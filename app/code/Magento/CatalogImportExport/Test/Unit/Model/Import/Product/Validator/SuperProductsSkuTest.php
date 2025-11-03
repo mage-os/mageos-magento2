@@ -38,9 +38,7 @@ class SuperProductsSkuTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->skuProcessorMock = $this->getMockBuilder(SkuProcessor::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->skuProcessorMock = $this->createMock(SkuProcessor::class);
         $this->skuStorageMock = $this->createMock(SkuStorage::class);
 
         $this->model = new SuperProductsSku($this->skuProcessorMock, $this->skuStorageMock);

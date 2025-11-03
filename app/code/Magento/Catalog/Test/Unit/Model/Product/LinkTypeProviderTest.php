@@ -100,7 +100,7 @@ class LinkTypeProviderTest extends TestCase
         }
         $this->linkTypeFactoryMock->expects($this->exactly(3))
             ->method('create')
-            ->will($this->onConsecutiveCalls($linkTypeMocks[0], $linkTypeMocks[1], $linkTypeMocks[2]));
+            ->willReturnOnConsecutiveCalls($linkTypeMocks[0], $linkTypeMocks[1], $linkTypeMocks[2]);
         $this->assertEquals($expectedResult, $this->model->getItems());
     }
 

@@ -42,9 +42,7 @@ class FactoryTest extends TestCase
         )->with(
             Collection::class,
             []
-        )->will(
-            $this->onConsecutiveCalls($objectOne, $objectTwo)
-        );
+        )->willReturnOnConsecutiveCalls($objectOne, $objectTwo);
         $this->assertSame($objectOne, $this->_model->create());
         $this->assertSame($objectTwo, $this->_model->create());
     }

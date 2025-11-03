@@ -19,6 +19,7 @@ use Magento\Eav\Model\Entity\Attribute\Group;
 use Magento\Eav\Model\Entity\Attribute\Set;
 use Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\Collection;
 use Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\CollectionFactory;
+use Magento\Eav\Test\Unit\Helper\AbstractAttributeTestHelper;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\DataObject;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
@@ -162,26 +163,7 @@ class ConfigTest extends TestCase
     #[DataProvider('getSourceOptionIdDataProvider')]
     public function testGetSourceOptionId($expected, $data, $search)
     {
-        // PHPUnit 12 compatible: Replace addMethods with anonymous class
-        $object = new class extends DataObject {
-            private $allOptionsResult;
-            
-            public function __construct()
-            {
-            }
-            
-            public function getAllOptions()
-            {
-                return $this->allOptionsResult;
-            }
-            
-            public function setAllOptions($result)
-            {
-                $this->allOptionsResult = $result;
-                return $this;
-            }
-        };
-        
+        $object = $this->createPartialMock(DataObject::class, []);
         $object->setAllOptions($data);
         $objectManager = new ObjectManager($this);
         $model = $objectManager->getObject(Config::class);
@@ -212,38 +194,7 @@ class ConfigTest extends TestCase
         $storeLabel = 'label';
         $attributeCode = 'code';
 
-        // PHPUnit 12 compatible: Replace addMethods + onlyMethods with anonymous class
-        $attribute = new class extends AbstractAttribute {
-            private $storeLabelResult;
-            private $attributeCodeResult;
-            
-            public function __construct()
-            {
-            }
-            
-            public function getStoreLabel()
-            {
-                return $this->storeLabelResult;
-            }
-            
-            public function setStoreLabel($result)
-            {
-                $this->storeLabelResult = $result;
-                return $this;
-            }
-            
-            public function getAttributeCode()
-            {
-                return $this->attributeCodeResult;
-            }
-            
-            public function setAttributeCode($result)
-            {
-                $this->attributeCodeResult = $result;
-                return $this;
-            }
-        };
-        
+        $attribute = new AbstractAttributeTestHelper();
         $attribute->setStoreLabel($storeLabel);
         $attribute->setAttributeCode($attributeCode);
 

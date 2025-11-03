@@ -16,6 +16,9 @@ use Magento\CatalogImportExport\Model\Export\Product;
 use Magento\CatalogImportExport\Model\Export\Product\Type\Factory;
 use Magento\CatalogImportExport\Model\Export\ProductFilterInterface;
 use Magento\CatalogImportExport\Model\Export\RowCustomizer\Composite;
+use Magento\CatalogImportExport\Test\Unit\Helper\AttributeSetCollectionFactoryTestHelper;
+use Magento\CatalogImportExport\Test\Unit\Helper\CategoryCollectionFactoryTestHelper;
+use Magento\CatalogImportExport\Test\Unit\Helper\ProductFactoryTestHelper;
 use Magento\CatalogInventory\Api\StockConfigurationInterface;
 use Magento\Eav\Model\Config;
 use Magento\Eav\Model\Entity\Collection\AbstractCollection;
@@ -191,54 +194,11 @@ class ProductTest extends TestCase
         );
         $this->exportConfig = $this->createMock(\Magento\ImportExport\Model\Export\Config::class);
 
-        $this->productFactory = new class extends ProductFactory {
-            private $typeId = null;
-            
-            public function __construct() {
-                // Empty constructor to avoid complex dependencies
-            }
-            
-            public function getTypeId() {
-                return $this->typeId;
-            }
-            
-            public function setTypeId($typeId) {
-                $this->typeId = $typeId;
-                return $this;
-            }
-            
-            public function create($data = []) {
-                return $this->createMock(\Magento\Catalog\Model\Product::class);
-            }
-        };
+        $this->productFactory = new ProductFactoryTestHelper();
 
-        $this->attrSetColFactory = new class extends AttributeSetCollectionFactory {
-            public function __construct() {
-                // Empty constructor to avoid complex dependencies
-            }
-            
-            public function setEntityTypeFilter($entityType) {
-                return $this;
-            }
-            
-            public function create($data = []) {
-                return $this->createMock(\Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\Collection::class);
-            }
-        };
+        $this->attrSetColFactory = new AttributeSetCollectionFactoryTestHelper();
 
-        $this->categoryColFactory = new class extends CategoryCollectionFactory {
-            public function __construct() {
-                // Empty constructor to avoid complex dependencies
-            }
-            
-            public function addNameToResult() {
-                return $this;
-            }
-            
-            public function create($data = []) {
-                return $this->createMock(\Magento\Catalog\Model\ResourceModel\Category\Collection::class);
-            }
-        };
+        $this->categoryColFactory = new CategoryCollectionFactoryTestHelper();
 
         $this->itemFactory = $this->createMock(ItemFactory::class);
         $this->optionColFactory = $this->createMock(

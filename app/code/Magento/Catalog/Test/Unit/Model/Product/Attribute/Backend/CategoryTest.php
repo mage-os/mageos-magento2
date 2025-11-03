@@ -17,65 +17,10 @@ class CategoryTest extends TestCase
     {
         $categoryIds = [1, 2, 3, 4, 5];
 
-        $product = new class extends DataObject {
-            private $categoryIds = null;
-            private $data = [];
-            
-            public function __construct()
-            {
-                // Don't call parent constructor to avoid dependencies
-            }
-            
-            public function getCategoryIds()
-            {
-                return $this->categoryIds;
-            }
-            
-            public function setCategoryIds($categoryIds)
-            {
-                $this->categoryIds = $categoryIds;
-                return $this;
-            }
-            
-            public function setData($key, $value = null)
-            {
-                if (is_array($key)) {
-                    $this->data = array_merge($this->data, $key);
-                } else {
-                    $this->data[$key] = $value;
-                }
-                return $this;
-            }
-            
-            public function getData($key = '', $index = null)
-            {
-                if ($key === '') {
-                    return $this->data;
-                }
-                return isset($this->data[$key]) ? $this->data[$key] : null;
-            }
-        };
+        $product = $this->createPartialMock(DataObject::class, []);
         $product->setCategoryIds($categoryIds);
 
-        $categoryAttribute = new class extends DataObject {
-            private $attributeCode = null;
-            
-            public function __construct()
-            {
-                // Don't call parent constructor to avoid dependencies
-            }
-            
-            public function getAttributeCode()
-            {
-                return $this->attributeCode;
-            }
-            
-            public function setAttributeCode($attributeCode)
-            {
-                $this->attributeCode = $attributeCode;
-                return $this;
-            }
-        };
+        $categoryAttribute = $this->createPartialMock(DataObject::class, []);
         $categoryAttribute->setAttributeCode('category_ids');
 
         $model = new Category();

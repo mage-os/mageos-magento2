@@ -13,6 +13,7 @@ use Magento\Catalog\Model\Product\Compare\ItemFactory;
 use Magento\Catalog\Model\Product\Compare\ListCompare;
 use Magento\Catalog\Model\ResourceModel\Product\Compare\Item;
 use Magento\Catalog\Model\ResourceModel\Product\Compare\Item\CollectionFactory;
+use Magento\Catalog\Test\Unit\Helper\SessionTestHelper;
 use Magento\Customer\Model\Session;
 use Magento\Customer\Model\Visitor;
 use Magento\Framework\App\Action\Context;
@@ -108,17 +109,7 @@ class IndexTest extends TestCase
         $this->sessionMock = $this->createMock(Session::class);
         $this->visitorMock = $this->createMock(Visitor::class);
         $this->listCompareMock = $this->createMock(ListCompare::class);
-        $this->catalogSession = new class extends \Magento\Catalog\Model\Session {
-            public function __construct()
-            {
-                // Empty constructor
-            }
-            
-            public function setBeforeCompareUrl($url)
-            {
-                return $this;
-            }
-        };
+        $this->catalogSession = new SessionTestHelper();
         $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
         $this->formKeyValidatorMock = $this->getMockBuilder(Validator::class)
             ->disableOriginalConstructor()

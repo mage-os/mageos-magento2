@@ -27,12 +27,16 @@ class SkuProcessorTest extends TestCase
     protected function setUp(): void
     {
         $this->productFactory = $this->createMock(ProductFactory::class);
-        $this->skuProcessor = $this->getMockBuilder(
-            SkuProcessor::class
-        )
-            ->onlyMethods(['_getSkus'])
-            ->setConstructorArgs([$this->productFactory])
-            ->getMock();
+        $this->skuProcessor = $this->createPartialMock(
+            SkuProcessor::class,
+            ['_getSkus']
+        );
+        
+        // Set the productFactory via reflection
+        $reflection = new \ReflectionClass($this->skuProcessor);
+        $property = $reflection->getProperty('productFactory');
+        $property->setAccessible(true);
+        $property->setValue($this->skuProcessor, $this->productFactory);
     }
 
     public function testReloadOldSkus()

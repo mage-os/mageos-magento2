@@ -15,6 +15,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHe
 use Magento\Quote\Model\Quote\Item\AbstractItem as AbstractQuoteItem;
 use Magento\Quote\Model\Quote\Item\Option as QuoteItemOption;
 use Magento\Quote\Model\Quote\Item\ToOrderItem as QuoteToOrderItem;
+use Magento\Quote\Test\Unit\Helper\AbstractItemTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -58,85 +59,8 @@ class QuoteItemProductOptionTest extends TestCase
         $this->subjectMock = $this->getMockBuilder(QuoteToOrderItem::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->quoteItemMock = new class extends AbstractQuoteItem {
-            private $options = null;
-            private $product = null;
-            private $quote = null;
-            private $address = null;
-            
-            public function __construct()
-            {
-                // Don't call parent constructor to avoid dependencies
-            }
-            
-            public function getOptions()
-            {
-                return $this->options;
-            }
-            
-            public function setOptions($options)
-            {
-                $this->options = $options;
-                return $this;
-            }
-            
-            public function getProduct()
-            {
-                return $this->product;
-            }
-            
-            public function setProduct($product)
-            {
-                $this->product = $product;
-                return $this;
-            }
-            
-            public function getQuote()
-            {
-                return $this->quote;
-            }
-            
-            public function setQuote($quote)
-            {
-                $this->quote = $quote;
-                return $this;
-            }
-            
-            public function getAddress()
-            {
-                return $this->address;
-            }
-            
-            public function setAddress($address)
-            {
-                $this->address = $address;
-                return $this;
-            }
-            
-            public function getOptionByCode($code)
-            {
-                return null;
-            }
-        };
-        $this->quoteItemOptionMock = new class extends QuoteItemOption {
-            private $code = null;
-            
-            public function __construct()
-            {
-                // Don't call parent constructor to avoid dependencies
-            }
-            
-            public function getCode()
-            {
-                return $this->code;
-            }
-            
-            public function setCode($code)
-            {
-                $this->code = $code;
-                return $this;
-            }
-        };
+        $this->quoteItemMock = new AbstractItemTestHelper();
+        $this->quoteItemOptionMock = $this->createPartialMock(QuoteItemOption::class, []);
         $this->productMock = $this->getMockBuilder(Product::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -155,45 +79,11 @@ class QuoteItemProductOptionTest extends TestCase
     public function testBeforeItemToOrderItemWithOptions()
     {
         // Create two option mocks with different codes
-        $optionMock1 = new class extends QuoteItemOption {
-            private $code = 'someText_8';
-            
-            public function __construct()
-            {
-                // Don't call parent constructor to avoid dependencies
-            }
-            
-            public function getCode()
-            {
-                return $this->code;
-            }
-            
-            public function setCode($code)
-            {
-                $this->code = $code;
-                return $this;
-            }
-        };
+        $optionMock1 = $this->createPartialMock(QuoteItemOption::class, []);
+        $optionMock1->setCode('someText_8');
         
-        $optionMock2 = new class extends QuoteItemOption {
-            private $code = 'not_int_text';
-            
-            public function __construct()
-            {
-                // Don't call parent constructor to avoid dependencies
-            }
-            
-            public function getCode()
-            {
-                return $this->code;
-            }
-            
-            public function setCode($code)
-            {
-                $this->code = $code;
-                return $this;
-            }
-        };
+        $optionMock2 = $this->createPartialMock(QuoteItemOption::class, []);
+        $optionMock2->setCode('not_int_text');
         
         $this->quoteItemMock->setOptions([$optionMock1, $optionMock2]);
         $this->productMock->expects(static::once())

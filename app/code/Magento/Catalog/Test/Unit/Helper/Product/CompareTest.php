@@ -10,6 +10,7 @@ namespace Magento\Catalog\Test\Unit\Helper\Product;
 use Magento\Catalog\Helper\Product\Compare;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Session;
+use Magento\Catalog\Test\Unit\Helper\SessionTestHelper;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\App\Request\Http;
@@ -93,18 +94,7 @@ class CompareTest extends TestCase
             PostHelper::class,
             ['getPostData']
         );
-        $this->catalogSessionMock = new class extends Session {
-            public function __construct()
-            {
-                // Empty constructor
-            }
-
-            public function getBeforeCompareUrl()
-            {
-                return 'http://magento.com/compare/before';
-            }
-            
-        };
+        $this->catalogSessionMock = new SessionTestHelper();
 
         $this->compareHelper = $objectManager->getObject(
             Compare::class,

@@ -12,6 +12,7 @@ use Magento\Catalog\Model\Indexer\Category\Flat\System\Config\Mode;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Indexer\IndexerInterface;
 use Magento\Framework\Indexer\IndexerRegistry;
+use Magento\Framework\Indexer\Test\Unit\Helper\IndexerRegistryTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Indexer\Model\Indexer\State;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -51,49 +52,7 @@ class ModeTest extends TestCase
             State::class,
             ['loadByIndexer', 'setStatus', 'save']
         );
-        $this->indexerRegistry = new class extends IndexerRegistry {
-            private $getResult = null;
-            private $loadResult = null;
-            private $setScheduledResult = null;
-            
-            public function __construct()
-            {
-                // Don't call parent constructor to avoid ObjectManager dependency
-            }
-            
-            public function get($indexerId)
-            {
-                return $this->getResult;
-            }
-            
-            public function setGetResult($result)
-            {
-                $this->getResult = $result;
-                return $this;
-            }
-            
-            public function load($indexerId)
-            {
-                return $this->loadResult;
-            }
-            
-            public function setLoadResult($result)
-            {
-                $this->loadResult = $result;
-                return $this;
-            }
-            
-            public function setScheduled($scheduled)
-            {
-                return $this->setScheduledResult;
-            }
-            
-            public function setSetScheduledResult($result)
-            {
-                $this->setScheduledResult = $result;
-                return $this;
-            }
-        };
+        $this->indexerRegistry = new IndexerRegistryTestHelper();
 
         $this->flatIndexer = $this->createMock(IndexerInterface::class);
 

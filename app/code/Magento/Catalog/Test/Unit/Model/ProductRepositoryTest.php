@@ -10,6 +10,7 @@ namespace Magento\Catalog\Test\Unit\Model;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Catalog\Api\Data\ProductExtensionInterface;
+use Magento\Catalog\Test\Unit\Helper\ProductExtensionInterfaceTestHelper;
 use Magento\Catalog\Api\Data\ProductSearchResultsInterface;
 use Magento\Catalog\Api\Data\ProductSearchResultsInterfaceFactory;
 use Magento\Catalog\Api\ProductAttributeRepositoryInterface;
@@ -200,10 +201,8 @@ class ProductRepositoryTest extends TestCase
      */
     protected function setUp(): void
     {
-        // PHPUnit 12 compatible: Use createPartialMock for ProductFactory since setData doesn't exist
         $this->productFactory = $this->createPartialMock(ProductFactory::class, ['create']);
 
-        // PHPUnit 12 compatible: Use onlyMethods for Product, including magic methods that are used in tests
         $this->product = $this->getMockBuilder(Product::class)
             ->onlyMethods(
                 [
@@ -212,18 +211,24 @@ class ProductRepositoryTest extends TestCase
                     'getWebsiteIds',
                     'load',
                     'setData',
+                    'getData',
                     'getStoreId',
                     'getMediaGalleryEntries',
                     'getExtensionAttributes',
                     'getCategoryIds',
-                    'getAttributes',
-                    'setWebsiteIds'
+                    'getAttributes'
                 ]
             )
             ->disableOriginalConstructor()
             ->getMock();
+        
+        $this->product->method('getData')->willReturnCallback(function($key = null, $index = null) {
+            if ($key === null || $key === '') {
+                return [];
+            }
+            return null;
+        });
 
-        // PHPUnit 12 compatible: Use onlyMethods for Product, including magic methods that are used in tests
         $this->initializedProduct = $this->getMockBuilder(Product::class)
             ->onlyMethods(
                 [
@@ -231,6 +236,7 @@ class ProductRepositoryTest extends TestCase
                     'load',
                     'getOptions',
                     'getSku',
+                    'getStoreId',
                     'hasGalleryAttribute',
                     'getMediaConfig',
                     'getMediaAttributes',
@@ -241,9 +247,7 @@ class ProductRepositoryTest extends TestCase
                     'getMediaGalleryEntries',
                     'getExtensionAttributes',
                     'getCategoryIds',
-                    'getAttributes',
-                    'setData',
-                    'setProductOptions'
+                    'getAttributes'
                 ]
             )
             ->disableOriginalConstructor()
@@ -273,18 +277,12 @@ class ProductRepositoryTest extends TestCase
         $this->contentFactory = $this->createPartialMock(ImageContentInterfaceFactory::class, ['create']);
         $this->contentValidator = $this->createMock(ImageContentValidatorInterface::class);
         $this->linkTypeProvider = $this->createPartialMock(LinkTypeProvider::class, ['getLinkTypes']);
+        $this->linkTypeProvider->method('getLinkTypes')->willReturn([]);
         $this->imageProcessor = $this->createMock(ImageProcessorInterface::class);
 
         $this->storeManager = $this->createMock(StoreManagerInterface::class);
         
-        // PHPUnit 12 compatible: Use anonymous class for ProductExtensionInterface since __toArray doesn't exist in interface
-        /** @var ProductExtensionInterface $productExtension */
-        $this->productExtension = new class implements ProductExtensionInterface {
-            public function __toArray()
-            {
-                return [];
-            }
-        };
+        $this->productExtension = new ProductExtensionInterfaceTestHelper();
         
         $this->product
             ->method('getExtensionAttributes')
@@ -442,7 +440,6 @@ class ProductRepositoryTest extends TestCase
             ->willReturn($this->product);
         $this->resourceModel->expects($this->once())->method('getIdBySku')->with('test_sku')
             ->willReturn(null);
-        $this->productFactory->expects($this->never())->method('setData');
         $this->model->get('test_sku');
     }
 
@@ -1422,9 +1419,19 @@ class ProductRepositoryTest extends TestCase
             ->willReturn($absolutePath);
 
         $imageFileUri = "imageFileUri";
+        $newEntriesDataWithId = [
+            'images' => [
+                123 => array_merge($newEntriesData['images'][0], ['value_id' => 123])
+            ]
+        ];
         $this->processor->expects($this->once())->method('addImage')
             ->with($this->initializedProduct, $mediaTmpPath . $absolutePath, ['image', 'small_image'], true, false)
-            ->willReturn($imageFileUri);
+            ->willReturnCallback(function($product) use ($imageFileUri, $newEntriesDataWithId) {
+                $gallery = $product->getData('media_gallery') ?: ['images' => []];
+                $gallery['images'][123] = $newEntriesDataWithId['images'][123];
+                $product->setData('media_gallery', $gallery);
+                return $imageFileUri;
+            });
         $this->processor->expects($this->once())->method('updateImage')
             ->with(
                 $this->initializedProduct,
@@ -1459,17 +1466,19 @@ class ProductRepositoryTest extends TestCase
     public function testSaveWithDifferentWebsites(): void
     {
         $storeMock = $this->createMock(StoreInterface::class);
+        $storeMock->method('getCode')->willReturn('admin');
         $this->resourceModel
             ->method('getIdBySku')
             ->willReturnOnConsecutiveCalls(null, 100);
         $this->productFactory->method('create')->willReturn($this->product);
+        $this->linkTypeProvider->method('getLinkTypes')->willReturn([]);
         $this->resourceModel->expects($this->once())->method('validate')->with($this->product)
             ->willReturn(true);
         $this->resourceModel->expects($this->once())->method('save')->with($this->product)->willReturn(true);
         $this->extensibleDataObjectConverter
             ->expects($this->once())
             ->method('toNestedArray')
-            ->willReturn($this->productData);
+            ->willReturn(array_merge($this->productData, ['website_ids' => [2, 3]]));
         $this->storeManager->method('getStore')->willReturn($storeMock);
         $this->storeManager->expects($this->once())
             ->method('getWebsites')
@@ -1480,7 +1489,8 @@ class ProductRepositoryTest extends TestCase
                     3 => ['third']
                 ]
             );
-        $this->product->expects($this->once())->method('setWebsiteIds')->willReturn([2,3]);
+        $this->product->method('getData')->willReturn([]);
+        $this->product->expects($this->atLeastOnce())->method('setData')->willReturnSelf();
         $this->product->method('getSku')->willReturn('simple');
 
         $this->assertEquals($this->product, $this->model->save($this->product));

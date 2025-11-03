@@ -13,6 +13,7 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Event\Test\Unit\ManagerStub;
 use Magento\Framework\Registry;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\Pricing\Test\Unit\Helper\RenderTestHelper;
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Framework\View\Layout;
 use Magento\Framework\View\LayoutInterface;
@@ -107,35 +108,7 @@ class RenderTest extends TestCase
         $this->registry->expects($this->never())
             ->method('registry');
 
-        $block = new class extends \Magento\Framework\Pricing\Render {
-            private $productItem = null;
-            private $renderResult = '';
-            
-            public function __construct()
-            {
-            }
-            
-            public function getProductItem()
-            {
-                return $this->productItem;
-            }
-            public function setProductItem($value)
-            {
-                $this->productItem = $value;
-                return $this;
-            }
-            
-            // Implement the onlyMethods that have expectations
-            public function render($priceType, $saleableItem, array $arguments = [])
-            {
-                return $this->renderResult;
-            }
-            public function setRenderResult($value)
-            {
-                $this->renderResult = $value;
-                return $this;
-            }
-        };
+        $block = new RenderTestHelper();
 
         $arguments = $this->object->getData();
         $arguments['render_block'] = $this->object;

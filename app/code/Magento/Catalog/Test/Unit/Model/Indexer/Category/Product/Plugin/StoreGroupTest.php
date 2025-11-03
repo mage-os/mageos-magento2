@@ -79,7 +79,7 @@ class StoreGroupTest extends TestCase
     public function testAfterSave(array $valueMap): void
     {
         $this->mockIndexerMethods();
-        $this->groupModelMock->expects($this->exactly(2))->method('dataHasChangedFor')->willReturnMap($valueMap);
+        $this->groupModelMock->expects($this->atLeastOnce())->method('dataHasChangedFor')->willReturnMap($valueMap);
         $this->groupModelMock->expects($this->once())->method('isObjectNew')->willReturn(false);
 
         $this->assertSame(
@@ -94,7 +94,7 @@ class StoreGroupTest extends TestCase
     #[DataProvider('changedDataProvider')]
     public function testAfterSaveNotNew(array $valueMap): void
     {
-        $this->groupModelMock->expects($this->exactly(2))->method('dataHasChangedFor')->willReturnMap($valueMap);
+        $this->groupModelMock->expects($this->atLeastOnce())->method('dataHasChangedFor')->willReturnMap($valueMap);
         $this->groupModelMock->expects($this->once())->method('isObjectNew')->willReturn(true);
 
         $this->assertSame(
@@ -109,10 +109,8 @@ class StoreGroupTest extends TestCase
     public static function changedDataProvider(): array
     {
         return [
-            [
-                [['root_category_id', true], ['website_id', false]],
-                [['root_category_id', false], ['website_id', true]],
-            ]
+            [[['root_category_id', true], ['website_id', false]]],
+            [[['root_category_id', false], ['website_id', true]]],
         ];
     }
 

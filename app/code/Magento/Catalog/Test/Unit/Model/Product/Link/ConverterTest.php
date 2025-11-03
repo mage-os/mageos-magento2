@@ -11,7 +11,9 @@ use Magento\Catalog\Api\Data\ProductLinkInterface;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Link\Converter;
 use Magento\Catalog\Model\Product\Type\AbstractType;
+use Magento\Catalog\Test\Unit\Helper\ProductLinkInterfaceTestHelper;
 use Magento\Framework\Api\ExtensionAttributesInterface;
+use Magento\Framework\Api\Test\Unit\Helper\ExtensionAttributesTestHelper;
 use PHPUnit\Framework\TestCase;
 
 class ConverterTest extends TestCase
@@ -32,56 +34,7 @@ class ConverterTest extends TestCase
         $linkedProductId = '2016';
         $linkType = 'associated';
         /** @var ProductLinkInterface $linkMock */
-        $linkMock = new class {
-            private $data = null;
-            private $linkType = null;
-            private $linkedProductSku = null;
-            private $extensionAttributes = null;
-            
-            public function getData()
-            {
-                return $this->data;
-            }
-            
-            public function setData($data)
-            {
-                $this->data = $data;
-                return $this;
-            }
-            
-            public function getLinkType()
-            {
-                return $this->linkType;
-            }
-            
-            public function setLinkType($linkType)
-            {
-                $this->linkType = $linkType;
-                return $this;
-            }
-            
-            public function getLinkedProductSku()
-            {
-                return $this->linkedProductSku;
-            }
-            
-            public function setLinkedProductSku($sku)
-            {
-                $this->linkedProductSku = $sku;
-                return $this;
-            }
-            
-            public function getExtensionAttributes()
-            {
-                return $this->extensionAttributes;
-            }
-            
-            public function setExtensionAttributes($attributes)
-            {
-                $this->extensionAttributes = $attributes;
-                return $this;
-            }
-        };
+        $linkMock = new ProductLinkInterfaceTestHelper();
         $basicData = [$linkMock];
         $linkedProductMock = $this->getMockBuilder(Product::class)
             ->disableOriginalConstructor()
@@ -116,20 +69,7 @@ class ConverterTest extends TestCase
             ->method('getId')
             ->willReturn($linkedProductId);
         /** @var ExtensionAttributesInterface $attributeMock */
-        $attributeMock = new class {
-            private $arrayData = null;
-            
-            public function __toArray()
-            {
-                return $this->arrayData;
-            }
-            
-            public function setArrayData($data)
-            {
-                $this->arrayData = $data;
-                return $this;
-            }
-        };
+        $attributeMock = new ExtensionAttributesTestHelper();
         $linkMock->setExtensionAttributes($attributeMock);
         $attributeMock->setArrayData(['qty' => 33]);
 

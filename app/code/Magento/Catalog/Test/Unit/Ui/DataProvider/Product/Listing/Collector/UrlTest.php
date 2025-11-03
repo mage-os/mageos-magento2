@@ -149,9 +149,9 @@ class UrlTest extends TestCase
         $product = $this->getMockBuilder(Product::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $productRenderInfoDto = $this->getMockForAbstractClass(ProductRenderInterface::class);
+        $productRenderInfoDto = $this->createMock(ProductRenderInterface::class);
 
-        $existingCompareButton = $this->getMockForAbstractClass(ButtonInterface::class);
+        $existingCompareButton = $this->createMock(ButtonInterface::class);
 
         // Test line 82: getAddToCompareButton returns existing button
         $productRenderInfoDto->expects($this->once())
@@ -223,10 +223,10 @@ class UrlTest extends TestCase
         $product = $this->getMockBuilder(Product::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $productRenderInfoDto = $this->getMockForAbstractClass(ProductRenderInterface::class);
+        $productRenderInfoDto = $this->createMock(ProductRenderInterface::class);
 
-        $existingCartButton = $this->getMockForAbstractClass(ButtonInterface::class);
-        $existingCompareButton = $this->getMockForAbstractClass(ButtonInterface::class);
+        $existingCartButton = $this->createMock(ButtonInterface::class);
+        $existingCompareButton = $this->createMock(ButtonInterface::class);
 
         // Test both buttons already exist
         $productRenderInfoDto->expects($this->once())

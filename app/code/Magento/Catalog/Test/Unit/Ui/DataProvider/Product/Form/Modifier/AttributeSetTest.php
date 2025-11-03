@@ -126,9 +126,7 @@ class AttributeSetTest extends AbstractModifierTestCase
     {
         $productId = 1;
 
-        $this->productMock->expects($this->once())
-            ->method('getId')
-            ->willReturn($productId);
+        $this->productMock->setData('entity_id', $productId);
 
         $this->assertArrayHasKey($productId, $this->getModel()->modifyData([]));
     }

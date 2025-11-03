@@ -11,6 +11,7 @@ use Magento\Tax\Model\ResourceModel\TaxClass\CollectionFactory;
 use Magento\Tax\Model\ClassModelFactory;
 use Magento\CatalogImportExport\Model\Import\Product\TaxClassProcessor;
 use Magento\CatalogImportExport\Model\Import\Product\Type\AbstractType;
+use Magento\CatalogImportExport\Test\Unit\Helper\TaxClassCollectionTestHelper;
 
 use Magento\Tax\Model\ClassModel;
 use Magento\Tax\Model\ResourceModel\TaxClass\Collection;
@@ -43,34 +44,12 @@ class TaxClassProcessorTest extends TestCase
         $objectManagerMock = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
         \Magento\Framework\App\ObjectManager::setInstance($objectManagerMock);
 
-        $taxClass = $this->getMockBuilder(ClassModel::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $taxClass = $this->createMock(ClassModel::class);
         $taxClass->method('getClassName')->willReturn(self::TEST_TAX_CLASS_NAME);
         $taxClass->method('getId')->willReturn(self::TEST_TAX_CLASS_ID);
 
         // Create collection mock that supports iteration
-        $taxClassCollection = new class($taxClass) extends Collection {
-            private $taxClass;
-            private $items = [];
-            
-            public function __construct($taxClass) {
-                $this->taxClass = $taxClass;
-                $this->items = [$taxClass];
-            }
-            
-            public function addFieldToFilter($field, $condition = null) {
-                return $this;
-            }
-            
-            public function getItems() {
-                return $this->items;
-            }
-            
-            public function getIterator() {
-                return new \ArrayIterator($this->items);
-            }
-        };
+        $taxClassCollection = new TaxClassCollectionTestHelper($taxClass);
 
         $taxClassCollectionFactory = $this->createPartialMock(
             CollectionFactory::class,
@@ -79,9 +58,7 @@ class TaxClassProcessorTest extends TestCase
 
         $taxClassCollectionFactory->method('create')->willReturn($taxClassCollection);
 
-        $anotherTaxClass = $this->getMockBuilder(ClassModel::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $anotherTaxClass = $this->createMock(ClassModel::class);
         $anotherTaxClass->method('getClassName')->willReturn(self::TEST_TAX_CLASS_NAME);
         $anotherTaxClass->method('getId')->willReturn(self::TEST_JUST_CREATED_TAX_CLASS_ID);
 

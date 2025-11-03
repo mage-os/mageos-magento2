@@ -15,6 +15,8 @@ use Magento\Catalog\Model\CustomOptions\CustomOption;
 use Magento\Catalog\Model\CustomOptions\CustomOptionFactory;
 use Magento\Catalog\Model\Product\Option\UrlBuilder;
 use Magento\Catalog\Model\ProductOptionProcessor;
+use Magento\Catalog\Test\Unit\Helper\ProductOptionExtensionInterfaceTestHelper;
+use Magento\Framework\Data\Test\Unit\Helper\DataObjectExtendedTestHelper;
 use Magento\Framework\DataObject;
 use Magento\Framework\DataObject\Factory as DataObjectFactory;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
@@ -53,30 +55,7 @@ class ProductOptionProcessorTest extends TestCase
 
     protected function setUp(): void
     {
-        // PHPUnit 12 compatible: Replace addMethods + onlyMethods with anonymous class for concrete class
-        $this->dataObject = new class extends DataObject {
-            private $optionsResult;
-            
-            public function __construct()
-            {
-            }
-            
-            public function getOptions()
-            {
-                return $this->optionsResult;
-            }
-            
-            public function setOptions($result)
-            {
-                $this->optionsResult = $result;
-                return $this;
-            }
-            
-            public function addData($data)
-            {
-                return $this;
-            }
-        };
+        $this->dataObject = new DataObjectExtendedTestHelper();
 
         $this->dataObjectFactory = $this->getMockBuilder(DataObjectFactory::class)
             ->onlyMethods(['create'])
@@ -84,36 +63,7 @@ class ProductOptionProcessorTest extends TestCase
             ->getMock();
         $this->dataObjectFactory->method('create')->willReturn($this->dataObject);
 
-        // PHPUnit 12 compatible: Replace addMethods with anonymous class for interface
-        /** @var CustomOptionInterface $customOption */
-        $this->customOption = new class {
-            private $downloadableLinksResult;
-            
-            public function __construct()
-            {
-            }
-            
-            public function getDownloadableLinks()
-            {
-                return $this->downloadableLinksResult;
-            }
-            
-            public function setDownloadableLinks($result)
-            {
-                $this->downloadableLinksResult = $result;
-                return $this;
-            }
-            
-            public function setOptionId($optionId)
-            {
-                return $this;
-            }
-            
-            public function setOptionValue($optionValue)
-            {
-                return $this;
-            }
-        };
+        $this->customOption = new DataObjectExtendedTestHelper();
 
         $this->customOptionFactory = $this->getMockBuilder(
             CustomOptionFactory::class
@@ -156,24 +106,7 @@ class ProductOptionProcessorTest extends TestCase
 
         // PHPUnit 12 compatible: Replace addMethods with anonymous class for interface
         /** @var ProductOptionExtensionInterface $productOptionExtensionMock */
-        $productOptionExtensionMock = new class {
-            private $customOptionsResult;
-            
-            public function __construct()
-            {
-            }
-            
-            public function getCustomOptions()
-            {
-                return $this->customOptionsResult;
-            }
-            
-            public function setCustomOptions($result)
-            {
-                $this->customOptionsResult = $result;
-                return $this;
-            }
-        };
+        $productOptionExtensionMock = new ProductOptionExtensionInterfaceTestHelper();
 
         $productOptionMock->method('getExtensionAttributes')->willReturn($productOptionExtensionMock);
 

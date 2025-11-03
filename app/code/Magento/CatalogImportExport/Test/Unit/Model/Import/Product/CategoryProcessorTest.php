@@ -14,6 +14,7 @@ use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\ResourceModel\Category\Collection;
 use Magento\CatalogImportExport\Model\Import\Product\CategoryProcessor;
 use Magento\CatalogImportExport\Model\Import\Product\Type\AbstractType;
+use Magento\CatalogImportExport\Test\Unit\Helper\CategoryCollectionTestHelper;
 use Magento\Framework\Exception\AlreadyExistsException;
 
 use Magento\Store\Model\Store;
@@ -56,9 +57,7 @@ class CategoryProcessorTest extends TestCase
         $objectManagerMock = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
         \Magento\Framework\App\ObjectManager::setInstance($objectManagerMock);
 
-        $this->childCategory = $this->getMockBuilder(Category::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->childCategory = $this->createMock(Category::class);
         $this->childCategory->method('getId')->willReturn(self::CHILD_CATEGORY_ID);
         $this->childCategory->method('getName')->willReturn(self::CHILD_CATEGORY_NAME);
         $this->childCategory->method('getPath')->willReturn(
@@ -66,45 +65,13 @@ class CategoryProcessorTest extends TestCase
             . self::CHILD_CATEGORY_ID
         );
 
-        $this->parentCategory = $this->getMockBuilder(Category::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->parentCategory = $this->createMock(Category::class);
         $this->parentCategory->method('getId')->willReturn(self::PARENT_CATEGORY_ID);
         $this->parentCategory->method('getName')->willReturn('Parent');
         $this->parentCategory->method('getPath')->willReturn(self::PARENT_CATEGORY_ID);
 
         // Create collection mock that supports iteration
-        $categoryCollection = new class($this->parentCategory, $this->childCategory) extends Collection {
-            private $parentCategory;
-            private $childCategory;
-            private $items = [];
-            
-            public function __construct($parentCategory, $childCategory) {
-                $this->parentCategory = $parentCategory;
-                $this->childCategory = $childCategory;
-                $this->items = [$this->parentCategory, $this->childCategory];
-            }
-            
-            public function addAttributeToSelect($attribute, $joinType = false) {
-                return $this;
-            }
-            
-            public function setStoreId($storeId) {
-                return $this;
-            }
-            
-            public function getItemById($id) {
-                return match($id) {
-                    1 => $this->parentCategory,
-                    2 => $this->childCategory,
-                    default => null
-                };
-            }
-            
-            public function getIterator() {
-                return new \ArrayIterator($this->items);
-            }
-        };
+        $categoryCollection = new CategoryCollectionTestHelper($this->parentCategory, $this->childCategory);
 
         $categoryColFactory = $this->createPartialMock(
             CollectionFactory::class,

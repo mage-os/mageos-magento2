@@ -16,7 +16,8 @@ use Magento\Framework\DB\Adapter\Pdo\Mysql;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\Model\ActionValidator\RemoveAction;
 use Magento\Framework\Model\Context;
-use Magento\Framework\Model\ResourceModel\AbstractResource;
+use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
+use Magento\Eav\Model\ResourceModel\Entity\Attribute as AttributeResource;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -82,18 +83,15 @@ class AttributeTest extends TestCase
 
         $dbAdapterMock->method('getTransactionLevel')->willReturn(1);
 
-        $this->resourceMock = $this->getMockBuilder(AbstractResource::class)
-            ->addMethods(['getIdFieldName', 'save', 'saveInSetIncluding', 'isUsedBySuperProducts', 'delete'])
-            ->onlyMethods(['getConnection'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->resourceMock = $this->createPartialMock(
+            AttributeResource::class,
+            ['getConnection', '_construct', 'getIdFieldName', 'saveInSetIncluding']
+        );
 
-        $this->eavConfigMock = $this->getMockBuilder(Config::class)
-            ->onlyMethods(['clear'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->eavConfigMock = $this->createPartialMock(Config::class, ['clear']);
 
         $this->resourceMock->method('getConnection')->willReturn($dbAdapterMock);
+        $this->resourceMock->method('getIdFieldName')->willReturn('attribute_id');
 
         $objectManager = new ObjectManager($this);
         $this->_model = $objectManager->getObject(

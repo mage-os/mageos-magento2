@@ -12,6 +12,7 @@ use Magento\Backend\Model\View\Result\Redirect as ResultRedirect;
 use Magento\Catalog\Api\Data\ProductAttributeInterface;
 use Magento\Catalog\Controller\Adminhtml\Product\Attribute\Save;
 use Magento\Catalog\Helper\Product as ProductHelper;
+use Magento\Catalog\Model\Entity\Attribute;
 use Magento\Catalog\Model\Product\Attribute\Frontend\Inputtype\Presentation;
 use Magento\Catalog\Model\Product\AttributeSet\Build;
 use Magento\Catalog\Model\Product\AttributeSet\BuildFactory;
@@ -23,14 +24,12 @@ use Magento\Eav\Model\Adminhtml\System\Config\Source\Inputtype\ValidatorFactory;
 use Magento\Eav\Model\ResourceModel\Entity\Attribute\Group\CollectionFactory;
 use Magento\Eav\Model\Validator\Attribute\Code as AttributeCodeValidator;
 use Magento\Framework\Controller\ResultFactory;
+use Magento\Framework\Controller\Result\Json as ResultJson;
 use Magento\Framework\Exception\NotFoundException;
-use Magento\Framework\Filter\FilterManager;
-use Magento\Catalog\Test\Unit\Mock\FilterManagerMock;
-use Magento\Catalog\Test\Unit\Mock\LayoutInterfaceMock;
-use Magento\Catalog\Test\Unit\Mock\ResultRedirectMock;
-use Magento\Catalog\Test\Unit\Mock\ProductAttributeInterfaceMock;
+use Magento\Framework\Filter\Test\Unit\Helper\FilterManagerTestHelper;
 use Magento\Framework\Serialize\Serializer\FormData;
 use Magento\Framework\View\Element\Messages;
+use Magento\Framework\View\Layout;
 use Magento\Framework\View\LayoutFactory;
 use Magento\Framework\View\LayoutInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -47,7 +46,7 @@ class SaveTest extends AttributeTest
     private $buildFactoryMock;
 
     /**
-     * @var FilterManager|MockObject
+     * @var FilterManagerTestHelper|MockObject
      */
     private $filterManagerMock;
 
@@ -82,6 +81,11 @@ class SaveTest extends AttributeTest
     private $redirectMock;
 
     /**
+     * @var ResultJson|MockObject
+     */
+    private $jsonResultMock;
+
+    /**
      * @var AttributeSetInterface|MockObject
      */
     private $attributeSetMock;
@@ -102,7 +106,7 @@ class SaveTest extends AttributeTest
     private $formDataSerializerMock;
 
     /**
-     * @var ProductAttributeInterface|MockObject
+     * @var Attribute|MockObject
      */
     private $productAttributeMock;
 
@@ -125,9 +129,7 @@ class SaveTest extends AttributeTest
     protected function setUp(): void
     {
         parent::setUp();
-        $this->filterManagerMock = $this->getMockBuilder(FilterManagerMock::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->filterManagerMock = $this->createMock(FilterManagerTestHelper::class);
         $this->productHelperMock = $this->createMock(ProductHelper::class);
         $this->attributeSetMock = $this->createMock(AttributeSetInterface::class);
         $this->builderMock = $this->createMock(Build::class);
@@ -153,12 +155,9 @@ class SaveTest extends AttributeTest
             ->onlyMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
-        $this->redirectMock = $this->getMockBuilder(ResultRedirectMock::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->productAttributeMock = $this->getMockBuilder(ProductAttributeInterfaceMock::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->redirectMock = $this->createMock(ResultRedirect::class);
+        $this->jsonResultMock = $this->createMock(ResultJson::class);
+        $this->productAttributeMock = $this->createMock(Attribute::class);
            
         $this->buildFactoryMock->expects($this->any())
             ->method('create')
@@ -383,9 +382,7 @@ class SaveTest extends AttributeTest
      */
     private function addReturnResultConditions(string $path = '', array $params = [], array $response = [])
     {
-        $layoutMock = $this->getMockBuilder(LayoutInterfaceMock::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $layoutMock = $this->createMock(Layout::class);
         $this->layoutFactoryMock
             ->expects($this->once())
             ->method('create')
@@ -409,12 +406,12 @@ class SaveTest extends AttributeTest
             ->expects($this->once())
             ->method('create')
             ->with(ResultFactory::TYPE_JSON)
-            ->willReturn($this->redirectMock);
+            ->willReturn($this->jsonResultMock);
         $response  = array_merge($response, [
             'messages' => ['message1'],
             'params' => $params,
         ]);
-        $this->redirectMock
+        $this->jsonResultMock
             ->expects($this->once())
             ->method('setData')
             ->with($response)

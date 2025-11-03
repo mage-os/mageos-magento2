@@ -56,25 +56,7 @@ class StockTest extends TestCase
             Stock::class,
             ['stockRegistry' => $this->stockRegistry]
         );
-        $attribute = new class extends DataObject {
-            private $attributeCode = null;
-            
-            public function __construct()
-            {
-                // Don't call parent constructor to avoid dependencies
-            }
-            
-            public function getAttributeCode()
-            {
-                return $this->attributeCode;
-            }
-            
-            public function setAttributeCode($attributeCode)
-            {
-                $this->attributeCode = $attributeCode;
-                return $this;
-            }
-        };
+        $attribute = $this->createPartialMock(DataObject::class, []);
         $attribute->setAttributeCode(self::ATTRIBUTE_NAME);
         $this->model->setAttribute($attribute);
     }

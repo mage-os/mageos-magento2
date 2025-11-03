@@ -11,6 +11,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Block\Rss\Product\NewProducts;
 use Magento\Catalog\Helper\Image;
 use Magento\Catalog\Model\Product;
+use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\Rss\UrlBuilderInterface;
@@ -128,55 +129,7 @@ class NewProductsTest extends TestCase
      */
     protected function getItemMock()
     {
-        $item = new class extends Product {
-            private $allowedInRss = false;
-            private $allowedPriceInRss = false;
-            private $description = 'Product Description';
-            private $name = 'Product Name';
-            private $productUrl = 'http://magento.com/product-name.html';
-            
-            public function __construct()
-            {
-                // Empty constructor for test
-            }
-            
-            public function setAllowedInRss($allowed)
-            {
-                $this->allowedInRss = $allowed;
-                return $this;
-            }
-            
-            public function setAllowedPriceInRss($allowed)
-            {
-                $this->allowedPriceInRss = $allowed;
-                return $this;
-            }
-            
-            public function getAllowedPriceInRss()
-            {
-                return $this->allowedPriceInRss;
-            }
-            
-            public function getAllowedInRss()
-            {
-                return $this->allowedInRss;
-            }
-            
-            public function getDescription()
-            {
-                return $this->description;
-            }
-            
-            public function getName()
-            {
-                return $this->name;
-            }
-            
-            public function getProductUrl($useSid = null)
-            {
-                return $this->productUrl;
-            }
-        };
+        $item = new ProductTestHelper();
         
         // Set up the expected behavior
         $item->setAllowedInRss(true);

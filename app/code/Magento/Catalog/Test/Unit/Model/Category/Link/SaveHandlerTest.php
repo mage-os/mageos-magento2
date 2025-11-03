@@ -86,25 +86,15 @@ class SaveHandlerTest extends TestCase
                 ->willReturn($this->hydrator);
         }
 
-        $extensionAttributes = $this->getMockBuilder(ProductExtensionInterface::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['setCategoryLinks', 'getCategoryLinks'])
-            ->getMock();
+        $extensionAttributes = $this->createMock(ProductExtensionInterface::class);
         $extensionAttributes->expects(static::any())
             ->method('getCategoryLinks')
             ->willReturn($categoryLinks);
 
-        $product = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getExtensionAttributes', 'getCategoryIds'])
-            ->addMethods(['setAffectedCategoryIds', 'setIsChangedCategories'])
-            ->getMock();
-        $product->method('setIsChangedCategories')
-            ->willReturnCallback(function ($arg) {
-                if ($arg === false) {
-                    return null;
-                }
-            });
+        $product = $this->createPartialMock(
+            Product::class,
+            ['getExtensionAttributes', 'getCategoryIds']
+        );
         $product->expects(static::once())
             ->method('getExtensionAttributes')
             ->willReturn($extensionAttributes);
@@ -116,13 +106,6 @@ class SaveHandlerTest extends TestCase
             ->method('saveCategoryLinks')
             ->with($product, $expectedCategoryLinks)
             ->willReturn($affectedIds);
-
-        if (!empty($affectedIds)) {
-            $product->expects(static::once())
-                ->method('setAffectedCategoryIds')
-                ->with($affectedIds);
-            $product->expects(static::exactly(2))->method('setIsChangedCategories');
-        }
 
         $this->productCategoryLink->expects(static::any())
             ->method('getCategoryLinks')
@@ -226,17 +209,13 @@ class SaveHandlerTest extends TestCase
      */
     public function testExecuteWithoutProcess(): void
     {
-        $product = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getExtensionAttributes'])
-            ->addMethods(['hasCategoryIds'])
-            ->getMock();
+        $product = $this->createPartialMock(
+            Product::class,
+            ['getExtensionAttributes']
+        );
         $product->expects(static::once())
             ->method('getExtensionAttributes')
             ->willReturn(null);
-        $product->expects(static::any())
-            ->method('hasCategoryIds')
-            ->willReturn(false);
 
         $entity = $this->saveHandler->execute($product);
         static::assertSame($product, $entity);

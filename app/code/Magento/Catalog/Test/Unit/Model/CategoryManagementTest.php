@@ -12,7 +12,7 @@ use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\Category\Tree;
 use Magento\Catalog\Model\CategoryManagement;
 use Magento\Catalog\Model\ResourceModel\Category\Collection;
-use Magento\Catalog\Model\ResourceModel\Category\CollectionFactory;
+use Magento\Catalog\Test\Unit\Helper\CategoryCollectionFactoryTestHelper;
 use Magento\Framework\App\ScopeInterface;
 use Magento\Framework\App\ScopeResolverInterface;
 use Magento\Framework\Data\Tree\Node;
@@ -43,7 +43,7 @@ class CategoryManagementTest extends TestCase
     protected $categoryTreeMock;
 
     /**
-     * @var CollectionFactory|MockObject
+     * @var CategoryCollectionFactoryTestHelper
      */
     protected $categoriesFactoryMock;
 
@@ -67,51 +67,7 @@ class CategoryManagementTest extends TestCase
         $this->objectManagerHelper = new ObjectManager($this);
         $this->categoryRepositoryMock = $this->createMock(CategoryRepositoryInterface::class);
         $this->categoryTreeMock = $this->createMock(Tree::class);
-        
-        // PHPUnit 12 compatible: Replace addMethods with anonymous class
-        $this->categoriesFactoryMock = new class extends CollectionFactory {
-            private $addFilterResult;
-            private $getFirstItemResult;
-            private $createResult;
-            
-            public function __construct()
-            {
-            }
-            
-            public function addFilter($field, $condition = null)
-            {
-                $this->addFilterResult = ['field' => $field, 'condition' => $condition];
-                return $this;
-            }
-            
-            public function setAddFilter($field, $condition = null)
-            {
-                $this->addFilterResult = ['field' => $field, 'condition' => $condition];
-                return $this;
-            }
-            
-            public function getFirstItem()
-            {
-                return $this->getFirstItemResult;
-            }
-            
-            public function setGetFirstItem($result)
-            {
-                $this->getFirstItemResult = $result;
-                return $this;
-            }
-            
-            public function create(array $data = [])
-            {
-                return $this->createResult;
-            }
-            
-            public function setCreate($result)
-            {
-                $this->createResult = $result;
-                return $this;
-            }
-        };
+        $this->categoriesFactoryMock = new CategoryCollectionFactoryTestHelper();
 
         $this->model = $this->objectManagerHelper->getObject(
             CategoryManagement::class,

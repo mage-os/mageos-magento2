@@ -12,6 +12,7 @@ use Magento\Catalog\Block\Product\ProductList\Toolbar;
 use Magento\Catalog\Helper\Product\ProductList;
 use Magento\Catalog\Model\Config;
 use Magento\Catalog\Model\Product\ProductList\ToolbarMemorizer;
+use Magento\Catalog\Test\Unit\Helper\PagerTestHelper;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\Url;
@@ -97,52 +98,7 @@ class ToolbarTest extends TestCase
             ]
         );
         $this->layout = $this->createPartialMock(Layout::class, ['getChildName', 'getBlock']);
-        $this->pagerBlock = new class extends Pager {
-            public function __construct()
-            {
-                // Empty constructor for test
-            }
-            
-            public function setUseContainer($useContainer)
-            {
-                return $this;
-            }
-            
-            public function setShowAmounts($showAmounts)
-            {
-                return $this;
-            }
-            
-            public function setShowPerPage($showPerPage)
-            {
-                return $this;
-            }
-            
-            public function setFrameLength($frameLength)
-            {
-                return $this;
-            }
-            
-            public function setJump($jump)
-            {
-                return $this;
-            }
-            
-            public function setLimit($limit)
-            {
-                return $this;
-            }
-            
-            public function setCollection($collection)
-            {
-                return $this;
-            }
-            
-            public function toHtml()
-            {
-                return true;
-            }
-        };
+        $this->pagerBlock = new PagerTestHelper();
         $this->urlBuilder = $this->createPartialMock(Url::class, ['getUrl']);
         $this->scopeConfig = $this->createMock(ScopeConfigInterface::class);
 

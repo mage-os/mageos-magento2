@@ -16,6 +16,8 @@ use Magento\Eav\Model\Entity\AbstractEntity;
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
 use Magento\Eav\Model\Entity\Attribute\Backend\AbstractBackend;
 use Magento\Eav\Model\Entity\Collection\AbstractCollection;
+use Magento\Eav\Test\Unit\Helper\AbstractAttributeTestHelper;
+use Magento\Eav\Test\Unit\Helper\CollectionTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -45,164 +47,8 @@ class StatusTest extends TestCase
     protected function setUp(): void
     {
         $this->objectManagerHelper = new ObjectManagerHelper($this);
-        $this->collection = new class extends Collection {
-            private $joinLeftResult = null;
-            private $orderResult = null;
-            private $checkSql = null;
-            private $select = null;
-            private $storeId = null;
-            private $connection = null;
-            
-            public function __construct()
-            {
-                // Don't call parent constructor to avoid dependencies
-            }
-            
-            public function joinLeft($table, $condition, $columns = '*')
-            {
-                return $this->joinLeftResult ?: $this;
-            }
-            
-            public function setJoinLeftResult($result)
-            {
-                $this->joinLeftResult = $result;
-                return $this;
-            }
-            
-            public function order($field, $direction = 'ASC')
-            {
-                return $this->orderResult ?: $this;
-            }
-            
-            public function setOrderResult($result)
-            {
-                $this->orderResult = $result;
-                return $this;
-            }
-            
-            public function getCheckSql($condition, $true, $false)
-            {
-                return $this->checkSql;
-            }
-            
-            public function setCheckSql($checkSql)
-            {
-                $this->checkSql = $checkSql;
-                return $this;
-            }
-            
-            public function getSelect()
-            {
-                return $this->select ?: $this;
-            }
-            
-            public function setSelect($select)
-            {
-                $this->select = $select;
-                return $this;
-            }
-            
-            public function getStoreId()
-            {
-                return $this->storeId;
-            }
-            
-            public function setStoreId($storeId)
-            {
-                $this->storeId = $storeId;
-                return $this;
-            }
-            
-            public function getConnection()
-            {
-                return $this->connection ?: $this;
-            }
-            
-            public function setConnection($connection)
-            {
-                $this->connection = $connection;
-                return $this;
-            }
-        };
-        $this->attributeModel = new class extends Attribute {
-            private $isScopeGlobal = null;
-            private $attribute = null;
-            private $attributeCode = null;
-            private $backend = null;
-            private $id = null;
-            private $entity = null;
-            
-            public function __construct()
-            {
-                // Don't call parent constructor to avoid dependencies
-            }
-            
-            public function isScopeGlobal()
-            {
-                return $this->isScopeGlobal;
-            }
-            
-            public function setIsScopeGlobal($isScopeGlobal)
-            {
-                $this->isScopeGlobal = $isScopeGlobal;
-                return $this;
-            }
-            
-            public function getAttribute()
-            {
-                return $this->attribute ?: $this;
-            }
-            
-            public function setAttribute($attribute)
-            {
-                $this->attribute = $attribute;
-                return $this;
-            }
-            
-            public function getAttributeCode()
-            {
-                return $this->attributeCode;
-            }
-            
-            public function setAttributeCode($attributeCode)
-            {
-                $this->attributeCode = $attributeCode;
-                return $this;
-            }
-            
-            public function getBackend()
-            {
-                return $this->backend;
-            }
-            
-            public function setBackend($backend)
-            {
-                $this->backend = $backend;
-                return $this;
-            }
-            
-            public function getId()
-            {
-                return $this->id;
-            }
-            
-            public function setId($id)
-            {
-                $this->id = $id;
-                return $this;
-            }
-            
-            public function getEntity()
-            {
-                return $this->entity;
-            }
-            
-            public function setEntity($entity)
-            {
-                $this->entity = $entity;
-                return $this;
-            }
-        };
+        $this->collection = new CollectionTestHelper();
+        $this->attributeModel = new AbstractAttributeTestHelper();
         $this->backendAttributeModel = $this->createPartialMock(
             Sku::class,
             [ 'getTable']

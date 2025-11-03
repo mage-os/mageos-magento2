@@ -61,10 +61,8 @@ class ProductTest extends TestCase
         $productTypeId = 4;
         $expectedErrorMessage = ['attribute_set' => 'Invalid attribute set entity type'];
 
-        $productMock = $this->getMockBuilder(DataObject::class)
-            ->addMethods(['getAttributeSetId'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $productMock = $this->createPartialMock(DataObject::class, []);
+        $productMock->setData('attribute_set_id', 4);
         $attributeSetMock = $this->createPartialMock(
             Set::class,
             ['load', 'getEntityTypeId']
@@ -75,8 +73,6 @@ class ProductTest extends TestCase
         $entityTypeMock->expects($this->once())->method('loadByCode')->with('catalog_product')->willReturnSelf();
 
         $productAttributeSetId = 4;
-        $productMock->expects($this->once())->method('getAttributeSetId')
-            ->willReturn($productAttributeSetId);
 
         $this->setFactoryMock->expects($this->once())->method('create')->willReturn($attributeSetMock);
         $attributeSetMock->expects($this->once())->method('load')->with($productAttributeSetId)->willReturnSelf();

@@ -16,6 +16,7 @@ use Magento\Catalog\Model\ResourceModel\Product\Gallery;
 use Magento\Framework\DataObject;
 use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Filesystem;
+use Magento\Framework\Filesystem\Directory\Test\Unit\Helper\FilesystemTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -79,58 +80,7 @@ class MediaImageDeleteProcessorTest extends TestCase
             ->onlyMethods(['getBaseMediaUrl', 'getMediaUrl', 'getBaseMediaPath', 'getMediaPath'])
             ->getMock();
 
-        $this->mediaDirectory = new class extends Filesystem {
-            private $relativePath = null;
-            private $relativePathCallback = null;
-            private $isFile = false;
-            private $deleteResult = null;
-            
-            public function __construct()
-            {
-            }
-            
-            public function getRelativePath($path)
-            {
-                if ($this->relativePathCallback) {
-                    return call_user_func($this->relativePathCallback, $path);
-                }
-                return $this->relativePath;
-            }
-            
-            public function setRelativePath($relativePath)
-            {
-                $this->relativePath = $relativePath;
-                return $this;
-            }
-            
-            public function setRelativePathCallback($callback)
-            {
-                $this->relativePathCallback = $callback;
-                return $this;
-            }
-            
-            public function isFile($path)
-            {
-                return $this->isFile;
-            }
-            
-            public function setIsFile($isFile)
-            {
-                $this->isFile = $isFile;
-                return $this;
-            }
-            
-            public function delete($path)
-            {
-                return $this->deleteResult;
-            }
-            
-            public function setDeleteResult($result)
-            {
-                $this->deleteResult = $result;
-                return $this;
-            }
-        };
+        $this->mediaDirectory = new FilesystemTestHelper();
 
         $this->imageProcessor = $this->getMockBuilder(Processor::class)
             ->disableOriginalConstructor()

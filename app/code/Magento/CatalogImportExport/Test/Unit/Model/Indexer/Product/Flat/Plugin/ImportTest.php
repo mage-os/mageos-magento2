@@ -38,19 +38,14 @@ class ImportTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->processorMock = $this->getMockBuilder(Processor::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['markIndexerAsInvalid', 'isIndexerScheduled'])
-            ->getMock();
+        $this->processorMock = $this->createPartialMock(
+            Processor::class,
+            ['markIndexerAsInvalid', 'isIndexerScheduled']
+        );
 
-        $this->flatStateMock = $this->getMockBuilder(State::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['isFlatEnabled'])
-            ->getMock();
+        $this->flatStateMock = $this->createPartialMock(State::class, ['isFlatEnabled']);
 
-        $this->subjectMock = $this->getMockBuilder(\Magento\ImportExport\Model\Import::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->subjectMock = $this->createMock(\Magento\ImportExport\Model\Import::class);
 
         $this->model = (new ObjectManager($this))->getObject(
             Import::class,

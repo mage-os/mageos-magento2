@@ -120,9 +120,7 @@ class DepthCalculatorTest extends TestCase
     {
         $this->depthCalculator = new DepthCalculator();
         $this->resolveInfoMock = $this->createMock(ResolveInfo::class);
-        $this->fieldNodeMock = $this->getMockBuilder(FieldNode::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->fieldNodeMock = $this->createMock(FieldNode::class);
     }
 
     /**

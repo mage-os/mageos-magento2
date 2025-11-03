@@ -129,11 +129,11 @@ class CollectionTest extends TestCase
         $universalFactory = $this->getMockBuilder(UniversalFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->storeManager = $this->getMockBuilder(StoreManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getId', 'getWebsiteId'])
-            ->onlyMethods(['getStore'])
-            ->getMock();
+        $this->storeManager = $this->createMock(StoreManagerInterface::class);
+        $store = $this->createPartialMock(Store::class, ['getId', 'getWebsiteId']);
+        $store->method('getId')->willReturn(1);
+        $store->method('getWebsiteId')->willReturn(1);
+        $this->storeManager->method('getStore')->willReturn($store);
         $moduleManager = $this->getMockBuilder(Manager::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -155,10 +155,7 @@ class CollectionTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $groupManagement = $this->createMock(GroupManagementInterface::class);
-        $this->connectionMock = $this->getMockBuilder(AdapterInterface::class)
-            ->addMethods(['getId'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->connectionMock = $this->createMock(AdapterInterface::class);
         $this->selectMock = $this->getMockBuilder(Select::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -177,8 +174,6 @@ class CollectionTest extends TestCase
             ReadHandler::class
         )->disableOriginalConstructor()
             ->getMock();
-        $this->storeManager->method('getId')->willReturn(1);
-        $this->storeManager->expects($this->any())->method('getStore')->willReturnSelf();
         $universalFactory->expects($this->exactly(1))->method('create')->willReturnOnConsecutiveCalls(
             $this->entityMock
         );
@@ -245,7 +240,6 @@ class CollectionTest extends TestCase
         $conditionType = 'nin';
         $preparedSql = "category_id IN(1,2)";
         $tableName = "catalog_category_product";
-        $this->connectionMock->method('getId')->willReturn(1);
         $this->connectionMock->expects($this->exactly(2))->method('prepareSqlCondition')
             ->willReturnCallback(function ($arg1, $arg2) use ($preparedSql, $conditionType, $condition) {
                 if ($arg1 == 'cat.category_id' && $arg2 == $condition) {
@@ -318,11 +312,7 @@ class CollectionTest extends TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['getData'])
             ->getMock();
-        $attributeMock = $this->getMockBuilder(AbstractAttribute::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['isScopeGlobal'])
-            ->onlyMethods(['getBackend'])
-            ->getMock();
+        $attributeMock = $this->createPartialMock(\Magento\Catalog\Model\ResourceModel\Eav\Attribute::class, ['getBackend', 'isScopeGlobal']);
         $backend = $this->getMockBuilder(Tierprice::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -342,8 +332,7 @@ class CollectionTest extends TestCase
             ->with('tier_price')
             ->willReturn($attributeMock);
         $attributeMock->expects($this->atLeastOnce())->method('getBackend')->willReturn($backend);
-        $attributeMock->expects($this->once())->method('isScopeGlobal')->willReturn(false);
-        $this->storeManager->expects($this->once())->method('getWebsiteId')->willReturn(1);
+        $attributeMock->method('isScopeGlobal')->willReturn(false);
         $backend->expects($this->once())->method('getResource')->willReturn($resource);
         $resource->expects($this->once())->method('getSelect')->willReturn($select);
         $select->expects($this->once())->method('columns')->with(['product_id' => 'entity_id'])->willReturnSelf();
@@ -377,11 +366,7 @@ class CollectionTest extends TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['getData'])
             ->getMock();
-        $attributeMock = $this->getMockBuilder(AbstractAttribute::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['isScopeGlobal'])
-            ->onlyMethods(['getBackend'])
-            ->getMock();
+        $attributeMock = $this->createPartialMock(\Magento\Catalog\Model\ResourceModel\Eav\Attribute::class, ['getBackend', 'isScopeGlobal']);
         $backend = $this->getMockBuilder(Tierprice::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -401,8 +386,7 @@ class CollectionTest extends TestCase
             ->with('tier_price')
             ->willReturn($attributeMock);
         $attributeMock->expects($this->atLeastOnce())->method('getBackend')->willReturn($backend);
-        $attributeMock->expects($this->once())->method('isScopeGlobal')->willReturn(false);
-        $this->storeManager->expects($this->once())->method('getWebsiteId')->willReturn(1);
+        $attributeMock->method('isScopeGlobal')->willReturn(false);
         $backend->expects($this->once())->method('getResource')->willReturn($resource);
         $resource->expects($this->once())->method('getSelect')->willReturn($select);
         $select->expects($this->once())->method('columns')->with(['product_id' => 'entity_id'])->willReturnSelf();

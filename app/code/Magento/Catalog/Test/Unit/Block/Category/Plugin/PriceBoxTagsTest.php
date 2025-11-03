@@ -9,14 +9,17 @@ namespace Magento\Catalog\Test\Unit\Block\Category\Plugin;
 
 use Magento\Catalog\Block\Category\Plugin\PriceBoxTags;
 use Magento\Customer\Model\Session;
+use Magento\Customer\Test\Unit\Helper\SessionTestHelper;
 use Magento\Directory\Model\Currency;
 use Magento\Framework\App\ScopeInterface;
 use Magento\Framework\App\ScopeResolverInterface;
 use Magento\Framework\DataObject;
 use Magento\Framework\Model\ResourceModel\AbstractResource;
+use Magento\Framework\Model\ResourceModel\Test\Unit\Helper\AbstractResourceTestHelper;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Framework\Pricing\Render\PriceBox;
 use Magento\Framework\Pricing\SaleableInterface;
+use Magento\Framework\Pricing\Test\Unit\Helper\SaleableTestHelper;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Tax\Model\Calculation;
@@ -78,32 +81,7 @@ class PriceBoxTagsTest extends TestCase
             ScopeResolverInterface::class
         )
             ->getMock();
-        $this->session = new class extends Session {
-            public function __construct()
-            {
-                // Empty constructor
-            }
-            public function getDefaultTaxBillingAddress()
-            {
-                return ['billing_address'];
-            }
-            public function getDefaultTaxShippingAddress()
-            {
-                return ['shipping_address'];
-            }
-            public function getCustomerTaxClassId()
-            {
-                return 3;
-            }
-            public function getCustomerGroupId()
-            {
-                return 2;
-            }
-            public function getCustomerId()
-            {
-                return 4;
-            }
-        };
+        $this->session = new SessionTestHelper();
         $this->taxCalculation = $this->getMockBuilder(Calculation::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -171,52 +149,10 @@ class PriceBoxTagsTest extends TestCase
             $scopeId,
             $customerId
         )->willReturn($rateRequest);
-        $salableInterface = new class implements SaleableInterface {
-            public function getTaxClassId()
-            {
-                return null;
-            }
-            
-            // Required SaleableInterface methods
-            public function getPriceInfo()
-            {
-                return null;
-            }
-            public function getTypeId()
-            {
-                return null;
-            }
-            public function getId()
-            {
-                return null;
-            }
-            public function getQty()
-            {
-                return 1.0;
-            }
-        };
+        $salableInterface = new SaleableTestHelper();
         $priceBox->expects($this->once())->method('getSaleableItem')->willReturn($salableInterface);
         // $salableInterface->expects($this->once())->method('getTaxClassId')->willReturn($customerTaxClassId);
-        $resource = new class extends AbstractResource {
-            public function __construct()
-            {
- /* Empty constructor */
-            }
-            public function getRateIds($rateRequest)
-            {
-                return [5,6];
-            }
-            
-            // Required abstract methods from AbstractResource
-            protected function _construct()
-            {
- /* Empty implementation */
-            }
-            public function getConnection()
-            {
-                return null;
-            }
-        };
+        $resource = new AbstractResourceTestHelper();
         $this->taxCalculation->expects($this->once())->method('getResource')->willReturn($resource);
         // $resource->expects($this->once())->method('getRateIds')->with($rateRequest)->willReturn($rateIds);
 

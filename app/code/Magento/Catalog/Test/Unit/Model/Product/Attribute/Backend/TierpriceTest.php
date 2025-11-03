@@ -12,6 +12,7 @@ use Magento\Catalog\Model\ResourceModel\Product\Attribute\Backend\Tierprice;
 use Magento\Customer\Api\Data\GroupInterface;
 use Magento\Customer\Api\GroupManagementInterface;
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
+use Magento\Eav\Test\Unit\Helper\AbstractAttributeTestHelper;
 use Magento\Framework\Locale\FormatInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Model\StoreManagerInterface;
@@ -64,37 +65,7 @@ class TierpriceTest extends TestCase
             ->getMockBuilder(Tierprice::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->attribute = new class extends AbstractAttribute {
-            private $isScopeGlobal = null;
-            private $name = null;
-            
-            public function __construct()
-            {
-                // Don't call parent constructor to avoid dependencies
-            }
-            
-            public function isScopeGlobal()
-            {
-                return $this->isScopeGlobal;
-            }
-            
-            public function setIsScopeGlobal($isScopeGlobal)
-            {
-                $this->isScopeGlobal = $isScopeGlobal;
-                return $this;
-            }
-            
-            public function getName()
-            {
-                return $this->name;
-            }
-            
-            public function setName($name)
-            {
-                $this->name = $name;
-                return $this;
-            }
-        };
+        $this->attribute = new AbstractAttributeTestHelper();
         $this->localeFormat = $this->createMock(FormatInterface::class);
         $this->storeManager = $this->createMock(StoreManagerInterface::class);
         $this->groupManagement = $this->createMock(GroupManagementInterface::class);

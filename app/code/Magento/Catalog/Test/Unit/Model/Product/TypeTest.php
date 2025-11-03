@@ -327,11 +327,7 @@ class TypeTest extends TestCase
      */
     private function getMockedConfig(): ConfigInterface
     {
-        $mockBuild = $this->getMockBuilder(ConfigInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getAll']);
-        $mock = $mockBuild->getMock();
-
+        $mock = $this->createStub(ConfigInterface::class);
         $mock->method('getAll')->willReturn($this->_productTypes);
 
         return $mock;

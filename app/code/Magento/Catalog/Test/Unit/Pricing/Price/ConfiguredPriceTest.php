@@ -14,6 +14,7 @@ use Magento\Catalog\Model\Product\Option;
 use Magento\Catalog\Model\Product\Option\Type\DefaultType;
 use Magento\Catalog\Pricing\Price\ConfiguredOptions;
 use Magento\Catalog\Pricing\Price\ConfiguredPrice;
+use Magento\Catalog\Test\Unit\Helper\DefaultTypeTestHelper;
 use Magento\Framework\Pricing\Adjustment\Calculator;
 use Magento\Framework\Pricing\Price\PriceInterface;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
@@ -66,14 +67,6 @@ class ConfiguredPriceTest extends TestCase
      */
     protected function setUp(): void
     {
-//        $objectManager = new ObjectManager($this);
-//        $objects = [
-//            [
-//                ConfiguredOptions::class,
-//                $this->createMock(ConfiguredOptions::class)
-//            ]
-//        ];
-//        $objectManager->prepareObjectManager($objects);
 
         $basePrice = $this->createMock(PriceInterface::class);
         $basePrice->method('getValue')->willReturn($this->basePriceValue);
@@ -158,39 +151,7 @@ class ConfiguredPriceTest extends TestCase
      */
     protected function createOptionTypeStub(Option $option)
     {
-        $optionType = new class extends DefaultType {
-            private $option = null;
-            private $configurationItem = null;
-            private $configurationItemOption = null;
-
-            public function __construct()
-            {
-                // empty constructor
-            }
-            
-            public function setOption($option)
-            {
-                $this->option = $option;
-                return $this;
-            }
-            
-            public function setConfigurationItem($configurationItem)
-            {
-                $this->configurationItem = $configurationItem;
-                return $this;
-            }
-            
-            public function setConfigurationItemOption($configurationItemOption)
-            {
-                $this->configurationItemOption = $configurationItemOption;
-                return $this;
-            }
-            
-            public function getOptionPrice($value, $basePrice)
-            {
-                return 10.;
-            }
-        };
+        $optionType = new DefaultTypeTestHelper();
         return $optionType;
     }
 }

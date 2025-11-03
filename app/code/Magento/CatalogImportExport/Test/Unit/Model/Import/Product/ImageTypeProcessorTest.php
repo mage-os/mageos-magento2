@@ -23,10 +23,7 @@ class ImageTypeProcessorTest extends TestCase
             ['create']
         );
 
-        $resource = $this->getMockBuilder(ResourceModel::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getTable', 'getConnection'])
-            ->getMock();
+        $resource = $this->createPartialMock(ResourceModel::class, ['getTable', 'getConnection']);
         $resource->expects($this->once())
             ->method('getTable')
             ->with('eav_attribute')
@@ -37,9 +34,7 @@ class ImageTypeProcessorTest extends TestCase
             ->method('create')
             ->willReturn($resource);
 
-        $selectMock = $this->getMockBuilder(Select::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $selectMock = $this->createMock(Select::class);
         $selectMock->expects($this->once())
             ->method('from')
             ->with('eav_attribute', ['code' => 'attribute_code'], null)

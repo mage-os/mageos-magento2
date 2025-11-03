@@ -53,25 +53,8 @@ class AbstractTest extends TestCase
         $this->_model = $this->getMockBuilder(AbstractGroupPrice::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $resource = new class {
-            private $mainTable = 'table';
-            
-            public function __construct()
-            {
-                // Empty constructor
-            }
-            
-            public function getMainTable()
-            {
-                return $this->mainTable;
-            }
-            
-            public function setMainTable($mainTable)
-            {
-                $this->mainTable = $mainTable;
-                return $this;
-            }
-        };
+        $resource = $this->createPartialMock(DataObject::class, []);
+        $resource->setMainTable('table');
 
         $this->_model->method('_getResource')->willReturn($resource);
         

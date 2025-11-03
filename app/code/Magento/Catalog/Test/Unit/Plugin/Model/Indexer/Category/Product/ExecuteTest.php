@@ -9,8 +9,10 @@ namespace Magento\Catalog\Test\Unit\Plugin\Model\Indexer\Category\Product;
 
 use Magento\Catalog\Model\Indexer\Category\Product\AbstractAction;
 use Magento\Catalog\Plugin\Model\Indexer\Category\Product\Execute;
+use Magento\Framework\App\Cache\Test\Unit\Helper\TypeListTestHelper;
 use Magento\Framework\App\Cache\TypeListInterface;
 use Magento\PageCache\Model\Config;
+use Magento\PageCache\Test\Unit\Helper\ConfigTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -27,79 +29,8 @@ class ExecuteTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->config = new class extends Config {
-            private $isEnabledReturn = false;
-
-            public function __construct()
-            {
-                // empty constructor
-            }
-            
-            public function setIsEnabledReturn($return)
-            {
-                $this->isEnabledReturn = $return;
-                return $this;
-            }
-            
-            public function isEnabled()
-            {
-                return $this->isEnabledReturn;
-            }
-        };
-        $this->typeList = new class implements TypeListInterface {
-            private $invalidateCalled = false;
-            private $invalidateArgument = null;
-
-            public function __construct()
-            {
-                // empty constructor
-            }
-            
-            public function setInvalidateCalled($called)
-            {
-                $this->invalidateCalled = $called;
-                return $this;
-            }
-            
-            public function getInvalidateCalled()
-            {
-                return $this->invalidateCalled;
-            }
-            
-            public function setInvalidateArgument($argument)
-            {
-                $this->invalidateArgument = $argument;
-                return $this;
-            }
-            
-            public function getInvalidateArgument()
-            {
-                return $this->invalidateArgument;
-            }
-            
-            public function invalidate($typeCode)
-            {
-                $this->invalidateCalled = true;
-                $this->invalidateArgument = $typeCode;
-            }
-            
-            // Required TypeListInterface methods
-            public function getTypes()
-            {
-                return [];
-            }
-            public function getTypeLabels()
-            {
-                return [];
-            }
-            public function getInvalidated()
-            {
-                return [];
-            }
-            public function cleanType($typeCode)
-            {
-            }
-        };
+        $this->config = new ConfigTestHelper();
+        $this->typeList = new TypeListTestHelper();
 
         $this->execute = new Execute($this->config, $this->typeList);
     }

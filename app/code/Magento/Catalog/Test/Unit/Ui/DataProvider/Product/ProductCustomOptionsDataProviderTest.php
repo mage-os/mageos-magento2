@@ -15,6 +15,7 @@ use Magento\Framework\DB\Select as DbSelect;
 use Magento\Framework\EntityManager\EntityMetadataInterface;
 use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
+use Magento\Framework\Model\ResourceModel\Db\Collection\Test\Unit\Helper\AbstractCollectionTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Ui\DataProvider\Modifier\PoolInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -74,82 +75,7 @@ class ProductCustomOptionsDataProviderTest extends TestCase
             ->onlyMethods(['create'])
             ->getMock();
         $this->requestMock = $this->createMock(RequestInterface::class);
-        $this->collectionMock = new class extends AbstractCollection {
-            private $storeId = null;
-            private $loadResult = null;
-            private $select = null;
-            private $table = null;
-            private $iterator = null;
-            private $isLoaded = false;
-            private $arrayData = [];
-            private $size = 0;
-            
-            public function __construct() {}
-            
-            public function setStoreId($value) { 
-                $this->storeId = $value; 
-                return $this; 
-            }
-            public function getStoreId() { 
-                return $this->storeId; 
-            }
-            
-            public function load($printQuery = false, $logQuery = false) { 
-                return $this->loadResult ?: $this; 
-            }
-            public function setLoadResult($value) { 
-                $this->loadResult = $value; 
-                return $this; 
-            }
-            
-            public function getSelect() { 
-                return $this->select; 
-            }
-            public function setSelect($value) { 
-                $this->select = $value; 
-                return $this; 
-            }
-            
-            public function getTable($tableName) { 
-                return $this->table; 
-            }
-            public function setTable($value) { 
-                $this->table = $value; 
-                return $this; 
-            }
-            
-            public function getIterator() { 
-                return $this->iterator; 
-            }
-            public function setIterator($value) { 
-                $this->iterator = $value; 
-                return $this; 
-            }
-            
-            public function isLoaded() { 
-                return $this->isLoaded; 
-            }
-            public function setIsLoaded($value) { 
-                $this->isLoaded = $value; 
-                return $this; 
-            }
-            
-            public function toArray($arrRequiredFields = []) { 
-                return $this->arrayData; 
-            }
-            public function setArrayData($value) { 
-                $this->arrayData = $value; 
-                return $this; 
-            }
-            
-            public function getSize() { 
-                return $this->size; 
-            }
-            public function setSize($value) { 
-                $this->size = $value; 
-                return $this; 
-            }
-        };
+        $this->collectionMock = new AbstractCollectionTestHelper();
         $this->dbSelectMock = $this->getMockBuilder(DbSelect::class)
             ->disableOriginalConstructor()
             ->getMock();

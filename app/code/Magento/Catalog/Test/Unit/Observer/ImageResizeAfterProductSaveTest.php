@@ -12,6 +12,7 @@ use Magento\Catalog\Observer\ImageResizeAfterProductSave;
 use Magento\Catalog\Model\Product;
 use Magento\Framework\Event;
 use Magento\Framework\Event\Observer;
+use Magento\Framework\Event\Test\Unit\Helper\EventTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Magento\Framework\App\State;
@@ -70,25 +71,7 @@ class ImageResizeAfterProductSaveTest extends TestCase
         $this->imagePath = 'path/to/image.jpg';
         $images = [new DataObject(['file' => $this->imagePath])];
         $this->observerMock = $this->createMock(Observer::class);
-        $this->eventMock = new class extends Event {
-            private $productMock;
-            
-            public function __construct()
-            {
-                // Empty constructor
-            }
-            
-            public function setProductMock($productMock)
-            {
-                $this->productMock = $productMock;
-                return $this;
-            }
-            
-            public function getProduct()
-            {
-                return $this->productMock;
-            }
-        };
+        $this->eventMock = new EventTestHelper();
         $this->productMock = $this->getMockBuilder(Product::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getId', 'getMediaGalleryImages'])

@@ -13,6 +13,8 @@ use Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory as A
 use Magento\CatalogImportExport\Model\Import\Product;
 use Magento\CatalogImportExport\Model\Import\Product\RowValidatorInterface;
 use Magento\CatalogImportExport\Model\Import\Product\Type\Simple;
+use Magento\CatalogImportExport\Test\Unit\Helper\AttributeTestHelper;
+use Magento\CatalogImportExport\Test\Unit\Helper\MysqlTestHelper;
 use Magento\Eav\Model\ResourceModel\Entity\Attribute\Collection as AttributeCollection;
 use Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\CollectionFactory as AttributeSetCollectionFactory;
 use Magento\Framework\App\ResourceConnection;
@@ -65,40 +67,7 @@ class SimpleTest extends TestCase
         $attrSetColFactory = $this->createMock(AttributeSetCollectionFactory::class);
         $attrColFactory = $this->createMock(AttributeCollectionFactory::class);
         $attrCollection = $this->createMock(AttributeCollection::class);
-        $attribute = new class extends Attribute {
-            private $isVisible = false;
-            private $isGlobal = false;
-            private $isRequired = false;
-            private $isUnique = false;
-            private $frontendLabel = '';
-            private $applyTo = [];
-            private $defaultValue = '';
-            private $usesSource = false;
-            
-            public function __construct() {}
-            
-            public function getAttributeCode() { return null; }
-            public function getId() { return null; }
-            public function getIsRequired() { return $this->isRequired; }
-            public function getIsUnique() { return $this->isUnique; }
-            public function isStatic() { return null; }
-            public function getDefaultValue() { return $this->defaultValue; }
-            public function usesSource() { return $this->usesSource; }
-            public function getFrontendInput() { return null; }
-            public function getIsVisible() { return $this->isVisible; }
-            public function getApplyTo() { return $this->applyTo; }
-            public function getIsGlobal() { return $this->isGlobal; }
-            public function getFrontendLabel() { return $this->frontendLabel; }
-            
-            public function setIsVisible($value) { $this->isVisible = $value; return $this; }
-            public function setIsGlobal($value) { $this->isGlobal = $value; return $this; }
-            public function setIsRequired($value) { $this->isRequired = $value; return $this; }
-            public function setIsUnique($value) { $this->isUnique = $value; return $this; }
-            public function setFrontendLabel($value) { $this->frontendLabel = $value; return $this; }
-            public function setApplyTo($value) { $this->applyTo = $value; return $this; }
-            public function setDefaultValue($value) { $this->defaultValue = $value; return $this; }
-            public function setUsesSource($value) { $this->usesSource = $value; return $this; }
-        };
+        $attribute = new AttributeTestHelper();
         // Set up the anonymous class methods to return expected values
         $attribute->setIsVisible(true);
         $attribute->setIsGlobal(true);
@@ -122,87 +91,47 @@ class SimpleTest extends TestCase
                 'attribute_set_name' => 'attributeSetName'
             ],
         ];
-        $attribute1 = new class extends Attribute {
-            private $id = '1';
-            private $attributeCode = 'attr_code';
-            private $frontendInput = 'multiselect';
-            private $isStatic = true;
-            
-            public function __construct() {}
-            
-            public function getId() { return $this->id; }
-            public function getAttributeCode() { return $this->attributeCode; }
-            public function getFrontendInput() { return $this->frontendInput; }
-            public function isStatic() { return $this->isStatic; }
-            
-            // Inherit other methods from parent
-            public function getIsRequired() { return true; }
-            public function getIsUnique() { return true; }
-            public function getDefaultValue() { return 'default_value'; }
-            public function usesSource() { return true; }
-            public function getIsVisible() { return true; }
-            public function getApplyTo() { return ['simple']; }
-            public function getIsGlobal() { return true; }
-            public function getFrontendLabel() { return 'frontend_label'; }
-        };
+        $attribute1 = new AttributeTestHelper();
+        $attribute1->setId('1');
+        $attribute1->setAttributeCode('attr_code');
+        $attribute1->setFrontendInput('multiselect');
+        $attribute1->setIsStatic(true);
         
-        $attribute2 = new class extends Attribute {
-            private $id = '2';
-            private $attributeCode = 'boolean_attribute';
-            private $frontendInput = 'boolean';
-            private $isStatic = false;
-            
-            public function __construct() {}
-            
-            public function getId() { return $this->id; }
-            public function getAttributeCode() { return $this->attributeCode; }
-            public function getFrontendInput() { return $this->frontendInput; }
-            public function isStatic() { return $this->isStatic; }
-            
-            // Inherit other methods from parent
-            public function getIsRequired() { return true; }
-            public function getIsUnique() { return true; }
-            public function getDefaultValue() { return 'default_value'; }
-            public function usesSource() { return true; }
-            public function getIsVisible() { return true; }
-            public function getApplyTo() { return ['simple']; }
-            public function getIsGlobal() { return true; }
-            public function getFrontendLabel() { return 'frontend_label'; }
-        };
+        $attribute2 = new AttributeTestHelper();
+        $attribute2->setId('2');
+        $attribute2->setAttributeCode('boolean_attribute');
+        $attribute2->setFrontendInput('boolean');
+        $attribute2->setIsStatic(false);
+        $attribute2->setIsRequired(true);
+        $attribute2->setIsUnique(true);
+        $attribute2->setDefaultValue('default_value');
+        $attribute2->setUsesSource(true);
+        $attribute2->setIsVisible(true);
+        $attribute2->setApplyTo(['simple']);
+        $attribute2->setIsGlobal(true);
         
-        $attribute3 = new class extends Attribute {
-            private $id = '3';
-            private $attributeCode = 'Text_attribute';
-            private $frontendInput = 'text';
-            private $isStatic = false;
-            
-            public function __construct() {}
-            
-            public function getId() { return $this->id; }
-            public function getAttributeCode() { return $this->attributeCode; }
-            public function getFrontendInput() { return $this->frontendInput; }
-            public function isStatic() { return $this->isStatic; }
-            
-            // Inherit other methods from parent
-            public function getIsRequired() { return true; }
-            public function getIsUnique() { return true; }
-            public function getDefaultValue() { return 'default_value'; }
-            public function usesSource() { return true; }
-            public function getIsVisible() { return true; }
-            public function getApplyTo() { return ['simple']; }
-            public function getIsGlobal() { return true; }
-            public function getFrontendLabel() { return 'frontend_label'; }
-        };
+        $attribute3 = new AttributeTestHelper();
+        $attribute3->setId('3');
+        $attribute3->setAttributeCode('text_attribute');
+        $attribute3->setFrontendInput('text');
+        $attribute3->setIsStatic(false);
+        $attribute3->setIsRequired(true);
+        $attribute3->setIsUnique(true);
+        $attribute3->setDefaultValue('default_value');
+        $attribute3->setUsesSource(true);
+        $attribute3->setIsVisible(true);
+        $attribute3->setApplyTo(['simple']);
+        $attribute3->setIsGlobal(true);
+        $callCount = 0;
         $this->entityModel->method('getEntityTypeId')
             ->willReturn(3);
         $this->entityModel->method('getAttributeOptions')
-            ->willReturnCallback(function () use (&$callCount) {
+            ->willReturnCallback(function ($attribute) use (&$callCount) {
                 $callCount++;
-                if ($callCount === 1) {
-                    return ['option1', 'option2'];
-                } elseif ($callCount === 2) {
+                if ($attribute->getAttributeCode() === 'boolean_attribute') {
                     return ['yes' => 1, 'no' => 0];
                 }
+                return ['option1', 'option2'];
             });
         $attrColFactory->method('create')
             ->willReturn($attrCollection);
@@ -210,26 +139,17 @@ class SimpleTest extends TestCase
             ->willReturn([$attribute1, $attribute2, $attribute3]);
         $attrCollection->method('addFieldToFilter')
             ->willReturnSelf();
+        
+        $getItemsCallCount = 0;
         $attrCollection->method('getItems')
-            ->willReturnOnConsecutiveCalls([$attribute1, $attribute2, $attribute3], []);
+            ->willReturnCallback(
+                function () use (&$getItemsCallCount, $attribute1, $attribute2, $attribute3) {
+                    $getItemsCallCount++;
+                    return $getItemsCallCount === 1 ? [$attribute1, $attribute2, $attribute3] : [];
+                }
+            );
 
-        $this->connection = new class extends Mysql {
-            private $selectResult = null;
-            private $fetchAllResult = null;
-            
-            public function __construct() {}
-            
-            public function select() { return $this->selectResult; }
-            public function fetchAll($sql = '', $bind = [], $fetchMode = null) { return $this->fetchAllResult; }
-            public function fetchPairs($sql = '', $bind = []) { return null; }
-            public function insertOnDuplicate($table, array $data, array $fields = []) { return $this; }
-            public function delete($table, $where = '') { return $this; }
-            public function quoteInto($text, $value, $type = null, $count = null) { return ''; }
-            public function joinLeft($name, $cond, $cols = '*', $schema = null) { return $this; }
-            
-            public function setSelect($select) { $this->selectResult = $select; return $this; }
-            public function setFetchAll($result) { $this->fetchAllResult = $result; return $this; }
-        };
+        $this->connection = new MysqlTestHelper();
         $this->select = $this->createPartialMock(
             Select::class,
             [
@@ -446,7 +366,7 @@ class SimpleTest extends TestCase
     {
         $rowData = [
             '_attribute_set' => 'attributeSetName',
-            'boolean_attribute' => 'Yes',
+            'boolean_attribute' => 'yes',
         ];
         $expected = [
             'boolean_attribute' => 1,

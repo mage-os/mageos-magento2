@@ -118,9 +118,10 @@ class ImageTest extends TestCase
 
     /**
      * @param int $imagesCount
+     * @param int $batchSize
      */
     #[DataProvider('dataProvider')]
-    public function testGetCountAllProductImages(int $imagesCount): void
+    public function testGetCountAllProductImages(int $imagesCount, int $batchSize): void
     {
         $selectMock = $this->getVisibleImagesSelectMock();
         $selectMock->expects($this->exactly(2))
@@ -155,9 +156,10 @@ class ImageTest extends TestCase
 
     /**
      * @param int $imagesCount
+     * @param int $batchSize
      */
     #[DataProvider('dataProvider')]
-    public function testGetCountUsedProductImages(int $imagesCount): void
+    public function testGetCountUsedProductImages(int $imagesCount, int $batchSize): void
     {
         $selectMock = $this->getUsedImagesSelectMock();
         $selectMock->expects($this->exactly(2))

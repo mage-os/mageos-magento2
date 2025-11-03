@@ -82,11 +82,7 @@ class ImageTest extends TestCase
     {
         $mockedStore = $this->getMockedStore();
 
-        $mockBuilder = $this->getMockBuilder(StoreManagerInterface::class);
-        $mock = $mockBuilder->onlyMethods(['getStore'])
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $mock = $this->createStub(StoreManagerInterface::class);
         $mock->method('getStore')->willReturn($mockedStore);
 
         return $mock;

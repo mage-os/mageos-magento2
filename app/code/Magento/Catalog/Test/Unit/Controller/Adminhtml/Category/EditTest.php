@@ -12,6 +12,11 @@ use Magento\Cms\Model\Wysiwyg\Config;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Backend\App\Action\Context;
 use Magento\Backend\Model\Session;
+use Magento\Backend\Test\Unit\Helper\ContextTestHelper;
+use Magento\Framework\App\Test\Unit\Helper\RequestTestHelper;
+use Magento\Framework\View\Test\Unit\Helper\ResultPageTestHelper;
+use Magento\Store\Test\Unit\Helper\StoreManagerTestHelper;
+use Magento\Store\Test\Unit\Helper\StoreTestHelper;
 use Magento\Backend\Model\View\Result\RedirectFactory;
 use Magento\Catalog\Controller\Adminhtml\Category\Edit;
 use Magento\Catalog\Model\Category;
@@ -31,6 +36,8 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.TooManyFields)
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class EditTest extends TestCase
 {
@@ -156,108 +163,14 @@ class EditTest extends TestCase
             ]
         );
 
-        $this->contextMock = new class extends Context {
-            private $requestMock;
-            private $objectManagerMock;
-            private $eventManagerMock;
-            private $responseMock;
-            private $messageManagerMock;
-            private $resultRedirectFactoryMock;
-            private $sessionMock;
-            private $titleMock;
-
-            public function __construct()
-            {
- /* Empty constructor */
-            }
-            
-            public function setMocks($requestMock, $objectManagerMock, $eventManagerMock, $responseMock, $messageManagerMock, $resultRedirectFactoryMock, $sessionMock, $titleMock)
-            {
-                $this->requestMock = $requestMock;
-                $this->objectManagerMock = $objectManagerMock;
-                $this->eventManagerMock = $eventManagerMock;
-                $this->responseMock = $responseMock;
-                $this->messageManagerMock = $messageManagerMock;
-                $this->resultRedirectFactoryMock = $resultRedirectFactoryMock;
-                $this->sessionMock = $sessionMock;
-                $this->titleMock = $titleMock;
-                return $this;
-            }
-
-            public function getRequest()
-            {
-                return $this->requestMock;
-            }
-            public function getObjectManager()
-            {
-                return $this->objectManagerMock;
-            }
-            public function getEventManager()
-            {
-                return $this->eventManagerMock;
-            }
-            public function getResponse()
-            {
-                return $this->responseMock;
-            }
-            public function getMessageManager()
-            {
-                return $this->messageManagerMock;
-            }
-            public function getResultRedirectFactory()
-            {
-                return $this->resultRedirectFactoryMock;
-            }
-            public function getSession()
-            {
-                return $this->sessionMock;
-            }
-            public function getTitle()
-            {
-                return $this->titleMock;
-            }
-        };
+        $this->contextMock = new ContextTestHelper();
 
         $this->resultRedirectFactoryMock = $this->createPartialMock(
             RedirectFactory::class,
             ['create']
         );
 
-        $this->resultPageMock = new class extends ResultPage {
-            public function __construct()
-            {
- /* Empty constructor */
-            }
-            
-            public function getConfig()
-            {
-                return $this;
-            }
-            public function getLayout()
-            {
-                return $this;
-            }
-            public function setActiveMenu($menuId)
-            {
-                return $this;
-            }
-            public function addBreadcrumb($label, $title, $link = null)
-            {
-                return $this;
-            }
-            public function getBlock($name)
-            {
-                return $this;
-            }
-            public function getTitle()
-            {
-                return $this;
-            }
-            public function prepend($element)
-            {
-                return $this;
-            }
-        };
+        $this->resultPageMock = new ResultPageTestHelper();
 
         $this->resultPageFactoryMock = $this->createPartialMock(
             PageFactory::class,
@@ -269,378 +182,8 @@ class EditTest extends TestCase
             JsonFactory::class,
             ['create']
         );
-        $this->storeManagerInterfaceMock = new class implements StoreManagerInterface {
-            private $getStoreReturn = null;
-            private $getDefaultStoreViewReturn = null;
-            private $getRootCategoryIdReturn = null;
-            private $getCodeReturn = null;
-
-            public function setReturnValues($getStore = null, $getDefaultStoreView = null, $getRootCategoryId = null, $getCode = null)
-            {
-                $this->getStoreReturn = $getStore;
-                $this->getDefaultStoreViewReturn = $getDefaultStoreView;
-                $this->getRootCategoryIdReturn = $getRootCategoryId;
-                $this->getCodeReturn = $getCode;
-                return $this;
-            }
-
-            public function getStore($storeId = null)
-            {
-                if ($this->getStoreReturn) {
-                    return $this->getStoreReturn;
-                }
-                // Return a store object that has getCode() method
-                return new class {
-                    public function getCode()
-                    {
-                        return 'default';
-                    }
-                    public function getRootCategoryId()
-                    {
-                        return 2;
-                    }
-                };
-            }
-            public function getDefaultStoreView()
-            {
-                if ($this->getDefaultStoreViewReturn) {
-                    return $this->getDefaultStoreViewReturn;
-                }
-                // Return a store object that has getRootCategoryId() method
-                return new class {
-                    public function getRootCategoryId()
-                    {
-                        return 2;
-                    }
-                };
-            }
-            public function getRootCategoryId()
-            {
-                return $this->getRootCategoryIdReturn ?: 2;
-            }
-            public function getCode()
-            {
-                return $this->getCodeReturn ?: '';
-            }
-            
-            // Required StoreManagerInterface methods
-            public function getStores($withDefault = false, $codeKey = false)
-            {
-                return [];
-            }
-            public function getWebsites($withDefault = false, $codeKey = false)
-            {
-                return [];
-            }
-            public function getWebsite($websiteId = null)
-            {
-                return null;
-            }
-            public function getCurrentStore()
-            {
-                return $this;
-            }
-            public function getCurrentStoreId()
-            {
-                return 1;
-            }
-            public function getCurrentWebsiteId()
-            {
-                return 1;
-            }
-            public function getCurrentWebsite()
-            {
-                return null;
-            }
-            public function getCurrentGroup()
-            {
-                return null;
-            }
-            public function getCurrentGroupId()
-            {
-                return 1;
-            }
-            
-            // Additional required abstract methods
-            public function setIsSingleStoreModeAllowed($value)
-            {
-                return $this;
-            }
-            public function hasSingleStore()
-            {
-                return false;
-            }
-            public function isSingleStoreMode()
-            {
-                return false;
-            }
-            public function reinitStores()
-            {
-                return $this;
-            }
-            public function getGroup($groupId = null)
-            {
-                return null;
-            }
-            public function getGroups($withDefault = false, $codeKey = false)
-            {
-                return [];
-            }
-            public function setCurrentStore($store)
-            {
-                return $this;
-            }
-        };
-        $this->requestMock = new class implements RequestInterface {
-            private $getParamReturn = null;
-            private $getPostReturn = null;
-            private $getPostValueReturn = null;
-            private $getQueryReturn = null;
-            private $setParamReturn = null;
-
-            public function setReturnValues($getParam = null, $getPost = null, $getPostValue = null, $getQuery = null, $setParam = null)
-            {
-                $this->getParamReturn = $getParam;
-                $this->getPostReturn = $getPost;
-                $this->getPostValueReturn = $getPostValue;
-                $this->getQueryReturn = $getQuery;
-                $this->setParamReturn = $setParam;
-                return $this;
-            }
-
-            public function getParam($param, $defaultValue = null)
-            {
-                return $this->getParamReturn;
-            }
-            public function getParams()
-            {
-                return [];
-            }
-            public function getPost($key = null, $defaultValue = null)
-            {
-                return $this->getPostReturn;
-            }
-            public function getPostValue($key = null, $defaultValue = null)
-            {
-                return $this->getPostValueReturn;
-            }
-            public function getQuery($key = null, $defaultValue = null)
-            {
-                return $this->getQueryReturn;
-            }
-            
-            // Required RequestInterface methods
-            public function getModuleName()
-            {
-                return '';
-            }
-            public function getControllerName()
-            {
-                return '';
-            }
-            public function getActionName()
-            {
-                return '';
-            }
-            public function getRequestUri()
-            {
-                return '';
-            }
-            public function getMethod()
-            {
-                return '';
-            }
-            public function isGet()
-            {
-                return false;
-            }
-            public function isPost()
-            {
-                return false;
-            }
-            public function isPut()
-            {
-                return false;
-            }
-            public function isDelete()
-            {
-                return false;
-            }
-            public function isHead()
-            {
-                return false;
-            }
-            public function isOptions()
-            {
-                return false;
-            }
-            public function isXmlHttpRequest()
-            {
-                return false;
-            }
-            public function isFlashRequest()
-            {
-                return false;
-            }
-            public function getServer($key = null, $default = null)
-            {
-                return $default;
-            }
-            public function getCookie($key, $default = null)
-            {
-                return $default;
-            }
-            public function getHeader($name)
-            {
-                return '';
-            }
-            public function getScheme()
-            {
-                return '';
-            }
-            public function getHttpHost()
-            {
-                return '';
-            }
-            public function getClientIp($checkProxy = true)
-            {
-                return '';
-            }
-            public function getScriptName()
-            {
-                return '';
-            }
-            public function getPathInfo()
-            {
-                return '';
-            }
-            public function getBasePath()
-            {
-                return '';
-            }
-            public function getBaseUrl()
-            {
-                return '';
-            }
-            public function getUri()
-            {
-                return '';
-            }
-            public function getUrl($uri = null)
-            {
-                return '';
-            }
-            public function getFullActionName($delimiter = '_')
-            {
-                return '';
-            }
-            public function isSecure()
-            {
-                return false;
-            }
-            public function getHttpUserAgent()
-            {
-                return '';
-            }
-            public function getHttpAccept()
-            {
-                return '';
-            }
-            public function getHttpAcceptCharset()
-            {
-                return '';
-            }
-            public function getHttpAcceptLanguage()
-            {
-                return '';
-            }
-            public function getHttpAcceptEncoding()
-            {
-                return '';
-            }
-            public function getHttpConnection()
-            {
-                return '';
-            }
-            public function getHttpReferer()
-            {
-                return '';
-            }
-            public function getRequestString()
-            {
-                return '';
-            }
-            public function getDistroBaseUrl()
-            {
-                return '';
-            }
-            public function getRequestedRouteName()
-            {
-                return '';
-            }
-            public function getRequestedControllerName()
-            {
-                return '';
-            }
-            public function getRequestedActionName()
-            {
-                return '';
-            }
-            public function getRouteName()
-            {
-                return '';
-            }
-            public function getControllerModule()
-            {
-                return '';
-            }
-            public function getFrontName()
-            {
-                return '';
-            }
-            public function getBeforeForwardInfo()
-            {
-                return [];
-            }
-            public function getAfterForwardInfo()
-            {
-                return [];
-            }
-            public function isStraight()
-            {
-                return false;
-            }
-            public function getAlias($name)
-            {
-                return '';
-            }
-            public function getOriginalPathInfo()
-            {
-                return '';
-            }
-            public function getOriginalRequest()
-            {
-                return null;
-            }
-            
-            // Additional required abstract methods
-            public function setModuleName($moduleName)
-            {
-                return $this;
-            }
-            public function setActionName($actionName)
-            {
-                return $this;
-            }
-            public function setParams(array $params)
-            {
-                return $this;
-            }
-            public function setParam($key, $value)
-            {
-                return $this->setParamReturn;
-            }
-        };
+        $this->storeManagerInterfaceMock = new StoreManagerTestHelper();
+        $this->requestMock = new RequestTestHelper();
         $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
         $this->eventManagerMock = $this->createMock(
             ManagerInterface::class,
@@ -691,8 +234,8 @@ class EditTest extends TestCase
     {
         $rootCategoryId = 2;
 
-        // Configure the anonymous class request mock
-        $this->requestMock->setReturnValues($categoryId, null, null, false, null);
+        // Configure the request mock
+        $this->requestMock->setParamReturn($categoryId);
 
         $this->mockInitCategoryCall();
 
@@ -700,20 +243,14 @@ class EditTest extends TestCase
             ->method('__call')
             ->willReturn([]);
 
-        // Create a store object with getCode() method
-        $storeObject = new class {
-            public function getCode()
-            {
-                return 'default';
-            }
-            public function getRootCategoryId()
-            {
-                return 2;
-            }
-        };
+        // Create a store object
+        $storeObject = new StoreTestHelper();
+        $storeObject->setCode('default');
+        $storeObject->setRootCategoryId(2);
         
-        // Configure the anonymous class store manager mock
-        $this->storeManagerInterfaceMock->setReturnValues($storeObject, $storeObject, $rootCategoryId, '');
+        // Configure the store manager mock
+        $this->storeManagerInterfaceMock->setStoreReturn($storeObject);
+        $this->storeManagerInterfaceMock->setDefaultStoreViewReturn($storeObject);
 
         if (!$categoryId) {
             $categoryId = $rootCategoryId;

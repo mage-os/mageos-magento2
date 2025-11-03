@@ -29,11 +29,7 @@ class AbstractTest extends TestCase
         $attributes = [];
         $codes = ['entity_type_id', 'attribute_set_id', 'created_at', 'updated_at', 'parent_id', 'increment_id'];
         foreach ($codes as $code) {
-            $mock = $this->getMockBuilder(AbstractAttribute::class)
-                ->addMethods(['getApplyTo'])
-                ->onlyMethods(['isInSet', 'getBackend'])
-                ->disableOriginalConstructor()
-                ->getMock();
+            $mock = $this->createPartialMock(AbstractAttribute::class, ['isInSet', 'getBackend']);
 
             $mock->setAttributeId($code);
             $mock->setAttributeCode($code);

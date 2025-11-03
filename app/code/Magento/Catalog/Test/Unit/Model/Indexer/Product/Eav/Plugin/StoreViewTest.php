@@ -11,6 +11,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Indexer\Product\Eav\Plugin\StoreView;
 use Magento\Catalog\Model\Indexer\Product\Eav\Processor;
 use Magento\Framework\Model\AbstractModel;
+use Magento\Framework\Model\Test\Unit\Helper\AbstractModelTestHelper;
 use Magento\Store\Model\ResourceModel\Store;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -46,49 +47,7 @@ class StoreViewTest extends TestCase
             ->getMock();
 
         /** @var AbstractModel $this->objectMock */
-        $this->objectMock = new class extends AbstractModel {
-            private $id = null;
-            private $dataHasChangedForResult = null;
-            private $isActive = null;
-            
-            public function __construct()
-            {
-                // Don't call parent constructor to avoid dependencies
-            }
-            
-            public function getId()
-            {
-                return $this->id;
-            }
-            
-            public function setId($id)
-            {
-                $this->id = $id;
-                return $this;
-            }
-            
-            public function dataHasChangedFor($field)
-            {
-                return $this->dataHasChangedForResult;
-            }
-            
-            public function setDataHasChangedForResult($result)
-            {
-                $this->dataHasChangedForResult = $result;
-                return $this;
-            }
-            
-            public function getIsActive()
-            {
-                return $this->isActive;
-            }
-            
-            public function setIsActive($isActive)
-            {
-                $this->isActive = $isActive;
-                return $this;
-            }
-        };
+        $this->objectMock = new AbstractModelTestHelper();
 
         $this->storeViewPlugin = new StoreView($this->eavProcessorMock);
     }

@@ -14,6 +14,7 @@ use Magento\Catalog\Pricing\Price\FinalPrice;
 use Magento\Catalog\Pricing\Price\MinimalPriceCalculatorInterface;
 use Magento\Catalog\Pricing\Price\RegularPrice;
 use Magento\Catalog\Pricing\Render\FinalPriceBox;
+use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use Magento\Framework\App\Cache\StateInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\DeploymentConfig;
@@ -36,6 +37,7 @@ use Magento\Framework\View\LayoutInterface;
 use Magento\Msrp\Pricing\Price\MsrpPrice;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Store\Test\Unit\Helper\StoreManagerTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -118,56 +120,7 @@ class FinalPriceBoxTest extends TestCase
     {
         $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
         \Magento\Framework\App\ObjectManager::setInstance($this->objectManagerMock);
-        $this->product = new class extends Product {
-            private $canShowPrice = true;
-            private $priceInfo = null;
-            private $isSalable = true;
-            private $id = null;
-            
-            public function __construct()
-            {
-            }
-            
-            public function getCanShowPrice()
-            {
-                return $this->canShowPrice;
-            }
-            public function setCanShowPrice($value)
-            {
-                $this->canShowPrice = $value;
-                return $this;
-            }
-            
-            public function getPriceInfo()
-            {
-                return $this->priceInfo;
-            }
-            public function setPriceInfo($value)
-            {
-                $this->priceInfo = $value;
-                return $this;
-            }
-            
-            public function isSalable()
-            {
-                return $this->isSalable;
-            }
-            public function setIsSalable($value)
-            {
-                $this->isSalable = $value;
-                return $this;
-            }
-            
-            public function getId()
-            {
-                return $this->id;
-            }
-            public function setId($value)
-            {
-                $this->id = $value;
-                return $this;
-            }
-        };
+        $this->product = new ProductTestHelper();
         $this->priceInfo = $this->createMock(PriceInfoInterface::class);
         $this->product->setPriceInfo($this->priceInfo);
 
@@ -194,88 +147,7 @@ class FinalPriceBoxTest extends TestCase
         $store = $this->getMockBuilder(StoreInterface::class)
             ->getMock();
         /** @var StoreManagerInterface $storeManager */
-        $storeManager = new class implements StoreManagerInterface {
-            private $store = null;
-            private $code = '';
-            
-            public function __construct()
-            {
-            }
-            
-            public function getStore($storeId = null)
-            {
-                return $this->store;
-            }
-            public function setStore($value)
-            {
-                $this->store = $value;
-                return $this;
-            }
-            
-            public function getCode()
-            {
-                return $this->code;
-            }
-            public function setCode($value)
-            {
-                $this->code = $value;
-                return $this;
-            }
-            
-            // Required StoreManagerInterface methods
-            public function getStores($withDefault = false, $codeKey = false)
-            {
-                return [];
-            }
-            public function getWebsite($websiteId = null)
-            {
-                return null;
-            }
-            public function getWebsites($withDefault = false, $codeKey = false)
-            {
-                return [];
-            }
-            public function reinitStores()
-            {
-                return $this;
-            }
-            public function getDefaultStoreView()
-            {
-                return null;
-            }
-            public function setCurrentStore($store)
-            {
-                return $this;
-            }
-            public function hasSingleStore()
-            {
-                return false;
-            }
-            public function isSingleStoreModeEnabled()
-            {
-                return false;
-            }
-            public function getCurrentStore()
-            {
-                return null;
-            }
-            public function setIsSingleStoreModeAllowed($value)
-            {
-                return $this;
-            }
-            public function isSingleStoreMode()
-            {
-                return false;
-            }
-            public function getGroup($groupId = null)
-            {
-                return null;
-            }
-            public function getGroups($withDefault = false)
-            {
-                return [];
-            }
-        };
+        $storeManager = new StoreManagerTestHelper();
         $storeManager->setStore($store);
 
         $scopeConfigMock = $this->createMock(ScopeConfigInterface::class);

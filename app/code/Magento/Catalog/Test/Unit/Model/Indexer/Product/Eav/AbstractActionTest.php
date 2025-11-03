@@ -55,14 +55,14 @@ class AbstractActionTest extends TestCase
             ['create']
         );
         $this->scopeConfig = $this->createMock(ScopeConfigInterface::class);
-        $this->_model = $this->createMock(
-            AbstractAction::class,
-            [
+        $this->_model = $this->getMockBuilder(AbstractAction::class)
+            ->setConstructorArgs([
                 $this->_eavDecimalFactoryMock,
                 $this->_eavSourceFactoryMock,
                 $this->scopeConfig
-            ]
-        );
+            ])
+            ->onlyMethods(['execute'])
+            ->getMock();
     }
 
     /**

@@ -20,7 +20,7 @@ use Magento\CatalogUrlRewrite\Model\CategoryUrlPathGenerator;
 use Magento\Framework\Api\AttributeValue;
 use Magento\Framework\Api\AttributeValueFactory;
 use Magento\Framework\Api\MetadataObjectInterface;
-use Magento\Framework\Filter\FilterManager;
+use Magento\Framework\Filter\Test\Unit\Helper\FilterManagerTestHelper;
 use Magento\Framework\Indexer\IndexerInterface;
 use Magento\Framework\Indexer\IndexerRegistry;
 use Magento\Framework\Model\ResourceModel\AbstractResource;
@@ -170,24 +170,7 @@ class CategoryTest extends TestCase
             ['create']
         );
         $this->catalogConfig = $this->createMock(Config::class);
-        $this->filterManager = new class extends FilterManager {
-            private $translitUrlResult = '';
-            
-            public function __construct()
-            {
-            }
-            
-            public function translitUrl($string)
-            {
-                return $this->translitUrlResult;
-            }
-            
-            public function setTranslitUrlResult($result)
-            {
-                $this->translitUrlResult = $result;
-                return $this;
-            }
-        };
+        $this->filterManager = new FilterManagerTestHelper();
         $this->flatState = $this->createMock(State::class);
         $this->flatIndexer = $this->createMock(IndexerInterface::class);
         $this->productIndexer = $this->createMock(IndexerInterface::class);
@@ -296,25 +279,8 @@ class CategoryTest extends TestCase
      */
     public function testMovePrimaryWorkflow(): void
     {
-        $indexer = new class {
-            private $isScheduledResult = false;
-            
-            public function __construct()
-            {
-            }
-            
-            public function isScheduled()
-            {
-                return $this->isScheduledResult;
-            }
-            
-            public function setIsScheduledResult($result)
-            {
-                $this->isScheduledResult = $result;
-                return $this;
-            }
-        };
-        $indexer->setIsScheduledResult(true);
+        $indexer = $this->createStub(IndexerInterface::class);
+        $indexer->method('isScheduled')->willReturn(true);
         $this->indexerRegistry->expects($this->once())
             ->method('get')
             ->with('catalog_category_product')

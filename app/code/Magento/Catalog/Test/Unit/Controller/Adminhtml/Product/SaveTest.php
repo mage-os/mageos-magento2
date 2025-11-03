@@ -107,18 +107,13 @@ class SaveTest extends ProductTestCase
 
         $additionalParams = ['resultRedirectFactory' => $this->resultRedirectFactory];
 
-        $storeManagerInterfaceMock = $this->createMock(
-            StoreManagerInterface::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['getStore', 'getCode']
-        );
-
-        $storeManagerInterfaceMock->expects($this->any())
-            ->method('getStore')->willReturnSelf();
+        $storeManagerInterfaceMock = $this->createMock(StoreManagerInterface::class);
+        
+        // Create a Store mock with getCode method
+        $storeMock = $this->createPartialMock(\Magento\Store\Model\Store::class, ['getCode']);
+        $storeMock->method('getCode')->willReturn('default');
+        
+        $storeManagerInterfaceMock->method('getStore')->willReturn($storeMock);
 
         $this->action = (new ObjectManagerHelper($this))->getObject(
             Save::class,

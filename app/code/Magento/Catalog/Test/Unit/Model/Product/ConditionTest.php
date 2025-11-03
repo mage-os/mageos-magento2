@@ -69,11 +69,7 @@ class ConditionTest extends TestCase
     {
         $mockedDbSelect = $this->getMockedDbSelect();
 
-        $mockBuilder = $this->getMockBuilder(AdapterInterface::class)
-            ->onlyMethods(['select'])
-            ->disableOriginalConstructor();
-        $mock = $mockBuilder->getMock();
-
+        $mock = $this->createStub(AdapterInterface::class);
         $mock->method('select')->willReturn($mockedDbSelect);
 
         return $mock;

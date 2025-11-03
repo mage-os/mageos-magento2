@@ -82,9 +82,7 @@ class FactoryTest extends TestCase
         $this->expectExceptionMessage('WrongClass doesn\'t extends \Magento\Catalog\Model\Layer\Filter\AbstractFilter');
         $className = 'WrongClass';
 
-        $filterMock = $this->getMockBuilder($className)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $filterMock = $this->createMock(\stdClass::class);
         $this->_objectManagerMock->expects($this->once())->method('create')->willReturn($filterMock);
 
         $this->_factory->create($className);

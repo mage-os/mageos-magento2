@@ -24,9 +24,7 @@ class WeightTest extends TestCase
     {
         $this->weight = new Weight();
 
-        $contextStub = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $contextStub = $this->createMock(Product::class);
         $contextStub->method('getEmptyAttributeValueConstant')->willReturn(Import::DEFAULT_EMPTY_ATTRIBUTE_VALUE_CONSTANT);
 
         $contextStub->method('retrieveMessageTemplate')->willReturn('some template');

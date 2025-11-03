@@ -36,10 +36,7 @@ class ActiveTableSwitcherTest extends TestCase
     public function testSwitch()
     {
         /** @var AdapterInterface|MockObject $connectionMock */
-        $connectionMock = $this->getMockBuilder(AdapterInterface::class)
-            ->addMethods(['changeTableComment'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $connectionMock = $this->createPartialMock(\Magento\Framework\DB\Adapter\Pdo\Mysql::class, ['changeTableComment', 'showTableStatus', 'renameTablesBatch']);
         $statement = $this->createMock(\Zend_Db_Statement_Interface::class);
         $tableName = 'tableName';
         $tableData = ['Comment' => 'Table comment'];

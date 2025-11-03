@@ -15,6 +15,9 @@ use Magento\Catalog\Model\Product\Option\Type\Select;
 use Magento\Catalog\Model\Product\Option\Value;
 use Magento\Catalog\Pricing\Price\CustomOptionPrice;
 use Magento\Catalog\Pricing\Price\CustomOptionPriceCalculator;
+use Magento\Catalog\Test\Unit\Helper\DefaultTypeTestHelper;
+use Magento\Catalog\Test\Unit\Helper\PriceInterfaceTestHelper;
+use Magento\Catalog\Test\Unit\Helper\SelectTestHelper;
 use Magento\Framework\DataObject;
 use Magento\Framework\Pricing\Adjustment\Calculator;
 use Magento\Framework\Pricing\Price\PriceInterface;
@@ -325,39 +328,7 @@ class CustomOptionPriceTest extends TestCase
 
         $optionMock->method('getProduct')->willReturn($this->product);
 
-        $priceMock = new class implements PriceInterface {
-            private $valueReturn = null;
-            
-            public function __construct()
-            {
-                // empty constructor
-            }
-            
-            public function setValueReturn($return)
-            {
-                $this->valueReturn = $return;
-                return $this;
-            }
-            
-            public function getValue()
-            {
-                return $this->valueReturn;
-            }
-            
-            // Required PriceInterface methods
-            public function getPriceCode()
-            {
-                return '';
-            }
-            public function getAmount()
-            {
-                return null;
-            }
-            public function getCustomAmount($amount = null, $exclude = null, $adjustmentCode = null)
-            {
-                return null;
-            }
-        };
+        $priceMock = new PriceInterfaceTestHelper();
         $priceMock->setValueReturn($price);
 
         $this->priceInfo->method('getPrice')->willReturn($priceMock);
@@ -376,55 +347,12 @@ class CustomOptionPriceTest extends TestCase
         $optionId2 = 2;
         $optionValue = 10;
         $optionType = 'select';
-        $optionValueMock = new class extends DefaultType {
-            private $valueReturn = null;
-
-            public function __construct()
-            {
-                // empty constructor
-            }
-            
-            public function setValueReturn($return)
-            {
-                $this->valueReturn = $return;
-                return $this;
-            }
-            
-            public function getValue()
-            {
-                return $this->valueReturn;
-            }
-        };
+        $optionValueMock = new DefaultTypeTestHelper();
         $optionMock = $this->getMockBuilder(Option::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getId', 'getType', 'groupFactory'])
             ->getMock();
-        $groupMock = new class extends Select {
-            private $option = null;
-            private $configurationItemOption = null;
-            
-            public function __construct()
-            {
-                // empty constructor
-            }
-            
-            public function setOption($option)
-            {
-                $this->option = $option;
-                return $this;
-            }
-            
-            public function setConfigurationItemOption($configurationItemOption)
-            {
-                $this->configurationItemOption = $configurationItemOption;
-                return $this;
-            }
-            
-            public function getOptionPrice($value, $basePrice)
-            {
-                return $value;
-            }
-        };
+        $groupMock = new SelectTestHelper();
 
         // The anonymous class already implements these methods
         $optionMock

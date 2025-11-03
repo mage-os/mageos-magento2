@@ -17,7 +17,10 @@ use Magento\Catalog\Model\Layer\Filter\Item;
 use Magento\Catalog\Model\Layer\Filter\Item\DataBuilder;
 use Magento\Catalog\Model\Layer\Filter\ItemFactory;
 use Magento\Catalog\Model\Layer\State;
+use Magento\Catalog\Test\Unit\Helper\ItemTestHelper;
+use Magento\Catalog\Test\Unit\Helper\PriceTestHelper;
 use Magento\Eav\Model\Entity\Attribute;
+use Magento\Eav\Test\Unit\Helper\AbstractAttributeTestHelper;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Escaper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
@@ -94,44 +97,7 @@ class PriceTest extends TestCase
             ->onlyMethods(['create'])
             ->getMock();
 
-        $this->dataProvider = new class extends Price {
-            private $priceId = null;
-            private $price = null;
-            private $resource = null;
-            
-            public function __construct()
-            {
-                // Don't call parent constructor to avoid dependencies
-            }
-            
-            public function setPriceId($priceId)
-            {
-                $this->priceId = $priceId;
-                return $this;
-            }
-            
-            public function getPrice()
-            {
-                return $this->price;
-            }
-            
-            public function setPrice($price)
-            {
-                $this->price = $price;
-                return $this;
-            }
-            
-            public function getResource()
-            {
-                return $this->resource;
-            }
-            
-            public function setResource($resource)
-            {
-                $this->resource = $resource;
-                return $this;
-            }
-        };
+        $this->dataProvider = new PriceTestHelper();
         $this->resource = $this->getMockBuilder(\Magento\Catalog\Model\ResourceModel\Layer\Filter\Price::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['applyPriceRange'])
@@ -163,41 +129,7 @@ class PriceTest extends TestCase
             ->onlyMethods(['create'])
             ->getMock();
 
-        $filterItem = new class extends Item {
-            private $filter = null;
-            private $label = null;
-            private $value = null;
-            private $count = null;
-            
-            public function __construct()
-            {
-                // Don't call parent constructor to avoid dependencies
-            }
-            
-            public function setFilter($filter)
-            {
-                $this->filter = $filter;
-                return $this;
-            }
-            
-            public function setLabel($label)
-            {
-                $this->label = $label;
-                return $this;
-            }
-            
-            public function setValue($value)
-            {
-                $this->value = $value;
-                return $this;
-            }
-            
-            public function setCount($count)
-            {
-                $this->count = $count;
-                return $this;
-            }
-        };
+        $filterItem = new ItemTestHelper();
         $this->filterItemFactory->method('create')->willReturn($filterItem);
 
         $escaper = $this->getMockBuilder(Escaper::class)
@@ -208,49 +140,7 @@ class PriceTest extends TestCase
             ->method('escapeHtml')
             ->willReturnArgument(0);
 
-        $this->attribute = new class extends Attribute {
-            private $isFilterable = null;
-            private $attributeCode = null;
-            private $frontend = null;
-            
-            public function __construct()
-            {
-                // Don't call parent constructor to avoid dependencies
-            }
-            
-            public function getIsFilterable()
-            {
-                return $this->isFilterable;
-            }
-            
-            public function setIsFilterable($isFilterable)
-            {
-                $this->isFilterable = $isFilterable;
-                return $this;
-            }
-            
-            public function getAttributeCode()
-            {
-                return $this->attributeCode;
-            }
-            
-            public function setAttributeCode($attributeCode)
-            {
-                $this->attributeCode = $attributeCode;
-                return $this;
-            }
-            
-            public function getFrontend()
-            {
-                return $this->frontend;
-            }
-            
-            public function setFrontend($frontend)
-            {
-                $this->frontend = $frontend;
-                return $this;
-            }
-        };
+        $this->attribute = new AbstractAttributeTestHelper();
         $algorithmFactory = $this->getMockBuilder(AlgorithmFactory::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['create'])

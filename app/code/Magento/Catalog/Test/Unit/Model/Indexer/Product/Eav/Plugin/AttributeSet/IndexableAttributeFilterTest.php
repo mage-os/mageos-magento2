@@ -60,21 +60,11 @@ class IndexableAttributeFilterTest extends TestCase
 
         $attributes = [$attributeMock1, $attributeMock2];
 
-        $groupMock = $this->getMockBuilder(Group::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getAttributes'])
-            ->getMock();
-        $groupMock->expects($this->once())
-            ->method('getAttributes')
-            ->willReturn($attributes);
+        $groupMock = $this->createPartialMock(Group::class, []);
+        $groupMock->setData('attributes', $attributes);
 
-        $attributeSetMock = $this->getMockBuilder(Set::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getGroups'])
-            ->getMock();
-        $attributeSetMock->expects($this->once())
-            ->method('getGroups')
-            ->willReturn([$groupMock]);
+        $attributeSetMock = $this->createPartialMock(Set::class, []);
+        $attributeSetMock->setData('groups', [$groupMock]);
 
         $model = new IndexableAttributeFilter(
             $eavAttributeFactoryMock

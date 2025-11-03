@@ -11,6 +11,9 @@ use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\CopyConstructor\UpSell;
 use Magento\Catalog\Model\Product\Link;
 use Magento\Catalog\Model\ResourceModel\Product\Link\Collection;
+use Magento\Catalog\Test\Unit\Helper\LinkTestHelper;
+use Magento\Catalog\Test\Unit\Helper\ProductLinkTestHelper;
+use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -48,69 +51,9 @@ class UpSellTest extends TestCase
 
         $this->_productMock = $this->createMock(Product::class);
 
-        $this->_duplicateMock = new class extends Product {
-            private $upSellLinkData = null;
-            
-            public function __construct()
-            {
-                // Don't call parent constructor to avoid dependencies
-            }
-            
-            public function setUpSellLinkData($data)
-            {
-                $this->upSellLinkData = $data;
-                return $this;
-            }
-            
-            public function getUpSellLinkData()
-            {
-                return $this->upSellLinkData;
-            }
-        };
+        $this->_duplicateMock = new ProductTestHelper();
 
-        $this->_linkMock = new class extends Link {
-            private $upSellLinkCollection = null;
-            private $attributes = null;
-            private $useUpSellLinksResult = null;
-            
-            public function __construct()
-            {
-                // Don't call parent constructor to avoid dependencies
-            }
-            
-            public function getUpSellLinkCollection()
-            {
-                return $this->upSellLinkCollection;
-            }
-            
-            public function setUpSellLinkCollection($collection)
-            {
-                $this->upSellLinkCollection = $collection;
-                return $this;
-            }
-            
-            public function getAttributes($type = null)
-            {
-                return $this->attributes;
-            }
-            
-            public function setAttributes($attributes)
-            {
-                $this->attributes = $attributes;
-                return $this;
-            }
-            
-            public function useUpSellLinks()
-            {
-                return $this->useUpSellLinksResult ?: $this;
-            }
-            
-            public function setUseUpSellLinksResult($result)
-            {
-                $this->useUpSellLinksResult = $result;
-                return $this;
-            }
-        };
+        $this->_linkMock = new LinkTestHelper();
 
         $this->_productMock->method('getLinkInstance')->willReturn(
             $this->_linkMock
@@ -126,37 +69,7 @@ class UpSellTest extends TestCase
 
         $this->_linkMock->setAttributes($attributes);
 
-        $productLinkMock = new class extends \Magento\Catalog\Model\ResourceModel\Product\Link {
-            private $linkedProductId = null;
-            private $arrayData = null;
-            
-            public function __construct()
-            {
-                // Don't call parent constructor to avoid dependencies
-            }
-            
-            public function getLinkedProductId()
-            {
-                return $this->linkedProductId;
-            }
-            
-            public function setLinkedProductId($id)
-            {
-                $this->linkedProductId = $id;
-                return $this;
-            }
-            
-            public function toArray($keys = null)
-            {
-                return $this->arrayData;
-            }
-            
-            public function setArrayData($data)
-            {
-                $this->arrayData = $data;
-                return $this;
-            }
-        };
+        $productLinkMock = new ProductLinkTestHelper();
 
         $productLinkMock->setLinkedProductId('100500');
         $productLinkMock->setArrayData(['some' => 'data']);

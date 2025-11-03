@@ -10,6 +10,7 @@ namespace Magento\Catalog\Test\Unit\Ui\DataProvider\Product\Form\Modifier;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Authorization\Model\Role;
 use Magento\Backend\Model\Auth\Session;
+use Magento\Backend\Test\Unit\Helper\SessionTestHelper;
 use Magento\Catalog\Model\ResourceModel\Category\Collection as CategoryCollection;
 use Magento\Catalog\Model\ResourceModel\Category\CollectionFactory as CategoryCollectionFactory;
 use Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\Categories;
@@ -87,22 +88,7 @@ class CategoriesTest extends AbstractModifierTestCase
             ->getMock();
         $this->authorizationMock = $this->createMock(AuthorizationInterface::class);
         // Create a custom session mock that handles getUser method
-        $this->sessionMock = new class extends Session {
-            private $user;
-            
-            public function __construct() {
-                // Skip parent constructor to avoid dependencies
-            }
-            
-            public function getUser() {
-                return $this->user;
-            }
-            
-            public function setUser($user) {
-                $this->user = $user;
-                return $this;
-            }
-        };
+        $this->sessionMock = new SessionTestHelper();
         $this->categoryCollectionFactoryMock->method('create')->willReturn($this->categoryCollectionMock);
         $this->categoryCollectionMock->expects($this->any())
             ->method('addAttributeToSelect')
@@ -201,6 +187,7 @@ class CategoriesTest extends AbstractModifierTestCase
 
     /**
      * @param bool $locked
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     #[DataProvider('modifyMetaLockedDataProvider')]
     public function testModifyMetaLocked($locked)
@@ -218,12 +205,14 @@ class CategoriesTest extends AbstractModifierTestCase
         $this->authorizationMock->expects($this->exactly(2))
             ->method('isAllowed')
             ->willReturn(true);
-        $this->arrayManagerMock->method('findPath')->willReturnCallback(function($fieldCode, $meta, $default, $children) {
-            if ($fieldCode === 'category_ids') {
-                return 'test_group_code.children.category_ids';
+        $this->arrayManagerMock->method('findPath')->willReturnCallback(
+            function ($fieldCode, $meta, $default, $children) {
+                if ($fieldCode === 'category_ids') {
+                    return 'test_group_code.children.category_ids';
+                }
+                return 'test_group_code.children.container_category_ids';
             }
-            return 'test_group_code.children.container_category_ids';
-        });
+        );
 
         $this->productMock->method('isLockedAttribute')->willReturn($locked);
 
@@ -284,22 +273,7 @@ class CategoriesTest extends AbstractModifierTestCase
             ->willReturn($roleAclUser);
 
         // Create a custom session mock that handles getUser method
-        $this->sessionMock = new class extends Session {
-            private $user;
-            
-            public function __construct() {
-                // Skip parent constructor to avoid dependencies
-            }
-            
-            public function getUser() {
-                return $this->user;
-            }
-            
-            public function setUser($user) {
-                $this->user = $user;
-                return $this;
-            }
-        };
+        $this->sessionMock = new SessionTestHelper();
 
         $this->sessionMock->setUser($userAclUser);
 

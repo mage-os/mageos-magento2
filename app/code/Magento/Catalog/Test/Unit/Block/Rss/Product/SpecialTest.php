@@ -11,6 +11,7 @@ use Magento\Catalog\Helper\Image;
 use Magento\Catalog\Helper\Output;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Rss\Product\Special;
+use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Http\Context;
 use Magento\Framework\App\RequestInterface;
@@ -201,69 +202,21 @@ class SpecialTest extends TestCase
      */
     protected function getItemMock(): Product
     {
-        $item = new class extends Product {
-            public function __construct()
-            {
-                // Empty constructor
-            }
-            
-            // Methods from addMethods
-            public function getDescription()
-            {
-                return 'Product Description';
-            }
-            
-            public function getAllowedInRss()
-            {
-                return true;
-            }
-            
-            public function getAllowedPriceInRss()
-            {
-                return true;
-            }
-            
-            public function getUseSpecial()
-            {
-                return true;
-            }
-            
-            // Methods from onlyMethods
-            public function __sleep()
-            {
-                return [];
-            }
-            
-            public function getName()
-            {
-                return 'Product Name';
-            }
-            
-            public function getProductUrl($useSid = null)
-            {
-                return 'http://magento.com/product-name.html';
-            }
-            
-            public function getSpecialToDate()
-            {
-                return date('Y-m-d');
-            }
-            
-            public function getSpecialPrice()
-            {
-                return 15;
-            }
-            
-            public function getFinalPrice($qty = null)
-            {
-                return 10;
-            }
-            
-            public function getPrice()
-            {
-                return null;
-            }
-        };
+        $item = $this->createPartialMock(
+            Product::class,
+            ['getPrice', 'getFinalPrice', 'getProductUrl', 'getSpecialPrice', 'getSpecialToDate']
+        );
+        $item->method('getPrice')->willReturn('');
+        $item->method('getFinalPrice')->willReturn(10);
+        $item->method('getSpecialPrice')->willReturn(10);
+        $item->method('getSpecialToDate')->willReturn(date('Y-m-d'));
+        $item->method('getProductUrl')->willReturn('http://magento.com/product-name.html');
+        $item->setAllowedInRss(true);
+        $item->setAllowedPriceInRss(true);
+        $item->setUseSpecial(true);
+        $item->setDescription('Product Description');
+        $item->setName('Product Name');
+        $item->setData('product_url', 'http://magento.com/product-name.html');
 
         return $item;
     }

@@ -13,6 +13,7 @@ use Magento\Catalog\Ui\DataProvider\Product\Form\ProductDataProvider;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Ui\DataProvider\Modifier\ModifierInterface;
 use Magento\Ui\DataProvider\Modifier\Pool;
+use Magento\Ui\Test\Unit\Helper\ModifierInterfaceTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -54,55 +55,12 @@ class ProductDataProviderTest extends TestCase
         $this->collectionMock = $this->getMockBuilder(Collection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        /** @var CollectionFactory $this->collectionFactoryMock */
-        $this->collectionFactoryMock = new class {
-            private $createResult = null;
-            
-            public function __construct() {}
-            
-            public function create() { 
-                return $this->createResult; 
-            }
-            public function setCreateResult($value) { 
-                $this->createResult = $value; 
-                return $this; 
-            }
-        };
-        $this->collectionFactoryMock->setCreateResult($this->collectionMock);
+        $this->collectionFactoryMock = $this->createMock(CollectionFactory::class);
+        $this->collectionFactoryMock->method('create')->willReturn($this->collectionMock);
         $this->poolMock = $this->getMockBuilder(Pool::class)
             ->disableOriginalConstructor()
             ->getMock();
-        /** @var ModifierInterface $this->modifierMockOne */
-        $this->modifierMockOne = new class implements ModifierInterface {
-            private $data = [];
-            private $meta = [];
-            
-            public function __construct() {}
-            
-            public function getData() { 
-                return $this->data; 
-            }
-            public function setData($value) { 
-                $this->data = $value; 
-                return $this; 
-            }
-            
-            public function getMeta() { 
-                return $this->meta; 
-            }
-            public function setMeta($value) { 
-                $this->meta = $value; 
-                return $this; 
-            }
-            
-            // Required ModifierInterface methods
-            public function modifyData(array $data) { 
-                return $this->data; 
-            }
-            public function modifyMeta(array $meta) { 
-                return $this->meta; 
-            }
-        };
+        $this->modifierMockOne = new ModifierInterfaceTestHelper();
 
         $this->model = $this->objectManager->getObject(ProductDataProvider::class, [
             'name' => 'testName',

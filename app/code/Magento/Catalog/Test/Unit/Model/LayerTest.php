@@ -24,6 +24,7 @@ use Magento\Framework\Registry;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Store\Test\Unit\Helper\StoreTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -127,37 +128,7 @@ class LayerTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        // PHPUnit 12 compatible: Replace addMethods + onlyMethods with anonymous class
-        $this->store = new class extends Store {
-            private $filtersResult;
-            private $rootCategoryIdResult;
-            
-            public function __construct()
-            {
-            }
-            
-            public function getFilters()
-            {
-                return $this->filtersResult;
-            }
-            
-            public function setFilters($result)
-            {
-                $this->filtersResult = $result;
-                return $this;
-            }
-            
-            public function getRootCategoryId()
-            {
-                return $this->rootCategoryIdResult;
-            }
-            
-            public function setRootCategoryId($result)
-            {
-                $this->rootCategoryIdResult = $result;
-                return $this;
-            }
-        };
+        $this->store = new StoreTestHelper();
 
         $this->storeManager = $this->createMock(StoreManagerInterface::class);
         $this->storeManager->method('getStore')->willReturn($this->store);

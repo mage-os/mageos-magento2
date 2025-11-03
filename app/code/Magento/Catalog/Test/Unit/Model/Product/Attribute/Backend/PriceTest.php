@@ -13,6 +13,7 @@ use Magento\Catalog\Model\Product\Attribute\Backend\Price;
 use Magento\Directory\Model\CurrencyFactory;
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
 use Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface;
+use Magento\Eav\Test\Unit\Helper\AbstractAttributeTestHelper;
 use Magento\Framework\Locale\Format;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Model\StoreManagerInterface;
@@ -56,49 +57,7 @@ class PriceTest extends TestCase
                 'currencyFactory' => $this->currencyFactory
             ]
         );
-        $this->attribute = new class extends AbstractAttribute {
-            private $isScopeWebsite = null;
-            private $isGlobal = null;
-            private $attributeCode = null;
-            
-            public function __construct()
-            {
-                // Don't call parent constructor to avoid dependencies
-            }
-            
-            public function isScopeWebsite()
-            {
-                return $this->isScopeWebsite;
-            }
-            
-            public function setIsScopeWebsite($isScopeWebsite)
-            {
-                $this->isScopeWebsite = $isScopeWebsite;
-                return $this;
-            }
-            
-            public function getIsGlobal()
-            {
-                return $this->isGlobal;
-            }
-            
-            public function setIsGlobal($isGlobal)
-            {
-                $this->isGlobal = $isGlobal;
-                return $this;
-            }
-            
-            public function getAttributeCode()
-            {
-                return $this->attributeCode;
-            }
-            
-            public function setAttributeCode($attributeCode)
-            {
-                $this->attributeCode = $attributeCode;
-                return $this;
-            }
-        };
+        $this->attribute = new AbstractAttributeTestHelper();
         $this->model->setAttribute($this->attribute);
     }
 

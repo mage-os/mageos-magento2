@@ -20,6 +20,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\MediaStorage\Helper\File\Storage\Database;
 use Magento\Quote\Model\Quote\Item\Option;
 use Magento\Quote\Model\Quote\Item\OptionFactory;
+use Magento\Quote\Test\Unit\Helper\ItemOptionTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -305,26 +306,7 @@ class FileTest extends TestCase
             ->with($resultValue)
             ->willReturn(json_encode($resultValue));
 
-        $option = new class extends Option {
-            private $value = null;
-            
-            public function __construct()
-            {
-                // Don't call parent constructor to avoid dependencies
-            }
-            
-            public function setValue($value)
-            {
-                $this->value = $value;
-                return $this;
-            }
-            
-            public function getValue()
-            {
-                return $this->value;
-            }
-        };
-
+        $option = new ItemOptionTestHelper();
         $option->setValue(json_encode($resultValue));
 
         $fileObject->setConfigurationItemOption($option);
@@ -341,32 +323,7 @@ class FileTest extends TestCase
     public function testGetEditableOptionValue()
     {
         /** @var OptionInterface $configurationItemOption */
-        $configurationItemOption = new class implements OptionInterface {
-            private $id = null;
-            private $value = null;
-            
-            public function getId()
-            {
-                return $this->id;
-            }
-            
-            public function setId($id)
-            {
-                $this->id = $id;
-                return $this;
-            }
-            
-            public function getValue()
-            {
-                return $this->value;
-            }
-            
-            public function setValue($value)
-            {
-                $this->value = $value;
-                return $this;
-            }
-        };
+        $configurationItemOption = new ItemOptionTestHelper();
         $configurationItemOption->setId(2);
         $fileObject = $this->getFileObject()->setData('configuration_item_option', $configurationItemOption);
         $optionTitle = 'Option Title';

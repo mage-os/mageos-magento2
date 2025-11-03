@@ -12,6 +12,7 @@ use Magento\Framework\Data\Form;
 use Magento\Framework\Data\Form\Element\CollectionFactory;
 use Magento\Framework\Data\Form\Element\Factory;
 use Magento\Framework\Data\Form\Element\Radios;
+use Magento\Framework\Data\Form\Element\Test\Unit\Helper\RadiosTestHelper;
 use Magento\Framework\Locale\Format;
 use Magento\Framework\Math\Random;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
@@ -69,42 +70,7 @@ class WeightTest extends TestCase
         $objectManagerMock = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
         \Magento\Framework\App\ObjectManager::setInstance($objectManagerMock);
 
-        // Create anonymous class for Radios to handle methods that don't exist in the original class
-        $this->weightSwitcher = new class extends Radios {
-            public function __construct()
-            {
-                // Don't call parent constructor to avoid complex dependencies
-            }
-
-            public function setId($id)
-            {
-                return $this;
-            }
-            public function setName($name)
-            {
-                return $this;
-            }
-            public function setLabel($label)
-            {
-                return $this;
-            }
-            public function setForm($form)
-            {
-                return $this;
-            }
-            public function setValue($value)
-            {
-                return $this;
-            }
-            public function setValues($values)
-            {
-                return $this;
-            }
-            public function setDisabled($disabled)
-            {
-                return $this;
-            }
-        };
+        $this->weightSwitcher = new RadiosTestHelper();
 
         $this->factory = $this->createMock(Factory::class);
         $this->factory->expects(

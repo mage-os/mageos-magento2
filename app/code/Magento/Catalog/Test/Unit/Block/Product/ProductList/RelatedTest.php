@@ -59,52 +59,10 @@ class RelatedTest extends TestCase
     #[DataProvider('canItemsAddToCartDataProvider')]
     public function testCanItemsAddToCart($isComposite, $isSaleable, $hasRequiredOptions, $canItemsAddToCart)
     {
-        $product = new class extends Product {
-            private $isComposite = false;
-            private $isSaleable = false;
-            private $hasRequiredOptions = false;
-            
-            public function __construct()
-            {
-                // Empty constructor for test
-            }
-            
-            public function isComposite()
-            {
-                return $this->isComposite;
-            }
-            
-            public function isSaleable()
-            {
-                return $this->isSaleable;
-            }
-            
-            public function getRequiredOptions()
-            {
-                return $this->hasRequiredOptions;
-            }
-            
-            public function setIsComposite($isComposite)
-            {
-                $this->isComposite = $isComposite;
-                return $this;
-            }
-            
-            public function setIsSaleable($isSaleable)
-            {
-                $this->isSaleable = $isSaleable;
-                return $this;
-            }
-            
-            public function setHasRequiredOptions($hasRequiredOptions)
-            {
-                $this->hasRequiredOptions = $hasRequiredOptions;
-                return $this;
-            }
-        };
-        $product->setIsComposite($isComposite);
-        $product->setIsSaleable($isSaleable);
-        $product->setHasRequiredOptions($hasRequiredOptions);
+        $product = $this->createPartialMock(Product::class, ['isComposite', 'isSaleable']);
+        $product->method('isComposite')->willReturn($isComposite);
+        $product->method('isSaleable')->willReturn($isSaleable);
+        $product->setData('required_options', $hasRequiredOptions);
 
         $itemsCollection = new \ReflectionProperty(
             Related::class,

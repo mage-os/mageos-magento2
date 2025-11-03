@@ -10,6 +10,7 @@ namespace Magento\Catalog\Test\Unit\Model\Config\Source;
 use Magento\Catalog\Model\ResourceModel\Category;
 use Magento\Catalog\Model\ResourceModel\Category\Collection;
 use Magento\Catalog\Model\ResourceModel\Category\CollectionFactory;
+use Magento\Catalog\Test\Unit\Model\ResourceModel\Helper\CategoryTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -39,36 +40,7 @@ class CategoryTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->category = new class extends Category {
-            private $name = '';
-            private $id = 0;
-            
-            public function __construct()
-            {
-            }
-            
-            public function getName()
-            {
-                return $this->name;
-            }
-            
-            public function setName($name)
-            {
-                $this->name = $name;
-                return $this;
-            }
-            
-            public function getId()
-            {
-                return $this->id;
-            }
-            
-            public function setId($id)
-            {
-                $this->id = $id;
-                return $this;
-            }
-        };
+        $this->category = new CategoryTestHelper();
 
         /**
          * @var CollectionFactory|MockObject $categoryCollectionFactory

@@ -124,9 +124,7 @@ class SearchCriteriaBuilderTest extends TestCase
 
         $filter = $this->createMock(Filter::class);
         $searchCriteria = $this->createMock(SearchCriteria::class);
-        $attributeInterface = $this->getMockBuilder(Attribute::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $attributeInterface = $this->createMock(Attribute::class);
 
         $attributeInterface->method('getData')
             ->willReturn(['is_filterable' => 0]);

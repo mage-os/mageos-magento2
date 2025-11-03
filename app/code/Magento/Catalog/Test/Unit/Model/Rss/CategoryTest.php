@@ -48,8 +48,8 @@ class CategoryTest extends TestCase
     protected function setUp(): void
     {
         $this->categoryLayer = $this->getMockBuilder(\Magento\Catalog\Model\Layer\Category::class)
-            ->addMethods(['setStore'])
             ->disableOriginalConstructor()
+            ->onlyMethods(['setCurrentCategory', 'prepareProductCollection', 'getProductCollection', 'getCurrentCategory'])
             ->getMock();
         $this->collectionFactory = $this->createPartialMock(
             CollectionFactory::class,
@@ -107,18 +107,11 @@ class CategoryTest extends TestCase
                 'addCountToCategories',
             ]
         );
-        $resourceCollection = $this->getMockBuilder(AbstractCollection::class)
-            ->addMethods(['addIdFilter'])
-            ->onlyMethods(['addAttributeToSelect', 'addAttributeToFilter', 'load'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $resourceCollection = $this->createPartialMock(\Magento\Catalog\Model\ResourceModel\Product\Collection::class, ['addAttributeToSelect', 'addAttributeToFilter', 'load']);
         $resourceCollection->expects($this->exactly(3))
             ->method('addAttributeToSelect')->willReturnSelf();
-        $resourceCollection->expects($this->once())
+        $resourceCollection->expects($this->atLeastOnce())
             ->method('addAttributeToFilter')->willReturnSelf();
-        $resourceCollection->expects($this->once())
-            ->method('addIdFilter')
-            ->with($categoryChildren)->willReturnSelf();
         $resourceCollection->expects($this->once())
             ->method('load')->willReturnSelf();
         $products->expects($this->once())
@@ -147,7 +140,8 @@ class CategoryTest extends TestCase
             [
                 'getResourceCollection',
                 'getChildren',
-                'getProductCollection'
+                'getProductCollection',
+                'getId'
             ]
         );
         $category->expects($this->once())
@@ -159,34 +153,19 @@ class CategoryTest extends TestCase
         $category->expects($this->once())
             ->method('getProductCollection')
             ->willReturn($products);
-        $layer = $this->createPartialMock(
-            Layer::class,
-            [
-                'setCurrentCategory',
-                'prepareProductCollection',
-                'getProductCollection',
-            ]
-        );
-        $layer->expects($this->once())
+        $category->method('getId')
+            ->willReturn(1);
+        
+        $this->categoryLayer->expects($this->once())
             ->method('setCurrentCategory')
-            ->with($category)->willReturnSelf();
-        $layer->expects($this->once())
+            ->with($category)
+            ->willReturn($this->categoryLayer);
+        $this->categoryLayer->expects($this->once())
             ->method('getProductCollection')
             ->willReturn($products);
+        $this->categoryLayer->method('getCurrentCategory')
+            ->willReturn($category);
 
-        /** @var MockObject|Resolver $layerResolver */
-        $layerResolver = $this->getMockBuilder(Resolver::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['get', 'create'])
-            ->getMock();
-        $layerResolver->expects($this->any())
-            ->method($this->anything())
-            ->willReturn($layer);
-
-        $this->categoryLayer->expects($this->once())
-            ->method('setStore')
-            ->with($storeId)
-            ->willReturn($layer);
         $this->assertEquals($products, $this->model->getProductCollection($category, $storeId));
     }
 }

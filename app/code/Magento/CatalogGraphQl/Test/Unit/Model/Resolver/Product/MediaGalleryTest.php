@@ -17,6 +17,7 @@ use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Magento\Framework\GraphQl\Config\Element\Field;
+use ReflectionClass;
 
 class MediaGalleryTest extends TestCase
 {
@@ -50,9 +51,7 @@ class MediaGalleryTest extends TestCase
         $this->fieldMock = $this->createMock(Field::class);
         $this->contextMock = $this->createMock(ContextInterface::class);
         $this->infoMock = $this->createMock(ResolveInfo::class);
-        $this->productMock = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->productMock = $this->createMock(Product::class);
         $this->mediaGallery = new MediaGallery();
     }
 
@@ -65,103 +64,16 @@ class MediaGalleryTest extends TestCase
     #[DataProvider('dataProviderForResolve')]
     public function testResolve($expected, $productName): void
     {
-        $existingEntryMock = new class implements \Magento\Catalog\Api\Data\ProductAttributeMediaGalleryEntryInterface {
-            private $data = [];
-            private $extensionAttributes = null;
-            
-            public function __construct() {}
-            
-            public function getData($key = '', $index = null) {
-                if ($key === '') {
-                    return $this->data;
-                }
-                return $this->data[$key] ?? null;
-            }
-            
-            public function setData($key, $value = null) {
-                if (is_array($key)) {
-                    $this->data = array_merge($this->data, $key);
-                } else {
-                    $this->data[$key] = $value;
-                }
-                return $this;
-            }
-            
-            public function getExtensionAttributes() {
-                return $this->extensionAttributes;
-            }
-            
-            public function setExtensionAttributes($extensionAttributes) {
-                $this->extensionAttributes = $extensionAttributes;
-                return $this;
-            }
-            
-            public function getId() {
-                return $this->getData('id');
-            }
-            
-            public function setId($id) {
-                return $this->setData('id', $id);
-            }
-            
-            public function getMediaType() {
-                return $this->getData('media_type');
-            }
-            
-            public function setMediaType($mediaType) {
-                return $this->setData('media_type', $mediaType);
-            }
-            
-            public function getLabel() {
-                return $this->getData('label');
-            }
-            
-            public function setLabel($label) {
-                return $this->setData('label', $label);
-            }
-            
-            public function getPosition() {
-                return $this->getData('position');
-            }
-            
-            public function setPosition($position) {
-                return $this->setData('position', $position);
-            }
-            
-            public function isDisabled() {
-                return $this->getData('disabled');
-            }
-            
-            public function setDisabled($disabled) {
-                return $this->setData('disabled', $disabled);
-            }
-            
-            public function getTypes() {
-                return $this->getData('types');
-            }
-            
-            public function setTypes(?array $types = null) {
-                return $this->setData('types', $types);
-            }
-            
-            public function getFile() {
-                return $this->getData('file');
-            }
-            
-            public function setFile($file) {
-                return $this->setData('file', $file);
-            }
-            
-            public function getContent() {
-                return $this->getData('content');
-            }
-            
-            public function setContent($content) {
-                return $this->setData('content', $content);
-            }
-        };
-        $existingEntryMock->setData($expected);
-        $existingEntryMock->setExtensionAttributes(false);
+        // Create a mock for Entry with getExtensionAttributes method
+        $existingEntryMock = $this->createPartialMock(Entry::class, ['getExtensionAttributes']);
+        $existingEntryMock->method('getExtensionAttributes')->willReturn(false);
+        
+        // Use reflection to set the internal data array
+        $reflection = new ReflectionClass($existingEntryMock);
+        $dataProperty = $reflection->getProperty('_data');
+        $dataProperty->setAccessible(true);
+        $dataProperty->setValue($existingEntryMock, $expected);
+        
         $this->productMock->method('getName')->willReturn($productName);
         $this->productMock->method('getMediaGalleryEntries')->willReturn([$existingEntryMock]);
         $result = $this->mediaGallery->resolve(

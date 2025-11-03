@@ -11,6 +11,7 @@ use Magento\Catalog\Block\Adminhtml\Product\Helper\Form\Gallery;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
 use Magento\Framework\App\Request\DataPersistorInterface;
+use Magento\Framework\App\Request\Test\Unit\Helper\DataPersistorTestHelper;
 use Magento\Framework\Data\Form;
 use Magento\Framework\Registry;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
@@ -54,27 +55,7 @@ class GalleryTest extends TestCase
         $this->registryMock = $this->createMock(Registry::class);
         $this->productMock = $this->createPartialMock(Product::class, ['getData']);
         $this->formMock = $this->createMock(Form::class);
-        $this->dataPersistorMock = new class implements DataPersistorInterface {
-            private $returnData = null;
-            
-            public function setReturnData($data)
-            {
-                $this->returnData = $data;
-            }
-            
-            public function set($key, $data)
-            {
- /* Empty implementation for test */
-            }
-            public function get($key)
-            {
-                return $this->returnData;
-            }
-            public function clear($key)
-            {
- /* Empty implementation for test */
-            }
-        };
+        $this->dataPersistorMock = new DataPersistorTestHelper();
         $this->objectManager = new ObjectManager($this);
         $this->gallery = $this->objectManager->getObject(
             Gallery::class,

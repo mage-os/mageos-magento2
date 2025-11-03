@@ -121,11 +121,10 @@ class CategoryTest extends TestCase
             ->getMock();
         $this->layer->method('getState')->willReturn($this->state);
 
-        $this->collection = $this->getMockBuilder(ProductCollectionResourceModel::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['addCategoryFilter', 'addCountToCategories'])
-            ->addMethods(['getFacetedData'])
-            ->getMock();
+        $this->collection = $this->createPartialMock(
+            ProductCollectionResourceModel::class,
+            ['addCategoryFilter', 'addCountToCategories']
+        );
 
         $this->layer->method('getProductCollection')->willReturn($this->collection);
 
@@ -138,16 +137,7 @@ class CategoryTest extends TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['create'])->getMock();
 
-        $filterItem = $this->getMockBuilder(Item::class)
-            ->disableOriginalConstructor()
-            ->addMethods(
-                [
-                    'setFilter',
-                    'setLabel',
-                    'setValue',
-                    'setCount'
-                ]
-            )->getMock();
+        $filterItem = $this->createMock(Item::class);
         $filterItem->expects($this->any())
             ->method($this->anything())->willReturnSelf();
         $this->filterItemFactory->method('create')->willReturn($filterItem);

@@ -14,6 +14,7 @@ use Magento\Catalog\Controller\Adminhtml\Product\Reload;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Controller\ResultInterface;
+use Magento\Framework\View\Test\Unit\Helper\ResultInterfaceTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Layout\ProcessorInterface;
 use Magento\Framework\View\LayoutInterface;
@@ -99,9 +100,7 @@ class ReloadTest extends TestCase
         $this->productBuilderMock = $this->getMockBuilder(Builder::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->resultMock = $this->getMockBuilder(ResultInterface::class)
-            ->onlyMethods(['forward', 'setJsonData', 'getLayout'])
-            ->getMock();
+        $this->resultMock = $this->createPartialMock(ResultInterfaceTestHelper::class, ['forward']);
         $this->productMock = $this->getMockBuilder(ProductInterface::class)
             ->getMock();
         $this->uiComponentMock = $this->getMockBuilder(UiComponent::class)
@@ -116,7 +115,7 @@ class ReloadTest extends TestCase
         $this->productBuilderMock->method('build')->willReturn($this->productMock);
         $this->layoutMock->method('getBlock')->willReturn($this->uiComponentMock);
         $this->layoutMock->method('getUpdate')->willReturn($this->processorMock);
-        $this->resultMock->method('getLayout')->willReturn($this->layoutMock);
+        $this->resultMock->setLayout($this->layoutMock);
 
         $this->model = $this->objectManager->getObject(Reload::class, [
             'context' => $this->contextMock,

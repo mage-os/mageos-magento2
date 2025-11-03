@@ -15,7 +15,7 @@ use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\Registry;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
-use Magento\Catalog\Test\Unit\Mock\RequestInterfaceMock;
+use Magento\Framework\App\Test\Unit\Helper\HttpTestHelper;
 use Magento\Framework\View\Result\PageFactory;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -76,10 +76,7 @@ class AttributeTest extends TestCase
         $this->resultPageFactoryMock = $this->getMockBuilder(PageFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->requestMock = $this->getMockBuilder(RequestInterfaceMock::class)
-            ->onlyMethods(['getPostValue', 'getParam', 'has'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->requestMock = $this->createPartialMock(HttpTestHelper::class, ['getPostValue', 'getParam', 'has']);
         $this->resultFactoryMock = $this->getMockBuilder(ResultFactory::class)
             ->disableOriginalConstructor()
             ->getMock();

@@ -14,6 +14,7 @@ use Magento\Catalog\Model\ResourceModel\Product\BaseSelectProcessorInterface;
 use Magento\Catalog\Model\ResourceModel\Product\StatusBaseSelectProcessor;
 use Magento\Eav\Model\Config;
 use Magento\Eav\Model\Entity\Attribute\AttributeInterface;
+use Magento\Framework\DataObject;
 use Magento\Framework\DB\Select;
 use Magento\Framework\EntityManager\EntityMetadataInterface;
 use Magento\Framework\EntityManager\MetadataPool;
@@ -98,35 +99,9 @@ class StatusBaseSelectProcessorTest extends TestCase
             ->willReturn($metadata);
 
         /** @var AttributeInterface $statusAttribute */
-        $statusAttribute = new class {
-            private $backendTable = '';
-            private $attributeId = '';
-            
-            public function __construct()
-            {
-            }
-            
-            public function getBackendTable()
-            {
-                return $this->backendTable;
-            }
-            public function setBackendTable($value)
-            {
-                $this->backendTable = $value;
-                return $this;
-            }
-            public function getAttributeId()
-            {
-                return $this->attributeId;
-            }
-            public function setAttributeId($value)
-            {
-                $this->attributeId = $value;
-                return $this;
-            }
-        };
-        $statusAttribute->setBackendTable($backendTable);
-        $statusAttribute->setAttributeId($attributeId);
+        $statusAttribute = $this->createPartialMock(DataObject::class, []);
+        $statusAttribute->setData('backend_table', $backendTable);
+        $statusAttribute->setData('attribute_id', $attributeId);
         $this->eavConfig->expects($this->once())
             ->method('getAttribute')
             ->with(Product::ENTITY, ProductInterface::STATUS)

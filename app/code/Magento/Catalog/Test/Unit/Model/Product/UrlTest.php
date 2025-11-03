@@ -14,8 +14,9 @@ use Magento\Catalog\Helper\Category;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Url;
 use Magento\Catalog\Model\Product\Url as ProductUrl;
+use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Framework\Filter\FilterManager;
+use Magento\Framework\Filter\Test\Unit\Helper\FilterManagerTestHelper;
 use Magento\Framework\Session\SidResolverInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\UrlFactory;
@@ -68,25 +69,7 @@ class UrlTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->filter = new class extends FilterManager {
-            private $translitUrlResult = null;
-            
-            public function __construct()
-            {
-                // Don't call parent constructor to avoid dependencies
-            }
-            
-            public function translitUrl($string)
-            {
-                return $this->translitUrlResult;
-            }
-            
-            public function setTranslitUrlResult($result)
-            {
-                $this->translitUrlResult = $result;
-                return $this;
-            }
-        };
+        $this->filter = new FilterManagerTestHelper();
 
         $this->urlFinder = $this->getMockBuilder(
             UrlFinderInterface::class
@@ -190,109 +173,7 @@ class UrlTest extends TestCase
         $productId,
         $productUrlKey
     ) {
-        $product = new class extends Product {
-            private $urlKey = null;
-            private $requestPath = null;
-            private $hasUrlDataObject = null;
-            private $doNotUseCategoryId = null;
-            private $storeId = null;
-            private $entityId = null;
-            private $id = null;
-            private $categoryId = null;
-            
-            public function __construct()
-            {
-                // Don't call parent constructor to avoid dependencies
-            }
-            
-            public function getUrlKey()
-            {
-                return $this->urlKey;
-            }
-            
-            public function setUrlKey($urlKey)
-            {
-                $this->urlKey = $urlKey;
-                return $this;
-            }
-            
-            public function setRequestPath($requestPath)
-            {
-                $this->requestPath = $requestPath;
-                return $this;
-            }
-            
-            public function hasUrlDataObject()
-            {
-                return $this->hasUrlDataObject;
-            }
-            
-            public function setHasUrlDataObject($hasUrlDataObject)
-            {
-                $this->hasUrlDataObject = $hasUrlDataObject;
-                return $this;
-            }
-            
-            public function getDoNotUseCategoryId()
-            {
-                return $this->doNotUseCategoryId;
-            }
-            
-            public function setDoNotUseCategoryId($doNotUseCategoryId)
-            {
-                $this->doNotUseCategoryId = $doNotUseCategoryId;
-                return $this;
-            }
-            
-            public function getStoreId()
-            {
-                return $this->storeId;
-            }
-            
-            public function setStoreId($storeId)
-            {
-                $this->storeId = $storeId;
-                return $this;
-            }
-            
-            public function getEntityId()
-            {
-                return $this->entityId;
-            }
-            
-            public function setEntityId($entityId)
-            {
-                $this->entityId = $entityId;
-                return $this;
-            }
-            
-            public function getId()
-            {
-                return $this->id;
-            }
-            
-            public function setId($id)
-            {
-                $this->id = $id;
-                return $this;
-            }
-            
-            public function getRequestPath()
-            {
-                return $this->requestPath;
-            }
-            
-            public function getCategoryId()
-            {
-                return $this->categoryId;
-            }
-            
-            public function setCategoryId($categoryId)
-            {
-                $this->categoryId = $categoryId;
-                return $this;
-            }
-        };
+        $product = new ProductTestHelper();
         $product->setStoreId($storeId);
         $product->setCategoryId($categoryId);
         $product->setRequestPath($requestPathProduct);

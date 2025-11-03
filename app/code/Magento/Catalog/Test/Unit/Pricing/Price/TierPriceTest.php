@@ -12,6 +12,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Pricing\Price\FinalPrice;
 use Magento\Catalog\Pricing\Price\TierPrice;
+use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use Magento\Customer\Api\GroupManagementInterface;
 use Magento\Customer\Model\Group;
 use Magento\Customer\Model\Group\RetrieverInterface;
@@ -99,57 +100,7 @@ class TierPriceTest extends TestCase
     protected function setUp(): void
     {
         $this->priceInfo = $this->createMock(Base::class);
-
-        $this->product = new class extends Product {
-            private $hasCustomerGroupId = false;
-            private $customerGroupId = null;
-            private $priceInfo = null;
-            private $resource = null;
-            
-            public function __construct()
-            {
-            }
-            
-            public function hasCustomerGroupId()
-            {
-                return $this->hasCustomerGroupId;
-            }
-            public function setHasCustomerGroupId($value)
-            {
-                $this->hasCustomerGroupId = $value;
-                return $this;
-            }
-            
-            public function getCustomerGroupId()
-            {
-                return $this->customerGroupId;
-            }
-            public function setCustomerGroupId($value)
-            {
-                $this->customerGroupId = $value;
-                return $this;
-            }
-            
-            public function getPriceInfo()
-            {
-                return $this->priceInfo;
-            }
-            public function setPriceInfo($value)
-            {
-                $this->priceInfo = $value;
-                return $this;
-            }
-            
-            public function getResource()
-            {
-                return $this->resource;
-            }
-            public function setResource($value)
-            {
-                $this->resource = $value;
-                return $this;
-            }
-        };
+        $this->product = new ProductTestHelper();
         $this->product->setPriceInfo($this->priceInfo);
         $this->customerGroupRetriever = $this->getMockBuilder(RetrieverInterface::class)
             ->disableOriginalConstructor()

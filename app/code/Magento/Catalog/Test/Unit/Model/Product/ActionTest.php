@@ -17,6 +17,7 @@ use Magento\Eav\Model\Config;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\Indexer\IndexerRegistry;
 use Magento\Framework\Model\ResourceModel\AbstractResource;
+use Magento\Framework\Model\ResourceModel\Test\Unit\Helper\AbstractResourceTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Indexer\Model\Indexer;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -74,54 +75,7 @@ class ActionTest extends TestCase
             WebsiteFactory::class,
             ['create']
         );
-        $this->resource = new class extends AbstractResource {
-            private $updateAttributesResult = null;
-            private $idFieldName = null;
-            private $connection = null;
-            
-            public function __construct()
-            {
-                // Don't call parent constructor to avoid dependencies
-            }
-            
-            protected function _construct()
-            {
-                // Implement abstract method
-            }
-            
-            public function updateAttributes($productIds, $attrData, $storeId)
-            {
-                return $this->updateAttributesResult;
-            }
-            
-            public function setUpdateAttributesResult($result)
-            {
-                $this->updateAttributesResult = $result;
-                return $this;
-            }
-            
-            public function getIdFieldName()
-            {
-                return $this->idFieldName;
-            }
-            
-            public function setIdFieldName($idFieldName)
-            {
-                $this->idFieldName = $idFieldName;
-                return $this;
-            }
-            
-            public function getConnection()
-            {
-                return $this->connection;
-            }
-            
-            public function setConnection($connection)
-            {
-                $this->connection = $connection;
-                return $this;
-            }
-        };
+        $this->resource = new AbstractResourceTestHelper();
         $this->productWebsite = $this->createPartialMock(
             Website::class,
             ['addProducts', 'removeProducts']

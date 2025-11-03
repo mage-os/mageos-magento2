@@ -50,17 +50,9 @@ class FormattedPriceInfoBuilderTest extends TestCase
         $storeId = 1;
         $storeCurrencyCode = 'USD';
 
-        $formattedPriceInfoInterfaceMock = $this->getMockBuilder(FormattedPriceInfoInterface::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['setData'])
-            ->getMock();
-        $priceInfoMock = $this->getMockBuilder(PriceInfoInterface::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getData'])
-            ->getMock();
-        $priceInfoMock->method('getData')->willReturn([
-                'key'=>'1233123'
-            ]);
+        $formattedPriceInfoInterfaceMock = $this->createMock(\Magento\Catalog\Model\ProductRender\FormattedPriceInfo::class);
+        $priceInfoMock = $this->createPartialMock(\Magento\Catalog\Model\ProductRender\PriceInfo::class, []);
+        $priceInfoMock->setData('key', '1233123');
         $this->priceCurrencyMock->expects($this->atLeastOnce())
             ->method('format')
             ->with(

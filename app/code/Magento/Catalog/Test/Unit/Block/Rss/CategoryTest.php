@@ -15,6 +15,7 @@ use Magento\Catalog\Model\CategoryFactory;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ResourceModel\Category\Collection;
 use Magento\Catalog\Model\ResourceModel\Category\Tree;
+use Magento\Catalog\Test\Unit\Helper\TreeTestHelper;
 use Magento\Customer\Model\Session;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Http\Context;
@@ -203,42 +204,11 @@ class CategoryTest extends TestCase
             ->method('getViewConfig')
             ->willReturn($configViewMock);
 
-        $product = new class extends Product {
-            public function __construct()
-            {
-                // Empty constructor for test
-            }
-            
-            public function __sleep()
-            {
-                return [];
-            }
-            
-            public function getName()
-            {
-                return 'Product Name';
-            }
-            
-            public function getProductUrl($useSid = null)
-            {
-                return 'http://magento.com/product.html';
-            }
-            
-            public function getAllowedInRss()
-            {
-                return true;
-            }
-            
-            public function getDescription()
-            {
-                return 'Product Description';
-            }
-            
-            public function getAllowedPriceInRss()
-            {
-                return true;
-            }
-        };
+        $product = $this->createPartialMock(Product::class, ['getName', 'getProductUrl']);
+        $product->method('getName')->willReturn('Product Name');
+        $product->method('getProductUrl')->willReturn('http://magento.com/product.html');
+        $product->setData('description', 'Product Description');
+        $product->setAllowedInRss(true);
 
         $this->rssModel->expects($this->once())->method('getProductCollection')
             ->willReturn([$product]);
@@ -333,34 +303,10 @@ class CategoryTest extends TestCase
             ->getMock();
         $nodes->expects($this->once())->method('getChildren')->willReturn([$node]);
 
-        $tree = new class extends Tree {
-            private $nodes;
-            
-            public function __construct()
-            {
-                // Empty constructor for test
-            }
-            
-            public function loadNode($nodeId)
-            {
-                return $this;
-            }
-            
-            public function loadChildren()
-            {
-                return $this->nodes;
-            }
-            
-            public function setNodes($nodes)
-            {
-                $this->nodes = $nodes;
-                return $this;
-            }
-        };
+        $tree = new TreeTestHelper();
         $tree->setNodes($nodes);
 
         $category->expects($this->once())->method('getTreeModel')->willReturn($tree);
-        $category->expects($this->once())->method('getResourceCollection')->willReturn('');
 
         $this->rssUrlBuilder->expects($this->once())->method('getUrl')
             ->willReturn('http://magento.com/category-name.html');

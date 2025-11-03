@@ -15,11 +15,14 @@ use Magento\Eav\Model\Config;
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
 use Magento\Eav\Model\Entity\Attribute\Backend\AbstractBackend;
 use Magento\Eav\Model\ResourceModel\Entity\Type;
+use Magento\Eav\Test\Unit\Helper\AbstractBackendTestHelper;
 use Magento\Framework\App\ResourceConnection;
+use Magento\Framework\App\Test\Unit\Helper\ResourceConnectionTestHelper;
 use Magento\Framework\DB\Adapter\AdapterInterface as Adapter;
 use Magento\Framework\MessageQueue\PoisonPill\PoisonPillPutInterface;
 use Magento\Framework\Model\AbstractModel;
 use Magento\Framework\Model\ResourceModel\Db\Context;
+use Magento\Framework\Model\Test\Unit\Helper\AbstractModelTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\DB\Select;
 use Magento\Store\Model\StoreManagerInterface;
@@ -97,36 +100,7 @@ class AttributeTest extends TestCase
         $this->connectionMock = $this->createMock(Adapter::class);
         $this->connectionMock->expects($this->once())->method('delete')->willReturn($this->selectMock);
 
-        $this->resourceMock = new class extends ResourceConnection {
-            private $deleteResult = null;
-            private $connection = null;
-            
-            public function __construct()
-            {
-            }
-            
-            public function delete($table, $where = '', $adapter = null)
-            {
-                return $this->deleteResult;
-            }
-            
-            public function setDeleteResult($result)
-            {
-                $this->deleteResult = $result;
-                return $this;
-            }
-            
-            public function getConnection($connectionName = ResourceConnection::DEFAULT_CONNECTION)
-            {
-                return $this->connection;
-            }
-            
-            public function setConnection($connection)
-            {
-                $this->connection = $connection;
-                return $this;
-            }
-        };
+        $this->resourceMock = new ResourceConnectionTestHelper();
 
         $this->contextMock = $this->getMockBuilder(Context::class)
             ->disableOriginalConstructor()
@@ -192,36 +166,7 @@ class AttributeTest extends TestCase
             ->with($entityTypeId, $result['attribute_id'])
             ->willReturn($eavAttributeMock);
 
-        $abstractModelMock = new class extends AbstractModel {
-            private $entityAttributeId = null;
-            private $entityTypeId = null;
-            
-            public function __construct()
-            {
-            }
-            
-            public function getEntityAttributeId()
-            {
-                return $this->entityAttributeId;
-            }
-            
-            public function setEntityAttributeId($entityAttributeId)
-            {
-                $this->entityAttributeId = $entityAttributeId;
-                return $this;
-            }
-            
-            public function getEntityTypeId()
-            {
-                return $this->entityTypeId;
-            }
-            
-            public function setEntityTypeId($entityTypeId)
-            {
-                $this->entityTypeId = $entityTypeId;
-                return $this;
-            }
-        };
+        $abstractModelMock = new AbstractModelTestHelper();
         $abstractModelMock->setEntityAttributeId($entityAttributeId);
         $abstractModelMock->setEntityTypeId($entityTypeId);
 
@@ -230,36 +175,7 @@ class AttributeTest extends TestCase
             ->with($eavAttributeMock, $result['attribute_set_id'])
             ->willReturn(true);
 
-        $backendModelMock = new class extends AbstractBackend {
-            private $backend = null;
-            private $table = null;
-            
-            public function __construct()
-            {
-            }
-            
-            public function getBackend()
-            {
-                return $this->backend;
-            }
-            
-            public function setBackend($backend)
-            {
-                $this->backend = $backend;
-                return $this;
-            }
-            
-            public function getTable()
-            {
-                return $this->table;
-            }
-            
-            public function setTable($table)
-            {
-                $this->table = $table;
-                return $this;
-            }
-        };
+        $backendModelMock = new AbstractBackendTestHelper();
 
         $abstractAttributeMock = $this->createMock(AbstractAttribute::class);
 

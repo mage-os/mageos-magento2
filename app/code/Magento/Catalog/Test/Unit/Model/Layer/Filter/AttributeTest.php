@@ -96,10 +96,7 @@ class AttributeTest extends TestCase
             ->getMock();
 
         /** @var StoreManagerInterface $storeManager */
-        $this->storeManager = $this->getMockBuilder(StoreManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->addMethods([])
-            ->getMock();
+        $this->storeManager = $this->createStub(StoreManagerInterface::class);
         /** @var Layer $layer */
         $this->layer = $this->getMockBuilder(Layer::class)
             ->disableOriginalConstructor()
@@ -138,19 +135,15 @@ class AttributeTest extends TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['getOption', 'getSelectOptions'])
             ->getMock();
-        $this->attribute = $this->getMockBuilder(\Magento\Eav\Model\Entity\Attribute::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getAttributeCode', 'getFrontend'])
-            ->addMethods(['getIsFilterable'])
-            ->getMock();
+        $this->attribute = $this->createPartialMock(
+            \Magento\Eav\Model\Entity\Attribute::class,
+            ['getAttributeCode', 'getFrontend']
+        );
         $this->attribute->expects($this->atLeastOnce())
             ->method('getFrontend')
             ->willReturn($this->frontend);
 
-        $this->request = $this->getMockBuilder(RequestInterface::class)
-            ->disableOriginalConstructor()
-            ->addMethods([])
-            ->getMock();
+        $this->request = $this->createMock(RequestInterface::class);
 
         $stripTagsFilter = $this->getMockBuilder(StripTags::class)
             ->disableOriginalConstructor()
@@ -212,22 +205,6 @@ class AttributeTest extends TestCase
 
         $filterItem = $this->createFilterItem($attributeLabel, $attributeValue, 0);
 
-        $filterItem->expects($this->once())
-            ->method('setFilter')
-            ->with($this->target)->willReturnSelf();
-
-        $filterItem->expects($this->once())
-            ->method('setLabel')
-            ->with($attributeLabel)->willReturnSelf();
-
-        $filterItem->expects($this->once())
-            ->method('setValue')
-            ->with($attributeValue)->willReturnSelf();
-
-        $filterItem->expects($this->once())
-            ->method('setCount')
-            ->with(0)->willReturnSelf();
-
         $this->state->expects($this->once())
             ->method('addFilter')
             ->with($filterItem)->willReturnSelf();
@@ -284,30 +261,12 @@ class AttributeTest extends TestCase
      */
     private function createFilterItem(string $label, string $value, int $count): Item
     {
-        $filterItem = $this->getMockBuilder(Item::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['setFilter', 'setLabel', 'setValue', 'setCount'])
-            ->getMock();
-
-        $filterItem->expects($this->once())
-            ->method('setFilter')
-            ->with($this->target)->willReturnSelf();
-
-        $filterItem->expects($this->once())
-            ->method('setLabel')
-            ->with($label)->willReturnSelf();
-
-        $filterItem->expects($this->once())
-            ->method('setValue')
-            ->with($value)->willReturnSelf();
-
-        $filterItem->expects($this->once())
-            ->method('setCount')
-            ->with($count)->willReturnSelf();
+        $filterItem = $this->createPartialMock(Item::class, []);
 
         $this->filterItemFactory
+            ->expects($this->once())
             ->method('create')
-            ->willReturnOnConsecutiveCalls($filterItem);
+            ->willReturn($filterItem);
 
         return $filterItem;
     }

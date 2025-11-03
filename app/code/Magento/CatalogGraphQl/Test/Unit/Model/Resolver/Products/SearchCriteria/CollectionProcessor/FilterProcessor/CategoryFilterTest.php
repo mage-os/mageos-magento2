@@ -12,6 +12,7 @@ use Magento\Catalog\Model\CategoryFactory;
 use Magento\Catalog\Model\ResourceModel\Category;
 use Magento\Catalog\Model\ResourceModel\Product\Collection;
 use Magento\Catalog\Model\ResourceModel\Product\Collection\JoinMinimalPosition;
+use Magento\Catalog\Test\Unit\Helper\CategoryTestHelper;
 use Magento\CatalogGraphQl\Model\Resolver\Products\SearchCriteria\CollectionProcessor\FilterProcessor\CategoryFilter;
 use Magento\Framework\Api\Filter;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -64,95 +65,20 @@ class CategoryFilterTest extends TestCase
     public function testApplyWithConditionTypeInAndMultipleCategories(): void
     {
         $filter = new Filter();
-        $category1 = new class extends \Magento\Catalog\Model\Category {
-            private $isAnchor = false;
-            private $children = '';
-            
-            public function __construct() {}
-            
-            public function getIsAnchor() {
-                return $this->isAnchor;
-            }
-            
-            public function setIsAnchor($isAnchor) {
-                $this->isAnchor = $isAnchor;
-                return $this;
-            }
-            
-            public function getChildren($recursive = true, $isActive = true, $sortByPosition = true) {
-                return $this->children;
-            }
-            
-            public function setChildren($children) {
-                $this->children = $children;
-                return $this;
-            }
-            
-            // CategoryInterface methods
-            public function getId() { return null; }
-            public function setId($id) { return $this; }
-            public function getParentId() { return null; }
-            public function setParentId($parentId) { return $this; }
-            public function getName() { return null; }
-            public function setName($name) { return $this; }
-            public function getIsActive() { return null; }
-            public function setIsActive($isActive) { return $this; }
-            public function getPosition() { return null; }
-            public function setPosition($position) { return $this; }
-            public function getLevel() { return null; }
-            public function setLevel($level) { return $this; }
-            public function getCreatedAt() { return null; }
-            public function setCreatedAt($createdAt) { return $this; }
-            public function getUpdatedAt() { return null; }
-            public function setUpdatedAt($updatedAt) { return $this; }
-            public function getPath() { return null; }
-            public function setPath($path) { return $this; }
-            public function getAvailableSortBy() { return null; }
-            public function setAvailableSortBy($availableSortBy) { return $this; }
-            public function getIncludeInMenu() { return null; }
-            public function setIncludeInMenu($includeInMenu) { return $this; }
-            public function getProductCount() { return null; }
-            public function setProductCount($productCount) { return $this; }
-            public function getChildrenData() { return null; }
-            public function setChildrenData(?array $childrenData = null) { return $this; }
-            public function getExtensionAttributes() { return null; }
-            public function setExtensionAttributes($extensionAttributes) { return $this; }
-            public function getCustomAttribute($attributeCode) { return null; }
-            public function setCustomAttribute($attributeCode, $attributeValue) { return $this; }
-            public function getCustomAttributes() { return []; }
-            public function setCustomAttributes(array $attributes) { return $this; }
-        };
+        $category1 = new CategoryTestHelper();
         
-        $category3 = new class extends \Magento\Catalog\Model\Category {
-            private $isAnchor = false;
-            private $children = '';
-            
-            public function __construct() {}
-            
-            public function getIsAnchor() {
-                return $this->isAnchor;
-            }
-            
-            public function setIsAnchor($isAnchor) {
-                $this->isAnchor = $isAnchor;
-                return $this;
-            }
-            
-            public function getChildren($recursive = true, $isActive = true, $sortByPosition = true) {
-                return $this->children;
-            }
-            
-            public function setChildren($children) {
-                $this->children = $children;
-                return $this;
-            }
-        };
+        $category3 = new CategoryTestHelper();
         $collection = $this->createMock(Collection::class);
         $filter->setConditionType('in');
         $filter->setValue('1,3');
+        
+        $createCallCount = 0;
         $this->categoryFactory->expects($this->exactly(2))
             ->method('create')
-            ->willReturnOnConsecutiveCalls($category1, $category3);
+            ->willReturnCallback(function () use (&$createCallCount, $category1, $category3) {
+                $createCallCount++;
+                return $createCallCount === 1 ? $category1 : $category3;
+            });
         $this->categoryResourceModel->expects($this->exactly(2))
             ->method('load')
             ->willReturnCallback(function (...$args) use ($category1, $category3) {
@@ -187,30 +113,7 @@ class CategoryFilterTest extends TestCase
     public function testApplyWithOtherSupportedConditionTypes(string $condition): void
     {
         $filter = new Filter();
-        $category = new class extends \Magento\Catalog\Model\Category {
-            private $isAnchor = false;
-            private $children = '';
-            
-            public function __construct() {}
-            
-            public function getIsAnchor() {
-                return $this->isAnchor;
-            }
-            
-            public function setIsAnchor($isAnchor) {
-                $this->isAnchor = $isAnchor;
-                return $this;
-            }
-            
-            public function getChildren($recursive = true, $isActive = true, $sortByPosition = true) {
-                return $this->children;
-            }
-            
-            public function setChildren($children) {
-                $this->children = $children;
-                return $this;
-            }
-        };
+        $category = new CategoryTestHelper();
         $collection = $this->createMock(Collection::class);
         $filter->setConditionType($condition);
         $categoryId = 1;

@@ -12,6 +12,7 @@ use Magento\Catalog\Model\Product\Website\SaveHandler;
 use Magento\Catalog\Model\ResourceModel\Product as ResourceModel;
 use Magento\Catalog\Model\ResourceModel\Product\Website\Link;
 use Magento\Framework\Api\ExtensionAttributesInterface;
+use Magento\Framework\Api\Test\Unit\Helper\ExtensionAttributesTestHelper;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -48,24 +49,7 @@ class SaveHandlerTest extends TestCase
             ->method("isSingleStoreMode")
             ->willReturn(false);
         /** @var ExtensionAttributesInterface $extensionAttributes */
-        $extensionAttributes = new class {
-            private $websiteIds = null;
-            
-            public function __construct()
-            {
-            }
-            
-            public function getWebsiteIds()
-            {
-                return $this->websiteIds;
-            }
-            
-            public function setWebsiteIds($value)
-            {
-                $this->websiteIds = $value;
-                return $this;
-            }
-        };
+        $extensionAttributes = new ExtensionAttributesTestHelper();
         $extensionAttributes->setWebsiteIds($websiteIds);
         $this->product->expects($this->once())
             ->method('getExtensionAttributes')
@@ -80,24 +64,7 @@ class SaveHandlerTest extends TestCase
     public function testWithEmptyWebsiteIds()
     {
         /** @var ExtensionAttributesInterface $extensionAttributes */
-        $extensionAttributes = new class {
-            private $websiteIds = null;
-            
-            public function __construct()
-            {
-            }
-            
-            public function getWebsiteIds()
-            {
-                return $this->websiteIds;
-            }
-            
-            public function setWebsiteIds($value)
-            {
-                $this->websiteIds = $value;
-                return $this;
-            }
-        };
+        $extensionAttributes = new ExtensionAttributesTestHelper();
         $this->product->expects($this->once())
             ->method('getExtensionAttributes')
             ->willReturn($extensionAttributes);

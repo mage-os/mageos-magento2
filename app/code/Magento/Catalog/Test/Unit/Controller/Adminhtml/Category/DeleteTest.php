@@ -13,6 +13,7 @@ use Magento\Backend\Model\Auth\Session;
 use Magento\Backend\Model\Auth\StorageInterface;
 use Magento\Backend\Model\View\Result\Redirect;
 use Magento\Backend\Model\View\Result\RedirectFactory;
+use Magento\Backend\Test\Unit\Helper\AuthStorageTestHelper;
 use Magento\Catalog\Api\CategoryRepositoryInterface;
 use Magento\Catalog\Controller\Adminhtml\Category\Delete;
 use Magento\Catalog\Model\Category;
@@ -81,28 +82,7 @@ class DeleteTest extends TestCase
             ['getParam', 'getPost']
         );
         $auth = $this->createPartialMock(Auth::class, ['getAuthStorage']);
-        $this->authStorage = new class implements StorageInterface {
-            public function processLogin()
-            {
-                return $this;
-            }
-            public function processLogout()
-            {
-                return $this;
-            }
-            public function isLoggedIn()
-            {
-                return true;
-            }
-            public function prolong()
-            {
-                return;
-            }
-            public function setDeletedPath($path)
-            {
-                return $this;
-            }
-        };
+        $this->authStorage = new AuthStorageTestHelper();
         $eventManager = $this->createMock(
             ManagerInterface::class,
             [],

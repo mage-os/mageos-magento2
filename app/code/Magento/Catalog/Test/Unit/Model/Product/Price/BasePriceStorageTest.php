@@ -19,11 +19,14 @@ use Magento\Catalog\Model\Product\Price\PricePersistenceFactory;
 use Magento\Catalog\Model\Product\Price\Validation\InvalidSkuProcessor;
 use Magento\Catalog\Model\Product\Price\Validation\Result;
 use Magento\Catalog\Model\ProductIdLocatorInterface;
+use Magento\Eav\Test\Unit\Helper\AbstractAttributeTestHelper;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Api\Data\WebsiteInterface;
 use Magento\Store\Api\StoreRepositoryInterface;
+use Magento\Store\Test\Unit\Helper\StoreTestHelper;
+use Magento\Store\Test\Unit\Helper\WebsiteTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -215,36 +218,10 @@ class BasePriceStorageTest extends TestCase
     public function testUpdate(bool $isScopeWebsite, bool $isScopeGlobal, array $formattedPrices)
     {
         /** @var WebsiteInterface $website */
-        $website = new class {
-            private $storeIds = null;
-            
-            public function getStoreIds()
-            {
-                return $this->storeIds;
-            }
-            
-            public function setStoreIds($storeIds)
-            {
-                $this->storeIds = $storeIds;
-                return $this;
-            }
-        };
+        $website = new WebsiteTestHelper();
         $website->setStoreIds([1 => 1, 2 => 2]);
         /** @var StoreInterface $store */
-        $store = new class {
-            private $website = null;
-            
-            public function getWebsite()
-            {
-                return $this->website;
-            }
-            
-            public function setWebsite($website)
-            {
-                $this->website = $website;
-                return $this;
-            }
-        };
+        $store = new StoreTestHelper();
         $store->setWebsite($website);
         $sku = 'sku_1';
         $idsBySku = [
@@ -276,32 +253,7 @@ class BasePriceStorageTest extends TestCase
         $this->pricePersistence->expects($this->any())->method('update')->with($formattedPrices);
         $this->validationResult->method('getFailedItems')->willReturn([]);
         /** @var ProductAttributeInterface $attribute */
-        $attribute = new class {
-            private $isScopeWebsite = null;
-            private $isScopeGlobal = null;
-            
-            public function isScopeWebsite()
-            {
-                return $this->isScopeWebsite;
-            }
-            
-            public function setIsScopeWebsite($value)
-            {
-                $this->isScopeWebsite = $value;
-                return $this;
-            }
-            
-            public function isScopeGlobal()
-            {
-                return $this->isScopeGlobal;
-            }
-            
-            public function setIsScopeGlobal($value)
-            {
-                $this->isScopeGlobal = $value;
-                return $this;
-            }
-        };
+        $attribute = new AbstractAttributeTestHelper();
         $attribute->setIsScopeWebsite($isScopeWebsite);
         $attribute->setIsScopeGlobal($isScopeGlobal);
         $this->productAttributeRepository

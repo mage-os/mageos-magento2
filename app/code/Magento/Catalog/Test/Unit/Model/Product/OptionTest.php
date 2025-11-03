@@ -12,6 +12,7 @@ use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Option;
 use Magento\Catalog\Model\Product\Option\Value;
 use Magento\Framework\Pricing\Amount\AmountInterface;
+use Magento\Framework\Pricing\Price\PriceInterface;
 use Magento\Framework\Pricing\PriceInfoInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -55,18 +56,12 @@ class OptionTest extends TestCase
 
     public function testGetRegularPrice()
     {
-        $priceInfoMock = $this->createMock(
-            PriceInfoInterface::class,
-            [],
-            '',
-            false,
-            false,
-            true,
-            ['getAmount', 'getPrice']
-        );
-        $priceInfoMock->expects($this->once())->method('getPrice')->willReturnSelf();
+        $priceInfoMock = $this->createStub(PriceInfoInterface::class);
+        $priceMock = $this->createStub(PriceInterface::class);
         $amountMock = $this->createMock(AmountInterface::class);
-        $priceInfoMock->expects($this->once())->method('getAmount')->willReturn($amountMock);
+        
+        $priceMock->method('getAmount')->willReturn($amountMock);
+        $priceInfoMock->method('getPrice')->willReturn($priceMock);
 
         $this->productMock->expects($this->once())->method('getPriceInfo')->willReturn($priceInfoMock);
 

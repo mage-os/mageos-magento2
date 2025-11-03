@@ -96,25 +96,9 @@ class ReadHandlerTest extends TestCase
             ->getMock();
 
         /** @var ProductExtensionInterface $extensionAttributes */
-        $extensionAttributes = new class implements ProductExtensionInterface {
-            private $categoryLinks = null;
-            
-            public function __construct()
-            {
-            }
-            
-            public function setCategoryLinks($categoryLinks)
-            {
-                $this->categoryLinks = $categoryLinks;
-                return $this;
-            }
-            
-            public function getCategoryLinks()
-            {
-                return $this->categoryLinks;
-            }
-        };
-        $extensionAttributes->setCategoryLinks($dtoCategoryLinks);
+        $extensionAttributes = $this->createStub(ProductExtensionInterface::class);
+        $extensionAttributes->method('getCategoryLinks')->willReturn($dtoCategoryLinks);
+        $extensionAttributes->method('setCategoryLinks')->willReturnSelf();
 
         $product->expects(static::once())
             ->method('getExtensionAttributes')
@@ -144,25 +128,9 @@ class ReadHandlerTest extends TestCase
             ->getMock();
 
         /** @var ProductExtensionInterface $extensionAttributes */
-        $extensionAttributes = new class implements ProductExtensionInterface {
-            private $categoryLinks = null;
-            
-            public function __construct()
-            {
-            }
-            
-            public function setCategoryLinks($categoryLinks)
-            {
-                $this->categoryLinks = $categoryLinks;
-                return $this;
-            }
-            
-            public function getCategoryLinks()
-            {
-                return $this->categoryLinks;
-            }
-        };
-        $extensionAttributes->setCategoryLinks(null);
+        $extensionAttributes = $this->createStub(ProductExtensionInterface::class);
+        $extensionAttributes->method('getCategoryLinks')->willReturn(null);
+        $extensionAttributes->method('setCategoryLinks')->willReturnSelf();
 
         $product->expects(static::once())
             ->method('getExtensionAttributes')

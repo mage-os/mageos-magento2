@@ -23,6 +23,7 @@ use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\View\Layout;
 use Magento\Framework\Session\Storage;
+use Magento\Framework\Session\Test\Unit\Helper\StorageTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -50,26 +51,10 @@ class ShowUpdateResultTest extends TestCase
      */
     protected function getSession()
     {
-        // Create a custom storage class that implements the required methods
-        $storage = new class extends Storage {
-            public function hasCompositeProductResult()
-            {
-                return true;
-            }
-            
-            public function getCompositeProductResult()
-            {
-                return new DataObject();
-            }
-            
-            public function unsCompositeProductResult()
-            {
-                return $this;
-            }
-        };
-        
+        $storage = new StorageTestHelper();
+
         $session = $this->createPartialMock(Session::class, []);
-        
+
         // Use reflection to set the storage property
         $reflection = new \ReflectionClass($session);
         $storageProperty = $reflection->getProperty('storage');

@@ -85,30 +85,14 @@ class SearchTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->search = $this->getMockBuilder(SearchInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->searchResultFactory = $this->getMockBuilder(SearchResultFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->fieldSelection = $this->getMockBuilder(FieldSelection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->argsSelection = $this->getMockBuilder(ArgumentsProcessorInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->productsProvider = $this->getMockBuilder(ProductSearch::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->searchCriteriaBuilder = $this->getMockBuilder(SearchCriteriaBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->suggestions = $this->getMockBuilder(Suggestions::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->queryPopularity = $this->getMockBuilder(QueryPopularity::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->search = $this->createMock(SearchInterface::class);
+        $this->searchResultFactory = $this->createMock(SearchResultFactory::class);
+        $this->fieldSelection = $this->createMock(FieldSelection::class);
+        $this->argsSelection = $this->createMock(ArgumentsProcessorInterface::class);
+        $this->productsProvider = $this->createMock(ProductSearch::class);
+        $this->searchCriteriaBuilder = $this->createMock(SearchCriteriaBuilder::class);
+        $this->suggestions = $this->createMock(Suggestions::class);
+        $this->queryPopularity = $this->createMock(QueryPopularity::class);
         $this->model = new Search(
             $this->search,
             $this->searchResultFactory,
@@ -124,20 +108,12 @@ class SearchTest extends TestCase
     public function testPopulateSearchQueryStats(): void
     {
         $args = ['search' => 'test', 'pageSize' => 10, 'currentPage' => 1];
-        $context = $this->getMockBuilder(ContextInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $resolveInfo = $this->getMockBuilder(ResolveInfo::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $context = $this->createMock(ContextInterface::class);
+        $resolveInfo = $this->createMock(ResolveInfo::class);
 
-        $searchCriteria = $this->getMockBuilder(SearchCriteriaInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $searchCriteria = $this->createMock(SearchCriteriaInterface::class);
         $this->searchCriteriaBuilder->method('build')->willReturn($searchCriteria);
-        $results = $this->getMockBuilder(SearchResultInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $results = $this->createMock(SearchResultInterface::class);
         $this->search->expects($this->once())
             ->method('search')
             ->with($searchCriteria)

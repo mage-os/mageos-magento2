@@ -112,8 +112,7 @@ class RelatedTest extends AbstractModifierTestCase
         $products = $this->getProducts();
         $priceModifier->method('prepareDataSource')
             ->willReturnArgument(0);
-        $this->productMock->method('getId')
-            ->willReturn($currentProductId);
+        $this->productMock->setData('entity_id', $currentProductId);
         $this->storeMock->method('getId')
             ->willReturn($currentStoreId);
         $this->imageHelper->method('init')

@@ -13,6 +13,7 @@ use Magento\Catalog\Model\Product\Link;
 use Magento\Catalog\Model\Product\Link\SaveHandler;
 use Magento\Catalog\Model\ResourceModel\Product\Link\Collection;
 use Magento\Catalog\Model\ResourceModel\Product\Link\CollectionFactory;
+use Magento\Catalog\Test\Unit\Helper\ProductLinkResourceTestHelper;
 use Magento\Framework\Model\ResourceModel\AbstractResource;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -71,90 +72,7 @@ class LinkTest extends TestCase
             )->getMock();
         $productCollectionFactory->method('create')->willReturn($this->productCollection);
 
-        $this->resource = new class extends AbstractResource {
-            private $saveProductLinksResult = null;
-            private $attributeTypeTable = null;
-            private $attributesByType = null;
-            private $table = null;
-            private $idFieldName = null;
-            private $connection = null;
-            
-            public function __construct()
-            {
-                // Don't call parent constructor to avoid dependencies
-            }
-            
-            protected function _construct()
-            {
-                // Implement abstract method
-            }
-            
-            public function saveProductLinks($productId, $linkData, $typeId)
-            {
-                return $this->saveProductLinksResult;
-            }
-            
-            public function setSaveProductLinksResult($result)
-            {
-                $this->saveProductLinksResult = $result;
-                return $this;
-            }
-            
-            public function getAttributeTypeTable($attributeType)
-            {
-                return $this->attributeTypeTable;
-            }
-            
-            public function setAttributeTypeTable($attributeTypeTable)
-            {
-                $this->attributeTypeTable = $attributeTypeTable;
-                return $this;
-            }
-            
-            public function getAttributesByType($typeId)
-            {
-                return $this->attributesByType;
-            }
-            
-            public function setAttributesByType($attributesByType)
-            {
-                $this->attributesByType = $attributesByType;
-                return $this;
-            }
-            
-            public function getTable($tableName)
-            {
-                return $this->table;
-            }
-            
-            public function setTable($table)
-            {
-                $this->table = $table;
-                return $this;
-            }
-            
-            public function getIdFieldName()
-            {
-                return $this->idFieldName;
-            }
-            
-            public function setIdFieldName($idFieldName)
-            {
-                $this->idFieldName = $idFieldName;
-                return $this;
-            }
-            
-            public function getConnection()
-            {
-                return $this->connection;
-            }
-            
-            public function setConnection($connection)
-            {
-                $this->connection = $connection;
-                return $this;
-            }
-        };
+        $this->resource = new ProductLinkResourceTestHelper();
 
         $this->saveProductLinksMock = $this->getMockBuilder(SaveHandler::class)
             ->disableOriginalConstructor()

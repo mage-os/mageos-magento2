@@ -19,6 +19,7 @@ use Magento\Catalog\Model\ResourceModel\Product\Price\BasePriceFactory;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Select;
 use Magento\Framework\EntityManager\MetadataPool;
+use Magento\Framework\EntityManager\Test\Unit\Helper\MetadataPoolTestHelper;
 use Magento\Framework\Stdlib\DateTime\DateTime;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -80,37 +81,7 @@ class PricePersistenceTest extends TestCase
             ->getMock();
         $this->attributeRepository = $this->createMock(ProductAttributeRepositoryInterface::class);
         $this->productIdLocator = $this->createMock(ProductIdLocatorInterface::class);
-        $this->metadataPool = new class extends MetadataPool {
-            private $linkField = null;
-            protected $metadata = null;
-            
-            public function __construct()
-            {
-                // Don't call parent constructor to avoid dependencies
-            }
-            
-            public function getLinkField()
-            {
-                return $this->linkField;
-            }
-            
-            public function setLinkField($linkField)
-            {
-                $this->linkField = $linkField;
-                return $this;
-            }
-            
-            public function getMetadata($entityType)
-            {
-                return $this->metadata ?: $this;
-            }
-            
-            public function setMetadata($metadata)
-            {
-                $this->metadata = $metadata;
-                return $this;
-            }
-        };
+        $this->metadataPool = new MetadataPoolTestHelper();
         $this->connection = $this->createMock(AdapterInterface::class);
         $this->productAttribute = $this->createMock(ProductAttributeInterface::class);
         $this->basePriceFactory = $this->getMockBuilder(BasePriceFactory::class)

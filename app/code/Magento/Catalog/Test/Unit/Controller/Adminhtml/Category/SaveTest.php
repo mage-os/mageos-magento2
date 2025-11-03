@@ -260,16 +260,8 @@ class SaveTest extends TestCase
         /**
          * @var Config|MockObject $wysiwygConfigMock
          */
-        $wysiwygConfigMock = new class extends Config {
-            public function __construct()
-            {
-                // Empty constructor
-            }
-            public function setStoreId($storeId)
-            {
-                return $this;
-            }
-        };
+        $wysiwygConfigMock = $this->createPartialMock(Config::class, []);
+        $wysiwygConfigMock->method('setStoreId')->willReturnSelf();
         /**
          * @var StoreManagerInterface|MockObject $storeManagerMock
          */

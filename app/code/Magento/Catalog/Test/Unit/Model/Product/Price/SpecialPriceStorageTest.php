@@ -13,6 +13,7 @@ use Magento\Catalog\Model\Product\Price\SpecialPriceStorage;
 use Magento\Catalog\Model\Product\Price\Validation\InvalidSkuProcessor;
 use Magento\Catalog\Model\Product\Price\Validation\Result;
 use Magento\Catalog\Model\ProductIdLocatorInterface;
+use Magento\Catalog\Test\Unit\Helper\SpecialPriceTestHelper;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Api\StoreRepositoryInterface;
@@ -67,56 +68,7 @@ class SpecialPriceStorageTest extends TestCase
     protected function setUp(): void
     {
         /** @var SpecialPriceInterface $this->specialPriceResource */
-        $this->specialPriceResource = new class implements SpecialPriceInterface {
-            private $entityLinkField = null;
-            private $getResult = null;
-            private $updateResult = null;
-            private $deleteResult = null;
-            
-            public function getEntityLinkField()
-            {
-                return $this->entityLinkField;
-            }
-            
-            public function setEntityLinkField($field)
-            {
-                $this->entityLinkField = $field;
-                return $this;
-            }
-            
-            public function get($skus)
-            {
-                return $this->getResult;
-            }
-            
-            public function setGetResult($result)
-            {
-                $this->getResult = $result;
-                return $this;
-            }
-            
-            public function update($prices)
-            {
-                return $this->updateResult;
-            }
-            
-            public function setUpdateResult($result)
-            {
-                $this->updateResult = $result;
-                return $this;
-            }
-            
-            public function delete($skus)
-            {
-                return $this->deleteResult;
-            }
-            
-            public function setDeleteResult($result)
-            {
-                $this->deleteResult = $result;
-                return $this;
-            }
-        };
+        $this->specialPriceResource = new SpecialPriceTestHelper();
         $this->productIdLocator = $this->createMock(ProductIdLocatorInterface::class);
         $this->storeRepository = $this->createMock(StoreRepositoryInterface::class);
         $this->invalidSkuProcessor = $this

@@ -16,6 +16,7 @@ use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Store\Test\Unit\Helper\StoreTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 
 class CustomOptionsTest extends AbstractModifierTestCase
@@ -60,58 +61,17 @@ class CustomOptionsTest extends AbstractModifierTestCase
             ->getMock();
         $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
         /** @var StoreInterface $this->storeMock */
-        $this->storeMock = new class implements StoreInterface {
-            private $baseCurrency = null;
-            
-            public function __construct() {}
-            
-            public function getBaseCurrency() { 
-                return $this->baseCurrency; 
-            }
-            public function setBaseCurrency($value) { 
-                $this->baseCurrency = $value; 
-                return $this; 
-            }
-            
-            // Required StoreInterface methods
-            public function getId() { return 1; }
-            public function setId($id) { return $this; }
-            public function getCode() { return 'default'; }
-            public function setCode($code) { return $this; }
-            public function getName() { return 'Default Store'; }
-            public function setName($name) { return $this; }
-            public function getWebsiteId() { return 1; }
-            public function setWebsiteId($websiteId) { return $this; }
-            public function getStoreGroupId() { return 1; }
-            public function setStoreGroupId($storeGroupId) { return $this; }
-            public function getIsActive() { return true; }
-            public function setIsActive($isActive) { return $this; }
-            public function getSortOrder() { return 0; }
-            public function setSortOrder($sortOrder) { return $this; }
-            public function getExtensionAttributes() { return null; }
-            public function setExtensionAttributes($extensionAttributes) { return $this; }
-        };
+        $this->storeMock = new StoreTestHelper();
         $this->priceCurrency = $this->createMock(PriceCurrencyInterface::class);
 
         $this->storeManagerMock->method('getStore')->willReturn($this->storeMock);
         $this->storeMock->setBaseCurrency($this->priceCurrency);
         
-        // Override the parent's productMock with a proper mock of Product class
-        $this->productMock = $this->createPartialMock(Product::class, ['getId', 'setId', 'getOptions', 'setOptions']);
+        // Configure productMock to handle getOptions properly
+        $productState = new \stdClass();
+        $productState->options = [];
         
-        // Configure getOptions to return the data set via setOptions
-        $this->productMock->method('setOptions')->willReturnCallback(function($options) {
-            $this->productMock->method('getOptions')->willReturn($options);
-            return $this->productMock;
-        });
-        
-        // Configure getId to return the ID set via setId
-        $this->productMock->method('setId')->willReturnCallback(function($id) {
-            $this->productMock->method('getId')->willReturn($id);
-            return $this->productMock;
-        });
-        
-        $this->locatorMock->method('getProduct')->willReturn($this->productMock);
+        $this->productMock->productState = $productState;
     }
 
     /**
@@ -181,8 +141,14 @@ class CustomOptionsTest extends AbstractModifierTestCase
             ]
         ];
 
+        // Set product ID and options
         $this->productMock->setId($productId);
-        $this->productMock->setOptions($options);
+        $this->productMock->productState->options = $options;
+        
+        // Configure getOptions to return from state
+        $this->productMock->method('getOptions')->willReturnCallback(function () {
+            return $this->productMock->productState->options;
+        });
 
         $this->assertSame($resultData, $this->getModel()->modifyData($originalData));
     }

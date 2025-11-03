@@ -68,7 +68,6 @@ use Magento\Store\Model\Website;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
-use Magento\Catalog\Test\Unit\Model\TestProduct;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -279,10 +278,7 @@ class ProductTest extends TestCase
             Manager::class,
             ['isEnabled']
         );
-        $this->extensionAttributes = $this->getMockBuilder(TestProduct::class)
-            ->onlyMethods(['getWebsiteIds', 'setWebsiteIds'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->extensionAttributes = $this->createStub(ProductExtensionInterface::class);
 
         // $this->extensionAttributes = $this->getMockBuilder(\Magento\Catalog\Model\Product::class)
         // ->onlyMethods(['getWebsiteIds', 'setWebsiteIds'])
@@ -430,9 +426,7 @@ class ProductTest extends TestCase
         $this->mediaConfig = $this->createMock(\Magento\Catalog\Model\Product\Media\Config::class);
         $this->eavConfig = $this->createMock(Config::class);
 
-        $this->productExtAttributes = $this->getMockBuilder(TestProduct::class)
-            ->onlyMethods(['getStockItem'])
-            ->getMock();
+        $this->productExtAttributes = $this->createStub(ProductExtensionInterface::class);
         $this->extensionAttributesFactory
             ->method('create')->willReturn($this->productExtAttributes);
 
@@ -885,13 +879,8 @@ class ProductTest extends TestCase
 
     protected function getMockForExtensionAttribute()
     {
-        $extensionAttributesMock = $this->getMockBuilder(TestProduct::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getStockItem'])
-            ->getMock();
-        $stockItemMock = $this->getMockBuilder(StockItemInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $extensionAttributesMock = $this->createStub(ProductExtensionInterface::class);
+        $stockItemMock = $this->createStub(StockItemInterface::class);
         $extensionAttributesMock->method('getStockItem')->willReturn($stockItemMock);
         return $extensionAttributesMock;
     }
@@ -1493,8 +1482,8 @@ class ProductTest extends TestCase
         ];
         $this->model->setData('media_gallery', $mediaEntries);
 
-        $entry1 = new TestProduct();
-        $entry2 = new TestProduct();
+        $entry1 = $this->createMock(ProductAttributeMediaGalleryEntryInterface::class);
+        $entry2 = $this->createMock(ProductAttributeMediaGalleryEntryInterface::class);
 
         $this->converterMock->expects($this->exactly(2))->method('convertTo')->willReturnOnConsecutiveCalls(
             $entry1,
@@ -1530,7 +1519,7 @@ class ProductTest extends TestCase
             ]
         ];
 
-        $entryMock = new TestProduct();
+        $entryMock = $this->createMock(ProductAttributeMediaGalleryEntryInterface::class);
 
         $result = [
             'value_id' => 1,

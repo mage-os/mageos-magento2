@@ -32,24 +32,19 @@ class ReadHandlerTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
         /** @var ProductExtensionInterface $this->extensionAttributesMock */
-        $this->extensionAttributesMock = new class implements ProductExtensionInterface {
-            private $websiteIds = null;
-            
-            public function __construct()
-            {
+        $this->extensionAttributesMock = $this->createStub(ProductExtensionInterface::class);
+        $websiteIds = null;
+        $this->extensionAttributesMock->method('setWebsiteIds')->willReturnCallback(
+            function ($value) use (&$websiteIds) {
+                $websiteIds = $value;
+                return $this->extensionAttributesMock;
             }
-            
-            public function setWebsiteIds($value)
-            {
-                $this->websiteIds = $value;
-                return $this;
+        );
+        $this->extensionAttributesMock->method('getWebsiteIds')->willReturnCallback(
+            function () use (&$websiteIds) {
+                return $websiteIds;
             }
-            
-            public function getWebsiteIds()
-            {
-                return $this->websiteIds;
-            }
-        };
+        );
         $this->readHandler = new ReadHandler($this->websiteLinkMock);
     }
 

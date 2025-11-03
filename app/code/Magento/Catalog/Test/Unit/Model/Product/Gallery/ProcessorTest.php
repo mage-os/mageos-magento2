@@ -14,10 +14,12 @@ use Magento\Catalog\Model\Product\Gallery\Processor;
 use Magento\Catalog\Model\Product\Media\Config;
 use Magento\Catalog\Model\ResourceModel\Product\Gallery;
 use Magento\Eav\Model\Entity\Attribute;
+use Magento\Framework\Data\Test\Unit\Helper\DataObjectTestHelper;
 use Magento\Framework\DataObject;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Directory\Write;
 use Magento\Framework\Model\ResourceModel\AbstractResource;
+use Magento\Framework\Model\ResourceModel\Test\Unit\Helper\AbstractResourceTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\MediaStorage\Helper\File\Storage\Database;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -87,49 +89,7 @@ class ProcessorTest extends TestCase
             Gallery::GALLERY_TABLE
         );
 
-        $this->dataObject = new class extends DataObject {
-            private $isDuplicate = null;
-            private $lockedAttribute = null;
-            private $mediaAttributes = null;
-            
-            public function __construct()
-            {
-                // Don't call parent constructor to avoid dependencies
-            }
-            
-            public function getIsDuplicate()
-            {
-                return $this->isDuplicate;
-            }
-            
-            public function setIsDuplicate($value)
-            {
-                $this->isDuplicate = $value;
-                return $this;
-            }
-            
-            public function isLockedAttribute($attribute)
-            {
-                return $this->lockedAttribute;
-            }
-            
-            public function setLockedAttribute($value)
-            {
-                $this->lockedAttribute = $value;
-                return $this;
-            }
-            
-            public function getMediaAttributes()
-            {
-                return $this->mediaAttributes;
-            }
-            
-            public function setMediaAttributes($attributes)
-            {
-                $this->mediaAttributes = $attributes;
-                return $this;
-            }
-        };
+        $this->dataObject = new DataObjectTestHelper();
 
         $this->model = $this->objectHelper->getObject(
             Processor::class,
@@ -187,42 +147,7 @@ class ProcessorTest extends TestCase
             Attribute::class,
             ['getAttributeCode', 'getIsRequired', 'isValueEmpty', 'getIsUnique', 'getEntity']
         );
-        $attributeEntity = new class extends AbstractResource {
-            private $checkAttributeUniqueValueResult = null;
-            private $connection = null;
-            
-            public function __construct()
-            {
-                // Don't call parent constructor to avoid dependencies
-            }
-            
-            public function checkAttributeUniqueValue($attribute, $object)
-            {
-                return $this->checkAttributeUniqueValueResult;
-            }
-            
-            public function setCheckAttributeUniqueValueResult($result)
-            {
-                $this->checkAttributeUniqueValueResult = $result;
-                return $this;
-            }
-            
-            public function getConnection()
-            {
-                return $this->connection;
-            }
-            
-            public function setConnection($connection)
-            {
-                $this->connection = $connection;
-                return $this;
-            }
-            
-            protected function _construct()
-            {
-                // Abstract method implementation
-            }
-        };
+        $attributeEntity = new AbstractResourceTestHelper();
 
         $attribute->method('getAttributeCode')->willReturn($attributeCode);
         $attribute->method('getIsRequired')->willReturn(true);

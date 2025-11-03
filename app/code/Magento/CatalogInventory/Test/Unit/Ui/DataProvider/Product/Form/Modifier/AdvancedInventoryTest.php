@@ -11,6 +11,7 @@ use Magento\Catalog\Test\Unit\Ui\DataProvider\Product\Form\Modifier\AbstractModi
 use Magento\CatalogInventory\Api\Data\StockItemInterface;
 use Magento\CatalogInventory\Api\StockConfigurationInterface;
 use Magento\CatalogInventory\Api\StockRegistryInterface;
+use Magento\CatalogInventory\Test\Unit\Helper\StockItemTestHelper;
 use Magento\CatalogInventory\Ui\DataProvider\Product\Form\Modifier\AdvancedInventory;
 use Magento\Framework\Serialize\JsonValidator;
 use Magento\Framework\Serialize\Serializer\Json;
@@ -58,82 +59,7 @@ class AdvancedInventoryTest extends AbstractModifierTestCase
         $this->storeMock = $this->getMockBuilder(Store::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->stockItemMock = new class implements StockItemInterface {
-            private $data = [];
-            
-            public function __construct() {}
-            
-            public function getData($key = null) {
-                if ($key === null) {
-                    return $this->data;
-                }
-                return isset($this->data[$key]) ? $this->data[$key] : null;
-            }
-            
-            public function setData($key, $value = null) {
-                if (is_array($key)) {
-                    $this->data = array_merge($this->data, $key);
-                } else {
-                    $this->data[$key] = $value;
-                }
-                return $this;
-            }
-            
-            // All required interface methods with default implementations
-            public function getItemId() { return null; }
-            public function setItemId($itemId) { return $this; }
-            public function getProductId() { return null; }
-            public function setProductId($productId) { return $this; }
-            public function getStockId() { return null; }
-            public function setStockId($stockId) { return $this; }
-            public function getQty() { return 0; }
-            public function setQty($qty) { return $this; }
-            public function getIsInStock() { return false; }
-            public function setIsInStock($isInStock) { return $this; }
-            public function getIsQtyDecimal() { return false; }
-            public function setIsQtyDecimal($isQtyDecimal) { return $this; }
-            public function getShowDefaultNotificationMessage() { return false; }
-            public function getUseConfigMinQty() { return false; }
-            public function setUseConfigMinQty($useConfigMinQty) { return $this; }
-            public function getMinQty() { return 0; }
-            public function setMinQty($minQty) { return $this; }
-            public function getUseConfigMinSaleQty() { return 0; }
-            public function setUseConfigMinSaleQty($useConfigMinSaleQty) { return $this; }
-            public function getMinSaleQty() { return 0; }
-            public function setMinSaleQty($minSaleQty) { return $this; }
-            public function getUseConfigMaxSaleQty() { return false; }
-            public function setUseConfigMaxSaleQty($useConfigMaxSaleQty) { return $this; }
-            public function getMaxSaleQty() { return 0; }
-            public function setMaxSaleQty($maxSaleQty) { return $this; }
-            public function getUseConfigBackorders() { return false; }
-            public function setUseConfigBackorders($useConfigBackorders) { return $this; }
-            public function getBackorders() { return 0; }
-            public function setBackorders($backOrders) { return $this; }
-            public function getUseConfigNotifyStockQty() { return false; }
-            public function setUseConfigNotifyStockQty($useConfigNotifyStockQty) { return $this; }
-            public function getNotifyStockQty() { return 0; }
-            public function setNotifyStockQty($notifyStockQty) { return $this; }
-            public function getUseConfigQtyIncrements() { return false; }
-            public function setUseConfigQtyIncrements($useConfigQtyIncrements) { return $this; }
-            public function getQtyIncrements() { return false; }
-            public function setQtyIncrements($qtyIncrements) { return $this; }
-            public function getUseConfigEnableQtyInc() { return false; }
-            public function setUseConfigEnableQtyInc($useConfigEnableQtyInc) { return $this; }
-            public function getEnableQtyIncrements() { return false; }
-            public function setEnableQtyIncrements($enableQtyIncrements) { return $this; }
-            public function getUseConfigManageStock() { return false; }
-            public function setUseConfigManageStock($useConfigManageStock) { return $this; }
-            public function getManageStock() { return false; }
-            public function setManageStock($manageStock) { return $this; }
-            public function getLowStockDate() { return ''; }
-            public function setLowStockDate($lowStockDate) { return $this; }
-            public function getIsDecimalDivided() { return false; }
-            public function setIsDecimalDivided($isDecimalDivided) { return $this; }
-            public function getStockStatusChangedAuto() { return 0; }
-            public function setStockStatusChangedAuto($stockStatusChangedAuto) { return $this; }
-            public function getExtensionAttributes() { return null; }
-            public function setExtensionAttributes(\Magento\CatalogInventory\Api\Data\StockItemExtensionInterface $extensionAttributes) { return $this; }
-        };
+        $this->stockItemMock = new StockItemTestHelper();
         $this->stockConfigurationMock = $this->getMockBuilder(StockConfigurationInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -190,9 +116,7 @@ class AdvancedInventoryTest extends AbstractModifierTestCase
         $serializeCalledNum = 0,
         $isValidCalledNum = 0
     ) {
-        $this->productMock->expects($this->any())
-            ->method('getId')
-            ->willReturn($modelId);
+        $this->productMock->setId($modelId);
 
         $this->stockConfigurationMock->expects($this->any())
             ->method('getDefaultConfigValue')

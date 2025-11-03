@@ -12,6 +12,7 @@ use Magento\Catalog\Model\Product;
 use Magento\Catalog\Observer\SetSpecialPriceStartDate;
 use Magento\Framework\Event;
 use Magento\Framework\Event\Observer;
+use Magento\Framework\Event\Test\Unit\Helper\EventTestHelper;
 use Magento\Framework\Stdlib\DateTime\Timezone;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -69,21 +70,7 @@ class SetSpecialPriceStartDateTest extends TestCase
         $this->timezone = $this->createMock(Timezone::class);
         $this->dateObject = $this->createMock(\DateTime::class);
 
-        // Create a custom event class that can handle getProduct()
-        $this->eventMock = new class extends Event {
-            private $productMock;
-            
-            public function setProductMock($productMock)
-            {
-                $this->productMock = $productMock;
-                return $this;
-            }
-            
-            public function getProduct()
-            {
-                return $this->productMock;
-            }
-        };
+        $this->eventMock = new EventTestHelper();
 
         $this->productMock = $this->getMockBuilder(Product::class)
             ->disableOriginalConstructor()

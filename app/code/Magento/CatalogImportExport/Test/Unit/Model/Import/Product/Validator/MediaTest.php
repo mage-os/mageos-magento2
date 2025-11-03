@@ -31,12 +31,8 @@ class MediaTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->validatorMock = $this->getMockBuilder(Validator::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $contextMock = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->validatorMock = $this->createMock(Validator::class);
+        $contextMock = $this->createMock(Product::class);
         $contextMock->method('getMultipleValueSeparator')->willReturn(Import::DEFAULT_GLOBAL_MULTI_VALUE_SEPARATOR);
         $contextMock->expects($this->any())
             ->method('retrieveMessageTemplate')

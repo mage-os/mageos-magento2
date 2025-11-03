@@ -12,6 +12,8 @@ use Magento\Catalog\Model\Entity\Attribute;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Attribute\Source\Status;
 use Magento\Catalog\Model\Product\Type\Simple;
+use Magento\Catalog\Test\Unit\Helper\EntityAttributeTestHelper;
+use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -48,87 +50,12 @@ class AbstractTypeTest extends TestCase
         $this->objectManagerHelper = new ObjectManager($this);
         $this->model = $this->objectManagerHelper->getObject(Simple::class);
 
-        $this->product = new class extends Product {
-            private $hasOptions = null;
-            private $resource = null;
-            private $status = null;
-            
-            public function __construct()
-            {
-            }
-            
-            public function getHasOptions()
-            {
-                return $this->hasOptions;
-            }
-            
-            public function setHasOptions($value)
-            {
-                $this->hasOptions = $value;
-                return $this;
-            }
-            
-            public function __sleep()
-            {
-                return [];
-            }
-            
-            public function getResource()
-            {
-                return $this->resource;
-            }
-            
-            public function setResource($value)
-            {
-                $this->resource = $value;
-                return $this;
-            }
-            
-            public function getStatus()
-            {
-                return $this->status;
-            }
-            
-            public function setStatus($value)
-            {
-                $this->status = $value;
-                return $this;
-            }
-        };
+        $this->product = new ProductTestHelper();
         $this->productResource = $this->createMock(\Magento\Catalog\Model\ResourceModel\Product::class);
 
         $this->product->setResource($this->productResource);
 
-        $this->attribute = new class extends Attribute {
-            private $groupSortPath = null;
-            private $sortPath = null;
-            
-            public function __construct()
-            {
-            }
-            
-            public function getGroupSortPath()
-            {
-                return $this->groupSortPath;
-            }
-            
-            public function setGroupSortPath($value)
-            {
-                $this->groupSortPath = $value;
-                return $this;
-            }
-            
-            public function getSortPath()
-            {
-                return $this->sortPath;
-            }
-            
-            public function setSortPath($value)
-            {
-                $this->sortPath = $value;
-                return $this;
-            }
-        };
+        $this->attribute = new EntityAttributeTestHelper();
     }
 
     public function testIsSalable()

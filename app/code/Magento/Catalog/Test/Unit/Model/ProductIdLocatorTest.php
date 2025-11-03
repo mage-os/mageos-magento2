@@ -11,6 +11,7 @@ use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Model\ProductIdLocator;
 use Magento\Catalog\Model\ResourceModel\Product\Collection;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
+use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use Magento\Framework\EntityManager\EntityMetadataInterface;
 use Magento\Framework\EntityManager\MetadataPool;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -72,53 +73,9 @@ class ProductIdLocatorTest extends TestCase
     {
         $skus = ['sku_1', 'sku_2'];
 
-        // PHPUnit 12 compatible: Replace addMethods + onlyMethods with anonymous class for interface
-        /** @var ProductInterface $product */
-        $product = new class {
-            private $skuResult;
-            private $dataResult;
-            private $typeIdResult;
-            
-            public function __construct()
-            {
-            }
-            
-            public function getSku()
-            {
-                return $this->skuResult;
-            }
-            
-            public function setSku($result)
-            {
-                $this->skuResult = $result;
-                return $this;
-            }
-            
-            public function getData($field)
-            {
-                return $this->dataResult;
-            }
-            
-            public function setData($result)
-            {
-                $this->dataResult = $result;
-                return $this;
-            }
-            
-            public function getTypeId()
-            {
-                return $this->typeIdResult;
-            }
-            
-            public function setTypeId($result)
-            {
-                $this->typeIdResult = $result;
-                return $this;
-            }
-        };
-        
+        $product = new ProductTestHelper();
         $product->setSku('sku_1');
-        $product->setData(1);
+        $product->setData($this->linkField, 1);
         $product->setTypeId('simple');
 
         $this->collection->expects($this->once())
@@ -153,53 +110,9 @@ class ProductIdLocatorTest extends TestCase
         $skus = ['111', '222', '333', '444', '555'];
         $products = [];
         foreach ($skus as $sku) {
-            // PHPUnit 12 compatible: Replace addMethods + onlyMethods with anonymous class for interface
-            /** @var ProductInterface $product */
-            $product = new class {
-                private $skuResult;
-                private $dataResult;
-                private $typeIdResult;
-                
-                public function __construct()
-                {
-                }
-                
-                public function getSku()
-                {
-                    return $this->skuResult;
-                }
-                
-                public function setSku($result)
-                {
-                    $this->skuResult = $result;
-                    return $this;
-                }
-                
-                public function getData($field)
-                {
-                    return $this->dataResult;
-                }
-                
-                public function setData($result)
-                {
-                    $this->dataResult = $result;
-                    return $this;
-                }
-                
-                public function getTypeId()
-                {
-                    return $this->typeIdResult;
-                }
-                
-                public function setTypeId($result)
-                {
-                    $this->typeIdResult = $result;
-                    return $this;
-                }
-            };
-            
+            $product = new ProductTestHelper();
             $product->setSku($sku);
-            $product->setData((int) $sku);
+            $product->setData($this->linkField, (int) $sku);
             $product->setTypeId('simple');
             $products[] = $product;
         }

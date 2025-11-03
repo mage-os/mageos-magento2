@@ -19,6 +19,7 @@ use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\App\Response\RedirectInterface;
+use Magento\Framework\App\Test\Unit\Helper\ResponseTestHelper;
 use Magento\Framework\App\ViewInterface;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\DataObject;
@@ -142,20 +143,7 @@ class ViewTest extends TestCase
     protected function setUp(): void
     {
         $this->request = $this->createMock(RequestInterface::class);
-        $this->response = new class implements ResponseInterface {
-            public function sendResponse()
-            {
-                return $this;
-            }
-            public function setRedirect($url)
-            {
-                return $this;
-            }
-            public function isRedirect()
-            {
-                return false;
-            }
-        };
+        $this->response = new ResponseTestHelper();
 
         $this->categoryHelper = $this->createMock(Category::class);
         $this->objectManager = $this->createMock(ObjectManagerInterface::class);
@@ -251,21 +239,10 @@ class ViewTest extends TestCase
         $this->categoryHelper->expects($this->once())->method('canShow')->with($this->category)->willReturn(true);
         $this->toolbarMemorizer->expects($this->once())->method('memorizeParams');
         $this->toolbarMemorizer->expects($this->once())->method('isMemorizingAllowed')->willReturn(true);
-        // No mock expectations needed for anonymous class
-        $settings = new class extends DataObject {
-            public function __construct()
-            {
-                // Empty constructor
-            }
-            public function getPageLayout()
-            {
-                return 'page_layout';
-            }
-            public function getLayoutUpdates()
-            {
-                return ['update1', 'update2'];
-            }
-        };
+
+        $settings = $this->createPartialMock(DataObject::class, []);
+        $settings->setPageLayout('page_layout');
+        $settings->setLayoutUpdates(['update1', 'update2']);
         $this->category
             ->method('hasChildren')
             ->willReturn(true);
@@ -285,6 +262,9 @@ class ViewTest extends TestCase
      * @return void
      */
     #[DataProvider('getInvocationData')]
+    /**
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+     */
     public function testApplyCustomLayoutUpdate(array $expectedData): void
     {
         $categoryId = 123;
@@ -303,20 +283,9 @@ class ViewTest extends TestCase
 
         $this->categoryHelper->expects($this->once())->method('canShow')->with($this->category)->willReturn(true);
 
-        $settings = new class extends DataObject {
-            public function __construct()
-            {
-                // Empty constructor
-            }
-            public function getPageLayout()
-            {
-                return 'page_layout';
-            }
-            public function getLayoutUpdates()
-            {
-                return ['update1', 'update2'];
-            }
-        };
+        $settings = $this->createPartialMock(DataObject::class, []);
+        $settings->setPageLayout('page_layout');
+        $settings->setLayoutUpdates(['update1', 'update2']);
         $this->category
             ->method('hasChildren')
             ->willReturnCallback(function () use ($expectedData) {

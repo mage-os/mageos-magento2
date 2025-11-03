@@ -22,6 +22,8 @@ use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\Catalog\Model\Product\Filter\DateTime as DateTimeFilter;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Eav\Model\Entity\Attribute\Exception as EavAttributeException;
+use Magento\Eav\Test\Unit\Helper\AbstractAttributeTestHelper;
+use Magento\Eav\Test\Unit\Helper\BackendValidatorTestHelper;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -88,101 +90,18 @@ class SaveTest extends TestCase
         $productFactory->method('create')->willReturn($product);
 
         // Attribute for special_from_date
-        /** @var \stdClass $fromAttrBackend */
-        $fromAttrBackend = new class {
-            private $shouldThrowException = true;
-            
-            public function __construct()
-            {
-            }
-            
-            public function validate()
-            {
-                if ($this->shouldThrowException) {
-                    throw new EavAttributeException(__('Make sure the To Date is later than or the same as the From Date.'));
-                }
-                return true;
-            }
-            public function setShouldThrowException($value)
-            {
-                $this->shouldThrowException = $value;
-                return $this;
-            }
-        };
+        $fromAttrBackend = new BackendValidatorTestHelper();
+        $fromAttrBackend->setShouldThrowException(true);
 
-        /** @var \Magento\Eav\Model\Entity\Attribute\AbstractAttribute $fromAttribute */
-        $fromAttribute = new class extends \Magento\Eav\Model\Entity\Attribute\AbstractAttribute {
-            private $maxValue = null;
-            private $backend = null;
-            
-            public function __construct()
-            {
-            }
-            
-            public function setMaxValue($value)
-            {
-                $this->maxValue = $value;
-                return $this;
-            }
-            public function getMaxValue()
-            {
-                return $this->maxValue;
-            }
-            
-            public function getBackend()
-            {
-                return $this->backend;
-            }
-            public function setBackend($value)
-            {
-                $this->backend = $value;
-                return $this;
-            }
-        };
+        $fromAttribute = new AbstractAttributeTestHelper();
         $fromAttribute->setMaxValue('2025-09-01 00:00:00');
         $fromAttribute->setBackend($fromAttrBackend);
 
         // Attribute for special_to_date
-        /** @var \stdClass $toAttrBackend */
-        $toAttrBackend = new class {
-            private $shouldThrowException = false;
-            
-            public function __construct()
-            {
-            }
-            
-            public function validate()
-            {
-                if ($this->shouldThrowException) {
-                    throw new EavAttributeException(__('Make sure the To Date is later than or the same as the From Date.'));
-                }
-                return true;
-            }
-            public function setShouldThrowException($value)
-            {
-                $this->shouldThrowException = $value;
-                return $this;
-            }
-        };
+        $toAttrBackend = new BackendValidatorTestHelper();
+        $toAttrBackend->setShouldThrowException(false);
 
-        /** @var \Magento\Eav\Model\Entity\Attribute\AbstractAttribute $toAttribute */
-        $toAttribute = new class extends \Magento\Eav\Model\Entity\Attribute\AbstractAttribute {
-            private $backend = null;
-            
-            public function __construct()
-            {
-            }
-            
-            public function getBackend()
-            {
-                return $this->backend;
-            }
-            public function setBackend($value)
-            {
-                $this->backend = $value;
-                return $this;
-            }
-        };
+        $toAttribute = new AbstractAttributeTestHelper();
         $toAttribute->setBackend($toAttrBackend);
 
         // eavConfig should return attributes for 'special_from_date' and 'special_to_date'
@@ -243,78 +162,14 @@ class SaveTest extends TestCase
         $product->method('getSpecialToDate')->willReturn('2025-09-10 00:00:00');
         $productFactory->method('create')->willReturn($product);
 
-        /** @var \stdClass $okBackend */
-        $okBackend = new class {
-            private $shouldThrowException = false;
-            
-            public function __construct()
-            {
-            }
-            
-            public function validate()
-            {
-                if ($this->shouldThrowException) {
-                    throw new EavAttributeException(__('Make sure the To Date is later than or the same as the From Date.'));
-                }
-                return true;
-            }
-            public function setShouldThrowException($value)
-            {
-                $this->shouldThrowException = $value;
-                return $this;
-            }
-        };
+        $okBackend = new BackendValidatorTestHelper();
+        $okBackend->setShouldThrowException(false);
 
-        /** @var \Magento\Eav\Model\Entity\Attribute\AbstractAttribute $fromAttribute */
-        $fromAttribute = new class extends \Magento\Eav\Model\Entity\Attribute\AbstractAttribute {
-            private $maxValue = null;
-            private $backend = null;
-            
-            public function __construct()
-            {
-            }
-            
-            public function setMaxValue($value)
-            {
-                $this->maxValue = $value;
-                return $this;
-            }
-            public function getMaxValue()
-            {
-                return $this->maxValue;
-            }
-            
-            public function getBackend()
-            {
-                return $this->backend;
-            }
-            public function setBackend($value)
-            {
-                $this->backend = $value;
-                return $this;
-            }
-        };
+        $fromAttribute = new AbstractAttributeTestHelper();
         $fromAttribute->setMaxValue('2025-09-10 00:00:00');
         $fromAttribute->setBackend($okBackend);
 
-        /** @var \Magento\Eav\Model\Entity\Attribute\AbstractAttribute $toAttribute */
-        $toAttribute = new class extends \Magento\Eav\Model\Entity\Attribute\AbstractAttribute {
-            private $backend = null;
-            
-            public function __construct()
-            {
-            }
-            
-            public function getBackend()
-            {
-                return $this->backend;
-            }
-            public function setBackend($value)
-            {
-                $this->backend = $value;
-                return $this;
-            }
-        };
+        $toAttribute = new AbstractAttributeTestHelper();
         $toAttribute->setBackend($okBackend);
 
         $eavConfig->method('getAttribute')

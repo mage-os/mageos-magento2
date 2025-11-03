@@ -14,6 +14,7 @@ use Magento\Catalog\Model\Webapi\Product\Option\Type\File\Processor as FileProce
 use Magento\Framework\Api\AttributeValueFactory;
 use Magento\Framework\Api\Data\ImageContentInterface;
 use Magento\Framework\Api\ExtensionAttributesFactory;
+use Magento\Framework\Api\Test\Unit\Helper\ExtensionAttributesTestHelper;
 use Magento\Framework\Data\Collection\AbstractDb;
 use Magento\Framework\Model\Context;
 use Magento\Framework\Model\ResourceModel\AbstractResource;
@@ -72,24 +73,7 @@ class CustomOptionTest extends TestCase
             ->getMock();
 
         /** @var CustomOptionExtensionInterface $this->extensionMock */
-        $this->extensionMock = new class implements \Magento\Framework\Api\ExtensionAttributesInterface {
-            private $fileInfo = null;
-            
-            public function __construct()
-            {
-            }
-            
-            public function getFileInfo()
-            {
-                return $this->fileInfo;
-            }
-            
-            public function setFileInfo($fileInfo)
-            {
-                $this->fileInfo = $fileInfo;
-                return $this;
-            }
-        };
+        $this->extensionMock = new ExtensionAttributesTestHelper();
 
         $this->extensionAttributesFactoryMock->expects(self::any())
             ->method('create')->willReturn($this->extensionMock);

@@ -220,13 +220,9 @@ class CollectionTest extends TestCase
         $items = [];
         $categoryIds = [];
         for ($i = 1; $i <= $categoryCount; $i++) {
-            $category = $this->getMockBuilder(Category::class)
-                ->addMethods(['getIsAnchor'])
-                ->onlyMethods(['getId', 'setProductCount'])
-                ->disableOriginalConstructor()
-                ->getMock();
+            $category = $this->createPartialMock(Category::class, ['getId', 'setProductCount']);
             $category->method('getId')->willReturn($i);
-            $category->method('getIsAnchor')->willReturn(true);
+            $category->setData('is_anchor', true);
             $category->expects($this->once())->method('setProductCount')->with(5);
             $items[$i] = $category;
             $categoryIds[] = $i;

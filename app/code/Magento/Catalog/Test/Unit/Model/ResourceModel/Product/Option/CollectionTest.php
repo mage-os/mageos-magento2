@@ -137,7 +137,7 @@ class CollectionTest extends TestCase
         $this->resourceMock->expects($this->exactly(3))
             ->method('getTable')
             ->willReturnCallback(fn($param) => match ([$param]) {
-                ['test_main_table'] => $this->returnValue('test_main_table'),
+                ['test_main_table'] => 'test_main_table',
                 ['catalog_product_entity'] => 'catalog_product_entity'
             });
         $this->metadataPoolMock = $this->createMock(MetadataPool::class);

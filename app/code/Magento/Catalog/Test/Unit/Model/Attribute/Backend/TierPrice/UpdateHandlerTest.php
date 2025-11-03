@@ -13,6 +13,8 @@ use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductAttributeRepositoryInterface;
 use Magento\Catalog\Model\Product\Attribute\Backend\TierPrice\UpdateHandler;
 use Magento\Catalog\Model\ResourceModel\Product\Attribute\Backend\Tierprice;
+use Magento\Catalog\Test\Unit\Helper\ProductAttributeTestHelper;
+use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use Magento\Customer\Api\Data\GroupInterface;
 use Magento\Customer\Api\GroupManagementInterface;
 use Magento\Framework\EntityManager\EntityMetadataInterface;
@@ -116,114 +118,18 @@ class UpdateHandlerTest extends TestCase
     ): void {
 
         /** @var ProductInterface $product */
-        $product = new class {
-            private $data = [];
-            private $storeId = 0;
-            private $origData = [];
-            
-            public function __construct()
-            {
-            }
-            
-            public function getData($key = null)
-            {
-                if ($key === null) {
-                    return $this->data;
-                }
-                return $this->data[$key] ?? null;
-            }
-            
-            public function setData($key, $value = null)
-            {
-                if (is_array($key)) {
-                    $this->data = array_merge($this->data, $key);
-                } else {
-                    $this->data[$key] = $value;
-                }
-                return $this;
-            }
-            
-            public function getStoreId()
-            {
-                return $this->storeId;
-            }
-            
-            public function setStoreId($storeId)
-            {
-                $this->storeId = $storeId;
-                return $this;
-            }
-            
-            public function getOrigData($key = null)
-            {
-                if ($key === null) {
-                    return $this->origData;
-                }
-                return $this->origData[$key] ?? null;
-            }
-            
-            public function setOrigData($key, $value = null)
-            {
-                if (is_array($key)) {
-                    $this->origData = array_merge($this->origData, $key);
-                } else {
-                    $this->origData[$key] = $value;
-                }
-                return $this;
-            }
-            
-            public function setGetDataResult($key, $value)
-            {
-                $this->data[$key] = $value;
-                return $this;
-            }
-            
-            public function setGetOrigDataResult($key, $value)
-            {
-                $this->origData[$key] = $value;
-                return $this;
-            }
-        };
-        $product->setGetDataResult('tier_price', $newTierPrices);
-        $product->setGetDataResult('entity_id', $productId);
-        $product->setGetOrigDataResult('tier_price', $originalTierPrices);
-        $product->setGetOrigDataResult('entity_id', $originalProductId);
+        $product = new ProductTestHelper();
+        $product->setData('tier_price', $newTierPrices);
+        $product->setData('entity_id', $productId);
+        $product->setOrigData('tier_price', $originalTierPrices);
+        $product->setOrigData('entity_id', $originalProductId);
         $product->setStoreId(0);
         $product->setData('tier_price_changed', 1);
         $store = $this->createMock(StoreInterface::class);
         $store->expects($this->atLeastOnce())->method('getWebsiteId')->willReturn(0);
         $this->storeManager->expects($this->atLeastOnce())->method('getStore')->willReturn($store);
         /** @var ProductAttributeInterface $attribute */
-        $attribute = new class {
-            private $name = '';
-            private $isScopeGlobal = false;
-            
-            public function __construct()
-            {
-            }
-            
-            public function getName()
-            {
-                return $this->name;
-            }
-            
-            public function setName($name)
-            {
-                $this->name = $name;
-                return $this;
-            }
-            
-            public function isScopeGlobal()
-            {
-                return $this->isScopeGlobal;
-            }
-            
-            public function setIsScopeGlobal($isScopeGlobal)
-            {
-                $this->isScopeGlobal = $isScopeGlobal;
-                return $this;
-            }
-        };
+        $attribute = new ProductAttributeTestHelper();
         $attribute->setName('tier_price');
         $attribute->setIsScopeGlobal(true);
         $this->attributeRepository->expects($this->atLeastOnce())->method('get')->with('tier_price')
@@ -251,103 +157,13 @@ class UpdateHandlerTest extends TestCase
         $this->expectException('Magento\Framework\Exception\InputException');
         $this->expectExceptionMessage('Tier prices data should be array, but actually other type is received');
         /** @var ProductAttributeInterface $attribute */
-        $attribute = new class {
-            private $name = '';
-            private $isScopeGlobal = false;
-            
-            public function __construct()
-            {
-            }
-            
-            public function getName()
-            {
-                return $this->name;
-            }
-            
-            public function setName($name)
-            {
-                $this->name = $name;
-                return $this;
-            }
-            
-            public function isScopeGlobal()
-            {
-                return $this->isScopeGlobal;
-            }
-            
-            public function setIsScopeGlobal($isScopeGlobal)
-            {
-                $this->isScopeGlobal = $isScopeGlobal;
-                return $this;
-            }
-        };
+        $attribute = new ProductAttributeTestHelper();
         $attribute->setName('tier_price');
         $this->attributeRepository->expects($this->atLeastOnce())->method('get')->with('tier_price')
             ->willReturn($attribute);
         /** @var ProductInterface $product */
-        $product = new class {
-            private $data = [];
-            private $storeId = 0;
-            private $origData = [];
-            
-            public function __construct()
-            {
-            }
-            
-            public function getData($key = null)
-            {
-                if ($key === null) {
-                    return $this->data;
-                }
-                return $this->data[$key] ?? null;
-            }
-            
-            public function setData($key, $value = null)
-            {
-                if (is_array($key)) {
-                    $this->data = array_merge($this->data, $key);
-                } else {
-                    $this->data[$key] = $value;
-                }
-                return $this;
-            }
-            
-            public function getStoreId()
-            {
-                return $this->storeId;
-            }
-            
-            public function setStoreId($storeId)
-            {
-                $this->storeId = $storeId;
-                return $this;
-            }
-            
-            public function getOrigData($key = null)
-            {
-                if ($key === null) {
-                    return $this->origData;
-                }
-                return $this->origData[$key] ?? null;
-            }
-            
-            public function setOrigData($key, $value = null)
-            {
-                if (is_array($key)) {
-                    $this->origData = array_merge($this->origData, $key);
-                } else {
-                    $this->origData[$key] = $value;
-                }
-                return $this;
-            }
-            
-            public function setGetDataResult($key, $value)
-            {
-                $this->data[$key] = $value;
-                return $this;
-            }
-        };
-        $product->setGetDataResult('tier_price', 1);
+        $product = new ProductTestHelper();
+        $product->setData('tier_price', 1);
 
         $this->updateHandler->execute($product);
     }

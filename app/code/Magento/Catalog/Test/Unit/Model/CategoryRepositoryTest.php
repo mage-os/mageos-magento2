@@ -295,39 +295,9 @@ class CategoryRepositoryTest extends TestCase
             ->expects($this->once())
             ->method('toNestedArray')
             ->willReturn([]);
-        
-        // PHPUnit 12 compatible: Replace addMethods with anonymous class
-        $objectMock = new class extends DataObject {
-            private $frontendResult;
-            private $labelResult;
-            
-            public function __construct()
-            {
-            }
-            
-            public function getFrontend()
-            {
-                return $this->frontendResult;
-            }
-            
-            public function setFrontend($result)
-            {
-                $this->frontendResult = $result;
-                return $this;
-            }
-            
-            public function getLabel()
-            {
-                return $this->labelResult;
-            }
-            
-            public function setLabel($result)
-            {
-                $this->labelResult = $result;
-                return $this;
-            }
-        };
-        
+
+        $objectMock = $this->createPartialMock(DataObject::class, []);
+
         $categoryMock->expects(
             $this->atLeastOnce()
         )->method('getId')->willReturn($categoryId);

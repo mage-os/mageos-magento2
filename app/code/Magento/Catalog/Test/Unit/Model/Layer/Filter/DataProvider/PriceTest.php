@@ -12,6 +12,7 @@ use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\Layer;
 use Magento\Catalog\Model\Layer\Filter\DataProvider\Price;
 use Magento\Catalog\Model\ResourceModel\Product\Collection;
+use Magento\Catalog\Test\Unit\Helper\CategoryTestHelper;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Registry;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
@@ -111,25 +112,7 @@ class PriceTest extends TestCase
     public function testGetPriceRangeWithRangeInFilter()
     {
         /** @var Category|MockObject $category */
-        $category = new class extends Category {
-            private $filterPriceRange = null;
-            
-            public function __construct()
-            {
-                // Don't call parent constructor to avoid dependencies
-            }
-            
-            public function getFilterPriceRange()
-            {
-                return $this->filterPriceRange;
-            }
-            
-            public function setFilterPriceRange($filterPriceRange)
-            {
-                $this->filterPriceRange = $filterPriceRange;
-                return $this;
-            }
-        };
+        $category = new CategoryTestHelper();
         $priceRange = 10;
         $category->setFilterPriceRange($priceRange);
         $this->coreRegistry->expects($this->once())
@@ -142,25 +125,7 @@ class PriceTest extends TestCase
     public function testGetPriceRangeWithRangeCalculation()
     {
         /** @var Category|MockObject $category */
-        $category = new class extends Category {
-            private $filterPriceRange = null;
-            
-            public function __construct()
-            {
-                // Don't call parent constructor to avoid dependencies
-            }
-            
-            public function getFilterPriceRange()
-            {
-                return $this->filterPriceRange;
-            }
-            
-            public function setFilterPriceRange($filterPriceRange)
-            {
-                $this->filterPriceRange = $filterPriceRange;
-                return $this;
-            }
-        };
+        $category = new CategoryTestHelper();
         $priceRange = 0;
         $category->setFilterPriceRange($priceRange);
         $this->coreRegistry->expects($this->once())

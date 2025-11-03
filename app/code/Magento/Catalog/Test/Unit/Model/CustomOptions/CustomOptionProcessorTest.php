@@ -93,17 +93,13 @@ class CustomOptionProcessorTest extends TestCase
             ->onlyMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
-        $this->cartItem = $this->getMockBuilder(CartItemInterface::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getOptionByCode'])
-            ->onlyMethods(['getProductOption', 'setProductOption'])
-            ->getMock();
-        $this->extensibleAttribute = $this->getMockBuilder(
+        $this->cartItem = $this->createPartialMock(
+            \Magento\Quote\Model\Quote\Item::class,
+            ['getOptionByCode', 'getProductOption', 'setProductOption']
+        );
+        $this->extensibleAttribute = $this->createMock(
             ProductOptionExtensionInterface::class
-        )
-            ->disableOriginalConstructor()
-            ->addMethods(['setCustomOptions', 'getCustomOptions'])
-            ->getMock();
+        );
         $this->productOption = $this->getMockBuilder(ProductOption::class)
             ->disableOriginalConstructor()
             ->getMock();

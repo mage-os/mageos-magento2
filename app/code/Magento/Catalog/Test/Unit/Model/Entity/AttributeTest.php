@@ -23,6 +23,7 @@ use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\Locale\ResolverInterface;
 use Magento\Framework\Model\Context;
 use Magento\Framework\Model\ResourceModel\AbstractResource;
+use Magento\Framework\Model\ResourceModel\Test\Unit\Helper\AbstractResourceTestHelper;
 use Magento\Framework\Reflection\DataObjectProcessor;
 use Magento\Framework\Registry;
 use Magento\Framework\Stdlib\DateTime\DateTimeFormatterInterface;
@@ -210,54 +211,7 @@ class AttributeTest extends TestCase
             DateTimeFormatterInterface::class
         );
 
-        $this->resourceMock = new class extends AbstractResource {
-            private $idFieldName = null;
-            private $saveInSetIncludingResult = null;
-            private $connection = null;
-            
-            public function __construct()
-            {
-                // Don't call parent constructor to avoid _construct() call
-            }
-            
-            protected function _construct()
-            {
-                // Empty implementation for abstract method
-            }
-            
-            public function getConnection()
-            {
-                return $this->connection;
-            }
-            
-            public function setConnection($connection)
-            {
-                $this->connection = $connection;
-                return $this;
-            }
-            
-            public function getIdFieldName()
-            {
-                return $this->idFieldName;
-            }
-            
-            public function setIdFieldName($idFieldName)
-            {
-                $this->idFieldName = $idFieldName;
-                return $this;
-            }
-            
-            public function saveInSetIncluding()
-            {
-                return $this->saveInSetIncludingResult;
-            }
-            
-            public function setSaveInSetIncludingResult($result)
-            {
-                $this->saveInSetIncludingResult = $result;
-                return $this;
-            }
-        };
+        $this->resourceMock = new AbstractResourceTestHelper();
         $this->cacheManager = $this->getMockBuilder(CacheInterface::class)
             ->getMock();
         $this->eventDispatcher = $this->getMockBuilder(ManagerInterface::class)

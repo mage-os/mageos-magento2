@@ -14,6 +14,7 @@ use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Configuration\Item\OptionFactory;
 use Magento\Catalog\Model\ProductFactory;
 use Magento\Catalog\Model\ResourceModel\Product\Option;
+use Magento\Catalog\Test\Unit\Helper\FieldsetOptionsTestHelper;
 use Magento\CatalogInventory\Api\Data\StockItemInterfaceFactory;
 use Magento\Framework\Data\CollectionFactory;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
@@ -70,23 +71,7 @@ class OptionsTest extends TestCase
             ->getMock();
         $option->method('getGroupByType')->willReturn('date');
         
-        // Create an anonymous subclass that extends Options and implements setSkipJsReloadPrice
-        $dateBlock = new class extends Options {
-            public function __construct()
-            {
-                // Empty constructor to avoid parent constructor dependencies
-            }
-            
-            public function setSkipJsReloadPrice($value)
-            {
-                return $this;
-            }
-
-            public function setOption($option)
-            {
-                return $this;
-            }
-        };
+        $dateBlock = new FieldsetOptionsTestHelper();
 
         $layout->method('getChildName')->willReturn('date');
         $layout->expects($this->any())->method('getBlock')->with('date')->willReturn($dateBlock);

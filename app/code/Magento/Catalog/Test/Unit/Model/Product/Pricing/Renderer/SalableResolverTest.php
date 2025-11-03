@@ -27,10 +27,7 @@ class SalableResolverTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->product = $this->getMockBuilder(Product::class)
-            ->addMethods(['getCanShowPrice'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->product = $this->createPartialMock(Product::class, []);
 
         $objectManager = new ObjectManager($this);
         $this->object = $objectManager->getObject(
@@ -40,7 +37,7 @@ class SalableResolverTest extends TestCase
 
     public function testSalableItem()
     {
-        $this->product->method('getCanShowPrice')->willReturn(true);
+        $this->product->setData('can_show_price', true);
 
         $result = $this->object->isSalable($this->product);
         $this->assertTrue($result);
@@ -48,7 +45,7 @@ class SalableResolverTest extends TestCase
 
     public function testNotSalableItem()
     {
-        $this->product->method('getCanShowPrice')->willReturn(false);
+        $this->product->setData('can_show_price', false);
 
         $result = $this->object->isSalable($this->product);
         $this->assertFalse($result);

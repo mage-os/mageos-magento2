@@ -8,6 +8,8 @@ declare(strict_types=1);
 namespace Magento\Catalog\Test\Unit\Ui\DataProvider\Product\Form\Modifier;
 
 use Magento\Catalog\Api\Data\ProductInterface;
+use Magento\Catalog\Test\Unit\Helper\LocatorTestHelper;
+use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\Websites;
 use Magento\Store\Api\GroupRepositoryInterface;
 use Magento\Store\Api\StoreRepositoryInterface;
@@ -17,6 +19,7 @@ use Magento\Store\Model\ResourceModel\Group\Collection;
 use Magento\Store\Model\Store as StoreView;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Store\Model\Website;
+use Magento\Store\Test\Unit\Helper\GroupCollectionTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 
 /**
@@ -111,43 +114,7 @@ class WebsitesTest extends AbstractModifierTestCase
         $this->storeManagerMock->method('isSingleStoreMode')->willReturn(false);
         
         // PHPUnit 12 compatible: Replace addMethods with anonymous class
-        $this->groupMock = new class extends Collection {
-            private $id;
-            private $name;
-            private $websiteId;
-            
-            public function __construct()
-            {
-            }
-            
-            public function getId()
-            {
-                return $this->id;
-            }
-            public function setId($id)
-            {
-                $this->id = $id;
-                return $this;
-            }
-            public function getName()
-            {
-                return $this->name;
-            }
-            public function setName($name)
-            {
-                $this->name = $name;
-                return $this;
-            }
-            public function getWebsiteId()
-            {
-                return $this->websiteId;
-            }
-            public function setWebsiteId($websiteId)
-            {
-                $this->websiteId = $websiteId;
-                return $this;
-            }
-        };
+        $this->groupMock = new GroupCollectionTestHelper();
         
         $this->groupMock->setWebsiteId(self::WEBSITE_ID);
         $this->groupMock->setId(self::GROUP_ID);
@@ -163,76 +130,12 @@ class WebsitesTest extends AbstractModifierTestCase
         $this->secondWebsiteMock->method('getId')->willReturn($this->assignedWebsites[0]);
         $this->websiteMock->method('getId')->willReturn(self::WEBSITE_ID);
         
-        // Override parent mocks with anonymous classes that have setter methods
+        // Override parent mocks with test helpers
         /** @var \Magento\Catalog\Api\Data\ProductInterface $productMock */
-        $this->productMock = new class {
-            private $id;
-            private $lockedAttribute;
-            
-            public function getId()
-            {
-                return $this->id;
-            }
-            public function setId($id)
-            {
-                $this->id = $id;
-                return $this;
-            }
-            public function isLockedAttribute($attribute)
-            {
-                return $this->lockedAttribute;
-            }
-            public function setLockedAttribute($lockedAttribute)
-            {
-                $this->lockedAttribute = $lockedAttribute;
-                return $this;
-            }
-        };
+        $this->productMock = new ProductTestHelper();
         
         /** @var \Magento\Catalog\Model\Locator\LocatorInterface $locatorMock */
-        $this->locatorMock = new class implements \Magento\Catalog\Model\Locator\LocatorInterface {
-            private $websiteIds;
-            private $product;
-            private $store;
-            private $baseCurrencyCode;
-            
-            public function getWebsiteIds()
-            {
-                return $this->websiteIds;
-            }
-            public function setWebsiteIds($websiteIds)
-            {
-                $this->websiteIds = $websiteIds;
-                return $this;
-            }
-            public function getProduct()
-            {
-                return $this->product;
-            }
-            public function setProduct($product)
-            {
-                $this->product = $product;
-                return $this;
-            }
-            public function getStore()
-            {
-                return $this->store;
-            }
-            public function setStore($store)
-            {
-                $this->store = $store;
-                return $this;
-            }
-            public function getBaseCurrencyCode()
-            {
-                return $this->baseCurrencyCode;
-            }
-            public function setBaseCurrencyCode($baseCurrencyCode)
-            {
-                $this->baseCurrencyCode = $baseCurrencyCode;
-                return $this;
-            }
-        };
+        $this->locatorMock = new LocatorTestHelper();
     }
 
     /**

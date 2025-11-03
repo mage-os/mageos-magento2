@@ -85,9 +85,20 @@ class FilterAttributeReaderTest extends TestCase
         $searchableAttributeCollection->expects(self::once())
             ->method('getItems')
             ->willReturn(array_filter([21 => $searchableAttribute]));
+        
+        $callCount = 0;
         $this->collectionFactoryMock->expects(self::exactly(2))
             ->method('create')
-            ->willReturnOnConsecutiveCalls($filterableAttributeCollection, $searchableAttributeCollection);
+            ->willReturnCallback(
+                function () use (
+                    &$callCount,
+                    $filterableAttributeCollection,
+                    $searchableAttributeCollection
+                ) {
+                    $callCount++;
+                    return $callCount === 1 ? $filterableAttributeCollection : $searchableAttributeCollection;
+                }
+            );
 
         $filterableAttribute->method('getAttributeCode')
             ->willReturn($filterableAttrCode);
