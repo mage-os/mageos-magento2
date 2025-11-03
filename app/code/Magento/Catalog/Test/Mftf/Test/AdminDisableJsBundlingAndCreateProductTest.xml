@@ -20,7 +20,6 @@
         </annotations>
         <before>
             <!-- Precondition Step 1: Enable JS Bundling and related settings via CLI -->
-            <magentoCLI command="config:set" arguments="dev/js/enable_js_bundling 0" stepKey="disableJsBundling"/>
             <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
             <createData entity="_defaultCategory" stepKey="createCategory"/>
             <!-- Precondition Step 2: Create two Simple products -->
@@ -38,8 +37,6 @@
             <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="logoutStorefront"/>
             <!-- Admin Logout -->
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutAsAdmin"/>
-            <!-- Revert JS bundling settings -->
-            <magentoCLI command="config:set" arguments="dev/js/enable_js_bundling 1" stepKey="enableJsBundling"/>
             <!-- Delete Customer -->
             <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
             <!-- Delete created products and category -->
