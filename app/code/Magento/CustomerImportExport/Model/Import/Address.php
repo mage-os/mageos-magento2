@@ -863,7 +863,7 @@ class Address extends AbstractCustomer
      *
      * @param array $rowData
      * @param int $rowNumber
-     * @return null
+     * @return void
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     protected function _validateRowForUpdate(array $rowData, $rowNumber)
@@ -936,7 +936,7 @@ class Address extends AbstractCustomer
      *
      * @param array $rowData
      * @param int $rowNumber
-     * @return null
+     * @return void
      */
     protected function _validateRowForDelete(array $rowData, $rowNumber)
     {
