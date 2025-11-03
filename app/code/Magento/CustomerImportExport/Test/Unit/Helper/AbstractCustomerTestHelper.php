@@ -52,7 +52,7 @@ class AbstractCustomerTestHelper extends AbstractCustomer
      *
      * @param array $rowData
      * @param int $rowNumber
-     * @return void
+     * @return null
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     protected function _validateRowForUpdate(array $rowData, $rowNumber)
@@ -65,7 +65,7 @@ class AbstractCustomerTestHelper extends AbstractCustomer
      *
      * @param array $rowData
      * @param int $rowNumber
-     * @return void
+     * @return null
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     protected function _validateRowForDelete(array $rowData, $rowNumber)

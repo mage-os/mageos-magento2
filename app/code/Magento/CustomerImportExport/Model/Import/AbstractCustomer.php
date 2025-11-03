@@ -211,7 +211,7 @@ abstract class AbstractCustomer extends \Magento\ImportExport\Model\Import\Entit
      *
      * @param array $rowData
      * @param int $rowNumber
-     * @return void
+     * @return null
      */
     abstract protected function _validateRowForUpdate(array $rowData, $rowNumber);
 
@@ -220,7 +220,7 @@ abstract class AbstractCustomer extends \Magento\ImportExport\Model\Import\Entit
      *
      * @param array $rowData
      * @param int $rowNumber
-     * @return void
+     * @return null
      */
     abstract protected function _validateRowForDelete(array $rowData, $rowNumber);
 

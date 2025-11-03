@@ -584,7 +584,7 @@ class Customer extends AbstractCustomer
      *
      * @param array $rowData
      * @param int $rowNumber
-     * @return void
+     * @return null
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      */
@@ -655,7 +655,7 @@ class Customer extends AbstractCustomer
      *
      * @param array $rowData
      * @param int $rowNumber
-     * @return void
+     * @return null
      */
     protected function _validateRowForDelete(array $rowData, $rowNumber)
     {
