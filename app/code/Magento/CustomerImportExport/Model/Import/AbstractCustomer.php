@@ -213,7 +213,7 @@ abstract class AbstractCustomer extends \Magento\ImportExport\Model\Import\Entit
      * @param int $rowNumber
      * @return void
      */
-    abstract protected function _validateRowForUpdate(array $rowData, $rowNumber): void;
+    abstract protected function _validateRowForUpdate(array $rowData, $rowNumber);
 
     /**
      * Validate data row for delete behaviour
@@ -222,7 +222,7 @@ abstract class AbstractCustomer extends \Magento\ImportExport\Model\Import\Entit
      * @param int $rowNumber
      * @return void
      */
-    abstract protected function _validateRowForDelete(array $rowData, $rowNumber): void;
+    abstract protected function _validateRowForDelete(array $rowData, $rowNumber);
 
     /**
      * General check of unique key
