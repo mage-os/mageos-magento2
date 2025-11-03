@@ -7,44 +7,35 @@ declare(strict_types=1);
 
 namespace Magento\Quote\Test\Unit\Helper;
 
-use Magento\Quote\Api\Data\PaymentExtensionInterface;
+use Magento\Quote\Api\Data\PaymentExtension;
 
 /**
- * Test helper that implements PaymentExtensionInterface
- *
- * Provides stub implementations for all extension attribute methods
+ * Test helper for PaymentExtension to expose getAgreementIds()/setAgreementIds() for unit tests.
  */
-class PaymentExtensionTestHelper implements PaymentExtensionInterface
+class PaymentExtensionTestHelper extends PaymentExtension
 {
-    /**
-     * @var array
-     */
-    private $agreementIds = [];
+    /** @var array|null */
+    private ?array $agreementIds = null;
 
-    /**
-     * Constructor
-     *
-     * @param array $agreementIds
-     */
-    public function __construct(array $agreementIds = [])
+    public function __construct()
     {
-        $this->agreementIds = $agreementIds;
+        // Skip parent constructor
     }
 
     /**
-     * Get agreement IDs
+     * Get agreement IDs for tests.
      *
-     * @return array
+     * @return array<int>|null
      */
-    public function getAgreementIds(): array
+    public function getAgreementIds(): ?array
     {
         return $this->agreementIds;
     }
 
     /**
-     * Set agreement IDs
+     * Set agreement IDs for tests.
      *
-     * @param array $agreementIds
+     * @param string[] $agreementIds
      * @return $this
      */
     public function setAgreementIds($agreementIds)

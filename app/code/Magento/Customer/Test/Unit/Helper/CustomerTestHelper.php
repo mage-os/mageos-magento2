@@ -10,14 +10,7 @@ namespace Magento\Customer\Test\Unit\Helper;
 use Magento\Customer\Model\Customer;
 
 /**
- * Test helper for Magento\Customer\Model\Customer
- *
- * This helper provides custom logic that cannot be achieved with standard PHPUnit mocks:
- * 1. getStoreId() with call counter - returns different values on consecutive calls
- *    (1 on first call, 2 on second call) - used by ModelsTest::testCustomerLoadAfter()
- * 2. load() - custom implementation that sets ID via parent's setId() without requiring a resource
- *
- * All other methods are inherited from the parent Customer class.
+ * Test helper for Customer model to expose getDefaultBilling for PHPUnit 12 mocks.
  */
 class CustomerTestHelper extends Customer
 {
@@ -26,9 +19,21 @@ class CustomerTestHelper extends Customer
      */
     private $callCount = 0;
 
+    /**
+     * Constructor intentionally empty to skip parent dependencies.
+     */
     public function __construct()
     {
-        // Skip parent constructor to avoid dependencies
+    }
+
+    /**
+     * Get default billing id stored in test data.
+     *
+     * @return mixed
+     */
+    public function getDefaultBilling()
+    {
+        return $this->getData('default_billing');
     }
 
     /**

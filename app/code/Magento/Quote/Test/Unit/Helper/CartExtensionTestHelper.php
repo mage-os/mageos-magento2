@@ -11,21 +11,13 @@ use Magento\Quote\Api\Data\CartExtension;
 use Magento\NegotiableQuote\Api\Data\NegotiableQuoteInterface;
 
 /**
- * Test helper for CartExtension
- *
- * This helper extends the concrete CartExtension class to provide test-specific functionality.
- * Used across 77 test files to set extension attributes without complex dependency injection.
- *
- * Provides:
- * - negotiableQuote (used in 74 files) - NegotiableQuote object
- * - shippingAssignments (used in 7 files) - Shipping assignments data
- * - companyId (used in 17 files) - Company ID for B2B functionality
- * - negotiableQuoteItem (used in 10 files) - NegotiableQuoteItem data
- *
- * All other CartExtension methods are inherited from the parent class.
+ * Test helper for CartExtension to provide setShippingAssignments() for unit tests.
  */
 class CartExtensionTestHelper extends CartExtension
 {
+    /** @var array */
+    private array $testData = [];
+
     /**
      * @var NegotiableQuoteInterface
      */
@@ -47,13 +39,27 @@ class CartExtensionTestHelper extends CartExtension
     private $negotiableQuoteItem;
 
     /**
-     * Constructor
+     * Set shipping assignments for tests.
      *
+     * @param array $shippingAssignments
      * @param mixed $negotiableQuote
+     * @return $this
      */
-    public function __construct($negotiableQuote = null)
+    public function setShippingAssignments($shippingAssignments, $negotiableQuote = null)
     {
+        $this->testData['shipping_assignments'] = $shippingAssignments;
         $this->negotiableQuote = $negotiableQuote;
+        return $this;
+    }
+
+    /**
+     * Get shipping assignments for tests.
+     *
+     * @return array|null
+     */
+    public function getShippingAssignments()
+    {
+        return $this->testData['shipping_assignments'] ?? null;
     }
 
     /**
@@ -75,28 +81,6 @@ class CartExtensionTestHelper extends CartExtension
     public function setNegotiableQuote($negotiableQuote)
     {
         $this->negotiableQuote = $negotiableQuote;
-        return $this;
-    }
-
-    /**
-     * Get shipping assignments
-     *
-     * @return mixed
-     */
-    public function getShippingAssignments()
-    {
-        return $this->shippingAssignments;
-    }
-
-    /**
-     * Set shipping assignments
-     *
-     * @param mixed $shippingAssignments
-     * @return $this
-     */
-    public function setShippingAssignments($shippingAssignments)
-    {
-        $this->shippingAssignments = $shippingAssignments;
         return $this;
     }
 
