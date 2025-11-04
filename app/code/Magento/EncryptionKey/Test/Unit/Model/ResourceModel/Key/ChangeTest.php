@@ -63,43 +63,42 @@ class ChangeTest extends TestCase
     /** @var Change */
     protected $model;
 
+    /** @var ObjectManager */
+    protected $objectManagerHelper;
+
     protected function setUp(): void
     {
-        $this->encryptMock = $this->getMockBuilder(EncryptorInterface::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['setNewKey', 'exportKeys'])
-            ->getMockForAbstractClass();
-        $this->filesystemMock = $this->getMockBuilder(Filesystem::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->structureMock = $this->getMockBuilder(Structure::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->writerMock = $this->getMockBuilder(Writer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->adapterMock = $this->getMockBuilder(AdapterInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $this->resourceMock = $this->getMockBuilder(ResourceConnection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->selectMock = $this->getMockBuilder(Select::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['update'])
-            ->onlyMethods(['from', 'where'])
-            ->getMock();
-        $translationClassName = TransactionManagerInterface::class;
-        $this->transactionMock = $this->getMockBuilder($translationClassName)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $relationClassName = ObjectRelationProcessor::class;
-        $this->objRelationMock = $this->getMockBuilder($relationClassName)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->objectManagerHelper = new ObjectManager($this);
+
+        $this->encryptMock = $this->objectManagerHelper->createPartialMockWithReflection(
+            EncryptorInterface::class,
+            [
+                'getHash',
+                'hash',
+                'validateHash',
+                'isValidHash',
+                'validateHashVersion',
+                'encrypt',
+                'decrypt',
+                'validateKey',
+                'setNewKey',
+                'exportKeys'
+            ]
+        );
+        $this->filesystemMock = $this->createMock(Filesystem::class);
+        $this->structureMock = $this->createMock(Structure::class);
+        $this->writerMock = $this->createMock(Writer::class);
+        $this->adapterMock = $this->createMock(AdapterInterface::class);
+        $this->resourceMock = $this->createMock(ResourceConnection::class);
+        $this->selectMock = $this->objectManagerHelper->createPartialMockWithReflection(
+            Select::class,
+            ['update', 'from', 'where']
+        );
+        $this->transactionMock = $this->createMock(TransactionManagerInterface::class);
+        $this->objRelationMock = $this->createMock(ObjectRelationProcessor::class);
         $this->randomMock = $this->createMock(Random::class);
 
-        $helper = new ObjectManager($this);
+        $helper = $this->objectManagerHelper;
 
         $this->model = $helper->getObject(
             Change::class,

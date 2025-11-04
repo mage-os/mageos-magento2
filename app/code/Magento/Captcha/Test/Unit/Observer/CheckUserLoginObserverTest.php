@@ -36,7 +36,7 @@ class CheckUserLoginObserverTest extends TestCase
     /** @var ActionFlag|MockObject */
     protected $actionFlagMock;
 
-    /* @var \Magento\Framework\Message\ManagerInterface|MockObject */
+    /** @var ManagerInterface|MockObject */
     protected $messageManagerMock;
 
     /** @var Session|MockObject */
@@ -57,25 +57,29 @@ class CheckUserLoginObserverTest extends TestCase
     /** @var CheckUserLoginObserver */
     protected $observer;
 
+    /** @var ObjectManager */
+    protected $objectManagerHelper;
+
     /**
      * Init mocks for tests
      * @return void
      */
     protected function setUp(): void
     {
+        $this->objectManagerHelper = new ObjectManager($this);
         $this->helperMock = $this->createMock(Data::class);
         $this->actionFlagMock = $this->createMock(ActionFlag::class);
-        $this->messageManagerMock = $this->getMockForAbstractClass(ManagerInterface::class);
-        $this->customerSessionMock = $this->getMockBuilder(Session::class)
-            ->addMethods(['setUsername', 'getBeforeAuthUrl'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->messageManagerMock = $this->createMock(ManagerInterface::class);
+        $this->customerSessionMock = $this->objectManagerHelper->createPartialMockWithReflection(
+            Session::class,
+            ['setUsername', 'getBeforeAuthUrl']
+        );
         $this->captchaStringResolverMock = $this->createMock(CaptchaStringResolver::class);
         $this->customerUrlMock = $this->createMock(Url::class);
-        $this->customerRepositoryMock = $this->getMockForAbstractClass(CustomerRepositoryInterface::class);
-        $this->authenticationMock = $this->getMockForAbstractClass(AuthenticationInterface::class);
+        $this->customerRepositoryMock = $this->createMock(CustomerRepositoryInterface::class);
+        $this->authenticationMock = $this->createMock(AuthenticationInterface::class);
 
-        $objectManager = new ObjectManager($this);
+        $objectManager = $this->objectManagerHelper;
         $this->observer = $objectManager->getObject(
             CheckUserLoginObserver::class,
             [

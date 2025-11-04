@@ -86,16 +86,15 @@ class CheckContactUsFormObserverTest extends TestCase
 
         $this->helperMock = $this->createMock(Data::class);
         $this->actionFlagMock = $this->createMock(ActionFlag::class);
-        $this->messageManagerMock = $this->getMockForAbstractClass(ManagerInterface::class);
-        $this->redirectMock = $this->getMockForAbstractClass(RedirectInterface::class);
+        $this->messageManagerMock = $this->createMock(ManagerInterface::class);
+        $this->redirectMock = $this->createMock(RedirectInterface::class);
         $this->captchaStringResolverMock = $this->createMock(CaptchaStringResolver::class);
-        $this->dataPersistorMock = $this->getMockBuilder(DataPersistorInterface::class)
-            ->getMockForAbstractClass();
+        $this->dataPersistorMock = $this->createMock(DataPersistorInterface::class);
 
-        $this->sessionMock = $this->getMockBuilder(SessionManager::class)
-            ->addMethods(['addErrorMessage'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->sessionMock = $this->objectManagerHelper->createPartialMockWithReflection(
+            SessionManager::class,
+            ['addErrorMessage']
+        );
         $this->captchaMock = $this->createMock(DefaultModel::class);
 
         $this->checkContactUsFormObserver = $this->objectManagerHelper->getObject(

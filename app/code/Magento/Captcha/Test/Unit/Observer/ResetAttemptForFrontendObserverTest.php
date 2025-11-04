@@ -27,6 +27,8 @@ class ResetAttemptForFrontendObserverTest extends TestCase
      */
     public function testExecuteExpectsDeleteUserAttemptsCalled()
     {
+        $objectManagerHelper = new ObjectManagerHelper($this);
+
         $logMock = $this->createMock(Log::class);
         $logMock->expects($this->once())->method('deleteUserAttempts')->willReturnSelf();
 
@@ -36,15 +38,15 @@ class ResetAttemptForFrontendObserverTest extends TestCase
             ->willReturn($logMock);
 
         /** @var MockObject|Observer $eventObserverMock */
-        $eventObserverMock = $this->getMockBuilder(Observer::class)
-            ->addMethods(['getModel'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $eventObserverMock = $objectManagerHelper->createPartialMockWithReflection(
+            Observer::class,
+            ['getModel']
+        );
         $eventObserverMock->expects($this->once())
             ->method('getModel')
             ->willReturn($this->createMock(Customer::class));
 
-        $objectManager = new ObjectManagerHelper($this);
+        $objectManager = $objectManagerHelper;
         /** @var ResetAttemptForFrontendObserver $observer */
         $observer = $objectManager->getObject(
             ResetAttemptForFrontendObserver::class,
