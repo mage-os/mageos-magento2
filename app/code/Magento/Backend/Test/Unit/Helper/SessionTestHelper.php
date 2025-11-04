@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2025 Adobe
+ * Copyright 2024 Adobe
  * All Rights Reserved.
  */
 declare(strict_types=1);
@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\Backend\Test\Unit\Helper;
 
 use Magento\Backend\Model\Session;
+use Magento\Framework\Test\Unit\Helper\SessionStorageTestHelper;
 
 /**
  * Test helper for Backend Session with custom methods
@@ -26,7 +27,7 @@ class SessionTestHelper extends Session
     {
         // Skip parent constructor to avoid dependency injection issues
         // Set storage to prevent session initialization errors
-        $this->storage = new \ArrayObject();
+        $this->storage = new SessionStorageTestHelper();
     }
 
     /**

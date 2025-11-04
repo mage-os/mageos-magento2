@@ -20,7 +20,7 @@ class StoreTestHelper extends Store
      */
     private $baseUrl = '';
   
-    /** 
+    /**
      * @var array
      */
     private $data = [];
@@ -58,7 +58,6 @@ class StoreTestHelper extends Store
         return $this;
     }
     
-
     /**
      * Custom roundPrice method for testing
      *

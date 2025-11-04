@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2025 Adobe
+ * Copyright 2024 Adobe
  * All Rights Reserved.
  */
 declare(strict_types=1);
@@ -11,7 +11,7 @@ use Magento\Store\Api\Data\WebsiteInterface;
 
 /**
  * Test helper for WebsiteInterface with custom methods
- * 
+ *
  * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  * @SuppressWarnings(PHPMD.ShortVariable)
  */

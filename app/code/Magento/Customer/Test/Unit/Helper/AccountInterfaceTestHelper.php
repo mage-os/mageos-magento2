@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2025 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -13,7 +13,7 @@ use Magento\Framework\App\ActionFlag;
 /**
  * Test helper for AccountInterface with custom methods
  * This is a test helper and doesn't need HTTP method restriction
- * 
+ *
  * @SuppressWarnings(PHPMD.AllPurposeAction)
  */
 class AccountInterfaceTestHelper implements AccountInterface

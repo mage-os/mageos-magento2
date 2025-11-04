@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2016 Adobe
+ * Copyright 2025 Adobe
  * All Rights Reserved.
  */
 declare(strict_types=1);
@@ -54,7 +54,11 @@ class CountryWithWebsitesTestHelper extends CountryWithWebsites
         $this->_attrOptionFactory = $attrOptionFactory;
         
         // Use reflection to set private properties in parent classes
-        $this->setPrivateProperty('storeManager', $parentStoreManager ?? $storeManager, 'Magento\Eav\Model\Entity\Attribute\Source\Table');
+        $this->setPrivateProperty(
+            'storeManager',
+            $parentStoreManager ?? $storeManager,
+            'Magento\Eav\Model\Entity\Attribute\Source\Table'
+        );
         $this->setPrivateProperty('countriesFactory', $countriesFactory, CountryWithWebsites::class);
         $this->setPrivateProperty('allowedCountriesReader', $allowedCountriesReader, CountryWithWebsites::class);
         $this->setPrivateProperty('storeManager', $storeManager, CountryWithWebsites::class);
@@ -78,4 +82,3 @@ class CountryWithWebsitesTestHelper extends CountryWithWebsites
         $property->setValue($this, $value);
     }
 }
-

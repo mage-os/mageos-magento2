@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2025 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -81,4 +81,3 @@ class AbstractModelTestHelper extends AbstractModel
         return strtolower(preg_replace('/(.)([A-Z])/', "$1_$2", $name));
     }
 }
-

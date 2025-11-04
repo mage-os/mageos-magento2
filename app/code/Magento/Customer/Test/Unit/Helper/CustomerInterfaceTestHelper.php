@@ -27,8 +27,13 @@ class CustomerInterfaceTestHelper implements CustomerInterface
     /**
      * Convert to array
      *
+     * Required to match CustomerInterface production implementation.
+     * Cannot rename due to interface compatibility requirements.
+     *
      * @return array
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      */
+    // phpcs:ignore PHPCompatibility.FunctionNameRestrictions.ReservedFunctionNames.MethodDoubleUnderscore
     public function __toArray(): array
     {
         return $this->data['__toArray'] ?? [];

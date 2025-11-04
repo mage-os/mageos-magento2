@@ -1,17 +1,18 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2024 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
 namespace Magento\Customer\Test\Unit\Helper;
 
 use Magento\Customer\Model\Session;
+use Magento\Framework\Test\Unit\Helper\SessionStorageTestHelper;
 
 /**
  * Test helper for Customer Session with custom methods
- * 
+ *
  * @SuppressWarnings(PHPMD.UnusedPrivateField)
  * @SuppressWarnings(PHPMD.ShortVariable)
  */
@@ -94,7 +95,7 @@ class CustomerSessionTestHelper extends Session
     {
         // Skip parent constructor to avoid dependency injection issues
         // Set storage to prevent session initialization errors
-        $this->storage = new \ArrayObject();
+        $this->storage = new SessionStorageTestHelper();
     }
 
     /**
