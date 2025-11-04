@@ -16,6 +16,8 @@ use BadMethodCallException;
 /**
  * Test helper for Quote model used in unit tests to avoid complex constructor
  * dependencies and to emulate additional methods expected by legacy tests.
+ *
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
 class QuoteTestHelper extends Quote
 {

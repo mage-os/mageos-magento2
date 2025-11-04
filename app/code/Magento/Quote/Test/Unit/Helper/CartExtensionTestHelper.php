@@ -26,11 +26,6 @@ class CartExtensionTestHelper extends CartExtension
     /**
      * @var mixed
      */
-    private $shippingAssignments;
-
-    /**
-     * @var mixed
-     */
     private $companyId;
 
     /**
