@@ -30,6 +30,8 @@ class MergeGuestOrder
      * @param AccountManagement $subject
      * @param CustomerInterface $customer
      * @return CustomerInterface
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function afterCreateAccount(AccountManagement $subject, CustomerInterface $customer)
     {
