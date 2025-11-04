@@ -579,6 +579,11 @@ class ProductTestHelper extends Product
      */
     public function getData($key = '', $index = null)
     {
+        // Ensure $data is initialized (for PHPUnit 12 partial mocks)
+        if (!is_array($this->data)) {
+            $this->data = [];
+        }
+        
         // Check if there's a callback set for getData
         if (isset($this->data['get_data_callback'])) {
             return call_user_func($this->data['get_data_callback'], $key);
@@ -589,7 +594,18 @@ class ProductTestHelper extends Product
             return $this->data['product_data'] ?? [];
         }
         $productData = $this->data['product_data'] ?? [];
-        return $productData[$key] ?? $index;
+        
+        // If key doesn't exist, return null
+        if (!isset($productData[$key])) {
+            return null;
+        }
+        
+        // If index is provided and value is an array, return indexed value
+        if ($index !== null && is_array($productData[$key])) {
+            return $productData[$key][$index] ?? null;
+        }
+        
+        return $productData[$key];
     }
 
     /**
@@ -601,6 +617,11 @@ class ProductTestHelper extends Product
      */
     public function setData($key, $value = null): self
     {
+        // Ensure $data is initialized (for PHPUnit 12 partial mocks)
+        if (!is_array($this->data)) {
+            $this->data = [];
+        }
+        
         // Use separate productData array for getData/setData to avoid conflicts
         if (!isset($this->data['product_data'])) {
             $this->data['product_data'] = [];
@@ -1601,6 +1622,6 @@ class ProductTestHelper extends Product
      */
     public function getCost()
     {
-        return $this->cost;
+        return $this->getData('cost') ?? $this->cost;
     }
 }

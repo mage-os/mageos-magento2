@@ -39,6 +39,18 @@ class CartExtensionTestHelper extends CartExtension
     private $negotiableQuoteItem;
 
     /**
+     * Constructor to optionally set negotiable quote
+     *
+     * @param NegotiableQuoteInterface|null $negotiableQuote
+     */
+    public function __construct($negotiableQuote = null)
+    {
+        if ($negotiableQuote !== null) {
+            $this->negotiableQuote = $negotiableQuote;
+        }
+    }
+
+    /**
      * Set shipping assignments for tests.
      *
      * @param array $shippingAssignments
