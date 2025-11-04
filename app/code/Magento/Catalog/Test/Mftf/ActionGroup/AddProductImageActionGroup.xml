@@ -15,6 +15,7 @@
         <arguments>
             <argument name="image" defaultValue="ProductImage"/>
         </arguments>
+        
         <waitForElementVisible selector="{{AdminProductImagesSection.productImagesToggle}}" stepKey="waitForImagesSection"/>
         <conditionalClick selector="{{AdminProductImagesSection.productImagesToggle}}" dependentSelector="{{AdminProductImagesSection.imageUploadButton}}" visible="false" stepKey="openProductImagesSection"/>
         <waitForPageLoad stepKey="waitForPageRefresh"/>
