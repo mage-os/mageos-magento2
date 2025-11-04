@@ -33,7 +33,7 @@ class MergeGuestOrder
      */
     public function afterCreateAccount(AccountManagement $subject, CustomerInterface $customer)
     {
-        $searchResult = $this->getGuestOrdersByEmail->execute($customer->getEmail());
+        $searchResult = $this->getGuestOrdersByEmail->execute($customer);
         foreach ($searchResult->getItems() as $order) {
             $this->customerAssignment->execute($order, $customer);
         }
