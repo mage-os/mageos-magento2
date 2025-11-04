@@ -8,7 +8,6 @@ declare(strict_types=1);
 namespace Magento\Backend\Test\Unit\Helper;
 
 use Magento\Backend\Model\Session;
-use Magento\Framework\Test\Unit\Helper\SessionStorageTestHelper;
 
 /**
  * Test helper for Backend Session with custom methods
@@ -28,7 +27,8 @@ class SessionTestHelper extends Session
     {
         // Skip parent constructor to avoid dependency injection issues
         // Set storage to prevent session initialization errors
-        $this->storage = new SessionStorageTestHelper();
+        // phpcs:ignore Magento2.Legacy.RestrictedCode.ArrayObjectIsRestricted
+        $this->storage = new \ArrayObject();
     }
 
     /**
