@@ -23,9 +23,9 @@ use PHPUnit\Framework\TestCase;
 class GenderTest extends TestCase
 {
     /** Constants used in the unit tests */
-    const CUSTOMER_ENTITY_TYPE = 'customer';
+    private const CUSTOMER_ENTITY_TYPE = 'customer';
 
-    const GENDER_ATTRIBUTE_CODE = 'gender';
+    private const GENDER_ATTRIBUTE_CODE = 'gender';
 
     /**
      * @var MockObject|CustomerMetadataInterface

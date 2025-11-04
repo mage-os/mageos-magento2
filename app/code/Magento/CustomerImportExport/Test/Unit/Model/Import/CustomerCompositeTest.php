@@ -365,8 +365,13 @@ class CustomerCompositeTest extends TestCase
      * @param int $behavior
      */
     #[DataProvider('getRowDataProvider')]
-    public function testValidateRow(array $rows, array $calls, $validationReturn, array $expectedErrors, $behavior): void
-    {
+    public function testValidateRow(
+        array $rows,
+        array $calls,
+        $validationReturn,
+        array $expectedErrors,
+        $behavior
+    ): void {
         $customerEntity = $this->_getCustomerEntityMock();
         $addressEntity = $this->_getAddressEntityMock();
 

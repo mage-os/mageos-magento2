@@ -45,7 +45,6 @@ class QuoteTestHelper extends Quote
         return $this;
     }
   
-
     /**
      * Set shared store ids for the quote instance in tests.
      *

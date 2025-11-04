@@ -12,6 +12,7 @@ use Magento\Framework\Test\Unit\Helper\SessionStorageTestHelper;
 
 /**
  * Test helper for Backend Session with custom methods
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class SessionTestHelper extends Session
 {

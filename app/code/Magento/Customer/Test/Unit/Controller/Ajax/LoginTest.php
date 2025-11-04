@@ -110,7 +110,7 @@ class LoginTest extends TestCase
         $this->response = new \Magento\Framework\Test\Unit\Helper\ResponseInterfaceTestHelper();
         $this->customerSession = $this->createPartialMock(
             \Magento\Customer\Test\Unit\Helper\CustomerSessionTestHelper::class,
-            ['isLoggedIn', 'setBeforeAuthUrl', 'setCustomerDataAsLoggedIn', 'regenerateId', 'getData', 
+            ['isLoggedIn', 'setBeforeAuthUrl', 'setCustomerDataAsLoggedIn', 'regenerateId', 'getData',
              'getLastCustomerId', 'getBeforeAuthUrl']
         );
         $this->objectManager = $this->createPartialMock(FakeObjectManager::class, ['get']);

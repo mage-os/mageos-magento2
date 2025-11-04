@@ -17,6 +17,7 @@ class RuleExtensionTestHelper extends RuleExtension
     /**
      * Set exclude website IDs (custom method for tests)
      *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      * @param array $excludeWebsiteIds
      * @return $this
      */

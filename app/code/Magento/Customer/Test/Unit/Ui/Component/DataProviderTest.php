@@ -26,7 +26,7 @@ use PHPUnit\Framework\TestCase;
  */
 class DataProviderTest extends TestCase
 {
-    const TEST_REQUEST_NAME = 'test_request_name';
+    private const TEST_REQUEST_NAME = 'test_request_name';
 
     /**
      * @var DataProvider

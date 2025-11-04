@@ -29,13 +29,14 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.UnusedLocalVariable)
  */
 class CustomerTest extends TestCase
 {
     /**#@+
      * Test attribute code
      */
-    const ATTRIBUTE_CODE = 'code1';
+    private const ATTRIBUTE_CODE = 'code1';
 
     /**#@-*/
 
@@ -61,7 +62,7 @@ class CustomerTest extends TestCase
     protected $_attributes = [['attribute_id' => 1, 'attribute_code' => self::ATTRIBUTE_CODE]];
 
     /**
-     * Customer data
+     * Sample customer data for testing export functionality
      *
      * @var array
      */
@@ -126,7 +127,7 @@ class CustomerTest extends TestCase
         );
         foreach ($this->_attributes as $attributeData) {
             $attribute = $this->createPartialMock(
-                AbstractAttribute::class, 
+                AbstractAttribute::class,
                 ['_construct', 'getAttributeCode', 'getId']
             );
             $attribute->method('getAttributeCode')->willReturn($attributeData['attribute_code']);

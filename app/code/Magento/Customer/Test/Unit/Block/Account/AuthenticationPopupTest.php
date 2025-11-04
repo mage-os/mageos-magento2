@@ -96,8 +96,14 @@ class AuthenticationPopupTest extends TestCase
      * @throws Exception
      */
     #[DataProvider('dataProviderGetConfig')]
-    public function testGetConfig($isAutocomplete, string $baseUrl, string $registerUrl, string $forgotUrl, string $loginUrl, array $result): void
-    {
+    public function testGetConfig(
+        $isAutocomplete,
+        string $baseUrl,
+        string $registerUrl,
+        string $forgotUrl,
+        string $loginUrl,
+        array $result
+    ): void {
         $this->scopeConfigMock->expects($this->any())
             ->method('getValue')
             ->with(Form::XML_PATH_ENABLE_AUTOCOMPLETE, ScopeInterface::SCOPE_STORE, null)

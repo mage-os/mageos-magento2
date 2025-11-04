@@ -33,29 +33,29 @@ class NameTest extends TestCase
     /**#@+
      * Constant values used throughout the various unit tests.
      */
-    const PREFIX = 'Mr';
+    private const PREFIX = 'Mr';
 
-    const MIDDLENAME = 'Middle';
+    private const MIDDLENAME = 'Middle';
 
-    const SUFFIX = 'Jr';
+    private const SUFFIX = 'Jr';
 
-    const KEY_CLASS_NAME = 'class_name';
+    private const KEY_CLASS_NAME = 'class_name';
 
-    const DEFAULT_CLASS_NAME = 'customer-name';
+    private const DEFAULT_CLASS_NAME = 'customer-name';
 
-    const CUSTOM_CLASS_NAME = 'my-class-name';
+    private const CUSTOM_CLASS_NAME = 'my-class-name';
 
-    const CONTAINER_CLASS_NAME_PREFIX = '-prefix';
+    private const CONTAINER_CLASS_NAME_PREFIX = '-prefix';
 
-    const CONTAINER_CLASS_NAME_MIDDLENAME = '-middlename';
+    private const CONTAINER_CLASS_NAME_MIDDLENAME = '-middlename';
 
-    const CONTAINER_CLASS_NAME_SUFFIX = '-suffix';
+    private const CONTAINER_CLASS_NAME_SUFFIX = '-suffix';
 
-    const PREFIX_ATTRIBUTE_CODE = 'prefix';
+    private const PREFIX_ATTRIBUTE_CODE = 'prefix';
 
-    const INVALID_ATTRIBUTE_CODE = 'invalid attribute code';
+    private const INVALID_ATTRIBUTE_CODE = 'invalid attribute code';
 
-    const PREFIX_STORE_LABEL = 'Name Prefix';
+    private const PREFIX_STORE_LABEL = 'Name Prefix';
     /**#@-*/
 
     /**

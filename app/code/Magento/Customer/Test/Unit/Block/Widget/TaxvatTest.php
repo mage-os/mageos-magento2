@@ -20,9 +20,9 @@ use PHPUnit\Framework\TestCase;
 class TaxvatTest extends TestCase
 {
     /** Constants used in the unit tests */
-    const CUSTOMER_ENTITY_TYPE = 'customer';
+    private const CUSTOMER_ENTITY_TYPE = 'customer';
 
-    const TAXVAT_ATTRIBUTE_CODE = 'taxvat';
+    private const TAXVAT_ATTRIBUTE_CODE = 'taxvat';
 
     /**
      * @var MockObject|CustomerMetadataInterface
