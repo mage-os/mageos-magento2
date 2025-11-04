@@ -60,7 +60,7 @@ class SecurityManagerTest extends TestCase
      */
     protected $dateTimeMock;
 
-    /*
+    /**
      * @var RemoteAddress
      */
     protected $remoteAddressMock;
@@ -73,9 +73,7 @@ class SecurityManagerTest extends TestCase
     {
         $this->objectManager = new ObjectManager($this);
 
-        $this->securityConfigMock =  $this->getMockBuilder(ConfigInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->securityConfigMock = $this->createMock(ConfigInterface::class);
 
         $this->passwordResetRequestEventCollectionFactoryMock = $this->createPartialMock(
             CollectionFactory::class,
@@ -92,31 +90,18 @@ class SecurityManagerTest extends TestCase
             ['create']
         );
 
-        $this->passwordResetRequestEventMock = $this->getMockBuilder(PasswordResetRequestEvent::class)
-            ->addMethods(['setRequestType', 'setAccountReference', 'setIp'])
-            ->onlyMethods(['save'])
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $securityChecker = $this->getMockForAbstractClass(SecurityCheckerInterface::class);
-
-        $this->eventManagerMock = $this->getMockForAbstractClass(
-            ManagerInterface::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['dispatch']
+        $this->passwordResetRequestEventMock = $this->objectManager->createPartialMockWithReflection(
+            PasswordResetRequestEvent::class,
+            ['setRequestType', 'setAccountReference', 'setIp', 'save']
         );
 
-        $this->dateTimeMock =  $this->getMockBuilder(DateTime::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $securityChecker = $this->createMock(SecurityCheckerInterface::class);
 
-        $this->remoteAddressMock =  $this->getMockBuilder(RemoteAddress::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->eventManagerMock = $this->createMock(ManagerInterface::class);
+
+        $this->dateTimeMock = $this->createMock(DateTime::class);
+
+        $this->remoteAddressMock = $this->createMock(RemoteAddress::class);
 
         $this->model = $this->objectManager->getObject(
             SecurityManager::class,

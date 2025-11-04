@@ -62,14 +62,9 @@ class AuthSessionTest extends TestCase
     {
         $this->objectManager = new ObjectManager($this);
 
-        $this->requestMock = $this->getMockForAbstractClass(
-            RequestInterface::class,
-            ['getParam', 'getModuleName', 'getActionName'],
-            '',
-            false
-        );
+        $this->requestMock = $this->createMock(RequestInterface::class);
 
-        $this->messageManagerMock = $this->getMockForAbstractClass(ManagerInterface::class);
+        $this->messageManagerMock = $this->createMock(ManagerInterface::class);
 
         $this->adminSessionsManagerMock = $this->createPartialMock(
             AdminSessionsManager::class,
@@ -78,17 +73,15 @@ class AuthSessionTest extends TestCase
 
         $this->securityCookieMock = $this->createPartialMock(SecurityCookie::class, ['setLogoutReasonCookie']);
 
-        $this->authSessionMock = $this->getMockBuilder(Session::class)
-            ->addMethods(['getUser'])
-            ->onlyMethods(['destroy'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->authSessionMock = $this->objectManager->createPartialMockWithReflection(
+            Session::class,
+            ['getUser', 'destroy']
+        );
 
-        $this->currentSessionMock = $this->getMockBuilder(AdminSessionInfo::class)
-            ->addMethods(['getStatus', 'isActive'])
-            ->onlyMethods(['isLoggedInStatus'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->currentSessionMock = $this->objectManager->createPartialMockWithReflection(
+            AdminSessionInfo::class,
+            ['getStatus', 'isActive', 'isLoggedInStatus']
+        );
 
         $this->userExpirationManagerMock = $this->createPartialMock(
             UserExpirationManager::class,

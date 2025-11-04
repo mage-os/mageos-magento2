@@ -86,10 +86,10 @@ class AdminUserAuthenticateBeforeTest extends TestCase
             ]
         );
         $this->eventObserverMock = $this->createPartialMock(Observer::class, ['getEvent']);
-        $this->eventMock = $this->getMockBuilder(Event::class)
-            ->addMethods(['getUsername'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->eventMock = $this->objectManager->createPartialMockWithReflection(
+            Event::class,
+            ['getUsername']
+        );
         $this->userExpirationMock = $this->createPartialMock(
             UserExpirationInterface::class,
             [

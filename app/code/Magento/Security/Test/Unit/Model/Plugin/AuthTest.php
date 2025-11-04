@@ -62,12 +62,7 @@ class AuthTest extends TestCase
             ['processLogin', 'processLogout', 'getCurrentSession']
         );
 
-        $this->messageManager = $this->getMockForAbstractClass(
-            ManagerInterface::class,
-            ['addWarningMessage'],
-            '',
-            false
-        );
+        $this->messageManager = $this->createMock(ManagerInterface::class);
 
         $this->currentSession = $this->createPartialMock(
             AdminSessionInfo::class,
@@ -80,7 +75,7 @@ class AuthTest extends TestCase
             Auth::class,
             [
                 'sessionsManager' => $this->sessionsManager,
-                'messageManager' =>$this->messageManager
+                'messageManager' => $this->messageManager
             ]
         );
     }
