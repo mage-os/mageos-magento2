@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright 2016 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 namespace Magento\PageCache\Model\Layout;
 
@@ -29,20 +29,10 @@ class MergeTest extends \PHPUnit\Framework\TestCase
 
         /** @var EntitySpecificHandlesList $entitySpecificHandleList */
         $entitySpecificHandleList = $objectManager->get(EntitySpecificHandlesList::class);
-
-        // Register test layout file with ttl attribute
-        $testHandle = 'test_layout_with_ttl';
-
-        // Add this handle to entity-specific list to trigger validation
-        $entitySpecificHandleList->addHandle($testHandle);
-
-        // Manually add the layout XML from test fixture
-        $layoutXml = file_get_contents(__DIR__ . '/../../_files/test_layout_with_ttl.xml');
-        $layoutMerge->addUpdate($layoutXml);
-
-        // This throws exception when loading
-        // because test_layout_with_ttl is marked as entity-specific
-        // and contains a block with ttl
-        $layoutMerge->load([$testHandle]);
+        // Add 'default' handle, which has declarations of blocks with ttl, to the list of entity specific handles.
+        // This allows to simulate a situation, when block with ttl attribute
+        // is declared e.g. in 'catalog_product_view_id_1' handle
+        $entitySpecificHandleList->addHandle('default');
+        $layoutMerge->load(['default']);
     }
 }
