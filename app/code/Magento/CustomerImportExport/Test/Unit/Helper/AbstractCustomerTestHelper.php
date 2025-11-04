@@ -58,6 +58,7 @@ class AbstractCustomerTestHelper extends AbstractCustomer
     protected function _validateRowForUpdate(array $rowData, $rowNumber)
     {
         // Stub implementation - no validation needed in tests
+        return null;
     }
 
     /**
@@ -71,6 +72,7 @@ class AbstractCustomerTestHelper extends AbstractCustomer
     protected function _validateRowForDelete(array $rowData, $rowNumber)
     {
         // Stub implementation - no validation needed in tests
+        return null;
     }
 
     /**

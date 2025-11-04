@@ -429,5 +429,6 @@ class CustomerTestHelper extends Customer
     public function setDisableAutoGroupChange(bool $value): self
     {
         $this->testData['disable_auto_group_change'] = $value;
+        return $this;
     }
 }

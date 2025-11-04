@@ -99,6 +99,56 @@ class CustomerSessionTestHelper extends Session
     }
 
     /**
+     * Override setData to accept both single key-value and array of data
+     *
+     * @param string|array $key
+     * @param mixed $value
+     * @return $this
+     */
+    public function setData($key, $value = null): self
+    {
+        if (is_array($key)) {
+            foreach ($key as $k => $v) {
+                $this->storage[$k] = $v;
+            }
+        } else {
+            $this->storage[$key] = $value;
+        }
+        return $this;
+    }
+
+    /**
+     * Override unsetData to accept optional key parameter
+     *
+     * @param string|null $key
+     * @return $this
+     */
+    public function unsetData($key = null): self
+    {
+        if ($key === null) {
+            $this->storage = new \ArrayObject();
+        } elseif (isset($this->storage[$key])) {
+            unset($this->storage[$key]);
+        }
+        return $this;
+    }
+
+    /**
+     * Override getData to retrieve data from storage
+     *
+     * @param string $key
+     * @param mixed $default
+     * @return mixed
+     */
+    public function getData($key = '', $default = null)
+    {
+        if ($key === '') {
+            return $this->storage->getArrayCopy();
+        }
+        return $this->storage[$key] ?? $default;
+    }
+
+    /**
      * Get customer form data (custom method for tests)
      *
      * @return array|null
