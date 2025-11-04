@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2025 Adobe
+ * Copyright 2024 Adobe
  * All Rights Reserved.
  */
 declare(strict_types=1);
@@ -9,6 +9,9 @@ namespace Magento\Catalog\Test\Unit\Helper;
 
 use Magento\Catalog\Model\ProductLink\Link;
 
+/**
+ * Test helper for ProductLink\Link
+ */
 class ProductLinkInterfaceTestHelper extends Link
 {
     /**
@@ -28,7 +31,7 @@ class ProductLinkInterfaceTestHelper extends Link
 
     public function __construct()
     {
-        // Empty constructor
+        // Empty constructor - skip parent dependencies
     }
 
     /**
@@ -89,4 +92,3 @@ class ProductLinkInterfaceTestHelper extends Link
         return $this->extensionAttributesOverride;
     }
 }
-

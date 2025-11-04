@@ -1,33 +1,41 @@
 <?php
 /**
- * Copyright 2025 Adobe
+ * Copyright 2015 Adobe
  * All Rights Reserved.
  */
 declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Helper;
 
-use Magento\Catalog\Model\ResourceModel\Product\Link;
+use Magento\Catalog\Model\Product\Link;
 
+/**
+ * Test helper for Product\Link
+ */
 class ProductLinkTestHelper extends Link
 {
     /**
-     * @var mixed
+     * @var string
      */
-    private $linkedProductId = null;
+    private $linkedProductId;
 
     /**
-     * @var mixed
+     * @var array
      */
-    private $arrayData = null;
+    private $arrayData = [];
 
+    /**
+     * Skip parent constructor
+     */
     public function __construct()
     {
-        // Empty constructor
+        // Intentionally empty - skip parent constructor for testing
     }
 
     /**
-     * @return mixed
+     * Get linked product ID
+     *
+     * @return string
      */
     public function getLinkedProductId()
     {
@@ -35,33 +43,36 @@ class ProductLinkTestHelper extends Link
     }
 
     /**
-     * @param mixed $id
-     * @return $this
+     * Set linked product ID
+     *
+     * @param string $id
+     * @return void
      */
     public function setLinkedProductId($id)
     {
         $this->linkedProductId = $id;
-        return $this;
     }
 
     /**
-     * @param mixed $keys
-     * @return mixed
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * Convert to array
+     *
+     * @param array $keys
+     * @return array
      */
-    public function toArray($keys = null)
+    public function toArray(array $keys = [])
     {
         return $this->arrayData;
     }
 
     /**
-     * @param mixed $data
-     * @return $this
+     * Set array data
+     *
+     * @param array $data
+     * @return void
      */
-    public function setArrayData($data)
+    public function setArrayData(array $data)
     {
         $this->arrayData = $data;
-        return $this;
     }
 }
 
