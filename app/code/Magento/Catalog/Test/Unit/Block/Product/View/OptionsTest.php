@@ -11,7 +11,6 @@ use Magento\Catalog\Model\Product\Option\ValueFactory;
 use Magento\Catalog\Block\Adminhtml\Product\Composite\Fieldset\Options as ProductOptions;
 use Magento\Catalog\Block\Product\View\Options;
 use Magento\Catalog\Model\CategoryFactory;
-use Magento\Catalog\Test\Unit\Helper\ProductOptionsTestHelper;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Configuration\Item\OptionFactory;
 use Magento\Catalog\Model\ProductFactory;
@@ -75,7 +74,8 @@ class OptionsTest extends TestCase
             \Magento\Catalog\Model\Product\Option::class,
             ['resource' => $this->_optionResource, 'optionValueFactory' => $optValFactoryMock]
         );
-        $dateBlock = new ProductOptionsTestHelper();
+        $dateBlock = $this->createPartialMock(ProductOptions::class, ['toHtml']);
+        $dateBlock->method('toHtml')->willReturn('');
 
         $layout->method('getChildName')->willReturn('date');
         $layout->expects($this->any())->method('getBlock')->with('date')->willReturn($dateBlock);

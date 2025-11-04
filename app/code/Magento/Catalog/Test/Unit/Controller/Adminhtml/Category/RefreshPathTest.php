@@ -13,8 +13,8 @@ use Magento\Catalog\Controller\Adminhtml\Category\RefreshPath;
 use Magento\Catalog\Model\Category;
 use Magento\Catalog\Test\Unit\Helper\RefreshPathTestHelper;
 use Magento\Framework\App\RequestInterface;
+use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\Result\JsonFactory;
-use Magento\Framework\Controller\Test\Unit\Helper\JsonFactoryTestHelper;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Model\StoreManagerInterface;
@@ -41,7 +41,7 @@ class RefreshPathTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->resultJsonFactoryMock = new JsonFactoryTestHelper();
+        $this->resultJsonFactoryMock = $this->createMock(JsonFactory::class);
 
         $this->contextMock = $this->createPartialMock(Context::class, ['getRequest']);
     }
@@ -100,8 +100,12 @@ class RefreshPathTest extends TestCase
         $this->setObjectProperty($refreshPath, '_objectManager', $objectManagerMock);
         $this->setObjectProperty($categoryMock, '_resource', $categoryResource);
 
-        $this->resultJsonFactoryMock->setCreateReturn($this->resultJsonFactoryMock);
-        $this->resultJsonFactoryMock->setSetDataReturn($result);
+        // Create Json result mock
+        $jsonResultMock = $this->createMock(Json::class);
+        $jsonResultMock->method('setData')->willReturn($result);
+
+        // Configure factory to return the Json result
+        $this->resultJsonFactoryMock->method('create')->willReturn($jsonResultMock);
 
         $this->assertEquals($result, $refreshPath->execute());
     }

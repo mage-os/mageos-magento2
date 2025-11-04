@@ -70,7 +70,6 @@ class CrossSellTest extends TestCase
         $this->_linkMock->setAttributes($attributes);
 
         $productLinkMock = new ProductLinkTestHelper();
-
         $productLinkMock->setLinkedProductId('100500');
         $productLinkMock->setArrayData(['some' => 'data']);
 

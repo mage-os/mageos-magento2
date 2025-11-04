@@ -12,7 +12,7 @@ use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\Category\Tree;
 use Magento\Catalog\Model\CategoryManagement;
 use Magento\Catalog\Model\ResourceModel\Category\Collection;
-use Magento\Catalog\Test\Unit\Helper\CategoryCollectionFactoryTestHelper;
+use Magento\Catalog\Model\ResourceModel\Category\CollectionFactory;
 use Magento\Framework\App\ScopeInterface;
 use Magento\Framework\App\ScopeResolverInterface;
 use Magento\Framework\Data\Tree\Node;
@@ -43,7 +43,7 @@ class CategoryManagementTest extends TestCase
     protected $categoryTreeMock;
 
     /**
-     * @var CategoryCollectionFactoryTestHelper
+     * @var CollectionFactory|MockObject
      */
     protected $categoriesFactoryMock;
 
@@ -67,7 +67,7 @@ class CategoryManagementTest extends TestCase
         $this->objectManagerHelper = new ObjectManager($this);
         $this->categoryRepositoryMock = $this->createMock(CategoryRepositoryInterface::class);
         $this->categoryTreeMock = $this->createMock(Tree::class);
-        $this->categoriesFactoryMock = new CategoryCollectionFactoryTestHelper();
+        $this->categoriesFactoryMock = $this->createMock(CollectionFactory::class);
 
         $this->model = $this->objectManagerHelper->getObject(
             CategoryManagement::class,
@@ -162,7 +162,10 @@ class CategoryManagementTest extends TestCase
             ->method('addFilter')
             ->with('level', ['eq' => 0])
             ->willReturnSelf();
-        $this->categoriesFactoryMock->setCreate($categoriesMock);
+        $this->categoriesFactoryMock
+            ->expects($this->once())
+            ->method('create')
+            ->willReturn($categoriesMock);
         $nodeMock = $this->createMock(Node::class);
 
         $this->categoryTreeMock
@@ -307,7 +310,10 @@ class CategoryManagementTest extends TestCase
     {
         $categoriesMock = $this->createMock(Collection::class);
 
-        $this->categoriesFactoryMock->setCreate($categoriesMock);
+        $this->categoriesFactoryMock
+            ->expects($this->once())
+            ->method('create')
+            ->willReturn($categoriesMock);
 
         $categoriesMock
             ->expects($this->once())

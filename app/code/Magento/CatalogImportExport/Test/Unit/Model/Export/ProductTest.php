@@ -16,9 +16,8 @@ use Magento\CatalogImportExport\Model\Export\Product;
 use Magento\CatalogImportExport\Model\Export\Product\Type\Factory;
 use Magento\CatalogImportExport\Model\Export\ProductFilterInterface;
 use Magento\CatalogImportExport\Model\Export\RowCustomizer\Composite;
-use Magento\CatalogImportExport\Test\Unit\Helper\AttributeSetCollectionFactoryTestHelper;
-use Magento\CatalogImportExport\Test\Unit\Helper\CategoryCollectionFactoryTestHelper;
-use Magento\CatalogImportExport\Test\Unit\Helper\ProductFactoryTestHelper;
+use Magento\Catalog\Model\ResourceModel\Product as ProductResource;
+use Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\Collection as AttributeSetCollection;
 use Magento\CatalogInventory\Api\StockConfigurationInterface;
 use Magento\Eav\Model\Config;
 use Magento\Eav\Model\Entity\Collection\AbstractCollection;
@@ -194,11 +193,24 @@ class ProductTest extends TestCase
         );
         $this->exportConfig = $this->createMock(\Magento\ImportExport\Model\Export\Config::class);
 
-        $this->productFactory = new ProductFactoryTestHelper();
+        // Create Product ResourceModel mock
+        $productResourceMock = $this->createMock(ProductResource::class);
+        $productResourceMock->method('getTypeId')->willReturn(4);
 
-        $this->attrSetColFactory = new AttributeSetCollectionFactoryTestHelper();
+        // Create Product Factory mock that returns the ResourceModel
+        $this->productFactory = $this->createMock(\Magento\Catalog\Model\ResourceModel\ProductFactory::class);
+        $this->productFactory->method('create')->willReturn($productResourceMock);
 
-        $this->categoryColFactory = new CategoryCollectionFactoryTestHelper();
+        // Create AttributeSet Collection mock
+        $attributeSetCollectionMock = $this->createMock(AttributeSetCollection::class);
+        $attributeSetCollectionMock->method('setEntityTypeFilter')->willReturnSelf();
+        $attributeSetCollectionMock->method('getIterator')->willReturn(new \ArrayIterator([]));
+
+        // Create AttributeSet Collection Factory mock that returns the Collection
+        $this->attrSetColFactory = $this->createMock(AttributeSetCollectionFactory::class);
+        $this->attrSetColFactory->method('create')->willReturn($attributeSetCollectionMock);
+
+        $this->categoryColFactory = $this->createMock(CategoryCollectionFactory::class);
 
         $this->itemFactory = $this->createMock(ItemFactory::class);
         $this->optionColFactory = $this->createMock(
