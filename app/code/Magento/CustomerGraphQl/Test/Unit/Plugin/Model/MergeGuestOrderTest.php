@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Unit\Plugin\Model;
+namespace Magento\CustomerGraphQl\Test\Unit\Plugin\Model;
 
 use Magento\Customer\Api\Data\CustomerInterface;
 use Magento\Customer\Model\AccountManagement;
