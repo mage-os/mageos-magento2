@@ -14,17 +14,11 @@ use Magento\Checkout\Test\Fixture\SetDeliveryMethod as SetDeliveryMethodFixture;
 use Magento\Checkout\Test\Fixture\SetGuestEmail as SetGuestEmailFixture;
 use Magento\Checkout\Test\Fixture\SetPaymentMethod as SetPaymentMethodFixture;
 use Magento\Checkout\Test\Fixture\SetShippingAddress as SetShippingAddressFixture;
-use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Quote\Test\Fixture\AddProductToCart as AddProductToCartFixture;
 use Magento\Quote\Test\Fixture\GuestCart as GuestCartFixture;
-use Magento\Sales\Api\CreditmemoRepositoryInterface;
-use Magento\Sales\Api\InvoiceRepositoryInterface;
-use Magento\Sales\Api\OrderRepositoryInterface;
-use Magento\Sales\Api\ShipmentRepositoryInterface;
-use Magento\Sales\Model\GridAsyncInsert;
 use Magento\Sales\Test\Fixture\Creditmemo as CreditmemoFixture;
 use Magento\Sales\Test\Fixture\Invoice as InvoiceFixture;
 use Magento\Sales\Test\Fixture\Shipment as ShipmentFixture;
@@ -63,31 +57,6 @@ class GridAsyncInsertCronTest extends TestCase
     private AdapterInterface $connection;
 
     /**
-     * @var OrderRepositoryInterface
-     */
-    private OrderRepositoryInterface $orderRepository;
-
-    /**
-     * @var InvoiceRepositoryInterface
-     */
-    private InvoiceRepositoryInterface $invoiceRepository;
-
-    /**
-     * @var ShipmentRepositoryInterface
-     */
-    private ShipmentRepositoryInterface $shipmentRepository;
-
-    /**
-     * @var CreditmemoRepositoryInterface
-     */
-    private CreditmemoRepositoryInterface $creditmemoRepository;
-
-    /**
-     * @var SearchCriteriaBuilder
-     */
-    private SearchCriteriaBuilder $searchCriteriaBuilder;
-
-    /**
      * @var DataFixtureStorage
      */
     private DataFixtureStorage $fixtures;
@@ -103,11 +72,6 @@ class GridAsyncInsertCronTest extends TestCase
         $this->objectManager = Bootstrap::getObjectManager();
         $this->resourceConnection = $this->objectManager->get(ResourceConnection::class);
         $this->connection = $this->resourceConnection->getConnection();
-        $this->orderRepository = $this->objectManager->get(OrderRepositoryInterface::class);
-        $this->invoiceRepository = $this->objectManager->get(InvoiceRepositoryInterface::class);
-        $this->shipmentRepository = $this->objectManager->get(ShipmentRepositoryInterface::class);
-        $this->creditmemoRepository = $this->objectManager->get(CreditmemoRepositoryInterface::class);
-        $this->searchCriteriaBuilder = $this->objectManager->get(SearchCriteriaBuilder::class);
         $this->fixtures = $this->objectManager->get(DataFixtureStorageManager::class)->getStorage();
     }
 
