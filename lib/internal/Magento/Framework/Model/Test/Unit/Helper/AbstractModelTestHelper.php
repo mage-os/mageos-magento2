@@ -11,10 +11,15 @@ use Magento\Framework\Model\AbstractModel;
 use Magento\MediaStorage\Model\File\Storage\Database;
 
 /**
- * Test helper for AbstractModel class
+ * Test helper for Magento\Framework\Model\AbstractModel
  */
 class AbstractModelTestHelper extends AbstractModel
 {
+    /**
+     * @var array
+     */
+    private $data = [];
+
     /**
      * @var Database
      */
@@ -61,6 +66,28 @@ class AbstractModelTestHelper extends AbstractModel
     public function __construct()
     {
         // Skip parent constructor to avoid dependency injection issues
+    }
+
+    /**
+     * Get attribute ID for testing
+     *
+     * @return mixed
+     */
+    public function getAttributeId()
+    {
+        return $this->data['attribute_id'] ?? null;
+    }
+
+    /**
+     * Set attribute ID for testing
+     *
+     * @param mixed $attributeId
+     * @return self
+     */
+    public function setAttributeId($attributeId): self
+    {
+        $this->data['attribute_id'] = $attributeId;
+        return $this;
     }
 
     /**
@@ -142,6 +169,8 @@ class AbstractModelTestHelper extends AbstractModel
     }
 
     /**
+     * Get ID
+     *
      * @return mixed
      */
     public function getId()
@@ -150,6 +179,8 @@ class AbstractModelTestHelper extends AbstractModel
     }
 
     /**
+     * Set ID
+     *
      * @param mixed $id
      * @return $this
      */
@@ -160,6 +191,8 @@ class AbstractModelTestHelper extends AbstractModel
     }
 
     /**
+     * Check if data has changed for field
+     *
      * @param string $field
      * @return mixed
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
@@ -170,6 +203,8 @@ class AbstractModelTestHelper extends AbstractModel
     }
 
     /**
+     * Set result for dataHasChangedFor
+     *
      * @param mixed $result
      * @return $this
      */
@@ -180,6 +215,8 @@ class AbstractModelTestHelper extends AbstractModel
     }
 
     /**
+     * Get is active status
+     *
      * @return mixed
      */
     public function getIsActive()
@@ -188,6 +225,8 @@ class AbstractModelTestHelper extends AbstractModel
     }
 
     /**
+     * Set is active status
+     *
      * @param mixed $isActive
      * @return $this
      */
@@ -198,6 +237,8 @@ class AbstractModelTestHelper extends AbstractModel
     }
 
     /**
+     * Get entity attribute ID
+     *
      * @return mixed
      */
     public function getEntityAttributeId()
@@ -206,6 +247,8 @@ class AbstractModelTestHelper extends AbstractModel
     }
 
     /**
+     * Set entity attribute ID
+     *
      * @param mixed $entityAttributeId
      * @return $this
      */
@@ -216,6 +259,8 @@ class AbstractModelTestHelper extends AbstractModel
     }
 
     /**
+     * Get entity type ID
+     *
      * @return mixed
      */
     public function getEntityTypeId()
@@ -224,6 +269,8 @@ class AbstractModelTestHelper extends AbstractModel
     }
 
     /**
+     * Set entity type ID
+     *
      * @param mixed $entityTypeId
      * @return $this
      */

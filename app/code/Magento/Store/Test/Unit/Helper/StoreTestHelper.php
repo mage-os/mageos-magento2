@@ -9,114 +9,259 @@ namespace Magento\Store\Test\Unit\Helper;
 
 use Magento\Store\Model\Store;
 
+/**
+ * Test helper for Magento\Store\Model\Store
+ * Extends the Store class to add custom methods for testing
+ */
 class StoreTestHelper extends Store
 {
     /**
-     * @var string
+     * @var array
      */
-    private $code = 'default';
+    private $data = [];
 
     /**
-     * @var int
+     * Constructor
      */
-    private $rootCategoryId = 2;
-
-    /**
-     * @var mixed
-     */
-    private $filters = null;
-
-    /**
-     * @var mixed
-     */
-    private $website = null;
-
-    /**
-     * @var mixed
-     */
-    private $baseCurrency = null;
-
-    /**
-     * @var mixed
-     */
-    private $id = null;
-
     public function __construct()
     {
-        // Skip parent constructor to avoid dependency injection issues
+        // Skip parent constructor to avoid dependencies
     }
 
-    public function setCode($code)
+    /**
+     * Custom roundPrice method for testing
+     *
+     * @param float $price
+     * @return float
+     */
+    public function roundPrice($price)
     {
-        $this->code = $code;
-        return $this;
+        return $this->data['round_price_callback'] ?
+            call_user_func($this->data['round_price_callback'], $price) :
+            $price;
     }
 
-    public function getCode()
+    /**
+     * Set round price callback for testing
+     *
+     * @param callable $callback
+     * @return self
+     */
+    public function setRoundPriceCallback(callable $callback): self
     {
-        return $this->code;
-    }
-
-    public function setRootCategoryId($id)
-    {
-        $this->rootCategoryId = $id;
-        return $this;
-    }
-
-    public function getRootCategoryId()
-    {
-        return $this->rootCategoryId;
-    }
-
-    public function setFilters($filters)
-    {
-        $this->filters = $filters;
-        return $this;
-    }
-
-    public function getFilters()
-    {
-        return $this->filters;
-    }
-
-    public function getWebsite()
-    {
-        return $this->website;
-    }
-
-    public function setWebsite($website)
-    {
-        $this->website = $website;
-        return $this;
-    }
-
-    public function getBaseCurrency()
-    {
-        return $this->baseCurrency;
-    }
-
-    public function setBaseCurrency($value)
-    {
-        $this->baseCurrency = $value;
+        $this->data['round_price_callback'] = $callback;
         return $this;
     }
 
     /**
+     * Set test data for flexible state management
+     *
+     * @param string $key
+     * @param mixed $value
+     * @return self
+     */
+    public function setTestData(string $key, $value): self
+    {
+        $this->data[$key] = $value;
+        return $this;
+    }
+
+    /**
+     * Get test data
+     *
+     * @param string $key
      * @return mixed
+     */
+    public function getTestData(string $key)
+    {
+        return $this->data[$key] ?? null;
+    }
+
+    /**
+     * Get base currency code (custom method for testing)
+     *
+     * @return string
+     */
+    public function getBaseCurrencyCode(): string
+    {
+        return $this->data['base_currency_code'] ?? 'USD';
+    }
+
+    /**
+     * Set base currency code (custom method for testing)
+     *
+     * @param string $code
+     * @return self
+     */
+    public function setBaseCurrencyCode(string $code): self
+    {
+        $this->data['base_currency_code'] = $code;
+        return $this;
+    }
+
+    /**
+     * Get base currency (custom method for testing)
+     *
+     * @return mixed
+     */
+    public function getBaseCurrency()
+    {
+        return $this->data['base_currency'] ?? null;
+    }
+
+    /**
+     * Set base currency (custom method for testing)
+     *
+     * @param mixed $currency
+     * @return self
+     */
+    public function setBaseCurrency($currency): self
+    {
+        $this->data['base_currency'] = $currency;
+        return $this;
+    }
+
+    /**
+     * Get store ID
+     *
+     * @return int|null
      */
     public function getId()
     {
-        return $this->id;
+        return $this->data['store_id'] ?? parent::getId();
     }
 
     /**
+     * Set store ID
+     *
+     * @param int $id
+     * @return self
+     */
+    public function setId($id)
+    {
+        $this->data['store_id'] = $id;
+        return $this;
+    }
+
+    /**
+     * Set store ID (alias from Helper branch for backward compatibility)
+     *
      * @param mixed $id
      * @return $this
      */
     public function setIdReturn($id)
     {
-        $this->id = $id;
+        $this->data['store_id'] = $id;
+        return $this;
+    }
+
+    /**
+     * Get website ID
+     *
+     * @return int|null
+     */
+    public function getWebsiteId()
+    {
+        return $this->data['website_id'] ?? parent::getWebsiteId();
+    }
+
+    /**
+     * Set website ID
+     *
+     * @param int $id
+     * @return self
+     */
+    public function setWebsiteId($id)
+    {
+        $this->data['website_id'] = $id;
+        return $this;
+    }
+
+    /**
+     * Get store code (Helper branch)
+     *
+     * @return string
+     */
+    public function getCode()
+    {
+        return $this->data['code'] ?? 'default';
+    }
+
+    /**
+     * Set store code (Helper branch)
+     *
+     * @param string $code
+     * @return $this
+     */
+    public function setCode($code)
+    {
+        $this->data['code'] = $code;
+        return $this;
+    }
+
+    /**
+     * Get root category ID (Helper branch)
+     *
+     * @return int
+     */
+    public function getRootCategoryId()
+    {
+        return $this->data['root_category_id'] ?? 2;
+    }
+
+    /**
+     * Set root category ID (Helper branch)
+     *
+     * @param int $id
+     * @return $this
+     */
+    public function setRootCategoryId($id)
+    {
+        $this->data['root_category_id'] = $id;
+        return $this;
+    }
+
+    /**
+     * Get filters (Helper branch)
+     *
+     * @return mixed
+     */
+    public function getFilters()
+    {
+        return $this->data['filters'] ?? null;
+    }
+
+    /**
+     * Set filters (Helper branch)
+     *
+     * @param mixed $filters
+     * @return $this
+     */
+    public function setFilters($filters)
+    {
+        $this->data['filters'] = $filters;
+        return $this;
+    }
+
+    /**
+     * Get website (Helper branch)
+     *
+     * @return mixed
+     */
+    public function getWebsite()
+    {
+        return $this->data['website'] ?? null;
+    }
+
+    /**
+     * Set website (Helper branch)
+     *
+     * @param mixed $website
+     * @return $this
+     */
+    public function setWebsite($website)
+    {
+        $this->data['website'] = $website;
         return $this;
     }
 }
-

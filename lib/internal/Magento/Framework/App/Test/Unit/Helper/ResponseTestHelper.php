@@ -9,6 +9,9 @@ namespace Magento\Framework\App\Test\Unit\Helper;
 
 use Magento\Framework\App\Response\Http;
 
+/**
+ * Test helper for Magento\Framework\App\ResponseInterface
+ */
 class ResponseTestHelper extends Http
 {
     public function __construct()
@@ -17,6 +20,44 @@ class ResponseTestHelper extends Http
     }
 
     /**
+     * Send response
+     *
+     * @return $this
+     */
+    public function sendResponse()
+    {
+        return $this;
+    }
+
+    /**
+     * Set HTTP response code (custom method for testing)
+     *
+     * @param int $code
+     * @return $this
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function setHttpResponseCode($code)
+    {
+        return $this;
+    }
+
+    /**
+     * Set header (custom method for testing)
+     *
+     * @param string $name
+     * @param string $value
+     * @param bool $replace
+     * @return $this
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function setHeader($name, $value, $replace = false)
+    {
+        return $this;
+    }
+
+    /**
+     * Set redirect
+     *
      * @param string $url
      * @param int $code
      * @return $this
@@ -28,6 +69,8 @@ class ResponseTestHelper extends Http
     }
 
     /**
+     * Check if response is redirect
+     *
      * @return bool
      */
     public function isRedirect()
@@ -35,4 +78,3 @@ class ResponseTestHelper extends Http
         return false;
     }
 }
-

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2018 Adobe
+ * Copyright 2025 Adobe
  * All Rights Reserved.
  */
 declare(strict_types=1);
@@ -10,7 +10,8 @@ namespace Magento\Quote\Test\Unit\Helper;
 use Magento\Quote\Model\Quote\Item;
 
 /**
- * Test helper for Quote Item
+ * Test helper for Quote Item with controllable properties and extensive mocking
+ *
  * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.TooManyFields)
@@ -103,10 +104,18 @@ class QuoteItemTestHelper extends Item
     private $itemId = null;
     /** @var array */
     private $errorInfos = [];
+    /** @var array<string, mixed> */
+    private $options = [];
 
-    public function __construct()
+    /**
+     * @param int|null $storeId Optional store ID for backward compatibility with 2.4-develop
+     */
+    public function __construct($storeId = null)
     {
         $this->_data = [];
+        if ($storeId !== null) {
+            $this->storeId = $storeId;
+        }
     }
 
     public function getWeeeTaxApplied()
@@ -494,6 +503,7 @@ class QuoteItemTestHelper extends Item
                 $this->_data[$key] = $value;
                 break;
         }
+
         return $this;
     }
 
@@ -673,5 +683,29 @@ class QuoteItemTestHelper extends Item
     {
         $this->itemId = $itemId;
         return $this;
+    }
+
+    /**
+     * Set option (from 2.4-develop)
+     *
+     * @param string $code
+     * @param mixed $option
+     * @return $this
+     */
+    public function setOption($code, $option)
+    {
+        $this->options[$code] = $option;
+        return $this;
+    }
+
+    /**
+     * Get option by code (from 2.4-develop)
+     *
+     * @param string $code
+     * @return mixed|null
+     */
+    public function getOptionByCode($code)
+    {
+        return $this->options[$code] ?? null;
     }
 }
