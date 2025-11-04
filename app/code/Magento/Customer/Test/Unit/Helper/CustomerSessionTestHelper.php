@@ -126,6 +126,7 @@ class CustomerSessionTestHelper extends Session
     public function unsetData($key = null): self
     {
         if ($key === null) {
+            // phpcs:ignore Magento2.Legacy.RestrictedCode.ArrayObjectIsRestricted
             $this->storage = new \ArrayObject();
         } elseif (isset($this->storage[$key])) {
             unset($this->storage[$key]);

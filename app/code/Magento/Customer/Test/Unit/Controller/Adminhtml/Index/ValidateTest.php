@@ -99,9 +99,22 @@ class ValidateTest extends TestCase
         );
         $this->customerDataFactory->expects($this->once())->method('create')->willReturn($this->customer);
         $this->form = $this->createMock(Form::class);
-        $this->request = $this->createPartialMock(
+        /** @phpstan-ignore-next-line */
+        $this->request = $this->createMock(
             RequestInterface::class,
+            [],
+            '',
+            false,
+            true,
+            true,
             ['getPost', 'getParam']
+        );
+        /** @phpstan-ignore-next-line */
+        $this->response = $this->createMock(
+            ResponseInterface::class,
+            [],
+            '',
+            false
         );
         $this->response = $this->createMock(ResponseInterface::class);
         $this->formFactory = $this->createPartialMock(FormFactory::class, ['create']);
