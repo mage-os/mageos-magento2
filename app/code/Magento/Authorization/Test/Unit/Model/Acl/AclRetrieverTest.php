@@ -20,6 +20,7 @@ use Magento\Framework\Acl;
 use Magento\Framework\Acl\Builder;
 use Magento\Framework\Acl\Role\CurrentRoleContext;
 use Magento\Framework\Exception\AuthorizationException;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -41,8 +42,14 @@ class AclRetrieverTest extends TestCase
      */
     private $roleMock;
 
+    /**
+     * @var ObjectManagerHelper
+     */
+    private $objectManagerHelper;
+
     protected function setUp(): void
     {
+        $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->aclRetriever = $this->createAclRetriever();
     }
 
@@ -121,22 +128,20 @@ class AclRetrieverTest extends TestCase
         /**
          * @var Rules|MockObject $rulesMock1
          */
-        $rulesMock1 = $this->getMockBuilder(Rules::class)
-            ->addMethods(['getResourceId'])
-            ->onlyMethods(['__wakeup'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $rulesMock1 = $this->objectManagerHelper->createPartialMockWithReflection(
+            Rules::class,
+            ['getResourceId', '__wakeup']
+        );
         $rulesMock1->method('getResourceId')->willReturn(
             'Magento_Backend::dashboard'
         );
         /**
          * @var Rules|MockObject $rulesMock2
          */
-        $rulesMock2 = $this->getMockBuilder(Rules::class)
-            ->addMethods(['getResourceId'])
-            ->onlyMethods(['__wakeup'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $rulesMock2 = $this->objectManagerHelper->createPartialMockWithReflection(
+            Rules::class,
+            ['getResourceId', '__wakeup']
+        );
         $rulesMock2->method('getResourceId')->willReturn('Magento_Cms::page');
 
         /**
@@ -180,7 +185,7 @@ class AclRetrieverTest extends TestCase
             $aclBuilderMock,
             $roleCollectionFactoryMock,
             $rulesCollectionFactoryMock,
-            $this->getMockForAbstractClass(LoggerInterface::class),
+            $this->createMock(LoggerInterface::class),
             new CurrentRoleContext()
         );
     }
@@ -188,11 +193,10 @@ class AclRetrieverTest extends TestCase
     public function testResetAclWhenRoleChanges(): void
     {
         // Set up rules collection
-        $rulesMock = $this->getMockBuilder(Rules::class)
-            ->addMethods(['getResourceId'])
-            ->onlyMethods(['__wakeup'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $rulesMock = $this->objectManagerHelper->createPartialMockWithReflection(
+            Rules::class,
+            ['getResourceId', '__wakeup']
+        );
         $rulesMock->method('getResourceId')->willReturn('Magento_Backend::dashboard');
 
         $rulesCollectionMock = $this->createPartialMock(
@@ -238,7 +242,7 @@ class AclRetrieverTest extends TestCase
             $aclBuilderMock,
             $roleCollectionFactoryMock,
             $rulesCollectionFactoryMock,
-            $this->getMockForAbstractClass(LoggerInterface::class),
+            $this->createMock(LoggerInterface::class),
             $currentRoleContext
         );
 

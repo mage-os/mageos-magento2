@@ -66,22 +66,27 @@ class RoleTest extends TestCase
     private $adapterMock;
 
     /**
+     * @var ObjectManager
+     */
+    private $objectManagerHelper;
+
+    /**
      * @inheritDoc
      */
     protected function setUp(): void
     {
-        $this->groupFactoryMock = $this->getMockBuilder(GroupFactory::class)
-            ->onlyMethods(['create'])
-            ->addMethods(['getModelInstance'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->roleFactoryMock = $this->getMockBuilder(UserFactory::class)
-            ->onlyMethods(['create'])
-            ->addMethods(['getModelInstance'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->objectManagerHelper = new ObjectManager($this);
+        
+        $this->groupFactoryMock = $this->objectManagerHelper->createPartialMockWithReflection(
+            GroupFactory::class,
+            ['create', 'getModelInstance']
+        );
+        $this->roleFactoryMock = $this->objectManagerHelper->createPartialMockWithReflection(
+            UserFactory::class,
+            ['create', 'getModelInstance']
+        );
         $this->resourceMock = $this->createMock(ResourceConnection::class);
-        $this->aclDataCacheMock = $this->getMockForAbstractClass(CacheInterface::class);
+        $this->aclDataCacheMock = $this->createMock(CacheInterface::class);
         $this->serializerMock = $this->createPartialMock(
             Json::class,
             ['serialize', 'unserialize']
@@ -107,8 +112,7 @@ class RoleTest extends TestCase
 
         $this->adapterMock = $this->createMock(Mysql::class);
 
-        $objectManager = new ObjectManager($this);
-        $this->model = $objectManager->getObject(
+        $this->model = $this->objectManagerHelper->getObject(
             Role::class,
             [
                 'groupFactory' => $this->groupFactoryMock,

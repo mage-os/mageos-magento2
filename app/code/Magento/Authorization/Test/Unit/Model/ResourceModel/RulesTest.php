@@ -83,27 +83,29 @@ class RulesTest extends TestCase
     private $rulesModelMock;
 
     /**
+     * @var ObjectManager
+     */
+    private $objectManagerHelper;
+
+    /**
      * @inheritDoc
      */
     protected function setUp(): void
     {
-        $this->contextMock = $this->getMockBuilder(Context::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getResources'])
-            ->getMock();
+        $this->objectManagerHelper = new ObjectManager($this);
 
-        $this->resourceConnectionMock = $this->getMockBuilder(ResourceConnection::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getConnection', 'getTableName'])
-            ->getMock();
+        $this->contextMock = $this->createPartialMock(Context::class, ['getResources']);
+
+        $this->resourceConnectionMock = $this->createPartialMock(
+            ResourceConnection::class,
+            ['getConnection', 'getTableName']
+        );
 
         $this->contextMock->expects($this->once())
             ->method('getResources')
             ->willReturn($this->resourceConnectionMock);
 
-        $this->connectionMock = $this->getMockBuilder(AdapterInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->connectionMock = $this->createMock(AdapterInterface::class);
 
         $this->resourceConnectionMock->expects($this->once())
             ->method('getConnection')
@@ -114,36 +116,29 @@ class RulesTest extends TestCase
             ->with('authorization_rule', 'default')
             ->willReturnArgument(0);
 
-        $this->aclBuilderMock = $this->getMockBuilder(Builder::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getConfigCache'])
-            ->getMock();
+        $this->aclBuilderMock = $this->objectManagerHelper->createPartialMockWithReflection(
+            Builder::class,
+            ['getConfigCache']
+        );
 
-        $this->loggerMock = $this->getMockBuilder(LoggerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->loggerMock = $this->createMock(LoggerInterface::class);
 
-        $this->rootResourceMock = $this->getMockBuilder(RootResource::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->rootResourceMock = $this->createMock(RootResource::class);
 
-        $this->aclDataCacheMock = $this->getMockBuilder(CacheInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->aclDataCacheMock = $this->createMock(CacheInterface::class);
 
         $this->aclBuilderMock->method('getConfigCache')
             ->willReturn($this->aclDataCacheMock);
 
-        $this->rulesModelMock = $this->getMockBuilder(RulesModel::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getRoleId'])
-            ->getMock();
+        $this->rulesModelMock = $this->objectManagerHelper->createPartialMockWithReflection(
+            RulesModel::class,
+            ['getRoleId']
+        );
 
         $this->rulesModelMock->method('getRoleId')
             ->willReturn(self::TEST_ROLE_ID);
 
-        $objectManager = new ObjectManager($this);
-        $this->model = $objectManager->getObject(
+        $this->model = $this->objectManagerHelper->getObject(
             Rules::class,
             [
                 'context' => $this->contextMock,
