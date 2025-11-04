@@ -369,7 +369,7 @@ class Wishlist extends AbstractModel implements IdentityInterface
      *
      * @return \Magento\Wishlist\Model\ResourceModel\Item\Collection
      *
-     * @throws NoSuchEntityException|Exception
+     * @throws NoSuchEntityException
      */
     public function getItemCollection()
     {
