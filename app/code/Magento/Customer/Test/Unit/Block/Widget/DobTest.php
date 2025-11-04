@@ -447,8 +447,7 @@ class DobTest extends TestCase
             $validationRule->expects($this->any())
                 ->method('getValue')
                 ->willReturn(strtotime(self::MIN_DATE));
-        }
-        elseif ($type=="MAX") {
+        } elseif ($type=="MAX") {
             $validationRule->expects($this->any())
                 ->method('getName')
                 ->willReturn(Dob::MAX_DATE_RANGE_KEY);
@@ -456,8 +455,6 @@ class DobTest extends TestCase
                 ->method('getValue')
                 ->willReturn(strtotime(self::MAX_DATE));
         }
-
-
         return $validationRule;
     }
 
