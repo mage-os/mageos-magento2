@@ -23,6 +23,7 @@ use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use ArrayIterator;
 
 /**
  * @see \Magento\CatalogSearch\Model\Advanced
@@ -212,7 +213,7 @@ class AdvancedTest extends TestCase
         $this->collection->expects($this->any())->method('setVisibility')->willReturnSelf();
         $this->resource->method('prepareCondition')->willReturn(['like' => '%simple%']);
         $this->resource->method('getIdFieldName')->willReturn('entity_id');
-        $this->dataCollection->method('getIterator')->willReturn(new \ArrayIterator($attributes));
+        $this->dataCollection->method('getIterator')->willReturn(new ArrayIterator($attributes));
         $objectManager = new ObjectManager($this);
 
         $advancedFactory = $this->getMockBuilder(AdvancedFactory::class)

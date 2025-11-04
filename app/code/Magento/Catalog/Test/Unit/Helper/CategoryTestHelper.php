@@ -16,6 +16,9 @@ class CategoryTestHelper extends Category
 {
     /** @var array */
     private $changedProductIds = [];
+    
+    /** @var array */
+    private $data = [];
 
     public function __construct()
     {
@@ -30,6 +33,45 @@ class CategoryTestHelper extends Category
     public function setChangedProductIds($value)
     {
         $this->changedProductIds = $value;
+        return $this;
+    }
+    
+    public function setUrlPath($value)
+    {
+        $this->data['url_path'] = $value;
+        return $this;
+    }
+    
+    public function getUrlPath()
+    {
+        return $this->data['url_path'] ?? null;
+    }
+    
+    public function unsUrlPath()
+    {
+        unset($this->data['url_path']);
+        return $this;
+    }
+    
+    public function setUrlKey($value)
+    {
+        $this->data['url_key'] = $value;
+        return $this;
+    }
+    
+    public function getUrlKey()
+    {
+        return $this->data['url_key'] ?? null;
+    }
+    
+    public function getStore()
+    {
+        return $this->data['store'] ?? null;
+    }
+    
+    public function setStore($value)
+    {
+        $this->data['store'] = $value;
         return $this;
     }
 

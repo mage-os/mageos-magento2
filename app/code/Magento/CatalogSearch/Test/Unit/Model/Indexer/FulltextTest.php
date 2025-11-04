@@ -24,6 +24,8 @@ use Magento\Indexer\Model\ProcessManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use ArrayObject;
+use Exception;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -132,7 +134,7 @@ class FulltextTest extends TestCase
         $stores = [0 => 'Store 1', 1 => 'Store 2'];
         $this->setupDataProvider($stores);
 
-        $indexData = new \ArrayObject([]);
+        $indexData = new ArrayObject([]);
         $this->fulltextResource->expects($this->exactly(2))
             ->method('getRelationsByChild')
             ->willReturn($ids);
@@ -153,10 +155,10 @@ class FulltextTest extends TestCase
             ->willReturnCallback(function ($arg1, $arg2) use ($consecutiveStoreRebuildArguments, $indexData) {
                 if ($arg1 == $consecutiveStoreRebuildArguments[0][0] &&
                     $arg2 == $consecutiveStoreRebuildArguments[0][1]) {
-                    return new \ArrayObject([$indexData, $indexData]);
+                    return new ArrayObject([$indexData, $indexData]);
                 } elseif ($arg1 == $consecutiveStoreRebuildArguments[1][0] &&
                     $arg2 == $consecutiveStoreRebuildArguments[1][1]) {
-                    return new \ArrayObject([$indexData, $indexData]);
+                    return new ArrayObject([$indexData, $indexData]);
                 }
             });
 
@@ -169,7 +171,7 @@ class FulltextTest extends TestCase
         $stores = [0 => 'Store 1'];
         $this->setupDataProvider($stores);
 
-        $indexData = new \ArrayObject([]);
+        $indexData = new ArrayObject([]);
         $this->fulltextResource->expects($this->exactly(1))
             ->method('getRelationsByChild')
             ->willReturn($ids);
@@ -178,7 +180,7 @@ class FulltextTest extends TestCase
         $this->saveHandler->expects($this->exactly(count($stores) + 1))->method('saveIndex');
         $this->saveHandler->expects($this->exactly(count($stores)))
             ->method('triggerStackedActions')
-            ->willThrowException(new \Exception('error'));
+            ->willThrowException(new Exception('error'));
         $this->saveHandler->expects($this->exactly(count($stores)))->method('disableStackedActions');
 
         $this->saveHandler->expects($this->exactly(2))->method('saveIndex');
@@ -193,7 +195,7 @@ class FulltextTest extends TestCase
             ->method('rebuildStoreIndex')
             ->willReturnCallback(function (...$consecutiveStoreRebuildArguments) use ($indexData) {
                 if (!empty($consecutiveStoreRebuildArguments)) {
-                    return new \ArrayObject([$indexData, $indexData]);
+                    return new ArrayObject([$indexData, $indexData]);
                 }
             });
 
@@ -222,7 +224,7 @@ class FulltextTest extends TestCase
     public function testExecuteFull()
     {
         $stores = [0 => 'Store 1', 1 => 'Store 2'];
-        $indexData = new \ArrayObject([new \ArrayObject([]), new \ArrayObject([])]);
+        $indexData = new ArrayObject([new ArrayObject([]), new ArrayObject([])]);
         $this->setupDataProvider($stores);
 
         $this->saveHandler->expects($this->exactly(count($stores)))->method('cleanIndex');
@@ -251,7 +253,7 @@ class FulltextTest extends TestCase
         $ids = [1, 2, 3];
         $stores = [0 => 'Store 1', 1 => 'Store 2'];
         $this->setupDataProvider($stores);
-        $indexData = new \ArrayObject([]);
+        $indexData = new ArrayObject([]);
         $this->fulltextResource->expects($this->exactly(2))
             ->method('getRelationsByChild')
             ->willReturn($ids);
@@ -260,7 +262,7 @@ class FulltextTest extends TestCase
         $this->saveHandler->expects($this->exactly(2))->method('isAvailable')->willReturn(true);
         $this->fullAction->expects($this->exactly(2))
             ->method('rebuildStoreIndex')
-            ->willReturn(new \ArrayObject([$indexData, $indexData]));
+            ->willReturn(new ArrayObject([$indexData, $indexData]));
 
         $this->model->executeList($ids);
     }
@@ -270,7 +272,7 @@ class FulltextTest extends TestCase
         $id = 1;
         $stores = [0 => 'Store 1', 1 => 'Store 2'];
         $this->setupDataProvider($stores);
-        $indexData = new \ArrayObject([]);
+        $indexData = new ArrayObject([]);
         $this->fulltextResource->expects($this->exactly(2))
             ->method('getRelationsByChild')
             ->willReturn([$id]);
@@ -279,7 +281,7 @@ class FulltextTest extends TestCase
         $this->saveHandler->expects($this->exactly(2))->method('isAvailable')->willReturn(true);
         $this->fullAction->expects($this->exactly(2))
             ->method('rebuildStoreIndex')
-            ->willReturn(new \ArrayObject([$indexData, $indexData]));
+            ->willReturn(new ArrayObject([$indexData, $indexData]));
 
         $this->model->executeRow($id);
     }

@@ -19,6 +19,7 @@ use Magento\Store\Model\StoreManagerInterface;
 use Magento\Store\Model\Website;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Exception;
 
 /**
  * Class ObserverTest
@@ -85,12 +86,12 @@ class ObserverTest extends TestCase
     public function testGetWebsitesThrowsException(): void
     {
         $message = 'get website exception';
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage($message);
 
         $this->scopeConfigMock->method('isSetFlag')->willReturn(false);
         $this->storeManagerMock->method('getWebsites')
-            ->willThrowException(new \Exception($message));
+            ->willThrowException(new Exception($message));
 
         $this->observer->process();
     }
@@ -103,7 +104,7 @@ class ObserverTest extends TestCase
     public function testProcessPriceThrowsException(): void
     {
         $message = 'create collection exception';
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage($message);
 
         $groupMock = $this->createMock(Group::class);
@@ -118,7 +119,7 @@ class ObserverTest extends TestCase
 
         $this->priceColFactoryMock->expects($this->once())
             ->method('create')
-            ->willThrowException(new \Exception($message));
+            ->willThrowException(new Exception($message));
 
         $this->observer->process();
     }
@@ -131,7 +132,7 @@ class ObserverTest extends TestCase
     public function testProcessStockThrowsException(): void
     {
         $message = 'create collection exception';
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage($message);
 
         $groupMock = $this->createMock(Group::class);
@@ -148,7 +149,7 @@ class ObserverTest extends TestCase
 
         $this->stockColFactoryMock->expects($this->once())
             ->method('create')
-            ->willThrowException(new \Exception($message));
+            ->willThrowException(new Exception($message));
 
         $this->observer->process();
     }

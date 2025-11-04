@@ -15,6 +15,7 @@ use Magento\CatalogSearch\Model\Search\Request\PartialSearchModifier;
 use Magento\Eav\Test\Unit\Helper\AttributeTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use ReflectionProperty;
 
 /**
  * Test "partial" search requests modifier
@@ -70,7 +71,7 @@ class PartialSearchModifierTest extends TestCase
                 ->willReturn($searchWeight);
             $items[] = $item;
         }
-        $reflectionProperty = new \ReflectionProperty($this->collection, '_items');
+        $reflectionProperty = new ReflectionProperty($this->collection, '_items');
         $reflectionProperty->setAccessible(true);
         $reflectionProperty->setValue($this->collection, $items);
         $this->assertEquals($expected, $this->model->modify($requests));

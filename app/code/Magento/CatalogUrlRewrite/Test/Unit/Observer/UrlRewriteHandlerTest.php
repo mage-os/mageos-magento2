@@ -25,6 +25,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Magento\CatalogUrlRewrite\Model\ProductScopeRewriteGenerator;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use ArrayIterator;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -205,7 +206,7 @@ class UrlRewriteHandlerTest extends TestCase
         $productCollection->expects($this->any())->method('setStoreId')->willReturnSelf();
         $productCollection->expects($this->any())->method('addStoreFilter')->willReturnSelf();
         $productCollection->expects($this->any())->method('addAttributeToSelect')->willReturnSelf();
-        $iterator = new \ArrayIterator([]);
+        $iterator = new ArrayIterator([]);
         $productCollection->method('getIterator')->willReturn($iterator);
 
         $this->collectionFactoryMock->method('create')->willReturn($productCollection);

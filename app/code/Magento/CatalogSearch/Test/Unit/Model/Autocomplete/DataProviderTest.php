@@ -19,6 +19,7 @@ use Magento\Search\Model\QueryFactory;
 use Magento\Search\Model\ResourceModel\Query\Collection;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use ArrayIterator;
 
 class DataProviderTest extends TestCase
 {
@@ -131,7 +132,7 @@ class DataProviderTest extends TestCase
         foreach ($data as $collectionItem) {
             $collectionData[] = new DataObject($collectionItem);
         }
-        $this->suggestCollection->method('getIterator')->willReturn(new \ArrayIterator($collectionData));
+        $this->suggestCollection->method('getIterator')->willReturn(new ArrayIterator($collectionData));
     }
 
     public function testGetItemsWithEmptyQueryText()

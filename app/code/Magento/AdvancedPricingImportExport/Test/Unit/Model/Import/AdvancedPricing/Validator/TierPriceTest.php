@@ -28,6 +28,7 @@ use Magento\ImportExport\Model\ResourceModel\Helper;
 use Magento\ImportExport\Model\ResourceModel\Import\Data as ResourceImportData;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 /**
  * @SuppressWarnings(PHPMD)
@@ -120,7 +121,7 @@ class TierPriceTest extends TestCase
 
         $this->tierPrice->init(null);
 
-        $reflection = new \ReflectionClass($this->tierPrice);
+        $reflection = new ReflectionClass($this->tierPrice);
         $property = $reflection->getProperty('customerGroups');
         $property->setAccessible(true);
         $this->assertEquals($expectedCustomerGroups, $property->getValue($this->tierPrice));

@@ -29,6 +29,7 @@ use Magento\MediaStorage\Model\ResourceModel\File\Storage\File;
 use Magento\ProductVideo\Controller\Adminhtml\Product\Gallery\RetrieveImage;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Exception;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -215,7 +216,7 @@ class RetrieveImageTest extends TestCase
         $readInterface->method('getAbsolutePath')->willReturn('');
         $this->abstractAdapter->expects($this->any())
             ->method('validateUploadFile')
-            ->willThrowException(new \Exception('Invalid File.'));
+            ->willThrowException(new Exception('Invalid File.'));
         $this->validatorMock->expects($this->once())->method('isValid')->with('jpg')->willReturn('true');
         $this->curlMock->expects($this->once())->method('read')->willReturn('testimage');
         $this->filesystemMock->expects($this->once())->method('getDirectoryWrite')->willReturn($writeInterface);

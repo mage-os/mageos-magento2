@@ -18,6 +18,7 @@ use Magento\Catalog\Test\Unit\Helper\AttributeTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use ArrayIterator;
 
 /**
  * Test for \Magento\CatalogSearch\Model\Search\RequestGenerator
@@ -136,7 +137,7 @@ class RequestGeneratorTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $collection->method('getIterator')->willReturn(
-            new \ArrayIterator(
+            new ArrayIterator(
                 [
                         $this->createAttributeTestHelper($attributeOptions),
                     ]

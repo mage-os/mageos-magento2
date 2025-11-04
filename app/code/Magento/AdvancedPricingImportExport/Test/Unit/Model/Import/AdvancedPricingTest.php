@@ -40,6 +40,7 @@ use Magento\CatalogImportExport\Test\Unit\Helper\ResourceFactoryTestHelper;
 use Magento\Framework\Test\Unit\Helper\DateTimeTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use ReflectionClass;
+use Exception;
 
 /**
  * @SuppressWarnings(PHPMD)
@@ -639,7 +640,7 @@ class AdvancedPricingTest extends AbstractImportTestCase
 
         $this->advancedPricing->deleteAdvancedPricing();
 
-        $reflection = new \ReflectionClass($this->advancedPricing);
+        $reflection = new ReflectionClass($this->advancedPricing);
         $property = $reflection->getProperty('_cachedSkuToDelete');
         $property->setAccessible(true);
         $cachedSkuToDelete = $property->getValue($this->advancedPricing);
@@ -934,7 +935,7 @@ class AdvancedPricingTest extends AbstractImportTestCase
         if ($exceptionInDelete) {
             $this->connection->expects($this->exactly($numCallDelete))
                 ->method('delete')
-                ->willThrowException(new \Exception());
+                ->willThrowException(new Exception());
         } else {
             $this->connection->expects($this->exactly($numCallDelete))
                 ->method('delete')

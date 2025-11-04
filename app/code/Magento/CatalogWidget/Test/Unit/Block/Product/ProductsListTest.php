@@ -33,6 +33,7 @@ use Magento\Store\Model\StoreManagerInterface;
 use Magento\Widget\Helper\Conditions;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use ArrayIterator;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -391,7 +392,7 @@ class ProductsListTest extends TestCase
         $product = $this->createPartialMock(IdentityInterface::class, ['getIdentities']);
         $product->expects($this->once())->method('getIdentities')->willReturn(['product_identity']);
         $collection->expects($this->once())->method('getIterator')->willReturn(
-            new \ArrayIterator([$product])
+            new ArrayIterator([$product])
         );
         $this->productsList->setData('product_collection', $collection);
 

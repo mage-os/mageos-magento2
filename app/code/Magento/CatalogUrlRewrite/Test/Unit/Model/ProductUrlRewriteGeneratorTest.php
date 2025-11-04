@@ -23,6 +23,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -121,7 +122,7 @@ class ProductUrlRewriteGeneratorTest extends TestCase
             ]
         );
 
-        $reflection = new \ReflectionClass(get_class($this->productUrlRewriteGenerator));
+        $reflection = new ReflectionClass(get_class($this->productUrlRewriteGenerator));
         $reflectionProperty = $reflection->getProperty('productScopeRewriteGenerator');
         $reflectionProperty->setAccessible(true);
         $reflectionProperty->setValue($this->productUrlRewriteGenerator, $this->productScopeRewriteGenerator);

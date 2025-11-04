@@ -14,6 +14,7 @@ use Magento\CatalogWidget\Model\Rule\Condition\ProductFactory;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 class CombineTest extends TestCase
 {
@@ -72,7 +73,7 @@ class CombineTest extends TestCase
         $productCondition->expects($this->any())->method('loadAttributeOptions')->willReturnSelf();
         
         // Set attribute options via reflection since getAttributeOption uses magic methods
-        $reflection = new \ReflectionClass($productCondition);
+        $reflection = new ReflectionClass($productCondition);
         $property = $reflection->getProperty('_data');
         $property->setAccessible(true);
         $property->setValue($productCondition, ['attribute_option' => $attributeOptions]);

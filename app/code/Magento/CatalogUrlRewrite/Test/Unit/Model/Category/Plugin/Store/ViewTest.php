@@ -22,6 +22,8 @@ use Magento\Store\Model\Store;
 use Magento\UrlRewrite\Model\UrlPersistInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
+use ArrayIterator;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -139,7 +141,7 @@ class ViewTest extends TestCase
         $origStoreMock = $this->getMockBuilder(Store::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $reflectionStore = new \ReflectionClass($this->plugin);
+        $reflectionStore = new ReflectionClass($this->plugin);
         $origStore = $reflectionStore->getProperty('origStore');
         $origStore->setAccessible(true);
         $origStore->setValue($this->plugin, $origStoreMock);
@@ -158,7 +160,7 @@ class ViewTest extends TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['getIterator'])
             ->getMock();
-        $categoryCollection->method('getIterator')->willReturn(new \ArrayIterator([]));
+        $categoryCollection->method('getIterator')->willReturn(new ArrayIterator([]));
         $this->categoryMock->expects($this->once())
             ->method('getCategories')
             ->willReturn($categoryCollection);
@@ -180,7 +182,7 @@ class ViewTest extends TestCase
         $this->productCollectionMock->expects($this->once())
             ->method('addStoreFilter')
             ->willReturn($this->productCollectionMock);
-        $iterator = new \ArrayIterator([$this->productMock]);
+        $iterator = new ArrayIterator([$this->productMock]);
         $this->productCollectionMock->expects($this->once())
             ->method('getIterator')
             ->willReturn($iterator);
@@ -200,7 +202,7 @@ class ViewTest extends TestCase
         $origStoreMock = $this->getMockBuilder(Store::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $reflectionStore = new \ReflectionClass($this->plugin);
+        $reflectionStore = new ReflectionClass($this->plugin);
         $origStore = $reflectionStore->getProperty('origStore');
         $origStore->setAccessible(true);
         $origStore->setValue($this->plugin, $origStoreMock);
@@ -217,7 +219,7 @@ class ViewTest extends TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['getIterator'])
             ->getMock();
-        $categoryCollection->method('getIterator')->willReturn(new \ArrayIterator([]));
+        $categoryCollection->method('getIterator')->willReturn(new ArrayIterator([]));
         $this->categoryMock->expects($this->never())
             ->method('getCategories');
         $this->categoryFactoryMock->expects($this->never())->method('create');
