@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2024 Adobe
+ * Copyright 2025 Adobe
  * All Rights Reserved.
  */
 declare(strict_types=1);
@@ -8,76 +8,97 @@ declare(strict_types=1);
 namespace Magento\Backend\Test\Unit\Helper;
 
 use Magento\Backend\Model\Auth\Session;
+use Magento\Framework\Session\Test\Unit\Helper\StorageTestHelper;
+use Magento\User\Model\User;
 
 /**
- * Test helper for Session
+ * Test helper for creating Auth Session mocks with various methods
+ *
+ * This helper extends the concrete Auth\Session class directly, providing a clean
+ * way to add test-specific methods without using anonymous classes.
+ * Extends Auth\Session to be compatible with type hints requiring that specific class.
+ *
+ * METHODS PROVIDED:
+ * - setUser() / getUser() - User management
+ * - setIsLoggedIn() / isLoggedIn() - Login state management
+ * - setSkipLoggingAction() - Logging control
  */
 class SessionTestHelper extends Session
 {
     /**
-     * @var array
+     * @var User|null
      */
-    private $data = [];
-
+    private $user = null;
+    
     /**
-     * Skip parent constructor
+     * @var bool
      */
+    private $isLoggedIn = false;
+    
     public function __construct()
     {
-        // Skip parent constructor
+        // Skip parent constructor for testing
+        // Initialize storage with the StorageTestHelper
+        $this->storage = new StorageTestHelper();
     }
-
+    
     /**
-     * setIsUrlNotice (custom method for testing)
+     * Get user
+     *
+     * @return User|null
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+    
+    /**
+     * Set user
+     *
+     * @param User $user
+     * @return $this
+     */
+    public function setUser($user)
+    {
+        $this->user = $user;
+        $this->isLoggedIn = true;
+        return $this;
+    }
+    
+    /**
+     * Set skip logging action
      *
      * @param mixed $value
      * @return $this
      */
-    public function setIsUrlNotice($value)
+    public function setSkipLoggingAction($value)
     {
-        $this->data['isUrlNotice'] = $value;
+        // Store in parent's storage using magic method (via StorageTestHelper::__call)
+        // phpcs:ignore Magento2.Functions.StaticFunction
+        /** @phpstan-ignore-next-line - StorageTestHelper::__call handles dynamic methods */
+        $this->storage->setSkipLoggingAction($value);
         return $this;
     }
-
+    
     /**
-     * getUser (custom method for testing)
-     *
-     * @return mixed
-     */
-    public function getUser()
-    {
-        return $this->data['user'] ?? null;
-    }
-
-    /**
-     * getAclRole (custom method for testing)
-     *
-     * @return mixed
-     */
-    public function getAclRole()
-    {
-        return $this->data['aclRole'] ?? null;
-    }
-
-    /**
-     * hasUser (custom method for testing)
+     * Check if user is logged in
      *
      * @return bool
      */
-    public function hasUser()
+    public function isLoggedIn()
     {
-        return $this->data['user'] ?? false;
+        return $this->isLoggedIn;
     }
-
+    
     /**
-     * setPostData (custom method for testing)
+     * Set is logged in
      *
-     * @param mixed $data
+     * @param bool $value
      * @return $this
      */
-    public function setPostData($data)
+    public function setIsLoggedIn($value)
     {
-        $this->data['post_data'] = $data;
+        $this->isLoggedIn = $value;
         return $this;
     }
 }
