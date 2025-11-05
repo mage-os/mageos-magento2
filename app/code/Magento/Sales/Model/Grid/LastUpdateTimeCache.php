@@ -87,6 +87,6 @@ class LastUpdateTimeCache
      */
     private function getFlagKey(string $gridTableName): string
     {
-        return self::CACHE_PREFIX . ':' . $gridTableName;
+        return self::STORAGE_KEY_PREFIX . ':' . $gridTableName;
     }
 }
