@@ -12,7 +12,7 @@ use Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Options\Option;
 use Magento\Catalog\Block\Adminhtml\Product\Options\Ajax;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ProductFactory;
-use Magento\Catalog\Test\Unit\Helper\OptionTestHelper;
+use Magento\Catalog\Test\Unit\Helper\OptionBlockTestHelper;
 use Magento\Framework\App\Config;
 use Magento\Framework\App\Request\Http;
 use Magento\Framework\Event\Manager;
@@ -88,7 +88,7 @@ class AjaxTest extends TestCase
         $product->expects($this->once())->method('load')->willReturnSelf();
         $product->expects($this->once())->method('getId')->willReturn(1);
 
-        $optionsBlock = new OptionTestHelper();
+        $optionsBlock = new OptionBlockTestHelper();
 
         $layout = $this->createMock(LayoutInterface::class);
         $layout->expects($this->once())->method('createBlock')
