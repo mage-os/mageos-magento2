@@ -560,4 +560,33 @@ class EscaperTest extends TestCase
             ],
         ];
     }
+
+    public function testEscapeXssInUrlWithMalformedUtf8ReturnsEmptyString(): void
+    {
+        // Invalid UTF-8 byte sequence followed by a script identifier
+        $bad = "\xC3\x28javascript:alert(1)";
+        $this->assertSame('', $this->escaper->escapeXssInUrl($bad));
+    }
+
+    public function testInlineSensitiveEscapeHtmlAttrWithTripleBraces(): void
+    {
+        $method = new \ReflectionMethod(Escaper::class, 'inlineSensitiveEscapeHtmlAttr');
+        $method->setAccessible(true);
+
+        $input = '{{{Search entire store here...}}}';
+        $expected = '{{{Search&#x20;entire&#x20;store&#x20;here...}}}';
+
+        $this->assertSame($expected, $method->invoke($this->escaper, $input));
+    }
+
+    public function testInlineSensitiveEscapeHtmlAttrWithoutTripleBracesFallsBack(): void
+    {
+        $method = new \ReflectionMethod(Escaper::class, 'inlineSensitiveEscapeHtmlAttr');
+        $method->setAccessible(true);
+
+        $input = 'Simple string';
+        $expected = 'Simple&#x20;string';
+
+        $this->assertSame($expected, $method->invoke($this->escaper, $input));
+    }
 }
