@@ -8,26 +8,19 @@ declare(strict_types=1);
 namespace Magento\Weee\Plugin\ConfigurableProduct\Pricing;
 
 use Magento\Catalog\Api\ProductRepositoryInterface;
-use Magento\Catalog\Model\Product;
 use Magento\Catalog\Pricing\Price\FinalPrice as CatalogFinalPrice;
 use Magento\Catalog\Test\Fixture\Product as ProductFixture;
+use Magento\Catalog\Test\Fixture\ProductStock as ProductStockFixture;
 use Magento\ConfigurableProduct\Pricing\Price\FinalPriceResolver as ConfigurableFinalPriceResolver;
 use Magento\ConfigurableProduct\Test\Fixture\Attribute as ConfigurableAttributeFixture;
 use Magento\ConfigurableProduct\Test\Fixture\Product as ConfigurableProductFixture;
-use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Framework\ObjectManagerInterface;
 use Magento\Indexer\Test\Fixture\Indexer;
-use Magento\Store\Model\ScopeInterface;
-use Magento\Tax\Model\Config as TaxConfig;
 use Magento\Tax\Test\Fixture\ProductTaxClass;
 use Magento\Tax\Test\Fixture\TaxRate;
 use Magento\Tax\Test\Fixture\TaxRule;
 use Magento\TestFramework\Fixture\Config;
 use Magento\TestFramework\Fixture\DataFixture;
-use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestFramework\TestCase\AbstractController;
-use Magento\Weee\Model\Config as WeeeConfig;
-use Magento\Weee\Model\Tax as WeeeDisplayConfig;
 use Magento\Weee\Test\Fixture\Attribute as WeeeAttributeFixture;
 
 /**
@@ -52,11 +45,6 @@ class FinalPriceResolverTest extends AbstractController
     private $finalPriceResolver;
 
     /**
-     * @var ScopeConfigInterface
-     */
-    private $scopeConfig;
-
-    /**
      * @inheritdoc
      */
     protected function setUp(): void
@@ -64,7 +52,6 @@ class FinalPriceResolverTest extends AbstractController
         parent::setUp();
         $this->productRepository = $this->_objectManager->get(ProductRepositoryInterface::class);
         $this->finalPriceResolver = $this->_objectManager->get(ConfigurableFinalPriceResolver::class);
-        $this->scopeConfig = $this->_objectManager->get(ScopeConfigInterface::class);
     }
 
     /**
@@ -196,11 +183,24 @@ class FinalPriceResolverTest extends AbstractController
             ]
         ),
         DataFixture(ConfigurableAttributeFixture::class, ['attribute_code' => 'test_configurable'], 'cfg_attr'),
-        DataFixture(ProductFixture::class, ['sku' => 's1', 'price' => 100, 'tax_class_id' => '$product_tax_class.id$'], 's1'),
-        DataFixture(ProductFixture::class, ['sku' => 's2', 'price' => 100, 'tax_class_id' => '$product_tax_class.id$'], 's2'),
+        DataFixture(
+            ProductFixture::class,
+            ['sku' => 's1', 'price' => 100, 'tax_class_id' => '$product_tax_class.id$'],
+            's1'
+        ),
+        DataFixture(
+            ProductFixture::class,
+            ['sku' => 's2', 'price' => 100, 'tax_class_id' => '$product_tax_class.id$'],
+            's2'
+        ),
         DataFixture(
             ConfigurableProductFixture::class,
-            ['sku' => 'cfg-test', 'tax_class_id' => '$product_tax_class.id$', '_options' => ['$cfg_attr$'], '_links' => ['$s1$', '$s2$']],
+            [
+                'sku' => 'cfg-test',
+                'tax_class_id' => '$product_tax_class.id$',
+                '_options' => ['$cfg_attr$'],
+                '_links' => ['$s1$', '$s2$']
+            ],
             'cfg'
         )
     ]
@@ -239,11 +239,24 @@ class FinalPriceResolverTest extends AbstractController
             ]
         ),
         DataFixture(ConfigurableAttributeFixture::class, ['attribute_code' => 'test_configurable'], 'cfg_attr'),
-        DataFixture(ProductFixture::class, ['sku' => 'simple-1', 'price' => 100, 'tax_class_id' => '$product_tax_class.id$'], 's1'),
-        DataFixture(ProductFixture::class, ['sku' => 'simple-2', 'price' => 100, 'tax_class_id' => '$product_tax_class.id$'], 's2'),
+        DataFixture(
+            ProductFixture::class,
+            ['sku' => 'simple-1', 'price' => 100, 'tax_class_id' => '$product_tax_class.id$'],
+            's1'
+        ),
+        DataFixture(
+            ProductFixture::class,
+            ['sku' => 'simple-2', 'price' => 100, 'tax_class_id' => '$product_tax_class.id$'],
+            's2'
+        ),
         DataFixture(
             ConfigurableProductFixture::class,
-            ['sku' => 'cfg-fpt-desc', 'tax_class_id' => '$product_tax_class.id$', '_options' => ['$cfg_attr$'], '_links' => ['$s1$', '$s2$']],
+            [
+                'sku' => 'cfg-fpt-desc',
+                'tax_class_id' => '$product_tax_class.id$',
+                '_options' => ['$cfg_attr$'],
+                '_links' => ['$s1$', '$s2$']
+            ],
             'cfg'
         )
     ]
@@ -294,11 +307,24 @@ class FinalPriceResolverTest extends AbstractController
             ]
         ),
         DataFixture(ConfigurableAttributeFixture::class, ['attribute_code' => 'test_configurable'], 'cfg_attr'),
-        DataFixture(ProductFixture::class, ['sku' => 'simple-incl-1', 'price' => 100, 'tax_class_id' => '$product_tax_class.id$'], 's1'),
-        DataFixture(ProductFixture::class, ['sku' => 'simple-incl-2', 'price' => 100, 'tax_class_id' => '$product_tax_class.id$'], 's2'),
+        DataFixture(
+            ProductFixture::class,
+            ['sku' => 'simple-incl-1', 'price' => 100, 'tax_class_id' => '$product_tax_class.id$'],
+            's1'
+        ),
+        DataFixture(
+            ProductFixture::class,
+            ['sku' => 'simple-incl-2', 'price' => 100, 'tax_class_id' => '$product_tax_class.id$'],
+            's2'
+        ),
         DataFixture(
             ConfigurableProductFixture::class,
-            ['sku' => 'cfg-incl-tax', 'tax_class_id' => '$product_tax_class.id$', '_options' => ['$cfg_attr$'], '_links' => ['$s1$', '$s2$']],
+            [
+                'sku' => 'cfg-incl-tax',
+                'tax_class_id' => '$product_tax_class.id$',
+                '_options' => ['$cfg_attr$'],
+                '_links' => ['$s1$', '$s2$']
+            ],
             'cfg'
         )
     ]
@@ -332,9 +358,7 @@ class FinalPriceResolverTest extends AbstractController
     /**
      * Test frontend configurable product page displays correct price without double taxation
      *
-     * Dispatches to the product page and verifies the response contains the correct price.
-     *
-     * Expected: Price should be $119.00 (not $141.61 with double tax)
+     * @magentoDbIsolation disabled
      */
     #[
         Config('tax/calculation/price_includes_tax', 0, 'store', 'default'),
@@ -362,9 +386,17 @@ class FinalPriceResolverTest extends AbstractController
             's1'
         ),
         DataFixture(
+            ProductStockFixture::class,
+            ['prod_id' => '$s1.id$', 'prod_qty' => 100, 'is_in_stock' => 1]
+        ),
+        DataFixture(
             ProductFixture::class,
             ['sku' => 'simple-frontend-2', 'price' => 100.00, 'tax_class_id' => '$product_tax_class.id$'],
             's2'
+        ),
+        DataFixture(
+            ProductStockFixture::class,
+            ['prod_id' => '$s2.id$', 'prod_qty' => 100, 'is_in_stock' => 1]
         ),
         DataFixture(
             ConfigurableProductFixture::class,
@@ -376,7 +408,9 @@ class FinalPriceResolverTest extends AbstractController
                 '_links' => ['$s1$', '$s2$']
             ],
             'configurable'
-        )
+        ),
+        DataFixture(Indexer::class, ['indexer_id' => 'cataloginventory_stock']),
+        DataFixture(Indexer::class, ['indexer_id' => 'catalog_product_price'])
     ]
     public function testFrontendConfigurableProductPageDisplaysCorrectPrice(): void
     {
@@ -394,12 +428,16 @@ class FinalPriceResolverTest extends AbstractController
 
         // Assert the correct price is displayed ($119.00)
         // The price should be shown with tax included
-        $this->assertStringContainsString('$119.00', $responseBody, 
+        $this->assertStringContainsString(
+            '$119.00',
+            $responseBody,
             'Price should be $119.00 (base $100 + 19% tax)'
         );
 
         // Assert the WRONG price (double tax) is NOT displayed
-        $this->assertStringNotContainsString('$141.61', $responseBody, 
+        $this->assertStringNotContainsString(
+            '$141.61',
+            $responseBody,
             'Price should NOT be $141.61 (double tax bug)'
         );
     }

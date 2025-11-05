@@ -45,8 +45,10 @@ class FinalPriceResolver
         SaleableInterface $product
     ):float {
         return $this->weeePriceDisplay()
-            ? $product->getPriceInfo()->getPrice(CatalogFinalPrice::PRICE_CODE)->getAmount()->getValue(Adjustment::ADJUSTMENT_CODE)
-            : $product->getPriceInfo()->getPrice(CatalogFinalPrice::PRICE_CODE)->getValue();
+            ? $product->getPriceInfo()->getPrice(CatalogFinalPrice::PRICE_CODE)
+                ->getAmount()->getValue(Adjustment::ADJUSTMENT_CODE)
+            : $product->getPriceInfo()->getPrice(CatalogFinalPrice::PRICE_CODE)
+                ->getValue();
     }
 
     /**
