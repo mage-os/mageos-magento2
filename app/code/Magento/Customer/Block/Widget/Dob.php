@@ -413,11 +413,11 @@ class Dob extends AbstractWidget
         $monthsFormat = $monthsData['format'];
         $daysFormat = $daysData['format'];
         $monthsAbbreviated = $monthsFormat['abbreviated'];
-        $monthsShort = $monthsAbbreviated !== null ? $monthsAbbreviated : $monthsFormat['wide'];
+        $monthsShort = $monthsAbbreviated ?? $monthsFormat['wide'];
         $daysAbbreviated = $daysFormat['abbreviated'];
-        $daysShort = $daysAbbreviated !== null ? $daysAbbreviated : $daysFormat['wide'];
+        $daysShort = $daysAbbreviated ?? $daysFormat['wide'];
         $daysShortFormat = $daysFormat['short'];
-        $daysMin = $daysShortFormat !== null ? $daysShortFormat : $daysShort;
+        $daysMin = $daysShortFormat ?? $daysShort;
         return $this->encoder->encode(
             [
                 'closeText' => __('Done'),
