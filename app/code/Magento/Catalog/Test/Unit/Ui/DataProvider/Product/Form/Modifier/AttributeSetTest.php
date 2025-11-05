@@ -14,6 +14,7 @@ use Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\AttributeSet;
 use Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\Collection;
 use Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\CollectionFactory;
 use Magento\Framework\UrlInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 
 /**
@@ -62,9 +63,12 @@ class AttributeSetTest extends AbstractModifierTestCase
         $this->attributeSetCollectionMock->expects($this->any())
             ->method('setEntityTypeFilter')
             ->willReturnSelf();
-        $this->attributeSetCollectionMock->expects($this->any())
-            ->method('addFieldToSelect')
+        $this->attributeSetCollectionMock->method('addFieldToSelect')
             ->willReturnSelf();
+        $this->attributeSetCollectionMock->method('setOrder')
+            ->willReturnSelf();
+        $this->attributeSetCollectionMock->method('getData')
+            ->willReturn([]);
     }
 
     /**
@@ -125,9 +129,15 @@ class AttributeSetTest extends AbstractModifierTestCase
     public function testModifyData()
     {
         $productId = 1;
+        $attributeSetId = 4;
 
         $this->productMock->setData('entity_id', $productId);
 
-        $this->assertArrayHasKey($productId, $this->getModel()->modifyData([]));
+        $result = $this->getModel()->modifyData([]);
+        $this->assertArrayHasKey($productId, $result);
+        $this->assertEquals(
+            $attributeSetId,
+            $result[$productId][AttributeSet::DATA_SOURCE_DEFAULT]['attribute_set_id']
+        );
     }
 }

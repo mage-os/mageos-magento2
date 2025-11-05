@@ -97,14 +97,8 @@ class WebsitesTest extends AbstractModifierTestCase
         parent::setUp();
         $this->assignedWebsites = [self::SECOND_WEBSITE_ID];
         $this->productId = self::PRODUCT_ID;
-        $this->websiteMock = $this->getMockBuilder(Website::class)
-            ->onlyMethods(['getId', 'getName'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->secondWebsiteMock = $this->getMockBuilder(Website::class)
-            ->onlyMethods(['getId', 'getName'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->websiteMock = $this->createPartialMock(Website::class, ['getId', 'getName']);
+        $this->secondWebsiteMock = $this->createPartialMock(Website::class, ['getId', 'getName']);
         $this->websitesList = [$this->websiteMock, $this->secondWebsiteMock];
         $this->websiteRepositoryMock = $this->createMock(WebsiteRepositoryInterface::class);
         $this->websiteRepositoryMock->method('getDefault')->willReturn($this->websiteMock);

@@ -43,6 +43,7 @@ use Magento\Store\Model\StoreManagerInterface;
 use Magento\Ui\DataProvider\EavValidationRules;
 use Magento\Ui\DataProvider\Mapper\FormElement as FormElementMapper;
 use Magento\Ui\DataProvider\Mapper\MetaProperties as MetaPropertiesMapper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 
 /**
@@ -132,6 +133,11 @@ class EavTest extends AbstractModifierTestCase
      * @var SearchCriteria|MockObject
      */
     private $searchCriteriaMock;
+    
+    /**
+     * @var SearchResultsInterface|MockObject
+     */
+    private $attributeGroupSearchResultsMock;
 
     /**
      * @var SortOrderBuilder|MockObject
@@ -144,7 +150,7 @@ class EavTest extends AbstractModifierTestCase
     private $attributeRepositoryMock;
 
     /**
-     * @var AttributeGroupInterface|MockObject
+     * @var Group|MockObject
      */
     private $attributeGroupMock;
 
@@ -154,7 +160,7 @@ class EavTest extends AbstractModifierTestCase
     private $searchResultsMock;
 
     /**
-     * @var Attribute|MockObject
+     * @var Attribute
      */
     private $eavAttributeMock;
 
@@ -179,7 +185,7 @@ class EavTest extends AbstractModifierTestCase
     protected $currencyLocaleMock;
 
     /**
-     * @var ProductAttributeInterface|MockObject
+     * @var Attribute
      */
     protected $productAttributeMock;
 
@@ -216,77 +222,49 @@ class EavTest extends AbstractModifierTestCase
         parent::setUp();
 
         $this->objectManager = new ObjectManager($this);
-        $this->eavConfigMock = $this->getMockBuilder(Config::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->eavValidationRulesMock = $this->getMockBuilder(EavValidationRules::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->eavConfigMock = $this->createMock(Config::class);
+        $this->eavValidationRulesMock = $this->createMock(EavValidationRules::class);
         $this->requestMock = $this->createMock(RequestInterface::class);
-        $this->groupCollectionFactoryMock = $this->getMockBuilder(GroupCollectionFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
-        $this->groupCollectionMock =
-            $this->getMockBuilder(GroupCollection::class)
-                ->disableOriginalConstructor()
-                ->getMock();
-        $this->attributeMock = $this->getMockBuilder(EavAttribute::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->groupMock = $this->createPartialMock(Group::class, []);
-        $this->entityTypeMock = $this->getMockBuilder(EntityType::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->attributeCollectionFactoryMock = $this->getMockBuilder(AttributeCollectionFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
-        $this->attributeCollectionMock = $this->getMockBuilder(AttributeCollection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->groupCollectionFactoryMock = $this->createPartialMock(
+            GroupCollectionFactory::class,
+            ['create']
+        );
+        $this->groupCollectionMock = $this->createMock(GroupCollection::class);
+        $this->attributeMock = $this->createMock(EavAttribute::class);
+        $this->groupMock = $this->createMock(Group::class);
+        $this->entityTypeMock = $this->createMock(EntityType::class);
+        $this->attributeCollectionFactoryMock = $this->createPartialMock(
+            AttributeCollectionFactory::class,
+            ['create']
+        );
+        $this->attributeCollectionMock = $this->createMock(AttributeCollection::class);
         $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
-        $this->storeManagerMock->method('isSingleStoreMode')->willReturn(true);
-        $this->scopeOverriddenValueMock = $this->createMock(\Magento\Catalog\Model\Attribute\ScopeOverriddenValue::class);
-        $this->scopeOverriddenValueMock->method('containsValue')->willReturn(false);
-        $this->formElementMapperMock = $this->getMockBuilder(FormElementMapper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->metaPropertiesMapperMock = $this->getMockBuilder(MetaPropertiesMapper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->searchCriteriaBuilderMock = $this->getMockBuilder(SearchCriteriaBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->formElementMapperMock = $this->createMock(FormElementMapper::class);
+        $this->metaPropertiesMapperMock = $this->createMock(MetaPropertiesMapper::class);
+        $this->searchCriteriaBuilderMock = $this->createMock(SearchCriteriaBuilder::class);
         $this->attributeGroupRepositoryMock = $this->createMock(ProductAttributeGroupRepositoryInterface::class);
-        $this->attributeGroupMock = $this->createPartialMock(
-            \Magento\Eav\Model\Entity\Attribute\Group::class,
-            []
-        );
+        $this->attributeGroupMock = $this->createMock(Group::class);
         $this->attributeRepositoryMock = $this->createMock(ProductAttributeRepositoryInterface::class);
-        $this->searchCriteriaMock = $this->createPartialMock(SearchCriteria::class, []);
-        $this->sortOrderBuilderMock = $this->getMockBuilder(SortOrderBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->searchCriteriaMock = $this->createMock(SearchCriteria::class);
+        $this->attributeGroupSearchResultsMock = $this->createMock(SearchResultsInterface::class);
+        $this->sortOrderBuilderMock = $this->createMock(SortOrderBuilder::class);
         $this->searchResultsMock = $this->createMock(SearchResultsInterface::class);
-        $this->eavAttributeMock = $this->createPartialMock(
-            Attribute::class,
-            ['load', 'getApplyTo', 'getFrontendInput', 'getAttributeCode', 'usesSource', 'getSource']
+        // Use parent Attribute class - all setters work via magic methods (DataObject)
+        $this->eavAttributeMock = $this->createPartialMock(Attribute::class, []);
+        $this->productAttributeMock = $this->createPartialMock(Attribute::class, []);
+        $this->arrayManagerMock = $this->createMock(ArrayManager::class);
+        $this->eavAttributeFactoryMock = $this->createPartialMock(
+            EavAttributeFactory::class,
+            ['create']
         );
-        $this->productAttributeMock = $this->createPartialMock(
-            \Magento\Catalog\Model\ResourceModel\Eav\Attribute::class,
-            []
-        );
-        $this->arrayManagerMock = $this->getMockBuilder(ArrayManager::class)
-            ->getMock();
-        $this->eavAttributeFactoryMock = $this->getMockBuilder(EavAttributeFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
         $this->eventManagerMock = $this->createMock(ManagerInterface::class);
 
-        $this->eavAttributeFactoryMock->method('create')->willReturn($this->eavAttributeMock);
-        $this->groupCollectionFactoryMock->method('create')->willReturn($this->groupCollectionMock);
+        $this->eavAttributeFactoryMock->expects($this->any())
+            ->method('create')
+            ->willReturn($this->eavAttributeMock);
+        $this->groupCollectionFactoryMock->expects($this->any())
+            ->method('create')
+            ->willReturn($this->groupCollectionMock);
         $this->groupCollectionMock->expects($this->any())
             ->method('setAttributeSetFilter')
             ->willReturnSelf();
@@ -453,6 +431,7 @@ class EavTest extends AbstractModifierTestCase
 
         $attributeMock = $this->createMock(AttributeInterface::class);
 
+        $attributeMock = $this->createStub(AttributeInterface::class);
         $attributeMock->method('getValue')->willReturn($attrValue);
 
         $this->productMock->setCustomAttribute('code', $attrValue);
@@ -461,7 +440,7 @@ class EavTest extends AbstractModifierTestCase
         $attributeSource = $this->createMock(SourceInterface::class);
         $attributeSource->method('getAllOptions')->willReturn($attributeOptions);
 
-        $this->eavAttributeMock->method('getSource')->willReturn($attributeSource);
+        $this->eavAttributeMock->setSource($attributeSource);
 
         $this->arrayManagerMock->method('set')
             ->with(

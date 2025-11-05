@@ -12,13 +12,21 @@ use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Locator\LocatorInterface;
 use Magento\Framework\Stdlib\ArrayManager;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Magento\Store\Api\Data\StoreInterface;
+use Magento\Store\Test\Unit\Helper\StoreTestHelper;
 use Magento\Ui\DataProvider\Modifier\ModifierInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 /**
+ * Abstract test case for product form modifiers
+ *
+ * Uses test helpers instead of inline anonymous classes following PHPUnit 12 migration rules.
+ *
  * @SuppressWarnings(PHPMD.NumberOfChildren)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.TooManyFields)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.LongMethod)
  */
 abstract class AbstractModifierTestCase extends TestCase
 {
@@ -38,7 +46,7 @@ abstract class AbstractModifierTestCase extends TestCase
     protected $productMock;
 
     /**
-     * @var StoreInterface|MockObject
+     * @var StoreTestHelper
      */
     protected $storeMock;
 
