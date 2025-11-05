@@ -12,6 +12,7 @@ use Magento\Backend\Model\View\Result\Page;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Framework\View\LayoutInterface;
+use Magento\Framework\View\Layout;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -44,12 +45,8 @@ class PageTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->layoutMock = $this->getMockBuilder(LayoutInterface::class)
-            ->addMethods(['setGeneratorPool'])
-            ->getMockForAbstractClass();
-        $this->breadcrumbsBlockMock = $this->getMockBuilder(Breadcrumbs::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->layoutMock = $this->createMock(Layout::class);
+        $this->breadcrumbsBlockMock = $this->createMock(Breadcrumbs::class);
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->context = $this->objectManagerHelper->getObject(

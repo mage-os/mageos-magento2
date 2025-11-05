@@ -13,7 +13,9 @@ use Magento\Backend\Block\Widget\Grid\Column\Renderer\Options\Converter;
 use Magento\Backend\Block\Widget\Grid\Column\Renderer\Radio\Extended;
 use Magento\Framework\DataObject;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Magento\Backend\Test\Unit\Helper\ColumnTestHelper;
 
 class ExtendedTest extends TestCase
 {
@@ -39,10 +41,7 @@ class ExtendedTest extends TestCase
             Converter::class,
             ['toFlatArray']
         );
-        $this->_column = $this->getMockBuilder(Column::class)
-            ->addMethods(['getValues', 'getIndex', 'getHtmlName'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->_column = new \Magento\Backend\Test\Unit\Helper\ColumnTestHelper();
         $this->_object = new Extended($context, $this->_converter);
         $this->_object->setColumn($this->_column);
     }
@@ -50,14 +49,14 @@ class ExtendedTest extends TestCase
     /**
      * @param array $rowData
      * @param string $expectedResult
-     * @dataProvider renderDataProvider
      */
+    #[DataProvider('renderDataProvider')]
     public function testRender(array $rowData, $expectedResult)
     {
         $selectedFlatArray = [1 => 'One'];
-        $this->_column->expects($this->once())->method('getValues')->willReturn($selectedFlatArray);
-        $this->_column->expects($this->once())->method('getIndex')->willReturn('label');
-        $this->_column->expects($this->once())->method('getHtmlName')->willReturn('test[]');
+        $this->_column->setValues($selectedFlatArray);
+        $this->_column->setIndex('label');
+        $this->_column->setData('html_name', 'test[]');
         $this->_converter->expects($this->never())->method('toFlatArray');
         $this->assertEquals($expectedResult, $this->_object->render(new DataObject($rowData)));
     }

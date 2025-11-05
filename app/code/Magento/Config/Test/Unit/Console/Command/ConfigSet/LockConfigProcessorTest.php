@@ -19,6 +19,7 @@ use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Stdlib\ArrayManager;
 use Magento\Store\Model\ScopeInterface;
 use PHPUnit\Framework\MockObject\MockObject as Mock;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -64,23 +65,11 @@ class LockConfigProcessorTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->preparedValueFactory = $this->getMockBuilder(PreparedValueFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->deploymentConfigWriterMock = $this->getMockBuilder(Writer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->arrayManagerMock = $this->getMockBuilder(ArrayManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->configPathResolver = $this->getMockBuilder(ConfigPathResolver::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->valueMock = $this->getMockBuilder(Value::class)
-            ->addMethods(['setValue', 'getValue'])
-            ->onlyMethods(['validateBeforeSave', 'beforeSave', 'afterSave'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->preparedValueFactory = $this->createMock(PreparedValueFactory::class);
+        $this->deploymentConfigWriterMock = $this->createMock(Writer::class);
+        $this->arrayManagerMock = $this->createMock(ArrayManager::class);
+        $this->configPathResolver = $this->createMock(ConfigPathResolver::class);
+        $this->valueMock = $this->createMock(Value::class);
 
         $this->model = new LockProcessor(
             $this->preparedValueFactory,
@@ -98,8 +87,8 @@ class LockConfigProcessorTest extends TestCase
      * @param string $value
      * @param string $scope
      * @param string|null $scopeCode
-     * @dataProvider processDataProvider
      */
+    #[DataProvider('processDataProvider')]
     public function testProcess($path, $value, $scope, $scopeCode)
     {
         $this->preparedValueFactory->expects($this->once())
@@ -123,8 +112,7 @@ class LockConfigProcessorTest extends TestCase
                     ]
                 ]
             ]);
-        $this->valueMock->expects($this->once())
-            ->method('getValue')
+        $this->valueMock->method('getValue')
             ->willReturn($value);
         $this->deploymentConfigWriterMock->expects($this->once())
             ->method('saveConfig')
@@ -176,8 +164,7 @@ class LockConfigProcessorTest extends TestCase
         $this->preparedValueFactory->expects($this->once())
             ->method('create')
             ->willReturn($this->valueMock);
-        $this->valueMock->expects($this->once())
-            ->method('getValue')
+        $this->valueMock->method('getValue')
             ->willReturn($value);
         $this->configPathResolver->expects($this->once())
             ->method('resolve')
@@ -208,8 +195,7 @@ class LockConfigProcessorTest extends TestCase
             ->willReturn($this->valueMock);
         $this->arrayManagerMock->expects($this->never())
             ->method('set');
-        $this->valueMock->expects($this->once())
-            ->method('getValue');
+        $this->valueMock->method('getValue');
         $this->valueMock->expects($this->once())
             ->method('afterSave')
             ->willThrowException(new \Exception('Invalid values'));

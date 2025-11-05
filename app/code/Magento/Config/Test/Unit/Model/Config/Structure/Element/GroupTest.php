@@ -15,6 +15,7 @@ use Magento\Framework\Data\Form\Element\Fieldset;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Config\Test\Unit\Helper\FieldsetTestHelper;
 
 class GroupTest extends TestCase
 {
@@ -76,7 +77,7 @@ class GroupTest extends TestCase
 
     public function testGetCloneModelCreatesCloneModel()
     {
-        $cloneModel = $this->getMockForAbstractClass(ValueInterface::class);
+        $cloneModel = $this->createMock(ValueInterface::class);
         $this->_depMapperMock = $this->createMock(
             Mapper::class
         );
@@ -95,10 +96,7 @@ class GroupTest extends TestCase
 
     public function testGetFieldsetSetsOnlyNonArrayValuesToFieldset()
     {
-        $fieldsetMock = $this->getMockBuilder(Fieldset::class)
-            ->addMethods(['setOriginalData'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $fieldsetMock = $this->createPartialMock(FieldsetTestHelper::class, ['setOriginalData']);
         $fieldsetMock->expects(
             $this->once()
         )->method(

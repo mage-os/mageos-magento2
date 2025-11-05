@@ -47,16 +47,10 @@ class CleanStaticFilesTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->objectManagerMock = $this->getMockForAbstractClass(ObjectManagerInterface::class);
-        $this->eventManagerMock = $this->getMockBuilder(ManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $this->messageManagerMock = $this->getMockBuilder(\Magento\Framework\Message\ManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->resultFactoryMock = $this->getMockBuilder(ResultFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
+        $this->eventManagerMock = $this->createMock(ManagerInterface::class);
+        $this->messageManagerMock = $this->createMock(\Magento\Framework\Message\ManagerInterface::class);
+        $this->resultFactoryMock = $this->createMock(ResultFactory::class);
         $objectHelper = new ObjectManager($this);
         $context = $objectHelper->getObject(
             Context::class,
@@ -76,9 +70,7 @@ class CleanStaticFilesTest extends TestCase
 
     public function testExecute()
     {
-        $cleanupFilesMock = $this->getMockBuilder(CleanupFiles::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $cleanupFilesMock = $this->createMock(CleanupFiles::class);
         $cleanupFilesMock->expects($this->once())
             ->method('clearMaterializedViewFiles');
         $this->objectManagerMock->expects($this->once())->method('get')->willReturn($cleanupFilesMock);
@@ -91,9 +83,7 @@ class CleanStaticFilesTest extends TestCase
             ->method('addSuccessMessage')
             ->with('The static files cache has been cleaned.');
 
-        $resultRedirect = $this->getMockBuilder(Redirect::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $resultRedirect = $this->createMock(Redirect::class);
         $this->resultFactoryMock->expects($this->atLeastOnce())
             ->method('create')
             ->with(ResultFactory::TYPE_REDIRECT)

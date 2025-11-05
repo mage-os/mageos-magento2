@@ -19,6 +19,7 @@ use Magento\Framework\Config\ScopeInterface;
 use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
 use PHPUnit\Framework\MockObject\Matcher\InvokedCount;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -58,17 +59,10 @@ class ValueProcessorTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->valueFactoryMock = $this->getMockBuilder(ValueFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->scopeMock = $this->getMockBuilder(ScopeInterface::class)
-            ->getMockForAbstractClass();
-        $this->structureFactoryMock = $this->getMockBuilder(StructureFactory::class)->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
-        $this->jsonSerializerMock = $this->getMockBuilder(JsonSerializer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->valueFactoryMock = $this->createMock(ValueFactory::class);
+        $this->scopeMock = $this->createMock(ScopeInterface::class);
+        $this->structureFactoryMock = $this->createPartialMock(StructureFactory::class, ['create']);
+        $this->jsonSerializerMock = $this->createMock(JsonSerializer::class);
 
         $this->valueProcessor = new ValueProcessor(
             $this->scopeMock,
@@ -95,9 +89,9 @@ class ValueProcessorTest extends TestCase
      * @param string|array $processedValue
      *
      * @return void
-     * @dataProvider processDataProvider
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
+    #[DataProvider('processDataProvider')]
     public function testProcess(
         $hasBackendModel,
         $expectsGetBackendModel,
@@ -131,19 +125,16 @@ class ValueProcessorTest extends TestCase
             });
 
         /** @var Structure|MockObject $structureMock */
-        $structureMock = $this->getMockBuilder(Structure::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $structureMock = $this->createMock(Structure::class);
         $this->structureFactoryMock->expects($this->once())
             ->method('create')
             ->willReturn($structureMock);
 
         /** @var Value|Encrypted|MockObject $valueMock */
-        $backendModelMock = $this->getMockBuilder($className)
-            ->disableOriginalConstructor()
-            ->addMethods(['setPath', 'setScope', 'setScopeId', 'setValue', 'getValue'])
-            ->onlyMethods(['afterLoad'])
-            ->getMock();
+        $backendModelMock = $this->createPartialMock(
+            $className,
+            ['setPath', 'setScope', 'setScopeId', 'setValue', 'getValue', 'afterLoad']
+        );
         $backendModelMock->expects($expectsSetPath)
             ->method('setPath')
             ->with($path)
@@ -168,9 +159,7 @@ class ValueProcessorTest extends TestCase
             ->willReturn($processedValue);
 
         /** @var Field|MockObject $fieldMock */
-        $fieldMock = $this->getMockBuilder(Field::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $fieldMock = $this->createMock(Field::class);
         $fieldMock->expects($this->once())
             ->method('hasBackendModel')
             ->willReturn($hasBackendModel);

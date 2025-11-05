@@ -13,10 +13,12 @@ use Magento\Framework\Data\Form\Element\Select;
 use Magento\Framework\Escaper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Magento\Framework\Math\Random;
 use Magento\Framework\View\Helper\SecureHtmlRenderer;
 use Magento\Framework\DataObject;
+use Magento\Config\Test\Unit\Helper\SelectTestHelper;
 
 class AllowspecificTest extends TestCase
 {
@@ -70,18 +72,12 @@ class AllowspecificTest extends TestCase
             ]
         );
         $this->_object->setId('spec_element');
-        $this->_formMock = $this->getMockBuilder(Form::class)
-            ->addMethods(['getHtmlIdPrefix', 'getHtmlIdSuffix'])
-            ->onlyMethods(['getElement'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->_formMock = $this->createMock(Form::class);
     }
 
     public function testGetAfterElementHtml()
     {
-        $this->_formMock->expects(
-            $this->once()
-        )->method(
+        $this->_formMock->method(
             'getHtmlIdPrefix'
         )->willReturn(
             'test_prefix_'
@@ -108,16 +104,13 @@ class AllowspecificTest extends TestCase
 
     /**
      * @param $value
-     * @dataProvider getHtmlWhenValueIsEmptyDataProvider
      */
+    #[DataProvider('getHtmlWhenValueIsEmptyDataProvider')]
     public function testGetHtmlWhenValueIsEmpty($value)
     {
         $this->_object->setForm($this->_formMock);
 
-        $elementMock = $this->getMockBuilder(Select::class)
-            ->addMethods(['setDisabled'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $elementMock = $this->createPartialMock(SelectTestHelper::class, ['setDisabled']);
 
         $elementMock->expects($this->once())->method('setDisabled')->with('disabled');
         $countryId = 'tetst_county_specificcountry';

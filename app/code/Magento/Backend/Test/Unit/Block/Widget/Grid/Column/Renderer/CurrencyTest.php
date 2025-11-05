@@ -20,6 +20,7 @@ use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Backend\Test\Unit\Helper\ColumnTestHelper;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -83,18 +84,11 @@ class CurrencyTest extends TestCase
         $this->currencyLocatorMock->method('getDefaultCurrency')
             ->with($this->requestMock)
             ->willReturn($defaultCurrencyCode);
-        $this->columnMock = $this->getMockBuilder(Column::class)
-            ->addMethods(['getIndex', 'getShowNumberSign', 'getDefault'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->columnMock->method('getIndex')->willReturn('value');
-        $this->columnMock->method('getShowNumberSign')->willReturn(false);
-        $this->columnMock->method('getDefault')->willReturn('');
-        $this->localeCurrencyMock = $this->getMockBuilder(LocaleCurrency::class)
-            ->onlyMethods(['getCurrency'])
-            ->addMethods(['toCurrency'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->columnMock = new \Magento\Backend\Test\Unit\Helper\ColumnTestHelper();
+        $this->columnMock->setIndex('value');
+        $this->columnMock->setData('show_number_sign', false);
+        $this->columnMock->setData('default', '');
+        $this->localeCurrencyMock = $this->createMock(LocaleCurrency::class);
         $this->currencyRenderer = $this->objectManager->getObject(
             Currency::class,
             [

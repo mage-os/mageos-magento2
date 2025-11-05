@@ -22,13 +22,9 @@ class HeadingTest extends TestCase
         $htmlId = 'test_HTML_id';
         $label  = 'test_label';
 
-        $elementMock = $this->getMockBuilder(AbstractElement::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getLabel'])
-            ->onlyMethods(['getHtmlId'])
-            ->getMock();
-        $elementMock->expects($this->any())->method('getHtmlId')->willReturn($htmlId);
-        $elementMock->expects($this->any())->method('getLabel')->willReturn($label);
+        $elementMock = $this->createMock(AbstractElement::class);
+        $elementMock->method('getHtmlId')->willReturn($htmlId);
+        $elementMock->method('getLabel')->willReturn($label);
 
         $objectManager = new ObjectManager($this);
 

@@ -19,7 +19,9 @@ use Magento\Framework\App\DeploymentConfig;
 use Magento\Framework\DB\Adapter\TableNotFoundException;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Magento\Config\Test\Unit\Helper\ValueTestHelper;
 
 /**
  * Test Class for retrieving runtime configuration from database.
@@ -70,23 +72,11 @@ class RuntimeConfigSourceTest extends TestCase
     {
         $objectManager = new ObjectManager($this);
 
-        $this->collectionFactoryMock = $this->getMockBuilder(CollectionFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->scopeCodeResolverMock = $this->getMockBuilder(ScopeCodeResolver::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->converterMock = $this->getMockBuilder(Converter::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->configItemMock = $this->getMockBuilder(Value::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getScope', 'getPath', 'getValue'])
-            ->getMock();
-        $this->configItemMockTwo = $this->getMockBuilder(Value::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getScope', 'getPath', 'getValue', 'getScopeId'])
-            ->getMock();
+        $this->collectionFactoryMock = $this->createMock(CollectionFactory::class);
+        $this->scopeCodeResolverMock = $this->createMock(ScopeCodeResolver::class);
+        $this->converterMock = $this->createMock(Converter::class);
+        $this->configItemMock = $this->createPartialMock(ValueTestHelper::class, ['getScope', 'getPath', 'getValue']);
+        $this->configItemMockTwo = $this->createPartialMock(ValueTestHelper::class, ['getScope', 'getPath', 'getValue', 'getScopeId']);
         $this->deploymentConfigMock = $this->createPartialMock(
             DeploymentConfig::class,
             ['isDbAvailable']
@@ -215,13 +205,12 @@ class RuntimeConfigSourceTest extends TestCase
     /**
      * Test get value for specified config
      *
-     * @dataProvider configDataProvider
-     *
      * @param string $path
      * @param array $configData
      * @param string $expectedResult
      * @return void
      */
+    #[DataProvider('configDataProvider')]
     public function testGetConfigValue(string $path, array $configData, string $expectedResult): void
     {
         $this->deploymentConfigMock->expects($this->once())

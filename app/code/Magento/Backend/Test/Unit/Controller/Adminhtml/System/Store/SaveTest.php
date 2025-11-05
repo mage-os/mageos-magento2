@@ -27,6 +27,8 @@ use Magento\Store\Model\Group;
 use Magento\Store\Model\Store;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Backend\Test\Unit\Helper\SessionTestHelper;
+use Magento\Backend\Test\Unit\Helper\FilterManagerTestHelper;
 
 /**
  * Unit test for \Magento\Backend\Controller\Adminhtml\System\Store\Save controller.
@@ -110,62 +112,21 @@ class SaveTest extends TestCase
      */
     public function setUp(): void
     {
-        $this->requestMock = $this->getMockBuilder(Http::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['isPost', 'getPostValue'])
-            ->getMock();
-        $this->responseMock = $this->getMockBuilder(\Magento\Framework\App\Response\Http::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->objectManagerMock = $this->getMockBuilder(ObjectManager::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['get', 'create'])
-            ->getMock();
-        $this->messagesMock = $this->getMockBuilder(ManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['addSuccessMessage', 'addErrorMessage'])
-            ->getMockForAbstractClass();
-        $this->helperMock = $this->getMockBuilder(Data::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getUrl'])
-            ->getMock();
-        $this->sessionMock = $this->getMockBuilder(Session::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['setPostData'])
-            ->getMock();
-        $this->storeModelMock = $this->getMockBuilder(Store::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['load', 'setData', 'setId', 'getGroupId', 'setWebsiteId', 'isActive', 'isDefault', 'save'])
-            ->getMock();
-        $this->groupModelMock = $this->getMockBuilder(Group::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['load', 'getWebsiteId'])
-            ->getMock();
-        $this->filterManagerMock = $this->getMockBuilder(FilterManager::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['removeTags'])
-            ->getMock();
-        $this->cacheTypeListMock = $this->getMockBuilder(TypeListInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['cleanType'])
-            ->getMockForAbstractClass();
-        $this->registryMock = $this->getMockBuilder(Registry::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->resultForwardFactoryMock = $this->getMockBuilder(ForwardFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->resultPageFactoryMock = $this->getMockBuilder(PageFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $redirectFactory = $this->getMockBuilder(RedirectFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
-        $resultRedirect = $this->getMockBuilder(Redirect::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['setPath', 'setUrl'])
-            ->getMock();
+        $this->requestMock = $this->createPartialMock(Http::class, ['isPost', 'getPostValue']);
+        $this->responseMock = $this->createMock(\Magento\Framework\App\Response\Http::class);
+        $this->objectManagerMock = $this->createPartialMock(ObjectManager::class, ['get', 'create']);
+        $this->messagesMock = $this->createMock(ManagerInterface::class);
+        $this->helperMock = $this->createPartialMock(Data::class, ['getUrl']);
+        $this->sessionMock = $this->createPartialMock(SessionTestHelper::class, ['setPostData']);
+        $this->storeModelMock = $this->createPartialMock(Store::class, ['load', 'setData', 'setId', 'getGroupId', 'setWebsiteId', 'isActive', 'isDefault', 'save']);
+        $this->groupModelMock = $this->createPartialMock(Group::class, ['load', 'getWebsiteId']);
+        $this->filterManagerMock = $this->createPartialMock(FilterManagerTestHelper::class, ['removeTags']);
+        $this->cacheTypeListMock = $this->createMock(TypeListInterface::class);
+        $this->registryMock = $this->createMock(Registry::class);
+        $this->resultForwardFactoryMock = $this->createMock(ForwardFactory::class);
+        $this->resultPageFactoryMock = $this->createMock(PageFactory::class);
+        $redirectFactory = $this->createPartialMock(RedirectFactory::class, ['create']);
+        $resultRedirect = $this->createPartialMock(Redirect::class, ['setPath', 'setUrl']);
         $resultRedirect->expects($this->once())->method('setPath')->willReturnSelf();
         $redirectFactory->expects($this->atLeastOnce())->method('create')->willReturn($resultRedirect);
         $contextMock = $this->getMockBuilder(Context::class)

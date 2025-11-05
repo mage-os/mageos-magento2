@@ -21,6 +21,7 @@ use Magento\Framework\Json\Helper\Data as JsonHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Layout;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class ExtendedTest extends TestCase
@@ -63,11 +64,7 @@ class ExtendedTest extends TestCase
         );
         $this->_gridMock->expects($this->any())->method('getId')->willReturn('test_grid');
 
-        $this->_layoutMock = $this->getMockBuilder(Layout::class)
-            ->addMethods(['helper'])
-            ->onlyMethods(['getParentName', 'getBlock'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->_layoutMock = $this->createMock(Layout::class);
 
         $this->_layoutMock->expects(
             $this->any()
@@ -147,8 +144,8 @@ class ExtendedTest extends TestCase
      * @param array $items
      * @param string $result
      *
-     * @dataProvider dataProviderGetGridIdsJsonWithUseSelectAll
      */
+    #[DataProvider('dataProviderGetGridIdsJsonWithUseSelectAll')]
     public function testGetGridIdsJsonWithUseSelectAll(array $items, $result)
     {
         $this->_block->setUseSelectAll(true);
@@ -159,9 +156,7 @@ class ExtendedTest extends TestCase
             $massActionIdField = $this->_block->getParentBlock()->getMassactionIdField();
         }
 
-        $collectionMock = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $collectionMock = $this->createMock(Collection::class);
 
         $this->_gridMock->expects($this->once())
             ->method('getCollection')

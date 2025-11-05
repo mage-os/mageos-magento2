@@ -14,7 +14,9 @@ use Magento\Framework\DataObject;
 use Magento\Framework\Locale\Resolver;
 use Magento\Framework\TranslateInterface;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Magento\Backend\Test\Unit\Helper\SessionTestHelper;
 
 class ManagerTest extends TestCase
 {
@@ -50,29 +52,20 @@ class ManagerTest extends TestCase
     {
         $this->_session = $this->createMock(Session::class);
 
-        $this->_authSession = $this->getMockBuilder(\Magento\Backend\Model\Auth\Session::class)->addMethods(['getUser'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->_authSession = $this->createPartialMock(SessionTestHelper::class, ['getUser']);
 
-        $this->_backendConfig = $this->getMockForAbstractClass(
-            ConfigInterface::class,
-            [],
-            '',
-            false
-        );
+        $this->_backendConfig = $this->createMock(
+            ConfigInterface::class);
 
         $userMock = new DataObject();
 
         $this->_authSession->expects($this->any())->method('getUser')->willReturn($userMock);
 
-        $this->_translator = $this->getMockBuilder(TranslateInterface::class)
-            ->addMethods(['init'])
-            ->onlyMethods(['setLocale'])
-            ->getMockForAbstractClass();
+        $this->_translator = $this->createMock(TranslateInterface::class);
 
-        $this->_translator->expects($this->any())->method('setLocale')->willReturn($this->_translator);
+        $this->_translator->method('setLocale')->willReturn($this->_translator);
 
-        $this->_translator->expects($this->any())->method('init')->willReturn(false);
+        $this->_translator->method('init')->willReturn(false);
 
         $this->_model = new Manager(
             $this->_session,

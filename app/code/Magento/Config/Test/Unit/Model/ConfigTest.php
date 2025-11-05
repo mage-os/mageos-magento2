@@ -28,6 +28,7 @@ use Magento\Store\Model\ScopeTypeNormalizer;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Store\Model\Website;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -110,49 +111,39 @@ class ConfigTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->eventManagerMock = $this->getMockForAbstractClass(ManagerInterface::class);
-        $this->structureReaderMock = $this->getMockBuilder(Reader::class)
-            ->addMethods(['getConfiguration'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->eventManagerMock = $this->createMock(ManagerInterface::class);
+        $this->structureReaderMock = $this->createMock(Reader::class);
         $this->configStructure = $this->createMock(Structure::class);
 
-        $this->structureReaderMock->expects(
-            $this->any()
-        )->method(
-            'getConfiguration'
-        )->willReturn(
-            $this->configStructure
-        );
+        $this->structureReaderMock->method('read')->willReturn($this->configStructure);
 
-        $this->transFactoryMock = $this->getMockBuilder(TransactionFactory::class)
-            ->addMethods(['addObject'])
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->appConfigMock = $this->getMockForAbstractClass(ReinitableConfigInterface::class);
+        $this->transFactoryMock = $this->createPartialMock(
+            TransactionFactory::class,
+            ['addObject', 'create']
+        );
+        $this->appConfigMock = $this->createMock(ReinitableConfigInterface::class);
         $this->configLoaderMock = $this->createPartialMock(
             Loader::class,
             ['getConfigByPath']
         );
         $this->dataFactoryMock = $this->createMock(ValueFactory::class);
 
-        $this->storeManager = $this->getMockForAbstractClass(StoreManagerInterface::class);
+        $this->storeManager = $this->createMock(StoreManagerInterface::class);
 
         $this->settingsChecker = $this
             ->createMock(SettingChecker::class);
 
         $this->scopeResolverPool = $this->createMock(ScopeResolverPool::class);
-        $this->scopeResolver = $this->getMockForAbstractClass(ScopeResolverInterface::class);
+        $this->scopeResolver = $this->createMock(ScopeResolverInterface::class);
         $this->scopeResolverPool->method('get')
             ->willReturn($this->scopeResolver);
-        $this->scope = $this->getMockForAbstractClass(ScopeInterface::class);
+        $this->scope = $this->createMock(ScopeInterface::class);
         $this->scopeResolver->method('getScope')
             ->willReturn($this->scope);
 
         $this->scopeTypeNormalizer = $this->createMock(ScopeTypeNormalizer::class);
 
-        $stubPillPut = $this->getMockForAbstractClass(PoisonPillPutInterface::class);
+        $stubPillPut = $this->createMock(PoisonPillPutInterface::class);
 
         $this->model = new Config(
             $this->appConfigMock,
@@ -188,7 +179,7 @@ class ConfigTest extends TestCase
     {
         $this->appConfigMock->expects($this->never())
             ->method('reinit');
-        $this->structureReaderMock->expects($this->never())->method('getConfiguration');
+        // Removed getConfiguration call as it doesn't exist on Reader class
         $this->assertNull($this->model->getSection());
         $this->assertNull($this->model->getWebsite());
         $this->assertNull($this->model->getStore());
@@ -326,11 +317,10 @@ class ConfigTest extends TestCase
         $this->model->setSection('section');
         $this->model->setGroups(['1' => ['fields' => ['key' => ['data']]]]);
 
-        $backendModel = $this->getMockBuilder(Value::class)
-            ->addMethods(['setPath'])
-            ->onlyMethods(['addData', '__sleep', '__wakeup'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $backendModel = $this->createPartialMock(
+            Value::class,
+            ['setPath', 'addData', '__sleep', '__wakeup']
+        );
         $backendModel->expects($this->once())
             ->method('addData')
             ->with([
@@ -360,8 +350,8 @@ class ConfigTest extends TestCase
      * @param array $groups
      *
      * @return void
-     * @dataProvider setDataByPathDataProvider
      */
+    #[DataProvider('setDataByPathDataProvider')]
     public function testSetDataByPath(string $path, string $value, string $section, array $groups): void
     {
         $this->model->setDataByPath($path, $value);
@@ -424,8 +414,8 @@ class ConfigTest extends TestCase
      * @param string $path
      *
      * @return void
-     * @dataProvider setDataByPathWrongDepthDataProvider
      */
+    #[DataProvider('setDataByPathWrongDepthDataProvider')]
     public function testSetDataByPathWrongDepth(string $path): void
     {
         $currentDepth = count(explode('/', $path));

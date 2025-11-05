@@ -64,53 +64,30 @@ class DateTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->mathRandomMock = $this->getMockBuilder(Random::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getUniqueHash'])
-            ->getMock();
+        $this->mathRandomMock = $this->createPartialMock(Random::class, ['getUniqueHash']);
 
-        $this->localeResolverMock = $this->getMockBuilder(ResolverInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->localeResolverMock = $this->createMock(ResolverInterface::class);
 
-        $this->dateTimeFormatterMock = $this
-            ->getMockBuilder(DateTimeFormatterInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->dateTimeFormatterMock = $this->createMock(DateTimeFormatterInterface::class);
 
-        $this->columnMock = $this->getMockBuilder(Column::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getTimezone'])
-            ->onlyMethods(['getHtmlId', 'getId'])
-            ->getMock();
+        $this->columnMock = $this->createMock(Column::class);
 
-        $this->localeDateMock = $this->getMockBuilder(TimezoneInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->localeDateMock = $this->createMock(TimezoneInterface::class);
 
-        $this->escaperMock = $this->getMockBuilder(Escaper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->escaperMock = $this->createMock(Escaper::class);
 
-        $this->contextMock = $this->getMockBuilder(Context::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->contextMock = $this->createMock(Context::class);
 
         $this->contextMock->expects($this->once())->method('getEscaper')->willReturn($this->escaperMock);
         $this->contextMock->expects($this->once())->method('getLocaleDate')->willReturn($this->localeDateMock);
 
-        $this->request = $this->getMockBuilder(Http::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->request = $this->createMock(Http::class);
 
         $this->contextMock->expects($this->once())
             ->method('getRequest')
             ->willReturn($this->request);
 
-        $this->repositoryMock = $this->getMockBuilder(Repository::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getUrlWithParams'])
-            ->getMock();
+        $this->repositoryMock = $this->createPartialMock(Repository::class, ['getUrlWithParams']);
 
         $this->contextMock->expects($this->once())
             ->method('getAssetRepository')
@@ -156,7 +133,6 @@ class DateTest extends TestCase
         $this->mathRandomMock->expects($this->any())->method('getUniqueHash')->willReturn($uniqueHash);
         $this->columnMock->expects($this->once())->method('getHtmlId')->willReturn($id);
         $this->localeDateMock->expects($this->any())->method('getDateFormat')->willReturn($format);
-        $this->columnMock->expects($this->any())->method('getTimezone')->willReturn(false);
         $this->localeResolverMock->expects($this->any())->method('getLocale')->willReturn('en_US');
         $this->model->setColumn($this->columnMock);
         $this->model->setValue($value);

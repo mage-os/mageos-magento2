@@ -11,7 +11,9 @@ use Magento\Backend\App\Config;
 use Magento\Backend\App\Config as BackendConfig;
 use Magento\Framework\App\Config\Data;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Magento\Backend\Test\Unit\Helper\DataTestHelper;
 
 /**
  * Test reading by path and reading flag from config
@@ -58,8 +60,8 @@ class ConfigTest extends TestCase
      * @param string $configPath
      * @param mixed $configValue
      * @param bool $expectedResult
-     * @dataProvider isSetFlagDataProvider
      */
+    #[DataProvider('isSetFlagDataProvider')]
     public function testIsSetFlag($configPath, $configValue, $expectedResult)
     {
         $this->appConfig->expects(
@@ -98,9 +100,6 @@ class ConfigTest extends TestCase
      */
     protected function getConfigDataMock($mockedMethod)
     {
-        return $this->getMockBuilder(Data::class)
-            ->addMethods([$mockedMethod])
-            ->disableOriginalConstructor()
-            ->getMock();
+        return $this->createPartialMock(DataTestHelper::class, ['$mockedMethod']);
     }
 }

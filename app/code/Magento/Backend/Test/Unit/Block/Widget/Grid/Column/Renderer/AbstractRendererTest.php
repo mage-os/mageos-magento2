@@ -9,8 +9,10 @@ namespace Magento\Backend\Test\Unit\Block\Widget\Grid\Column\Renderer;
 
 use Magento\Backend\Block\Widget\Grid\Column;
 use Magento\Backend\Block\Widget\Grid\Column\Renderer\AbstractRenderer;
+use Magento\Backend\Test\Unit\Helper\ColumnTestHelper;
 use Magento\Framework\DataObject;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class AbstractRendererTest extends TestCase
@@ -36,16 +38,11 @@ class AbstractRendererTest extends TestCase
     protected function setUp(): void
     {
         $this->dataObjectMock = $this->createPartialMock(DataObject::class, ['getData']);
-        $this->columnMock = $this->getMockBuilder(Column::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getEditable', 'getIndex', 'getEditOnly'])
-            ->onlyMethods(['getId'])
-            ->getMock();
-        $this->renderer =
-            $this->getMockBuilder(AbstractRenderer::class)
-                ->disableOriginalConstructor()
-                ->onlyMethods([])
-                ->getMock();
+        $this->columnMock = $this->createPartialMock(
+            ColumnTestHelper::class,
+            ['getEditable', 'getIndex', 'getEditOnly', 'getId']
+        );
+        $this->renderer = $this->createPartialMock(AbstractRenderer::class, []);
     }
 
     /**
@@ -53,8 +50,8 @@ class AbstractRendererTest extends TestCase
      * @param bool $onlyEdit
      * @param string $expectedResult
      * @return void
-     * @dataProvider renderDataProvider
      */
+    #[DataProvider('renderDataProvider')]
     public function testRender($editable, $onlyEdit, $expectedResult)
     {
         $value = 'some value';

@@ -12,6 +12,7 @@ use Magento\Backend\Block\Widget\Grid\Column\Filter\Store;
 use Magento\Framework\DB\Helper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class StoreTest extends TestCase
@@ -51,8 +52,8 @@ class StoreTest extends TestCase
     /**
      * @param null|array $expectedCondition
      * @param null|int|string $value
-     * @dataProvider getConditionDataProvider
      */
+    #[DataProvider('getConditionDataProvider')]
     public function testGetCondition($expectedCondition, $value)
     {
         $this->store->setValue($value);

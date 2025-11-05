@@ -39,12 +39,8 @@ class EmulatedAdminhtmlAreaProcessorTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->scopeMock = $this->getMockBuilder(ScopeInterface::class)
-            ->getMockForAbstractClass();
-        $this->stateMock = $this->getMockBuilder(State::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['emulateAreaCode'])
-            ->getMock();
+        $this->scopeMock = $this->createMock(ScopeInterface::class);
+        $this->stateMock = $this->createPartialMock(State::class, ['emulateAreaCode']);
 
         $this->emulatedAdminhtmlProcessorArea = new EmulatedAdminhtmlAreaProcessor(
             $this->scopeMock,

@@ -26,6 +26,7 @@ use Magento\Framework\Message\ManagerInterface as MessageManager;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Framework\View\Result\PageFactory;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -100,13 +101,11 @@ class LoginTest extends TestCase
         $objectManagerHelper = new ObjectManagerHelper($this);
 
         $this->helperMock = $this->createMock(Data::class);
-        $this->requestMock = $this->getMockBuilder(Request::class)
-            ->addMethods(['getUri', 'getRequestUri'])
-            ->getMockForAbstractClass();
-        $this->redirectMock = $this->getMockBuilder(Redirect::class)
-            ->disableOriginalConstructor()
-            ->disableOriginalClone()
-            ->getMock();
+        $this->requestMock = $this->createPartialMock(
+            \Magento\Backend\Test\Unit\Helper\RequestTestHelper::class,
+            ['getUri', 'getRequestUri']
+        );
+        $this->redirectMock = $this->createMock(Redirect::class);
         $this->resultRedirectFactoryMock = $this->createMock(RedirectFactory::class);
         $this->resultPageFactoryMock = $this->createMock(PageFactory::class);
         $this->authMock = $this->createMock(Auth::class);
@@ -126,10 +125,7 @@ class LoginTest extends TestCase
             ->method('getUri')
             ->willReturn($this->uriMock);
 
-        $contextMock = $this->getMockBuilder(Context::class)
-            ->disableOriginalConstructor()
-            ->disableOriginalClone()
-            ->getMock();
+        $contextMock = $this->createMock(Context::class);
 
         $contextMock->expects($this->once())
             ->method('getResultFactory')
@@ -167,8 +163,8 @@ class LoginTest extends TestCase
      * @param string $backendFrontName
      * @param bool $redirect
      *
-     * @dataProvider isValidBackendUriDataProvider
      */
+    #[DataProvider('isValidBackendUriDataProvider')]
     public function testIsValidBackendUri(string $requestUri, string $baseUrl, string $backendFrontName, bool $redirect)
     {
         $this->uriMock->expects($this->once())->method('isValid')->willReturn(true);

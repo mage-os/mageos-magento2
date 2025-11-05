@@ -15,6 +15,7 @@ use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Store\Model\Website;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class DwstreeTest extends TestCase
@@ -51,29 +52,27 @@ class DwstreeTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->requestMock = $this->getMockBuilder(RequestInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->requestMock = $this->createMock(RequestInterface::class);
 
-        $this->storeManagerMock = $this->getMockBuilder(StoreManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
 
-        $this->websiteMock = $this->getMockBuilder(Website::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->websiteMock = $this->createMock(Website::class);
 
-        $this->storeMock = $this->getMockBuilder(Store::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->storeMock = $this->createMock(Store::class);
 
         $objectManager = new ObjectManager($this);
+
+        // Create layout and breadcrumbs mocks
+        $layoutMock = $this->createMock(\Magento\Framework\View\LayoutInterface::class);
+        $breadcrumbsMock = new \Magento\Config\Test\Unit\Helper\BreadcrumbsTestHelper();
+        $layoutMock->method('getBlock')->with('breadcrumbs')->willReturn($breadcrumbsMock);
 
         $this->context = $objectManager->getObject(
             Context::class,
             [
                 'request'      => $this->requestMock,
                 'storeManager' => $this->storeManagerMock,
+                'layout'       => $layoutMock,
             ]
         );
         $objects = [
@@ -93,8 +92,8 @@ class DwstreeTest extends TestCase
      * @param $section
      * @param $website
      * @param $store
-     * @dataProvider initTabsDataProvider
      */
+    #[DataProvider('initTabsDataProvider')]
     public function testInitTabs($section, $website, $store)
     {
         $this->requestMock->expects($this->any())

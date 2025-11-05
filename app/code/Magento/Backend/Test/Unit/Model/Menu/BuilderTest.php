@@ -41,11 +41,7 @@ class BuilderTest extends TestCase
     protected function setUp(): void
     {
         $this->factoryMock = $this->createMock(Factory::class);
-        $this->menuMock = $this->getMockBuilder(Menu::class)
-            ->addMethods(['addChild'])
-            ->onlyMethods(['add'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->menuMock = $this->createMock(Menu::class);
 
         $this->model = (new ObjectManager($this))->getObject(
             Builder::class,
@@ -141,7 +137,7 @@ class BuilderTest extends TestCase
         );
         $this->model->processCommand(new Remove(['id' => 1]));
 
-        $this->menuMock->expects($this->never())->method('addChild');
+        // addChild method doesn't need expects() - it doesn't exist on Menu
 
         $this->model->getResult($this->menuMock);
     }

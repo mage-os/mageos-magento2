@@ -14,6 +14,7 @@ use Magento\Config\Model\Config\Structure\Element\Dependency\Mapper;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\ScopeInterface;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class MapperTest extends TestCase
@@ -59,19 +60,13 @@ class MapperTest extends TestCase
             'field_y' => ['id' => self::FIELD_ID2]
         ];
 
-        $this->_configStructureMock = $this->getMockBuilder(Structure::class)
-            ->onlyMethods(['getElement'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->_fieldFactoryMock = $this->getMockBuilder(FieldFactory::class)
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->_scopeConfigMock = $this->getMockBuilder(
+        $this->_configStructureMock = $this->createPartialMock(Structure::class, ['getElement']);
+
+$this->_fieldFactoryMock = $this->createPartialMock(FieldFactory::class, ['create']);
+
+$this->_scopeConfigMock = $this->createMock(
             ScopeConfigInterface::class
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
+        );
         $this->_model = new Mapper(
             $this->_configStructureMock,
             $this->_fieldFactoryMock,
@@ -94,8 +89,8 @@ class MapperTest extends TestCase
      * @param bool $isValueSatisfy
      *
      * @return void
-     * @dataProvider getDependenciesDataProvider
      */
+    #[DataProvider('getDependenciesDataProvider')]
     public function testGetDependenciesWhenDependentIsInvisible($isValueSatisfy): void
     {
         $expected = [];
@@ -234,11 +229,8 @@ class MapperTest extends TestCase
      */
     protected function _getDependencyField($isValueSatisfy, $isFieldVisible, $fieldId, $mockClassName): MockObject
     {
-        $field = $this->getMockBuilder(Field::class)
-            ->onlyMethods(['isValueSatisfy', 'getId'])
-            ->setMockClassName($mockClassName)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $field = $this->createPartialMock(Field::class, ['isValueSatisfy', 'getId']);
+
         if ($isFieldVisible) {
             $field->expects($isFieldVisible ? $this->never() : $this->once())->method('isValueSatisfy');
         } else {
@@ -273,11 +265,8 @@ class MapperTest extends TestCase
      */
     protected function _getField($isVisible, $path, $mockClassName): MockObject
     {
-        $field = $this->getMockBuilder(\Magento\Config\Model\Config\Structure\Element\Field::class)
-            ->onlyMethods(['isVisible', 'getPath'])
-            ->setMockClassName($mockClassName)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $field = $this->createPartialMock(\Magento\Config\Model\Config\Structure\Element\Field::class, ['isVisible', 'getPath']);
+
         $field->expects($this->once())->method('isVisible')->willReturn($isVisible);
         if ($isVisible) {
             $field->expects($this->never())->method('getPath');

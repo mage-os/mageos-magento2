@@ -11,6 +11,7 @@ use Magento\Backend\Model\Auth\Session;
 use Magento\Backend\Model\Authorization\RoleLocator;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Backend\Test\Unit\Helper\SessionTestHelper;
 
 class RoleLocatorTest extends TestCase
 {
@@ -29,10 +30,7 @@ class RoleLocatorTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->_sessionMock = $this->getMockBuilder(Session::class)
-            ->addMethods(['getUser', 'getAclRole', 'hasUser'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->_sessionMock = $this->createPartialMock(SessionTestHelper::class, ['getUser', 'getAclRole', 'hasUser']);
         $this->_model = new RoleLocator($this->_sessionMock);
     }
 

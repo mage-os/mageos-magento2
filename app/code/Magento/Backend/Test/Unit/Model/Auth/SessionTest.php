@@ -20,7 +20,9 @@ use Magento\Framework\Stdlib\CookieManagerInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\User\Model\User;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Magento\Backend\Test\Unit\Helper\StorageTestHelper;
 
 /**
  * Class SessionTest tests Magento\Backend\Model\Auth\Session
@@ -79,10 +81,7 @@ class SessionTest extends TestCase
             PhpCookieManager::class,
             ['getCookie', 'setPublicCookie']
         );
-        $this->storage = $this->getMockBuilder(Storage::class)
-            ->addMethods(['getUser'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->storage = $this->createPartialMock(StorageTestHelper::class, ['getUser']);
         $this->sessionConfig = $this->createPartialMock(
             \Magento\Framework\Session\Config::class,
             [
@@ -93,9 +92,7 @@ class SessionTest extends TestCase
                 'getCookieSameSite'
             ]
         );
-        $this->aclBuilder = $this->getMockBuilder(Builder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->aclBuilder = $this->createMock(Builder::class);
         $objectManager = new ObjectManager($this);
         $objects = [
             [
@@ -125,21 +122,15 @@ class SessionTest extends TestCase
     }
 
     /**
-     * @dataProvider refreshAclDataProvider
-     * @param $isUserPassedViaParams
+     * * @param $isUserPassedViaParams
      */
+    #[DataProvider('refreshAclDataProvider')]
     public function testRefreshAcl($isUserPassedViaParams)
     {
-        $aclMock = $this->getMockBuilder(Acl::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $aclMock = $this->createMock(Acl::class);
         $this->aclBuilder->expects($this->any())->method('getAcl')->willReturn($aclMock);
-        $userMock = $this->getMockBuilder(User::class)
-            ->addMethods(['getReloadAclFlag', 'setReloadAclFlag'])
-            ->onlyMethods(['unsetData', 'save'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $userMock->expects($this->any())->method('getReloadAclFlag')->willReturn(true);
+        $userMock = $this->createMock(User::class);
+        $userMock->method('getReloadAclFlag')->willReturn(true);
         $userMock->expects($this->once())->method('setReloadAclFlag')->with('0')->willReturnSelf();
         $userMock->expects($this->once())->method('save');
         if ($isUserPassedViaParams) {
@@ -244,25 +235,21 @@ class SessionTest extends TestCase
     }
 
     /**
-     * @dataProvider isAllowedDataProvider
      * @param bool $isUserDefined
      * @param bool $isAclDefined
      * @param bool $isAllowed
      * @param true $expectedResult
      */
+    #[DataProvider('isAllowedDataProvider')]
     public function testIsAllowed($isUserDefined, $isAclDefined, $isAllowed, $expectedResult)
     {
         $userAclRole = 'userAclRole';
         if ($isAclDefined) {
-            $aclMock = $this->getMockBuilder(Acl::class)
-                ->disableOriginalConstructor()
-                ->getMock();
+            $aclMock = $this->createMock(Acl::class);
             $this->session->setAcl($aclMock);
         }
         if ($isUserDefined) {
-            $userMock = $this->getMockBuilder(User::class)
-                ->disableOriginalConstructor()
-                ->getMock();
+            $userMock = $this->createMock(User::class);
             $this->storage->expects($this->once())->method('getUser')->willReturn($userMock);
         }
         if ($isAclDefined && $isUserDefined) {
@@ -289,9 +276,9 @@ class SessionTest extends TestCase
     }
 
     /**
-     * @dataProvider firstPageAfterLoginDataProvider
-     * @param bool $isFirstPageAfterLogin
+     * * @param bool $isFirstPageAfterLogin
      */
+    #[DataProvider('firstPageAfterLoginDataProvider')]
     public function testFirstPageAfterLogin($isFirstPageAfterLogin)
     {
         $this->session->setIsFirstPageAfterLogin($isFirstPageAfterLogin);

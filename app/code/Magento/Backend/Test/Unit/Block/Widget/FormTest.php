@@ -10,6 +10,7 @@ namespace Magento\Backend\Test\Unit\Block\Widget;
 use Magento\Backend\Block\Template\Context;
 use Magento\Backend\Block\Widget\Form;
 use Magento\Backend\Block\Widget\Form\Element\ElementCreator;
+use Magento\Backend\Test\Unit\Helper\DataFormTestHelper;
 use Magento\Framework\Data\Form as DataForm;
 use Magento\Framework\Json\Helper\Data;
 use Magento\Framework\ObjectManagerInterface;
@@ -42,21 +43,15 @@ class FormTest extends TestCase
     {
         $this->prepareContext();
 
-        $this->dataForm = $this->getMockBuilder(\Magento\Framework\Data\Form::class)
-            ->disableOriginalConstructor()
-            ->addMethods([
-                'setParent',
-                'setBaseUrl'
-            ])
-            ->onlyMethods(['addCustomAttribute'])
-            ->getMock();
+        $this->dataForm = $this->createPartialMock(
+            DataFormTestHelper::class,
+            ['addCustomAttribute', 'setParent', 'setBaseUrl']
+        );
 
-        $this->jsonHelperMock = $this->getMockBuilder(Data::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->jsonHelperMock = $this->createMock(Data::class);
 
         /** @var ObjectManagerInterface|MockObject $objectManagerMock */
-        $objectManagerMock = $this->getMockForAbstractClass(ObjectManagerInterface::class);
+        $objectManagerMock = $this->createMock(ObjectManagerInterface::class);
         $objectManagerMock->expects($this->exactly(3))
             ->method('get')
             ->willReturn($this->jsonHelperMock);
@@ -71,12 +66,9 @@ class FormTest extends TestCase
 
     protected function prepareContext()
     {
-        $this->urlBuilder = $this->getMockBuilder(UrlInterface::class)
-            ->getMock();
+        $this->urlBuilder = $this->createMock(UrlInterface::class);
 
-        $this->context = $this->getMockBuilder(Context::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->context = $this->createMock(Context::class);
         $this->context->expects($this->any())
             ->method('getUrlBuilder')
             ->willReturn($this->urlBuilder);

@@ -27,30 +27,13 @@ class SecureTest extends TestCase
 
         $resource = $this->createMock(Data::class);
         $resource->expects($this->any())->method('addCommitCallback')->willReturn($resource);
-        $resourceCollection = $this->getMockBuilder(AbstractDb::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $resourceCollection = $this->createMock(AbstractDb::class);
         $mergeService = $this->createMock(MergeService::class);
         $coreRegistry = $this->createMock(Registry::class);
-        $coreConfig = $this->getMockForAbstractClass(ScopeConfigInterface::class);
-        $cacheTypeListMock = $this->getMockBuilder(TypeListInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $coreConfig = $this->createMock(ScopeConfigInterface::class);
+        $cacheTypeListMock = $this->createMock(TypeListInterface::class);
 
-        $model = $this->getMockBuilder(Secure::class)
-            ->onlyMethods(['getOldValue'])
-            ->setConstructorArgs(
-                [
-                    $context,
-                    $coreRegistry,
-                    $coreConfig,
-                    $cacheTypeListMock,
-                    $mergeService,
-                    $resource,
-                    $resourceCollection
-                ]
-            )
-            ->getMock();
+        $model = $this->createPartialMock(Secure::class, ['getOldValue']);
 
         $cacheTypeListMock->expects($this->once())
             ->method('invalidate')

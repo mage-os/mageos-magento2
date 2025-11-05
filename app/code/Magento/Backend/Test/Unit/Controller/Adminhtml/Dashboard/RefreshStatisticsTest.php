@@ -84,17 +84,14 @@ class RefreshStatisticsTest extends TestCase
         );
         $this->resultRedirect = $this->createMock(Redirect::class);
 
-        $this->request = $this->getMockForAbstractClass(RequestInterface::class);
-        $this->response = $this->getMockBuilder(ResponseInterface::class)
-            ->addMethods(['setRedirect'])
-            ->onlyMethods(['sendResponse'])
-            ->getMockForAbstractClass();
+        $this->request = $this->createMock(RequestInterface::class);
+        $this->response = $this->createMock(ResponseInterface::class);
 
         $this->messageManager = $this->createMock(Manager::class);
 
         $this->order = $this->createMock(Order::class);
 
-        $this->objectManager = $this->getMockForAbstractClass(ObjectManagerInterface::class);
+        $this->objectManager = $this->createMock(ObjectManagerInterface::class);
 
         $this->context = $this->createMock(Context::class);
         $this->context->expects($this->once())->method('getRequest')->willReturn($this->request);

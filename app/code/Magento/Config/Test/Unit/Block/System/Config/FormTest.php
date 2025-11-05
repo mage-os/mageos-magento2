@@ -31,7 +31,9 @@ use Magento\Framework\View\Layout;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Magento\Config\Test\Unit\Helper\ConfigTestHelper;
 
 /**
  * Test System config form block
@@ -105,7 +107,7 @@ class FormTest extends TestCase
     {
         $this->_systemConfigMock = $this->createMock(Structure::class);
 
-        $requestMock = $this->getMockForAbstractClass(RequestInterface::class);
+        $requestMock = $this->createMock(RequestInterface::class);
         $requestParams = [
             ['website', '', 'website_code'],
             ['section', '', 'section_code'],
@@ -122,10 +124,8 @@ class FormTest extends TestCase
             \Magento\Config\Block\System\Config\Form\Fieldset\Factory::class
         );
         $this->_fieldFactoryMock = $this->createMock(\Magento\Config\Block\System\Config\Form\Field\Factory::class);
-        $settingCheckerMock = $this->getMockBuilder(SettingChecker::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->_coreConfigMock = $this->getMockForAbstractClass(ScopeConfigInterface::class);
+        $settingCheckerMock = $this->createMock(SettingChecker::class);
+        $this->_coreConfigMock = $this->createMock(ScopeConfigInterface::class);
 
         $this->_backendConfigMock = $this->createMock(Config::class);
 
@@ -147,14 +147,9 @@ class FormTest extends TestCase
             ['section1/group1/field1' => 'some_value']
         );
 
-        $this->_formMock = $this->getMockBuilder(FormData::class)
-            ->addMethods(['setParent', 'setBaseUrl'])
-            ->onlyMethods(['addFieldset'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->_formMock = $this->createMock(FormData::class);
 
-        $this->storeManagerMock = $this->getMockBuilder(StoreManagerInterface::class)
-            ->getMockForAbstractClass();
+        $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
 
         $helper = new ObjectManager($this);
 
@@ -182,16 +177,13 @@ class FormTest extends TestCase
 
         $objectArguments = $helper->getConstructArguments(Form::class, $data);
         $this->_objectBuilder = $this->getMockBuilder(Form::class)
-            ->setConstructorArgs($objectArguments)
-            ->addMethods(['something']);
-        $deploymentConfigMock = $this->getMockBuilder(DeploymentConfig::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+            ->setConstructorArgs($objectArguments);
+        $deploymentConfigMock = $this->createMock(DeploymentConfig::class);
         $deploymentConfigMock->expects($this->any())
             ->method('get')
             ->willReturn([]);
 
-        $objectManagerMock = $this->getMockForAbstractClass(ObjectManagerInterface::class);
+        $objectManagerMock = $this->createMock(ObjectManagerInterface::class);
         $objectManagerMock->expects($this->any())
             ->method('get')
             ->willReturnMap([
@@ -204,8 +196,8 @@ class FormTest extends TestCase
 
     /**
      * @param bool $sectionIsVisible
-     * @dataProvider initFormDataProvider
      */
+    #[DataProvider('initFormDataProvider')]
     public function testInitForm($sectionIsVisible)
     {
         /** @var Form|MockObject $object */
@@ -216,9 +208,7 @@ class FormTest extends TestCase
         $this->_formMock->expects($this->once())->method('setBaseUrl')->with('base_url');
         $this->_urlModelMock->expects($this->any())->method('getBaseUrl')->willReturn('base_url');
 
-        $sectionMock = $this->getMockBuilder(Section::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $sectionMock = $this->createMock(Section::class);
         if ($sectionIsVisible) {
             $sectionMock->expects($this->once())
                 ->method('isVisible')
@@ -267,9 +257,9 @@ class FormTest extends TestCase
      * @param bool $shouldCloneFields
      * @param array $prefixes
      * @param int $callNum
-     * @dataProvider initGroupDataProvider
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
+    #[DataProvider('initGroupDataProvider')]
     public function testInitGroup($shouldCloneFields, $prefixes, $callNum)
     {
         /** @var Form|MockObject $object */
@@ -288,10 +278,7 @@ class FormTest extends TestCase
             $fieldsetRendererMock
         );
 
-        $cloneModelMock = $this->getMockBuilder(Config::class)
-            ->addMethods(['getPrefixes'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $cloneModelMock = $this->createPartialMock(ConfigTestHelper::class, ['getPrefixes']);
 
         $groupMock = $this->createMock(Group::class);
         $groupMock->expects($this->once())->method('getFrontendModel')->willReturn(false);
@@ -395,10 +382,10 @@ class FormTest extends TestCase
      * @param bool $isReadOnly
      * @param bool $expectedDisable
      *
-     * @dataProvider initFieldsDataProvider
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
+    #[DataProvider('initFieldsDataProvider')]
     public function testInitFields(
         $backendConfigValue,
         $configValue,
@@ -451,8 +438,7 @@ class FormTest extends TestCase
         );
 
         /** @var StoreInterface|MockObject $storeMock */
-        $storeMock = $this->getMockBuilder(StoreInterface::class)
-            ->getMockForAbstractClass();
+        $storeMock = $this->createMock(StoreInterface::class);
         $storeMock->expects($this->once())
             ->method('getCode')
             ->willReturn('store_code');
@@ -502,7 +488,7 @@ class FormTest extends TestCase
 
         $sectionMock->expects($this->once())->method('getId')->willReturn('section1');
 
-        $formFieldMock = $this->getMockForAbstractClass(
+        $formFieldMock = $this->createMock(
             AbstractElement::class,
             [],
             '',
@@ -548,9 +534,7 @@ class FormTest extends TestCase
 
         $fieldMock->expects($this->once())->method('populateInput');
 
-        $settingCheckerMock = $this->getMockBuilder(SettingChecker::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $settingCheckerMock = $this->createMock(SettingChecker::class);
         $settingCheckerMock->expects($this->any())
             ->method('isReadOnly')
             ->willReturn($isReadOnly);
@@ -558,8 +542,7 @@ class FormTest extends TestCase
             ->method('getPlaceholderValue')
             ->willReturn($placeholderValue);
 
-        $elementVisibilityMock = $this->getMockBuilder(ElementVisibilityInterface::class)
-            ->getMockForAbstractClass();
+        $elementVisibilityMock = $this->createMock(ElementVisibilityInterface::class);
         $elementVisibilityMock->expects($this->any())
             ->method('isDisabled')
             ->willReturn($isDisabled);

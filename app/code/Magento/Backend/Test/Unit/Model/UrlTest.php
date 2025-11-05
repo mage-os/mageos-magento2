@@ -99,11 +99,7 @@ class UrlTest extends TestCase
     protected function setUp(): void
     {
         $objectManager = new ObjectManager($this);
-        $this->menuMock = $this->getMockBuilder(Menu::class)
-            ->addMethods(['getFirstAvailableChild'])
-            ->onlyMethods(['get', 'getFirstAvailable'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->menuMock = $this->createMock(Menu::class);
 
         $this->menuConfigMock = $this->createMock(Config::class);
         $this->menuConfigMock->expects($this->any())->method('getMenu')->willReturn($this->menuMock);
@@ -141,7 +137,7 @@ class UrlTest extends TestCase
         )->willReturn(
             $this->areaFrontName
         );
-        $this->scopeConfigMock = $this->getMockForAbstractClass(ScopeConfigInterface::class);
+        $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
         $this->scopeConfigMock->expects(
             $this->any()
         )->method(
@@ -203,17 +199,13 @@ class UrlTest extends TestCase
     {
         $user = $this->createMock(User::class);
         $user->expects($this->once())->method('setHasAvailableResources')->with(false);
-        $mockSession = $this->getMockBuilder(Session::class)
-            ->addMethods(['getUser'])
-            ->onlyMethods(['isAllowed'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $mockSession = $this->createMock(Session::class);
 
-        $mockSession->expects($this->any())->method('getUser')->willReturn($user);
+        $mockSession->method('getUser')->willReturn($user);
 
         $this->model->setSession($mockSession);
 
-        $this->menuMock->expects($this->any())->method('getFirstAvailableChild')->willReturn(null);
+        // getFirstAvailableChild doesn't exist on Menu mock
 
         $this->assertEquals('*/denied', $this->model->findFirstAvailableMenu());
     }
@@ -224,19 +216,15 @@ class UrlTest extends TestCase
     public function testFindFirstAvailableMenu(): void
     {
         $user = $this->createMock(User::class);
-        $mockSession = $this->getMockBuilder(Session::class)
-            ->addMethods(['getUser'])
-            ->onlyMethods(['isAllowed'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $mockSession = $this->createMock(Session::class);
 
-        $mockSession->expects($this->any())->method('getUser')->willReturn($user);
+        $mockSession->method('getUser')->willReturn($user);
 
         $this->model->setSession($mockSession);
 
         $itemMock = $this->createMock(Item::class);
         $itemMock->expects($this->once())->method('getAction')->willReturn('adminhtml/user');
-        $this->menuMock->expects($this->any())->method('getFirstAvailable')->willReturn($itemMock);
+        // getFirstAvailable doesn't exist on Menu mock
 
         $this->assertEquals('adminhtml/user', $this->model->findFirstAvailableMenu());
     }

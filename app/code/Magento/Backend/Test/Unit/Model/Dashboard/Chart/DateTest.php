@@ -27,6 +27,7 @@ use Magento\Sales\Model\ResourceModel\Report\OrderFactory;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
@@ -127,9 +128,7 @@ class DateTest extends TestCase
     protected function setUp(): void
     {
         $this->collection = $this->getCollectionObject();
-        $this->collectionFactoryMock = $this->getMockBuilder(CollectionFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->collectionFactoryMock = $this->createMock(CollectionFactory::class);
         $this->collectionFactoryMock
             ->expects($this->any())
             ->method('create')
@@ -143,8 +142,8 @@ class DateTest extends TestCase
      * @param int $expectedYear
      *
      * @return void
-     * @dataProvider getByPeriodDataProvider
      */
+    #[DataProvider('getByPeriodDataProvider')]
     public function testGetByPeriod($period, $config, $expectedYear): void
     {
         $this->scopeConfigMock
@@ -179,43 +178,26 @@ class DateTest extends TestCase
      */
     private function getCollectionObject()
     {
-        $this->entityFactoryMock = $this->getMockBuilder(EntityFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->loggerMock = $this->getMockBuilder(LoggerInterface::class)
-            ->getMock();
-        $this->fetchStrategyMock = $this->getMockBuilder(
+        $this->entityFactoryMock = $this->createMock(EntityFactory::class);
+        $this->loggerMock = $this->createMock(LoggerInterface::class);
+        $this->fetchStrategyMock = $this->createMock(
             FetchStrategyInterface::class
-        )->getMock();
-        $this->managerMock = $this->getMockBuilder(ManagerInterface::class)
-            ->getMock();
+        );
+        $this->managerMock = $this->createMock(ManagerInterface::class);
         $snapshotClassName = Snapshot::class;
-        $this->entitySnapshotMock = $this->getMockBuilder($snapshotClassName)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->helperMock = $this->getMockBuilder(Helper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->scopeConfigMock = $this->getMockBuilder(ScopeConfigInterface::class)
-            ->getMock();
-        $this->storeManagerMock = $this->getMockBuilder(StoreManagerInterface::class)
-            ->getMock();
-        $this->timezoneMock = $this->getMockBuilder(TimezoneInterface::class)
-            ->getMock();
+        $this->entitySnapshotMock = $this->createMock($snapshotClassName);
+        $this->helperMock = $this->createMock(Helper::class);
+        $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
+        $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
+        $this->timezoneMock = $this->createMock(TimezoneInterface::class);
         $this->timezoneMock
             ->expects($this->any())
             ->method('getConfigTimezone')
             ->willReturn('America/Chicago');
-        $this->configMock = $this->getMockBuilder(Config::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->orderFactoryMock = $this->getMockBuilder(OrderFactory::class)
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->selectMock = $this->getMockBuilder(Select::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->configMock = $this->createMock(Config::class);
+        $this->orderFactoryMock = $this->createPartialMock(OrderFactory::class, ['create']);
+
+$this->selectMock = $this->createMock(Select::class);
         $this->selectMock
             ->expects($this->any())
             ->method('columns')
@@ -236,17 +218,13 @@ class DateTest extends TestCase
             ->expects($this->any())
             ->method('getPart')
             ->willReturn([]);
-        $this->connectionMock = $this->getMockBuilder(Mysql::class)
-            ->onlyMethods(['select', 'getIfNullSql', 'getDateFormatSql', 'prepareSqlCondition', 'getCheckSql'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->connectionMock
+        $this->connectionMock = $this->createPartialMock(Mysql::class, ['select', 'getIfNullSql', 'getDateFormatSql', 'prepareSqlCondition', 'getCheckSql']);
+
+$this->connectionMock
             ->expects($this->any())
             ->method('select')
             ->willReturn($this->selectMock);
-        $this->resourceMock = $this->getMockBuilder(AbstractDb::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->resourceMock = $this->createPartialMock(AbstractDb::class, ['getConnection', '_construct']);
         $this->resourceMock
             ->expects($this->once())
             ->method('getConnection')

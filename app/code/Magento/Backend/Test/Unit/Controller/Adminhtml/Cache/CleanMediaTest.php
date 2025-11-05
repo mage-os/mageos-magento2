@@ -33,12 +33,11 @@ class CleanMediaTest extends TestCase
         $response = $this->createMock(Http::class);
         $request = $this->createMock(\Magento\Framework\App\Request\Http::class);
 
-        $objectManager = $this->getMockForAbstractClass(ObjectManagerInterface::class);
+        $objectManager = $this->createMock(ObjectManagerInterface::class);
         $backendHelper = $this->createMock(Data::class);
         $helper = new ObjectManager($this);
 
         $session = $this->getMockBuilder(Session::class)
-            ->addMethods(['setIsUrlNotice'])
             ->setConstructorArgs($helper->getConstructArguments(Session::class))
             ->getMock();
 
@@ -46,9 +45,6 @@ class CleanMediaTest extends TestCase
             ExceptionMessageLookupFactory::class
         )
             ->disableOriginalConstructor()
-            ->addMethods(
-                ['getMessageGenerator']
-            )
             ->getMock();
 
         $messageManagerParams = $helper->getConstructArguments(Manager::class);
@@ -73,13 +69,8 @@ class CleanMediaTest extends TestCase
             ->onlyMethods(['getRequest', 'getResponse', 'getMessageManager', 'getSession', 'getResultFactory'])
             ->setConstructorArgs($args)
             ->getMock();
-        $resultFactory = $this->getMockBuilder(ResultFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
-        $resultRedirect = $this->getMockBuilder(Redirect::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $resultFactory = $this->createPartialMock(ResultFactory::class, ['create']);
+        $resultRedirect = $this->createMock(Redirect::class);
         $resultFactory->expects($this->atLeastOnce())
             ->method('create')
             ->with(ResultFactory::TYPE_REDIRECT)

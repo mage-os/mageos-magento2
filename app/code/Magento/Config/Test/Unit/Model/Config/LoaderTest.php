@@ -39,16 +39,8 @@ class LoaderTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->_configValueFactory = $this->getMockBuilder(ValueFactory::class)
-            ->addMethods(['getCollection'])
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->collectionFactory = $this->getMockBuilder(CollectionFactory::class)
-            ->addMethods(['getCollection'])
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->_configValueFactory = $this->createMock(ValueFactory::class);
+        $this->collectionFactory = $this->createMock(CollectionFactory::class);
         $this->_model = new Loader($this->_configValueFactory, $this->collectionFactory);
         $this->_configCollection = $this->createMock(Collection::class);
         $this->_configCollection->expects($this->once())->

@@ -17,6 +17,7 @@ use Magento\Directory\Model\Currency\DefaultLocator;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Backend\Test\Unit\Helper\ColumnTestHelper;
 
 class PriceTest extends TestCase
 {
@@ -60,24 +61,18 @@ class PriceTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->requestMock = $this->getMockForAbstractClass(RequestInterface::class);
+        $this->requestMock = $this->createMock(RequestInterface::class);
 
         $this->context = $this->createMock(Context::class);
         $this->context->expects($this->any())->method('getRequest')->willReturn($this->requestMock);
 
         $this->helper = $this->createMock(Helper::class);
 
-        $this->currency = $this->getMockBuilder(Currency::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getAnyRate'])
-            ->getMock();
+        $this->currency = $this->createPartialMock(Currency::class, ['getAnyRate']);
 
         $this->currencyLocator = $this->createMock(DefaultLocator::class);
 
-        $this->columnMock = $this->getMockBuilder(Column::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getCurrencyCode'])
-            ->getMock();
+        $this->columnMock = $this->createMock(Column::class);
 
         $helper = new ObjectManager($this);
 

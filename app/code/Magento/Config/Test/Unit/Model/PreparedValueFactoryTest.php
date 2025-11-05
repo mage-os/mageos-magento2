@@ -21,7 +21,9 @@ use Magento\Framework\App\ScopeResolverPool;
 use Magento\Store\Model\ScopeInterface as StoreScopeInterface;
 use Magento\Store\Model\ScopeTypeNormalizer;
 use PHPUnit\Framework\MockObject\MockObject as Mock;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Magento\Config\Test\Unit\Helper\ValueTestHelper;
 
 /**
  * @inheritdoc
@@ -90,40 +92,16 @@ class PreparedValueFactoryTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->structureFactoryMock = $this->getMockBuilder(StructureFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
-        $this->valueFactoryMock = $this->getMockBuilder(BackendFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
-        $this->structureMock = $this->getMockBuilder(Structure::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->fieldMock = $this->getMockBuilder(Field::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->valueMock = $this->getMockBuilder(Value::class)
-            ->disableOriginalConstructor()
-            ->addMethods([
-                'setPath', 'setScope', 'setScopeId', 'setValue', 'setField',
-                'setGroupId', 'setFieldConfig', 'setScopeCode'
-            ])
-            ->getMock();
-        $this->configMock = $this->getMockBuilder(ScopeConfigInterface::class)
-            ->getMockForAbstractClass();
-        $this->scopeResolverPoolMock = $this->getMockBuilder(ScopeResolverPool::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->scopeResolverMock = $this->getMockBuilder(ScopeResolver::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->scopeMock = $this->getMockBuilder(ScopeInterface::class)
-            ->getMockForAbstractClass();
-        $this->scopeTypeNormalizer = $this->getMockBuilder(ScopeTypeNormalizer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->structureFactoryMock = $this->createPartialMock(StructureFactory::class, ['create']);
+        $this->valueFactoryMock = $this->createPartialMock(BackendFactory::class, ['create']);
+        $this->structureMock = $this->createMock(Structure::class);
+        $this->fieldMock = $this->createMock(Field::class);
+        $this->valueMock = $this->createPartialMock(ValueTestHelper::class, ['setPath', 'setScope', 'setScopeId', 'setValue', 'setField', 'setGroupId', 'setFieldConfig', 'setScopeCode']);
+        $this->configMock = $this->createMock(ScopeConfigInterface::class);
+        $this->scopeResolverPoolMock = $this->createMock(ScopeResolverPool::class);
+        $this->scopeResolverMock = $this->createMock(ScopeResolver::class);
+        $this->scopeMock = $this->createMock(ScopeInterface::class);
+        $this->scopeTypeNormalizer = $this->createMock(ScopeTypeNormalizer::class);
 
         $this->preparedValueFactory = new PreparedValueFactory(
             $this->scopeResolverPoolMock,
@@ -139,18 +117,29 @@ class PreparedValueFactoryTest extends TestCase
      * @param string|null $configPath
      * @param string $value
      * @param string $scope
+     * @param string|null $normalizedScope
      * @param string|int|null $scopeCode
      * @param int $scopeId
-     * @dataProvider createDataProvider
      */
+    #[DataProvider('createDataProvider')]
     public function testCreate(
         $path,
-        $configPath,
-        $value,
-        $scope,
-        $scopeCode,
-        $scopeId
+        $configPath = null,
+        $value = null,
+        $scope = null,
+        $normalizedScope = null,
+        $scopeCode = null,
+        $scopeId = null
     ) {
+        // Handle both 6 and 7 parameter data sets
+        if ($normalizedScope === null && $scopeCode !== null && is_string($scopeCode) && !is_numeric($scopeCode)) {
+            // 6 parameter case: shift parameters
+            $scopeId = $scopeCode;
+            $scopeCode = $normalizedScope = $scope;
+        } elseif ($normalizedScope !== null) {
+            // 7 parameter case: use normalizedScope
+            $scope = $normalizedScope;
+        }
         $groupPath = 'some/group';
         $groupId = 'some_group';
         $fieldId = 'some_field';
@@ -170,9 +159,7 @@ class PreparedValueFactoryTest extends TestCase
                 ->willReturn($scopeId);
         }
         /** @var Group|Mock $groupMock */
-        $groupMock = $this->getMockBuilder(Group::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $groupMock = $this->createMock(Group::class);
         $groupMock->expects($this->once())
             ->method('getId')
             ->willReturn($groupId);
@@ -317,15 +304,32 @@ class PreparedValueFactoryTest extends TestCase
 
     /**
      * @param string $path
+     * @param string|null $configPath
+     * @param mixed $value
      * @param string $scope
+     * @param string|null $normalizedScope
      * @param string|int|null $scopeCode
-     * @dataProvider createDataProvider
+     * @param int|null $scopeId
      */
+    #[DataProvider('createDataProvider')]
     public function testCreateNotInstanceOfValue(
         $path,
-        $scope,
-        $scopeCode
+        $configPath = null,
+        $value = null,
+        $scope = null,
+        $normalizedScope = null,
+        $scopeCode = null,
+        $scopeId = null
     ) {
+        // Handle both 6 and 7 parameter data sets - use only path, scope, scopeCode
+        if ($normalizedScope === null && $scopeCode !== null && is_string($scopeCode) && !is_numeric($scopeCode)) {
+            // 6 parameter case
+            $scopeCode = $normalizedScope = $scope;
+            $scope = $value;
+        } elseif ($normalizedScope !== null) {
+            // 7 parameter case
+            $scope = $normalizedScope;
+        }
         $this->scopeResolverPoolMock->expects($this->never())
             ->method('get');
         $this->scopeResolverMock->expects($this->never())

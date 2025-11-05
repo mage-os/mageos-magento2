@@ -23,8 +23,11 @@ use Magento\Framework\View\Helper\Js;
 use Magento\Framework\View\Layout;
 use Magento\User\Model\User;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Magento\Framework\View\Helper\SecureHtmlRenderer;
+use Magento\Config\Test\Unit\Helper\SessionTestHelper;
+use Magento\Config\Test\Unit\Helper\UserTestHelper;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -95,23 +98,15 @@ class FieldsetTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->authSessionMock = $this->getMockBuilder(Session::class)
-            ->addMethods(['getUser'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->authSessionMock = $this->createMock(SessionTestHelper::class);
 
-        $this->userMock = $this->getMockBuilder(User::class)
-            ->addMethods(['getExtra'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->userMock = $this->createMock(UserTestHelper::class);
 
         $this->authSessionMock->expects($this->any())
             ->method('getUser')
             ->willReturn($this->userMock);
 
-        $this->_requestMock = $this->getMockBuilder(RequestInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->_requestMock = $this->createMock(RequestInterface::class);
         $this->_requestMock->expects($this->any())
             ->method('getParam')
             ->willReturn('Test Param');
@@ -141,11 +136,10 @@ class FieldsetTest extends TestCase
         $this->_testHelper = new ObjectManager($this);
         $this->_object = $this->_testHelper->getObject(Fieldset::class, $data);
 
-        $this->_elementMock = $this->getMockBuilder(Text::class)
-            ->addMethods(['getLegend', 'getComment', 'getIsNested', 'getExpanded'])
-            ->onlyMethods(['getId', 'getHtmlId', 'getName', 'getElements', 'getForm'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->_elementMock = $this->createPartialMock(
+            Text::class,
+            ['getLegend', 'getComment', 'getIsNested', 'getExpanded', 'getId', 'getHtmlId', 'getName', 'getElements', 'getForm']
+        );
 
         $this->_elementMock->expects($this->any())
             ->method('getId')
@@ -168,8 +162,8 @@ class FieldsetTest extends TestCase
      * @param $expanded
      * @param $nested
      * @param extra
-     * @dataProvider renderWithoutStoredElementsDataProvider
      */
+    #[DataProvider('renderWithoutStoredElementsDataProvider')]
     public function testRenderWithoutStoredElements($expanded, $nested, $extra)
     {
         $this->userMock->expects($this->any())->method('getExtra')->willReturn($extra);
@@ -193,27 +187,25 @@ class FieldsetTest extends TestCase
      * @param $expanded
      * @param $nested
      * @param $extra
-     * @dataProvider renderWithStoredElementsDataProvider
      */
+    #[DataProvider('renderWithStoredElementsDataProvider')]
     public function testRenderWithStoredElements($expanded, $nested, $extra)
     {
         $this->userMock->expects($this->any())->method('getExtra')->willReturn($extra);
         $this->_helperMock->expects($this->any())->method('getScript')->willReturnArgument(0);
-        $fieldMock = $this->getMockBuilder(Text::class)
-            ->addMethods(['getTooltip', 'getIsNested', 'getExpanded'])
-            ->onlyMethods(['getId', 'toHtml', 'getHtmlId'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $fieldMock = $this->createPartialMock(
+            Text::class,
+            ['getTooltip', 'getIsNested', 'getExpanded', 'getId', 'toHtml', 'getHtmlId']
+        );
         $fieldMock->expects($this->any())->method('getId')->willReturn('test_field_id');
         $fieldMock->expects($this->any())->method('getTooltip')->willReturn('test_field_tootip');
         $fieldMock->expects($this->any())->method('toHtml')->willReturn('test_field_toHTML');
         $fieldMock->expects($this->any())->method('getHtmlId')->willReturn('test_field_HTML_id');
 
-        $fieldSetMock = $this->getMockBuilder(\Magento\Framework\Data\Form\Element\Fieldset::class)
-            ->addMethods(['getTooltip', 'getIsNested', 'getExpanded'])
-            ->onlyMethods(['getId', 'toHtml', 'getHtmlId'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $fieldSetMock = $this->createPartialMock(
+            \Magento\Framework\Data\Form\Element\Fieldset::class,
+            ['getTooltip', 'getIsNested', 'getExpanded', 'getId', 'toHtml', 'getHtmlId']
+        );
         $fieldSetMock->expects($this->any())->method('getId')->willReturn('test_fieldset_id');
         $fieldSetMock->expects($this->any())->method('getTooltip')->willReturn('test_fieldset_tootip');
         $fieldSetMock->expects($this->any())->method('toHtml')->willReturn('test_fieldset_toHTML');

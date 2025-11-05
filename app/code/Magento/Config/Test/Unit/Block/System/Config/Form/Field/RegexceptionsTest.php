@@ -61,20 +61,11 @@ class RegexceptionsTest extends TestCase
 
         $objectManager = new ObjectManager($this);
 
-        $this->labelFactoryMock = $this->getMockBuilder(LabelFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->labelMock = $this->getMockBuilder(Label::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->elementFactoryMock = $this->getMockBuilder(Factory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->labelFactoryMock = $this->createMock(LabelFactory::class);
+        $this->labelMock = $this->createMock(Label::class);
+        $this->elementFactoryMock = $this->createMock(Factory::class);
         $this->elementMock = $this->getMockBuilder(AbstractElement::class)
             ->disableOriginalConstructor()
-            ->addMethods(
-                ['setName', 'setHtmlId', 'setValues', 'getValues']
-            )
             ->onlyMethods(
                 ['setForm', 'getName', 'getHtmlId', 'getElementHtml']
             )

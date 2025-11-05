@@ -85,32 +85,17 @@ class ImporterTest extends TestCase
     protected function setUp(): void
     {
         $this->flagManagerMock = $this->getMockBuilder(FlagManager::class)
-            ->onlyMethods(['getFlagData', 'saveFlag'])
-            ->addMethods(['create'])
+            ->onlyMethods(['getFlagData', 'saveFlag', 'create'])
             ->disableOriginalConstructor()
             ->getMock();
-        $this->flagMock = $this->getMockBuilder(Flag::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->arrayUtilsMock = $this->getMockBuilder(ArrayUtils::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->valueFactoryMock = $this->getMockBuilder(PreparedValueFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->valueMock = $this->getMockBuilder(Value::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->scopeConfigMock = $this->getMockBuilder(ScopeConfigInterface::class)
-            ->getMockForAbstractClass();
-        $this->stateMock = $this->getMockBuilder(State::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->scopeMock = $this->getMockBuilder(ScopeInterface::class)
-            ->getMockForAbstractClass();
-        $this->saveProcessorMock = $this->getMockBuilder(SaveProcessor::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->flagMock = $this->createMock(Flag::class);
+        $this->arrayUtilsMock = $this->createMock(ArrayUtils::class);
+        $this->valueFactoryMock = $this->createMock(PreparedValueFactory::class);
+        $this->valueMock = $this->createMock(Value::class);
+        $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
+        $this->stateMock = $this->createMock(State::class);
+        $this->scopeMock = $this->createMock(ScopeInterface::class);
+        $this->saveProcessorMock = $this->createMock(SaveProcessor::class);
 
         $this->flagManagerMock->expects($this->any())
             ->method('create')

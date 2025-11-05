@@ -78,48 +78,24 @@ class FieldTest extends TestCase
             'elementHTML' => 'test_html',
         ];
 
-        $this->_elementMock = $this->getMockBuilder(Text::class)
-            ->addMethods([
-                'getLabel',
-                'getComment',
-                'getHint',
-                'getScope',
-                'getScopeLabel',
-                'getInherit',
-                'getIsDisableInheritance',
-                'getCanUseWebsiteValue',
-                'getCanUseDefaultValue',
-                'setDisabled',
-                'getTooltip'
-            ])
-            ->onlyMethods(['getHtmlId', 'getName', 'getElementHtml', 'setReadonly'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->_elementMock = $this->createMock(Text::class);
 
-        $this->_elementMock->expects(
-            $this->any()
-        )->method(
+        $this->_elementMock->method(
             'getHtmlId'
         )->willReturn(
             $this->_testData['htmlId']
         );
-        $this->_elementMock->expects(
-            $this->any()
-        )->method(
+        $this->_elementMock->method(
             'getName'
         )->willReturn(
             $this->_testData['name']
         );
-        $this->_elementMock->expects(
-            $this->any()
-        )->method(
+        $this->_elementMock->method(
             'getLabel'
         )->willReturn(
             $this->_testData['label']
         );
-        $this->_elementMock->expects(
-            $this->any()
-        )->method(
+        $this->_elementMock->method(
             'getElementHtml'
         )->willReturn(
             $this->_testData['elementHTML']
@@ -145,7 +121,7 @@ class FieldTest extends TestCase
     public function testRenderValueWithCommentBlock()
     {
         $testComment = 'test_comment';
-        $this->_elementMock->expects($this->any())->method('getComment')->willReturn($testComment);
+        $this->_elementMock->method('getComment')->willReturn($testComment);
         $expected = '<td class="value">' .
             $this->_testData['elementHTML'] .
             '<p class="note"><span>' .
@@ -158,7 +134,7 @@ class FieldTest extends TestCase
     public function testRenderValueWithTooltipBlock()
     {
         $testTooltip = 'test_tooltip';
-        $this->_elementMock->expects($this->any())->method('getTooltip')->willReturn($testTooltip);
+        $this->_elementMock->method('getTooltip')->willReturn($testTooltip);
         $expected = '<td class="value with-tooltip">' .
             $this->_testData['elementHTML'] .
             '<div class="tooltip"><span class="help"><span></span></span><div class="tooltip-content">' .
@@ -171,7 +147,7 @@ class FieldTest extends TestCase
     public function testRenderHint()
     {
         $testHint = 'test_hint';
-        $this->_elementMock->expects($this->any())->method('getHint')->willReturn($testHint);
+        $this->_elementMock->method('getHint')->willReturn($testHint);
         $expected = '<td class=""><div class="hint"><div id="hint_test_field_id">' . $testHint . '</div></div>';
         $actual = $this->_object->render($this->_elementMock);
         $this->assertStringContainsString($expected, $actual);
@@ -182,8 +158,8 @@ class FieldTest extends TestCase
         $this->_storeManagerMock->expects($this->once())->method('isSingleStoreMode')->willReturn(false);
 
         $testScopeLabel = 'test_scope_label';
-        $this->_elementMock->expects($this->any())->method('getScope')->willReturn(true);
-        $this->_elementMock->expects($this->any())->method('getScopeLabel')->willReturn($testScopeLabel);
+        $this->_elementMock->method('getScope')->willReturn(true);
+        $this->_elementMock->method('getScopeLabel')->willReturn($testScopeLabel);
 
         $expected = '<tr id="row_test_field_id">' .
             '<td class="label"><label for="test_field_id">' .
@@ -196,9 +172,9 @@ class FieldTest extends TestCase
 
     public function testRenderInheritCheckbox()
     {
-        $this->_elementMock->expects($this->any())->method('getInherit')->willReturn(true);
-        $this->_elementMock->expects($this->any())->method('getCanUseWebsiteValue')->willReturn(true);
-        $this->_elementMock->expects($this->any())->method('getCanUseDefaultValue')->willReturn(true);
+        $this->_elementMock->method('getInherit')->willReturn(true);
+        $this->_elementMock->method('getCanUseWebsiteValue')->willReturn(true);
+        $this->_elementMock->method('getCanUseDefaultValue')->willReturn(true);
         $this->_elementMock->expects($this->once())->method('setDisabled')->with(true);
         $this->_elementMock->method('getIsDisableInheritance')->willReturn(true);
         $this->_elementMock->method('setReadonly')->with(true);

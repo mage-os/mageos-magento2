@@ -17,7 +17,10 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Layout;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Magento\Backend\Test\Unit\Helper\TemplateTestHelper;
+use Magento\Backend\Test\Unit\Helper\WidgetTestHelper;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -42,10 +45,7 @@ class ColumnTest extends TestCase
     protected function setUp(): void
     {
         $this->_layoutMock = $this->createMock(Layout::class);
-        $this->_blockMock = $this->getMockBuilder(Template::class)
-            ->addMethods(['setColumn', 'getHtml'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->_blockMock = $this->createPartialMock(TemplateTestHelper::class, ['setColumn', 'getHtml']);
 
         $arguments = [
             'layout' => $this->_layoutMock,
@@ -92,8 +92,8 @@ class ColumnTest extends TestCase
     }
 
     /**
-     * @dataProvider getSortableDataProvider
      */
+    #[DataProvider('getSortableDataProvider')]
     public function testGetSortable($value)
     {
         $this->_block->setData('sortable', $value);
@@ -376,8 +376,8 @@ class ColumnTest extends TestCase
     /**
      * @param $groupedData
      * @param $expected
-     * @dataProvider columnGroupedDataProvider
      */
+    #[DataProvider('columnGroupedDataProvider')]
     public function testColumnIsGrouped($groupedData, $expected)
     {
         $arguments = [
@@ -406,10 +406,7 @@ class ColumnTest extends TestCase
     {
         $row = new DataObject(['id' => '2', 'title' => 'some item']);
         /** @var  $rendererMock */
-        $rendererMock = $this->getMockBuilder(AbstractRenderer::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['renderExport', 'render'])
-            ->getMock();
+        $rendererMock = $this->createPartialMock(AbstractRenderer::class, ['renderExport', 'render']);
 
         $rendererMock->expects($this->any())->method('renderExport')->willReturnCallback(
             function (DataObject $row) {
@@ -423,10 +420,7 @@ class ColumnTest extends TestCase
             }
         );
 
-        $frameCallbackHostObject = $this->getMockBuilder(Widget::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['decorate'])
-            ->getMock();
+        $frameCallbackHostObject = $this->createPartialMock(WidgetTestHelper::class, ['decorate']);
 
         $frameCallbackHostObject->expects($this->any())
             ->method('decorate')
@@ -450,10 +444,7 @@ class ColumnTest extends TestCase
         $this->expectExceptionMessage('Frame callback host must be instance of Magento\Backend\Block\Widget');
         $row = new DataObject(['id' => '2', 'title' => 'some item']);
         /** @var  $rendererMock */
-        $rendererMock = $this->getMockBuilder(AbstractRenderer::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['renderExport', 'render'])
-            ->getMock();
+        $rendererMock = $this->createPartialMock(AbstractRenderer::class, ['renderExport', 'render']);
 
         $rendererMock->expects($this->any())->method('renderExport')->willReturnCallback(
             function (DataObject $row) {
@@ -472,10 +463,7 @@ class ColumnTest extends TestCase
         $this->expectExceptionMessage('Frame callback host must be instance of Magento\Backend\Block\Widget');
         $row = new DataObject(['id' => '2', 'title' => 'some item']);
         /** @var  $rendererMock */
-        $rendererMock = $this->getMockBuilder(AbstractRenderer::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['render'])
-            ->getMock();
+        $rendererMock = $this->createPartialMock(AbstractRenderer::class, ['render']);
 
         $rendererMock->expects($this->any())->method('render')->willReturnCallback(
             function (DataObject $row) {

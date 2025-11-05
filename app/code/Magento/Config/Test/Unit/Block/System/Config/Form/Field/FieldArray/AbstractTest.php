@@ -23,15 +23,7 @@ class AbstractTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->model = $this->getMockForAbstractClass(
-            AbstractFieldArray::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['escapeHtml']
-        );
+        $this->model = $this->createPartialMock(AbstractFieldArray::class, ['escapeHtml']);
     }
 
     public function testGetArrayRows()
@@ -58,9 +50,7 @@ class AbstractTest extends TestCase
 
     public function testGetAddButtonLabel()
     {
-        $contextMock = $this->getMockBuilder(Context::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $contextMock = $this->createMock(Context::class);
         $this->model->__construct($contextMock);
 
         $this->assertEquals("Add", $this->model->getAddButtonLabel());
