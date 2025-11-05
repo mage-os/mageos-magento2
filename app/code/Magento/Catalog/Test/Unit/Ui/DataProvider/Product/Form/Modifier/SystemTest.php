@@ -64,18 +64,10 @@ class SystemTest extends AbstractModifierTestCase
             ]
         );
 
-        $this->productMock->expects($this->once())
-            ->method('getId')
-            ->willReturn($productId);
-        $this->productMock->expects($this->exactly(2))
-            ->method('getTypeId')
-            ->willReturn(Type::TYPE_SIMPLE);
-        $this->productMock->expects($this->once())
-            ->method('getStoreId')
-            ->willReturn($storeId);
-        $this->productMock->expects($this->once())
-            ->method('getAttributeSetId')
-            ->willReturn($attributeSetId);
+        $this->productMock->setId($productId);
+        $this->productMock->setTypeId(Type::TYPE_SIMPLE);
+        $this->productMock->setStoreId($storeId);
+        $this->productMock->setAttributeSetId($attributeSetId);
 
         $this->urlBuilderMock->expects($this->exactly(3))
             ->method('getUrl')

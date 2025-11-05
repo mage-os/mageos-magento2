@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2015 Adobe
+ * Copyright 2025 Adobe
  * All Rights Reserved.
  */
 declare(strict_types=1);
@@ -10,18 +10,147 @@ namespace Magento\Eav\Test\Unit\Helper;
 use Magento\Eav\Model\Entity\Attribute;
 
 /**
- * Mock class for EAV Attribute with additional methods
+ * Test helper class for EAV Attribute with custom methods
+ *
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
 class AttributeTestHelper extends Attribute
 {
     /**
-     * @var mixed
+     * @var array
      */
-    private $isFilterable = null;
+    private $data = [];
+
     /**
-     * @var mixed
+     * Skip parent constructor to avoid dependencies
      */
-    private $searchWeight = null;
+    public function __construct()
+    {
+        // Skip parent constructor - clean initialization
+    }
+
+    /**
+     * Override getId to work without constructor
+     *
+     * @return mixed
+     */
+    public function getId()
+    {
+        return $this->data['id'] ?? $this->data['attribute_id'] ?? null;
+    }
+
+    /**
+     * Override getData to work with our data array
+     *
+     * @param string $key
+     * @param mixed $index
+     * @return mixed
+     */
+    public function getData($key = '', $index = null)
+    {
+        if ($key === '') {
+            return $this->data;
+        }
+
+        if ($index !== null) {
+            return $this->data[$key][$index] ?? null;
+        }
+
+        return $this->data[$key] ?? null;
+    }
+
+    /**
+     * Override setData to work with our data array
+     *
+     * @param string|array $key
+     * @param mixed $value
+     * @return self
+     */
+    public function setData($key, $value = null): self
+    {
+        if (is_array($key)) {
+            $this->data = array_merge($this->data, $key);
+        } else {
+            $this->data[$key] = $value;
+        }
+        return $this;
+    }
+
+    /**
+     * Get attribute name
+     *
+     * @return string|null
+     */
+    public function getName(): ?string
+    {
+        return $this->data['name'] ?? null;
+    }
+
+    /**
+     * Set attribute name
+     *
+     * @param mixed $name
+     * @return self
+     */
+    public function setName($name): self
+    {
+        $this->data['name'] = $name;
+        return $this;
+    }
+
+    /**
+     * Mock method for testing
+     *
+     * @param mixed $setId
+     * @return bool
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function isInSet($setId)
+    {
+        return $this->data['is_in_set'] ?? false;
+    }
+
+    /**
+     * Mock method for testing
+     *
+     * @return self
+     */
+    public function save(): self
+    {
+        return $this;
+    }
+
+    /**
+     * Mock method for testing
+     *
+     * @return string
+     */
+    public function getAttributeCode()
+    {
+        return $this->data['attribute_code'] ?? 'some_code';
+    }
+
+    /**
+     * Get store label for testing
+     *
+     * @param int|null $storeId
+     * @return string
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function getStoreLabel($storeId = null)
+    {
+        return $this->data['store_label'] ?? $this->getFrontendLabel();
+    }
+
+    /**
+     * Get source for testing
+     *
+     * @return mixed
+     */
+    public function getSource()
+    {
+        return $this->data['source'] ?? null;
+    }
 
     /**
      * Mock method for getIsFilterable
@@ -30,7 +159,7 @@ class AttributeTestHelper extends Attribute
      */
     public function getIsFilterable()
     {
-        return $this->isFilterable;
+        return $this->data['is_filterable'] ?? null;
     }
 
     /**
@@ -41,7 +170,7 @@ class AttributeTestHelper extends Attribute
      */
     public function setIsFilterable($value)
     {
-        $this->isFilterable = $value;
+        $this->data['is_filterable'] = $value;
         return $this;
     }
 
@@ -52,7 +181,7 @@ class AttributeTestHelper extends Attribute
      */
     public function getSearchWeight()
     {
-        return $this->searchWeight;
+        return $this->data['search_weight'] ?? null;
     }
 
     /**
@@ -63,7 +192,7 @@ class AttributeTestHelper extends Attribute
      */
     public function setSearchWeight($value)
     {
-        $this->searchWeight = $value;
+        $this->data['search_weight'] = $value;
         return $this;
     }
 

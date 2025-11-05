@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2024 Adobe
+ * Copyright 2025 Adobe
  * All Rights Reserved.
  */
 declare(strict_types=1);
@@ -45,6 +45,11 @@ class ProductExtensionInterfaceTestHelper implements ProductExtensionInterface
 
     public function __construct()
     {
+    }
+
+    public function __toArray(): array
+    {
+        return [];
     }
 
     public function getStockItem()

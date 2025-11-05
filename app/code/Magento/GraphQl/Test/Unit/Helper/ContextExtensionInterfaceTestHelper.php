@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2018 Adobe
+ * Copyright 2025 Adobe
  * All Rights Reserved.
  */
 declare(strict_types=1);
@@ -24,6 +24,16 @@ class ContextExtensionInterfaceTestHelper implements ContextExtensionInterface
      * @var StoreInterface|null
      */
     private ?StoreInterface $store = null;
+
+    /**
+     * @var int|null
+     */
+    private ?int $customerGroupId = null;
+
+    public function __construct()
+    {
+        // Empty constructor
+    }
 
     /**
      * Set is customer flag
@@ -77,7 +87,7 @@ class ContextExtensionInterfaceTestHelper implements ContextExtensionInterface
      */
     public function getCustomerGroupId(): ?int
     {
-        return null;
+        return $this->customerGroupId;
     }
 
     /**
@@ -85,10 +95,10 @@ class ContextExtensionInterfaceTestHelper implements ContextExtensionInterface
      *
      * @param int|null $customerGroupId
      * @return $this
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function setCustomerGroupId($customerGroupId): self
     {
+        $this->customerGroupId = $customerGroupId;
         return $this;
     }
 }

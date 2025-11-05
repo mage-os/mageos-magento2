@@ -43,7 +43,7 @@ class ProductUrlRewriteTest extends AbstractModifierTestCase
     {
         $this->assertSame([], $this->getModel()->modifyMeta([]));
 
-        $this->productMock->method('getId')->willReturn(1);
+        $this->productMock->setId(1);
 
         $this->assertNotEmpty($this->getModel()->modifyMeta([
             'test_group_code' => [

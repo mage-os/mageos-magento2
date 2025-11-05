@@ -11,10 +11,15 @@ use Magento\Framework\Model\AbstractModel;
 use Magento\MediaStorage\Model\File\Storage\Database;
 
 /**
- * Test helper for AbstractModel class
+ * Test helper for Magento\Framework\Model\AbstractModel
  */
 class AbstractModelTestHelper extends AbstractModel
 {
+    /**
+     * @var array
+     */
+    private $data = [];
+
     /**
      * @var Database
      */
@@ -31,11 +36,58 @@ class AbstractModelTestHelper extends AbstractModel
     private $websiteId = null;
 
     /**
+     * @var mixed
+     */
+    private $id = null;
+
+    /**
+     * @var mixed
+     */
+    private $dataHasChangedForResult = null;
+
+    /**
+     * @var mixed
+     */
+    private $isActive = null;
+
+    /**
+     * @var mixed
+     */
+    private $entityAttributeId = null;
+
+    /**
+     * @var mixed
+     */
+    private $entityTypeId = null;
+
+    /**
      * Constructor - skip parent constructor to avoid dependencies
      */
     public function __construct()
     {
         // Skip parent constructor to avoid dependency injection issues
+    }
+
+    /**
+     * Get attribute ID for testing
+     *
+     * @return mixed
+     */
+    public function getAttributeId()
+    {
+        return $this->data['attribute_id'] ?? null;
+    }
+
+    /**
+     * Set attribute ID for testing
+     *
+     * @param mixed $attributeId
+     * @return self
+     */
+    public function setAttributeId($attributeId): self
+    {
+        $this->data['attribute_id'] = $attributeId;
+        return $this;
     }
 
     /**
@@ -113,6 +165,118 @@ class AbstractModelTestHelper extends AbstractModel
     public function setWebsiteId($websiteId)
     {
         $this->websiteId = $websiteId;
+        return $this;
+    }
+
+    /**
+     * Get ID
+     *
+     * @return mixed
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set ID
+     *
+     * @param mixed $id
+     * @return $this
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+        return $this;
+    }
+
+    /**
+     * Check if data has changed for field
+     *
+     * @param string $field
+     * @return mixed
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function dataHasChangedFor($field)
+    {
+        return $this->dataHasChangedForResult;
+    }
+
+    /**
+     * Set result for dataHasChangedFor
+     *
+     * @param mixed $result
+     * @return $this
+     */
+    public function setDataHasChangedForResult($result)
+    {
+        $this->dataHasChangedForResult = $result;
+        return $this;
+    }
+
+    /**
+     * Get is active status
+     *
+     * @return mixed
+     */
+    public function getIsActive()
+    {
+        return $this->isActive;
+    }
+
+    /**
+     * Set is active status
+     *
+     * @param mixed $isActive
+     * @return $this
+     */
+    public function setIsActive($isActive)
+    {
+        $this->isActive = $isActive;
+        return $this;
+    }
+
+    /**
+     * Get entity attribute ID
+     *
+     * @return mixed
+     */
+    public function getEntityAttributeId()
+    {
+        return $this->entityAttributeId;
+    }
+
+    /**
+     * Set entity attribute ID
+     *
+     * @param mixed $entityAttributeId
+     * @return $this
+     */
+    public function setEntityAttributeId($entityAttributeId)
+    {
+        $this->entityAttributeId = $entityAttributeId;
+        return $this;
+    }
+
+    /**
+     * Get entity type ID
+     *
+     * @return mixed
+     */
+    public function getEntityTypeId()
+    {
+        return $this->entityTypeId;
+    }
+
+    /**
+     * Set entity type ID
+     *
+     * @param mixed $entityTypeId
+     * @return $this
+     */
+    public function setEntityTypeId($entityTypeId)
+    {
+        $this->entityTypeId = $entityTypeId;
         return $this;
     }
 }
