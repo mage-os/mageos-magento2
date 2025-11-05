@@ -96,7 +96,7 @@ class AllmethodsTest extends TestCase
             ->willReturn($expectedArray['allowedMethods']);
         $this->assertEquals([$expectedArray['expected_result']], $this->allmethods->toOptionArray(true));
     }
-    
+
     /**
      * Returns providers data for test
      *
@@ -121,5 +121,86 @@ class AllmethodsTest extends TestCase
 
             ]
         ];
+    }
+
+    /**
+     * Ensures carriers with no allowed methods are skipped entirely
+     *
+     * @return void
+     */
+    public function testSkipsCarrierWhenNoAllowedMethods(): void
+    {
+        $this->shippingConfig->expects($this->once())
+            ->method('getAllCarriers')
+            ->willReturn(['flatrate' => $this->carriersMock]);
+
+        $this->carriersMock->expects($this->once())
+            ->method('getAllowedMethods')
+            ->willReturn(null);
+
+        $result = $this->allmethods->toOptionArray(false);
+
+        $this->assertSame([
+            ['value' => '', 'label' => ''],
+        ], $result);
+    }
+
+    /**
+     * Ensures a proper entry is added for a valid method
+     *
+     * @return void
+     */
+    public function testAddsMethodEntryForValidMethod(): void
+    {
+        $this->shippingConfig->expects($this->once())
+            ->method('getActiveCarriers')
+            ->willReturn(['flatrate' => $this->carriersMock]);
+
+        $this->carriersMock->expects($this->once())
+            ->method('getAllowedMethods')
+            ->willReturn(['fixed' => 'Fixed Rate']);
+
+        $this->scopeConfig->expects($this->once())
+            ->method('getValue')
+            ->with('carriers/flatrate/title', \Magento\Store\Model\ScopeInterface::SCOPE_STORE)
+            ->willReturn('Flat Rate');
+
+        $result = $this->allmethods->toOptionArray(true);
+
+        $this->assertArrayHasKey('flatrate', $result);
+        $this->assertSame('Flat Rate', $result['flatrate']['label']);
+        $this->assertSame([
+            [
+                'value' => 'flatrate_fixed',
+                'label' => '[flatrate] Fixed Rate',
+            ]
+        ], $result['flatrate']['value']);
+    }
+
+    /**
+     * Ensures null/empty method codes are not added
+     *
+     * @return void
+     */
+    public function testSkipsNullAndEmptyMethodCodes(): void
+    {
+        $this->shippingConfig->expects($this->once())
+            ->method('getAllCarriers')
+            ->willReturn(['flatrate' => $this->carriersMock]);
+
+        $this->carriersMock->expects($this->once())
+            ->method('getAllowedMethods')
+            ->willReturn([null => 'Null Title', '' => 'Empty Title']);
+
+        $this->scopeConfig->expects($this->once())
+            ->method('getValue')
+            ->with('carriers/flatrate/title', \Magento\Store\Model\ScopeInterface::SCOPE_STORE)
+            ->willReturn('Flat Rate');
+
+        $result = $this->allmethods->toOptionArray(false);
+
+        $this->assertArrayHasKey('flatrate', $result);
+        $this->assertSame('Flat Rate', $result['flatrate']['label']);
+        $this->assertSame([], $result['flatrate']['value']);
     }
 }
