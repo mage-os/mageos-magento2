@@ -9,16 +9,54 @@ namespace Magento\Framework\Session\Test\Unit\Helper;
 
 use Magento\Framework\Session\SessionManager;
 
+/**
+ * Test helper for SessionManager with custom affectedItems methods
+ *
+ * Only implements custom methods not available in SessionManager
+ */
 class SessionManagerTestHelper extends SessionManager
 {
+    /**
+     * @var array|null
+     */
+    private $affectedItems = null;
+
     /**
      * @var mixed
      */
     private $customerGroupIdReturn = null;
 
+    /**
+     * Constructor
+     */
     public function __construct()
     {
-        // Empty constructor
+        // Skip parent constructor to avoid dependencies
+    }
+
+    /**
+     * Get affected items
+     *
+     * @return array|null
+     */
+    public function getAffectedItems()
+    {
+        return $this->affectedItems;
+    }
+
+    /**
+     * Set affected items
+     *
+     * @param mixed $items
+     * @return void
+     */
+    public function setAffectedItems($items)
+    {
+        if (is_array($items)) {
+            $this->affectedItems = $items;
+        } else {
+            $this->affectedItems = null;
+        }
     }
 
     /**
@@ -39,4 +77,3 @@ class SessionManagerTestHelper extends SessionManager
         return $this->customerGroupIdReturn;
     }
 }
-

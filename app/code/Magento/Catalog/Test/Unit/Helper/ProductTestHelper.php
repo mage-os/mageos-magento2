@@ -51,6 +51,10 @@ class ProductTestHelper extends Product
     private $setOptionsCalled = false;
     /** @var array */
     private $setOptionsParams = [];
+    /**
+     * @var float
+     */
+    private $cost;
 
     /**
      * @var bool
@@ -240,10 +244,15 @@ class ProductTestHelper extends Product
     /**
      * Constructor
      *
-     * @param mixed $resource Optional resource parameter or DataObject for URL
+     * @param float $cost
+     * @param ?DataObject $urlDataObject
+     * @param mixed $resource
      */
-    public function __construct($resource = null)
-    {
+    public function __construct(
+        $cost = 0.0,
+        ?DataObject $urlDataObject = null,
+        $resource = null
+    ) {
         if ($resource instanceof DataObject) {
             $this->urlDataObject = $resource;
             $this->resource = null;
@@ -251,6 +260,8 @@ class ProductTestHelper extends Product
             $this->resource = $resource;
             $this->urlDataObject = null;
         }
+        
+        $this->cost = $cost;
         $this->_data = [];
         $this->testData = [];
     }
@@ -2500,5 +2511,41 @@ class ProductTestHelper extends Product
     public function hasUrlDataObject()
     {
         return (bool)$this->urlDataObject;
+    }
+
+    /**
+     * Set is object new
+     *
+     * Convenience wrapper for parent's isObjectNew($flag) method.
+     *
+     * @param bool $flag
+     * @return $this
+     */
+    public function setIsObjectNew($flag)
+    {
+        parent::isObjectNew($flag);
+        return $this;
+    }
+
+    /**
+     * Check if product has options
+     *
+     * This method is mocked by tests to control option behavior.
+     *
+     * @return bool
+     */
+    public function hasOptions(): bool
+    {
+        return isset($this->_data['has_options']) && $this->_data['has_options'];
+    }
+
+    /**
+     * Get cost
+     *
+     * @return float
+     */
+    public function getCost()
+    {
+        return $this->getData('cost') ?? $this->cost;
     }
 }
