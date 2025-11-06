@@ -99,6 +99,7 @@ class EditTest extends TestCase
         ];
 
         $helper = new ObjectManager($this);
+        $helper->prepareObjectManager();
         $this->_object = $helper->getObject(Edit::class, $data);
     }
 

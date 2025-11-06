@@ -9,10 +9,11 @@ namespace Magento\Backend\Test\Unit\App\Action\Plugin;
 
 use Magento\Backend\App\AbstractAction;
 use Magento\Backend\App\Action\Plugin\MassactionKey;
+use Magento\Framework\App\Request\Http;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class MassactionKeyTest extends TestCase
@@ -37,13 +38,14 @@ class MassactionKeyTest extends TestCase
      */
     protected function setUp(): void
     {
+        $objectManager = new ObjectManager($this);
+        
         $this->subjectMock = $this->createMock(AbstractAction::class);
-        $this->requestMock = $this->createPartialMock(
-            \Magento\Backend\Test\Unit\Helper\RequestTestHelper::class,
+        $this->requestMock = $objectManager->createPartialMockWithReflection(
+            Http::class,
             ['getPost', 'setPostValue']
         );
 
-        $objectManager = new ObjectManager($this);
         $this->plugin = $objectManager->getObject(
             MassactionKey::class,
             [

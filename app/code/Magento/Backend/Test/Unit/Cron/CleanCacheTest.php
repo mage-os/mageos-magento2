@@ -12,12 +12,13 @@ use Magento\Framework\App\Cache\Frontend\Pool;
 use Magento\Framework\Cache\FrontendInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\TestCase;
+use Zend_Cache_Backend_Interface;
 
 class CleanCacheTest extends TestCase
 {
     public function testCleanCache()
     {
-        $cacheBackendMock = $this->createMock(\Zend_Cache_Backend_Interface::class);
+        $cacheBackendMock = $this->createMock(Zend_Cache_Backend_Interface::class);
         $cacheFrontendMock = $this->createMock(FrontendInterface::class);
         $frontendPoolMock = $this->createMock(Pool::class);
 

@@ -7,8 +7,8 @@ declare(strict_types=1);
 
 namespace Magento\Backend\Test\Unit\Model\Widget\Grid;
 
+use Magento\Backend\Model\Widget\Grid\AbstractTotals;
 use Magento\Backend\Model\Widget\Grid\Parser;
-use Magento\Backend\Test\Unit\Helper\AbstractTotalsTestHelper;
 use Magento\Framework\Data\Collection;
 use Magento\Framework\Data\Collection\EntityFactory;
 use Magento\Framework\DataObject;
@@ -45,7 +45,13 @@ class AbstractTotalsTest extends TestCase
         $this->_prepareParserMock();
         $this->_prepareFactoryMock();
 
-        $this->_model = new AbstractTotalsTestHelper($this->_factoryMock, $this->_parserMock);
+        $arguments = ['factory' => $this->_factoryMock, 'parser' => $this->_parserMock];
+        $this->_model = $this->getMockBuilder(AbstractTotals::class)
+            ->setConstructorArgs($arguments)
+            ->onlyMethods(['_countSum', '_countAverage'])
+            ->getMock();
+        $this->_model->expects($this->any())->method('_countSum')->willReturn(2);
+        $this->_model->expects($this->any())->method('_countAverage')->willReturn(2);
 
         $this->_setUpColumns();
     }

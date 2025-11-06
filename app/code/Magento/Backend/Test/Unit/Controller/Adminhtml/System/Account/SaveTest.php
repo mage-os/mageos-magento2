@@ -18,8 +18,10 @@ use Magento\Backend\Model\View\Result\Redirect;
 use Magento\Framework\App\FrontController;
 use Magento\Framework\App\Request\Http;
 use Magento\Framework\App\RequestInterface;
+use Magento\Framework\App\Response\Http as ResponseHttp;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\ResultFactory;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as HelperObjectManager;
 use Magento\Framework\Event\ManagerInterface as EventManagerInterface;
 use Magento\Framework\ObjectManager\ObjectManager;
 use Magento\Framework\TranslateInterface;
@@ -105,9 +107,9 @@ class SaveTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
+        $this->objectManagerHelper = new HelperObjectManager($this);
         $this->requestMock = $this->createPartialMock(Http::class, ['getOriginalPathInfo']);
-        $this->responseMock = $this->createMock(\Magento\Framework\App\Response\Http::class);
+        $this->responseMock = $this->createMock(ResponseHttp::class);
         $this->objectManagerMock = $this->createPartialMock(ObjectManager::class, ['get', 'create']);
         $frontControllerMock = $this->createMock(FrontController::class);
 

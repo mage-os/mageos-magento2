@@ -50,9 +50,14 @@ class AbstractTest extends TestCase
 
     public function testGetAddButtonLabel()
     {
+        $objectManager = new ObjectManager($this);
+        $objectManager->prepareObjectManager();
         $contextMock = $this->createMock(Context::class);
-        $this->model->__construct($contextMock);
+        $model = $this->getMockBuilder(AbstractFieldArray::class)
+            ->setConstructorArgs(['context' => $contextMock])
+            ->onlyMethods(['escapeHtml'])
+            ->getMock();
 
-        $this->assertEquals("Add", $this->model->getAddButtonLabel());
+        $this->assertEquals("Add", $model->getAddButtonLabel());
     }
 }

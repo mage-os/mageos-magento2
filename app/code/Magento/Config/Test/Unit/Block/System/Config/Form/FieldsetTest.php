@@ -15,6 +15,7 @@ use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Data\Form;
 use Magento\Framework\Data\Form\AbstractForm;
 use Magento\Framework\Data\Form\Element\Collection;
+use Magento\Framework\Data\Form\Element\Fieldset as FieldsetElement;
 use Magento\Framework\Data\Form\Element\CollectionFactory;
 use Magento\Framework\Data\Form\Element\Factory;
 use Magento\Framework\Data\Form\Element\Text;
@@ -208,7 +209,7 @@ class FieldsetTest extends TestCase
         $fieldMock->expects($this->any())->method('getHtmlId')->willReturn('test_field_HTML_id');
 
         $fieldSetMock = $this->_testHelper->createPartialMockWithReflection(
-            \Magento\Framework\Data\Form\Element\Fieldset::class,
+            FieldsetElement::class,
             ['getTooltip', 'getIsNested', 'getExpanded', 'getId', 'toHtml', 'getHtmlId']
         );
         $fieldSetMock->expects($this->any())->method('getId')->willReturn('test_fieldset_id');

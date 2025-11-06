@@ -11,6 +11,7 @@ use Magento\Config\Model\Config\Structure;
 use Magento\Config\Model\Config\Structure\Element\Dependency\Field;
 use Magento\Config\Model\Config\Structure\Element\Dependency\FieldFactory;
 use Magento\Config\Model\Config\Structure\Element\Dependency\Mapper;
+use Magento\Config\Model\Config\Structure\Element\Field as StructureField;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\ScopeInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -265,7 +266,7 @@ $this->_scopeConfigMock = $this->createMock(
      */
     protected function _getField($isVisible, $path, $mockClassName): MockObject
     {
-        $field = $this->createPartialMock(\Magento\Config\Model\Config\Structure\Element\Field::class, ['isVisible', 'getPath']);
+        $field = $this->createPartialMock(StructureField::class, ['isVisible', 'getPath']);
 
         $field->expects($this->once())->method('isVisible')->willReturn($isVisible);
         if ($isVisible) {

@@ -17,6 +17,7 @@ use Magento\Framework\App\Config\Value;
 use Magento\Framework\App\Config\ValueFactory;
 use Magento\Framework\Config\ScopeInterface;
 use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\Matcher\InvokedCount;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -143,7 +144,7 @@ class ValueProcessorTest extends TestCase
             ->method('create')
             ->willReturn($structureMock);
 
-        $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
+        $objectManager = new ObjectManager($this);
         /** @var Value|Encrypted|MockObject $valueMock */
         $backendModelMock = $objectManager->createPartialMockWithReflection(
             $className,

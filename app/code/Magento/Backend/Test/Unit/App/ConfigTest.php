@@ -9,6 +9,7 @@ namespace Magento\Backend\Test\Unit\App;
 
 use Magento\Backend\App\Config;
 use Magento\Backend\App\Config as BackendConfig;
+use Magento\Framework\App\Config as FrameworkConfig;
 use Magento\Framework\App\Config\Data;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -40,7 +41,7 @@ class ConfigTest extends TestCase
     protected function setUp(): void
     {
         $this->objectManager = new ObjectManager($this);
-        $this->appConfig = $this->createPartialMock(\Magento\Framework\App\Config::class, ['get']);
+        $this->appConfig = $this->createPartialMock(FrameworkConfig::class, ['get']);
         $this->model = new BackendConfig($this->appConfig);
     }
 

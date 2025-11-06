@@ -11,6 +11,7 @@ use Magento\Backend\Block\Context;
 use Magento\Backend\Block\Widget\Grid\Column\Filter\Store;
 use Magento\Framework\DB\Helper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
+use Magento\Store\Model\System\Store as SystemStore;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -36,7 +37,7 @@ class StoreTest extends TestCase
     {
         $this->context = $this->createMock(Context::class);
         $this->helper = $this->createMock(Helper::class);
-        $this->store = $this->createMock(\Magento\Store\Model\System\Store::class);
+        $this->store = $this->createMock(SystemStore::class);
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->store = $this->objectManagerHelper->getObject(

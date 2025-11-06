@@ -13,6 +13,7 @@ use Magento\Backend\Model\View\Result\Redirect;
 use Magento\Framework\App\State\CleanupFiles;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Event\ManagerInterface;
+use Magento\Framework\Message\ManagerInterface as MessageManagerInterface;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -49,7 +50,7 @@ class CleanStaticFilesTest extends TestCase
     {
         $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
         $this->eventManagerMock = $this->createMock(ManagerInterface::class);
-        $this->messageManagerMock = $this->createMock(\Magento\Framework\Message\ManagerInterface::class);
+        $this->messageManagerMock = $this->createMock(MessageManagerInterface::class);
         $this->resultFactoryMock = $this->createMock(ResultFactory::class);
         $objectHelper = new ObjectManager($this);
         $context = $objectHelper->getObject(

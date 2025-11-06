@@ -8,9 +8,11 @@ declare(strict_types=1);
 namespace Magento\Config\Test\Unit\Block\System\Config;
 
 use Magento\Backend\Block\Template\Context;
+use Magento\Backend\Block\Widget\Breadcrumbs;
 use Magento\Config\Block\System\Config\Dwstree;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\View\LayoutInterface;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Store\Model\Website;
@@ -63,8 +65,8 @@ class DwstreeTest extends TestCase
         $objectManager = new ObjectManager($this);
 
         // Create layout and breadcrumbs mocks
-        $layoutMock = $this->createMock(\Magento\Framework\View\LayoutInterface::class);
-        $breadcrumbsMock = new \Magento\Config\Test\Unit\Helper\BreadcrumbsTestHelper();
+        $layoutMock = $this->createMock(LayoutInterface::class);
+        $breadcrumbsMock = $this->createMock(Breadcrumbs::class);
         $layoutMock->method('getBlock')->with('breadcrumbs')->willReturn($breadcrumbsMock);
 
         $this->context = $objectManager->getObject(

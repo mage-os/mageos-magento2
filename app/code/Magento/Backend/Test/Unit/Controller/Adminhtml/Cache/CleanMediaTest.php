@@ -12,6 +12,7 @@ use Magento\Backend\Controller\Adminhtml\Cache\CleanMedia;
 use Magento\Backend\Helper\Data;
 use Magento\Backend\Model\Session;
 use Magento\Backend\Model\View\Result\Redirect;
+use Magento\Framework\App\Request\Http as RequestHttp;
 use Magento\Framework\App\Response\Http;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Message\ExceptionMessageLookupFactory;
@@ -31,7 +32,7 @@ class CleanMediaTest extends TestCase
     {
         // Wire object with mocks
         $response = $this->createMock(Http::class);
-        $request = $this->createMock(\Magento\Framework\App\Request\Http::class);
+        $request = $this->createMock(RequestHttp::class);
 
         $objectManager = $this->createMock(ObjectManagerInterface::class);
         $backendHelper = $this->createMock(Data::class);
