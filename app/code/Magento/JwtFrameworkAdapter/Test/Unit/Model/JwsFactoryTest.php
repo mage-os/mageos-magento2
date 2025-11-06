@@ -13,6 +13,7 @@ use Magento\Framework\Jwt\Payload\ArbitraryPayload;
 use Magento\Framework\Jwt\Payload\ClaimsPayloadInterface;
 use Magento\Framework\Jwt\Payload\NestedPayloadInterface;
 use Magento\JwtFrameworkAdapter\Model\JwsFactory;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class JwsFactoryTest extends TestCase
@@ -71,14 +72,8 @@ class JwsFactoryTest extends TestCase
 
     /**
      * Test "create" method.
-     *
-     * @param array $headers
-     * @param string $content
-     * @param array|null $unprotected
-     * @param string $payloadClass
-     * @return void
-     * @dataProvider getCreateCases
      */
+    #[DataProvider('getCreateCases')]
     public function testCreate(
         array $headers,
         string $content,
