@@ -427,7 +427,8 @@ mutation {
 QUERY;
 
         self::expectExceptionMessage(
-            'The billing address must contain either "customer_address_id", "address", or "same_as_shipping".'
+            'The billing address must contain either "customer_address_id", '
+            . '"customer_address_uid", "address", or "same_as_shipping".'
         );
         $this->graphQlMutation($query);
     }

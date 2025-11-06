@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2018 Adobe
+ * Copyright 2014 Adobe
  * All Rights Reserved.
  */
 
@@ -98,7 +98,7 @@ class AllPurposeActionTest extends TestCase
         $node = $this->getMockBuilder(ClassNode::class)
             ->disableOriginalConstructor()
             ->disableProxyingToOriginalMethods()
-            ->setMethods(
+            ->onlyMethods(
                 [
                     // disable name lookup from AST artifact
                     'getNamespaceName',
