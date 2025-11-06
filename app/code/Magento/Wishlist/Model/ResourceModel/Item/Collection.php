@@ -80,8 +80,6 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
     protected $_isProductNameJoined = false;
 
     /**
-     * Adminhtml sales
-     *
      * @var \Magento\Sales\Helper\Admin
      */
     protected $_adminhtmlSales = null;
