@@ -14,6 +14,7 @@ use Magento\Framework\App\Response\RedirectInterface;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\ObjectManagerInterface;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\User\Controller\Adminhtml\User\Save;
 use Magento\User\Model\User;
 use Magento\User\Model\UserFactory;
@@ -64,20 +65,20 @@ class SaveTest extends TestCase
 
     protected function setUp(): void
     {
+        $objectManagerHelper = new ObjectManagerHelper($this);
+
         $this->requestMock = $this->createMock(Http::class);
         $this->messageManagerMock = $this->createMock(ManagerInterface::class);
         $this->userFactoryMock = $this->createPartialMock(UserFactory::class, ['create']);
-        $this->userModelMock = $this->getMockBuilder(User::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['isObjectNew', 'load', 'setData', 'validate'])
-            ->addMethods(['setRoleId'])
-            ->getMock();
+        $this->userModelMock = $objectManagerHelper->createPartialMockWithReflection(
+            User::class,
+            ['setRoleId', 'isObjectNew', 'load', 'setData', 'validate']
+        );
         $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
-        $this->sessionMock = $this->getMockBuilder(Session::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['setUserData'])
-            ->getMock();
-        // // @phpcsSuppress Magento2.Security.GlobalState
+        $this->sessionMock = $objectManagerHelper->createPartialMockWithReflection(
+            Session::class,
+            ['setUserData']
+        );
         $registryMock = $this->createMock(\Magento\Framework\Registry::class);
         $this->contextMock = $this->createMock(Context::class);
         $this->userFactoryMock->expects($this->once())
@@ -105,9 +106,9 @@ class SaveTest extends TestCase
             ->willReturn($this->objectManagerMock);
         $this->controller = $this->getMockBuilder(Save::class)
             ->setConstructorArgs([
-                'context' => $this->contextMock,
-                'userFactory' => $this->userFactoryMock,
-                'coreRegistry' => $registryMock
+                $this->contextMock,
+                $registryMock,
+                $this->userFactoryMock
             ])
             ->onlyMethods(['redirectToEdit'])
             ->getMock();
@@ -146,9 +147,9 @@ class SaveTest extends TestCase
         $this->controller->expects($this->once())
             ->method('redirectToEdit')
             ->with($this->userModelMock, $postData)
-            ->will($this->returnCallback(function () use ($postData) {
+            ->willReturnCallback(function () use ($postData) {
                 $this->sessionMock->setUserData($postData);
-            }));
+            });
 
         $this->controller->execute();
     }

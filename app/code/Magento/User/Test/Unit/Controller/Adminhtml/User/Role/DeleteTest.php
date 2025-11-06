@@ -105,20 +105,20 @@ class DeleteTest extends TestCase
         $objectManagerHelper = new ObjectManagerHelper($this);
 
         $this->contextMock = $this->createMock(Context::class);
-        $this->coreRegistryMock = $this->getMockBuilder(Registry::class)
-            ->addMethods(['getId'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->coreRegistryMock = $objectManagerHelper->createPartialMockWithReflection(
+            Registry::class,
+            ['getId']
+        );
         $this->roleFactoryMock = $this->createMock(RoleFactory::class);
         $this->userFactoryMock = $this->createPartialMock(
             UserFactory::class,
             ['create']
         );
         $this->rulesFactoryMock = $this->createMock(RulesFactory::class);
-        $this->authSessionMock = $this->getMockBuilder(Session::class)
-            ->addMethods(['getUser'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->authSessionMock = $objectManagerHelper->createPartialMockWithReflection(
+            Session::class,
+            ['getUser']
+        );
         $this->filterManagerMock = $this->createMock(FilterManager::class);
         $this->resultRedirectMock = $this->createPartialMock(
             Redirect::class,
@@ -132,20 +132,13 @@ class DeleteTest extends TestCase
         $this->resultFactoryMock->expects($this->atLeastOnce())
             ->method('create')
             ->willReturn($this->resultRedirectMock);
-        $this->requestMock = $this->getMockForAbstractClass(
-            RequestInterface::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['getParam']
-        );
+        $this->requestMock = $this->createMock(RequestInterface::class);
         $this->contextMock->expects($this->once())
             ->method('getResultFactory')
             ->willReturn($this->resultFactoryMock);
         $this->resultFactoryMock->expects($this->once())
             ->method('create')
+            // @phpstan-ignore-next-line
             ->with(ResultFactory::TYPE_REDIRECT, [])
             ->willReturn($this->resultRedirectMock);
 
@@ -156,11 +149,10 @@ class DeleteTest extends TestCase
 
         $this->contextMock->expects($this->once())->method('getRequest')->willReturn($this->requestMock);
 
-        $this->roleModelMock = $this->getMockBuilder(Role::class)
-            ->addMethods(['getRoleType'])
-            ->onlyMethods(['load', 'getId', 'delete'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->roleModelMock = $objectManagerHelper->createPartialMockWithReflection(
+            Role::class,
+            ['getRoleType', 'load', 'getId', 'delete']
+        );
 
         $this->controller = $objectManagerHelper->getObject(
             Delete::class,

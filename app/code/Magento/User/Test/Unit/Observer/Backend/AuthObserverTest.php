@@ -69,56 +69,29 @@ class AuthObserverTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->configInterfaceMock = $this->getMockBuilder(ConfigInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-
-        $this->userMock = $this->getMockBuilder(\Magento\User\Model\ResourceModel\User::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['unlock', 'updateFailure', 'getLatestPassword'])
-            ->getMock();
-
-        $this->urlInterfaceMock = $this->getMockBuilder(UrlInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-
-        $this->authSessionMock = $this->getMockBuilder(Session::class)
-            ->disableOriginalConstructor()
-            ->addMethods(
-                [
-                    'setPciAdminUserIsPasswordExpired',
-                    'unsPciAdminUserIsPasswordExpired',
-                    'getPciAdminUserIsPasswordExpired',
-                ])
-            ->onlyMethods(
-                [
-                    'isLoggedIn',
-                    'clearStorage'
-                ]
-            )->getMock();
-
-        $this->userFactoryMock = $this->getMockBuilder(UserFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
-
-        $this->encryptorMock = $this->getMockBuilder(EncryptorInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-
-        $this->managerInterfaceMock = $this->getMockBuilder(\Magento\Framework\Message\ManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->messageInterfaceMock = $this->getMockBuilder(MessageInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-
-        $this->eventManagerMock = $this->getMockBuilder(\Magento\Framework\Event\ManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-
         $helper = new ObjectManager($this);
+
+        $this->configInterfaceMock = $this->createMock(ConfigInterface::class);
+        $this->userMock = $this->createPartialMock(
+            \Magento\User\Model\ResourceModel\User::class,
+            ['unlock', 'updateFailure', 'getLatestPassword']
+        );
+        $this->urlInterfaceMock = $this->createMock(UrlInterface::class);
+        $this->authSessionMock = $helper->createPartialMockWithReflection(
+            Session::class,
+            [
+                'setPciAdminUserIsPasswordExpired',
+                'unsPciAdminUserIsPasswordExpired',
+                'getPciAdminUserIsPasswordExpired',
+                'isLoggedIn',
+                'clearStorage'
+            ]
+        );
+        $this->userFactoryMock = $this->createPartialMock(UserFactory::class, ['create']);
+        $this->encryptorMock = $this->createMock(EncryptorInterface::class);
+        $this->managerInterfaceMock = $this->createMock(\Magento\Framework\Message\ManagerInterface::class);
+        $this->messageInterfaceMock = $this->createMock(MessageInterface::class);
+        $this->eventManagerMock = $this->createMock(\Magento\Framework\Event\ManagerInterface::class);
 
         $this->observerConfig = $helper->getObject(
             ObserverConfig::class,
@@ -154,24 +127,22 @@ class AuthObserverTest extends TestCase
             'last_updated' => 1496248367
         ];
 
+        $helper = new ObjectManager($this);
+
         /** @var Observer|MockObject $eventObserverMock */
-        $eventObserverMock = $this->getMockBuilder(Observer::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getEvent'])
-            ->getMock();
+        $eventObserverMock = $this->createPartialMock(Observer::class, ['getEvent']);
 
         /** @var Event|MockObject */
-        $eventMock = $this->getMockBuilder(Event::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getPassword', 'getUser', 'getResult'])
-            ->getMock();
+        $eventMock = $helper->createPartialMockWithReflection(
+            Event::class,
+            ['getPassword', 'getUser', 'getResult']
+        );
 
         /** @var ModelUser|MockObject $userMock */
-        $userMock = $this->getMockBuilder(\Magento\User\Model\User::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getLockExpires'])
-            ->onlyMethods(['getId', 'getPassword', 'save'])
-            ->getMock();
+        $userMock = $helper->createPartialMockWithReflection(
+            \Magento\User\Model\User::class,
+            ['getLockExpires', 'getId', 'getPassword', 'save']
+        );
 
         $eventObserverMock->expects($this->atLeastOnce())->method('getEvent')->willReturn($eventMock);
         $eventMock->expects($this->once())->method('getPassword')->willReturn($password);
@@ -187,10 +158,7 @@ class AuthObserverTest extends TestCase
             ->willReturn(1);
 
         /** @var Collection|MockObject $collectionMock */
-        $collectionMock = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getLastAddedMessage'])
-            ->getMock();
+        $collectionMock = $this->createPartialMock(Collection::class, ['getLastAddedMessage']);
 
         $this->managerInterfaceMock->expects($this->once())->method('getMessages')->willReturn($collectionMock);
         $collectionMock
@@ -210,24 +178,22 @@ class AuthObserverTest extends TestCase
         $authResult = true;
         $lockExpires = '3015-07-08 11:14:15.638276';
 
+        $helper = new ObjectManager($this);
+
         /** @var Observer|MockObject $eventObserverMock */
-        $eventObserverMock = $this->getMockBuilder(Observer::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getEvent'])
-            ->getMock();
+        $eventObserverMock = $this->createPartialMock(Observer::class, ['getEvent']);
 
         /** @var Event|MockObject */
-        $eventMock = $this->getMockBuilder(Event::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getPassword', 'getUser', 'getResult'])
-            ->getMock();
+        $eventMock = $helper->createPartialMockWithReflection(
+            Event::class,
+            ['getPassword', 'getUser', 'getResult']
+        );
 
         /** @var ModelUser|MockObject $userMock */
-        $userMock = $this->getMockBuilder(\Magento\User\Model\User::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getLockExpires'])
-            ->onlyMethods(['getId', 'getPassword'])
-            ->getMock();
+        $userMock = $helper->createPartialMockWithReflection(
+            \Magento\User\Model\User::class,
+            ['getLockExpires', 'getId', 'getPassword']
+        );
 
         $eventObserverMock->expects($this->atLeastOnce())->method('getEvent')->willReturn($eventMock);
         $eventMock->expects($this->once())->method('getPassword')->willReturn($password);
@@ -259,24 +225,22 @@ class AuthObserverTest extends TestCase
             'last_updated' => 1694661402
         ];
 
+        $helper = new ObjectManager($this);
+
         /** @var Observer|MockObject $eventObserverMock */
-        $eventObserverMock = $this->getMockBuilder(Observer::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getEvent'])
-            ->getMock();
+        $eventObserverMock = $this->createPartialMock(Observer::class, ['getEvent']);
 
         /** @var Event|MockObject */
-        $eventMock = $this->getMockBuilder(Event::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getPassword', 'getUser', 'getResult'])
-            ->getMock();
+        $eventMock = $helper->createPartialMockWithReflection(
+            Event::class,
+            ['getPassword', 'getUser', 'getResult']
+        );
 
         /** @var ModelUser|MockObject $userMock */
-        $userMock = $this->getMockBuilder(\Magento\User\Model\User::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getLockExpires'])
-            ->onlyMethods(['getId', 'getPassword', 'save'])
-            ->getMock();
+        $userMock = $helper->createPartialMockWithReflection(
+            \Magento\User\Model\User::class,
+            ['getLockExpires', 'getId', 'getPassword', 'save']
+        );
 
         $eventObserverMock->expects($this->atLeastOnce())->method('getEvent')->willReturn($eventMock);
         $eventMock->expects($this->once())->method('getPassword')->willReturn($password);
@@ -292,10 +256,7 @@ class AuthObserverTest extends TestCase
             ->willReturn(1);
 
         /** @var Collection|MockObject $collectionMock */
-        $collectionMock = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getLastAddedMessage'])
-            ->getMock();
+        $collectionMock = $this->createPartialMock(Collection::class, ['getLastAddedMessage']);
 
         $this->managerInterfaceMock->expects($this->once())->method('getMessages')->willReturn($collectionMock);
         $collectionMock
@@ -317,24 +278,22 @@ class AuthObserverTest extends TestCase
         $firstFailure = '1965-07-08 11:14:15.638276';
         $numOfFailures = 5;
 
+        $helper = new ObjectManager($this);
+
         /** @var Observer|MockObject $eventObserverMock */
-        $eventObserverMock = $this->getMockBuilder(Observer::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getEvent'])
-            ->getMock();
+        $eventObserverMock = $this->createPartialMock(Observer::class, ['getEvent']);
 
         /** @var Event|MockObject */
-        $eventMock = $this->getMockBuilder(Event::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getPassword', 'getUser', 'getResult'])
-            ->getMock();
+        $eventMock = $helper->createPartialMockWithReflection(
+            Event::class,
+            ['getPassword', 'getUser', 'getResult']
+        );
 
         /** @var ModelUser|MockObject $userMock */
-        $userMock = $this->getMockBuilder(\Magento\User\Model\User::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getId'])
-            ->addMethods(['getFailuresNum', 'getFirstFailure'])
-            ->getMock();
+        $userMock = $helper->createPartialMockWithReflection(
+            \Magento\User\Model\User::class,
+            ['getId', 'getFailuresNum', 'getFirstFailure']
+        );
 
         $eventObserverMock->expects($this->atLeastOnce())->method('getEvent')->willReturn($eventMock);
         $eventMock->expects($this->once())->method('getPassword')->willReturn($password);

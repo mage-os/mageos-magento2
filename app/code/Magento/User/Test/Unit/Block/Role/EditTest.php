@@ -45,25 +45,24 @@ class EditTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->jsonEncoderMock = $this->getMockBuilder(EncoderInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-
-        $this->authSessionsMock = $this->getMockBuilder(Session::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->registryMock = $this->getMockBuilder(Registry::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['registry'])
-            ->getMock();
-
-        $this->layoutInterfaceMock = $this->getMockBuilder(LayoutInterface::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['setRole', 'setActive', 'getId'])
-            ->getMockForAbstractClass();
-
         $objectManagerHelper = new ObjectManager($this);
+        
+        $this->jsonEncoderMock = $this->createMock(EncoderInterface::class);
+        $this->authSessionsMock = $this->createMock(Session::class);
+        $this->registryMock = $this->createPartialMock(Registry::class, ['registry']);
+        $this->layoutInterfaceMock = $objectManagerHelper->createPartialMockWithReflection(
+            LayoutInterface::class,
+            [
+                'getUpdate', 'generateXml', 'generateElements', 'renderElement', 'addOutputElement',
+                'getOutput', 'hasElement', 'unsetElement', 'getAllBlocks', 'getBlock',
+                'getChildBlock', 'setChild', 'reorderChild', 'unsetChild', 'getChildNames',
+                'getChildBlocks', 'getChildName', 'addToParentGroup', 'getGroupChildNames',
+                'getParentName', 'createBlock', 'addBlock', 'addContainer', 'renameElement',
+                'getElementAlias', 'removeOutputElement', 'getMessagesBlock', 'getBlockSingleton',
+                'getElementProperty', 'isBlock', 'isContainer', 'isManipulationAllowed',
+                'setBlock', 'isCacheable', 'setRole', 'setActive', 'getId'
+            ]
+        );
         $objects = [
             [
                 JsonHelper::class,

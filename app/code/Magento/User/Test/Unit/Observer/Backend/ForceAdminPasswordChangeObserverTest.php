@@ -8,14 +8,15 @@ declare(strict_types=1);
 namespace Magento\User\Test\Unit\Observer\Backend;
 
 use Magento\Backend\App\ConfigInterface;
+use Magento\Backend\Model\Auth\Session as AuthSession;
 use Magento\Backend\Model\Session;
 use Magento\Backend\Model\UrlInterface;
-use Magento\Framework\App\Action\AbstractAction;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\ActionFlag;
-use Magento\Framework\App\RequestInterface;
+use Magento\Framework\App\Request\Http as HttpRequest;
 use Magento\Framework\AuthorizationInterface;
 use Magento\Framework\Event;
+use Magento\Framework\Event\ManagerInterface as EventManagerInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
@@ -45,7 +46,7 @@ class ForceAdminPasswordChangeObserverTest extends TestCase
     /** @var Session|MockObject */
     protected $sessionMock;
 
-    /** @var \Magento\Backend\Model\Auth\Session|MockObject */
+    /** @var AuthSession|MockObject */
     protected $authSessionMock;
 
     /** @var ActionFlag|MockObject */
@@ -54,7 +55,7 @@ class ForceAdminPasswordChangeObserverTest extends TestCase
     /** @var ManagerInterface|MockObject */
     protected $managerInterfaceMock;
 
-    /** @var \Magento\Framework\Event\ManagerInterface|MockObject */
+    /** @var EventManagerInterface|MockObject */
     protected $eventManagerMock;
 
     /** @var ForceAdminPasswordChangeObserver */
@@ -62,52 +63,25 @@ class ForceAdminPasswordChangeObserverTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->authMock = $this->getMockBuilder(AuthorizationInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['isAllowed'])
-            ->getMockForAbstractClass();
-
-        $this->configInterfaceMock = $this->getMockBuilder(ConfigInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-
-        $this->urlInterfaceMock = $this->getMockBuilder(UrlInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-
-        $this->sessionMock = $this->getMockBuilder(Session::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['clearStorage'])
-            ->getMock();
-
-        $this->authSessionMock = $this->getMockBuilder(\Magento\Backend\Model\Auth\Session::class)
-            ->disableOriginalConstructor()
-            ->addMethods(
-                [
-                    'setPciAdminUserIsPasswordExpired',
-                    'unsPciAdminUserIsPasswordExpired',
-                    'getPciAdminUserIsPasswordExpired'
-                ])
-            ->onlyMethods(
-                [
-                    'isLoggedIn',
-                    'clearStorage'
-                ]
-            )->getMock();
-
-        $this->actionFlagMock = $this->getMockBuilder(ActionFlag::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->managerInterfaceMock = $this->getMockBuilder(ManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-
-        $this->eventManagerMock = $this->getMockBuilder(\Magento\Framework\Event\ManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-
         $helper = new ObjectManager($this);
+
+        $this->authMock = $this->createMock(AuthorizationInterface::class);
+        $this->configInterfaceMock = $this->createMock(ConfigInterface::class);
+        $this->urlInterfaceMock = $this->createMock(UrlInterface::class);
+        $this->sessionMock = $this->createPartialMock(Session::class, ['clearStorage']);
+        $this->authSessionMock = $helper->createPartialMockWithReflection(
+            AuthSession::class,
+            [
+                'setPciAdminUserIsPasswordExpired',
+                'unsPciAdminUserIsPasswordExpired',
+                'getPciAdminUserIsPasswordExpired',
+                'isLoggedIn',
+                'clearStorage'
+            ]
+        );
+        $this->actionFlagMock = $this->createMock(ActionFlag::class);
+        $this->managerInterfaceMock = $this->createMock(ManagerInterface::class);
+        $this->eventManagerMock = $this->createMock(EventManagerInterface::class);
 
         $this->observerConfig = $helper->getObject(
             ObserverConfig::class,
@@ -132,17 +106,16 @@ class ForceAdminPasswordChangeObserverTest extends TestCase
 
     public function testForceAdminPasswordChange()
     {
+        $helper = new ObjectManager($this);
+
         /** @var Observer|MockObject $eventObserverMock */
-        $eventObserverMock = $this->getMockBuilder(Observer::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getEvent'])
-            ->getMock();
+        $eventObserverMock = $this->createPartialMock(Observer::class, ['getEvent']);
 
         /** @var Event|MockObject */
-        $eventMock = $this->getMockBuilder(Event::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getControllerAction', 'getRequest'])
-            ->getMock();
+        $eventMock = $helper->createPartialMockWithReflection(
+            Event::class,
+            ['getControllerAction', 'getRequest']
+        );
 
         $this->configInterfaceMock
             ->expects($this->atLeastOnce())
@@ -151,16 +124,9 @@ class ForceAdminPasswordChangeObserverTest extends TestCase
         $this->authSessionMock->expects($this->once())->method('isLoggedIn')->willReturn(true);
         $eventObserverMock->expects($this->atLeastOnce())->method('getEvent')->willReturn($eventMock);
         /** @var Action $controllerMock */
-        $controllerMock = $this->getMockBuilder(AbstractAction::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getRedirect'])
-            ->onlyMethods(['getRequest'])
-            ->getMockForAbstractClass();
-        /** @var RequestInterface $requestMock */
-        $requestMock = $this->getMockBuilder(RequestInterface::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getFullActionName', 'setDispatched'])
-            ->getMockForAbstractClass();
+        $controllerMock = $this->createPartialMock(Action::class, ['getRequest', 'execute']);
+        /** @var HttpRequest $requestMock */
+        $requestMock = $this->createPartialMock(HttpRequest::class, ['getFullActionName', 'setDispatched']);
         $eventMock->expects($this->once())->method('getControllerAction')->willReturn($controllerMock);
         $eventMock->expects($this->once())->method('getRequest')->willReturn($requestMock);
         $this->authSessionMock->expects($this->once())->method('getPciAdminUserIsPasswordExpired')->willReturn(true);

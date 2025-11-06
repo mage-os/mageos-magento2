@@ -37,10 +37,10 @@ class AdminSessionUserContextTest extends TestCase
     {
         $this->objectManager = new ObjectManager($this);
 
-        $this->adminSession = $this->getMockBuilder(Session::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['hasUser', 'getUser', 'getId'])
-            ->getMock();
+        $this->adminSession = $this->objectManager->createPartialMockWithReflection(
+            Session::class,
+            ['hasUser', 'getUser', 'getId']
+        );
 
         $this->adminSessionUserContext = $this->objectManager->getObject(
             AdminSessionUserContext::class,

@@ -8,15 +8,17 @@ declare(strict_types=1);
 namespace Magento\User\Test\Unit\Controller\Adminhtml\User;
 
 use Magento\Backend\Model\Auth\Session;
-use Magento\Framework\App\RequestInterface;
-use Magento\Framework\App\ResponseInterface;
+use Magento\Framework\App\Request\Http as HttpRequest;
+use Magento\Framework\App\Response\HttpInterface;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\ObjectManager\ObjectManager;
 use Magento\Framework\ObjectManagerInterface;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\User\Block\User\Edit\Tab\Main;
 use Magento\User\Controller\Adminhtml\User\Delete;
 use Magento\User\Model\User;
 use Magento\User\Model\UserFactory;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -31,12 +33,12 @@ class DeleteTest extends TestCase
     private $controller;
 
     /**
-     * @var MockObject|RequestInterface
+     * @var MockObject|HttpRequest
      */
     private $requestMock;
 
     /**
-     * @var MockObject|ResponseInterface
+     * @var MockObject|HttpInterface
      */
     private $responseMock;
 
@@ -70,43 +72,38 @@ class DeleteTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->objectManagerMock = $this->getMockBuilder(ObjectManager::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['get', 'create'])
-            ->getMock();
+        $objectManagerHelper = new ObjectManagerHelper($this);
 
-        $this->responseMock = $this->getMockBuilder(ResponseInterface::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['setRedirect'])
-            ->getMockForAbstractClass();
+        $this->objectManagerMock = $this->createPartialMock(
+            ObjectManager::class,
+            ['get', 'create']
+        );
 
-        $this->requestMock = $this->getMockBuilder(RequestInterface::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getPost'])
-            ->getMockForAbstractClass();
+        $this->responseMock = $this->createMock(HttpInterface::class);
 
-        $this->authSessionMock = $this->getMockBuilder(Session::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getUser'])
-            ->getMock();
+        $this->requestMock = $this->createPartialMock(
+            HttpRequest::class,
+            ['getPost']
+        );
 
-        $this->userMock = $this->getMockBuilder(User::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getId', 'performIdentityCheck', 'delete', 'load'])
-            ->getMock();
+        $this->authSessionMock = $objectManagerHelper->createPartialMockWithReflection(
+            Session::class,
+            ['getUser']
+        );
 
-        $this->userFactoryMock = $this->getMockBuilder(UserFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
+        $this->userMock = $this->createPartialMock(
+            User::class,
+            ['getId', 'performIdentityCheck', 'delete', 'load']
+        );
 
-        $this->messageManagerMock = $this->getMockBuilder(ManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->userFactoryMock = $this->createPartialMock(
+            UserFactory::class,
+            ['create']
+        );
 
-        $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
+        $this->messageManagerMock = $this->createMock(ManagerInterface::class);
 
-        $this->controller = $objectManager->getObject(
+        $this->controller = $objectManagerHelper->getObject(
             Delete::class,
             [
                 'request'        => $this->requestMock,
@@ -121,15 +118,9 @@ class DeleteTest extends TestCase
     /**
      * Test method \Magento\User\Controller\Adminhtml\User\Delete::execute
      *
-     * @param string $currentUserPassword
-     * @param int    $userId
-     * @param int    $currentUserId
-     * @param string $resultMethod
-     *
-     * @dataProvider executeDataProvider
      * @return void
-     *
      */
+    #[DataProvider('executeDataProvider')]
     public function testExecute($currentUserPassword, $userId, $currentUserId, $resultMethod)
     {
         $currentUserMock = $this->userMock;
