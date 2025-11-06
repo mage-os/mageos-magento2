@@ -63,7 +63,7 @@ class EmulatedAdminhtmlAreaProcessorTest extends TestCase
 
         $this->stateMock->expects($this->once())
             ->method('emulateAreaCode')
-            ->with(Area::AREA_ADMINHTML, $callback)
+            ->with(Area::AREA_ADMINHTML, $this->isInstanceOf(\Closure::class))
             ->willReturn('result');
 
         $this->assertEquals('result', $this->emulatedAdminhtmlProcessorArea->process($callback));

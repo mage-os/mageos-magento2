@@ -18,6 +18,7 @@ use Magento\Framework\Config\ScopeInterface;
 use Magento\Framework\Flag;
 use Magento\Framework\FlagManager;
 use Magento\Framework\Stdlib\ArrayUtils;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject as Mock;
 use PHPUnit\Framework\TestCase;
 
@@ -80,14 +81,20 @@ class ImporterTest extends TestCase
     private $saveProcessorMock;
 
     /**
+     * @var ObjectManager
+     */
+    private $objectManager;
+
+    /**
      * @inheritdoc
      */
     protected function setUp(): void
     {
-        $this->flagManagerMock = $this->getMockBuilder(FlagManager::class)
-            ->onlyMethods(['getFlagData', 'saveFlag', 'create'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->objectManager = new ObjectManager($this);
+        $this->flagManagerMock = $this->objectManager->createPartialMockWithReflection(
+            FlagManager::class,
+            ['getFlagData', 'saveFlag', 'create']
+        );
         $this->flagMock = $this->createMock(Flag::class);
         $this->arrayUtilsMock = $this->createMock(ArrayUtils::class);
         $this->valueFactoryMock = $this->createMock(PreparedValueFactory::class);

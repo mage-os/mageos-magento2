@@ -22,12 +22,10 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Helper\Js;
 use Magento\Framework\View\Layout;
 use Magento\User\Model\User;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Magento\Framework\View\Helper\SecureHtmlRenderer;
-use Magento\Config\Test\Unit\Helper\SessionTestHelper;
-use Magento\Config\Test\Unit\Helper\UserTestHelper;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -98,9 +96,16 @@ class FieldsetTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->authSessionMock = $this->createMock(SessionTestHelper::class);
+        $this->_testHelper = new ObjectManager($this);
+        $this->authSessionMock = $this->_testHelper->createPartialMockWithReflection(
+            Session::class,
+            ['getUser']
+        );
 
-        $this->userMock = $this->createMock(UserTestHelper::class);
+        $this->userMock = $this->_testHelper->createPartialMockWithReflection(
+            User::class,
+            ['getExtra']
+        );
 
         $this->authSessionMock->expects($this->any())
             ->method('getUser')
@@ -133,12 +138,12 @@ class FieldsetTest extends TestCase
             'data' => ['group' => $groupMock],
             'secureRenderer' => $secureRendererMock
         ];
-        $this->_testHelper = new ObjectManager($this);
         $this->_object = $this->_testHelper->getObject(Fieldset::class, $data);
 
-        $this->_elementMock = $this->createPartialMock(
+        $this->_elementMock = $this->_testHelper->createPartialMockWithReflection(
             Text::class,
-            ['getLegend', 'getComment', 'getIsNested', 'getExpanded', 'getId', 'getHtmlId', 'getName', 'getElements', 'getForm']
+            ['getLegend', 'getComment', 'getIsNested', 'getExpanded',
+             'getId', 'getHtmlId', 'getName', 'getElements', 'getForm']
         );
 
         $this->_elementMock->expects($this->any())
@@ -193,7 +198,7 @@ class FieldsetTest extends TestCase
     {
         $this->userMock->expects($this->any())->method('getExtra')->willReturn($extra);
         $this->_helperMock->expects($this->any())->method('getScript')->willReturnArgument(0);
-        $fieldMock = $this->createPartialMock(
+        $fieldMock = $this->_testHelper->createPartialMockWithReflection(
             Text::class,
             ['getTooltip', 'getIsNested', 'getExpanded', 'getId', 'toHtml', 'getHtmlId']
         );
@@ -202,7 +207,7 @@ class FieldsetTest extends TestCase
         $fieldMock->expects($this->any())->method('toHtml')->willReturn('test_field_toHTML');
         $fieldMock->expects($this->any())->method('getHtmlId')->willReturn('test_field_HTML_id');
 
-        $fieldSetMock = $this->createPartialMock(
+        $fieldSetMock = $this->_testHelper->createPartialMockWithReflection(
             \Magento\Framework\Data\Form\Element\Fieldset::class,
             ['getTooltip', 'getIsNested', 'getExpanded', 'getId', 'toHtml', 'getHtmlId']
         );

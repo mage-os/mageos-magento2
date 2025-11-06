@@ -24,11 +24,12 @@ use Magento\Framework\DB\Transaction;
 use Magento\Framework\DB\TransactionFactory;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\MessageQueue\PoisonPill\PoisonPillPutInterface;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Model\ScopeTypeNormalizer;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Store\Model\Website;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -107,17 +108,32 @@ class ConfigTest extends TestCase
     private $scopeTypeNormalizer;
 
     /**
+     * @var ObjectManager
+     */
+    private $objectManager;
+
+    /**
      * @inheritdoc
      */
     protected function setUp(): void
     {
+        $this->objectManager = new ObjectManager($this);
         $this->eventManagerMock = $this->createMock(ManagerInterface::class);
-        $this->structureReaderMock = $this->createMock(Reader::class);
+        $this->structureReaderMock = $this->objectManager->createPartialMockWithReflection(
+            Reader::class,
+            ['getConfiguration']
+        );
         $this->configStructure = $this->createMock(Structure::class);
 
-        $this->structureReaderMock->method('read')->willReturn($this->configStructure);
+        $this->structureReaderMock->expects(
+            $this->any()
+        )->method(
+            'getConfiguration'
+        )->willReturn(
+            $this->configStructure
+        );
 
-        $this->transFactoryMock = $this->createPartialMock(
+        $this->transFactoryMock = $this->objectManager->createPartialMockWithReflection(
             TransactionFactory::class,
             ['addObject', 'create']
         );
@@ -179,7 +195,7 @@ class ConfigTest extends TestCase
     {
         $this->appConfigMock->expects($this->never())
             ->method('reinit');
-        // Removed getConfiguration call as it doesn't exist on Reader class
+        $this->structureReaderMock->expects($this->never())->method('getConfiguration');
         $this->assertNull($this->model->getSection());
         $this->assertNull($this->model->getWebsite());
         $this->assertNull($this->model->getStore());
@@ -317,7 +333,7 @@ class ConfigTest extends TestCase
         $this->model->setSection('section');
         $this->model->setGroups(['1' => ['fields' => ['key' => ['data']]]]);
 
-        $backendModel = $this->createPartialMock(
+        $backendModel = $this->objectManager->createPartialMockWithReflection(
             Value::class,
             ['setPath', 'addData', '__sleep', '__wakeup']
         );

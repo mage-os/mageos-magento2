@@ -30,10 +30,9 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Layout;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Magento\Config\Test\Unit\Helper\ConfigTestHelper;
 
 /**
  * Test System config form block
@@ -147,11 +146,14 @@ class FormTest extends TestCase
             ['section1/group1/field1' => 'some_value']
         );
 
-        $this->_formMock = $this->createMock(FormData::class);
+        $helper = new ObjectManager($this);
+
+        $this->_formMock = $helper->createPartialMockWithReflection(
+            FormData::class,
+            ['setParent', 'setBaseUrl', 'addFieldset']
+        );
 
         $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
-
-        $helper = new ObjectManager($this);
 
         $context = $helper->getObject(
             Context::class,
@@ -262,6 +264,7 @@ class FormTest extends TestCase
     #[DataProvider('initGroupDataProvider')]
     public function testInitGroup($shouldCloneFields, $prefixes, $callNum)
     {
+        $helper = new ObjectManager($this);
         /** @var Form|MockObject $object */
         $object = $this->_objectBuilder->onlyMethods(['initFields'])->getMock();
         $this->_formFactoryMock->expects($this->any())->method('create')->willReturn($this->_formMock);
@@ -278,7 +281,10 @@ class FormTest extends TestCase
             $fieldsetRendererMock
         );
 
-        $cloneModelMock = $this->createPartialMock(ConfigTestHelper::class, ['getPrefixes']);
+        $cloneModelMock = $helper->createPartialMockWithReflection(
+            Config::class,
+            ['getPrefixes']
+        );
 
         $groupMock = $this->createMock(Group::class);
         $groupMock->expects($this->once())->method('getFrontendModel')->willReturn(false);
@@ -488,13 +494,8 @@ class FormTest extends TestCase
 
         $sectionMock->expects($this->once())->method('getId')->willReturn('section1');
 
-        $formFieldMock = $this->createMock(
+        $formFieldMock = $this->createPartialMock(
             AbstractElement::class,
-            [],
-            '',
-            false,
-            false,
-            true,
             ['setRenderer']
         );
 

@@ -22,11 +22,13 @@ class HeadingTest extends TestCase
         $htmlId = 'test_HTML_id';
         $label  = 'test_label';
 
-        $elementMock = $this->createMock(AbstractElement::class);
-        $elementMock->method('getHtmlId')->willReturn($htmlId);
-        $elementMock->method('getLabel')->willReturn($label);
-
         $objectManager = new ObjectManager($this);
+        $elementMock = $objectManager->createPartialMockWithReflection(
+            AbstractElement::class,
+            ['getLabel', 'getHtmlId']
+        );
+        $elementMock->expects($this->any())->method('getHtmlId')->willReturn($htmlId);
+        $elementMock->expects($this->any())->method('getLabel')->willReturn($label);
 
         $heading = $objectManager->getObject(Heading::class, []);
 

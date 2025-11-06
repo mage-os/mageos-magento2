@@ -19,8 +19,6 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Element\BlockFactory;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Magento\Config\Test\Unit\Helper\TextTestHelper;
-use Magento\Config\Test\Unit\Helper\DataObjectTestHelper;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -59,9 +57,14 @@ class FieldTest extends TestCase
      */
     protected $_depMapperMock;
 
+    /**
+     * @var ObjectManager
+     */
+    private $objectManager;
+
     protected function setUp(): void
     {
-        $objectManager = new ObjectManager($this);
+        $this->objectManager = new ObjectManager($this);
 
         $this->_backendFactoryMock = $this->createMock(BackendFactory::class);
         $this->_sourceFactoryMock = $this->createMock(SourceFactory::class);
@@ -71,7 +74,7 @@ class FieldTest extends TestCase
             Mapper::class
         );
 
-        $this->_model = $objectManager->getObject(
+        $this->_model = $this->objectManager->getObject(
             Field::class,
             [
                 'backendFactory' => $this->_backendFactoryMock,
@@ -219,7 +222,10 @@ class FieldTest extends TestCase
             'someArr' => ['testVar' => 'testVal'],
         ];
         $this->_model->setData($params, 'scope');
-        $elementMock = $this->createPartialMock(TextTestHelper::class, ['setOriginalData']);
+        $elementMock = $this->objectManager->createPartialMockWithReflection(
+            Text::class,
+            ['setOriginalData']
+        );
         unset($params['someArr']);
         $elementMock->expects($this->once())->method('setOriginalData')->with($params);
         $this->_model->populateInput($elementMock);
@@ -322,7 +328,10 @@ class FieldTest extends TestCase
             ['source_model' => 'Source_Model_Name::retrieveElements', 'path' => 'path', 'type' => 'multiselect'],
             'scope'
         );
-        $sourceModelMock = $this->createMock(DataObjectTestHelper::class);
+        $sourceModelMock = $this->objectManager->createPartialMockWithReflection(
+            DataObject::class,
+            ['setPath', 'retrieveElements']
+        );
         $this->_sourceFactoryMock->expects(
             $this->once()
         )->method(
@@ -344,7 +353,10 @@ class FieldTest extends TestCase
             ['source_model' => 'Source_Model_Name::retrieveElements', 'path' => 'path', 'type' => 'select'],
             'scope'
         );
-        $sourceModelMock = $this->createMock(DataObjectTestHelper::class);
+        $sourceModelMock = $this->objectManager->createPartialMockWithReflection(
+            DataObject::class,
+            ['setPath', 'retrieveElements']
+        );
         $this->_sourceFactoryMock->expects(
             $this->once()
         )->method(

@@ -16,8 +16,9 @@ use Magento\Config\Model\Config\Structure\Element\FlyweightFactory;
 use Magento\Config\Model\Config\Structure\Element\Iterator\Tab as TabIterator;
 use Magento\Config\Model\Config\Structure\Element\Section;
 use Magento\Config\Model\Config\Structure\ElementInterface;
-use PHPUnit\Framework\MockObject\MockObject as Mock;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\MockObject\MockObject as Mock;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -58,10 +59,16 @@ class StructureTest extends TestCase
     protected $_structureData;
 
     /**
+     * @var ObjectManager
+     */
+    private $objectManager;
+
+    /**
      * @inheritdoc
      */
     protected function setUp(): void
     {
+        $this->objectManager = new ObjectManager($this);
         $this->_flyweightFactory = $this->createMock(FlyweightFactory::class);
         $this->_tabIteratorMock = $this->createMock(TabIterator::class);
         $this->_structureDataMock = $this->createMock(Data::class);
@@ -334,14 +341,20 @@ class StructureTest extends TestCase
 
     public function testGetFirstSectionReturnsFirstAllowedSection()
     {
-        $tabMock = $this->createMock(Structure\Element\Tab::class);
+        $tabMock = $this->objectManager->createPartialMockWithReflection(
+            Structure\Element\Tab::class,
+            ['current', 'rewind', 'getChildren']
+        );
 
         $tabMock->expects($this->any())
             ->method('getChildren')
             ->willReturnSelf();
         $tabMock->expects($this->once())
             ->method('rewind');
-        $section = $this->createPartialMock(Section::class, ['isVisible', 'getData']);
+        $section = $this->createPartialMock(
+            Section::class,
+            ['isVisible', 'getData']
+        );
         $section->expects($this->any())
             ->method('isVisible')
             ->willReturn(true);
@@ -445,7 +458,7 @@ class StructureTest extends TestCase
      * @param array $expected
      * @return void
      */
-    #[DataProvider('getFieldPathsDataProvider')]
+    #[DataProvider('getFieldPaths')]
     public function testGetFieldPaths(array $expected): void
     {
         $this->assertSame(
@@ -459,7 +472,7 @@ class StructureTest extends TestCase
      *
      * @return array
      */
-    public static function getFieldPathsDataProvider(): array
+    public static function getFieldPaths(): array
     {
         return  [
             [

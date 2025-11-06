@@ -54,6 +54,7 @@ class AbstractElementTest extends TestCase
                 'storeManager' => $this->storeManagerMock,
                 'moduleManager' => $this->moduleManagerMock,
             ])
+            ->onlyMethods([])
             ->getMock();
 
         $objectManagerHelper = new ObjectManagerHelper($this);

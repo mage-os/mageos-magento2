@@ -21,12 +21,10 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Helper\Js;
 use Magento\Framework\View\Layout;
 use Magento\User\Model\User;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Magento\Framework\View\Helper\SecureHtmlRenderer;
-use Magento\Config\Test\Unit\Helper\SessionTestHelper;
-use Magento\Config\Test\Unit\Helper\UserTestHelper;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -121,18 +119,24 @@ class DisableOutputTest extends TestCase
             ->method('getOne')
             ->willReturn(null);
 
-        $this->authSessionMock = $this->createMock(SessionTestHelper::class);
+        $this->authSessionMock = $this->objectManager->createPartialMockWithReflection(
+            Session::class,
+            ['getUser']
+        );
 
-        $this->userMock = $this->createMock(UserTestHelper::class);
+        $this->userMock = $this->objectManager->createPartialMockWithReflection(
+            User::class,
+            ['getExtra']
+        );
 
         $this->authSessionMock->expects($this->any())
             ->method('getUser')
             ->willReturn($this->userMock);
 
-        $groupMock = $this->getMockBuilder(Group::class)
-            ->onlyMethods(['getFieldsetCss'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $groupMock = $this->createPartialMock(
+            Group::class,
+            ['getFieldsetCss']
+        );
         $groupMock->expects($this->any())->method('getFieldsetCss')->willReturn('test_fieldset_css');
 
         $factory = $this->createMock(Factory::class);
@@ -174,17 +178,14 @@ class DisableOutputTest extends TestCase
             $data
         );
 
-        $this->elementMock = $this->getMockBuilder(Text::class)
-            ->onlyMethods(
-                [
-                    'getId', 'getHtmlId', 'getName', 'toHtml',
-                    'addField', 'setRenderer', 'getElements'
-                ]
-            )
-            ->disableOriginalConstructor()
-            ->disableOriginalClone()
-            ->enableAutoload()
-            ->getMock();
+        $this->elementMock = $this->objectManager->createPartialMockWithReflection(
+            Text::class,
+            [
+                'getExpanded', 'getLegend', 'getComment', 'getTooltip', 'getIsNested',
+                'getId', 'getHtmlId', 'getName', 'toHtml',
+                'addField', 'setRenderer', 'getElements'
+            ]
+        );
 
         $this->elementMock->expects($this->any())
             ->method('getId')

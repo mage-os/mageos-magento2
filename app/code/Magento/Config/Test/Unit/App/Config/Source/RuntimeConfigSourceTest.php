@@ -18,10 +18,9 @@ use Magento\Framework\App\Config\Value;
 use Magento\Framework\App\DeploymentConfig;
 use Magento\Framework\DB\Adapter\TableNotFoundException;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Magento\Config\Test\Unit\Helper\ValueTestHelper;
 
 /**
  * Test Class for retrieving runtime configuration from database.
@@ -75,8 +74,14 @@ class RuntimeConfigSourceTest extends TestCase
         $this->collectionFactoryMock = $this->createMock(CollectionFactory::class);
         $this->scopeCodeResolverMock = $this->createMock(ScopeCodeResolver::class);
         $this->converterMock = $this->createMock(Converter::class);
-        $this->configItemMock = $this->createPartialMock(ValueTestHelper::class, ['getScope', 'getPath', 'getValue']);
-        $this->configItemMockTwo = $this->createPartialMock(ValueTestHelper::class, ['getScope', 'getPath', 'getValue', 'getScopeId']);
+        $this->configItemMock = $objectManager->createPartialMockWithReflection(
+            Value::class,
+            ['getScope', 'getPath', 'getValue']
+        );
+        $this->configItemMockTwo = $objectManager->createPartialMockWithReflection(
+            Value::class,
+            ['getScope', 'getPath', 'getValue', 'getScopeId']
+        );
         $this->deploymentConfigMock = $this->createPartialMock(
             DeploymentConfig::class,
             ['isDbAvailable']

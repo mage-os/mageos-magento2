@@ -17,9 +17,9 @@ use Magento\Framework\App\Config\Value;
 use Magento\Framework\App\Config\ValueFactory;
 use Magento\Framework\Config\ScopeInterface;
 use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\Matcher\InvokedCount;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -61,7 +61,10 @@ class ValueProcessorTest extends TestCase
     {
         $this->valueFactoryMock = $this->createMock(ValueFactory::class);
         $this->scopeMock = $this->createMock(ScopeInterface::class);
-        $this->structureFactoryMock = $this->createPartialMock(StructureFactory::class, ['create']);
+        $this->structureFactoryMock = $this->createPartialMock(
+            StructureFactory::class,
+            ['create']
+        );
         $this->jsonSerializerMock = $this->createMock(JsonSerializer::class);
 
         $this->valueProcessor = new ValueProcessor(
@@ -74,15 +77,15 @@ class ValueProcessorTest extends TestCase
 
     /**
      * @param bool $hasBackendModel
-     * @param InvokedCount $expectsGetBackendModel
-     * @param InvokedCount $expectsCreate
-     * @param InvokedCount $expectsGetValue
-     * @param InvokedCount $expectsSetPath
-     * @param InvokedCount $expectsSetScope
-     * @param InvokedCount $expectsSetScopeId
-     * @param InvokedCount $expectsSetValue
-     * @param InvokedCount $expectsAfterLoad
-     * @param InvokedCount $expectsSerialize
+     * @param string $expectsGetBackendModel
+     * @param string $expectsCreate
+     * @param string $expectsGetValue
+     * @param string $expectsSetPath
+     * @param string $expectsSetScope
+     * @param string $expectsSetScopeId
+     * @param string $expectsSetValue
+     * @param string $expectsAfterLoad
+     * @param string $expectsSerialize
      * @param string $expectsValue
      * @param string $className
      * @param string $value
@@ -108,6 +111,16 @@ class ValueProcessorTest extends TestCase
         $value,
         $processedValue
     ): void {
+        // Convert string matchers to actual matchers
+        $expectsGetBackendModel = $this->$expectsGetBackendModel();
+        $expectsCreate = $this->$expectsCreate();
+        $expectsGetValue = $this->$expectsGetValue();
+        $expectsSetPath = $this->$expectsSetPath();
+        $expectsSetScope = $this->$expectsSetScope();
+        $expectsSetScopeId = $this->$expectsSetScopeId();
+        $expectsSetValue = $this->$expectsSetValue();
+        $expectsAfterLoad = $this->$expectsAfterLoad();
+        $expectsSerialize = $this->$expectsSerialize();
         $scope = 'someScope';
         $scopeCode = 'someScopeCode';
         $path = 'some/config/path';
@@ -130,8 +143,9 @@ class ValueProcessorTest extends TestCase
             ->method('create')
             ->willReturn($structureMock);
 
+        $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         /** @var Value|Encrypted|MockObject $valueMock */
-        $backendModelMock = $this->createPartialMock(
+        $backendModelMock = $objectManager->createPartialMockWithReflection(
             $className,
             ['setPath', 'setScope', 'setScopeId', 'setValue', 'getValue', 'afterLoad']
         );
@@ -191,15 +205,15 @@ class ValueProcessorTest extends TestCase
         return [
             [
                 'hasBackendModel' => true,
-                'expectsGetBackendModel' => self::once(),
-                'expectsCreate' => self::never(),
-                'expectsGetValue' => self::once(),
-                'expectsSetPath' => self::once(),
-                'expectsSetScope' => self::once(),
-                'expectsSetScopeId' => self::once(),
-                'expectsSetValue' => self::once(),
-                'expectsAfterLoad' => self::once(),
-                'expectsSerialize' => self::once(),
+                'expectsGetBackendModel' => 'once',
+                'expectsCreate' => 'never',
+                'expectsGetValue' => 'once',
+                'expectsSetPath' => 'once',
+                'expectsSetScope' => 'once',
+                'expectsSetScopeId' => 'once',
+                'expectsSetValue' => 'once',
+                'expectsAfterLoad' => 'once',
+                'expectsSerialize' => 'once',
                 'expectsValue' => '{value:someValue}',
                 'className' => Value::class,
                 'value' => '{value:someValue}',
@@ -207,15 +221,15 @@ class ValueProcessorTest extends TestCase
             ],
             [
                 'hasBackendModel' => true,
-                'expectsGetBackendModel' => self::once(),
-                'expectsCreate' => self::never(),
-                'expectsGetValue' => self::once(),
-                'expectsSetPath' => self::once(),
-                'expectsSetScope' => self::once(),
-                'expectsSetScopeId' => self::once(),
-                'expectsSetValue' => self::once(),
-                'expectsAfterLoad' => self::once(),
-                'expectsSerialize' => self::never(),
+                'expectsGetBackendModel' => 'once',
+                'expectsCreate' => 'never',
+                'expectsGetValue' => 'once',
+                'expectsSetPath' => 'once',
+                'expectsSetScope' => 'once',
+                'expectsSetScopeId' => 'once',
+                'expectsSetValue' => 'once',
+                'expectsAfterLoad' => 'once',
+                'expectsSerialize' => 'never',
                 'expectsValue' => 'someValue',
                 'className' => Value::class,
                 'value' => 'someValue',
@@ -223,15 +237,15 @@ class ValueProcessorTest extends TestCase
             ],
             [
                 'hasBackendModel' => false,
-                'expectsGetBackendModel' => self::never(),
-                'expectsCreate' => self::once(),
-                'expectsGetValue' => self::once(),
-                'expectsSetPath' => self::once(),
-                'expectsSetScope' => self::once(),
-                'expectsSetScopeId' => self::once(),
-                'expectsSetValue' => self::once(),
-                'expectsAfterLoad' => self::once(),
-                'expectsSerialize' => self::never(),
+                'expectsGetBackendModel' => 'never',
+                'expectsCreate' => 'once',
+                'expectsGetValue' => 'once',
+                'expectsSetPath' => 'once',
+                'expectsSetScope' => 'once',
+                'expectsSetScopeId' => 'once',
+                'expectsSetValue' => 'once',
+                'expectsAfterLoad' => 'once',
+                'expectsSerialize' => 'never',
                 'expectsValue' => 'someValue',
                 'className' => Value::class,
                 'value' => 'someValue',
@@ -239,15 +253,15 @@ class ValueProcessorTest extends TestCase
             ],
             [
                 'hasBackendModel' => true,
-                'expectsGetBackendModel' => self::once(),
-                'expectsCreate' => self::never(),
-                'expectsGetValue' => self::never(),
-                'expectsSetPath' => self::never(),
-                'expectsSetScope' => self::never(),
-                'expectsSetScopeId' => self::never(),
-                'expectsSetValue' => self::never(),
-                'expectsAfterLoad' => self::never(),
-                'expectsSerialize' => self::never(),
+                'expectsGetBackendModel' => 'once',
+                'expectsCreate' => 'never',
+                'expectsGetValue' => 'never',
+                'expectsSetPath' => 'never',
+                'expectsSetScope' => 'never',
+                'expectsSetScopeId' => 'never',
+                'expectsSetValue' => 'never',
+                'expectsAfterLoad' => 'never',
+                'expectsSerialize' => 'never',
                 'expectsValue' => ValueProcessor::SAFE_PLACEHOLDER,
                 'className' => Encrypted::class,
                 'value' => 'someValue',
@@ -255,15 +269,15 @@ class ValueProcessorTest extends TestCase
             ],
             [
                 'hasBackendModel' => true,
-                'expectsGetBackendModel' => self::once(),
-                'expectsCreate' => self::never(),
-                'expectsGetValue' => self::once(),
-                'expectsSetPath' => self::once(),
-                'expectsSetScope' => self::once(),
-                'expectsSetScopeId' => self::once(),
-                'expectsSetValue' => self::once(),
-                'expectsAfterLoad' => self::once(),
-                'expectsSerialize' => self::never(),
+                'expectsGetBackendModel' => 'once',
+                'expectsCreate' => 'never',
+                'expectsGetValue' => 'once',
+                'expectsSetPath' => 'once',
+                'expectsSetScope' => 'once',
+                'expectsSetScopeId' => 'once',
+                'expectsSetValue' => 'once',
+                'expectsAfterLoad' => 'once',
+                'expectsSerialize' => 'never',
                 'expectsValue' => null,
                 'className' => Value::class,
                 'value' => null,
@@ -271,15 +285,15 @@ class ValueProcessorTest extends TestCase
             ],
             [
                 'hasBackendModel' => true,
-                'expectsGetBackendModel' => self::once(),
-                'expectsCreate' => self::never(),
-                'expectsGetValue' => self::never(),
-                'expectsSetPath' => self::never(),
-                'expectsSetScope' => self::never(),
-                'expectsSetScopeId' => self::never(),
-                'expectsSetValue' => self::never(),
-                'expectsAfterLoad' => self::never(),
-                'expectsSerialize' => self::never(),
+                'expectsGetBackendModel' => 'once',
+                'expectsCreate' => 'never',
+                'expectsGetValue' => 'never',
+                'expectsSetPath' => 'never',
+                'expectsSetScope' => 'never',
+                'expectsSetScopeId' => 'never',
+                'expectsSetValue' => 'never',
+                'expectsAfterLoad' => 'never',
+                'expectsSerialize' => 'never',
                 'expectsValue' => null,
                 'className' => Encrypted::class,
                 'value' => null,

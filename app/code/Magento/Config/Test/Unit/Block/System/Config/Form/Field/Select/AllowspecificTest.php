@@ -12,13 +12,12 @@ use Magento\Framework\Data\Form;
 use Magento\Framework\Data\Form\Element\Select;
 use Magento\Framework\Escaper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Magento\Framework\Math\Random;
 use Magento\Framework\View\Helper\SecureHtmlRenderer;
 use Magento\Framework\DataObject;
-use Magento\Config\Test\Unit\Helper\SelectTestHelper;
 
 class AllowspecificTest extends TestCase
 {
@@ -32,9 +31,15 @@ class AllowspecificTest extends TestCase
      */
     protected $_formMock;
 
+    /**
+     * @var ObjectManager
+     */
+    private $objectManager;
+
     protected function setUp(): void
     {
         $testHelper = new ObjectManager($this);
+        $this->objectManager = new ObjectManager($this);
         $objects = [
             [
                 SecureHtmlRenderer::class,
@@ -72,12 +77,17 @@ class AllowspecificTest extends TestCase
             ]
         );
         $this->_object->setId('spec_element');
-        $this->_formMock = $this->createMock(Form::class);
+        $this->_formMock = $this->objectManager->createPartialMockWithReflection(
+            Form::class,
+            ['getHtmlIdPrefix', 'getHtmlIdSuffix', 'getElement']
+        );
     }
 
     public function testGetAfterElementHtml()
     {
-        $this->_formMock->method(
+        $this->_formMock->expects(
+            $this->once()
+        )->method(
             'getHtmlIdPrefix'
         )->willReturn(
             'test_prefix_'
@@ -110,7 +120,10 @@ class AllowspecificTest extends TestCase
     {
         $this->_object->setForm($this->_formMock);
 
-        $elementMock = $this->createPartialMock(SelectTestHelper::class, ['setDisabled']);
+        $elementMock = $this->objectManager->createPartialMockWithReflection(
+            Select::class,
+            ['setDisabled']
+        );
 
         $elementMock->expects($this->once())->method('setDisabled')->with('disabled');
         $countryId = 'tetst_county_specificcountry';

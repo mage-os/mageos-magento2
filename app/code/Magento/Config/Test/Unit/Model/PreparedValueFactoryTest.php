@@ -18,12 +18,12 @@ use Magento\Framework\App\Config\Value;
 use Magento\Framework\App\ScopeInterface;
 use Magento\Framework\App\ScopeResolver;
 use Magento\Framework\App\ScopeResolverPool;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Model\ScopeInterface as StoreScopeInterface;
 use Magento\Store\Model\ScopeTypeNormalizer;
-use PHPUnit\Framework\MockObject\MockObject as Mock;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\MockObject\MockObject as Mock;
 use PHPUnit\Framework\TestCase;
-use Magento\Config\Test\Unit\Helper\ValueTestHelper;
 
 /**
  * @inheritdoc
@@ -88,15 +88,33 @@ class PreparedValueFactoryTest extends TestCase
     private $preparedValueFactory;
 
     /**
+     * @var ObjectManager
+     */
+    private $objectManager;
+
+    /**
      * @inheritdoc
      */
     protected function setUp(): void
     {
-        $this->structureFactoryMock = $this->createPartialMock(StructureFactory::class, ['create']);
-        $this->valueFactoryMock = $this->createPartialMock(BackendFactory::class, ['create']);
+        $this->objectManager = new ObjectManager($this);
+        $this->structureFactoryMock = $this->createPartialMock(
+            StructureFactory::class,
+            ['create']
+        );
+        $this->valueFactoryMock = $this->createPartialMock(
+            BackendFactory::class,
+            ['create']
+        );
         $this->structureMock = $this->createMock(Structure::class);
         $this->fieldMock = $this->createMock(Field::class);
-        $this->valueMock = $this->createPartialMock(ValueTestHelper::class, ['setPath', 'setScope', 'setScopeId', 'setValue', 'setField', 'setGroupId', 'setFieldConfig', 'setScopeCode']);
+        $this->valueMock = $this->objectManager->createPartialMockWithReflection(
+            Value::class,
+            [
+                'setPath', 'setScope', 'setScopeId', 'setValue', 'setField',
+                'setGroupId', 'setFieldConfig', 'setScopeCode'
+            ]
+        );
         $this->configMock = $this->createMock(ScopeConfigInterface::class);
         $this->scopeResolverPoolMock = $this->createMock(ScopeResolverPool::class);
         $this->scopeResolverMock = $this->createMock(ScopeResolver::class);
@@ -117,29 +135,18 @@ class PreparedValueFactoryTest extends TestCase
      * @param string|null $configPath
      * @param string $value
      * @param string $scope
-     * @param string|null $normalizedScope
      * @param string|int|null $scopeCode
      * @param int $scopeId
      */
     #[DataProvider('createDataProvider')]
     public function testCreate(
         $path,
-        $configPath = null,
-        $value = null,
-        $scope = null,
-        $normalizedScope = null,
-        $scopeCode = null,
-        $scopeId = null
+        $configPath,
+        $value,
+        $scope,
+        $scopeCode,
+        $scopeId
     ) {
-        // Handle both 6 and 7 parameter data sets
-        if ($normalizedScope === null && $scopeCode !== null && is_string($scopeCode) && !is_numeric($scopeCode)) {
-            // 6 parameter case: shift parameters
-            $scopeId = $scopeCode;
-            $scopeCode = $normalizedScope = $scope;
-        } elseif ($normalizedScope !== null) {
-            // 7 parameter case: use normalizedScope
-            $scope = $normalizedScope;
-        }
         $groupPath = 'some/group';
         $groupId = 'some_group';
         $fieldId = 'some_field';
@@ -254,7 +261,6 @@ class PreparedValueFactoryTest extends TestCase
                 '/custom/config_path',
                 'someValue',
                 'someScope',
-                'someScope',
                 'someScopeCode',
                 1,
             ],
@@ -263,38 +269,37 @@ class PreparedValueFactoryTest extends TestCase
                 null,
                 'someValue',
                 ScopeInterface::SCOPE_DEFAULT,
-                ScopeInterface::SCOPE_DEFAULT,
                 null,
                 0,
             ],
             'website scope flow' => [
                 '/some/path',
+                null,
                 'someValue',
-                StoreScopeInterface::SCOPE_WEBSITE,
                 StoreScopeInterface::SCOPE_WEBSITES,
                 null,
                 0,
             ],
             'websites scope flow' => [
                 '/some/path',
+                null,
                 'someValue',
-                StoreScopeInterface::SCOPE_WEBSITES,
                 StoreScopeInterface::SCOPE_WEBSITES,
                 null,
                 0,
             ],
             'store scope flow' => [
                 '/some/path',
+                null,
                 'someValue',
-                StoreScopeInterface::SCOPE_STORE,
                 StoreScopeInterface::SCOPE_STORES,
                 null,
                 0,
             ],
             'stores scope flow' => [
                 '/some/path',
+                null,
                 'someValue',
-                StoreScopeInterface::SCOPE_STORES,
                 StoreScopeInterface::SCOPE_STORES,
                 null,
                 0,
@@ -304,32 +309,15 @@ class PreparedValueFactoryTest extends TestCase
 
     /**
      * @param string $path
-     * @param string|null $configPath
-     * @param mixed $value
      * @param string $scope
-     * @param string|null $normalizedScope
      * @param string|int|null $scopeCode
-     * @param int|null $scopeId
      */
-    #[DataProvider('createDataProvider')]
+    #[DataProvider('createNotInstanceOfValueDataProvider')]
     public function testCreateNotInstanceOfValue(
         $path,
-        $configPath = null,
-        $value = null,
-        $scope = null,
-        $normalizedScope = null,
-        $scopeCode = null,
-        $scopeId = null
+        $scope,
+        $scopeCode
     ) {
-        // Handle both 6 and 7 parameter data sets - use only path, scope, scopeCode
-        if ($normalizedScope === null && $scopeCode !== null && is_string($scopeCode) && !is_numeric($scopeCode)) {
-            // 6 parameter case
-            $scopeCode = $normalizedScope = $scope;
-            $scope = $value;
-        } elseif ($normalizedScope !== null) {
-            // 7 parameter case
-            $scope = $normalizedScope;
-        }
         $this->scopeResolverPoolMock->expects($this->never())
             ->method('get');
         $this->scopeResolverMock->expects($this->never())
@@ -371,14 +359,13 @@ class PreparedValueFactoryTest extends TestCase
     /**
      * @return array
      */
-    public function createNotInstanceOfValueDataProvider()
+    public static function createNotInstanceOfValueDataProvider()
     {
         return [
             'standard flow' => [
                 '/some/path',
                 'someScope',
                 'someScopeCode',
-                1,
             ],
             'default scope flow' => [
                 '/some/path',

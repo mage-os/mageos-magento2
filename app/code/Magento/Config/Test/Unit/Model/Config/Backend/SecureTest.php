@@ -23,7 +23,8 @@ class SecureTest extends TestCase
 {
     public function testSaveMergedJsCssMustBeCleaned()
     {
-        $context = (new ObjectManager($this))->getObject(Context::class);
+        $objectManager = new ObjectManager($this);
+        $context = $objectManager->getObject(Context::class);
 
         $resource = $this->createMock(Data::class);
         $resource->expects($this->any())->method('addCommitCallback')->willReturn($resource);
@@ -33,13 +34,23 @@ class SecureTest extends TestCase
         $coreConfig = $this->createMock(ScopeConfigInterface::class);
         $cacheTypeListMock = $this->createMock(TypeListInterface::class);
 
-        $model = $this->createPartialMock(Secure::class, ['getOldValue']);
-
         $cacheTypeListMock->expects($this->once())
             ->method('invalidate')
-            ->with(Config::TYPE_IDENTIFIER)
-            ->willReturn($model);
+            ->with(Config::TYPE_IDENTIFIER);
         $mergeService->expects($this->once())->method('cleanMergedJsCss');
+
+        $model = $objectManager->getObject(
+            Secure::class,
+            [
+                'context' => $context,
+                'registry' => $coreRegistry,
+                'config' => $coreConfig,
+                'cacheTypeList' => $cacheTypeListMock,
+                'mergeService' => $mergeService,
+                'resource' => $resource,
+                'resourceCollection' => $resourceCollection,
+            ]
+        );
 
         $model->setValue('new_value');
         $model->afterSave();

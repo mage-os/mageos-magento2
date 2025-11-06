@@ -51,6 +51,11 @@ class RegexceptionsTest extends TestCase
      */
     protected $object;
 
+    /**
+     * @var ObjectManager
+     */
+    private $objectManager;
+
     protected function setUp(): void
     {
         $this->cellParameters = [
@@ -59,17 +64,18 @@ class RegexceptionsTest extends TestCase
             'class' => 'testClass',
         ];
 
-        $objectManager = new ObjectManager($this);
+        $this->objectManager = new ObjectManager($this);
 
         $this->labelFactoryMock = $this->createMock(LabelFactory::class);
         $this->labelMock = $this->createMock(Label::class);
         $this->elementFactoryMock = $this->createMock(Factory::class);
-        $this->elementMock = $this->getMockBuilder(AbstractElement::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(
-                ['setForm', 'getName', 'getHtmlId', 'getElementHtml']
-            )
-            ->getMock();
+        $this->elementMock = $this->objectManager->createPartialMockWithReflection(
+            AbstractElement::class,
+            [
+                'setName', 'setHtmlId', 'setValues', 'getValues',
+                'setForm', 'getName', 'getHtmlId', 'getElementHtml'
+            ]
+        );
 
         $data = [
             'elementFactory' => $this->elementFactoryMock,
@@ -78,8 +84,8 @@ class RegexceptionsTest extends TestCase
                 'element' => $this->elementMock
             ],
         ];
-        $objectManager->prepareObjectManager();
-        $this->object = $objectManager->getObject(
+        $this->objectManager->prepareObjectManager();
+        $this->object = $this->objectManager->getObject(
             Regexceptions::class,
             $data
         );

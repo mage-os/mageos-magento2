@@ -18,8 +18,8 @@ use Magento\Framework\Config\File\ConfigFilePool;
 use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Stdlib\ArrayManager;
 use Magento\Store\Model\ScopeInterface;
-use PHPUnit\Framework\MockObject\MockObject as Mock;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\MockObject\MockObject as Mock;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -69,7 +69,12 @@ class LockConfigProcessorTest extends TestCase
         $this->deploymentConfigWriterMock = $this->createMock(Writer::class);
         $this->arrayManagerMock = $this->createMock(ArrayManager::class);
         $this->configPathResolver = $this->createMock(ConfigPathResolver::class);
-        $this->valueMock = $this->createMock(Value::class);
+        
+        $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
+        $this->valueMock = $objectManager->createPartialMockWithReflection(
+            Value::class,
+            ['setValue', 'getValue', 'validateBeforeSave', 'beforeSave', 'afterSave']
+        );
 
         $this->model = new LockProcessor(
             $this->preparedValueFactory,
@@ -112,7 +117,8 @@ class LockConfigProcessorTest extends TestCase
                     ]
                 ]
             ]);
-        $this->valueMock->method('getValue')
+        $this->valueMock->expects($this->once())
+            ->method('getValue')
             ->willReturn($value);
         $this->deploymentConfigWriterMock->expects($this->once())
             ->method('saveConfig')
@@ -164,7 +170,8 @@ class LockConfigProcessorTest extends TestCase
         $this->preparedValueFactory->expects($this->once())
             ->method('create')
             ->willReturn($this->valueMock);
-        $this->valueMock->method('getValue')
+        $this->valueMock->expects($this->once())
+            ->method('getValue')
             ->willReturn($value);
         $this->configPathResolver->expects($this->once())
             ->method('resolve')
@@ -195,7 +202,8 @@ class LockConfigProcessorTest extends TestCase
             ->willReturn($this->valueMock);
         $this->arrayManagerMock->expects($this->never())
             ->method('set');
-        $this->valueMock->method('getValue');
+        $this->valueMock->expects($this->once())
+            ->method('getValue');
         $this->valueMock->expects($this->once())
             ->method('afterSave')
             ->willThrowException(new \Exception('Invalid values'));

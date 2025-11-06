@@ -12,6 +12,7 @@ use Magento\Config\Model\ResourceModel\Config\Data\Collection;
 use Magento\Config\Model\ResourceModel\Config\Data\CollectionFactory;
 use Magento\Framework\App\Config\ValueFactory;
 use Magento\Framework\DataObject;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -37,10 +38,22 @@ class LoaderTest extends TestCase
      */
     protected $collectionFactory;
 
+    /**
+     * @var ObjectManager
+     */
+    private $objectManager;
+
     protected function setUp(): void
     {
-        $this->_configValueFactory = $this->createMock(ValueFactory::class);
-        $this->collectionFactory = $this->createMock(CollectionFactory::class);
+        $this->objectManager = new ObjectManager($this);
+        $this->_configValueFactory = $this->objectManager->createPartialMockWithReflection(
+            ValueFactory::class,
+            ['getCollection', 'create']
+        );
+        $this->collectionFactory = $this->objectManager->createPartialMockWithReflection(
+            CollectionFactory::class,
+            ['getCollection', 'create']
+        );
         $this->_model = new Loader($this->_configValueFactory, $this->collectionFactory);
         $this->_configCollection = $this->createMock(Collection::class);
         $this->_configCollection->expects($this->once())->

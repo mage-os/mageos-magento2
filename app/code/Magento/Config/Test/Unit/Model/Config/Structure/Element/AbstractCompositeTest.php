@@ -64,6 +64,7 @@ class AbstractCompositeTest extends TestCase
         $this->moduleManagerMock = $this->createMock(Manager::class);
         $this->_model = $this->getMockBuilder(AbstractComposite::class)
             ->setConstructorArgs([$this->_storeManagerMock, $this->moduleManagerMock, $this->_iteratorMock])
+            ->onlyMethods([])
             ->getMock();
         $objectManagerHelper = new ObjectManagerHelper($this);
         $objectManagerHelper->setBackwardCompatibleProperty(

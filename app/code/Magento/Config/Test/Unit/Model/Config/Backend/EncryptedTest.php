@@ -14,8 +14,8 @@ use Magento\Framework\Event\Manager;
 use Magento\Framework\Model\Context;
 use Magento\Framework\Model\ResourceModel\AbstractResource;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class EncryptedTest extends TestCase
@@ -45,7 +45,10 @@ class EncryptedTest extends TestCase
         )->willReturn(
             $eventDispatcherMock
         );
-        $this->_resourceMock = $this->createMock(AbstractResource::class);
+        $this->_resourceMock = $helper->createPartialMockWithReflection(
+            AbstractResource::class,
+            ['getIdFieldName', 'save', 'getConnection', 'beginTransaction', 'commit', 'addCommitCallback', '_construct']
+        );
         $this->_configMock = $this->createMock(ScopeConfigInterface::class);
         $this->_encryptorMock = $this->createMock(EncryptorInterface::class);
         $this->_model = $helper->getObject(
