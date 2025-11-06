@@ -97,12 +97,26 @@ class SetCustomerToCompareList
             $compareList = $this->compareListFactory->create();
             $customerListId = $this->getListIdByCustomerId->execute($customerId);
             $this->resourceCompareList->load($compareList, $listId, 'list_id');
+            if (!$compareList->getListId()) {
+                throw new GraphQlNoSuchEntityException(
+                    __('The compare list with ID "%list_id" does not exist.', ['list_id' => $listId])
+                );
+            }
             if ($customerListId) {
                 return $this->mergeCompareLists->execute($listId, $customerListId, $context);
             }
-            $compareList->setCustomerId($customerId);
-            $this->resourceCompareList->save($compareList);
-            $this->resourceCompareItem->updateCustomerIdForListItems($listId, $customerId);
+
+            $this->resourceCompareList->beginTransaction();
+            try {
+                $compareList->setCustomerId($customerId);
+                $this->resourceCompareList->save($compareList);
+                $this->resourceCompareItem->updateCustomerIdForListItems($listId, $customerId);
+                $this->resourceCompareList->commit();
+            } catch (\Exception $e) {
+                $this->resourceCompareList->rollBack();
+                throw $e;
+            }
+
             return $compareList;
         }
 
