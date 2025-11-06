@@ -60,20 +60,4 @@
         <data key="label">No</data>
         <data key="value">0</data>
     </entity>
-    <entity name="AdminSetUpsGatewayUrl" type="ups_config">
-        <data key="path">carriers/ups/gateway_url</data>
-        <data key="value">https://wwwcie.ups.com/api/rating/</data>
-    </entity>
-    <entity name="AdminSetUpsTypeToRestAPI" type="ups_config">
-        <data key="path">carriers/ups/type</data>
-        <data key="value">UPS_REST</data>
-    </entity>
-    <entity name="AdminSetUpsTypeToRestAPI" type="ups_config">
-        <data key="path">carriers/ups/type</data>
-        <data key="value">UPS_REST</data>
-    </entity>
-    <entity name="AdminSetAccountTypeLiveAccountNo" type="ups_config">
-        <data key="path">carriers/ups/is_account_live</data>
-        <data key="value">0</data>
-    </entity>
 </entities>
