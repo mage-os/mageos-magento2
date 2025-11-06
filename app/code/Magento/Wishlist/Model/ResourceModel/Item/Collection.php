@@ -351,7 +351,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
         /** @var \Magento\Wishlist\Model\Item $item */
         foreach ($this as $item) {
             $product = $productCollection->getItemById($item->getProductId());
-            if ($product) {
+            if ($product && !$product->getIsHidden()) {
                 if ($checkInStock && !$product->isInStock()) {
                     $this->removeItemByKey($item->getId());
                 } else {
