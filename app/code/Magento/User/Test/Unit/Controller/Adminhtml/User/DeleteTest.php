@@ -136,12 +136,24 @@ class DeleteTest extends TestCase
 
         $this->requestMock->expects($this->any())
             ->method('getPost')
-            ->willReturnMap([
-                ['user_id', $userId],
-                [Main::CURRENT_USER_PASSWORD_FIELD, $currentUserPassword],
-            ]);
+            ->willReturnCallback(function ($key) use ($userId, $currentUserPassword) {
+                if ($key === 'user_id') {
+                    return $userId;
+                }
+                if ($key === Main::CURRENT_USER_PASSWORD_FIELD) {
+                    return $currentUserPassword;
+                }
+                return null;
+            });
 
         $userMock = clone $currentUserMock;
+
+        if ($resultMethod === 'addSuccess' && $userId && $currentUserId !== $userId) {
+            $currentUserMock->expects($this->once())
+                ->method('performIdentityCheck')
+                ->with($currentUserPassword)
+                ->willReturn(true);
+        }
 
         $this->userFactoryMock->expects($this->any())->method('create')->willReturn($userMock);
         $this->responseMock->expects($this->any())->method('setRedirect')->willReturnSelf();

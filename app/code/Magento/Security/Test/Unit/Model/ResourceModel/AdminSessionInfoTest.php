@@ -87,13 +87,9 @@ class AdminSessionInfoTest extends TestCase
         $whereStatement = [
             'updated_at > ?' => $this->dateTimeMock->formatDate($updateOlderThen),
             'user_id = ?' => (int) $userId,
+            'id NOT IN (?)' => $excludedSessionIds,
+            'status IN (?)' => $withStatuses,
         ];
-        if (!empty($excludedSessionIds)) {
-            $whereStatement['id NOT IN (?)'] = $excludedSessionIds;
-        }
-        if (!empty($withStatuses)) {
-            $whereStatement['status IN (?)'] = $withStatuses;
-        }
 
         $this->resourceMock->expects($this->once())
             ->method('getConnection')
