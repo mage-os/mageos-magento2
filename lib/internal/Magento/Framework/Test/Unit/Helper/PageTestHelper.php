@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2024 Adobe
+ * Copyright 2025 Adobe
  * All Rights Reserved.
  */
 declare(strict_types=1);
@@ -8,15 +8,26 @@ declare(strict_types=1);
 namespace Magento\Framework\Test\Unit\Helper;
 
 use Magento\Framework\View\Result\Page;
+use Magento\Framework\View\Page\Config;
 
 /**
- * Test helper for Page with custom methods
+ * Test helper for Page
+ *
+ * This helper extends the concrete Page class to provide
+ * test-specific functionality without dependency injection issues.
+ *
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class PageTestHelper extends Page
 {
     /**
-     * @var string|null
+     * @var Config
      */
+    private $config;
+
+     /**
+      * @var string|null
+      */
     private $activeMenu = null;
 
     /**
@@ -25,55 +36,58 @@ class PageTestHelper extends Page
     private $breadcrumbs = [];
 
     /**
-     * Constructor that skips parent dependencies
+     * Constructor that accepts config
+     *
+     * @param Config $config
      */
-    public function __construct()
+    public function __construct($config)
     {
-        // Skip parent constructor to avoid dependency injection issues
+        $this->config = $config;
     }
 
     /**
-     * Set active menu (custom method for tests)
+     * Set active menu
      *
-     * @param string $menu
+     * @param string $menuId
      * @return $this
      */
-    public function setActiveMenu(string $menu): self
+    public function setActiveMenu($menuId)
     {
-        $this->activeMenu = $menu;
+        $this->activeMenu = $menuId;
         return $this;
     }
 
     /**
-     * Get active menu
-     *
-     * @return string|null
-     */
-    public function getActiveMenu(): ?string
-    {
-        return $this->activeMenu;
-    }
-
-    /**
-     * Add breadcrumb (custom method for tests)
+     * Add breadcrumb
      *
      * @param string $label
      * @param string $title
+     * @param string|null $link
      * @return $this
      */
-    public function addBreadcrumb(string $label, string $title): self
+    public function addBreadcrumb($label, $title, $link = null)
     {
         $this->breadcrumbs[] = ['label' => $label, 'title' => $title];
         return $this;
     }
 
-    /**
-     * Get breadcrumbs
-     *
-     * @return array
-     */
+     /**
+      * Get breadcrumbs
+      *
+      * @return array
+      */
     public function getBreadcrumbs(): array
     {
         return $this->breadcrumbs;
+    }
+
+    /**
+     * Get config
+     *
+     * @return Config
+     */
+    public function getConfig()
+    {
+        return $this->config;
     }
 }

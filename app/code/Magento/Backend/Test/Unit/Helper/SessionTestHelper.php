@@ -1,123 +1,104 @@
 <?php
 /**
- * Copyright 2024 Adobe
+ * Copyright 2025 Adobe
  * All Rights Reserved.
  */
 declare(strict_types=1);
 
 namespace Magento\Backend\Test\Unit\Helper;
 
-use Magento\Backend\Model\Session;
+use Magento\Backend\Model\Auth\Session;
+use Magento\Framework\Session\Test\Unit\Helper\StorageTestHelper;
+use Magento\User\Model\User;
 
 /**
- * Test helper for Backend Session with custom methods
- * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+ * Test helper for creating Auth Session mocks with various methods
+ *
+ * This helper extends the concrete Auth\Session class directly, providing a clean
+ * way to add test-specific methods without using anonymous classes.
+ * Extends Auth\Session to be compatible with type hints requiring that specific class.
+ *
+ * METHODS PROVIDED:
+ * - setUser() / getUser() - User management
+ * - setIsLoggedIn() / isLoggedIn() - Login state management
+ * - setSkipLoggingAction() - Logging control
  */
 class SessionTestHelper extends Session
 {
     /**
-     * @var array|null
+     * @var User|null
      */
-    private $customerData = null;
-
+    private $user = null;
+    
     /**
-     * Constructor that skips parent dependencies
+     * @var bool
      */
+    private $isLoggedIn = false;
+    
     public function __construct()
     {
-        // Skip parent constructor to avoid dependency injection issues
-        // Set storage to prevent session initialization errors
-        // phpcs:ignore Magento2.Legacy.RestrictedCode.ArrayObjectIsRestricted
-        $this->storage = new \ArrayObject();
+        // Skip parent constructor for testing
+        // Initialize storage with the StorageTestHelper
+        $this->storage = new StorageTestHelper();
     }
-
+    
     /**
-     * Get customer data (custom method for tests)
+     * Get user
      *
-     * @return array|null
+     * @return User|null
      */
-    public function getCustomerData()
+    public function getUser()
     {
-        return $this->customerData;
+        return $this->user;
     }
-
+    
     /**
-     * Set customer data
+     * Set user
      *
-     * @param array|null $data
+     * @param User $user
      * @return $this
      */
-    public function setCustomerData($data): self
+    public function setUser($user)
     {
-        $this->customerData = $data;
+        $this->user = $user;
+        $this->isLoggedIn = true;
         return $this;
     }
-
+    
     /**
-     * Set customer group data (custom method for tests)
+     * Set skip logging action
      *
-     * @param array|null $data
+     * @param mixed $value
      * @return $this
      */
-    public function setCustomerGroupData(?array $data): self
+    public function setSkipLoggingAction($value)
     {
-        $this->customerData = $data; // Reuse the same storage
+        // Store in parent's storage using magic method (via StorageTestHelper::__call)
+        // phpcs:ignore Magento2.Functions.StaticFunction
+        /** @phpstan-ignore-next-line - StorageTestHelper::__call handles dynamic methods */
+        $this->storage->setSkipLoggingAction($value);
         return $this;
     }
-
+    
     /**
-     * Get customer form data (alias)
+     * Check if user is logged in
      *
-     * @return array|null
+     * @return bool
      */
-    public function getCustomerFormData(): ?array
+    public function isLoggedIn()
     {
-        return $this->customerData;
+        return $this->isLoggedIn;
     }
-
+    
     /**
-     * Set customer form data (alias)
+     * Set is logged in
      *
-     * @param array|null $data
+     * @param bool $value
      * @return $this
      */
-    public function setCustomerFormData(?array $data): self
+    public function setIsLoggedIn($value)
     {
-        $this->customerData = $data;
-        return $this;
-    }
-
-    /**
-     * Unset customer data (custom method for tests)
-     *
-     * @return $this
-     */
-    public function unsCustomerData(): self
-    {
-        $this->customerData = null;
-        return $this;
-    }
-
-    /**
-     * Unset customer form data (custom method for tests)
-     *
-     * @return $this
-     */
-    public function unsCustomerFormData(): self
-    {
-        $this->customerData = null;
-        return $this;
-    }
-
-    /**
-     * Set is URL notice (custom method for tests)
-     *
-     * @param bool|null $flag
-     * @return $this
-     */
-    public function setIsUrlNotice($flag = true): self
-    {
-        // Just return self for fluent interface
+        $this->isLoggedIn = $value;
         return $this;
     }
 }

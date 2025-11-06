@@ -9,7 +9,7 @@ namespace Magento\Customer\Test\Unit\Block\Adminhtml\Edit\Tab;
 
 use Magento\Backend\Block\Template\Context;
 use Magento\Backend\Model\Session;
-use Magento\Backend\Test\Unit\Helper\SessionTestHelper;
+use Magento\Backend\Test\Unit\Helper\BackendSessionTestHelper as SessionTestHelper;
 use Magento\Customer\Api\AccountManagementInterface;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Customer\Api\Data\CustomerInterface;

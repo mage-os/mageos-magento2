@@ -46,6 +46,7 @@ use Magento\Framework\UrlInterface;
 use Magento\Framework\View\Result\PageFactory;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\Test\Unit\Helper\HttpRequestTestHelper;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -265,7 +266,7 @@ class FormPostTest extends TestCase
         $this->context = $this->createMock(Context::class);
 
         $this->request = $this->createPartialMock(
-            \Magento\Framework\Test\Unit\Helper\RequestInterfaceTestHelper::class,
+            \Magento\Framework\Test\Unit\Helper\HttpRequestTestHelper::class,
             ['getParam', 'isPost', 'getPostValue']
         );
 

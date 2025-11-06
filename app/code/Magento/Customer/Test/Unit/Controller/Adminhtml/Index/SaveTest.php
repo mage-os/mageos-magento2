@@ -46,6 +46,7 @@ use Magento\Framework\View\Result\PageFactory;
 use Magento\Newsletter\Model\SubscriberFactory;
 use Magento\Newsletter\Model\SubscriptionManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Backend\Test\Unit\Helper\BackendSessionTestHelper;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -211,7 +212,7 @@ class SaveTest extends TestCase
         $this->pageConfigMock = $this->createMock(Config::class);
         $this->pageTitleMock = $this->createMock(Title::class);
         $this->sessionMock = $this->createPartialMock(
-            \Magento\Backend\Test\Unit\Helper\SessionTestHelper::class,
+            BackendSessionTestHelper::class,
             ['unsCustomerFormData', 'setCustomerFormData']
         );
         $this->formFactoryMock = $this->createMock(FormFactory::class);

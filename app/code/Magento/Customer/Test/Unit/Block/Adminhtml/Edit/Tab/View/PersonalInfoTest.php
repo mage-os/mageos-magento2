@@ -8,7 +8,7 @@ declare(strict_types=1);
 namespace Magento\Customer\Test\Unit\Block\Adminhtml\Edit\Tab\View;
 
 use Magento\Backend\Model\Session;
-use Magento\Backend\Test\Unit\Helper\SessionTestHelper;
+use Magento\Backend\Test\Unit\Helper\BackendSessionTestHelper as SessionTestHelper;
 use Magento\Customer\Api\Data\CustomerInterface;
 use Magento\Customer\Api\Data\CustomerInterfaceFactory;
 use Magento\Customer\Block\Adminhtml\Edit\Tab\View\PersonalInfo;

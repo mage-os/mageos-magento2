@@ -15,6 +15,11 @@ use Magento\Customer\Model\Customer;
 class CustomerTestHelper extends Customer
 {
     /**
+     * @var int
+     */
+    private $callCount = 0;
+
+    /**
      * @var array<string, mixed>
      */
     private array $testData = [];
@@ -28,11 +33,63 @@ class CustomerTestHelper extends Customer
     }
 
     /**
-     * Set default billing
+     * Get default billing id stored in test data.
      *
-     * @param int|string|null $value
-     * @return $this
+     * @return mixed
      */
+    public function getDefaultBillingAddress()
+    {
+        return $this->testData['default_billing_address'] ?? null;
+    }
+
+    /**
+     * Get default billing
+     *
+     * @return int|string|null
+     */
+    public function getDefaultBilling()
+    {
+        return $this->getData('default_billing');
+    }
+
+    /**
+     * Get store ID with call counter
+     *
+     * Custom logic: Returns 1 on first call, 2 on second call
+     * This is used to test different store access scenarios
+     *
+     * @return int
+     */
+    public function getStoreId()
+    {
+        $this->callCount++;
+        // Return store1 on first call, store2 on second call
+        return $this->callCount === 1 ? 1 : 2;
+    }
+
+    /**
+     * Load customer
+     *
+     * Custom logic: Sets ID via parent's setId() without requiring a resource (for testing)
+     * Parent AbstractModel::load() requires a resource to be set
+     *
+     * @param mixed $id
+     * @param mixed $field
+     * @return $this
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function load($id, $field = null)
+    {
+        parent::setId($id);
+        return $this;
+    }
+    
+     /**
+      * Set default billing
+      *
+      * @param int|string|null $value
+      * @return $this
+      */
     public function setDefaultBilling($value): self
     {
         $this->testData['default_billing'] = $value;
@@ -67,19 +124,6 @@ class CustomerTestHelper extends Customer
      * @return $this
      */
     public function save()
-    {
-        return $this;
-    }
-
-    /**
-     * Load customer
-     *
-     * @param int|string $modelId
-     * @param string|null $field
-     * @return $this
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function load($modelId, $field = null)
     {
         return $this;
     }
@@ -216,26 +260,6 @@ class CustomerTestHelper extends Customer
     }
 
     /**
-     * Get default billing address
-     *
-     * @return mixed
-     */
-    public function getDefaultBillingAddress()
-    {
-        return $this->testData['default_billing_address'] ?? null;
-    }
-
-    /**
-     * Get default billing
-     *
-     * @return int|string|null
-     */
-    public function getDefaultBilling()
-    {
-        return $this->testData['default_billing'] ?? null;
-    }
-
-    /**
      * Get default shipping
      *
      * @return int|string|null
@@ -243,16 +267,6 @@ class CustomerTestHelper extends Customer
     public function getDefaultShipping()
     {
         return $this->testData['default_shipping'] ?? null;
-    }
-
-    /**
-     * Get store ID
-     *
-     * @return int|null
-     */
-    public function getStoreId()
-    {
-        return $this->testData['store_id'] ?? null;
     }
 
     /**

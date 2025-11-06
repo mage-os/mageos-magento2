@@ -12,7 +12,7 @@ use Magento\Customer\Model\Url;
 use Magento\Customer\Test\Unit\Helper\CustomerSessionTestHelper;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\RequestInterface;
-use Magento\Framework\Test\Unit\Helper\RequestInterfaceTestHelper;
+use Magento\Framework\Test\Unit\Helper\HttpRequestTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\UrlInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -62,7 +62,7 @@ class UrlTest extends TestCase
 
         $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
         $this->requestMock = $this->createPartialMock(
-            RequestInterfaceTestHelper::class,
+            HttpRequestTestHelper::class,
             ['isGet', 'getParam']
         );
         $this->customerSessionMock = $this->createPartialMock(

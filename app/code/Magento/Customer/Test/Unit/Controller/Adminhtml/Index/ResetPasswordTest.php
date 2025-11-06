@@ -32,6 +32,7 @@ use Magento\Framework\Message\Manager;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\Message\Warning;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Backend\Test\Unit\Helper\BackendSessionTestHelper;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -141,7 +142,7 @@ class ResetPasswordTest extends TestCase
 
         $actionFlagMock = $this->createMock(ActionFlag::class);
 
-        $this->_session = new \Magento\Backend\Test\Unit\Helper\SessionTestHelper();
+        $this->_session = new BackendSessionTestHelper();
         // setIsUrlNotice is now available through the helper
 
         $this->_helper = $this->createPartialMock(

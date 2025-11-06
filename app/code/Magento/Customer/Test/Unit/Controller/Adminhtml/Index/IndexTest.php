@@ -20,6 +20,7 @@ use Magento\Framework\Test\Unit\Helper\PageTestHelper;
 use Magento\Framework\View\Result\Page;
 use Magento\Framework\View\Result\PageFactory;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Backend\Test\Unit\Helper\BackendSessionTestHelper as SessionTestHelper;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -94,7 +95,7 @@ class IndexTest extends TestCase
         $this->pageConfigMock = $this->createMock(Config::class);
         $this->pageTitleMock = $this->createMock(Title::class);
         $this->sessionMock = $this->createPartialMock(
-            \Magento\Backend\Test\Unit\Helper\SessionTestHelper::class,
+            SessionTestHelper::class,
             ['unsCustomerData', 'unsCustomerFormData']
         );
 

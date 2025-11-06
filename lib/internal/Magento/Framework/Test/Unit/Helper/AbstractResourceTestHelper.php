@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2024 Adobe
+ * Copyright 2025 Adobe
  * All Rights Reserved.
  */
 declare(strict_types=1);
@@ -10,16 +10,38 @@ namespace Magento\Framework\Test\Unit\Helper;
 use Magento\Framework\Model\ResourceModel\AbstractResource;
 
 /**
- * Test helper for AbstractResource with custom methods
+ * Test helper for AbstractResource
+ *
+ * This helper extends the concrete AbstractResource class to provide
+ * test-specific functionality without dependency injection issues.
  */
 class AbstractResourceTestHelper extends AbstractResource
 {
     /**
-     * Constructor that skips parent dependencies
+     * @var string
      */
-    public function __construct()
+    private $idFieldName = 'id';
+
+    /**
+     * Get ID field name
+     *
+     * @return string
+     */
+    public function getIdFieldName()
     {
-        // Skip parent constructor to avoid dependencies
+        return $this->idFieldName;
+    }
+
+    /**
+     * Set ID field name
+     *
+     * @param string $fieldName
+     * @return $this
+     */
+    public function setIdFieldName($fieldName)
+    {
+        $this->idFieldName = $fieldName;
+        return $this;
     }
 
     /**
@@ -29,38 +51,28 @@ class AbstractResourceTestHelper extends AbstractResource
      */
     protected function _construct()
     {
-        // Stub implementation for abstract method
+        // Empty implementation for testing
     }
 
     /**
-     * Get ID field name (custom method for tests)
-     *
-     * @return string|null
-     */
-    public function getIdFieldName()
-    {
-        return 'entity_id';
-    }
-
-    /**
-     * Save in set including (custom method for tests)
-     *
-     * @param mixed $object
-     * @return $this
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function saveInSetIncluding($object): self
-    {
-        return $this;
-    }
-
-    /**
-     * Get connection (abstract method implementation)
+     * Get connection
      *
      * @return mixed
      */
     public function getConnection()
     {
         return null;
+    }
+
+     /**
+      * Save in set including (custom method for tests)
+      *
+      * @param mixed $object
+      * @return $this
+      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+      */
+    public function saveInSetIncluding($object): self
+    {
+        return $this;
     }
 }

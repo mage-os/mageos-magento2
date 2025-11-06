@@ -30,7 +30,7 @@ use Magento\Framework\Controller\Result\Redirect;
 use Magento\Framework\Data\Form\FormKey\Validator;
 use Magento\Framework\Event\ManagerInterface as EventManagerInterface;
 use Magento\Framework\Message\ManagerInterface as MessageManagerInterface;
-use Magento\Framework\Test\Unit\Helper\RequestInterfaceTestHelper;
+use Magento\Framework\Test\Unit\Helper\HttpRequestTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -140,7 +140,7 @@ class EditPostTest extends TestCase
         $this->customerMapper = $this->createMock(Mapper::class);
 
         $this->request = $this->createPartialMock(
-            RequestInterfaceTestHelper::class,
+            HttpRequestTestHelper::class,
             ['getParam']
         );
         $this->context->expects($this->any())

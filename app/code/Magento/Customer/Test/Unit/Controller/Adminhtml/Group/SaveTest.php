@@ -26,6 +26,7 @@ use Magento\Framework\Reflection\DataObjectProcessor;
 use Magento\Framework\Registry;
 use Magento\Framework\View\Result\PageFactory;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Backend\Test\Unit\Helper\BackendSessionTestHelper;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -107,7 +108,7 @@ class SaveTest extends TestCase
         $this->resultForwardMock = $this->createMock(Forward::class);
         $this->groupMock = $this->createMock(GroupInterface::class);
         $this->sessionMock = $this->createPartialMock(
-            \Magento\Backend\Test\Unit\Helper\SessionTestHelper::class,
+            BackendSessionTestHelper::class,
             ['setCustomerGroupData']
         );
         $this->groupExtensionFactoryMock = $this->createPartialMock(

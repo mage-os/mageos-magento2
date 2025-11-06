@@ -28,6 +28,7 @@ use Magento\Framework\View\Result\Layout;
 use Magento\Framework\View\Result\LayoutFactory;
 use Magento\Newsletter\Model\Subscriber;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Backend\Test\Unit\Helper\BackendSessionTestHelper;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -152,7 +153,7 @@ class NewsletterTest extends TestCase
 
         $actionFlagMock = $this->createMock(ActionFlag::class);
 
-        $this->_session = new \Magento\Backend\Test\Unit\Helper\SessionTestHelper();
+        $this->_session = new BackendSessionTestHelper();
         // setIsUrlNotice is now available through the helper
 
         $this->_helper = $this->createPartialMock(

@@ -1,127 +1,117 @@
 <?php
 /**
- * Copyright 2024 Adobe
+ * Copyright 2025 Adobe
  * All Rights Reserved.
  */
 declare(strict_types=1);
 
 namespace Magento\Framework\Test\Unit\Helper;
 
-use Magento\Framework\App\Request\Http;
+use Magento\Framework\App\RequestInterface;
 
 /**
- * Test helper for RequestInterface with custom methods
+ * Test helper for RequestInterface
+ *
+ * This helper implements RequestInterface to provide
+ * test-specific functionality without dependency injection issues.
  *
  * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
-class RequestInterfaceTestHelper extends Http
+class RequestInterfaceTestHelper implements RequestInterface
 {
     /**
-     * @var bool
+     * @var string
      */
-    protected $isPost = false;
+    private $actionName = 'DELETE';
 
     /**
-     * @var mixed
+     * Constructor that optionally accepts action name
+     *
+     * @param string|null $actionName
      */
-    protected $postValue = null;
-
-    /**
-     * @var bool
-     */
-    protected $isGet = false;
-
-    /**
-     * Constructor that skips parent dependencies
-     */
-    public function __construct()
+    public function __construct($actionName = 'DELETE')
     {
-        // Skip parent constructor to avoid dependency injection issues
+        $this->actionName = $actionName;
     }
 
     /**
-     * Check if request is POST (custom method for tests)
+     * Get module name
      *
-     * @return bool
+     * @return string|null
      */
-    public function isPost(): bool
+    public function getModuleName()
     {
-        return $this->isPost;
+        return null;
     }
 
     /**
-     * Set is post flag
+     * Set module name
      *
-     * @param bool $isPost
+     * @param string $name
      * @return $this
      */
-    public function setIsPost(bool $isPost): self
+    public function setModuleName($name)
     {
-        $this->isPost = $isPost;
         return $this;
     }
 
     /**
-     * Get post value (custom method for tests)
+     * Get controller name
      *
-     * @param string|null $name
+     * @return string|null
+     */
+    public function getControllerName()
+    {
+        return null;
+    }
+
+    /**
+     * Set controller name
+     *
+     * @param string $name
+     * @return $this
+     */
+    public function setControllerName($name)
+    {
+        return $this;
+    }
+
+    /**
+     * Get action name
+     *
+     * @return string
+     */
+    public function getActionName()
+    {
+        return $this->actionName;
+    }
+
+    /**
+     * Set action name
+     *
+     * @param string $name
+     * @return $this
+     */
+    public function setActionName($name)
+    {
+        $this->actionName = $name;
+        return $this;
+    }
+
+    /**
+     * Get param
+     *
+     * @param string $key
      * @param mixed $default
      * @return mixed
      */
-    public function getPostValue($name = null, $default = null)
+    public function getParam($key, $default = null)
     {
-        return $this->postValue;
+        return $default;
     }
 
     /**
-     * Set post value (override parent method for testing)
-     *
-     * @param string $name
-     * @param mixed $value
-     * @return $this
-     */
-    public function setPostValue($name, $value = null)
-    {
-        $this->postValue = $value;
-        return $this;
-    }
-
-    /**
-     * Set test post value (for test setup)
-     *
-     * @param mixed $value
-     * @return $this
-     */
-    public function setTestPostValue($value): self
-    {
-        $this->postValue = $value;
-        return $this;
-    }
-
-    /**
-     * Check if request is GET (custom method for tests)
-     *
-     * @return bool
-     */
-    public function isGet(): bool
-    {
-        return $this->isGet;
-    }
-
-    /**
-     * Set is GET flag
-     *
-     * @param bool $isGet
-     * @return $this
-     */
-    public function setIsGet(bool $isGet): self
-    {
-        $this->isGet = $isGet;
-        return $this;
-    }
-
-    /**
-     * Set parameter value (override parent method for testing)
+     * Set param
      *
      * @param string $key
      * @param mixed $value
@@ -129,7 +119,81 @@ class RequestInterfaceTestHelper extends Http
      */
     public function setParam($key, $value)
     {
-        $this->params[$key] = $value;
         return $this;
+    }
+
+    /**
+     * Get params
+     *
+     * @return array
+     */
+    public function getParams()
+    {
+        return [];
+    }
+
+    /**
+     * Set params
+     *
+     * @param array $params
+     * @return $this
+     */
+    public function setParams(array $params)
+    {
+        return $this;
+    }
+
+    /**
+     * Has param
+     *
+     * @param string $key
+     * @return bool
+     */
+    public function has($key)
+    {
+        return false;
+    }
+
+    /**
+     * Is secure
+     *
+     * @return bool
+     */
+    public function isSecure()
+    {
+        return false;
+    }
+
+    /**
+     * Init forward
+     *
+     * @return void
+     */
+    public function initForward()
+    {
+        // Mock implementation
+    }
+
+    /**
+     * Set dispatched
+     *
+     * @param bool $flag
+     * @return void
+     */
+    public function setDispatched($flag = true)
+    {
+        // Mock implementation
+    }
+
+    /**
+     * Get cookie
+     *
+     * @param string $name
+     * @param mixed $default
+     * @return mixed
+     */
+    public function getCookie($name, $default = null)
+    {
+        return $default;
     }
 }
