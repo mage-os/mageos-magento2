@@ -8,12 +8,10 @@ declare(strict_types=1);
 namespace Magento\Swatches\Test\Unit\Observer;
 
 use Magento\Framework\DataObject;
-use Magento\Framework\DataObject\Test\Unit\Helper\DataObjectTestHelper;
 use Magento\Framework\Event;
 use Magento\Framework\Event\Observer;
-use Magento\Framework\Event\Test\Unit\Helper\EventTestHelper;
-use Magento\Framework\Event\Test\Unit\Helper\ObserverTestHelper;
 use Magento\Framework\Module\Manager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Swatches\Observer\AddSwatchAttributeTypeObserver;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -27,6 +25,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
  */
 class AddSwatchAttributeTypeObserverTest extends TestCase
 {
+    use MockCreationTrait;
     /** @var Manager|MockObject */
     protected $moduleManagerMock;
 
@@ -40,7 +39,7 @@ class AddSwatchAttributeTypeObserverTest extends TestCase
     {
         $this->moduleManagerMock = $this->createMock(Manager::class);
 
-        $this->eventObserverMock = new ObserverTestHelper();
+        $this->eventObserverMock = $this->createPartialMockWithReflection(Observer::class, ['getEvent']);
         $objectManager = new ObjectManager($this);
         $this->observerMock = $objectManager->getObject(
             AddSwatchAttributeTypeObserver::class,
@@ -58,13 +57,13 @@ class AddSwatchAttributeTypeObserverTest extends TestCase
             ->method('isOutputEnabled')
             ->willReturn($exp['isOutputEnabled']);
 
-        $eventMock = new EventTestHelper();
-        $this->eventObserverMock->setEvent($eventMock);
-
-        $response = new DataObjectTestHelper();
-        $eventMock->setResponse($response);
-
-        $response->setTypes($exp['outputArray']);
+        $response = $this->createPartialMockWithReflection(DataObject::class, ['getTypes', 'setTypes']);
+        $response->method('getTypes')->willReturn($exp['outputArray']);
+        
+        $eventMock = $this->createPartialMockWithReflection(Event::class, ['getResponse']);
+        $eventMock->method('getResponse')->willReturn($response);
+        
+        $this->eventObserverMock->method('getEvent')->willReturn($eventMock);
 
         $this->observerMock->execute($this->eventObserverMock);
     }

@@ -10,8 +10,9 @@ namespace Magento\Search\Test\Unit\Controller\Adminhtml\Term;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\App\Response\Http\FileFactory;
 use Magento\Framework\Controller\ResultFactory;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
-use Magento\Framework\View\Test\Unit\Helper\AbstractBlockTestHelper;
+use Magento\Framework\View\Element\AbstractBlock;
 use Magento\Framework\View\LayoutInterface;
 use Magento\Framework\View\Result\Layout;
 use Magento\Search\Controller\Adminhtml\Term\ExportSearchCsv;
@@ -21,6 +22,7 @@ use PHPUnit\Framework\TestCase;
 
 class ExportSearchCsvTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var ExportPost
      */
@@ -60,14 +62,14 @@ class ExportSearchCsvTest extends TestCase
     {
         $resultLayoutMock = $this->createMock(Layout::class);
         $layoutMock = $this->createMock(LayoutInterface::class);
-        $contentMock = $this->createMock(AbstractBlockTestHelper::class);
+        $contentMock = $this->createPartialMockWithReflection(AbstractBlock::class, ['getCsvFile']);
+        $contentMock->method('getCsvFile')->willReturn('csvFile');
         $this->resultFactoryMock
             ->expects($this->once())
             ->method('create')
             ->with(ResultFactory::TYPE_LAYOUT)->willReturn($resultLayoutMock);
         $resultLayoutMock->expects($this->once())->method('getLayout')->willReturn($layoutMock);
         $layoutMock->expects($this->once())->method('getChildBlock')->willReturn($contentMock);
-        $contentMock->expects($this->once())->method('getCsvFile')->willReturn('csvFile');
         $this->fileFactoryMock
             ->expects($this->once())
             ->method('create')

@@ -13,9 +13,9 @@ use Magento\Catalog\Model\ProductFactory;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\ResponseInterface;
-use Magento\Framework\App\Test\Unit\Helper\ResponseInterfaceTestHelper;
 use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\ResultFactory;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\PageCache\Model\Config;
 use Magento\Swatches\Controller\Ajax\Media;
@@ -28,6 +28,7 @@ use PHPUnit\Framework\TestCase;
  */
 class MediaTest extends TestCase
 {
+    use MockCreationTrait;
     /** @var array */
     private $mediaGallery;
 
@@ -94,8 +95,12 @@ class MediaTest extends TestCase
 
         $this->requestMock = $this->createMock(RequestInterface::class);
         $this->contextMock->method('getRequest')->willReturn($this->requestMock);
-        $this->responseMock = new ResponseInterfaceTestHelper();
-        // setPublicHeaders() is directly implemented, no method() call needed
+        $this->responseMock = $this->createPartialMockWithReflection(
+            ResponseInterface::class,
+            ['setPublicHeaders', 'sendResponse', 'setHeader', 'clearHeader', 'clearHeaders',
+             'setHttpResponseCode', 'setBody', 'appendBody', 'getBody', 'setRedirect', 'setStatusHeader']
+        );
+        $this->responseMock->method('setPublicHeaders')->willReturnSelf();
         $this->contextMock->method('getResponse')->willReturn($this->responseMock);
         $this->resultFactory = $this->createPartialMock(ResultFactory::class, ['create']);
         $this->contextMock->method('getResultFactory')->willReturn($this->resultFactory);

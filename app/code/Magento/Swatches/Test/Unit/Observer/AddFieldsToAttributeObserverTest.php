@@ -11,8 +11,8 @@ use Magento\Config\Model\Config\Source\Yesno;
 use Magento\Framework\Data\Form;
 use Magento\Framework\Data\Form\Element\AbstractElement;
 use Magento\Framework\Event\Observer;
-use Magento\Framework\Event\Test\Unit\Helper\ObserverTestHelper;
 use Magento\Framework\Module\Manager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Swatches\Observer\AddFieldsToAttributeObserver;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -26,6 +26,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
  */
 class AddFieldsToAttributeObserverTest extends TestCase
 {
+    use MockCreationTrait;
     /** @var Manager|MockObject */
     protected $moduleManagerMock;
 
@@ -46,7 +47,7 @@ class AddFieldsToAttributeObserverTest extends TestCase
         $this->moduleManagerMock = $this->createMock(Manager::class);
 
         $this->yesNoMock = $this->createMock(Yesno::class);
-        $this->eventObserverMock = new ObserverTestHelper();
+        $this->eventObserverMock = $this->createPartialMockWithReflection(Observer::class, ['getForm']);
         $this->formMock = $this->createPartialMock(Form::class, ['getElement']);
 
         $objectManager = new ObjectManager($this);
@@ -67,7 +68,7 @@ class AddFieldsToAttributeObserverTest extends TestCase
             ->method('isOutputEnabled')
             ->willReturn($expected['isOutputEnabled']);
 
-        $this->eventObserverMock->setForm($this->formMock);
+        $this->eventObserverMock->method('getForm')->willReturn($this->formMock);
 
         $element = $this->createMock(AbstractElement::class);
         $this->formMock

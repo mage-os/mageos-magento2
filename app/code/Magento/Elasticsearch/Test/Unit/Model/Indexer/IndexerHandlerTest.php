@@ -9,7 +9,6 @@ namespace Magento\Elasticsearch\Test\Unit\Model\Indexer;
 
 use Magento\CatalogSearch\Model\Indexer\Fulltext\Processor;
 use Magento\AdvancedSearch\Model\Client\ClientInterface;
-use Magento\AdvancedSearch\Test\Unit\Helper\ClientInterfaceTestHelper;
 use Magento\Elasticsearch\Model\Adapter\Elasticsearch;
 use Magento\Elasticsearch\Model\Adapter\Index\IndexNameResolver;
 use Magento\Elasticsearch\Model\Indexer\IndexerHandler;
@@ -20,6 +19,7 @@ use Magento\Framework\Indexer\IndexStructureInterface;
 use Magento\Framework\Indexer\SaveHandler\Batch;
 use Magento\Framework\Search\Request\Dimension;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Magento\Framework\App\DeploymentConfig;
@@ -31,6 +31,7 @@ use Magento\Framework\Indexer\CacheContext;
  */
 class IndexerHandlerTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var IndexerHandler
      */
@@ -122,7 +123,10 @@ class IndexerHandlerTest extends TestCase
 
         $this->indexNameResolver = $this->createMock(IndexNameResolver::class);
 
-        $this->client = new ClientInterfaceTestHelper();
+        $this->client = $this->createPartialMockWithReflection(
+            ClientInterface::class,
+            ['ping', 'testConnection']
+        );
 
         $this->scopeResolver = $this->createMock(ScopeResolverInterface::class);
 
@@ -179,7 +183,7 @@ class IndexerHandlerTest extends TestCase
             ->method('ping')
             ->willReturn(true);
 
-        $this->client->setPingResult(true);
+        $this->client->method('ping')->willReturn(true);
 
         $result = $this->model->isAvailable();
 

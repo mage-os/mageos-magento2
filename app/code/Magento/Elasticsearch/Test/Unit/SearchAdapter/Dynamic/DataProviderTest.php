@@ -23,6 +23,7 @@ use Magento\Framework\Search\Dynamic\IntervalFactory;
 use Magento\Framework\Search\Dynamic\IntervalInterface;
 use Magento\Framework\Search\Request\BucketInterface;
 use Magento\Framework\Search\Request\Dimension;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
@@ -34,6 +35,7 @@ use PHPUnit\Framework\TestCase;
  */
 class DataProviderTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var QueryContainer|MockObject
      */
@@ -145,7 +147,10 @@ class DataProviderTest extends TestCase
         $this->clientConfig->expects($this->any())
             ->method('getEntityType')
             ->willReturn('product');
-        $this->clientMock = new \Magento\AdvancedSearch\Test\Unit\Helper\ClientInterfaceTestHelper();
+        $this->clientMock = $this->createPartialMockWithReflection(
+            ClientInterface::class,
+            ['testConnection', 'query', 'bulkQuery']
+        );
         $this->connectionManager->expects($this->any())
             ->method('getConnection')
             ->willReturn($this->clientMock);
@@ -213,16 +218,16 @@ class DataProviderTest extends TestCase
             'min' => 1,
             'std' => 1,
         ];
-        $this->clientMock->setQueryResults([[
-                'aggregations' => [
-                    'prices' => [
-                        'count' => 1,
-                        'max' => 1,
-                        'min' => 1,
-                        'std_deviation' => 1,
-                    ],
+        $this->clientMock->method('query')->willReturn([
+            'aggregations' => [
+                'prices' => [
+                    'count' => 1,
+                    'max' => 1,
+                    'min' => 1,
+                    'std_deviation' => 1,
                 ],
-            ]]);
+            ],
+        ]);
 
         $this->queryContainer->expects($this->once())
             ->method('getQuery')
@@ -241,7 +246,7 @@ class DataProviderTest extends TestCase
             ->willReturn([]);
         
         // Set empty results to simulate no data
-        $this->clientMock->setQueryResults([]);
+        $this->clientMock->method('query')->willReturn([]);
 
         $result = $this->model->getAggregations($this->entityStorage);
         $this->assertIsArray($result);
@@ -303,18 +308,18 @@ class DataProviderTest extends TestCase
             ->method('getId');
 
         // Set query results for this specific test
-        $this->clientMock->setQueryResults([[
-                'aggregations' => [
-                    'prices' => [
-                        'buckets' => [
-                            [
-                                'key' => 1,
-                                'doc_count' => 1,
-                            ],
+        $this->clientMock->method('query')->willReturn([
+            'aggregations' => [
+                'prices' => [
+                    'buckets' => [
+                        [
+                            'key' => 1,
+                            'doc_count' => 1,
                         ],
                     ],
                 ],
-            ]]);
+            ],
+        ]);
 
         $this->queryContainer->expects($this->once())
             ->method('getQuery')
@@ -341,7 +346,7 @@ class DataProviderTest extends TestCase
             ->willReturn([]);
         
         // Set empty results to simulate no data
-        $this->clientMock->setQueryResults([]);
+        $this->clientMock->method('query')->willReturn([]);
 
         $result = $this->model->getAggregation($bucket, [$dimension], 10, $this->entityStorage);
         $this->assertIsArray($result);

@@ -10,8 +10,8 @@ namespace Magento\Swatches\Test\Unit\Model;
 use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
 use Magento\Catalog\Model\ResourceModel\Product\Attribute\Collection;
 use Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory;
-use Magento\Catalog\Test\Unit\Helper\AttributeTestHelper;
 use Magento\Eav\Model\Entity\Attribute\Source\AbstractSource;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Swatches\Helper\Data;
 use Magento\Swatches\Model\AttributesList;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -19,6 +19,7 @@ use PHPUnit\Framework\TestCase;
 
 class AttributesListTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var AttributesList
      */
@@ -52,7 +53,18 @@ class AttributesListTest extends TestCase
         );
         $collectionFactoryMock->expects($this->once())->method('create')->willReturn($this->collectionMock);
 
-        $this->attributeMock = new AttributeTestHelper();
+        $sourceMock = $this->createPartialMockWithReflection(\stdClass::class, ['getAllOptions']);
+        $sourceMock->method('getAllOptions')->willReturn(['options']);
+        
+        $this->attributeMock = $this->createPartialMockWithReflection(
+            Attribute::class,
+            ['getId', 'getFrontendLabel', 'getAttributeCode', 'getSource']
+        );
+        $this->attributeMock->method('getId')->willReturn('id');
+        $this->attributeMock->method('getFrontendLabel')->willReturn('label');
+        $this->attributeMock->method('getAttributeCode')->willReturn('code');
+        $this->attributeMock->method('getSource')->willReturn($sourceMock);
+        
         $this->collectionMock
             ->expects($this->once())
             ->method('getItems')

@@ -12,10 +12,10 @@ use Magento\Catalog\Model\Layer;
 use Magento\Catalog\Model\Layer\AvailabilityFlagInterface;
 use Magento\Catalog\Model\Layer\FilterList;
 use Magento\Catalog\Model\Layer\Resolver;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Element\AbstractBlock;
 use Magento\Framework\View\LayoutInterface;
-use Magento\Framework\View\Test\Unit\Helper\AbstractBlockTestHelper;
 use Magento\LayeredNavigation\Block\Navigation;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -27,6 +27,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
  */
 class NavigationTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var MockObject
      */
@@ -191,9 +192,9 @@ class NavigationTest extends TestCase
         $this->model->setLayout($this->layoutMock);
         $this->layoutMock->expects($this->once())->method('getChildName')->willReturn('sample block');
 
-        $blockMock = new AbstractBlockTestHelper();
+        $blockMock = $this->createPartialMockWithReflection(AbstractBlock::class, ['getClearUrl']);
         $clearUrl = 'very clear URL';
-        $blockMock->setClearUrl($clearUrl);
+        $blockMock->method('getClearUrl')->willReturn($clearUrl);
 
         $this->layoutMock->expects($this->once())->method('getBlock')->willReturn($blockMock);
         $this->assertEquals($clearUrl, $this->model->getClearUrl());

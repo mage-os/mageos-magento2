@@ -10,6 +10,7 @@ namespace Magento\Elasticsearch\Test\Unit\Model\Adapter\FieldMapper\Product;
 use Magento\Elasticsearch\Model\Adapter\FieldMapper\Product\AttributeAdapter;
 use Magento\Framework\Api\CustomAttributesDataInterface;
 use Magento\Framework\Model\AbstractExtensibleModel;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -19,6 +20,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
  */
 class AttributeAdapterTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var AttributeAdapter
      */
@@ -36,7 +38,76 @@ class AttributeAdapterTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->attribute = new \Magento\Framework\Api\Test\Unit\Helper\CustomAttributesDataInterfaceTestHelper();
+        $this->attribute = $this->createPartialMockWithReflection(
+            CustomAttributesDataInterface::class,
+            ['getIsFilterable', 'setIsFilterable', 'getIsFilterableInSearch', 'setIsFilterableInSearch',
+             'getIsSearchable', 'setIsSearchable', 'getIsVisibleInAdvancedSearch', 'setIsVisibleInAdvancedSearch',
+             'getBackendType', 'setBackendType', 'getFrontendInput', 'setFrontendInput',
+             'usesSource', 'setUsesSource', 'getCustomAttributes', 'setCustomAttributes',
+             'getCustomAttribute', 'setCustomAttribute']
+        );
+        
+        // Create stateful mock data storage
+        $data = [
+            'isFilterable' => false,
+            'isFilterableInSearch' => false,
+            'isSearchable' => false,
+            'isVisibleInAdvancedSearch' => false,
+            'backendType' => 'varchar',
+            'frontendInput' => 'text',
+            'usesSource' => false
+        ];
+        
+        $this->attribute->method('getIsFilterable')->willReturnCallback(function () use (&$data) {
+            return $data['isFilterable'];
+        });
+        $this->attribute->method('setIsFilterable')->willReturnCallback(function ($value) use (&$data) {
+            $data['isFilterable'] = $value;
+            return $this->attribute;
+        });
+        $this->attribute->method('getIsFilterableInSearch')->willReturnCallback(function () use (&$data) {
+            return $data['isFilterableInSearch'];
+        });
+        $this->attribute->method('setIsFilterableInSearch')->willReturnCallback(function ($value) use (&$data) {
+            $data['isFilterableInSearch'] = $value;
+            return $this->attribute;
+        });
+        $this->attribute->method('getIsSearchable')->willReturnCallback(function () use (&$data) {
+            return $data['isSearchable'];
+        });
+        $this->attribute->method('setIsSearchable')->willReturnCallback(function ($value) use (&$data) {
+            $data['isSearchable'] = $value;
+            return $this->attribute;
+        });
+        $this->attribute->method('getIsVisibleInAdvancedSearch')->willReturnCallback(function () use (&$data) {
+            return $data['isVisibleInAdvancedSearch'];
+        });
+        $this->attribute->method('setIsVisibleInAdvancedSearch')->willReturnCallback(function ($value) use (&$data) {
+            $data['isVisibleInAdvancedSearch'] = $value;
+            return $this->attribute;
+        });
+        $this->attribute->method('getBackendType')->willReturnCallback(function () use (&$data) {
+            return $data['backendType'];
+        });
+        $this->attribute->method('setBackendType')->willReturnCallback(function ($value) use (&$data) {
+            $data['backendType'] = $value;
+            return $this->attribute;
+        });
+        $this->attribute->method('getFrontendInput')->willReturnCallback(function () use (&$data) {
+            return $data['frontendInput'];
+        });
+        $this->attribute->method('setFrontendInput')->willReturnCallback(function ($value) use (&$data) {
+            $data['frontendInput'] = $value;
+            return $this->attribute;
+        });
+        $this->attribute->method('usesSource')->willReturnCallback(function () use (&$data) {
+            return $data['usesSource'];
+        });
+        $this->attribute->method('setUsesSource')->willReturnCallback(function ($value) use (&$data) {
+            $data['usesSource'] = $value;
+            return $this->attribute;
+        });
+        $this->attribute->method('getCustomAttributes')->willReturn([]);
 
         $objectManager = new ObjectManagerHelper($this);
 

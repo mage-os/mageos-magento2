@@ -10,8 +10,8 @@ namespace Magento\LayeredNavigation\Test\Unit\Observer\Edit\Tab\Front;
 
 use Magento\Backend\Block\Widget\Form\Element\Dependence;
 use Magento\Framework\Event\Observer;
-use Magento\Framework\Event\Test\Unit\Helper\ObserverTestHelper;
 use Magento\Framework\Module\Manager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\LayeredNavigation\Observer\Edit\Tab\Front\ProductAttributeFormBuildFormFieldDependenciesObserver;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -22,6 +22,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ProductAttributeFormBuildFormFieldDependenciesObserverTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var MockObject|Manager
      */
@@ -42,8 +43,9 @@ class ProductAttributeFormBuildFormFieldDependenciesObserverTest extends TestCas
     protected function setUp(): void
     {
         $this->moduleManager = $this->createMock(Manager::class);
-        $this->event = new ObserverTestHelper();
-        $this->event->setDependencies($this->createMock(Dependence::class));
+        $dependenciesMock = $this->createMock(Dependence::class);
+        $this->event = $this->createPartialMockWithReflection(Observer::class, ['getDependencies']);
+        $this->event->method('getDependencies')->willReturn($dependenciesMock);
         $this->observer = new ProductAttributeFormBuildFormFieldDependenciesObserver($this->moduleManager);
 
         parent::setUp();

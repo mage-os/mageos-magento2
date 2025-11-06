@@ -17,6 +17,7 @@ use Magento\Elasticsearch\Model\Indexer\Fulltext\Plugin\Category\Product\Attribu
 use Magento\Elasticsearch\Model\Indexer\IndexerHandler;
 use Magento\Framework\Indexer\DimensionProviderInterface;
 use Magento\Framework\Indexer\IndexerInterface;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Rule\InvokedCount as InvokedCountMatcher;
@@ -28,6 +29,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
  */
 class AttributeTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var Config|MockObject
      */
@@ -104,7 +106,25 @@ class AttributeTest extends TestCase
         $indexerData = ['indexer_example_data'];
 
         /** @var IndexerInterface|MockObject $indexerMock */
-        $indexerMock = new \Magento\Framework\Indexer\Test\Unit\Helper\IndexerInterfaceTestHelper();
+        $indexerMock = $this->createPartialMockWithReflection(
+            IndexerInterface::class,
+            ['getData', 'setData', 'load', 'getId', 'isScheduled', 'getViewId', 'getActionClass',
+             'getTitle', 'getDescription', 'getFields', 'getSources', 'getDependencies', 'getHandlers',
+             'getState', 'setState', 'getStatus', 'setStatus', 'getView', 'getLatestUpdated',
+             'invalidate', 'reindexAll', 'reindexRow', 'reindexList', 'isInvalid', 'isValid',
+             'isWorking', 'setScheduled']
+        );
+        $data = [];
+        $indexerMock->method('getData')->willReturnCallback(function () use (&$data) {
+            return $data;
+        });
+        $indexerMock->method('setData')->willReturnCallback(function ($newData) use (&$data, $indexerMock) {
+            $data = $newData;
+            return $indexerMock;
+        });
+        $indexerMock->method('load')->willReturnSelf();
+        $indexerMock->method('getId')->willReturn('test_indexer');
+        $indexerMock->method('isScheduled')->willReturn(false);
         $indexerMock->setData($indexerData);
 
         $this->indexerProcessorMock->expects($this->once())

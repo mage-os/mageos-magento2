@@ -16,12 +16,11 @@ use Magento\Eav\Model\ResourceModel\Entity\Attribute\Option\CollectionFactory;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Select;
 use Magento\Framework\Registry;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\Validator\UniversalFactory;
 use Magento\Swatches\Block\Adminhtml\Attribute\Edit\Options\AbstractSwatch;
 use Magento\Swatches\Helper\Media;
-use Magento\Swatches\Test\Unit\Helper\AttributeTestHelper;
-use Magento\Swatches\Test\Unit\Helper\OptionTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -32,6 +31,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
  */
 class AbstractSwatchTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var MockObject
      */
@@ -152,7 +152,10 @@ class AbstractSwatchTest extends TestCase
             ->with('store_option_values_1')
             ->willReturn(null);
 
-        $option = new OptionTestHelper();
+        $option = $this->createPartialMockWithReflection(\stdClass::class, ['getId', 'getValue', 'getLabel']);
+        $option->method('getId')->willReturn(14);
+        $option->method('getValue')->willReturn('Blue');
+        $option->method('getLabel')->willReturn('#0000FF');
 
         $attrOptionCollectionMock = $this->createPartialMock(
             Collection::class,
@@ -174,7 +177,8 @@ class AbstractSwatchTest extends TestCase
             ->method('create')
             ->willReturn($attrOptionCollectionMock);
 
-        $attribute = new AttributeTestHelper();
+        $attribute = $this->createPartialMockWithReflection(\stdClass::class, ['getId']);
+        $attribute->method('getId')->willReturn(23);
 
         $this->registryMock
             ->expects($this->once())

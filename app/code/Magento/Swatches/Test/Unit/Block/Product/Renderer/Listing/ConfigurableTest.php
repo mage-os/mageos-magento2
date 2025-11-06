@@ -17,14 +17,12 @@ use Magento\ConfigurableProduct\Helper\Data;
 use Magento\ConfigurableProduct\Model\ConfigurableAttributeData;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable\Attribute;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable\Variations\Prices;
-use Magento\ConfigurableProduct\Test\Unit\Helper\ConfigurableAttributeTestHelper;
 use Magento\Customer\Helper\Session\CurrentCustomer;
 use Magento\Eav\Api\Data\AttributeInterface;
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Request\Http;
 use Magento\Framework\App\RequestInterface;
-use Magento\Framework\App\Test\Unit\Helper\HttpTestHelper;
 use Magento\Framework\App\DeploymentConfig;
 use Magento\Framework\Config\ConfigOptionsListConstants;
 use Magento\Framework\Json\EncoderInterface;
@@ -33,6 +31,7 @@ use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Framework\Pricing\PriceInfo\Base;
 use Magento\Framework\Stdlib\ArrayUtils;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Swatches\Block\Product\Renderer\Configurable;
@@ -49,6 +48,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ConfigurableTest extends TestCase
 {
+    use MockCreationTrait;
     /** @var Configurable */
     private $configurable;
 
@@ -136,7 +136,9 @@ class ConfigurableTest extends TestCase
             Prices::class
         );
         $customerSession = $this->createMock(\Magento\Customer\Model\Session::class);
-        $this->request = new HttpTestHelper();
+        $this->request = $this->createPartialMockWithReflection(Http::class, ['toArray', 'getQuery']);
+        $this->request->method('toArray')->willReturn(['color' => 59, 'size' => 1, 'random_param' => '123']);
+        $this->request->method('getQuery')->willReturnSelf();
 
         $context = $this->getContextMock();
         $context->method('getRequest')->willReturn($this->request);
@@ -274,8 +276,8 @@ class ConfigurableTest extends TestCase
         $productAttribute1->expects($this->any())->method('getId')->willReturn(1);
         $productAttribute1->expects($this->any())->method('getAttributeCode')->willReturn('code');
 
-        $attribute1 = new ConfigurableAttributeTestHelper();
-        $attribute1->setProductAttribute($productAttribute1);
+        $attribute1 = $this->createPartialMockWithReflection(Attribute::class, ['getProductAttribute']);
+        $attribute1->method('getProductAttribute')->willReturn($productAttribute1);
 
         $this->helper->expects($this->any())->method('getAllowAttributes')->with($this->product)
             ->willReturn([$attribute1]);

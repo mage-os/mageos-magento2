@@ -23,13 +23,13 @@ use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Select;
 use Magento\Framework\EntityManager\MetadataPool;
-use Magento\Framework\EntityManager\Test\Unit\Helper\MetadataPoolTestHelper;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\Indexer\MultiDimensionProvider;
 use Magento\Framework\Indexer\ScopeResolver\IndexScopeResolver;
 use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
 use Magento\Framework\Model\ResourceModel\Db\Context;
 use Magento\Framework\Search\Request\IndexScopeResolverInterface;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
@@ -43,6 +43,8 @@ use PHPUnit\Framework\Attributes\DataProvider;
  */
 class IndexTest extends TestCase
 {
+    use MockCreationTrait;
+    
     /**
      * @var Index
      */
@@ -179,7 +181,12 @@ class IndexTest extends TestCase
             'getTablePrefix',
         ]);
 
-        $this->metadataPool = new MetadataPoolTestHelper();
+        $this->metadataPool = $this->createPartialMockWithReflection(
+            MetadataPool::class,
+            ['getMetadata', 'getIdentifierField']
+        );
+        $this->metadataPool->method('getMetadata')->willReturnSelf();
+        $this->metadataPool->method('getIdentifierField')->willReturn('entity_id');
 
         $this->context->expects($this->any())
             ->method('getResources')
@@ -192,8 +199,6 @@ class IndexTest extends TestCase
         $this->resources->expects($this->any())
             ->method('getTablePrefix')
             ->willReturn('');
-
-        $this->metadataPool->setIdentifierField('entity_id');
 
         $objectManager = new ObjectManagerHelper($this);
 

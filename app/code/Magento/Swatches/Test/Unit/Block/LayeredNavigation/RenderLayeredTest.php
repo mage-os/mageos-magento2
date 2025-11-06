@@ -18,7 +18,6 @@ use Magento\Framework\View\Element\Template\Context;
 use Magento\Swatches\Block\LayeredNavigation\RenderLayered;
 use Magento\Swatches\Helper\Data;
 use Magento\Swatches\Helper\Media;
-use Magento\Swatches\Test\Unit\Helper\RenderLayeredTestHelper;
 use Magento\Theme\Block\Html\Pager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -113,7 +112,7 @@ class RenderLayeredTest extends TestCase
         $this->filterMock = $this->createMock(AbstractFilter::class);
         $this->htmlBlockPagerMock = $this->createMock(Pager::class);
 
-        $this->block = new RenderLayeredTestHelper(
+        $this->block = new RenderLayered(
             $this->contextMock,
             $this->eavAttributeMock,
             $this->layerAttributeFactoryMock,

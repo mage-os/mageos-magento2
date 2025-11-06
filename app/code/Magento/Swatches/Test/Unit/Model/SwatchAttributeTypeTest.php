@@ -7,9 +7,10 @@ declare(strict_types=1);
 
 namespace Magento\Swatches\Test\Unit\Model;
 
-use Magento\Catalog\Test\Unit\Helper\AttributeTestHelper;
+use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
 use Magento\Eav\Api\Data\AttributeInterface;
 use Magento\Framework\Serialize\Serializer\Json;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Swatches\Model\Swatch;
 use Magento\Swatches\Model\SwatchAttributeType;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -23,6 +24,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
  */
 class SwatchAttributeTypeTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var SwatchAttributeType
      */
@@ -136,7 +138,20 @@ class SwatchAttributeTypeTest extends TestCase
         $json = new Json();
         $encodedAdditionData = $json->serialize([Swatch::SWATCH_INPUT_TYPE_KEY => Swatch::SWATCH_INPUT_TYPE_TEXT]);
 
-        $attributeMock = new AttributeTestHelper($encodedAdditionData);
+        $attributeMock = $this->createPartialMockWithReflection(Attribute::class, ['hasData', 'getData', 'setData']);
+        $data = [];
+        $attributeMock->method('hasData')->willReturnCallback(function ($key) use (&$data) {
+            return isset($data[$key]);
+        });
+        $attributeMock->method('getData')->willReturnCallback(function ($key = '') use (&$data, $encodedAdditionData) {
+            if ($key === 'additional_data') {
+                return $encodedAdditionData;
+            }
+            return $data[$key] ?? null;
+        });
+        $attributeMock->method('setData')->willReturnCallback(function ($key, $value = null) use (&$data) {
+            $data[$key] = $value;
+        });
 
         $this->assertTrue($this->swatchType->isTextSwatch($attributeMock));
         $this->assertFalse($this->swatchType->isVisualSwatch($attributeMock));

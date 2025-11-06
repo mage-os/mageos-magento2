@@ -10,7 +10,8 @@ namespace Magento\Swatches\Test\Unit\Model;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
-use Magento\ConfigurableProduct\Test\Unit\Helper\ConfigurableAttributeTestHelper;
+use Magento\ConfigurableProduct\Model\Product\Type\Configurable\Attribute as ConfigurableAttribute;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Swatches\Model\SwatchAttributeCodes;
 use Magento\Swatches\Model\SwatchAttributesProvider;
@@ -24,6 +25,7 @@ use PHPUnit\Framework\TestCase;
  */
 class SwatchAttributesProviderTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var SwatchAttributesProvider
      */
@@ -73,9 +75,12 @@ class SwatchAttributesProviderTest extends TestCase
 
         $attributeMock = $this->createPartialMock(Attribute::class, ['getData', 'setData', 'getSource', 'hasData']);
 
-        $configAttributeMock = new ConfigurableAttributeTestHelper();
-        $configAttributeMock->setAttributeId(1);
-        $configAttributeMock->setProductAttribute($attributeMock);
+        $configAttributeMock = $this->createPartialMockWithReflection(
+            ConfigurableAttribute::class,
+            ['getAttributeId', 'getProductAttribute']
+        );
+        $configAttributeMock->method('getAttributeId')->willReturn(1);
+        $configAttributeMock->method('getProductAttribute')->willReturn($attributeMock);
 
         $this->typeConfigurable
             ->method('getConfigurableAttributes')

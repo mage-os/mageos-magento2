@@ -9,8 +9,8 @@ namespace Magento\LayeredNavigation\Test\Unit\Observer\Grid;
 
 use Magento\Catalog\Block\Adminhtml\Product\Attribute\Grid;
 use Magento\Framework\Event\Observer;
-use Magento\Framework\Event\Test\Unit\Helper\ObserverTestHelper;
 use Magento\Framework\Module\Manager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\LayeredNavigation\Observer\Grid\ProductAttributeGridBuildObserver;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -25,6 +25,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ProductAttributeGridBuildObserverTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var ProductAttributeGridBuildObserver
      */
@@ -53,8 +54,8 @@ class ProductAttributeGridBuildObserverTest extends TestCase
         $objectManager = new ObjectManager($this);
         $this->moduleManagerMock = $this->createMock(Manager::class);
         $this->gridMock = $this->createMock(Grid::class);
-        $this->observerMock = new ObserverTestHelper();
-        $this->observerMock->setGrid($this->gridMock);
+        $this->observerMock = $this->createPartialMockWithReflection(Observer::class, ['getGrid']);
+        $this->observerMock->method('getGrid')->willReturn($this->gridMock);
 
         $this->observer = $objectManager->getObject(
             ProductAttributeGridBuildObserver::class,

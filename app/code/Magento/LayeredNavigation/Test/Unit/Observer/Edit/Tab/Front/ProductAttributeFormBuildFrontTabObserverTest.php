@@ -12,8 +12,8 @@ use Magento\Config\Model\Config\Source\Yesno;
 use Magento\Framework\Data\Form;
 use Magento\Framework\Data\Form\Element\Fieldset;
 use Magento\Framework\Event\Observer;
-use Magento\Framework\Event\Test\Unit\Helper\ObserverTestHelper;
 use Magento\Framework\Module\Manager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\LayeredNavigation\Observer\Edit\Tab\Front\ProductAttributeFormBuildFrontTabObserver;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -26,6 +26,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ProductAttributeFormBuildFrontTabObserverTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var MockObject|Observer
      */
@@ -53,9 +54,9 @@ class ProductAttributeFormBuildFrontTabObserverTest extends TestCase
     {
         $this->optionListLock = $this->createMock(Yesno::class);
         $this->moduleManagerMock = $this->createMock(Manager::class);
-        $this->eventObserverMock = new ObserverTestHelper();
         $formMock = $this->createMock(Form::class);
-        $this->eventObserverMock->setForm($formMock);
+        $this->eventObserverMock = $this->createPartialMockWithReflection(Observer::class, ['getForm']);
+        $this->eventObserverMock->method('getForm')->willReturn($formMock);
 
         $objectManager = new ObjectManager($this);
         $this->observer = $objectManager->getObject(

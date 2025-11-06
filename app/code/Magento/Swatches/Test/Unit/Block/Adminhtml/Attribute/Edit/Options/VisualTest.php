@@ -9,13 +9,14 @@ declare(strict_types=1);
 namespace Magento\Swatches\Test\Unit\Block\Adminhtml\Attribute\Edit\Options;
 
 use Magento\Framework\DataObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Swatches\Block\Adminhtml\Attribute\Edit\Options\Visual;
-use Magento\Swatches\Test\Unit\Helper\VisualTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class VisualTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var MockObject|Visual
      */
@@ -26,7 +27,16 @@ class VisualTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->model = new VisualTestHelper();
+        $this->model = $this->createPartialMockWithReflection(
+            Visual::class,
+            ['canManageOptionDefaultOnly', 'getOptionValues', 'getUrl', 'isReadOnly', 'getReadOnly']
+        );
+        $this->model->method('canManageOptionDefaultOnly')->willReturn(false);
+        $this->model->method('getOptionValues')->willReturn([]);
+        $this->model->method('getUrl')->willReturn('test-url');
+        $this->model->method('isReadOnly')->willReturn(false);
+        $this->model->method('getReadOnly')->willReturn(false);
+        $this->model->read_only = false;
     }
 
     /**
@@ -80,7 +90,18 @@ class VisualTest extends TestCase
     public function executeTest($testCase)
     {
         // Override methods for this test
-        $this->model = new VisualTestHelper($testCase['dataSet']);
+        $dataSet = $testCase['dataSet'];
+        $this->model = $this->createPartialMockWithReflection(
+            Visual::class,
+            ['canManageOptionDefaultOnly', 'getOptionValues', 'getUrl', 'isReadOnly', 'getReadOnly']
+        );
+        $this->model->method('canManageOptionDefaultOnly')
+            ->willReturn($dataSet['can_manage_option_default_only'] ?? false);
+        $this->model->method('getOptionValues')->willReturn($dataSet['option_values'] ?? []);
+        $this->model->method('getUrl')->willReturn('http://magento.com/admin/swatches/iframe/show');
+        $this->model->method('isReadOnly')->willReturn($dataSet['read_only'] ?? false);
+        $this->model->method('getReadOnly')->willReturn($dataSet['read_only'] ?? false);
+        $this->model->read_only = $dataSet['read_only'] ?? false;
 
         $this->assertEquals($testCase['expectedResult'], $this->model->getJsonConfig());
     }
