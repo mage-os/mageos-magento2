@@ -197,7 +197,7 @@ class DateTest extends TestCase
         $this->configMock = $this->createMock(Config::class);
         $this->orderFactoryMock = $this->createPartialMock(OrderFactory::class, ['create']);
 
-$this->selectMock = $this->createMock(Select::class);
+        $this->selectMock = $this->createMock(Select::class);
         $this->selectMock
             ->expects($this->any())
             ->method('columns')
@@ -218,7 +218,10 @@ $this->selectMock = $this->createMock(Select::class);
             ->expects($this->any())
             ->method('getPart')
             ->willReturn([]);
-        $this->connectionMock = $this->createPartialMock(Mysql::class, ['select', 'getIfNullSql', 'getDateFormatSql', 'prepareSqlCondition', 'getCheckSql', 'getTableName']);
+        $this->connectionMock = $this->createPartialMock(
+            Mysql::class,
+            ['select', 'getIfNullSql', 'getDateFormatSql', 'prepareSqlCondition', 'getCheckSql', 'getTableName']
+        );
 
         $this->connectionMock
             ->expects($this->any())
@@ -228,7 +231,10 @@ $this->selectMock = $this->createMock(Select::class);
             ->expects($this->any())
             ->method('getTableName')
             ->willReturnArgument(0);
-        $this->resourceMock = $this->createPartialMock(AbstractDb::class, ['getConnection', 'getMainTable', 'getTable', '_construct']);
+        $this->resourceMock = $this->createPartialMock(
+            AbstractDb::class,
+            ['getConnection', 'getMainTable', 'getTable', '_construct']
+        );
         $this->resourceMock
             ->expects($this->any())
             ->method('getConnection')

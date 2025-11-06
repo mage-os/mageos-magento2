@@ -75,7 +75,7 @@ class FileFactoryTest extends TestCase
         $this->_sessionMock = $this->objectManager->createPartialMockWithReflection(
             Session::class,
             ['setIsUrlNotice']
-            );
+        );
         $this->_backendUrl = $this->createMock(Url::class);
         $this->_authMock = $this->createMock(Auth::class);
         $this->_model = $this->objectManager->getObject(

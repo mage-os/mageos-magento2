@@ -33,8 +33,6 @@ class ModuleServiceTest extends TestCase
     private $moduleListMock;
 
     /**
-     * Object Manager
-     *
      * @var ObjectManager
      */
     private $objectManager;

@@ -38,8 +38,8 @@ class ReaderTest extends TestCase
      */
     private $postProcessor;
 
-    /*
-     * Reader
+    /**
+     * @var Reader
      */
     private $model;
 

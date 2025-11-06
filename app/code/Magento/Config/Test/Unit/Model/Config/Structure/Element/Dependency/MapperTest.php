@@ -63,9 +63,9 @@ class MapperTest extends TestCase
 
         $this->_configStructureMock = $this->createPartialMock(Structure::class, ['getElement']);
 
-$this->_fieldFactoryMock = $this->createPartialMock(FieldFactory::class, ['create']);
+        $this->_fieldFactoryMock = $this->createPartialMock(FieldFactory::class, ['create']);
 
-$this->_scopeConfigMock = $this->createMock(
+        $this->_scopeConfigMock = $this->createMock(
             ScopeConfigInterface::class
         );
         $this->_model = new Mapper(
@@ -224,11 +224,10 @@ $this->_scopeConfigMock = $this->createMock(
      * @param bool $isValueSatisfy
      * @param bool $isFieldVisible
      * @param string $fieldId
-     * @param string $mockClassName
      *
      * @return MockObject
      */
-    protected function _getDependencyField($isValueSatisfy, $isFieldVisible, $fieldId, $mockClassName): MockObject
+    protected function _getDependencyField($isValueSatisfy, $isFieldVisible, $fieldId): MockObject
     {
         $field = $this->createPartialMock(Field::class, ['isValueSatisfy', 'getId']);
 

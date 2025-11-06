@@ -44,7 +44,7 @@ class CleanCacheTest extends TestCase
             $this->any()
         )->method(
             'valid'
-        )->willReturnCallback(function() use (&$callCount) {
+        )->willReturnCallback(function () use (&$callCount) {
             $callCount++;
             return $callCount === 1; // true on first call, false on second
         });

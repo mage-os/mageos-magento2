@@ -44,9 +44,9 @@ class LogoTest extends TestCase
         $helper = new ObjectManager($this);
         $this->uploaderFactoryMock = $this->createPartialMock(UploaderFactory::class, ['create']);
 
-$this->uploaderMock = $this->createPartialMock(Uploader::class, ['setAllowedExtensions', 'save']);
+        $this->uploaderMock = $this->createPartialMock(Uploader::class, ['setAllowedExtensions', 'save']);
 
-$this->uploaderFactoryMock
+        $this->uploaderFactoryMock
             ->expects($this->once())
             ->method('create')
             ->willReturn($this->uploaderMock);

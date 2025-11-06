@@ -47,7 +47,7 @@ class InitialSnapshotConfigSourceTest extends TestCase
         $this->flagManagerMock = $this->createMock(FlagManager::class);
         $this->dataObjectFactoryMock = $this->createPartialMock(DataObjectFactory::class, ['create']);
 
-$this->dataObjectMock = $this->createMock(DataObject::class);
+        $this->dataObjectMock = $this->createMock(DataObject::class);
 
         $this->dataObjectFactoryMock->expects($this->any())
             ->method('create')

@@ -54,7 +54,7 @@ class IndexTest extends TestCase
         $this->pageMock = $this->createMock(Page::class);
         $this->pageConfigMock = $this->createPartialMock(Config::class, ['getTitle']);
 
-$this->titleMock = $this->createMock(Title::class);
+        $this->titleMock = $this->createMock(Title::class);
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->indexController =  $this->objectManagerHelper->getObject(

@@ -126,7 +126,6 @@ class ValueProcessorTest extends TestCase
         $scopeCode = 'someScopeCode';
         $path = 'some/config/path';
         $oldConfigScope = 'oldConfigScope';
-
         $this->scopeMock->expects($this->once())
             ->method('getCurrentScope')
             ->willReturn($oldConfigScope);
@@ -188,7 +187,6 @@ class ValueProcessorTest extends TestCase
             ->method('serialize')
             ->with($processedValue)
             ->willReturn($expectsValue);
-
         $structureMock->expects($this->once())
             ->method('getElementByConfigPath')
             ->with($path)

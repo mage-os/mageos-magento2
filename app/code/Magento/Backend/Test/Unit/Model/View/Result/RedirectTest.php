@@ -36,6 +36,9 @@ class RedirectTest extends TestCase
     /** @var RedirectInterface|MockObject */
     protected $redirect;
 
+    /**
+     * @var string
+     */
     protected $url = 'adminhtml/index';
 
     protected function setUp(): void

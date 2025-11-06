@@ -25,7 +25,7 @@ use PHPUnit\Framework\TestCase;
  */
 class FieldTest extends TestCase
 {
-    const FIELD_TEST_CONSTANT = "field test constant";
+    private const FIELD_TEST_CONSTANT = "field test constant";
 
     /**
      * @var Field

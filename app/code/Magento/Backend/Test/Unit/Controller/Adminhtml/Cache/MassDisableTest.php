@@ -66,7 +66,7 @@ class MassDisableTest extends TestCase
 
         $this->stateMock = $this->createMock(State::class);
 
-$this->messageManagerMock = $this->createMock(MessageManager::class);
+        $this->messageManagerMock = $this->createMock(MessageManager::class);
 
         $this->requestMock = $this->createMock(Request::class);
 
