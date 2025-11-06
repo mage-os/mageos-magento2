@@ -190,7 +190,7 @@ class AllmethodsTest extends TestCase
 
         $this->carriersMock->expects($this->once())
             ->method('getAllowedMethods')
-            ->willReturn([null => 'Null Title', '' => 'Empty Title']);
+            ->willReturn([0 => 'Zero Title', '' => 'Empty Title']);
 
         $this->scopeConfig->expects($this->once())
             ->method('getValue')
