@@ -13,7 +13,7 @@
             <features value="Checkout"/>
             <stories value="Checkout for Afghanistan Countries"/>
             <title value="Storefront guest checkout for Afghanistan countries with flat rate and free shipping"/>
-            <description value="Checkout flow if flat rate anf free shipping method are disabled for all countries except Afghanistan"/>
+            <description value="Checkout flow if flat rate and free shipping method are disabled for all countries except Afghanistan"/>
             <severity value="AVERAGE"/>
             <testCaseId value="AC-7617"/>
             <group value="checkout"/>
@@ -22,35 +22,26 @@
             <!-- Precondition Step 1: Create simple product -->
             <createData entity="_defaultProduct" stepKey="createSimpleProduct"/>
             <!-- Precondition Step 2: Enable Free Shipping for Specific Countries = Afghanistan -->
-            <magentoCLI command="config:set {{EnableFreeShippingConfigData.path}} {{EnableFreeShippingConfigData.value}}" stepKey="enableFreeShipping"/>
-            <magentoCLI command="config:set {{EnableFreeShippingToSpecificCountriesConfigData.path}} {{EnableFreeShippingToSpecificCountriesConfigData.value}}" stepKey="limitFreeShippingToSpecificCountries"/>
-            <magentoCLI command="config:set {{EnableFreeShippingToAfghanistanConfigData.path}} {{EnableFreeShippingToAfghanistanConfigData.value}}" stepKey="setFreeShippingSpecificCountryAF"/>
+            <actionGroup ref="CliEnableFreeShippingMethodActionGroup" stepKey="enableFreeShippingMethod"/>
+            <actionGroup ref="AdminEnableFreeShippingToSpecificCountriesActionGroup" stepKey="enableToSpecificCountries"/>
             <!-- Enable Flat Rate for Specific Countries = Afghanistan -->
-            <magentoCLI command="config:set {{EnableFlatRateConfigData.path}} {{EnableFlatRateConfigData.value}}" stepKey="enableFlatRate"/>
-            <magentoCLI command="config:set {{EnableFlatRateToSpecificCountriesConfigData.path}} {{EnableFlatRateToSpecificCountriesConfigData.value}}" stepKey="limitFlatRateToSpecificCountries"/>
-            <magentoCLI command="config:set {{EnableFlatRateToAfghanistanConfigData.path}} {{EnableFlatRateToAfghanistanConfigData.value}}" stepKey="setFlatRateSpecificCountryAF"/>
-            <!-- Precondition Step 3: Disable all other carriers -->
-            <magentoCLI command="config:set {{AdminDisableUPSConfigData.path}} {{AdminDisableUPSConfigData.value}}" stepKey="disableUPSCarrier"/>
-            <magentoCLI command="config:set {{AdminDisableUSPSConfigData.path}} {{AdminDisableUSPSConfigData.value}}" stepKey="disableUSPSCarrier"/>
-            <magentoCLI command="config:set {{AdminFedexDisableForCheckoutConfigData.path}} {{AdminFedexDisableForCheckoutConfigData.value}}" stepKey="disableFedExCarrier"/>
-            <magentoCLI command="config:set {{AdminDHLDisableConfigData.path}} {{AdminDHLDisableConfigData.value}}" stepKey="disableDHLCarrier"/>
+            <actionGroup ref="AdminEnableFlatRateToSpecificCountriesActionGroup" stepKey="enableFlatRateToSpecificCountries"/>
         </before>
         <after>
             <!-- Revert Free Shipping and Flat Rate restrictions -->
-            <magentoCLI command="config:set {{DisableFreeShippingConfigData.path}} {{DisableFreeShippingConfigData.value}}" stepKey="disableFreeShipping"/>
-            <magentoCLI command="config:set {{EnableFreeShippingToAllAllowedCountriesConfigData.path}} {{EnableFreeShippingToAllAllowedCountriesConfigData.value}}" stepKey="freeShippingAllCountries"/>
-            <magentoCLI command="config:set {{DisableFlatRateConfigData.path}} {{DisableFlatRateConfigData.value}}" stepKey="disableFlatRate"/>
-            <magentoCLI command="config:set {{EnableFlatRateToAllAllowedCountriesConfigData.path}} {{EnableFlatRateToAllAllowedCountriesConfigData.value}}" stepKey="flatRateAllCountries"/>
+            <actionGroup ref="CliDisableFreeShippingMethodActionGroup" stepKey="disableFreeShipping"/>
+            <actionGroup ref="AdminEnableFreeShippingToAllCountriesActionGroup" stepKey="enableAllCountries"/>
+            <actionGroup ref="AdminEnableFlatRateToAllCountriesActionGroup" stepKey="selectAllCountries"/>
             <!-- Delete product -->
             <deleteData createDataKey="createSimpleProduct" stepKey="deleteSimpleProduct"/>
         </after>
         <!-- Step 1: Go to Storefront as Guest -->
         <actionGroup ref="StorefrontOpenHomePageActionGroup" stepKey="goToStorefront"/>
         <!-- Step 2: Add simple product to cart -->
-        <actionGroup ref="StorefrontOpenProductEntityPageActionGroup" stepKey="goToSimple2ProductPage">
+        <actionGroup ref="StorefrontOpenProductEntityPageActionGroup" stepKey="navigateToProductPage">
             <argument name="product" value="$createSimpleProduct$"/>
         </actionGroup>
-        <actionGroup ref="AddProductWithQtyToCartFromStorefrontProductPageActionGroup" stepKey="addSimple2ToCart">
+        <actionGroup ref="AddProductWithQtyToCartFromStorefrontProductPageActionGroup" stepKey="addProductToCart">
             <argument name="productName" value="$createSimpleProduct.name$"/>
             <argument name="productQty" value="1"/>
         </actionGroup>
@@ -72,6 +63,6 @@
         <actionGroup ref="AssertStoreFrontShippingMethodAvailableActionGroup" stepKey="seeFreeShipping">
             <argument name="shippingMethodName" value="Free Shipping"/>
         </actionGroup>
-        <waitForElementVisible selector="{{CheckoutShippingMethodsSection.next}}" stepKey="sSeeNextButton"/>
+        <waitForElementVisible selector="{{CheckoutShippingMethodsSection.next}}" stepKey="seeNextButton"/>
     </test>
 </tests>
