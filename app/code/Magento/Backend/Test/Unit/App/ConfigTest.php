@@ -10,10 +10,10 @@ namespace Magento\Backend\Test\Unit\App;
 use Magento\Backend\App\Config;
 use Magento\Backend\App\Config as BackendConfig;
 use Magento\Framework\App\Config\Data;
-use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Magento\Backend\Test\Unit\Helper\DataTestHelper;
 
 /**
  * Test reading by path and reading flag from config
@@ -32,8 +32,14 @@ class ConfigTest extends TestCase
      */
     protected $model;
 
+    /**
+     * @var ObjectManager
+     */
+    private $objectManager;
+
     protected function setUp(): void
     {
+        $this->objectManager = new ObjectManager($this);
         $this->appConfig = $this->createPartialMock(\Magento\Framework\App\Config::class, ['get']);
         $this->model = new BackendConfig($this->appConfig);
     }
@@ -100,6 +106,9 @@ class ConfigTest extends TestCase
      */
     protected function getConfigDataMock($mockedMethod)
     {
-        return $this->createPartialMock(DataTestHelper::class, ['$mockedMethod']);
+        return $this->objectManager->createPartialMockWithReflection(
+            Data::class,
+            [$mockedMethod]
+        );
     }
 }

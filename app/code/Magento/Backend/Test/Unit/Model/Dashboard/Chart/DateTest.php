@@ -218,17 +218,29 @@ $this->selectMock = $this->createMock(Select::class);
             ->expects($this->any())
             ->method('getPart')
             ->willReturn([]);
-        $this->connectionMock = $this->createPartialMock(Mysql::class, ['select', 'getIfNullSql', 'getDateFormatSql', 'prepareSqlCondition', 'getCheckSql']);
+        $this->connectionMock = $this->createPartialMock(Mysql::class, ['select', 'getIfNullSql', 'getDateFormatSql', 'prepareSqlCondition', 'getCheckSql', 'getTableName']);
 
-$this->connectionMock
+        $this->connectionMock
             ->expects($this->any())
             ->method('select')
             ->willReturn($this->selectMock);
-        $this->resourceMock = $this->createPartialMock(AbstractDb::class, ['getConnection', '_construct']);
+        $this->connectionMock
+            ->expects($this->any())
+            ->method('getTableName')
+            ->willReturnArgument(0);
+        $this->resourceMock = $this->createPartialMock(AbstractDb::class, ['getConnection', 'getMainTable', 'getTable', '_construct']);
         $this->resourceMock
-            ->expects($this->once())
+            ->expects($this->any())
             ->method('getConnection')
             ->willReturn($this->connectionMock);
+        $this->resourceMock
+            ->expects($this->any())
+            ->method('getMainTable')
+            ->willReturn('sales_order');
+        $this->resourceMock
+            ->expects($this->any())
+            ->method('getTable')
+            ->willReturnArgument(0);
         return new Collection(
             $this->entityFactoryMock,
             $this->loggerMock,

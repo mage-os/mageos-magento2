@@ -23,13 +23,16 @@ class AbstractCommandTest extends TestCase
     {
         $this->_model = $this->getMockBuilder(AbstractCommand::class)
             ->setConstructorArgs([['id' => 'item']])
+            ->onlyMethods(['_execute'])
             ->getMock();
     }
 
     public function testConstructorRequiresObligatoryParams()
     {
         $this->expectException('InvalidArgumentException');
-        $this->getMockBuilder(AbstractCommand::class)->getMock();
+        $this->getMockBuilder(AbstractCommand::class)
+            ->onlyMethods(['_execute'])
+            ->getMock();
     }
 
     public function testChainAddsNewCommandAsNextInChain()

@@ -27,8 +27,6 @@ use Magento\Store\Model\Group;
 use Magento\Store\Model\Store;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Magento\Backend\Test\Unit\Helper\SessionTestHelper;
-use Magento\Backend\Test\Unit\Helper\FilterManagerTestHelper;
 
 /**
  * Unit test for \Magento\Backend\Controller\Adminhtml\System\Store\Save controller.
@@ -108,19 +106,34 @@ class SaveTest extends TestCase
     private $resultPageFactoryMock;
 
     /**
+     * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
+     */
+    private $objectManagerHelper;
+
+    /**
      * @inheritDoc
      */
     public function setUp(): void
     {
+        $this->objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->requestMock = $this->createPartialMock(Http::class, ['isPost', 'getPostValue']);
         $this->responseMock = $this->createMock(\Magento\Framework\App\Response\Http::class);
         $this->objectManagerMock = $this->createPartialMock(ObjectManager::class, ['get', 'create']);
         $this->messagesMock = $this->createMock(ManagerInterface::class);
         $this->helperMock = $this->createPartialMock(Data::class, ['getUrl']);
-        $this->sessionMock = $this->createPartialMock(SessionTestHelper::class, ['setPostData']);
-        $this->storeModelMock = $this->createPartialMock(Store::class, ['load', 'setData', 'setId', 'getGroupId', 'setWebsiteId', 'isActive', 'isDefault', 'save']);
+        $this->sessionMock = $this->objectManagerHelper->createPartialMockWithReflection(
+            Session::class,
+            ['setPostData']
+        );
+        $this->storeModelMock = $this->createPartialMock(
+            Store::class,
+            ['load', 'setData', 'setId', 'getGroupId', 'setWebsiteId', 'isActive', 'isDefault', 'save']
+        );
         $this->groupModelMock = $this->createPartialMock(Group::class, ['load', 'getWebsiteId']);
-        $this->filterManagerMock = $this->createPartialMock(FilterManagerTestHelper::class, ['removeTags']);
+        $this->filterManagerMock = $this->objectManagerHelper->createPartialMockWithReflection(
+            FilterManager::class,
+            ['removeTags']
+        );
         $this->cacheTypeListMock = $this->createMock(TypeListInterface::class);
         $this->registryMock = $this->createMock(Registry::class);
         $this->resultForwardFactoryMock = $this->createMock(ForwardFactory::class);
@@ -129,17 +142,17 @@ class SaveTest extends TestCase
         $resultRedirect = $this->createPartialMock(Redirect::class, ['setPath', 'setUrl']);
         $resultRedirect->expects($this->once())->method('setPath')->willReturnSelf();
         $redirectFactory->expects($this->atLeastOnce())->method('create')->willReturn($resultRedirect);
-        $contextMock = $this->getMockBuilder(Context::class)
-            ->onlyMethods([
+        $contextMock = $this->createPartialMock(
+            Context::class,
+            [
                 'getRequest',
                 'getResponse',
                 'getObjectManager',
                 'getHelper',
                 'getMessageManager',
                 'getResultRedirectFactory'
-            ])
-            ->disableOriginalConstructor()
-            ->getMock();
+            ]
+        );
         $contextMock->expects($this->once())->method('getRequest')->willReturn($this->requestMock);
         $contextMock->expects($this->once())->method('getResponse')->willReturn($this->responseMock);
         $contextMock->expects($this->once())->method('getObjectManager')->willReturn($this->objectManagerMock);

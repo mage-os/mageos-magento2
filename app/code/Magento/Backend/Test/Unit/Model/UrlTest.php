@@ -93,13 +93,21 @@ class UrlTest extends TestCase
     private $serializerMock;
 
     /**
+     * @var ObjectManager
+     */
+    private $objectManager;
+
+    /**
      * @inheritDoc
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     protected function setUp(): void
     {
-        $objectManager = new ObjectManager($this);
-        $this->menuMock = $this->createMock(Menu::class);
+        $this->objectManager = new ObjectManager($this);
+        $this->menuMock = $this->objectManager->createPartialMockWithReflection(
+            Menu::class,
+            ['getFirstAvailableChild', 'get', 'getFirstAvailable']
+        );
 
         $this->menuConfigMock = $this->createMock(Config::class);
         $this->menuConfigMock->expects($this->any())->method('getMenu')->willReturn($this->menuMock);
@@ -162,10 +170,7 @@ class UrlTest extends TestCase
             ->willReturn($routeParamsResolver);
         /** @var HostChecker|MockObject $hostCheckerMock */
         $hostCheckerMock = $this->createMock(HostChecker::class);
-        $this->serializerMock = $this->getMockBuilder(Json::class)
-            ->onlyMethods(['serialize'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->serializerMock = $this->createPartialMock(Json::class, ['serialize']);
 
         $this->serializerMock->expects($this->any())
             ->method('serialize')
@@ -174,7 +179,7 @@ class UrlTest extends TestCase
                     return json_encode($value);
                 }
             );
-        $this->model = $objectManager->getObject(
+        $this->model = $this->objectManager->getObject(
             Url::class,
             [
                 'scopeConfig' => $this->scopeConfigMock,
@@ -199,13 +204,16 @@ class UrlTest extends TestCase
     {
         $user = $this->createMock(User::class);
         $user->expects($this->once())->method('setHasAvailableResources')->with(false);
-        $mockSession = $this->createMock(Session::class);
+        $mockSession = $this->objectManager->createPartialMockWithReflection(
+            Session::class,
+            ['getUser', 'isAllowed']
+        );
 
-        $mockSession->method('getUser')->willReturn($user);
+        $mockSession->expects($this->any())->method('getUser')->willReturn($user);
 
         $this->model->setSession($mockSession);
 
-        // getFirstAvailableChild doesn't exist on Menu mock
+        $this->menuMock->expects($this->any())->method('getFirstAvailableChild')->willReturn(null);
 
         $this->assertEquals('*/denied', $this->model->findFirstAvailableMenu());
     }
@@ -216,15 +224,18 @@ class UrlTest extends TestCase
     public function testFindFirstAvailableMenu(): void
     {
         $user = $this->createMock(User::class);
-        $mockSession = $this->createMock(Session::class);
+        $mockSession = $this->objectManager->createPartialMockWithReflection(
+            Session::class,
+            ['getUser', 'isAllowed']
+        );
 
-        $mockSession->method('getUser')->willReturn($user);
+        $mockSession->expects($this->any())->method('getUser')->willReturn($user);
 
         $this->model->setSession($mockSession);
 
         $itemMock = $this->createMock(Item::class);
         $itemMock->expects($this->once())->method('getAction')->willReturn('adminhtml/user');
-        // getFirstAvailable doesn't exist on Menu mock
+        $this->menuMock->expects($this->any())->method('getFirstAvailable')->willReturn($itemMock);
 
         $this->assertEquals('adminhtml/user', $this->model->findFirstAvailableMenu());
     }

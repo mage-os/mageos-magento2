@@ -20,8 +20,8 @@ use Magento\Framework\Data\Collection;
 use Magento\Framework\Json\Helper\Data as JsonHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Layout;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class ExtendedTest extends TestCase
@@ -56,15 +56,25 @@ class ExtendedTest extends TestCase
      */
     protected $_requestMock;
 
+    /**
+     * @var ObjectManager
+     */
+    private $objectManager;
+
     protected function setUp(): void
     {
+        $this->objectManager = new ObjectManager($this);
+        
         $this->_gridMock = $this->createPartialMock(
             Grid::class,
             ['getId', 'getCollection']
         );
         $this->_gridMock->expects($this->any())->method('getId')->willReturn('test_grid');
 
-        $this->_layoutMock = $this->createMock(Layout::class);
+        $this->_layoutMock = $this->objectManager->createPartialMockWithReflection(
+            Layout::class,
+            ['helper', 'getParentName', 'getBlock']
+        );
 
         $this->_layoutMock->expects(
             $this->any()
@@ -96,7 +106,6 @@ class ExtendedTest extends TestCase
             'data' => ['massaction_id_field' => 'test_id', 'massaction_id_filter' => 'test_id'],
         ];
 
-        $objectManagerHelper = new ObjectManager($this);
         $objects = [
             [
                 JsonHelper::class,
@@ -107,9 +116,9 @@ class ExtendedTest extends TestCase
                 $this->createMock(DirectoryHelper::class)
             ]
         ];
-        $objectManagerHelper->prepareObjectManager($objects);
+        $this->objectManager->prepareObjectManager($objects);
 
-        $this->_block = $objectManagerHelper->getObject(
+        $this->_block = $this->objectManager->getObject(
             Extended::class,
             $arguments
         );
@@ -143,7 +152,6 @@ class ExtendedTest extends TestCase
     /**
      * @param array $items
      * @param string $result
-     *
      */
     #[DataProvider('dataProviderGetGridIdsJsonWithUseSelectAll')]
     public function testGetGridIdsJsonWithUseSelectAll(array $items, $result)

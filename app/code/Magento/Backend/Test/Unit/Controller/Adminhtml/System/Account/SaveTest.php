@@ -27,7 +27,6 @@ use Magento\Framework\Validator\Locale;
 use Magento\User\Model\User;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Magento\Backend\Test\Unit\Helper\SessionTestHelper;
 
 /**
  * Unit test for \Magento\Backend\Controller\Adminhtml\System\Account controller.
@@ -97,34 +96,44 @@ class SaveTest extends TestCase
     protected $eventManagerMock;
 
     /**
+     * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
+     */
+    private $objectManagerHelper;
+
+    /**
      * @inheritDoc
      */
     protected function setUp(): void
     {
+        $this->objectManagerHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
         $this->requestMock = $this->createPartialMock(Http::class, ['getOriginalPathInfo']);
         $this->responseMock = $this->createMock(\Magento\Framework\App\Response\Http::class);
         $this->objectManagerMock = $this->createPartialMock(ObjectManager::class, ['get', 'create']);
         $frontControllerMock = $this->createMock(FrontController::class);
 
         $this->helperMock = $this->createPartialMock(Data::class, ['getUrl']);
-        $this->messagesMock = $this->createPartialMock(\Magento\Framework\Message\Manager::class, ['addSuccessMessage']);
+        $this->messagesMock = $this->createPartialMock(
+            \Magento\Framework\Message\Manager::class,
+            ['addSuccessMessage']
+        );
 
-        $this->authSessionMock = $this->createPartialMock(SessionTestHelper::class, ['getUser']);
+        $this->authSessionMock = $this->objectManagerHelper->createPartialMockWithReflection(
+            Session::class,
+            ['getUser']
+        );
 
-        $this->userMock = $this->getMockBuilder(User::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(
-                [
-                    'load',
-                    'save',
-                    'sendNotificationEmailsIfRequired',
-                    'performIdentityCheck',
-                    'validate',
-                    '__sleep',
-                    '__wakeup'
-                ]
-            )
-            ->getMock();
+        $this->userMock = $this->createPartialMock(
+            User::class,
+            [
+                'load',
+                'save',
+                'sendNotificationEmailsIfRequired',
+                'performIdentityCheck',
+                'validate',
+                '__sleep',
+                '__wakeup'
+            ]
+        );
 
         $this->validatorMock = $this->createPartialMock(Locale::class, ['isValid']);
 
@@ -139,7 +148,19 @@ class SaveTest extends TestCase
             ->with(ResultFactory::TYPE_REDIRECT)
             ->willReturn($resultRedirect);
 
-        $contextMock = $this->createMock(Context::class);
+        $contextMock = $this->objectManagerHelper->createPartialMockWithReflection(
+            Context::class,
+            [
+                'getFrontController',
+                'getTranslator',
+                'getRequest',
+                'getResponse',
+                'getObjectManager',
+                'getHelper',
+                'getMessageManager',
+                'getResultFactory'
+            ]
+        );
         $contextMock->expects($this->any())->method('getRequest')->willReturn($this->requestMock);
         $contextMock->expects($this->any())->method('getResponse')->willReturn($this->responseMock);
         $contextMock->expects($this->any())->method('getObjectManager')->willReturn($this->objectManagerMock);
@@ -151,8 +172,7 @@ class SaveTest extends TestCase
 
         $args = ['context' => $contextMock];
 
-        $testHelper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-        $this->controller = $testHelper->getObject(Save::class, $args);
+        $this->controller = $this->objectManagerHelper->getObject(Save::class, $args);
     }
 
     /**

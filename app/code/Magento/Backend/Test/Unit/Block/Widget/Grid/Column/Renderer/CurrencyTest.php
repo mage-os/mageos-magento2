@@ -20,7 +20,6 @@ use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Magento\Backend\Test\Unit\Helper\ColumnTestHelper;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -84,11 +83,17 @@ class CurrencyTest extends TestCase
         $this->currencyLocatorMock->method('getDefaultCurrency')
             ->with($this->requestMock)
             ->willReturn($defaultCurrencyCode);
-        $this->columnMock = new \Magento\Backend\Test\Unit\Helper\ColumnTestHelper();
-        $this->columnMock->setIndex('value');
-        $this->columnMock->setData('show_number_sign', false);
-        $this->columnMock->setData('default', '');
-        $this->localeCurrencyMock = $this->createMock(LocaleCurrency::class);
+        $this->columnMock = $this->objectManager->createPartialMockWithReflection(
+            Column::class,
+            ['getIndex', 'getShowNumberSign', 'getDefault']
+        );
+        $this->columnMock->method('getIndex')->willReturn('value');
+        $this->columnMock->method('getShowNumberSign')->willReturn(false);
+        $this->columnMock->method('getDefault')->willReturn('');
+        $this->localeCurrencyMock = $this->objectManager->createPartialMockWithReflection(
+            LocaleCurrency::class,
+            ['getCurrency', 'toCurrency']
+        );
         $this->currencyRenderer = $this->objectManager->getObject(
             Currency::class,
             [
@@ -129,10 +134,10 @@ class CurrencyTest extends TestCase
             'store_id' => $storeId
         ]);
         $this->currencyRenderer->setColumn($this->columnMock);
-        $storeMock = $this->getMockBuilder(Store::class)
-            ->onlyMethods(['getCurrentCurrencyCode'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $storeMock = $this->createPartialMock(
+            Store::class,
+            ['getCurrentCurrencyCode']
+        );
         $this->storeManagerMock->method('getStore')
             ->with($storeId)
             ->willReturn($storeMock);

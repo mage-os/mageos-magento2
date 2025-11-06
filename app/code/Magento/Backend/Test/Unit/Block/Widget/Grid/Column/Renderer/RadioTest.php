@@ -12,10 +12,10 @@ use Magento\Backend\Block\Widget\Grid\Column;
 use Magento\Backend\Block\Widget\Grid\Column\Renderer\Options\Converter;
 use Magento\Backend\Block\Widget\Grid\Column\Renderer\Radio;
 use Magento\Framework\DataObject;
-use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Magento\Backend\Test\Unit\Helper\ColumnTestHelper;
 
 class RadioTest extends TestCase
 {
@@ -34,14 +34,23 @@ class RadioTest extends TestCase
      */
     protected $_column;
 
+    /**
+     * @var ObjectManager
+     */
+    private $objectManager;
+
     protected function setUp(): void
     {
+        $this->objectManager = new ObjectManager($this);
         $context = $this->createMock(Context::class);
         $this->_converter = $this->createPartialMock(
             Converter::class,
             ['toFlatArray']
         );
-        $this->_column = new \Magento\Backend\Test\Unit\Helper\ColumnTestHelper();
+        $this->_column = $this->objectManager->createPartialMockWithReflection(
+            Column::class,
+            ['getValues', 'getIndex', 'getHtmlName']
+        );
         $this->_object = new Radio($context, $this->_converter);
         $this->_object->setColumn($this->_column);
     }
@@ -55,9 +64,9 @@ class RadioTest extends TestCase
     {
         $selectedTreeArray = [['value' => 1, 'label' => 'One']];
         $selectedFlatArray = [1 => 'One'];
-        $this->_column->setValues($selectedTreeArray);
-        $this->_column->setIndex('label');
-        $this->_column->setData('html_name', 'test[]');
+        $this->_column->expects($this->once())->method('getValues')->willReturn($selectedTreeArray);
+        $this->_column->expects($this->once())->method('getIndex')->willReturn('label');
+        $this->_column->expects($this->once())->method('getHtmlName')->willReturn('test[]');
         $this->_converter->expects(
             $this->once()
         )->method(

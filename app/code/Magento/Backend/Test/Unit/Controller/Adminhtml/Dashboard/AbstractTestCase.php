@@ -33,20 +33,13 @@ class AbstractTestCase extends TestCase
         $resultRawFactoryMock =
             $this->createPartialMock(RawFactory::class, ['create']);
         $layoutFactoryMock = $this->createPartialMock(LayoutFactory::class, ['create']);
-        $layoutMock = $this->getMockBuilder(Layout::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['createBlock'])
-            ->getMock();
-        
-        // Configure createBlock to return an object with toHtml method
-        $blockMock = new class {
-            public function toHtml() {
-                return "data";
-            }
-        };
-        
+        $layoutMock = $objectManager->createPartialMockWithReflection(
+            Layout::class,
+            ['toHtml', 'createBlock']
+        );
         $layoutFactoryMock->expects($this->once())->method('create')->willReturn($layoutMock);
-        $layoutMock->expects($this->once())->method('createBlock')->with($blockName)->willReturn($blockMock);
+        $layoutMock->expects($this->once())->method('createBlock')->with($blockName)->willReturnSelf();
+        $layoutMock->expects($this->once())->method('toHtml')->willReturn($outPut);
         $resultRawFactoryMock->expects($this->once())->method('create')->willReturn($resultRawMock);
         $resultRawMock->expects($this->once())->method('setContents')->with($outPut)->willReturnSelf();
 

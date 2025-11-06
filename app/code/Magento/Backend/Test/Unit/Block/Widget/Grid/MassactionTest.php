@@ -21,8 +21,8 @@ use Magento\Framework\Json\Helper\Data;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Layout;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -90,8 +90,12 @@ class MassactionTest extends TestCase
     /** @var Data */
     protected $jsonHelperMock;
 
+    /** @var ObjectManager */
+    private $objectManagerHelper;
+
     protected function setUp(): void
     {
+        $this->objectManagerHelper = new ObjectManager($this);
         $this->_gridMock = $this->createPartialMock(
             Grid::class,
             ['getId', 'getCollection']
@@ -100,7 +104,10 @@ class MassactionTest extends TestCase
             ->method('getId')
             ->willReturn('test_grid');
 
-        $this->_layoutMock = $this->createMock(Layout::class);
+        $this->_layoutMock = $this->objectManagerHelper->createPartialMockWithReflection(
+            Layout::class,
+            ['helper', 'getParentName', 'getBlock']
+        );
         $this->_layoutMock->expects($this->any())
             ->method('getParentName')
             ->with('test_grid_massaction')
@@ -116,7 +123,10 @@ class MassactionTest extends TestCase
 
         $this->visibilityCheckerMock = $this->createMock(VisibilityChecker::class);
 
-        $this->_authorizationMock = $this->createPartialMock(Authorization::class, ['isAllowed']);
+        $this->_authorizationMock = $this->createPartialMock(
+            Authorization::class,
+            ['isAllowed']
+        );
 
         $this->gridCollectionMock = $this->createMock(Collection::class);
         $this->gridCollectionSelectMock = $this->createMock(Select::class);
@@ -147,8 +157,7 @@ class MassactionTest extends TestCase
             ->willReturn($this->jsonHelperMock);
         \Magento\Framework\App\ObjectManager::setInstance($objectManagerMock);
 
-        $objectManagerHelper = new ObjectManager($this);
-        $this->_block = $objectManagerHelper->getObject(
+        $this->_block = $this->objectManagerHelper->getObject(
             Massaction::class,
             $arguments
         );
@@ -360,7 +369,6 @@ class MassactionTest extends TestCase
      * @param bool $withVisibilityChecker
      * @param bool $isVisible
      * @param bool $isAllowed
-     *
      */
     #[DataProvider('addItemDataProvider')]
     public function testAddItem($itemId, $item, $count, $withVisibilityChecker, $isVisible, $isAllowed)

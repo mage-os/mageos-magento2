@@ -37,15 +37,15 @@ class CleanMediaTest extends TestCase
         $backendHelper = $this->createMock(Data::class);
         $helper = new ObjectManager($this);
 
-        $session = $this->getMockBuilder(Session::class)
-            ->setConstructorArgs($helper->getConstructArguments(Session::class))
-            ->getMock();
+        $session = $helper->createPartialMockWithReflection(
+            Session::class,
+            ['setIsUrlNotice']
+        );
 
-        $exceptionMessageFactory = $this->getMockBuilder(
-            ExceptionMessageLookupFactory::class
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
+        $exceptionMessageFactory = $helper->createPartialMockWithReflection(
+            ExceptionMessageLookupFactory::class,
+            ['getMessageGenerator']
+        );
 
         $messageManagerParams = $helper->getConstructArguments(Manager::class);
         $messageManagerParams['exceptionMessageFactory'] = $exceptionMessageFactory;

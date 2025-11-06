@@ -62,15 +62,27 @@ class DateTest extends TestCase
      */
     private $repositoryMock;
 
+    /**
+     * @var ObjectManager
+     */
+    private $objectManagerHelper;
+
     protected function setUp(): void
     {
-        $this->mathRandomMock = $this->createPartialMock(Random::class, ['getUniqueHash']);
+        $this->objectManagerHelper = new ObjectManager($this);
+        $this->mathRandomMock = $this->createPartialMock(
+            Random::class,
+            ['getUniqueHash']
+        );
 
         $this->localeResolverMock = $this->createMock(ResolverInterface::class);
 
         $this->dateTimeFormatterMock = $this->createMock(DateTimeFormatterInterface::class);
 
-        $this->columnMock = $this->createMock(Column::class);
+        $this->columnMock = $this->objectManagerHelper->createPartialMockWithReflection(
+            Column::class,
+            ['getTimezone', 'getHtmlId', 'getId']
+        );
 
         $this->localeDateMock = $this->createMock(TimezoneInterface::class);
 
@@ -87,14 +99,16 @@ class DateTest extends TestCase
             ->method('getRequest')
             ->willReturn($this->request);
 
-        $this->repositoryMock = $this->createPartialMock(Repository::class, ['getUrlWithParams']);
+        $this->repositoryMock = $this->createPartialMock(
+            Repository::class,
+            ['getUrlWithParams']
+        );
 
         $this->contextMock->expects($this->once())
             ->method('getAssetRepository')
             ->willReturn($this->repositoryMock);
 
-        $objectManagerHelper = new ObjectManager($this);
-        $this->model = $objectManagerHelper->getObject(
+        $this->model = $this->objectManagerHelper->getObject(
             Date::class,
             [
                 'mathRandom' => $this->mathRandomMock,
@@ -133,6 +147,7 @@ class DateTest extends TestCase
         $this->mathRandomMock->expects($this->any())->method('getUniqueHash')->willReturn($uniqueHash);
         $this->columnMock->expects($this->once())->method('getHtmlId')->willReturn($id);
         $this->localeDateMock->expects($this->any())->method('getDateFormat')->willReturn($format);
+        $this->columnMock->expects($this->any())->method('getTimezone')->willReturn(false);
         $this->localeResolverMock->expects($this->any())->method('getLocale')->willReturn('en_US');
         $this->model->setColumn($this->columnMock);
         $this->model->setValue($value);

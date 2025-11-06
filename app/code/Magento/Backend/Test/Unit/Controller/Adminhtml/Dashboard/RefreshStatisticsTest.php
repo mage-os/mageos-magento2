@@ -84,8 +84,11 @@ class RefreshStatisticsTest extends TestCase
         );
         $this->resultRedirect = $this->createMock(Redirect::class);
 
-        $this->request = $this->createMock(RequestInterface::class);
-        $this->response = $this->createMock(ResponseInterface::class);
+        $this->request = $this->createStub(RequestInterface::class);
+        $this->response = $objectManagerHelper->createPartialMockWithReflection(
+            ResponseInterface::class,
+            ['setRedirect', 'sendResponse']
+        );
 
         $this->messageManager = $this->createMock(Manager::class);
 

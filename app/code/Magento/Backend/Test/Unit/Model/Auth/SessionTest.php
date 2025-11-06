@@ -19,10 +19,9 @@ use Magento\Framework\Stdlib\Cookie\PublicCookieMetadata;
 use Magento\Framework\Stdlib\CookieManagerInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\User\Model\User;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Magento\Backend\Test\Unit\Helper\StorageTestHelper;
 
 /**
  * Class SessionTest tests Magento\Backend\Model\Auth\Session
@@ -67,10 +66,17 @@ class SessionTest extends TestCase
     private $session;
 
     /**
+     * @var ObjectManager
+     */
+    private $objectManager;
+
+    /**
      * @inheritdoc
      */
     protected function setUp(): void
     {
+        $this->objectManager = new ObjectManager($this);
+        
         $this->cookieMetadataFactory = $this->createPartialMock(
             CookieMetadataFactory::class,
             ['createPublicCookieMetadata']
@@ -81,7 +87,10 @@ class SessionTest extends TestCase
             PhpCookieManager::class,
             ['getCookie', 'setPublicCookie']
         );
-        $this->storage = $this->createPartialMock(StorageTestHelper::class, ['getUser']);
+        $this->storage = $this->objectManager->createPartialMockWithReflection(
+            Storage::class,
+            ['getUser']
+        );
         $this->sessionConfig = $this->createPartialMock(
             \Magento\Framework\Session\Config::class,
             [
@@ -93,15 +102,14 @@ class SessionTest extends TestCase
             ]
         );
         $this->aclBuilder = $this->createMock(Builder::class);
-        $objectManager = new ObjectManager($this);
         $objects = [
             [
                 SessionStartChecker::class,
                 $this->createMock(SessionStartChecker::class)
             ]
         ];
-        $objectManager->prepareObjectManager($objects);
-        $this->session = $objectManager->getObject(
+        $this->objectManager->prepareObjectManager($objects);
+        $this->session = $this->objectManager->getObject(
             Session::class,
             [
                 'config' => $this->config,
@@ -122,15 +130,18 @@ class SessionTest extends TestCase
     }
 
     /**
-     * * @param $isUserPassedViaParams
+     * @param $isUserPassedViaParams
      */
     #[DataProvider('refreshAclDataProvider')]
     public function testRefreshAcl($isUserPassedViaParams)
     {
         $aclMock = $this->createMock(Acl::class);
         $this->aclBuilder->expects($this->any())->method('getAcl')->willReturn($aclMock);
-        $userMock = $this->createMock(User::class);
-        $userMock->method('getReloadAclFlag')->willReturn(true);
+        $userMock = $this->objectManager->createPartialMockWithReflection(
+            User::class,
+            ['getReloadAclFlag', 'setReloadAclFlag', 'unsetData', 'save']
+        );
+        $userMock->expects($this->any())->method('getReloadAclFlag')->willReturn(true);
         $userMock->expects($this->once())->method('setReloadAclFlag')->with('0')->willReturnSelf();
         $userMock->expects($this->once())->method('save');
         if ($isUserPassedViaParams) {
@@ -276,7 +287,7 @@ class SessionTest extends TestCase
     }
 
     /**
-     * * @param bool $isFirstPageAfterLogin
+     * @param bool $isFirstPageAfterLogin
      */
     #[DataProvider('firstPageAfterLoginDataProvider')]
     public function testFirstPageAfterLogin($isFirstPageAfterLogin)

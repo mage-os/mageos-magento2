@@ -17,7 +17,6 @@ use Magento\Directory\Model\Currency\DefaultLocator;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Magento\Backend\Test\Unit\Helper\ColumnTestHelper;
 
 class PriceTest extends TestCase
 {
@@ -57,6 +56,11 @@ class PriceTest extends TestCase
     private $blockPrice;
 
     /**
+     * @var ObjectManager
+     */
+    private $objectManagerHelper;
+
+    /**
      * @inheritDoc
      */
     protected function setUp(): void
@@ -68,13 +72,21 @@ class PriceTest extends TestCase
 
         $this->helper = $this->createMock(Helper::class);
 
-        $this->currency = $this->createPartialMock(Currency::class, ['getAnyRate']);
+        $this->currency = $this->createPartialMock(
+            Currency::class,
+            ['getAnyRate']
+        );
 
         $this->currencyLocator = $this->createMock(DefaultLocator::class);
 
-        $this->columnMock = $this->createMock(Column::class);
+        $this->objectManagerHelper = new ObjectManager($this);
 
-        $helper = new ObjectManager($this);
+        $this->columnMock = $this->objectManagerHelper->createPartialMockWithReflection(
+            Column::class,
+            ['getCurrencyCode']
+        );
+
+        $helper = $this->objectManagerHelper;
 
         $this->blockPrice = $helper->getObject(Price::class, [
             'context'         => $this->context,

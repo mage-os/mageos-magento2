@@ -12,7 +12,6 @@ use Magento\Backend\Model\View\Result\Page;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Framework\View\LayoutInterface;
-use Magento\Framework\View\Layout;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -45,10 +44,23 @@ class PageTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->layoutMock = $this->createMock(Layout::class);
-        $this->breadcrumbsBlockMock = $this->createMock(Breadcrumbs::class);
-
         $this->objectManagerHelper = new ObjectManagerHelper($this);
+        
+        $this->layoutMock = $this->objectManagerHelper->createPartialMockWithReflection(
+            LayoutInterface::class,
+            [
+                'setGeneratorPool', 'getBlock', 'getUpdate', 'generateXml', 'generateElements',
+                'renderElement', 'addOutputElement', 'getOutput', 'hasElement', 'unsetElement',
+                'getAllBlocks', 'getChildBlock', 'setChild', 'reorderChild', 'unsetChild',
+                'getChildNames', 'getChildBlocks', 'getChildName', 'addToParentGroup',
+                'getGroupChildNames', 'getParentName', 'createBlock', 'addBlock', 'addContainer',
+                'renameElement', 'getElementAlias', 'removeOutputElement', 'getMessagesBlock',
+                'getBlockSingleton', 'getElementProperty', 'isBlock', 'isContainer',
+                'isManipulationAllowed', 'setBlock', 'isCacheable'
+            ]
+        );
+        $this->breadcrumbsBlockMock = $this->createMock(Breadcrumbs::class);
+        
         $this->context = $this->objectManagerHelper->getObject(
             Context::class,
             ['layout' => $this->layoutMock]

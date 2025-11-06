@@ -17,16 +17,12 @@ use Magento\Backend\Model\Auth;
 use Magento\Backend\Model\Url;
 use Magento\Backend\Model\UrlFactory;
 use Magento\Backend\Model\View\Result\Redirect;
-use Magento\Framework\App\Cache\StateInterface as CacheState;
-use Magento\Framework\App\Cache\TypeListInterface as CacheTypeList;
 use Magento\Framework\App\RequestInterface as Request;
-use Magento\Framework\App\State;
 use Magento\Framework\Controller\Result\RedirectFactory;
-use Magento\Framework\Message\ManagerInterface as MessageManager;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Framework\View\Result\PageFactory;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -101,8 +97,8 @@ class LoginTest extends TestCase
         $objectManagerHelper = new ObjectManagerHelper($this);
 
         $this->helperMock = $this->createMock(Data::class);
-        $this->requestMock = $this->createPartialMock(
-            \Magento\Backend\Test\Unit\Helper\RequestTestHelper::class,
+        $this->requestMock = $objectManagerHelper->createPartialMockWithReflection(
+            \Magento\Framework\App\Request\Http::class,
             ['getUri', 'getRequestUri']
         );
         $this->redirectMock = $this->createMock(Redirect::class);
@@ -162,7 +158,6 @@ class LoginTest extends TestCase
      * @param string $baseUrl
      * @param string $backendFrontName
      * @param bool $redirect
-     *
      */
     #[DataProvider('isValidBackendUriDataProvider')]
     public function testIsValidBackendUri(string $requestUri, string $baseUrl, string $backendFrontName, bool $redirect)

@@ -12,11 +12,11 @@ use Magento\Backend\Model\Locale\Manager;
 use Magento\Backend\Model\Session;
 use Magento\Framework\DataObject;
 use Magento\Framework\Locale\Resolver;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\TranslateInterface;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Magento\Backend\Test\Unit\Helper\SessionTestHelper;
 
 class ManagerTest extends TestCase
 {
@@ -46,26 +46,37 @@ class ManagerTest extends TestCase
     private $_backendConfig;
 
     /**
+     * @var ObjectManager
+     */
+    private $objectManager;
+
+    /**
      * @inheritdoc
      */
     protected function setUp(): void
     {
+        $this->objectManager = new ObjectManager($this);
         $this->_session = $this->createMock(Session::class);
 
-        $this->_authSession = $this->createPartialMock(SessionTestHelper::class, ['getUser']);
+        $this->_authSession = $this->objectManager->createPartialMockWithReflection(
+            \Magento\Backend\Model\Auth\Session::class,
+            ['getUser']
+        );
 
-        $this->_backendConfig = $this->createMock(
-            ConfigInterface::class);
+        $this->_backendConfig = $this->createMock(ConfigInterface::class);
 
         $userMock = new DataObject();
 
         $this->_authSession->expects($this->any())->method('getUser')->willReturn($userMock);
 
-        $this->_translator = $this->createMock(TranslateInterface::class);
+        $this->_translator = $this->objectManager->createPartialMockWithReflection(
+            TranslateInterface::class,
+            ['init', 'setLocale', 'loadData', 'getData', 'getLocale', 'getTheme']
+        );
 
-        $this->_translator->method('setLocale')->willReturn($this->_translator);
+        $this->_translator->expects($this->any())->method('setLocale')->willReturn($this->_translator);
 
-        $this->_translator->method('init')->willReturn(false);
+        $this->_translator->expects($this->any())->method('init')->willReturn(false);
 
         $this->_model = new Manager(
             $this->_session,
@@ -85,9 +96,9 @@ class ManagerTest extends TestCase
 
     /**
      * @param string $locale
-     * @dataProvider switchBackendInterfaceLocaleDataProvider
      * @covers \Magento\Backend\Model\Locale\Manager::switchBackendInterfaceLocale
      */
+    #[DataProvider('switchBackendInterfaceLocaleDataProvider')]
     public function testSwitchBackendInterfaceLocale($locale)
     {
         $this->_model->switchBackendInterfaceLocale($locale);

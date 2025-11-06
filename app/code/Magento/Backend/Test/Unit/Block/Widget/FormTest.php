@@ -10,12 +10,12 @@ namespace Magento\Backend\Test\Unit\Block\Widget;
 use Magento\Backend\Block\Template\Context;
 use Magento\Backend\Block\Widget\Form;
 use Magento\Backend\Block\Widget\Form\Element\ElementCreator;
-use Magento\Backend\Test\Unit\Helper\DataFormTestHelper;
 use Magento\Framework\Data\Form as DataForm;
 use Magento\Framework\Json\Helper\Data;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\UrlInterface;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -39,13 +39,17 @@ class FormTest extends TestCase
     /** @var  ElementCreator */
     protected $creatorStub;
 
+    /** @var ObjectManagerHelper */
+    private $objectManagerHelper;
+
     protected function setUp(): void
     {
+        $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->prepareContext();
 
-        $this->dataForm = $this->createPartialMock(
-            DataFormTestHelper::class,
-            ['addCustomAttribute', 'setParent', 'setBaseUrl']
+        $this->dataForm = $this->objectManagerHelper->createPartialMockWithReflection(
+            \Magento\Framework\Data\Form::class,
+            ['setParent', 'setBaseUrl', 'addCustomAttribute']
         );
 
         $this->jsonHelperMock = $this->createMock(Data::class);

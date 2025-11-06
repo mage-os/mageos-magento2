@@ -31,8 +31,8 @@ use Magento\Quote\Api\Data\CartInterface;
 use Magento\Quote\Model\QuoteFactory;
 use Magento\Sales\Model\OrderFactory;
 use Magento\Store\Model\StoreManagerInterface;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -140,61 +140,23 @@ class QuoteTest extends TestCase
     protected function setUp(): void
     {
         $this->objectManager = new ObjectManager($this);
-        $this->customerRepositoryMock = $this->createMock(
-            CustomerRepositoryInterface::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['getCustomer']
-        );
-        $this->groupManagementMock = $this->createMock(
-            GroupManagementInterface::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['getDefaultGroup']
-        );
+        $this->customerRepositoryMock = $this->createMock(CustomerRepositoryInterface::class);
+        
+        $this->groupManagementMock = $this->createMock(GroupManagementInterface::class);
 
-        $this->scopeConfigMock = $this->createMock(
-            ScopeConfigInterface::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['getValue']
-        );
+        $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
+        
         $this->quoteRepositoryMock = $this->createMock(CartRepositoryInterface::class);
 
         $this->requestMock = $this->createMock(Http::class);
-        $this->sidResolverMock = $this->createMock(
-            SidResolverInterface::class,
-            [],
-            '',
-            false
-        );
-        $this->sessionConfigMock = $this->createMock(
-            ConfigInterface::class,
-            [],
-            '',
-            false
-        );
-        $this->saveHandlerMock = $this->createMock(
-            SaveHandlerInterface::class,
-            [],
-            '',
-            false
-        );
-        $this->validatorMock = $this->createMock(
-            ValidatorInterface::class,
-            [],
-            '',
-            false
-        );
+        $this->sidResolverMock = $this->createMock(SidResolverInterface::class);
+        
+        $this->sessionConfigMock = $this->createMock(ConfigInterface::class);
+        
+        $this->saveHandlerMock = $this->createMock(SaveHandlerInterface::class);
+        
+        $this->validatorMock = $this->createMock(ValidatorInterface::class);
+        
         $this->storage = new Storage();
         $this->cookieManagerMock = $this->createMock(CookieManagerInterface::class);
         $this->cookieMetadataFactoryMock = $this->createMock(
@@ -202,12 +164,7 @@ class QuoteTest extends TestCase
         );
         $this->orderFactoryMock = $this->createPartialMock(OrderFactory::class, ['create']);
         $appStateMock = $this->createMock(State::class);
-        $this->storeManagerMock = $this->createMock(
-            StoreManagerInterface::class,
-            [],
-            '',
-            false
-        );
+        $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
 
         $this->quoteFactoryMock = $this->createPartialMock(QuoteFactory::class, ['create']);
 
@@ -219,27 +176,36 @@ class QuoteTest extends TestCase
         ];
         $this->objectManager->prepareObjectManager($objects);
 
-        $this->quote = $this->getMockBuilder(Quote::class)
-            ->setConstructorArgs(
-                [
-                    'request' => $this->requestMock,
-                    'sidResolver' => $this->sidResolverMock,
-                    'sessionConfig' => $this->sessionConfigMock,
-                    'saveHandler' => $this->saveHandlerMock,
-                    'validator' => $this->validatorMock,
-                    'storage' => $this->storage,
-                    'cookieManager' => $this->cookieManagerMock,
-                    'cookieMetadataFactory' => $this->cookieMetadataFactoryMock,
-                    'appState' => $appStateMock,
-                    'customerRepository' => $this->customerRepositoryMock,
-                    'quoteRepository' => $this->quoteRepositoryMock,
-                    'orderFactory' => $this->orderFactoryMock,
-                    'storeManager' => $this->storeManagerMock,
-                    'groupManagement' => $this->groupManagementMock,
-                    'quoteFactory' => $this->quoteFactoryMock
-                ]
-            )
-            ->getMock();
+        // Create a partial mock with the magic methods using reflection
+        $mockBuilder = $this->getMockBuilder(Quote::class);
+        $mockBuilder->setConstructorArgs([
+            'request' => $this->requestMock,
+            'sidResolver' => $this->sidResolverMock,
+            'sessionConfig' => $this->sessionConfigMock,
+            'saveHandler' => $this->saveHandlerMock,
+            'validator' => $this->validatorMock,
+            'storage' => $this->storage,
+            'cookieManager' => $this->cookieManagerMock,
+            'cookieMetadataFactory' => $this->cookieMetadataFactoryMock,
+            'appState' => $appStateMock,
+            'customerRepository' => $this->customerRepositoryMock,
+            'quoteRepository' => $this->quoteRepositoryMock,
+            'orderFactory' => $this->orderFactoryMock,
+            'storeManager' => $this->storeManagerMock,
+            'groupManagement' => $this->groupManagementMock,
+            'quoteFactory' => $this->quoteFactoryMock
+        ]);
+        
+        // Use reflection to set methods property for magic methods
+        $builderReflection = new \ReflectionClass($mockBuilder);
+        $methodsProperty = $builderReflection->getProperty('methods');
+        $methodsProperty->setAccessible(true);
+        $methodsProperty->setValue(
+            $mockBuilder,
+            ['getStoreId', 'getQuoteId', 'setQuoteId', 'hasCustomerId', 'getCustomerId']
+        );
+        
+        $this->quote = $mockBuilder->getMock();
     }
 
     /**
@@ -253,9 +219,23 @@ class QuoteTest extends TestCase
         $storeId = 10;
         $customerId = 66;
         $customerGroupId = 77;
-        $this->quote->method('getQuoteId')->willReturn(null);
-        $this->quote->method('setQuoteId')->with($quoteId);
-        $cartInterfaceMock = $this->createMock(CartInterface::class);
+        $this->quote->expects($this->any())->method('getQuoteId')->willReturn(null);
+        $this->quote->expects($this->any())->method('setQuoteId')->with($quoteId);
+        $cartInterfaceMock = $this->objectManager->createPartialMockWithReflection(
+            CartInterface::class,
+            [
+                'setIgnoreOldQty', 'setIsSuperMode', 'setCustomerGroupId',
+                'getId', 'setId', 'getCreatedAt', 'setCreatedAt', 'getUpdatedAt', 'setUpdatedAt',
+                'getConvertedAt', 'setConvertedAt', 'getIsActive', 'setIsActive', 'getIsVirtual',
+                'getItems', 'setItems', 'getItemsCount', 'setItemsCount', 'getItemsQty', 'setItemsQty',
+                'getCustomer', 'setCustomer', 'getBillingAddress', 'setBillingAddress',
+                'getReservedOrderId', 'setReservedOrderId', 'getOrigOrderId', 'setOrigOrderId',
+                'getCurrency', 'setCurrency', 'getCustomerIsGuest', 'setCustomerIsGuest',
+                'getCustomerNote', 'setCustomerNote', 'getCustomerNoteNotify', 'setCustomerNoteNotify',
+                'getCustomerTaxClassId', 'setCustomerTaxClassId', 'getStoreId', 'setStoreId',
+                'getExtensionAttributes', 'setExtensionAttributes'
+            ]
+        );
         $this->quoteFactoryMock->expects($this->once())->method('create')->willReturn($cartInterfaceMock);
         $this->quote->expects($this->any())->method('getStoreId')->willReturn($storeId);
         $this->quote->expects($this->any())->method('getCustomerId')->willReturn($customerId);
@@ -273,9 +253,12 @@ class QuoteTest extends TestCase
             ->with($customerId)
             ->willReturn($dataCustomerMock);
 
-        $quoteMock = $this->createPartialMock(
+        $quoteMock = $this->objectManager->createPartialMockWithReflection(
             \Magento\Quote\Model\Quote::class,
-            ['setCustomerGroupId', 'setIgnoreOldQty', 'setIsSuperMode', 'setStoreId', 'setIsActive', 'assignCustomer', '__wakeup']
+            [
+                'setCustomerGroupId', 'setIgnoreOldQty', 'setIsSuperMode', 'setStoreId',
+                'setIsActive', 'assignCustomer', '__wakeup'
+            ]
         );
 
         $this->quoteRepositoryMock->expects($this->once())->method('get')->willReturn($quoteMock);
@@ -298,11 +281,14 @@ class QuoteTest extends TestCase
         $quoteId = 22;
         $storeId = 10;
 
-        $this->quote->method('getQuoteId')
+        $this->quote->expects($this->any())
+            ->method('getQuoteId')
             ->willReturn($quoteId);
-        $this->quote->method('setQuoteId')
+        $this->quote->expects($this->any())
+            ->method('setQuoteId')
             ->with($quoteId);
-        $this->quote->method('getStoreId')
+        $this->quote->expects($this->any())
+            ->method('getStoreId')
             ->willReturn($storeId);
         $this->quote->expects($this->any())
             ->method('getCustomerId')
@@ -314,9 +300,12 @@ class QuoteTest extends TestCase
             ->with($customerId)
             ->willReturn($dataCustomerMock);
 
-        $quoteMock = $this->createPartialMock(
+        $quoteMock = $this->objectManager->createPartialMockWithReflection(
             \Magento\Quote\Model\Quote::class,
-            ['setCustomerGroupId', 'setIgnoreOldQty', 'setIsSuperMode', 'getCustomerId', 'setStoreId', 'setIsActive', 'getId', 'assignCustomer', '__wakeup']
+            [
+                'setCustomerGroupId', 'setIgnoreOldQty', 'setIsSuperMode', 'getCustomerId',
+                'setStoreId', 'setIsActive', 'getId', 'assignCustomer', '__wakeup'
+            ]
         );
         $quoteMock->expects($this->once())
             ->method('setStoreId')

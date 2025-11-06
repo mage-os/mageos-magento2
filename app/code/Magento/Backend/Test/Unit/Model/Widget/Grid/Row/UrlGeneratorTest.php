@@ -9,18 +9,23 @@ namespace Magento\Backend\Test\Unit\Model\Widget\Grid\Row;
 
 use Magento\Backend\Model\Url;
 use Magento\Backend\Model\Widget\Grid\Row\UrlGenerator;
-use Magento\Backend\Test\Unit\Helper\DataObjectTestHelper;
+use Magento\Framework\DataObject;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\TestCase;
 
 class UrlGeneratorTest extends TestCase
 {
     public function testGetUrl()
     {
+        $objectManager = new ObjectManager($this);
         $itemId = 3;
         $urlPath = 'mng/item/edit';
 
-        $itemMock = new DataObjectTestHelper();
-        $itemMock->setData('item_id', $itemId);
+        $itemMock = $objectManager->createPartialMockWithReflection(
+            DataObject::class,
+            ['getItemId']
+        );
+        $itemMock->expects($this->once())->method('getItemId')->willReturn($itemId);
 
         $urlModelMock = $this->createMock(Url::class);
         $urlModelMock->expects(

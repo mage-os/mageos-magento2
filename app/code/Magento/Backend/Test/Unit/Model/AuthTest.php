@@ -38,13 +38,21 @@ class AuthTest extends TestCase
      */
     protected $_modelFactoryMock;
 
+    /**
+     * @var ObjectManager
+     */
+    private $objectManager;
+
     protected function setUp(): void
     {
+        $this->objectManager = new ObjectManager($this);
         $this->_eventManagerMock = $this->createMock(ManagerInterface::class);
-        $this->_credentialStorage = $this->createMock(StorageInterface::class);
+        $this->_credentialStorage = $this->objectManager->createPartialMockWithReflection(
+            StorageInterface::class,
+            ['getId', 'login', 'authenticate', 'reload', 'logout', 'hasAvailableResources', 'setHasAvailableResources']
+        );
         $this->_modelFactoryMock = $this->createMock(ModelFactory::class);
-        $objectManager = new ObjectManager($this);
-        $this->_model = $objectManager->getObject(
+        $this->_model = $this->objectManager->getObject(
             Auth::class,
             [
                 'eventManager' => $this->_eventManagerMock,
@@ -73,7 +81,7 @@ class AuthTest extends TestCase
             ->method('login')
             ->with('username', 'password')
             ->willThrowException($exceptionMock);
-        // getId method doesn't need expects() - it's a magic method
+        $this->_credentialStorage->expects($this->never())->method('getId');
         $this->_eventManagerMock->expects($this->once())->method('dispatch')->with('backend_auth_user_login_failed');
         $this->_model->login('username', 'password');
 

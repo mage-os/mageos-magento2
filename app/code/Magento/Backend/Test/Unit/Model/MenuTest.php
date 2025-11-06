@@ -268,8 +268,11 @@ class MenuTest extends TestCase
 
     public function testGetFirstAvailableReturnsLeafNode()
     {
-        $item = $this->createMock(Item::class);
-        // getFirstAvailable method doesn't exist on Item
+        $item = $this->objectManagerHelper->createPartialMockWithReflection(
+            Item::class,
+            ['getFirstAvailable', 'isAllowed']
+        );
+        $item->expects($this->never())->method('getFirstAvailable');
         $this->_model->add($item);
 
         $this->_items['item1']->expects($this->once())->method('isAllowed')->willReturn(true);

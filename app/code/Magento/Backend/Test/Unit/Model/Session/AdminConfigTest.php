@@ -14,7 +14,6 @@ use Magento\Backend\App\Area\FrontNameResolver;
 use Magento\Backend\Model\Session\AdminConfig;
 use Magento\Backend\Model\Url;
 use Magento\Backend\Model\UrlFactory;
-use Magento\Backend\Test\Unit\Helper\ValidatorFactoryTestHelper;
 use Magento\Framework\App\Request\Http;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Filesystem;
@@ -22,8 +21,8 @@ use Magento\Framework\Filesystem\Directory\WriteInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\Validator\ValidatorInterface;
 use Magento\Framework\ValidatorFactory;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class AdminConfigTest extends TestCase
@@ -64,8 +63,8 @@ class AdminConfigTest extends TestCase
             ->method('getHttpHost')
             ->willReturn('init.host');
         $this->objectManager =  new ObjectManager($this);
-        $this->validatorFactory = $this->createPartialMock(
-            ValidatorFactoryTestHelper::class,
+        $this->validatorFactory = $this->objectManager->createPartialMockWithReflection(
+            ValidatorFactory::class,
             ['setInstanceName', 'create']
         );
         $backendUrl = $this->createMock(Url::class);

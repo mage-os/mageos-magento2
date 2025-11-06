@@ -13,7 +13,6 @@ use Magento\Framework\DataObject;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use Magento\Backend\Test\Unit\Helper\ColumnTestHelper;
 
 class ConcatTest extends TestCase
 {
@@ -42,19 +41,24 @@ class ConcatTest extends TestCase
         ];
     }
 
-    /**
-     */
     #[DataProvider('typeProvider')]
     public function testRender($method, $getters)
     {
         $object = new DataObject(['test' => 'a', 'best' => 'b']);
-        $column = new \Magento\Backend\Test\Unit\Helper\ColumnTestHelper();
-        // Configure getSeparator
-        $column->setSeparator('-');
+        $column = $this->objectManagerHelper->createPartialMockWithReflection(
+            Column::class,
+            [$method, 'getSeparator']
+        );
+        $column->expects($this->any())
+            ->method('getSeparator')
+            ->willReturn('-');
+        $column->expects($this->any())
+            ->method($method)
+            ->willReturn($getters);
         if ($method == 'getGetter') {
-            $column->setGetter(['getTest', 'getBest']);
-        } else {
-            $column->setIndex($getters);
+            $column->expects($this->any())
+                ->method('getGetter')
+                ->willReturn(['getTest', 'getBest']);
         }
         $this->renderer->setColumn($column);
         $this->assertEquals('a-b', $this->renderer->render($object));

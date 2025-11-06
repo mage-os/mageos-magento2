@@ -36,14 +36,23 @@ class BuilderTest extends TestCase
     private $factoryMock;
 
     /**
+     * @var ObjectManager
+     */
+    private $objectManager;
+
+    /**
      * @inheritDoc
      */
     protected function setUp(): void
     {
+        $this->objectManager = new ObjectManager($this);
         $this->factoryMock = $this->createMock(Factory::class);
-        $this->menuMock = $this->createMock(Menu::class);
+        $this->menuMock = $this->objectManager->createPartialMockWithReflection(
+            Menu::class,
+            ['addChild', 'add']
+        );
 
-        $this->model = (new ObjectManager($this))->getObject(
+        $this->model = $this->objectManager->getObject(
             Builder::class,
             [
                 'menuItemFactory' => $this->factoryMock
@@ -137,7 +146,7 @@ class BuilderTest extends TestCase
         );
         $this->model->processCommand(new Remove(['id' => 1]));
 
-        // addChild method doesn't need expects() - it doesn't exist on Menu
+        $this->menuMock->expects($this->never())->method('addChild');
 
         $this->model->getResult($this->menuMock);
     }
