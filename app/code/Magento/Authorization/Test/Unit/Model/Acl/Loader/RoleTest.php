@@ -16,7 +16,7 @@ use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\Pdo\Mysql;
 use Magento\Framework\DB\Select;
 use Magento\Framework\Serialize\Serializer\Json;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -25,6 +25,8 @@ use PHPUnit\Framework\TestCase;
  */
 class RoleTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Role
      */
@@ -66,22 +68,15 @@ class RoleTest extends TestCase
     private $adapterMock;
 
     /**
-     * @var ObjectManager
-     */
-    private $objectManagerHelper;
-
-    /**
      * @inheritDoc
      */
     protected function setUp(): void
     {
-        $this->objectManagerHelper = new ObjectManager($this);
-        
-        $this->groupFactoryMock = $this->objectManagerHelper->createPartialMockWithReflection(
+        $this->groupFactoryMock = $this->createPartialMockWithReflection(
             GroupFactory::class,
             ['create', 'getModelInstance']
         );
-        $this->roleFactoryMock = $this->objectManagerHelper->createPartialMockWithReflection(
+        $this->roleFactoryMock = $this->createPartialMockWithReflection(
             UserFactory::class,
             ['create', 'getModelInstance']
         );
@@ -112,15 +107,12 @@ class RoleTest extends TestCase
 
         $this->adapterMock = $this->createMock(Mysql::class);
 
-        $this->model = $this->objectManagerHelper->getObject(
-            Role::class,
-            [
-                'groupFactory' => $this->groupFactoryMock,
-                'roleFactory' => $this->roleFactoryMock,
-                'resource' => $this->resourceMock,
-                'aclDataCache' => $this->aclDataCacheMock,
-                'serializer' => $this->serializerMock
-            ]
+        $this->model = new Role(
+            $this->groupFactoryMock,
+            $this->roleFactoryMock,
+            $this->resourceMock,
+            $this->aclDataCacheMock,
+            $this->serializerMock
         );
     }
 

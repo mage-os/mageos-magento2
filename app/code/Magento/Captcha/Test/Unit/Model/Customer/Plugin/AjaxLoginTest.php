@@ -15,13 +15,15 @@ use Magento\Customer\Controller\Ajax\Login;
 use Magento\Framework\App\Request\Http;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\Serialize\Serializer\Json;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class AjaxLoginTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var MockObject|Session
      */
@@ -73,18 +75,11 @@ class AjaxLoginTest extends TestCase
     protected $model;
 
     /**
-     * @var ObjectManager
-     */
-    protected $objectManagerHelper;
-
-    /**
      * @inheritdoc
      */
     protected function setUp(): void
     {
-        $this->objectManagerHelper = new ObjectManager($this);
-        $this->sessionManagerMock = $this->objectManagerHelper
-            ->createPartialMockWithReflection(Session::class, ['setUsername']);
+        $this->sessionManagerMock = $this->createPartialMockWithReflection(Session::class, ['setUsername']);
         $this->captchaHelperMock = $this->createMock(Data::class);
         $this->captchaMock = $this->createMock(DefaultModel::class);
         $this->jsonFactoryMock = $this->createPartialMock(

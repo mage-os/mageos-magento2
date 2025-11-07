@@ -19,7 +19,7 @@ use Magento\Framework\App\Response\RedirectInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\Session\SessionManager;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -30,10 +30,8 @@ use PHPUnit\Framework\TestCase;
  */
 class CheckContactUsFormObserverTest extends TestCase
 {
-    /**
-     * @var ObjectManager
-     */
-    private $objectManagerHelper;
+    use MockCreationTrait;
+
 
     /**
      * @var CheckContactUsFormObserver
@@ -82,8 +80,6 @@ class CheckContactUsFormObserverTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->objectManagerHelper = new ObjectManager($this);
-
         $this->helperMock = $this->createMock(Data::class);
         $this->actionFlagMock = $this->createMock(ActionFlag::class);
         $this->messageManagerMock = $this->createMock(ManagerInterface::class);
@@ -91,22 +87,19 @@ class CheckContactUsFormObserverTest extends TestCase
         $this->captchaStringResolverMock = $this->createMock(CaptchaStringResolver::class);
         $this->dataPersistorMock = $this->createMock(DataPersistorInterface::class);
 
-        $this->sessionMock = $this->objectManagerHelper->createPartialMockWithReflection(
+        $this->sessionMock = $this->createPartialMockWithReflection(
             SessionManager::class,
             ['addErrorMessage']
         );
         $this->captchaMock = $this->createMock(DefaultModel::class);
 
-        $this->checkContactUsFormObserver = $this->objectManagerHelper->getObject(
-            CheckContactUsFormObserver::class,
-            [
-                'helper' => $this->helperMock,
-                'actionFlag' => $this->actionFlagMock,
-                'messageManager' => $this->messageManagerMock,
-                'redirect' => $this->redirectMock,
-                'captchaStringResolver' => $this->captchaStringResolverMock,
-                'dataPersistor' => $this->dataPersistorMock
-            ]
+        $this->checkContactUsFormObserver = new CheckContactUsFormObserver(
+            $this->helperMock,
+            $this->actionFlagMock,
+            $this->messageManagerMock,
+            $this->redirectMock,
+            $this->captchaStringResolverMock,
+            $this->dataPersistorMock
         );
     }
 

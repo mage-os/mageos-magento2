@@ -19,6 +19,7 @@ use Magento\Framework\Event;
 use Magento\Framework\Event\ManagerInterface as EventManagerInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Message\ManagerInterface;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\User\Model\Backend\Config\ObserverConfig;
 use Magento\User\Observer\Backend\ForceAdminPasswordChangeObserver;
@@ -31,6 +32,8 @@ use PHPUnit\Framework\TestCase;
  */
 class ForceAdminPasswordChangeObserverTest extends TestCase
 {
+    use MockCreationTrait;
+
     /** @var AuthorizationInterface|MockObject */
     protected $authMock;
 
@@ -69,7 +72,7 @@ class ForceAdminPasswordChangeObserverTest extends TestCase
         $this->configInterfaceMock = $this->createMock(ConfigInterface::class);
         $this->urlInterfaceMock = $this->createMock(UrlInterface::class);
         $this->sessionMock = $this->createPartialMock(Session::class, ['clearStorage']);
-        $this->authSessionMock = $helper->createPartialMockWithReflection(
+        $this->authSessionMock = $this->createPartialMockWithReflection(
             AuthSession::class,
             [
                 'setPciAdminUserIsPasswordExpired',
@@ -112,7 +115,7 @@ class ForceAdminPasswordChangeObserverTest extends TestCase
         $eventObserverMock = $this->createPartialMock(Observer::class, ['getEvent']);
 
         /** @var Event|MockObject */
-        $eventMock = $helper->createPartialMockWithReflection(
+        $eventMock = $this->createPartialMockWithReflection(
             Event::class,
             ['getControllerAction', 'getRequest']
         );

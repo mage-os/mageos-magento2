@@ -13,7 +13,7 @@ use Magento\Captcha\Model\ResourceModel\LogFactory;
 use Magento\Captcha\Observer\ResetAttemptForBackendObserver;
 use Magento\Framework\Event;
 use Magento\Framework\Event\Observer;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -22,13 +22,13 @@ use PHPUnit\Framework\TestCase;
  */
 class ResetAttemptForBackendObserverTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * Test that the method resets attempts for Backend
      */
     public function testExecuteExpectsDeleteUserAttemptsCalled()
     {
-        $objectManagerHelper = new ObjectManagerHelper($this);
-
         $logMock = $this->createMock(Log::class);
         $logMock->expects($this->once())->method('deleteUserAttempts')->willReturnSelf();
 
@@ -38,7 +38,7 @@ class ResetAttemptForBackendObserverTest extends TestCase
             ->willReturn($logMock);
 
         /** @var MockObject|Observer $eventObserverMock */
-        $eventObserverMock = $objectManagerHelper->createPartialMockWithReflection(
+        $eventObserverMock = $this->createPartialMockWithReflection(
             Observer::class,
             ['getUser']
         );
@@ -47,12 +47,8 @@ class ResetAttemptForBackendObserverTest extends TestCase
             ->method('getUser')
             ->willReturn($eventMock);
 
-        $objectManager = $objectManagerHelper;
         /** @var ResetAttemptForBackendObserver $observer */
-        $observer = $objectManager->getObject(
-            ResetAttemptForBackendObserver::class,
-            ['resLogFactory' => $resLogFactoryMock]
-        );
+        $observer = new ResetAttemptForBackendObserver($resLogFactoryMock);
         $observer->execute($eventObserverMock);
     }
 }

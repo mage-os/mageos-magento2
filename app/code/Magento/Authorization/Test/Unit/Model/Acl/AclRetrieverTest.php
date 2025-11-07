@@ -20,7 +20,7 @@ use Magento\Framework\Acl;
 use Magento\Framework\Acl\Builder;
 use Magento\Framework\Acl\Role\CurrentRoleContext;
 use Magento\Framework\Exception\AuthorizationException;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -32,6 +32,8 @@ use Psr\Log\LoggerInterface;
  */
 class AclRetrieverTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var AclRetriever
      */
@@ -42,14 +44,8 @@ class AclRetrieverTest extends TestCase
      */
     private $roleMock;
 
-    /**
-     * @var ObjectManagerHelper
-     */
-    private $objectManagerHelper;
-
     protected function setUp(): void
     {
-        $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->aclRetriever = $this->createAclRetriever();
     }
 
@@ -128,7 +124,7 @@ class AclRetrieverTest extends TestCase
         /**
          * @var Rules|MockObject $rulesMock1
          */
-        $rulesMock1 = $this->objectManagerHelper->createPartialMockWithReflection(
+        $rulesMock1 = $this->createPartialMockWithReflection(
             Rules::class,
             ['getResourceId', '__wakeup']
         );
@@ -138,7 +134,7 @@ class AclRetrieverTest extends TestCase
         /**
          * @var Rules|MockObject $rulesMock2
          */
-        $rulesMock2 = $this->objectManagerHelper->createPartialMockWithReflection(
+        $rulesMock2 = $this->createPartialMockWithReflection(
             Rules::class,
             ['getResourceId', '__wakeup']
         );
@@ -193,7 +189,7 @@ class AclRetrieverTest extends TestCase
     public function testResetAclWhenRoleChanges(): void
     {
         // Set up rules collection
-        $rulesMock = $this->objectManagerHelper->createPartialMockWithReflection(
+        $rulesMock = $this->createPartialMockWithReflection(
             Rules::class,
             ['getResourceId', '__wakeup']
         );

@@ -15,13 +15,15 @@ use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Event;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Message\ManagerInterface;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class CheckUserLoginBackendObserverTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var CheckUserLoginBackendObserver
      */
@@ -48,18 +50,12 @@ class CheckUserLoginBackendObserverTest extends TestCase
     private $helperMock;
 
     /**
-     * @var ObjectManager
-     */
-    private $objectManagerHelper;
-
-    /**
      * Set Up
      *
      * @return void
      */
     protected function setUp(): void
     {
-        $this->objectManagerHelper = new ObjectManager($this);
         $this->helperMock = $this->createMock(Data::class);
         $this->messageManagerMock = $this->createMock(ManagerInterface::class);
         $this->captchaStringResolverMock = $this->createMock(CaptchaStringResolver::class);
@@ -87,7 +83,7 @@ class CheckUserLoginBackendObserverTest extends TestCase
 
         /** @var Observer|MockObject $observerMock */
         $observerMock = $this->createPartialMock(Observer::class, ['getEvent']);
-        $eventMock = $this->objectManagerHelper->createPartialMockWithReflection(
+        $eventMock = $this->createPartialMockWithReflection(
             Event::class,
             ['getUsername']
         );
@@ -129,7 +125,7 @@ class CheckUserLoginBackendObserverTest extends TestCase
 
         /** @var Observer|MockObject $observerMock */
         $observerMock = $this->createPartialMock(Observer::class, ['getEvent']);
-        $eventMock = $this->objectManagerHelper->createPartialMockWithReflection(
+        $eventMock = $this->createPartialMockWithReflection(
             Event::class,
             ['getUsername']
         );

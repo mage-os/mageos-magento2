@@ -14,6 +14,7 @@ use Magento\Framework\App\Response\RedirectInterface;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\ObjectManagerInterface;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\User\Controller\Adminhtml\User\Save;
 use Magento\User\Model\User;
@@ -23,6 +24,8 @@ use PHPUnit\Framework\TestCase;
 
 class SaveTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Save|MockObject
      */
@@ -70,12 +73,12 @@ class SaveTest extends TestCase
         $this->requestMock = $this->createMock(Http::class);
         $this->messageManagerMock = $this->createMock(ManagerInterface::class);
         $this->userFactoryMock = $this->createPartialMock(UserFactory::class, ['create']);
-        $this->userModelMock = $objectManagerHelper->createPartialMockWithReflection(
+        $this->userModelMock = $this->createPartialMockWithReflection(
             User::class,
             ['setRoleId', 'isObjectNew', 'load', 'setData', 'validate']
         );
         $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
-        $this->sessionMock = $objectManagerHelper->createPartialMockWithReflection(
+        $this->sessionMock = $this->createPartialMockWithReflection(
             Session::class,
             ['setUserData']
         );

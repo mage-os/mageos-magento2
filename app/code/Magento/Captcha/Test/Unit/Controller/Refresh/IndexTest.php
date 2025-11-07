@@ -15,7 +15,7 @@ use Magento\Framework\App\Request\Http as HttpRequest;
 use Magento\Framework\Controller\Result\Json as ResultJson;
 use Magento\Framework\Controller\Result\JsonFactory as ResultJsonFactory;
 use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\View\Element\AbstractBlock;
 use Magento\Framework\View\Element\BlockInterface;
 use Magento\Framework\View\LayoutInterface;
@@ -24,6 +24,8 @@ use PHPUnit\Framework\TestCase;
 
 class IndexTest extends TestCase
 {
+    use MockCreationTrait;
+
     private const STUB_FORM_ID = 'StubFormId';
     private const STUB_CAPTCHA_SOURCE = '/stub-captcha-source.jpg';
 
@@ -54,16 +56,11 @@ class IndexTest extends TestCase
     /** @var Index */
     private $refreshAction;
 
-    /** @var ObjectManager */
-    private $objectManager;
-
     protected function setUp(): void
     {
-        $this->objectManager = new ObjectManager($this);
-
         $this->requestMock = $this->createPartialMock(HttpRequest::class, ['getPost', 'getContent']);
         $this->layoutMock = $this->createMock(LayoutInterface::class);
-        $this->blockMock = $this->objectManager->createPartialMockWithReflection(
+        $this->blockMock = $this->createPartialMockWithReflection(
             AbstractBlock::class,
             ['setFormId', 'setIsAjax', 'toHtml']
         );
@@ -149,7 +146,7 @@ class IndexTest extends TestCase
      */
     private function getCaptchaModelMock(string $imageSource): CaptchaInterface
     {
-        $modelMock = $this->objectManager->createPartialMockWithReflection(
+        $modelMock = $this->createPartialMockWithReflection(
             CaptchaInterface::class,
             ['generate', 'getBlockName', 'getImgSrc', 'isCorrect']
         );

@@ -13,6 +13,7 @@ use Magento\Framework\Event;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Message\Collection;
 use Magento\Framework\Message\ManagerInterface;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\User\Model\Backend\Config\ObserverConfig;
 use Magento\User\Model\ResourceModel\User;
@@ -27,6 +28,8 @@ use PHPUnit\Framework\TestCase;
  */
 class TrackAdminNewPasswordObserverTest extends TestCase
 {
+    use MockCreationTrait;
+
     /** @var ObserverConfig */
     protected $observerConfig;
 
@@ -51,7 +54,7 @@ class TrackAdminNewPasswordObserverTest extends TestCase
 
         $this->configInterfaceMock = $this->createMock(ConfigInterface::class);
         $this->userMock = $this->createMock(User::class);
-        $this->authSessionMock = $helper->createPartialMockWithReflection(
+        $this->authSessionMock = $this->createPartialMockWithReflection(
             Session::class,
             [
                 'setPciAdminUserIsPasswordExpired',
@@ -90,7 +93,7 @@ class TrackAdminNewPasswordObserverTest extends TestCase
         $eventObserverMock = $this->createPartialMock(Observer::class, ['getEvent']);
 
         /** @var Event|MockObject */
-        $eventMock = $helper->createPartialMockWithReflection(Event::class, ['getObject']);
+        $eventMock = $this->createPartialMockWithReflection(Event::class, ['getObject']);
 
         /** @var UserModel|MockObject $userMock */
         $userMock = $this->createPartialMock(UserModel::class, ['getId', 'getPassword', 'dataHasChangedFor']);

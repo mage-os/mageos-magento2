@@ -18,6 +18,7 @@ use Magento\Framework\Model\AbstractModel;
 use Magento\Framework\Model\ResourceModel\Db\Context;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\Stdlib\DateTime;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\User\Model\ResourceModel\User;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -30,6 +31,8 @@ use PHPUnit\Framework\TestCase;
  */
 class UserTest extends TestCase
 {
+    use MockCreationTrait;
+
     /** @var User */
     protected $model;
 
@@ -136,7 +139,7 @@ class UserTest extends TestCase
     public function testHasAssigned2RolePassAnObject()
     {
         $helper = new ObjectManager($this);
-        $methodUserMock = $helper->createPartialMockWithReflection(
+        $methodUserMock = $this->createPartialMockWithReflection(
             AbstractModel::class,
             ['getUserId']
         );
@@ -308,7 +311,7 @@ class UserTest extends TestCase
     public function testDeleteFromRole()
     {
         $helper = new ObjectManager($this);
-        $methodUserMock = $helper->createPartialMockWithReflection(
+        $methodUserMock = $this->createPartialMockWithReflection(
             AbstractModel::class,
             ['getUserId', 'getRoleId']
         );
@@ -328,7 +331,7 @@ class UserTest extends TestCase
     public function testRoleUserExists()
     {
         $helper = new ObjectManager($this);
-        $methodUserMock = $helper->createPartialMockWithReflection(
+        $methodUserMock = $this->createPartialMockWithReflection(
             AbstractModel::class,
             ['getUserId', 'getRoleId']
         );
@@ -393,7 +396,7 @@ class UserTest extends TestCase
     {
         $roleId = 123;
         $objectManager = new ObjectManager($this);
-        $methodUserMock = $objectManager->createPartialMockWithReflection(
+        $methodUserMock = $this->createPartialMockWithReflection(
             \Magento\User\Model\User::class,
             ['hasRoleId', 'getRoleId', 'getExtra', 'setExtra']
         );
@@ -432,7 +435,7 @@ class UserTest extends TestCase
     public function testAfterLoad()
     {
         $objectManager = new ObjectManager($this);
-        $methodUserMock = $objectManager->createPartialMockWithReflection(
+        $methodUserMock = $this->createPartialMockWithReflection(
             \Magento\User\Model\User::class,
             ['getExtra', 'setExtra']
         );
@@ -463,7 +466,7 @@ class UserTest extends TestCase
     public function testAfterLoadNoExtra()
     {
         $objectManager = new ObjectManager($this);
-        $methodUserMock = $objectManager->createPartialMockWithReflection(
+        $methodUserMock = $this->createPartialMockWithReflection(
             \Magento\User\Model\User::class,
             ['getExtra', 'setExtra']
         );

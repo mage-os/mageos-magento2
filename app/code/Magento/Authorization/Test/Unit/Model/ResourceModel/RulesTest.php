@@ -17,7 +17,7 @@ use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Model\ResourceModel\Db\Context;
 use Magento\Framework\Phrase;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -32,6 +32,8 @@ use Psr\Log\LoggerInterface;
  */
 class RulesTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * Test constants
      */
@@ -83,17 +85,10 @@ class RulesTest extends TestCase
     private $rulesModelMock;
 
     /**
-     * @var ObjectManager
-     */
-    private $objectManagerHelper;
-
-    /**
      * @inheritDoc
      */
     protected function setUp(): void
     {
-        $this->objectManagerHelper = new ObjectManager($this);
-
         $this->contextMock = $this->createPartialMock(Context::class, ['getResources']);
 
         $this->resourceConnectionMock = $this->createPartialMock(
@@ -116,7 +111,7 @@ class RulesTest extends TestCase
             ->with('authorization_rule', 'default')
             ->willReturnArgument(0);
 
-        $this->aclBuilderMock = $this->objectManagerHelper->createPartialMockWithReflection(
+        $this->aclBuilderMock = $this->createPartialMockWithReflection(
             Builder::class,
             ['getConfigCache']
         );
@@ -130,7 +125,7 @@ class RulesTest extends TestCase
         $this->aclBuilderMock->method('getConfigCache')
             ->willReturn($this->aclDataCacheMock);
 
-        $this->rulesModelMock = $this->objectManagerHelper->createPartialMockWithReflection(
+        $this->rulesModelMock = $this->createPartialMockWithReflection(
             RulesModel::class,
             ['getRoleId']
         );
@@ -138,16 +133,13 @@ class RulesTest extends TestCase
         $this->rulesModelMock->method('getRoleId')
             ->willReturn(self::TEST_ROLE_ID);
 
-        $this->model = $this->objectManagerHelper->getObject(
-            Rules::class,
-            [
-                'context' => $this->contextMock,
-                'aclBuilder' => $this->aclBuilderMock,
-                'logger' => $this->loggerMock,
-                'rootResource' => $this->rootResourceMock,
-                'aclDataCache' => $this->aclDataCacheMock,
-                'default'
-            ]
+        $this->model = new Rules(
+            $this->contextMock,
+            $this->aclBuilderMock,
+            $this->loggerMock,
+            $this->rootResourceMock,
+            $this->aclDataCacheMock,
+            'default'
         );
     }
 

@@ -13,6 +13,7 @@ use Magento\Framework\App\Response\HttpInterface;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\ObjectManager\ObjectManager;
 use Magento\Framework\ObjectManagerInterface;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\User\Block\User\Edit\Tab\Main;
 use Magento\User\Controller\Adminhtml\User\Delete;
@@ -27,6 +28,8 @@ use PHPUnit\Framework\TestCase;
  */
 class DeleteTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Delete
      */
@@ -86,7 +89,7 @@ class DeleteTest extends TestCase
             ['getPost']
         );
 
-        $this->authSessionMock = $objectManagerHelper->createPartialMockWithReflection(
+        $this->authSessionMock = $this->createPartialMockWithReflection(
             Session::class,
             ['getUser']
         );

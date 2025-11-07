@@ -13,7 +13,7 @@ use Magento\Framework\Acl\Data\CacheInterface;
 use Magento\Framework\Acl\RootResource;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\Serialize\Serializer\Json;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\Exception;
 use Magento\Framework\Acl\Role\CurrentRoleContext;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -24,6 +24,8 @@ use PHPUnit\Framework\TestCase;
  */
 class MissingDeclineRuleTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Rule
      */
@@ -50,19 +52,13 @@ class MissingDeclineRuleTest extends TestCase
     private $serializerMock;
 
     /**
-     * @var ObjectManagerHelper
-     */
-    private $objectManagerHelper;
-
-    /**
      * @inheritDoc
      */
     protected function setUp(): void
     {
-        $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->rootResource = new RootResource('Magento_Backend::all');
 
-        $this->resourceMock = $this->objectManagerHelper->createPartialMockWithReflection(
+        $this->resourceMock = $this->createPartialMockWithReflection(
             ResourceConnection::class,
             ['getTable', 'getConnection']
         );

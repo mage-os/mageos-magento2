@@ -19,7 +19,7 @@ use Magento\Framework\Filesystem;
 use Magento\Framework\Math\Random;
 use Magento\Framework\Model\ResourceModel\Db\ObjectRelationProcessor;
 use Magento\Framework\Model\ResourceModel\Db\TransactionManagerInterface;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -30,6 +30,8 @@ use PHPUnit\Framework\TestCase;
  */
 class ChangeTest extends TestCase
 {
+    use MockCreationTrait;
+
     /** @var EncryptorInterface|MockObject */
     protected $encryptMock;
 
@@ -63,14 +65,9 @@ class ChangeTest extends TestCase
     /** @var Change */
     protected $model;
 
-    /** @var ObjectManager */
-    protected $objectManagerHelper;
-
     protected function setUp(): void
     {
-        $this->objectManagerHelper = new ObjectManager($this);
-
-        $this->encryptMock = $this->objectManagerHelper->createPartialMockWithReflection(
+        $this->encryptMock = $this->createPartialMockWithReflection(
             EncryptorInterface::class,
             [
                 'getHash',
@@ -90,7 +87,7 @@ class ChangeTest extends TestCase
         $this->writerMock = $this->createMock(Writer::class);
         $this->adapterMock = $this->createMock(AdapterInterface::class);
         $this->resourceMock = $this->createMock(ResourceConnection::class);
-        $this->selectMock = $this->objectManagerHelper->createPartialMockWithReflection(
+        $this->selectMock = $this->createPartialMockWithReflection(
             Select::class,
             ['update', 'from', 'where']
         );
@@ -98,21 +95,16 @@ class ChangeTest extends TestCase
         $this->objRelationMock = $this->createMock(ObjectRelationProcessor::class);
         $this->randomMock = $this->createMock(Random::class);
 
-        $helper = $this->objectManagerHelper;
-
-        $this->model = $helper->getObject(
-            Change::class,
-            [
-                'filesystem' => $this->filesystemMock,
-                'structure' => $this->structureMock,
-                'encryptor' => $this->encryptMock,
-                'writer' => $this->writerMock,
-                'adapterInterface' => $this->adapterMock,
-                'resource' => $this->resourceMock,
-                'transactionManager' => $this->transactionMock,
-                'relationProcessor' => $this->objRelationMock,
-                'random' => $this->randomMock
-            ]
+        $contextMock = $this->createPartialMock(\Magento\Framework\Model\ResourceModel\Db\Context::class, ['getResources']);
+        $contextMock->method('getResources')->willReturn($this->resourceMock);
+        
+        $this->model = new Change(
+            $contextMock,
+            $this->filesystemMock,
+            $this->structureMock,
+            $this->encryptMock,
+            $this->writerMock,
+            $this->randomMock
         );
     }
 

@@ -15,6 +15,7 @@ use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Directory\ReadInterface;
 use Magento\Framework\Json\EncoderInterface;
 use Magento\Framework\Registry;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\UrlInterface;
 use Magento\Framework\View\Element\AbstractBlock;
@@ -35,6 +36,8 @@ use PHPUnit\Framework\TestCase;
  */
 class UserTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var User
      */
@@ -233,7 +236,7 @@ class UserTest extends TestCase
     {
         $this->requestInterfaceMock->expects($this->any())->method('getParam')->willReturn(1);
         $layoutBlockMock = $this->createMock(LayoutInterface::class);
-        $blockMock = $this->objectManagerHelper->createPartialMockWithReflection(
+        $blockMock = $this->createPartialMockWithReflection(
             AbstractBlock::class,
             ['setData', 'getLayout', 'getChildNames', 'setGrid', 'setId', 'isAvailable']
         );

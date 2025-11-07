@@ -18,6 +18,7 @@ use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Filter\FilterManager;
 use Magento\Framework\Message\Manager;
 use Magento\Framework\Registry;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\User\Controller\Adminhtml\User\Role\Delete;
 use Magento\User\Model\User;
@@ -32,6 +33,8 @@ use PHPUnit\Framework\TestCase;
  */
 class DeleteTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Delete
      */
@@ -105,7 +108,7 @@ class DeleteTest extends TestCase
         $objectManagerHelper = new ObjectManagerHelper($this);
 
         $this->contextMock = $this->createMock(Context::class);
-        $this->coreRegistryMock = $objectManagerHelper->createPartialMockWithReflection(
+        $this->coreRegistryMock = $this->createPartialMockWithReflection(
             Registry::class,
             ['getId']
         );
@@ -115,7 +118,7 @@ class DeleteTest extends TestCase
             ['create']
         );
         $this->rulesFactoryMock = $this->createMock(RulesFactory::class);
-        $this->authSessionMock = $objectManagerHelper->createPartialMockWithReflection(
+        $this->authSessionMock = $this->createPartialMockWithReflection(
             Session::class,
             ['getUser']
         );
@@ -149,7 +152,7 @@ class DeleteTest extends TestCase
 
         $this->contextMock->expects($this->once())->method('getRequest')->willReturn($this->requestMock);
 
-        $this->roleModelMock = $objectManagerHelper->createPartialMockWithReflection(
+        $this->roleModelMock = $this->createPartialMockWithReflection(
             Role::class,
             ['getRoleType', 'load', 'getId', 'delete']
         );

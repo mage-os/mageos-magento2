@@ -13,6 +13,7 @@ use Magento\Directory\Helper\Data as DirectoryHelper;
 use Magento\Framework\Json\EncoderInterface;
 use Magento\Framework\Json\Helper\Data as JsonHelper;
 use Magento\Framework\Registry;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\LayoutInterface;
 use Magento\User\Block\Role\Edit;
@@ -25,6 +26,8 @@ use PHPUnit\Framework\TestCase;
  */
 class EditTest extends TestCase
 {
+    use MockCreationTrait;
+
     /** @var Edit|MockObject */
     protected $model;
 
@@ -50,7 +53,7 @@ class EditTest extends TestCase
         $this->jsonEncoderMock = $this->createMock(EncoderInterface::class);
         $this->authSessionsMock = $this->createMock(Session::class);
         $this->registryMock = $this->createPartialMock(Registry::class, ['registry']);
-        $this->layoutInterfaceMock = $objectManagerHelper->createPartialMockWithReflection(
+        $this->layoutInterfaceMock = $this->createPartialMockWithReflection(
             LayoutInterface::class,
             [
                 'getUpdate', 'generateXml', 'generateElements', 'renderElement', 'addOutputElement',
