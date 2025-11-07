@@ -130,8 +130,6 @@ class AuthObserverTest extends TestCase
             'last_updated' => 1496248367
         ];
 
-        $helper = new ObjectManager($this);
-
         /** @var Observer|MockObject $eventObserverMock */
         $eventObserverMock = $this->createPartialMock(Observer::class, ['getEvent']);
 
@@ -181,8 +179,6 @@ class AuthObserverTest extends TestCase
         $authResult = true;
         $lockExpires = '3015-07-08 11:14:15.638276';
 
-        $helper = new ObjectManager($this);
-
         /** @var Observer|MockObject $eventObserverMock */
         $eventObserverMock = $this->createPartialMock(Observer::class, ['getEvent']);
 
@@ -227,8 +223,6 @@ class AuthObserverTest extends TestCase
             'expires' => 1,
             'last_updated' => 1694661402
         ];
-
-        $helper = new ObjectManager($this);
 
         /** @var Observer|MockObject $eventObserverMock */
         $eventObserverMock = $this->createPartialMock(Observer::class, ['getEvent']);
@@ -280,8 +274,6 @@ class AuthObserverTest extends TestCase
         $authResult = false;
         $firstFailure = '1965-07-08 11:14:15.638276';
         $numOfFailures = 5;
-
-        $helper = new ObjectManager($this);
 
         /** @var Observer|MockObject $eventObserverMock */
         $eventObserverMock = $this->createPartialMock(Observer::class, ['getEvent']);

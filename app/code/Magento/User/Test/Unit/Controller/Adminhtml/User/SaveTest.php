@@ -68,8 +68,6 @@ class SaveTest extends TestCase
 
     protected function setUp(): void
     {
-        $objectManagerHelper = new ObjectManagerHelper($this);
-
         $this->requestMock = $this->createMock(Http::class);
         $this->messageManagerMock = $this->createMock(ManagerInterface::class);
         $this->userFactoryMock = $this->createPartialMock(UserFactory::class, ['create']);

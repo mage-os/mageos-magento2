@@ -138,7 +138,6 @@ class UserTest extends TestCase
 
     public function testHasAssigned2RolePassAnObject()
     {
-        $helper = new ObjectManager($this);
         $methodUserMock = $this->createPartialMockWithReflection(
             AbstractModel::class,
             ['getUserId']
@@ -310,7 +309,6 @@ class UserTest extends TestCase
 
     public function testDeleteFromRole()
     {
-        $helper = new ObjectManager($this);
         $methodUserMock = $this->createPartialMockWithReflection(
             AbstractModel::class,
             ['getUserId', 'getRoleId']
@@ -330,7 +328,6 @@ class UserTest extends TestCase
 
     public function testRoleUserExists()
     {
-        $helper = new ObjectManager($this);
         $methodUserMock = $this->createPartialMockWithReflection(
             AbstractModel::class,
             ['getUserId', 'getRoleId']

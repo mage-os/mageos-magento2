@@ -86,7 +86,6 @@ class TrackAdminNewPasswordObserverTest extends TestCase
 
     public function testTrackAdminPassword()
     {
-        $helper = new ObjectManager($this);
         $newPW = "mYn3wpassw0rd";
         $uid = 123;
         /** @var Observer|MockObject $eventObserverMock */

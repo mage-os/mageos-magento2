@@ -32,7 +32,6 @@ class CheckContactUsFormObserverTest extends TestCase
 {
     use MockCreationTrait;
 
-
     /**
      * @var CheckContactUsFormObserver
      */

@@ -95,7 +95,10 @@ class ChangeTest extends TestCase
         $this->objRelationMock = $this->createMock(ObjectRelationProcessor::class);
         $this->randomMock = $this->createMock(Random::class);
 
-        $contextMock = $this->createPartialMock(\Magento\Framework\Model\ResourceModel\Db\Context::class, ['getResources']);
+        $contextMock = $this->createPartialMock(
+            \Magento\Framework\Model\ResourceModel\Db\Context::class,
+            ['getResources']
+        );
         $contextMock->method('getResources')->willReturn($this->resourceMock);
         
         $this->model = new Change(

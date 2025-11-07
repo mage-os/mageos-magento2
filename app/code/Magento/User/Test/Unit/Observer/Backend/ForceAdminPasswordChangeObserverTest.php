@@ -109,8 +109,6 @@ class ForceAdminPasswordChangeObserverTest extends TestCase
 
     public function testForceAdminPasswordChange()
     {
-        $helper = new ObjectManager($this);
-
         /** @var Observer|MockObject $eventObserverMock */
         $eventObserverMock = $this->createPartialMock(Observer::class, ['getEvent']);
 
