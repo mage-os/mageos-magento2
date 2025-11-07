@@ -10,6 +10,7 @@
           xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/sectionSchema.xsd">
     <section name="AdminSystemSecurityConfigSection">
         <element name="maxSessionSizeAdminInheritSystemValue" type="checkbox" selector="#system_security_max_session_size_admin_inherit"/>
-    </section>
+        <element name="securityGroupHeader" type="button" selector="#system_security-head"/>
+    =</section>
 </sections>
 

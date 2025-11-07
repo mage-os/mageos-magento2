@@ -10,13 +10,13 @@
        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
     <test name="AdminMaxSessionSizeTest">
         <annotations>
-            <features value="Customer"/>
+            <features value="Security"/>
             <stories value="Validate max session size in admin."/>
             <title value="To check max session size in admin."/>
             <description value="Set admin max session size to 0 and verify admin and storefront logins."/>
             <testCaseId value="AC-3093"/>
             <severity value="MAJOR"/>
-            <group value="customer"/>
+            <group value="security"/>
         </annotations>
         <before>
             <!-- Precondition 1: Create Customer and login to storefront-->
@@ -30,14 +30,17 @@
             </actionGroup>
         </before>
         <after>
-            <!-- Logout from storefront, delete customer, restore default max session size, check system value and logout from admin-->
+            <!-- Logout from storefront, delete customer, restore default max session size, select system value and logout from admin-->
             <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="logoutFromStorefront"/>
             <deleteData createDataKey="customer" stepKey="deleteCustomer"/>
             <actionGroup ref="AdminSessionMaxSizeCliActionGroup" stepKey="restoreDefaultMaxSessionSize"/>
-            <actionGroup ref="AdminNavigateToConfigurationSystemSectionActionGroup" stepKey="navigateToAdminSessionMaxSize">
-                <argument name="section" value="{{AdminSessionMaxSizeUrl.urlName}}"/>
-            </actionGroup>
+            <actionGroup ref="AdminNavigateToConfigurationSystemSectionActionGroup" stepKey="navigateToSystem"/>
+            <waitForElementVisible selector="{{AdminSystemSecurityConfigSection.securityGroupHeader}}" stepKey="waitSecurityGroupHeader"/>
+            <click selector="{{AdminSystemSecurityConfigSection.securityGroupHeader}}" stepKey="expandSecurityGroup"/>
+            <waitForElementVisible selector="{{AdminSystemSecurityConfigSection.maxSessionSizeAdminInheritSystemValue}}" stepKey="waitToUseSystemValue"/>
             <checkOption selector="{{AdminSystemSecurityConfigSection.maxSessionSizeAdminInheritSystemValue}}" stepKey="checkUseSystemValue"/>
+            <waitForElementVisible selector="{{AdminSystemSecurityConfigSection.securityGroupHeader}}" stepKey="waitSecurityGroupHeaderToClose"/>
+            <click selector="{{AdminSystemSecurityConfigSection.securityGroupHeader}}" stepKey="clickToSecurityGroupToClose"/>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
         </after>
         <!-- Step 3: Logout and login to admin and verify User is able to login successfully -->
