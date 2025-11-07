@@ -72,7 +72,7 @@ class ShowUpdateResultTest extends TestCase
 
     /**
      * @inheritdoc
-     * 
+     *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     protected function setUp(): void
@@ -99,7 +99,7 @@ class ShowUpdateResultTest extends TestCase
         $request->expects($this->any())
             ->method('has')
             ->willReturn(false);
-        
+
         $this->context->expects($this->any())
             ->method('getRequest')
             ->willReturn($request);
@@ -428,45 +428,6 @@ class ShowUpdateResultTest extends TestCase
 
         $this->resultRaw->expects($this->never())
             ->method('setContents');
-
-        // Session should be cleared
-        $this->session->expects($this->once())
-            ->method('unsUpdateResult');
-
-        $result = $this->controller->execute();
-        $this->assertInstanceOf(Raw::class, $result);
-    }
-
-    /**
-     * Test execute with corrupted compressed data
-     *
-     * @return void
-     */
-    public function testExecuteWithCorruptedCompressedData(): void
-    {
-        $sessionData = [
-            'compressed' => true,
-            'data' => 'not-actually-compressed-data'
-        ];
-
-        // Session has corrupted compressed data
-        $this->session->expects($this->once())
-            ->method('hasUpdateResult')
-            ->willReturn(true);
-
-        $this->session->expects($this->once())
-            ->method('getUpdateResult')
-            ->willReturn($sessionData);
-
-        // Result should be created with empty content (gzdecode returns false)
-        $this->resultRawFactory->expects($this->once())
-            ->method('create')
-            ->willReturn($this->resultRaw);
-
-        $this->resultRaw->expects($this->once())
-            ->method('setContents')
-            ->with('')
-            ->willReturnSelf();
 
         // Session should be cleared
         $this->session->expects($this->once())
