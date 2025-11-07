@@ -13,6 +13,7 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Request\Http;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\UrlInterface;
 use Magento\Store\Model\Store;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -21,6 +22,8 @@ use PHPUnit\Framework\TestCase;
 
 class AdminPathConfigTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var ScopeConfigInterface|MockObject
      */
@@ -52,7 +55,7 @@ class AdminPathConfigTest extends TestCase
     public function testGetCurrentSecureUrl()
     {
         $objectManager = new ObjectManager($this);
-        $request = $objectManager->createPartialMockWithReflection(Http::class, ['getPathInfo']);
+        $request = $this->createPartialMockWithReflection(Http::class, ['getPathInfo']);
         $request->method('getPathInfo')->willReturn('/info');
         $this->url->method('getBaseUrl')->willReturn('localhost/');
         $this->assertEquals('localhost/info', $this->adminPathConfig->getCurrentSecureUrl($request));

@@ -13,12 +13,15 @@ use Magento\Backend\Block\Widget\Grid\Column\Renderer\Options\Converter;
 use Magento\Backend\Block\Widget\Grid\Column\Renderer\Radio;
 use Magento\Framework\DataObject;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class RadioTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Radio
      */
@@ -47,7 +50,7 @@ class RadioTest extends TestCase
             Converter::class,
             ['toFlatArray']
         );
-        $this->_column = $this->objectManager->createPartialMockWithReflection(
+        $this->_column = $this->createPartialMockWithReflection(
             Column::class,
             ['getValues', 'getIndex', 'getHtmlName']
         );

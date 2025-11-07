@@ -20,6 +20,7 @@ use Magento\Framework\DB\Select;
 use Magento\Framework\Json\Helper\Data;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\View\Layout;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -32,6 +33,8 @@ use PHPUnit\Framework\TestCase;
  */
 class MassactionTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Massaction
      */
@@ -104,7 +107,7 @@ class MassactionTest extends TestCase
             ->method('getId')
             ->willReturn('test_grid');
 
-        $this->_layoutMock = $this->objectManagerHelper->createPartialMockWithReflection(
+        $this->_layoutMock = $this->createPartialMockWithReflection(
             Layout::class,
             ['helper', 'getParentName', 'getBlock']
         );

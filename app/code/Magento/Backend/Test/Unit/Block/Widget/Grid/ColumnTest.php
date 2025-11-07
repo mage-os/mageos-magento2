@@ -14,6 +14,7 @@ use Magento\Backend\Block\Widget\Grid\Column\Renderer\AbstractRenderer;
 use Magento\Backend\Model\Url;
 use Magento\Framework\DataObject;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Layout;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -25,6 +26,8 @@ use PHPUnit\Framework\TestCase;
  */
 class ColumnTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Column
      */
@@ -49,7 +52,7 @@ class ColumnTest extends TestCase
     {
         $this->objectManager = new ObjectManager($this);
         $this->_layoutMock = $this->createMock(Layout::class);
-        $this->_blockMock = $this->objectManager->createPartialMockWithReflection(
+        $this->_blockMock = $this->createPartialMockWithReflection(
             Template::class,
             ['setColumn', 'getHtml']
         );
@@ -426,7 +429,7 @@ class ColumnTest extends TestCase
             }
         );
 
-        $frameCallbackHostObject = $this->objectManager->createPartialMockWithReflection(
+        $frameCallbackHostObject = $this->createPartialMockWithReflection(
             Widget::class,
             ['decorate']
         );

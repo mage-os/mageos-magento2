@@ -20,6 +20,7 @@ use Magento\Backend\Model\View\Result\Redirect;
 use Magento\Framework\App\RequestInterface as Request;
 use Magento\Framework\Controller\Result\RedirectFactory;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\View\Result\PageFactory;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -32,6 +33,8 @@ use PHPUnit\Framework\TestCase;
  */
 class LoginTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Login
      */
@@ -97,7 +100,7 @@ class LoginTest extends TestCase
         $objectManagerHelper = new ObjectManagerHelper($this);
 
         $this->helperMock = $this->createMock(Data::class);
-        $this->requestMock = $objectManagerHelper->createPartialMockWithReflection(
+        $this->requestMock = $this->createPartialMockWithReflection(
             \Magento\Framework\App\Request\Http::class,
             ['getUri', 'getRequestUri']
         );

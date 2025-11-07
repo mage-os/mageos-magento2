@@ -19,6 +19,7 @@ use Magento\Framework\App\Request\Http;
 use Magento\Framework\Data\Collection;
 use Magento\Framework\Json\Helper\Data as JsonHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\View\Layout;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -26,6 +27,8 @@ use PHPUnit\Framework\TestCase;
 
 class ExtendedTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Massaction
      */
@@ -71,7 +74,7 @@ class ExtendedTest extends TestCase
         );
         $this->_gridMock->expects($this->any())->method('getId')->willReturn('test_grid');
 
-        $this->_layoutMock = $this->objectManager->createPartialMockWithReflection(
+        $this->_layoutMock = $this->createPartialMockWithReflection(
             Layout::class,
             ['helper', 'getParentName', 'getBlock']
         );

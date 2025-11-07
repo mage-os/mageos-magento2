@@ -19,6 +19,7 @@ use Magento\Framework\Flag;
 use Magento\Framework\FlagManager;
 use Magento\Framework\Stdlib\ArrayUtils;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject as Mock;
 use PHPUnit\Framework\TestCase;
 
@@ -30,6 +31,8 @@ use PHPUnit\Framework\TestCase;
  */
 class ImporterTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Importer
      */
@@ -91,7 +94,7 @@ class ImporterTest extends TestCase
     protected function setUp(): void
     {
         $this->objectManager = new ObjectManager($this);
-        $this->flagManagerMock = $this->objectManager->createPartialMockWithReflection(
+        $this->flagManagerMock = $this->createPartialMockWithReflection(
             FlagManager::class,
             ['getFlagData', 'saveFlag', 'create']
         );

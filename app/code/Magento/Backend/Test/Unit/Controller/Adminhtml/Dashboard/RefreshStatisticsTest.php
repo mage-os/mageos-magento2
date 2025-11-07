@@ -16,6 +16,7 @@ use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Message\Manager;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Sales\Model\ResourceModel\Report\Order;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -25,6 +26,8 @@ use PHPUnit\Framework\TestCase;
  */
 class RefreshStatisticsTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Redirect|MockObject
      */
@@ -85,7 +88,7 @@ class RefreshStatisticsTest extends TestCase
         $this->resultRedirect = $this->createMock(Redirect::class);
 
         $this->request = $this->createStub(RequestInterface::class);
-        $this->response = $objectManagerHelper->createPartialMockWithReflection(
+        $this->response = $this->createPartialMockWithReflection(
             ResponseInterface::class,
             ['setRedirect', 'sendResponse']
         );

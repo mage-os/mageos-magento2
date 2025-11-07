@@ -17,6 +17,7 @@ use Magento\Framework\Math\Random;
 use Magento\Framework\Stdlib\DateTime\DateTimeFormatterInterface;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\View\Asset\Repository;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -28,6 +29,8 @@ use PHPUnit\Framework\TestCase;
  */
 class DateTest extends TestCase
 {
+    use MockCreationTrait;
+
     /** @var Date */
     protected $model;
 
@@ -79,7 +82,7 @@ class DateTest extends TestCase
 
         $this->dateTimeFormatterMock = $this->createMock(DateTimeFormatterInterface::class);
 
-        $this->columnMock = $this->objectManagerHelper->createPartialMockWithReflection(
+        $this->columnMock = $this->createPartialMockWithReflection(
             Column::class,
             ['getTimezone', 'getHtmlId', 'getId']
         );

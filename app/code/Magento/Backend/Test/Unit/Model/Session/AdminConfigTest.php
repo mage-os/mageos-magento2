@@ -18,6 +18,7 @@ use Magento\Framework\App\Request\Http;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Directory\WriteInterface;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\Validator\ValidatorInterface;
 use Magento\Framework\ValidatorFactory;
@@ -27,6 +28,7 @@ use PHPUnit\Framework\TestCase;
 
 class AdminConfigTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var RequestInterface|MockObject
      */
@@ -63,7 +65,7 @@ class AdminConfigTest extends TestCase
             ->method('getHttpHost')
             ->willReturn('init.host');
         $this->objectManager =  new ObjectManager($this);
-        $this->validatorFactory = $this->objectManager->createPartialMockWithReflection(
+        $this->validatorFactory = $this->createPartialMockWithReflection(
             ValidatorFactory::class,
             ['setInstanceName', 'create']
         );

@@ -17,6 +17,7 @@ use Magento\Config\Model\Config\Structure\Element\Iterator\Tab as TabIterator;
 use Magento\Config\Model\Config\Structure\Element\Section;
 use Magento\Config\Model\Config\Structure\ElementInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject as Mock;
 use PHPUnit\Framework\TestCase;
@@ -28,6 +29,8 @@ use PHPUnit\Framework\TestCase;
  */
 class StructureTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Structure|Mock
      */
@@ -341,7 +344,7 @@ class StructureTest extends TestCase
 
     public function testGetFirstSectionReturnsFirstAllowedSection()
     {
-        $tabMock = $this->objectManager->createPartialMockWithReflection(
+        $tabMock = $this->createPartialMockWithReflection(
             Structure\Element\Tab::class,
             ['current', 'rewind', 'getChildren']
         );

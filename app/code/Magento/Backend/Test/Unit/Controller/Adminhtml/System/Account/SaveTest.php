@@ -22,6 +22,7 @@ use Magento\Framework\App\Response\Http as ResponseHttp;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as HelperObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\Event\ManagerInterface as EventManagerInterface;
 use Magento\Framework\ObjectManager\ObjectManager;
 use Magento\Framework\TranslateInterface;
@@ -37,6 +38,8 @@ use PHPUnit\Framework\TestCase;
  */
 class SaveTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Account
      */
@@ -119,7 +122,7 @@ class SaveTest extends TestCase
             ['addSuccessMessage']
         );
 
-        $this->authSessionMock = $this->objectManagerHelper->createPartialMockWithReflection(
+        $this->authSessionMock = $this->createPartialMockWithReflection(
             Session::class,
             ['getUser']
         );
@@ -150,7 +153,7 @@ class SaveTest extends TestCase
             ->with(ResultFactory::TYPE_REDIRECT)
             ->willReturn($resultRedirect);
 
-        $contextMock = $this->objectManagerHelper->createPartialMockWithReflection(
+        $contextMock = $this->createPartialMockWithReflection(
             Context::class,
             [
                 'getFrontController',

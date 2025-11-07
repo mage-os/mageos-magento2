@@ -19,6 +19,7 @@ use Magento\Framework\Data\Form\FormKey;
 use Magento\Framework\Encryption\Encryptor;
 use Magento\Framework\Encryption\EncryptorInterface;
 use Magento\Framework\Serialize\Serializer\Json;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\Url\HostChecker;
 use Magento\Framework\Url\RouteParamsResolver;
@@ -32,6 +33,7 @@ use PHPUnit\Framework\TestCase;
  */
 class UrlTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var Url
      */
@@ -104,7 +106,7 @@ class UrlTest extends TestCase
     protected function setUp(): void
     {
         $this->objectManager = new ObjectManager($this);
-        $this->menuMock = $this->objectManager->createPartialMockWithReflection(
+        $this->menuMock = $this->createPartialMockWithReflection(
             Menu::class,
             ['getFirstAvailableChild', 'get', 'getFirstAvailable']
         );
@@ -204,7 +206,7 @@ class UrlTest extends TestCase
     {
         $user = $this->createMock(User::class);
         $user->expects($this->once())->method('setHasAvailableResources')->with(false);
-        $mockSession = $this->objectManager->createPartialMockWithReflection(
+        $mockSession = $this->createPartialMockWithReflection(
             Session::class,
             ['getUser', 'isAllowed']
         );
@@ -224,7 +226,7 @@ class UrlTest extends TestCase
     public function testFindFirstAvailableMenu(): void
     {
         $user = $this->createMock(User::class);
-        $mockSession = $this->objectManager->createPartialMockWithReflection(
+        $mockSession = $this->createPartialMockWithReflection(
             Session::class,
             ['getUser', 'isAllowed']
         );

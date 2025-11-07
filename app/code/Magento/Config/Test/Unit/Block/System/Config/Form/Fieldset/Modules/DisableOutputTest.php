@@ -18,6 +18,7 @@ use Magento\Framework\Data\Form\Element\Factory;
 use Magento\Framework\Data\Form\Element\Text;
 use Magento\Framework\Module\ModuleListInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\View\Helper\Js;
 use Magento\Framework\View\Layout;
 use Magento\User\Model\User;
@@ -31,6 +32,8 @@ use Magento\Framework\View\Helper\SecureHtmlRenderer;
  */
 class DisableOutputTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var DisableOutput
      */
@@ -119,12 +122,12 @@ class DisableOutputTest extends TestCase
             ->method('getOne')
             ->willReturn(null);
 
-        $this->authSessionMock = $this->objectManager->createPartialMockWithReflection(
+        $this->authSessionMock = $this->createPartialMockWithReflection(
             Session::class,
             ['getUser']
         );
 
-        $this->userMock = $this->objectManager->createPartialMockWithReflection(
+        $this->userMock = $this->createPartialMockWithReflection(
             User::class,
             ['getExtra']
         );
@@ -178,7 +181,7 @@ class DisableOutputTest extends TestCase
             $data
         );
 
-        $this->elementMock = $this->objectManager->createPartialMockWithReflection(
+        $this->elementMock = $this->createPartialMockWithReflection(
             Text::class,
             [
                 'getExpanded', 'getLegend', 'getComment', 'getTooltip', 'getIsNested',

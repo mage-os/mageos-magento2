@@ -12,6 +12,7 @@ use Magento\Backend\App\Config as BackendConfig;
 use Magento\Framework\App\Config as FrameworkConfig;
 use Magento\Framework\App\Config\Data;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -23,6 +24,8 @@ use PHPUnit\Framework\TestCase;
  */
 class ConfigTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var \Magento\Framework\App\Config|MockObject
      */
@@ -107,7 +110,7 @@ class ConfigTest extends TestCase
      */
     protected function getConfigDataMock($mockedMethod)
     {
-        return $this->objectManager->createPartialMockWithReflection(
+        return $this->createPartialMockWithReflection(
             Data::class,
             [$mockedMethod]
         );

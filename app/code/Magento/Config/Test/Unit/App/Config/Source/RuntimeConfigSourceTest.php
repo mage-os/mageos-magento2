@@ -18,6 +18,7 @@ use Magento\Framework\App\Config\Value;
 use Magento\Framework\App\DeploymentConfig;
 use Magento\Framework\DB\Adapter\TableNotFoundException;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -29,6 +30,8 @@ use PHPUnit\Framework\TestCase;
  */
 class RuntimeConfigSourceTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var RuntimeConfigSource
      */
@@ -74,11 +77,11 @@ class RuntimeConfigSourceTest extends TestCase
         $this->collectionFactoryMock = $this->createMock(CollectionFactory::class);
         $this->scopeCodeResolverMock = $this->createMock(ScopeCodeResolver::class);
         $this->converterMock = $this->createMock(Converter::class);
-        $this->configItemMock = $objectManager->createPartialMockWithReflection(
+        $this->configItemMock = $this->createPartialMockWithReflection(
             Value::class,
             ['getScope', 'getPath', 'getValue']
         );
-        $this->configItemMockTwo = $objectManager->createPartialMockWithReflection(
+        $this->configItemMockTwo = $this->createPartialMockWithReflection(
             Value::class,
             ['getScope', 'getPath', 'getValue', 'getScopeId']
         );

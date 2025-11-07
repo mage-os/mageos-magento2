@@ -12,6 +12,7 @@ use Magento\Backend\Model\Locale\Manager;
 use Magento\Backend\Model\Session;
 use Magento\Framework\DataObject;
 use Magento\Framework\Locale\Resolver;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\TranslateInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -20,6 +21,7 @@ use PHPUnit\Framework\TestCase;
 
 class ManagerTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var Manager
      */
@@ -58,7 +60,7 @@ class ManagerTest extends TestCase
         $this->objectManager = new ObjectManager($this);
         $this->_session = $this->createMock(Session::class);
 
-        $this->_authSession = $this->objectManager->createPartialMockWithReflection(
+        $this->_authSession = $this->createPartialMockWithReflection(
             \Magento\Backend\Model\Auth\Session::class,
             ['getUser']
         );
@@ -69,7 +71,7 @@ class ManagerTest extends TestCase
 
         $this->_authSession->expects($this->any())->method('getUser')->willReturn($userMock);
 
-        $this->_translator = $this->objectManager->createPartialMockWithReflection(
+        $this->_translator = $this->createPartialMockWithReflection(
             TranslateInterface::class,
             ['init', 'setLocale', 'loadData', 'getData', 'getLocale', 'getTheme']
         );

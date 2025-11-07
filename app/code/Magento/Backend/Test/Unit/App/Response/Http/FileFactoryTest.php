@@ -13,12 +13,15 @@ use Magento\Backend\Model\Session;
 use Magento\Backend\Model\Url;
 use Magento\Framework\App\Response\Http;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Magento\Framework\App\Response\FileFactory;
 
 class FileFactoryTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var \Magento\Framework\App\Response\Http\FileFactory
      */
@@ -72,7 +75,7 @@ class FileFactoryTest extends TestCase
             $this->_responseMock
         );
 
-        $this->_sessionMock = $this->objectManager->createPartialMockWithReflection(
+        $this->_sessionMock = $this->createPartialMockWithReflection(
             Session::class,
             ['setIsUrlNotice']
         );

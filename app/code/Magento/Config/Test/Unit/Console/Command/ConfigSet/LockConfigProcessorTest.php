@@ -18,6 +18,7 @@ use Magento\Framework\Config\File\ConfigFilePool;
 use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Stdlib\ArrayManager;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Store\Model\ScopeInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject as Mock;
@@ -31,6 +32,8 @@ use PHPUnit\Framework\TestCase;
  */
 class LockConfigProcessorTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var LockProcessor
      */
@@ -72,7 +75,7 @@ class LockConfigProcessorTest extends TestCase
         $this->configPathResolver = $this->createMock(ConfigPathResolver::class);
         
         $objectManager = new ObjectManager($this);
-        $this->valueMock = $objectManager->createPartialMockWithReflection(
+        $this->valueMock = $this->createPartialMockWithReflection(
             Value::class,
             ['setValue', 'getValue', 'validateBeforeSave', 'beforeSave', 'afterSave']
         );

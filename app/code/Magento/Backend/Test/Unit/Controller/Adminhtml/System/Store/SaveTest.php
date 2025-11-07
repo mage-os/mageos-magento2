@@ -20,6 +20,7 @@ use Magento\Framework\App\Response\Http as ResponseHttp;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\Result\RedirectFactory;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as HelperObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\Filter\FilterManager;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\ObjectManager\ObjectManager;
@@ -37,6 +38,8 @@ use PHPUnit\Framework\TestCase;
  */
 class SaveTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Save
      */
@@ -123,7 +126,7 @@ class SaveTest extends TestCase
         $this->objectManagerMock = $this->createPartialMock(ObjectManager::class, ['get', 'create']);
         $this->messagesMock = $this->createMock(ManagerInterface::class);
         $this->helperMock = $this->createPartialMock(Data::class, ['getUrl']);
-        $this->sessionMock = $this->objectManagerHelper->createPartialMockWithReflection(
+        $this->sessionMock = $this->createPartialMockWithReflection(
             Session::class,
             ['setPostData']
         );
@@ -132,7 +135,7 @@ class SaveTest extends TestCase
             ['load', 'setData', 'setId', 'getGroupId', 'setWebsiteId', 'isActive', 'isDefault', 'save']
         );
         $this->groupModelMock = $this->createPartialMock(Group::class, ['load', 'getWebsiteId']);
-        $this->filterManagerMock = $this->objectManagerHelper->createPartialMockWithReflection(
+        $this->filterManagerMock = $this->createPartialMockWithReflection(
             FilterManager::class,
             ['removeTags']
         );

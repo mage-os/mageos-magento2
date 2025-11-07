@@ -9,12 +9,15 @@ namespace Magento\Backend\Test\Unit\Controller\Adminhtml\Dashboard;
 
 use Magento\Backend\Block\Dashboard\Tab\Products\Viewed;
 use Magento\Backend\Controller\Adminhtml\Dashboard\ProductsViewed;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * Test for \Magento\Backend\Controller\Adminhtml\Dashboard\ProductViewed
  */
 class ProductsViewedTest extends AbstractTestCase
 {
+    use MockCreationTrait;
+
     public function testExecute()
     {
         $this->assertExecute(

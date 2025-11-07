@@ -15,11 +15,14 @@ use Magento\Framework\DB\Helper;
 use Magento\Directory\Model\Currency;
 use Magento\Directory\Model\Currency\DefaultLocator;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class PriceTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var RequestInterface|MockObject
      */
@@ -81,7 +84,7 @@ class PriceTest extends TestCase
 
         $this->objectManagerHelper = new ObjectManager($this);
 
-        $this->columnMock = $this->objectManagerHelper->createPartialMockWithReflection(
+        $this->columnMock = $this->createPartialMockWithReflection(
             Column::class,
             ['getCurrencyCode']
         );

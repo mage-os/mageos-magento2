@@ -12,6 +12,7 @@ use Magento\Framework\Data\Form;
 use Magento\Framework\Data\Form\Element\Select;
 use Magento\Framework\Escaper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -21,6 +22,8 @@ use Magento\Framework\DataObject;
 
 class AllowspecificTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Allowspecific
      */
@@ -77,7 +80,7 @@ class AllowspecificTest extends TestCase
             ]
         );
         $this->_object->setId('spec_element');
-        $this->_formMock = $this->objectManager->createPartialMockWithReflection(
+        $this->_formMock = $this->createPartialMockWithReflection(
             Form::class,
             ['getHtmlIdPrefix', 'getHtmlIdSuffix', 'getElement']
         );
@@ -120,7 +123,7 @@ class AllowspecificTest extends TestCase
     {
         $this->_object->setForm($this->_formMock);
 
-        $elementMock = $this->objectManager->createPartialMockWithReflection(
+        $elementMock = $this->createPartialMockWithReflection(
             Select::class,
             ['setDisabled']
         );

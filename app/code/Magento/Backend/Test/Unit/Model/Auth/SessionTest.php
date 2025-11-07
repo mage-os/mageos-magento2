@@ -18,6 +18,7 @@ use Magento\Framework\Stdlib\Cookie\PhpCookieManager;
 use Magento\Framework\Stdlib\Cookie\PublicCookieMetadata;
 use Magento\Framework\Stdlib\CookieManagerInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\User\Model\User;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -30,6 +31,8 @@ use PHPUnit\Framework\TestCase;
  */
 class SessionTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Config|MockObject
      */
@@ -87,7 +90,7 @@ class SessionTest extends TestCase
             PhpCookieManager::class,
             ['getCookie', 'setPublicCookie']
         );
-        $this->storage = $this->objectManager->createPartialMockWithReflection(
+        $this->storage = $this->createPartialMockWithReflection(
             Storage::class,
             ['getUser']
         );
@@ -137,7 +140,7 @@ class SessionTest extends TestCase
     {
         $aclMock = $this->createMock(Acl::class);
         $this->aclBuilder->expects($this->any())->method('getAcl')->willReturn($aclMock);
-        $userMock = $this->objectManager->createPartialMockWithReflection(
+        $userMock = $this->createPartialMockWithReflection(
             User::class,
             ['getReloadAclFlag', 'setReloadAclFlag', 'unsetData', 'save']
         );

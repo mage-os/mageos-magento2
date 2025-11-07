@@ -20,6 +20,7 @@ use Magento\Framework\Message\Manager;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\Session\SessionManager;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\View\Asset\MergeService;
 use PHPUnit\Framework\TestCase;
 
@@ -28,6 +29,8 @@ use PHPUnit\Framework\TestCase;
  */
 class CleanMediaTest extends TestCase
 {
+    use MockCreationTrait;
+
     public function testExecute()
     {
         // Wire object with mocks
@@ -38,12 +41,12 @@ class CleanMediaTest extends TestCase
         $backendHelper = $this->createMock(Data::class);
         $helper = new ObjectManager($this);
 
-        $session = $helper->createPartialMockWithReflection(
+        $session = $this->createPartialMockWithReflection(
             Session::class,
             ['setIsUrlNotice']
         );
 
-        $exceptionMessageFactory = $helper->createPartialMockWithReflection(
+        $exceptionMessageFactory = $this->createPartialMockWithReflection(
             ExceptionMessageLookupFactory::class,
             ['getMessageGenerator']
         );

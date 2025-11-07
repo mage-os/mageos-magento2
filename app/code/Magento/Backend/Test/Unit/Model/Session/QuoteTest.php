@@ -24,6 +24,7 @@ use Magento\Framework\Session\StorageInterface;
 use Magento\Framework\Session\ValidatorInterface;
 use Magento\Framework\Stdlib\Cookie\CookieMetadataFactory;
 use Magento\Framework\Stdlib\CookieManagerInterface;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\Session\SessionStartChecker;
 use Magento\Quote\Api\CartRepositoryInterface;
@@ -41,6 +42,8 @@ use PHPUnit\Framework\TestCase;
  */
 class QuoteTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var ObjectManager
      */
@@ -221,7 +224,7 @@ class QuoteTest extends TestCase
         $customerGroupId = 77;
         $this->quote->expects($this->any())->method('getQuoteId')->willReturn(null);
         $this->quote->expects($this->any())->method('setQuoteId')->with($quoteId);
-        $cartInterfaceMock = $this->objectManager->createPartialMockWithReflection(
+        $cartInterfaceMock = $this->createPartialMockWithReflection(
             CartInterface::class,
             [
                 'setIgnoreOldQty', 'setIsSuperMode', 'setCustomerGroupId',
@@ -253,7 +256,7 @@ class QuoteTest extends TestCase
             ->with($customerId)
             ->willReturn($dataCustomerMock);
 
-        $quoteMock = $this->objectManager->createPartialMockWithReflection(
+        $quoteMock = $this->createPartialMockWithReflection(
             \Magento\Quote\Model\Quote::class,
             [
                 'setCustomerGroupId', 'setIgnoreOldQty', 'setIsSuperMode', 'setStoreId',
@@ -300,7 +303,7 @@ class QuoteTest extends TestCase
             ->with($customerId)
             ->willReturn($dataCustomerMock);
 
-        $quoteMock = $this->objectManager->createPartialMockWithReflection(
+        $quoteMock = $this->createPartialMockWithReflection(
             \Magento\Quote\Model\Quote::class,
             [
                 'setCustomerGroupId', 'setIgnoreOldQty', 'setIsSuperMode', 'getCustomerId',

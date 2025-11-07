@@ -13,11 +13,14 @@ use Magento\Config\Model\ResourceModel\Config\Data\CollectionFactory;
 use Magento\Framework\App\Config\ValueFactory;
 use Magento\Framework\DataObject;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class LoaderTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Loader
      */
@@ -46,11 +49,11 @@ class LoaderTest extends TestCase
     protected function setUp(): void
     {
         $this->objectManager = new ObjectManager($this);
-        $this->_configValueFactory = $this->objectManager->createPartialMockWithReflection(
+        $this->_configValueFactory = $this->createPartialMockWithReflection(
             ValueFactory::class,
             ['getCollection', 'create']
         );
-        $this->collectionFactory = $this->objectManager->createPartialMockWithReflection(
+        $this->collectionFactory = $this->createPartialMockWithReflection(
             CollectionFactory::class,
             ['getCollection', 'create']
         );

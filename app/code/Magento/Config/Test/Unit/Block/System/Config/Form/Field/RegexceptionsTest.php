@@ -14,6 +14,7 @@ use Magento\Config\Block\System\Config\Form\Field\Regexceptions;
 use Magento\Framework\Data\Form\Element\AbstractElement;
 use Magento\Framework\Data\Form\Element\Factory;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\View\Design\Theme\Label;
 use Magento\Framework\View\Design\Theme\LabelFactory;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -21,6 +22,8 @@ use PHPUnit\Framework\TestCase;
 
 class RegexceptionsTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var array
      */
@@ -69,7 +72,7 @@ class RegexceptionsTest extends TestCase
         $this->labelFactoryMock = $this->createMock(LabelFactory::class);
         $this->labelMock = $this->createMock(Label::class);
         $this->elementFactoryMock = $this->createMock(Factory::class);
-        $this->elementMock = $this->objectManager->createPartialMockWithReflection(
+        $this->elementMock = $this->createPartialMockWithReflection(
             AbstractElement::class,
             [
                 'setName', 'setHtmlId', 'setValues', 'getValues',

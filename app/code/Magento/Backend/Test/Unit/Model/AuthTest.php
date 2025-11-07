@@ -13,11 +13,14 @@ use Magento\Framework\Data\Collection\ModelFactory;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class AuthTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Auth
      */
@@ -47,7 +50,7 @@ class AuthTest extends TestCase
     {
         $this->objectManager = new ObjectManager($this);
         $this->_eventManagerMock = $this->createMock(ManagerInterface::class);
-        $this->_credentialStorage = $this->objectManager->createPartialMockWithReflection(
+        $this->_credentialStorage = $this->createPartialMockWithReflection(
             StorageInterface::class,
             ['getId', 'login', 'authenticate', 'reload', 'logout', 'hasAvailableResources', 'setHasAvailableResources']
         );

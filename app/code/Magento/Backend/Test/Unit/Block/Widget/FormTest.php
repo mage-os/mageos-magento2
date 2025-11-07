@@ -16,11 +16,14 @@ use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\UrlInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class FormTest extends TestCase
 {
+    use MockCreationTrait;
+
     /** @var  Form */
     protected $model;
 
@@ -47,7 +50,7 @@ class FormTest extends TestCase
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->prepareContext();
 
-        $this->dataForm = $this->objectManagerHelper->createPartialMockWithReflection(
+        $this->dataForm = $this->createPartialMockWithReflection(
             \Magento\Framework\Data\Form::class,
             ['setParent', 'setBaseUrl', 'addCustomAttribute']
         );

@@ -17,10 +17,13 @@ use Magento\Framework\Stdlib\DateTime\DateTimeFormatter;
 use Magento\Framework\Stdlib\DateTime\DateTimeFormatterInterface;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class NotificationTest extends TestCase
 {
+    use MockCreationTrait;
+
     public function testRender()
     {
         $objectManager = new ObjectManager($this);
@@ -46,7 +49,7 @@ class NotificationTest extends TestCase
         $localeDateMock->expects($this->any())->method('date')->willReturn($testDatetime);
         $localeDateMock->expects($this->any())->method('getDateTimeFormat')->willReturn(null);
 
-        $elementMock = $objectManager->createPartialMockWithReflection(
+        $elementMock = $this->createPartialMockWithReflection(
             AbstractElement::class,
             ['getLabel', 'getHtmlId']
         );

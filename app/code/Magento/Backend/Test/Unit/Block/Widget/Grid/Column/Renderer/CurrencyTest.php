@@ -13,6 +13,7 @@ use Magento\Directory\Model\CurrencyFactory;
 use Magento\Backend\Block\Widget\Grid\Column;
 use Magento\Framework\DataObject;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Backend\Block\Widget\Grid\Column\Renderer\Currency;
 use Magento\Framework\Locale\Currency as LocaleCurrency;
 use Magento\Directory\Model\Currency as CurrencyData;
@@ -26,6 +27,8 @@ use PHPUnit\Framework\TestCase;
  */
 class CurrencyTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Currency
      */
@@ -83,14 +86,14 @@ class CurrencyTest extends TestCase
         $this->currencyLocatorMock->method('getDefaultCurrency')
             ->with($this->requestMock)
             ->willReturn($defaultCurrencyCode);
-        $this->columnMock = $this->objectManager->createPartialMockWithReflection(
+        $this->columnMock = $this->createPartialMockWithReflection(
             Column::class,
             ['getIndex', 'getShowNumberSign', 'getDefault']
         );
         $this->columnMock->method('getIndex')->willReturn('value');
         $this->columnMock->method('getShowNumberSign')->willReturn(false);
         $this->columnMock->method('getDefault')->willReturn('');
-        $this->localeCurrencyMock = $this->objectManager->createPartialMockWithReflection(
+        $this->localeCurrencyMock = $this->createPartialMockWithReflection(
             LocaleCurrency::class,
             ['getCurrency', 'toCurrency']
         );

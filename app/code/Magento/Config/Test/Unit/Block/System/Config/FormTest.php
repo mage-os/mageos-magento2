@@ -32,6 +32,7 @@ use Magento\Framework\Data\Form\Element\Fieldset as FieldsetElement;
 use Magento\Framework\Data\FormFactory;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\View\Layout;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
@@ -48,6 +49,8 @@ use PHPUnit\Framework\TestCase;
  */
 class FormTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var \PHPUnit\Framework\MockObject_MockBuilder
      */
@@ -151,7 +154,7 @@ class FormTest extends TestCase
 
         $helper = new ObjectManager($this);
 
-        $this->_formMock = $helper->createPartialMockWithReflection(
+        $this->_formMock = $this->createPartialMockWithReflection(
             FormData::class,
             ['setParent', 'setBaseUrl', 'addFieldset']
         );
@@ -284,7 +287,7 @@ class FormTest extends TestCase
             $fieldsetRendererMock
         );
 
-        $cloneModelMock = $helper->createPartialMockWithReflection(
+        $cloneModelMock = $this->createPartialMockWithReflection(
             Config::class,
             ['getPrefixes']
         );

@@ -19,6 +19,7 @@ use Magento\Framework\App\ScopeInterface;
 use Magento\Framework\App\ScopeResolver;
 use Magento\Framework\App\ScopeResolverPool;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Store\Model\ScopeInterface as StoreScopeInterface;
 use Magento\Store\Model\ScopeTypeNormalizer;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -32,6 +33,8 @@ use PHPUnit\Framework\TestCase;
  */
 class PreparedValueFactoryTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var StructureFactory|Mock
      */
@@ -108,7 +111,7 @@ class PreparedValueFactoryTest extends TestCase
         );
         $this->structureMock = $this->createMock(Structure::class);
         $this->fieldMock = $this->createMock(Field::class);
-        $this->valueMock = $this->objectManager->createPartialMockWithReflection(
+        $this->valueMock = $this->createPartialMockWithReflection(
             Value::class,
             [
                 'setPath', 'setScope', 'setScopeId', 'setValue', 'setField',

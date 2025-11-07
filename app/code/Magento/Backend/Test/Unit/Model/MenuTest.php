@@ -11,12 +11,15 @@ use Magento\Backend\Model\Menu;
 use Magento\Backend\Model\Menu\Item;
 use Magento\Backend\Model\Menu\Item\Factory;
 use Magento\Framework\Serialize\SerializerInterface;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
 class MenuTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Menu
      */
@@ -268,7 +271,7 @@ class MenuTest extends TestCase
 
     public function testGetFirstAvailableReturnsLeafNode()
     {
-        $item = $this->objectManagerHelper->createPartialMockWithReflection(
+        $item = $this->createPartialMockWithReflection(
             Item::class,
             ['getFirstAvailable', 'isAllowed']
         );

@@ -11,12 +11,15 @@ use Magento\Backend\Block\Widget\Grid\Column;
 use Magento\Backend\Block\Widget\Grid\Column\Renderer\AbstractRenderer;
 use Magento\Framework\DataObject;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class AbstractRendererTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Column|MockObject
      */
@@ -44,7 +47,7 @@ class AbstractRendererTest extends TestCase
     {
         $this->objectManager = new ObjectManager($this);
         $this->dataObjectMock = $this->createPartialMock(DataObject::class, ['getData']);
-        $this->columnMock = $this->objectManager->createPartialMockWithReflection(
+        $this->columnMock = $this->createPartialMockWithReflection(
             Column::class,
             ['getEditable', 'getIndex', 'getEditOnly', 'getId']
         );

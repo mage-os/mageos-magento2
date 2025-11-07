@@ -13,11 +13,14 @@ use Magento\Config\Model\Config\Structure\Element\Group;
 use Magento\Framework\App\Config\ValueInterface;
 use Magento\Framework\Data\Form\Element\Fieldset;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class GroupTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Group
      */
@@ -100,7 +103,7 @@ class GroupTest extends TestCase
 
     public function testGetFieldsetSetsOnlyNonArrayValuesToFieldset()
     {
-        $fieldsetMock = $this->objectManager->createPartialMockWithReflection(
+        $fieldsetMock = $this->createPartialMockWithReflection(
             Fieldset::class,
             ['setOriginalData']
         );

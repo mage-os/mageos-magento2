@@ -25,6 +25,7 @@ use Magento\Framework\DB\TransactionFactory;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\MessageQueue\PoisonPill\PoisonPillPutInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Store\Model\ScopeTypeNormalizer;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Store\Model\Website;
@@ -37,6 +38,8 @@ use PHPUnit\Framework\TestCase;
  */
 class ConfigTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Config
      */
@@ -119,7 +122,7 @@ class ConfigTest extends TestCase
     {
         $this->objectManager = new ObjectManager($this);
         $this->eventManagerMock = $this->createMock(ManagerInterface::class);
-        $this->structureReaderMock = $this->objectManager->createPartialMockWithReflection(
+        $this->structureReaderMock = $this->createPartialMockWithReflection(
             Reader::class,
             ['getConfiguration']
         );
@@ -133,7 +136,7 @@ class ConfigTest extends TestCase
             $this->configStructure
         );
 
-        $this->transFactoryMock = $this->objectManager->createPartialMockWithReflection(
+        $this->transFactoryMock = $this->createPartialMockWithReflection(
             TransactionFactory::class,
             ['addObject', 'create']
         );
@@ -333,7 +336,7 @@ class ConfigTest extends TestCase
         $this->model->setSection('section');
         $this->model->setGroups(['1' => ['fields' => ['key' => ['data']]]]);
 
-        $backendModel = $this->objectManager->createPartialMockWithReflection(
+        $backendModel = $this->createPartialMockWithReflection(
             Value::class,
             ['setPath', 'addData', '__sleep', '__wakeup']
         );

@@ -16,6 +16,7 @@ use Magento\Framework\Data\Form\Element\Text;
 use Magento\Framework\DataObject;
 use Magento\Framework\Option\ArrayInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\View\Element\BlockFactory;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -25,7 +26,9 @@ use PHPUnit\Framework\TestCase;
  */
 class FieldTest extends TestCase
 {
-    private const FIELD_TEST_CONSTANT = "field test constant";
+    use MockCreationTrait;
+
+    public const FIELD_TEST_CONSTANT = "field test constant";
 
     /**
      * @var Field
@@ -222,7 +225,7 @@ class FieldTest extends TestCase
             'someArr' => ['testVar' => 'testVal'],
         ];
         $this->_model->setData($params, 'scope');
-        $elementMock = $this->objectManager->createPartialMockWithReflection(
+        $elementMock = $this->createPartialMockWithReflection(
             Text::class,
             ['setOriginalData']
         );
@@ -328,7 +331,7 @@ class FieldTest extends TestCase
             ['source_model' => 'Source_Model_Name::retrieveElements', 'path' => 'path', 'type' => 'multiselect'],
             'scope'
         );
-        $sourceModelMock = $this->objectManager->createPartialMockWithReflection(
+        $sourceModelMock = $this->createPartialMockWithReflection(
             DataObject::class,
             ['setPath', 'retrieveElements']
         );
@@ -353,7 +356,7 @@ class FieldTest extends TestCase
             ['source_model' => 'Source_Model_Name::retrieveElements', 'path' => 'path', 'type' => 'select'],
             'scope'
         );
-        $sourceModelMock = $this->objectManager->createPartialMockWithReflection(
+        $sourceModelMock = $this->createPartialMockWithReflection(
             DataObject::class,
             ['setPath', 'retrieveElements']
         );

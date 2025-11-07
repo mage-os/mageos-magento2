@@ -11,11 +11,14 @@ use Magento\Backend\Block\Widget\Grid\Column;
 use Magento\Backend\Block\Widget\Grid\Column\Renderer\Concat;
 use Magento\Framework\DataObject;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class ConcatTest extends TestCase
 {
+    use MockCreationTrait;
+
     /** @var ObjectManager  */
     protected $objectManagerHelper;
 
@@ -45,7 +48,7 @@ class ConcatTest extends TestCase
     public function testRender($method, $getters)
     {
         $object = new DataObject(['test' => 'a', 'best' => 'b']);
-        $column = $this->objectManagerHelper->createPartialMockWithReflection(
+        $column = $this->createPartialMockWithReflection(
             Column::class,
             [$method, 'getSeparator']
         );

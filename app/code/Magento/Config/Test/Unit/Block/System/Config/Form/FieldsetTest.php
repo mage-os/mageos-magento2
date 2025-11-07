@@ -20,6 +20,7 @@ use Magento\Framework\Data\Form\Element\CollectionFactory;
 use Magento\Framework\Data\Form\Element\Factory;
 use Magento\Framework\Data\Form\Element\Text;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\View\Helper\Js;
 use Magento\Framework\View\Layout;
 use Magento\User\Model\User;
@@ -33,6 +34,8 @@ use Magento\Framework\View\Helper\SecureHtmlRenderer;
  */
 class FieldsetTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Fieldset
      */
