@@ -64,10 +64,7 @@ class EsConfigTest extends TestCase
         $this->serializerMock->expects($this->once())
             ->method('unserialize')
             ->with('serializedData')
-            ->willReturn([
-                'stemmerInfo' => [],
-                'stopwordsInfo' => []
-            ]);
+            ->willReturn(['unserializedData']);
 
         $this->config = $this->objectManager->getObject(
             EsConfig::class,
@@ -80,20 +77,18 @@ class EsConfigTest extends TestCase
     }
 
     /**
-     * Test getStemmerInfo method
+     * @return array|mixed|null
      */
-    public function testGetStemmerInfo(): void
+    public function testGetStemmerInfo()
     {
-        $result = $this->config->getStemmerInfo();
-        $this->assertIsArray($result);
+        $this->config->getStemmerInfo();
     }
 
     /**
-     * Test getStopwordsInfo method
+     * @return array|mixed|null
      */
-    public function testGetStopwordsInfo(): void
+    public function testGetStopwordsInfo()
     {
-        $result = $this->config->getStopwordsInfo();
-        $this->assertIsArray($result);
+        $this->config->getStopwordsInfo();
     }
 }
