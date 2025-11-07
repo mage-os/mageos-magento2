@@ -128,8 +128,15 @@ class LoadBlock extends CreateAction implements HttpPostActionInterface, HttpGet
         }
 
         $result = $resultPage->getLayout()->renderElement('content');
-        if ($request->getParam('as_js_varname') && !$asJson) {
-            $this->_objectManager->get(\Magento\Backend\Model\Session::class)->setUpdateResult($result);
+        if ($request->getParam('as_js_varname')) {
+            $session = $this->_objectManager->get(\Magento\Backend\Model\Session::class);
+            // Compress data for JSON responses to prevent session bloat while maintaining redirect pattern
+            if ($asJson && function_exists('gzencode')) {
+                $compressed = gzencode($result, 6); // Level 6 compression for balance of speed/size
+                $session->setUpdateResult(['compressed' => true, 'data' => $compressed]);
+            } else {
+                $session->setUpdateResult($result);
+            }
             return $this->resultRedirectFactory->create()->setPath('sales/*/showUpdateResult');
         }
         return $this->resultRawFactory->create()->setContents($result);

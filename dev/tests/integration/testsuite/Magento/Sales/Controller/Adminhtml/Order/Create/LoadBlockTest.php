@@ -127,7 +127,16 @@ class LoadBlockTest extends AbstractBackendController
         $this->assertNotNull($newQuoteItemsCollection->getItemByColumnValue('sku', 'simple2'));
         if ($asJsVarname) {
             $this->assertRedirect($this->stringContains('sales/order_create/showUpdateResult'));
-            $body = (string) $this->_objectManager->get(\Magento\Backend\Model\Session::class)->getUpdateResult();
+            $sessionData = $this->_objectManager->get(\Magento\Backend\Model\Session::class)->getUpdateResult();
+            // Handle compressed data for JSON responses
+            if (is_array($sessionData) && isset($sessionData['compressed']) && $sessionData['compressed']) {
+                $body = gzdecode($sessionData['data']);
+            } else {
+                $body = (string) $sessionData;
+            }
+            if ($asJson) {
+                $body = json_decode($body, true, 512, JSON_THROW_ON_ERROR)['sidebar'];
+            }
         } elseif ($asJson) {
             $body = json_decode($this->getResponse()->getBody(), true, 512, JSON_THROW_ON_ERROR)['sidebar'];
         } else {
@@ -154,7 +163,7 @@ class LoadBlockTest extends AbstractBackendController
     }
 
     /**
-     * Test that JSON response with as_js_varname does not store result in session
+     * Test that JSON response with as_js_varname stores compressed data to prevent session bloat
      *
      * @return void
      */
@@ -164,7 +173,7 @@ class LoadBlockTest extends AbstractBackendController
         DataFixture(CustomerCart::class, ['customer_id' => '$customer.id$', 'is_active' => 1], as: 'quote'),
         DataFixture(AddProductToCart::class, ['cart_id' => '$quote.id$', 'product_id' => '$product.id$', 'qty' => 1])
     ]
-    public function testJsonResponseWithJsVarnameDoesNotStoreInSession(): void
+    public function testJsonResponseWithJsVarnameUsesCompressionToPreventSessionBloat(): void
     {
         /** @var CartInterface $quote */
         $quote = $this->fixtures->get('quote');
@@ -198,23 +207,37 @@ class LoadBlockTest extends AbstractBackendController
         $newQuoteItemsCollection = $newQuote->getItemsCollection(false);
         $this->assertNotNull($newQuoteItemsCollection->getItemByColumnValue('sku', $product->getSku()));
 
-        // Session should NOT contain updateResult (prevents session bloat)
-        $backendSession = $this->_objectManager->get(\Magento\Backend\Model\Session::class);
-        $this->assertFalse(
-            $backendSession->hasUpdateResult(),
-            'Session should not store updateResult for JSON responses to prevent session bloat'
-        );
-
-        // Verify response is returned directly (not a redirect)
+        // Verify redirect happens (maintains 2-request pattern for PAT compatibility)
         $response = $this->getResponse();
-        $this->assertFalse(
+        $this->assertTrue(
             $response->isRedirect(),
-            'Response should not be a redirect when json=true with as_js_varname'
+            'Response should redirect to ShowUpdateResult'
         );
+        $this->assertRedirect($this->stringContains('sales/order_create/showUpdateResult'));
 
-        // Verify response body is valid JSON with expected content
-        $responseBody = $response->getBody();
-        $this->assertNotEmpty($responseBody, 'Response body should not be empty');
+        // Verify session stores compressed data to prevent bloat
+        $backendSession = $this->_objectManager->get(\Magento\Backend\Model\Session::class);
+        $this->assertTrue(
+            $backendSession->hasUpdateResult(),
+            'Session should contain compressed updateResult'
+        );
+        
+        $sessionData = $backendSession->getUpdateResult();
+        $this->assertIsArray($sessionData, 'Session data should be array for compressed format');
+        $this->assertTrue($sessionData['compressed'], 'Data should be marked as compressed');
+        $this->assertArrayHasKey('data', $sessionData, 'Compressed data should exist');
+        
+        // Verify compression actually reduces size
+        $decompressed = gzdecode($sessionData['data']);
+        $this->assertNotEmpty($decompressed, 'Decompressed data should not be empty');
+        
+        $originalSize = strlen($decompressed);
+        $compressedSize = strlen($sessionData['data']);
+        $this->assertLessThan(
+            $originalSize,
+            $compressedSize,
+            'Compressed size should be smaller than original'
+        );
     }
 
     /**

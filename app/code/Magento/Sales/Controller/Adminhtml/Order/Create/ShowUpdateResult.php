@@ -55,9 +55,19 @@ class ShowUpdateResult extends \Magento\Sales\Controller\Adminhtml\Order\Create 
         /** @var \Magento\Framework\Controller\Result\Raw $resultRaw */
         $resultRaw = $this->resultRawFactory->create();
         $session = $this->_objectManager->get(\Magento\Backend\Model\Session::class);
-        if ($session->hasUpdateResult() && is_scalar($session->getUpdateResult())) {
-            $resultRaw->setContents($session->getUpdateResult());
+
+        if ($session->hasUpdateResult()) {
+            $updateResult = $session->getUpdateResult();
+
+            // Handle compressed data (for JSON responses to reduce session bloat)
+            if (is_array($updateResult) && isset($updateResult['compressed']) && $updateResult['compressed']) {
+                $decompressed = gzdecode($updateResult['data']);
+                $resultRaw->setContents($decompressed ?: '');
+            } elseif (is_scalar($updateResult)) {
+                $resultRaw->setContents($updateResult);
+            }
         }
+
         $session->unsUpdateResult();
         return $resultRaw;
     }
