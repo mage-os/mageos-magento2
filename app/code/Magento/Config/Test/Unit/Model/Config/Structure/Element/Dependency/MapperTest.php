@@ -107,14 +107,12 @@ class MapperTest extends TestCase
             $dependentPath = 'some path ' . $i;
             $field = $this->_getField(
                 false,
-                $dependentPath,
-                'Magento_Backend_Model_Config_Structure_Element_Field_' . (string)$isValueSatisfy . $i
+                $dependentPath
             );
             $dependencyField = $this->_getDependencyField(
                 $isValueSatisfy,
                 false,
-                $data['id'],
-                'Magento_Backend_Model_Config_Structure_Element_Dependency_Field_' . (string)$isValueSatisfy . $i
+                $data['id']
             );
             $configStructureMockWithArgs[] = [$data['id']];
             $configStructureMockWillReturnArgs[] = $field;
@@ -178,14 +176,12 @@ class MapperTest extends TestCase
             $data = $rowData[$i];
             $field = $this->_getField(
                 true,
-                'some path',
-                'Magento_Backend_Model_Config_Structure_Element_Field_visible_' . $i
+                'some path'
             );
             $dependencyField = $this->_getDependencyField(
                 (bool)$i,
                 true,
-                $data['id'],
-                'Magento_Backend_Model_Config_Structure_Element_Dependency_Field_visible_' . $i
+                $data['id']
             );
             $configStructureMockWithArgs[] = [$data['id']];
             $configStructureMockWillReturnArgs[] = $field;
@@ -259,11 +255,10 @@ class MapperTest extends TestCase
      *
      * @param bool $isVisible
      * @param string $path
-     * @param string $mockClassName
      *
      * @return MockObject
      */
-    protected function _getField($isVisible, $path, $mockClassName): MockObject
+    protected function _getField($isVisible, $path): MockObject
     {
         $field = $this->createPartialMock(StructureField::class, ['isVisible', 'getPath']);
 
