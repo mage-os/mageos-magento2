@@ -159,7 +159,8 @@ class ProductImageTest extends TestCase
         }
     }
 
-    protected function getMockForProductClass() {
+    protected function getMockForProductClass()
+    {
         $productMock = $this->createMock(Product::class);
         $productMock->expects($this->any())->method('getImage')->willReturn(false);
         return $productMock;

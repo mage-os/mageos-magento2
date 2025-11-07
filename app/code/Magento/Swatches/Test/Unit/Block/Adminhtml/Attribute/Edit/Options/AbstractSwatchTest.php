@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2025 Adobe
+ * Copyright 2015 Adobe
  * All Rights Reserved.
  */
 declare(strict_types=1);
@@ -130,7 +130,7 @@ class AbstractSwatchTest extends TestCase
             14 => 'Blue',
             15 => 'Black'
         ];
-        
+
         $this->block->expects($this->once())
             ->method('getData')
             ->with('store_option_values_1')
@@ -169,7 +169,7 @@ class AbstractSwatchTest extends TestCase
                 'getSelect'
             ]
         );
-        
+
         $attrOptionCollectionMock->method('getIterator')->willReturn(new \ArrayIterator([$option]));
 
         $this->attrOptionCollectionFactoryMock
@@ -196,7 +196,7 @@ class AbstractSwatchTest extends TestCase
             ->expects($this->once())
             ->method('getConnection')
             ->willReturn($this->connectionMock);
-        
+
         $attrOptionCollectionMock
             ->expects($this->atLeastOnce())
             ->method('getTable')
@@ -204,7 +204,7 @@ class AbstractSwatchTest extends TestCase
                 ['eav_attribute_option_value', 'eav_attribute_option_value'],
                 ['eav_attribute_option_swatch', 'eav_attribute_option_swatch']
             ]);
-        
+
         $attrOptionCollectionMock
             ->expects($this->once())
             ->method('load')
@@ -220,7 +220,7 @@ class AbstractSwatchTest extends TestCase
                 14 => '#0000FF'
             ]
         ];
-        
+
         $result = $this->block->getStoreOptionValues(1);
         $this->assertEquals($expectedValues, $result);
     }

@@ -130,6 +130,8 @@ class StaticFieldTest extends TestCase
      * @param string $sortFieldName
      * @param array $expected
      * @return void
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     #[DataProvider('attributeProvider')]
     public function testGetAllAttributesTypes(

@@ -362,6 +362,7 @@ class QueryFactoryTest extends TestCase
      * @param bool $isQueryTextShort
      * @param string $matchedQueryText
      * @return void
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     private function mockSimpleQuery(
         string $cleanedRawText,

@@ -39,7 +39,7 @@ class DocumentFactoryTest extends TestCase
     protected $entityMetadata;
 
     /**
-     * Instance name
+     * Fully qualified class name of the entity
      *
      * @var string
      */

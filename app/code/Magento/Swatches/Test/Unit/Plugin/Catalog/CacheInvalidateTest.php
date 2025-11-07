@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2025 Adobe
+ * Copyright 2016 Adobe
  * All Rights Reserved.
  */
 declare(strict_types=1);
@@ -65,7 +65,7 @@ class CacheInvalidateTest extends TestCase
             ->willReturn(true);
         $this->typeList
             ->method('invalidate')
-            ->willReturnCallback(function ($arg1) use (&$callCount) {
+            ->willReturnCallback(function ($arg1) {
                 if ($arg1 == 'block_html' || $arg1 == 'collections') {
                     return null;
                 }

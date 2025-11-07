@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2025 Adobe
+ * Copyright 2015 Adobe
  * All Rights Reserved.
  */
 declare(strict_types=1);
@@ -55,7 +55,7 @@ class AttributesListTest extends TestCase
 
         $sourceMock = $this->createPartialMockWithReflection(\stdClass::class, ['getAllOptions']);
         $sourceMock->method('getAllOptions')->willReturn(['options']);
-        
+
         $this->attributeMock = $this->createPartialMockWithReflection(
             Attribute::class,
             ['getId', 'getFrontendLabel', 'getAttributeCode', 'getSource']
@@ -64,7 +64,7 @@ class AttributesListTest extends TestCase
         $this->attributeMock->method('getFrontendLabel')->willReturn('label');
         $this->attributeMock->method('getAttributeCode')->willReturn('code');
         $this->attributeMock->method('getSource')->willReturn($sourceMock);
-        
+
         $this->collectionMock
             ->expects($this->once())
             ->method('getItems')

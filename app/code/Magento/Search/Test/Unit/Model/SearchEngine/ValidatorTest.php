@@ -18,10 +18,19 @@ use PHPUnit\Framework\TestCase;
  */
 class ValidatorTest extends TestCase
 {
+    /**
+     * @var Validator
+     */
     private $validator;
 
+    /**
+     * @var MockObject
+     */
     private $otherEngineValidatorMock;
 
+    /**
+     * @var MockObject
+     */
     private $scopeConfigMock;
 
     protected function setUp(): void

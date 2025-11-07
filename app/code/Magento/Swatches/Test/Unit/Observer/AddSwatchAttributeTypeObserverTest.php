@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2025 Adobe
+ * Copyright 2015 Adobe
  * All Rights Reserved.
  */
 declare(strict_types=1);
@@ -59,10 +59,10 @@ class AddSwatchAttributeTypeObserverTest extends TestCase
 
         $response = $this->createPartialMockWithReflection(DataObject::class, ['getTypes', 'setTypes']);
         $response->method('getTypes')->willReturn($exp['outputArray']);
-        
+
         $eventMock = $this->createPartialMockWithReflection(Event::class, ['getResponse']);
         $eventMock->method('getResponse')->willReturn($response);
-        
+
         $this->eventObserverMock->method('getEvent')->willReturn($eventMock);
 
         $this->observerMock->execute($this->eventObserverMock);

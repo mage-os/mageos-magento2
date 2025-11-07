@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2025 Adobe
+ * Copyright 2019 Adobe
  * All Rights Reserved.
  */
 
@@ -89,7 +89,7 @@ class TextTest extends TestCase
     {
         // Set read_only property directly
         $this->model->read_only = $testCase['dataSet']['read_only'];
-        
+
         // Override methods for this test
         $dataSet = $testCase['dataSet'];
         $this->model = $this->createPartialMockWithReflection(

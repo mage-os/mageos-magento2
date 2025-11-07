@@ -77,18 +77,20 @@ class EsConfigTest extends TestCase
     }
 
     /**
-     * @return array|mixed|null
+     * Test getStemmerInfo method
      */
-    public function testGetStemmerInfo()
+    public function testGetStemmerInfo(): void
     {
-        $this->config->getStemmerInfo();
+        $result = $this->config->getStemmerInfo();
+        $this->assertIsArray($result);
     }
 
     /**
-     * @return array|mixed|null
+     * Test getStopwordsInfo method
      */
-    public function testGetStopwordsInfo()
+    public function testGetStopwordsInfo(): void
     {
-        $this->config->getStopwordsInfo();
+        $result = $this->config->getStopwordsInfo();
+        $this->assertIsArray($result);
     }
 }

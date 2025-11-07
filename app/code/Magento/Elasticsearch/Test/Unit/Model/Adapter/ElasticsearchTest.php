@@ -14,7 +14,6 @@ use Magento\AdvancedSearch\Model\Client\ClientInterface as ElasticsearchClient;
 use Magento\AdvancedSearch\Model\Client\ClientOptionsInterface;
 use Magento\Catalog\Api\ProductAttributeRepositoryInterface;
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
-use Magento\Elasticsearch\Model\Client\Elasticsearch;
 use Magento\Elasticsearch\Model\Adapter\BatchDataMapperInterface;
 use Magento\Elasticsearch\Model\Adapter\Elasticsearch as ElasticsearchAdapter;
 use Magento\Elasticsearch\Model\Adapter\FieldMapperInterface;
@@ -154,7 +153,7 @@ class ElasticsearchTest extends TestCase
         $elasticsearchClientMock->expects($this->any())
             ->method('indices')
             ->willReturn($indicesMock);
-        $this->client = $this->createMock(Elasticsearch::class); // @phpstan-ignore-line
+        $this->client = $this->createMock(ElasticsearchClient::class);
         $this->connectionManager->expects($this->any())
             ->method('getConnection')
             ->willReturn($this->client);
