@@ -13,7 +13,7 @@
             <features value="PayPal"/>
             <stories value="Partial Refund Order with billing agreement"/>
             <title value="Partial Refund order placed within Billing Agreement"/>
-            <description value="Place an order with billing agreement as payment method and Refund Partially the Order"/>
+            <description value="Place an order with billing agreement as payment method and refund partially the order"/>
             <severity value="MAJOR"/>
             <testCaseId value="AC-5289"/>
             <group value="3rd_party_integration"/>
