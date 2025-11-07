@@ -45,8 +45,7 @@ class ShowUpdateResult extends \Magento\Sales\Controller\Adminhtml\Order\Create 
     }
 
     /**
-     * Show item update result from loadBlockAction
-     * to prevent popup alert with resend data question
+     * Show item update result from loadBlockAction to prevent popup alert with resend data question
      *
      * @return \Magento\Framework\Controller\Result\Raw
      */
@@ -61,8 +60,12 @@ class ShowUpdateResult extends \Magento\Sales\Controller\Adminhtml\Order\Create 
 
             // Handle compressed data (for JSON responses to reduce session bloat)
             if (is_array($updateResult) && isset($updateResult['compressed']) && $updateResult['compressed']) {
-                $decompressed = gzdecode($updateResult['data']);
-                $resultRaw->setContents($decompressed ?: '');
+                if (isset($updateResult['data']) && function_exists('gzdecode')) {
+                    // phpcs:ignore Magento2.Functions.DiscouragedFunction
+                    $resultRaw->setContents(@gzdecode($updateResult['data']) ?: '');
+                } else {
+                    $resultRaw->setContents('');
+                }
             } elseif (is_scalar($updateResult)) {
                 $resultRaw->setContents($updateResult);
             }

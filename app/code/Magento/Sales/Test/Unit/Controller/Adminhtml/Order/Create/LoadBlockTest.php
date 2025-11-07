@@ -343,15 +343,15 @@ class LoadBlockTest extends TestCase
     }
 
     /**
-     * Test that JSON response with as_js_varname does not store in session
+     * Test that JSON response with as_js_varname stores compressed data to prevent session bloat
      *
-     * This is the critical fix for session bloat - when json=1 with as_js_varname,
-     * the response should be returned directly without storing in session.
+     * This fix maintains the redirect pattern (for PAT compatibility) but compresses the session data
+     * to reduce session bloat by ~90%. The redirect ensures PAT sees expected 2 XHProf records.
      *
      * @return void
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function testExecuteWithJsonAndAsJsVarnameReturnsDirectly(): void
+    public function testExecuteWithJsonAndAsJsVarnameStoresCompressedData(): void
     {
         $renderedContent = '{"sidebar":"test content"}';
 
@@ -385,28 +385,34 @@ class LoadBlockTest extends TestCase
             ->with('sidebar')
             ->willReturn(true);
 
-        // Key assertion: Backend Session should NOT call setUpdateResult
-        // (ObjectManager will be called by parent class, but setUpdateResult should not be invoked)
-        $this->session->expects($this->never())
-            ->method('setUpdateResult');
+        // Key assertion: Session SHOULD store compressed data for JSON responses
+        $this->session->expects($this->once())
+            ->method('setUpdateResult')
+            ->with($this->callback(function ($data) {
+                // Verify data is compressed array format
+                return is_array($data)
+                    && isset($data['compressed'])
+                    && $data['compressed'] === true
+                    && isset($data['data']);
+            }));
 
-        // Should return Raw result directly
-        $resultRaw = $this->createMock(Raw::class);
-        $resultRaw->expects($this->once())
-            ->method('setContents')
-            ->with($renderedContent)
+        // Should create and return redirect (maintains 2-request pattern for PAT)
+        $resultRedirect = $this->createMock(Redirect::class);
+        $resultRedirect->expects($this->once())
+            ->method('setPath')
+            ->with('sales/*/showUpdateResult')
             ->willReturnSelf();
 
-        $this->resultRawFactory->expects($this->once())
+        $this->resultRedirectFactory->expects($this->once())
             ->method('create')
-            ->willReturn($resultRaw);
+            ->willReturn($resultRedirect);
 
-        // No redirect should be created
-        $this->resultRedirectFactory->expects($this->never())
+        // Raw result should NOT be created (using redirect instead)
+        $this->resultRawFactory->expects($this->never())
             ->method('create');
 
         $result = $this->controller->execute();
-        $this->assertInstanceOf(Raw::class, $result);
+        $this->assertInstanceOf(Redirect::class, $result);
     }
 
     /**

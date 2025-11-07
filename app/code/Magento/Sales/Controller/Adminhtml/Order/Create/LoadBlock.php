@@ -130,10 +130,12 @@ class LoadBlock extends CreateAction implements HttpPostActionInterface, HttpGet
         $result = $resultPage->getLayout()->renderElement('content');
         if ($request->getParam('as_js_varname')) {
             $session = $this->_objectManager->get(\Magento\Backend\Model\Session::class);
+
             // Compress data for JSON responses to prevent session bloat while maintaining redirect pattern
             if ($asJson && function_exists('gzencode')) {
-                $compressed = gzencode($result, 6); // Level 6 compression for balance of speed/size
-                $session->setUpdateResult(['compressed' => true, 'data' => $compressed]);
+                // Level 6 compression for balance of speed/size
+                // phpcs:ignore Magento2.Functions.DiscouragedFunction
+                $session->setUpdateResult(['compressed' => true, 'data' => gzencode($result, 6)]);
             } else {
                 $session->setUpdateResult($result);
             }
