@@ -1072,12 +1072,31 @@ class EscaperTest extends TestCase
         $rp = new \ReflectionProperty(\Magento\Framework\App\ObjectManager::class, '_instance');
         $rp->setAccessible(true);
         $originalOm = $rp->getValue();
-        $stubOm = new class($zendEscaper) implements \Magento\Framework\ObjectManagerInterface {
+        $stubOm = new class($zendEscaper) implements \Magento\Framework\ObjectManagerInterface
+        {
+            /**
+             * @var \Magento\Framework\ZendEscaper
+             */
             private $escaper;
-            public function __construct($escaper) { $this->escaper = $escaper; }
-            public function get($type) { return $this->escaper; }
-            public function create($type, array $arguments = []) { return $this->get($type); }
-            public function configure(array $configuration) {}
+
+            public function __construct($escaper)
+            {
+                $this->escaper = $escaper;
+            }
+
+            public function get($type)
+            {
+                return $this->escaper;
+            }
+
+            public function create($type, array $arguments = [])
+            {
+                return $this->get($type);
+            }
+
+            public function configure(array $configuration)
+            {
+            }
         };
         \Magento\Framework\App\ObjectManager::setInstance($stubOm);
 
@@ -1120,12 +1139,31 @@ class EscaperTest extends TestCase
         $rp = new \ReflectionProperty(\Magento\Framework\App\ObjectManager::class, '_instance');
         $rp->setAccessible(true);
         $originalOm = $rp->getValue();
-        $stubOm = new class($inlineMock) implements \Magento\Framework\ObjectManagerInterface {
+        $stubOm = new class($inlineMock) implements \Magento\Framework\ObjectManagerInterface
+        {
+            /**
+             * @var \Magento\Framework\Translate\InlineInterface
+             */
             private $inline;
-            public function __construct($inline) { $this->inline = $inline; }
-            public function get($type) { return $this->inline; }
-            public function create($type, array $arguments = []) { return $this->get($type); }
-            public function configure(array $configuration) {}
+
+            public function __construct($inline)
+            {
+                $this->inline = $inline;
+            }
+
+            public function get($type)
+            {
+                return $this->inline;
+            }
+
+            public function create($type, array $arguments = [])
+            {
+                return $this->get($type);
+            }
+
+            public function configure(array $configuration)
+            {
+            }
         };
         \Magento\Framework\App\ObjectManager::setInstance($stubOm);
 
@@ -1154,12 +1192,31 @@ class EscaperTest extends TestCase
         $rp = new \ReflectionProperty(\Magento\Framework\App\ObjectManager::class, '_instance');
         $rp->setAccessible(true);
         $originalOm = $rp->getValue();
-        $stubOm = new class($loggerMock) implements \Magento\Framework\ObjectManagerInterface {
+        $stubOm = new class($loggerMock) implements \Magento\Framework\ObjectManagerInterface
+        {
+            /**
+             * @var \Psr\Log\LoggerInterface
+             */
             private $logger;
-            public function __construct($logger) { $this->logger = $logger; }
-            public function get($type) { return $this->logger; }
-            public function create($type, array $arguments = []) { return $this->get($type); }
-            public function configure(array $configuration) {}
+
+            public function __construct($logger)
+            {
+                $this->logger = $logger;
+            }
+
+            public function get($type)
+            {
+                return $this->logger;
+            }
+
+            public function create($type, array $arguments = [])
+            {
+                return $this->get($type);
+            }
+
+            public function configure(array $configuration)
+            {
+            }
         };
         \Magento\Framework\App\ObjectManager::setInstance($stubOm);
 
@@ -1189,5 +1246,4 @@ class EscaperTest extends TestCase
 
         $this->assertSame($this->loggerMock, $logger);
     }
-
 }
