@@ -283,15 +283,15 @@ class FieldTest extends TestCase
             [
                 'label' => 'test',
                 'value' => sprintf(
-                    "{{%s::FIELD_TEST_CONSTANT}}",
-                    '\Magento\Config\Test\Unit\Model\Config\Structure\Element\FieldTest'
+                    "{{\\%s::FIELD_TEST_CONSTANT}}",
+                    self::class
                 ),
             ],
         ];
         $expected = [
             [
                 'label' => __('test'),
-                'value' => \Magento\Config\Test\Unit\Model\Config\Structure\Element\FieldTest::FIELD_TEST_CONSTANT,
+                'value' => self::FIELD_TEST_CONSTANT,
             ],
         ];
 
