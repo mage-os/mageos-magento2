@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright 2025 Adobe
+ * All Rights Reserved.
+ */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminRemoveAttributeFromConfigurableProductTest">
+        <annotations>
+            <features value="ConfigurableProduct"/>
+            <stories value="Edit configurable product"/>
+            <title value="Admin should be able to remove an entire attribute from configurable product"/>
+            <description value="Admin removes Color attribute from configurable product leaving only Size attribute with 2 options"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="AC-3984"/>
+            <group value="ConfigurableProduct"/>
+        </annotations>
+        <before>
+            <!-- Login as admin -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+        <after>
+            <!-- Delete the configurable product -->
+            <actionGroup ref="DeleteProductBySkuActionGroup" stepKey="deleteConfigurableProduct">
+                <argument name="sku" value="{{BaseConfigurableProduct.sku}}"/>
+            </actionGroup>
+            <actionGroup ref="ResetAdminDataGridToDefaultViewActionGroup" stepKey="clearProductFilters"/>
+            <!-- Delete created attributes -->
+            <actionGroup ref="AdminDeleteProductAttributeByLabelActionGroup" stepKey="deleteSizeAttribute">
+                <argument name="productAttributeLabel" value="{{ProductSizeAttribute.frontend_label}}"/>
+            </actionGroup>
+            <!-- Delete color Options -->
+            <actionGroup ref="NavigateToEditProductAttributeActionGroup" stepKey="goToAttributeEditPage">
+                <argument name="ProductAttribute" value="color"/>
+            </actionGroup>
+            <click selector="{{AdminNewAttributePanel.deleteOptionByName('black')}}" stepKey="removeBlackFromColor" />
+            <click selector="{{AdminNewAttributePanel.deleteOptionByName('red')}}" stepKey="removeRedFromColor" />
+            <click selector="{{AdminNewAttributePanel.deleteOptionByName('blue')}}" stepKey="removeBlueFromColor" />
+            <click selector="{{AdminNewAttributePanel.deleteOptionByName('pink')}}" stepKey="removePinkFromColor" />
+            <click selector="{{AdminNewAttributePanel.deleteOptionByName('white')}}" stepKey="removeWhiteFromColor" />
+            <actionGroup ref="SaveProductAttributeActionGroup" stepKey="saveAttribute"/>
+            <!-- Reindex after deleting product attribute -->
+            <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
+                <argument name="indices" value=""/>
+            </actionGroup>
+            <!-- Logout -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
+        </after>
+        <!-- Step 2-3: Navigate to Products - Catalog and start creating configurable product -->
+        <actionGroup ref="AdminOpenProductIndexPageActionGroup" stepKey="navigateToProductIndex"/>
+        <actionGroup ref="GoToCreateProductPageActionGroup" stepKey="goToCreateConfigurableProduct">
+            <argument name="product" value="BaseConfigurableProduct"/>
+        </actionGroup>
+        <!-- Step 4: Fill out required fields -->
+        <actionGroup ref="FillMainProductFormActionGroup" stepKey="fillConfigurableProductValues">
+            <argument name="product" value="BaseConfigurableProduct"/>
+        </actionGroup>
+        <!-- Step 5: Click 'Create Configurations' button -->
+        <click selector="{{AdminProductFormConfigurationsSection.createConfigurations}}"
+               stepKey="clickCreateConfigurations"/>
+        <waitForElementVisible selector="{{AdminCreateProductConfigurationsPanel.createNewAttribute}}"
+                               stepKey="waitForConfigPanel"/>
+        <!-- Step 6-8: Create new 'size' attribute -->
+        <click selector="{{AdminCreateProductConfigurationsPanel.createNewAttribute}}"
+               stepKey="clickCreateNewAttribute"/>
+        <waitForPageLoad stepKey="waitForIFrame"/>
+        <switchToIFrame selector="{{AdminNewAttributePanel.newAttributeIFrame}}" stepKey="switchToNewAttributeIFrame"/>
+        <!-- Step 7: Fill out label for 'size' attribute -->
+        <fillField selector="{{AdminNewAttributePanel.defaultLabel}}" userInput="{{ProductSizeAttribute.frontend_label}}" stepKey="fillAttributeLabel"/>
+        <actionGroup ref="AdminNavigateToProductAttributeAdvancedSectionActionGroup" stepKey="goToAdvancedSection"/>
+        <fillField selector="{{AdvancedAttributePropertiesSection.AttributeCode}}" userInput="{{ProductSizeAttribute.attribute_code}}" stepKey="fillAttributeCode"/>
+        <!-- Add 5 options: 8, 10, 12, 14, 16 -->
+        <click selector="{{AttributePropertiesSection.dropdownAddOptions}}" stepKey="clickAddOption1"/>
+        <fillField selector="{{AttributePropertiesSection.dropdownNthOptionAdmin('1')}}" userInput="{{SizeOption8.label}}"
+                   stepKey="fillOption1"/>
+        <click selector="{{AttributePropertiesSection.dropdownAddOptions}}" stepKey="clickAddOption2"/>
+        <fillField selector="{{AttributePropertiesSection.dropdownNthOptionAdmin('2')}}" userInput="{{SizeOption10.label}}"
+                   stepKey="fillOption2"/>
+        <click selector="{{AttributePropertiesSection.dropdownAddOptions}}" stepKey="clickAddOption3"/>
+        <fillField selector="{{AttributePropertiesSection.dropdownNthOptionAdmin('3')}}" userInput="{{SizeOption12.label}}"
+                   stepKey="fillOption3"/>
+        <click selector="{{AttributePropertiesSection.dropdownAddOptions}}" stepKey="clickAddOption4"/>
+        <fillField selector="{{AttributePropertiesSection.dropdownNthOptionAdmin('4')}}" userInput="{{SizeOption14.label}}"
+                   stepKey="fillOption4"/>
+        <click selector="{{AttributePropertiesSection.dropdownAddOptions}}" stepKey="clickAddOption5"/>
+        <fillField selector="{{AttributePropertiesSection.dropdownNthOptionAdmin('5')}}" userInput="{{SizeOption16.label}}"
+                   stepKey="fillOption5"/>
+        <!-- Step 8: Save Attribute -->
+        <click selector="{{AdminNewAttributePanel.saveAttribute}}" stepKey="clickSaveAttribute"/>
+        <waitForPageLoad stepKey="waitForAttributeSave"/>
+        <switchToIFrame stepKey="switchOutOfIFrame"/>
+        <!-- Step 9: Select both attributes (color and size) -->
+        <conditionalClick selector="{{AdminDataGridHeaderSection.clearFilters}}"
+                          dependentSelector="{{AdminDataGridHeaderSection.clearFilters}}" visible="true"
+                          stepKey="clearExistingFilters"/>
+        <click selector="{{AdminCreateProductConfigurationsPanel.filters}}" stepKey="clickFilters"/>
+        <fillField selector="{{AdminCreateProductConfigurationsPanel.attributeCode}}" userInput="{{ProductSizeAttribute.attribute_code}}"
+                   stepKey="fillFilterAttributeCode"/>
+        <click selector="{{AdminCreateProductConfigurationsPanel.applyFilters}}" stepKey="clickApplyFilters"/>
+        <click selector="{{AdminCreateProductConfigurationsPanel.firstCheckbox}}" stepKey="clickOnSizeCheckbox"/>
+        <conditionalClick selector="{{AdminDataGridHeaderSection.clearFilters}}"
+                          dependentSelector="{{AdminDataGridHeaderSection.clearFilters}}" visible="true"
+                          stepKey="clearFiltersAgain"/>
+        <click selector="{{AdminCreateProductConfigurationsPanel.filters}}" stepKey="clickFilters2"/>
+        <fillField selector="{{AdminCreateProductConfigurationsPanel.attributeCode}}" userInput="color"
+                   stepKey="fillFilterAttributeCode2"/>
+        <click selector="{{AdminCreateProductConfigurationsPanel.applyFilters}}" stepKey="clickApplyFilters2"/>
+        <click selector="{{AdminCreateProductConfigurationsPanel.firstCheckbox}}" stepKey="clickOnColorCheckbox"/>
+        <!-- Step 10: Click 'Next' button -->
+        <click selector="{{AdminCreateProductConfigurationsPanel.next}}" stepKey="clickNextStep1"/>
+        <waitForElementVisible selector="{{AdminCreateProductConfigurationsPanel.selectAllByAttribute('Color')}}"
+                               stepKey="waitForAttributeValuesPage"/>
+        <!-- Step 11: Add 5 color options manually -->
+        <!-- Click on "Create New Value" for each color -->
+        <waitForElementVisible selector="{{AdminCreateProductConfigurationsPanel.createNewValueForAttribute('Color')}}"
+                               stepKey="waitForCreateNewValue"/>
+        <!-- Add black -->
+        <click selector="{{AdminCreateProductConfigurationsPanel.createNewValueForAttribute('Color')}}" stepKey="clickCreateBlack"/>
+        <waitForElementVisible selector="{{AdminCreateProductConfigurationsPanel.attributeName}}"
+                               stepKey="waitForBlackInput"/>
+        <fillField selector="{{AdminCreateProductConfigurationsPanel.attributeName}}" userInput="black"
+                   stepKey="fillBlack"/>
+        <click selector="{{AdminCreateProductConfigurationsPanel.saveAttribute}}" stepKey="saveBlack"/>
+        <!-- Add red -->
+        <click selector="{{AdminCreateProductConfigurationsPanel.createNewValueForAttribute('Color')}}" stepKey="clickCreateRed"/>
+        <waitForElementVisible selector="{{AdminCreateProductConfigurationsPanel.attributeName}}"
+                               stepKey="waitForRedInput"/>
+        <fillField selector="{{AdminCreateProductConfigurationsPanel.attributeName}}" userInput="red"
+                   stepKey="fillRed"/>
+        <click selector="{{AdminCreateProductConfigurationsPanel.saveAttribute}}" stepKey="saveRed"/>
+        <!-- Add blue -->
+        <click selector="{{AdminCreateProductConfigurationsPanel.createNewValueForAttribute('Color')}}" stepKey="clickCreateBlue"/>
+        <waitForElementVisible selector="{{AdminCreateProductConfigurationsPanel.attributeName}}"
+                               stepKey="waitForBlueInput"/>
+        <fillField selector="{{AdminCreateProductConfigurationsPanel.attributeName}}" userInput="blue"
+                   stepKey="fillBlue"/>
+        <click selector="{{AdminCreateProductConfigurationsPanel.saveAttribute}}" stepKey="saveBlue"/>
+        <!-- Add pink -->
+        <click selector="{{AdminCreateProductConfigurationsPanel.createNewValueForAttribute('Color')}}" stepKey="clickCreatePink"/>
+        <waitForElementVisible selector="{{AdminCreateProductConfigurationsPanel.attributeName}}"
+                               stepKey="waitForPinkInput"/>
+        <fillField selector="{{AdminCreateProductConfigurationsPanel.attributeName}}" userInput="pink"
+                   stepKey="fillPink"/>
+        <click selector="{{AdminCreateProductConfigurationsPanel.saveAttribute}}" stepKey="savePink"/>
+        <!-- Add white -->
+        <click selector="{{AdminCreateProductConfigurationsPanel.createNewValueForAttribute('Color')}}" stepKey="clickCreateWhite"/>
+        <waitForElementVisible selector="{{AdminCreateProductConfigurationsPanel.attributeName}}"
+                               stepKey="waitForWhiteInput"/>
+        <fillField selector="{{AdminCreateProductConfigurationsPanel.attributeName}}" userInput="white"
+                   stepKey="fillWhite"/>
+        <click selector="{{AdminCreateProductConfigurationsPanel.saveAttribute}}" stepKey="saveWhite"/>
+        <!-- Step 12: Select all options for both attributes -->
+        <click selector="{{AdminCreateProductConfigurationsPanel.selectAllByAttribute('Color')}}"
+               stepKey="selectAllColorOptions"/>
+        <click selector="{{AdminCreateProductConfigurationsPanel.selectAllByAttribute(ProductSizeAttribute.frontend_label)}}"
+               stepKey="selectAllSizeOptions"/>
+        <!-- Step 13: Click 'Next' button -->
+        <click selector="{{AdminCreateProductConfigurationsPanel.next}}" stepKey="clickNextStep2"/>
+        <waitForElementVisible selector="{{AdminCreateProductConfigurationsPanel.applySingleQuantityToEachSkus}}"
+                               stepKey="waitForBulkStep"/>
+        <!-- Step 14: Apply single quantity to each SKU -->
+        <click selector="{{AdminCreateProductConfigurationsPanel.applySingleQuantityToEachSkus}}"
+               stepKey="clickSingleQuantity"/>
+        <fillField selector="{{AdminCreateProductConfigurationsPanel.quantity}}" userInput="10000"
+                   stepKey="fillQuantity"/>
+        <!-- Step 15: Click 'Next' to go to Summary -->
+        <click selector="{{AdminCreateProductConfigurationsPanel.next}}" stepKey="clickNextStep3"/>
+        <waitForElementVisible selector="{{AdminCreateProductConfigurationsPanel.next}}" stepKey="waitForSummary"/>
+        <!-- Step 16: Click 'Generate Products' -->
+        <click selector="{{AdminCreateProductConfigurationsPanel.next}}" stepKey="generateProducts"/>
+        <waitForPageLoad stepKey="waitForProductsGeneration"/>
+        <!-- Step 17-18: Save product and confirm attribute set -->
+        <actionGroup ref="AdminProductFormSaveActionGroup" stepKey="saveConfigurableProduct"/>
+        <conditionalClick selector="{{AdminChooseAffectedAttributeSetPopup.confirm}}"
+                          dependentSelector="{{AdminChooseAffectedAttributeSetPopup.confirm}}"
+                          visible="true"
+                          stepKey="confirmAttributeSetForConfigurableProduct"/>
+        <seeElement selector="{{AdminProductMessagesSection.successMessage}}" stepKey="seeSaveProductMessage"/>
+        <!-- Verify 25 variations were created (5 colors x 5 sizes = 25) -->
+        <seeElement selector="{{AdminProductFormConfigurationsSection.currentVariationsProductName('1')}}"
+                    stepKey="seeFirstVariation"/>
+        <!-- Step 19: Click 'Edit Configurations' -->
+        <click selector="{{AdminProductFormConfigurationsSection.createConfigurations}}"
+               stepKey="clickEditConfigurations"/>
+        <waitForElementVisible selector="{{AdminCreateProductConfigurationsPanel.next}}"
+                               stepKey="waitForEditConfigPanel"/>
+        <!-- Step 20: Uncheck Color attribute on Step 1 -->
+        <click selector="{{AdminCreateProductConfigurationsPanel.attributeCheckbox('color')}}"
+               stepKey="uncheckColorAttribute"/>
+        <!-- Step 21: Click 'Next' and verify only size attribute is displayed -->
+        <click selector="{{AdminCreateProductConfigurationsPanel.next}}" stepKey="clickNextAfterUncheckingColor"/>
+        <waitForElementVisible selector="{{AdminCreateProductConfigurationsPanel.selectAllByAttribute(ProductSizeAttribute.frontend_label)}}"
+                               stepKey="waitForSizeOptionsPage"/>
+        <dontSeeElement selector="{{AdminCreateProductConfigurationsPanel.selectAllByAttribute('Color')}}"
+                        stepKey="verifyColorNotDisplayed"/>
+        <!-- Step 22: Uncheck all size options except 8 and 10 -->
+        <!-- First deselect all -->
+        <click selector="{{AdminCreateProductConfigurationsPanel.deSelectAllByAttribute(ProductSizeAttribute.frontend_label)}}"
+               stepKey="deselectAllSizeOptions"/>
+        <!-- Then select only 8 and 10 -->
+        <click selector="{{AdminCreateProductConfigurationsPanel.attributeOption('8')}}" stepKey="selectSize8"/>
+        <click selector="{{AdminCreateProductConfigurationsPanel.attributeOption('10')}}" stepKey="selectSize10"/>
+        <!-- Step 23: Click 'Next' button -->
+        <click selector="{{AdminCreateProductConfigurationsPanel.next}}" stepKey="clickNextStep2AfterEdit"/>
+        <waitForElementVisible selector="{{AdminCreateProductConfigurationsPanel.applySingleQuantityToEachSkus}}"
+                               stepKey="waitForBulkStepAfterEdit"/>
+        <!-- Step 24: Skip images, price, and quantity (just click Next) -->
+        <click selector="{{AdminCreateProductConfigurationsPanel.next}}" stepKey="clickNextStep3AfterEdit"/>
+        <waitForElementVisible selector="{{AdminCreateProductConfigurationsPanel.next}}"
+                               stepKey="waitForSummaryAfterEdit"/>
+        <!-- Step 25: Verify Summary -->
+        <see userInput="{{BaseConfigurableProduct.sku}}-{{SizeOption8.label}}" stepKey="seeNewVariation1InSummary"/>
+        <see userInput="{{BaseConfigurableProduct.sku}}-{{SizeOption10.label}}" stepKey="seeNewVariation2InSummary"/>
+        <!-- Step 26: Click 'Generate Products' -->
+        <click selector="{{AdminCreateProductConfigurationsPanel.next}}" stepKey="generateProductsAfterEdit"/>
+        <waitForPageLoad stepKey="waitForProductsRegeneration"/>
+        <!-- Step 27: Save product -->
+        <actionGroup ref="AdminProductFormSaveActionGroup" stepKey="saveConfigurableProductAfterEdit"/>
+        <seeElement selector="{{AdminProductMessagesSection.successMessage}}" stepKey="seeSaveProductMessageAfterEdit"/>
+        <!-- Verify only 2 variations remain in Current Variations grid -->
+        <see selector="{{AdminProductFormConfigurationsSection.currentVariationsNameCells}}" userInput="{{BaseConfigurableProduct.sku}}-{{SizeOption8.label}}"
+             stepKey="verifyFinalVariation1"/>
+        <see selector="{{AdminProductFormConfigurationsSection.currentVariationsNameCells}}" userInput="{{BaseConfigurableProduct.sku}}-{{SizeOption10.label}}"
+             stepKey="verifyFinalVariation2"/>
+        <!-- Verify old color-based variations are gone -->
+        <dontSee selector="{{AdminProductFormConfigurationsSection.currentVariationsNameCells}}" userInput="black"
+                 stepKey="verifyColorVariationsRemoved"/>
+    </test>
+</tests>
