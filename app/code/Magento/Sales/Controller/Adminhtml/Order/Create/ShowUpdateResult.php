@@ -62,7 +62,9 @@ class ShowUpdateResult extends \Magento\Sales\Controller\Adminhtml\Order\Create 
             if (is_array($updateResult) && isset($updateResult['compressed']) && $updateResult['compressed']) {
                 if (isset($updateResult['data']) && function_exists('gzdecode')) {
                     // phpcs:ignore Magento2.Functions.DiscouragedFunction
-                    $resultRaw->setContents(@gzdecode($updateResult['data']) ?: '');
+                    $decompressed = gzdecode($updateResult['data']);
+                    // gzdecode returns false on error, handle gracefully
+                    $resultRaw->setContents(is_string($decompressed) ? $decompressed : '');
                 } else {
                     $resultRaw->setContents('');
                 }

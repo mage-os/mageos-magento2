@@ -72,6 +72,8 @@ class ShowUpdateResultTest extends TestCase
 
     /**
      * @inheritdoc
+     * 
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     protected function setUp(): void
     {
