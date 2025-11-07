@@ -64,7 +64,10 @@ class EsConfigTest extends TestCase
         $this->serializerMock->expects($this->once())
             ->method('unserialize')
             ->with('serializedData')
-            ->willReturn(['unserializedData']);
+            ->willReturn([
+                'stemmerInfo' => [],
+                'stopwordsInfo' => []
+            ]);
 
         $this->config = $this->objectManager->getObject(
             EsConfig::class,
