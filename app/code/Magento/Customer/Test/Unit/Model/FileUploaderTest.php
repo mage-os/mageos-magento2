@@ -16,7 +16,6 @@ use Magento\Customer\Model\FileProcessorFactory;
 use Magento\Customer\Model\FileUploader;
 use Magento\Customer\Model\Metadata\ElementFactory;
 use Magento\Customer\Model\Metadata\Form\Image;
-use Magento\Customer\Model\Metadata\Form\Select;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
