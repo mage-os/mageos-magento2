@@ -118,8 +118,37 @@ class FileUploaderTest extends TestCase
             ->with($this->attributeMetadata, null, CustomerMetadataInterface::ENTITY_TYPE_CUSTOMER)
             ->willReturn($formElement);
 
+        $this->attributeMetadata->expects($this->once())
+            ->method('getFrontendInput')
+            ->willReturn('image');
+
         $model = $this->getModel(CustomerMetadataInterface::ENTITY_TYPE_CUSTOMER, 'customer');
         $this->assertTrue($model->validate());
+    }
+
+    public function testValidateInvalidAttributeType()
+    {
+        $attributeType = 'select';
+        $attributeCode = 'attribute_code';
+        $filename = 'filename.ext1';
+
+        $_FILES = [
+            'customer' => [
+                'name' => [
+                    $attributeCode => $filename,
+                ],
+            ],
+        ];
+
+        $this->attributeMetadata->expects($this->exactly(2))
+            ->method('getFrontendInput')
+            ->willReturn($attributeType);
+
+        $model = $this->getModel(CustomerMetadataInterface::ENTITY_TYPE_CUSTOMER, 'customer');
+        $expectedErrors = [
+            __('"%1" is not a valid input to accept file uploads.', $attributeType)
+        ];
+        $this->assertEquals($expectedErrors, $model->validate());
     }
 
     public function testUpload()

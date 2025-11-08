@@ -50,6 +50,11 @@ class FileUploader
     private $scope;
 
     /**
+     * @var string[]
+     */
+    private array $validInputTypes;
+
+    /**
      * @param CustomerMetadataInterface $customerMetadataService
      * @param AddressMetadataInterface $addressMetadataService
      * @param ElementFactory $elementFactory
@@ -57,6 +62,7 @@ class FileUploader
      * @param AttributeMetadataInterface $attributeMetadata
      * @param string $entityTypeCode
      * @param string $scope
+     * @param array|null $validInputTypes
      */
     public function __construct(
         CustomerMetadataInterface $customerMetadataService,
@@ -65,7 +71,8 @@ class FileUploader
         FileProcessorFactory $fileProcessorFactory,
         AttributeMetadataInterface $attributeMetadata,
         $entityTypeCode,
-        $scope
+        $scope,
+        ?array $validInputTypes = ['file', 'image']
     ) {
         $this->customerMetadataService = $customerMetadataService;
         $this->addressMetadataService = $addressMetadataService;
@@ -74,6 +81,7 @@ class FileUploader
         $this->attributeMetadata = $attributeMetadata;
         $this->entityTypeCode = $entityTypeCode;
         $this->scope = $scope;
+        $this->validInputTypes = $validInputTypes;
     }
 
     /**
@@ -83,6 +91,12 @@ class FileUploader
      */
     public function validate()
     {
+        if (!in_array($this->attributeMetadata->getFrontendInput(), $this->validInputTypes)) {
+            return [
+                __('"%1" is not a valid input to accept file uploads.', $this->attributeMetadata->getFrontendInput())
+            ];
+        }
+
         $formElement = $this->elementFactory->create(
             $this->attributeMetadata,
             null,
