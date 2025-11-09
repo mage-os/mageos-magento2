@@ -77,7 +77,7 @@ class EsConfigTest extends TestCase
     }
 
     /**
-     * @return array|mixed|null
+     * @return void
      */
     public function testGetStemmerInfo()
     {
@@ -85,7 +85,7 @@ class EsConfigTest extends TestCase
     }
 
     /**
-     * @return array|mixed|null
+     * @return void
      */
     public function testGetStopwordsInfo()
     {
