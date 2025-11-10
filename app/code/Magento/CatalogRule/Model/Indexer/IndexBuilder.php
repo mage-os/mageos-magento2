@@ -17,7 +17,9 @@ use Magento\CatalogRule\Model\Indexer\IndexBuilder\ProductLoader;
 use Magento\CatalogRule\Model\Indexer\IndexerTableSwapperInterface as TableSwapper;
 use Magento\CatalogRule\Model\ResourceModel\Rule\Collection as RuleCollection;
 use Magento\CatalogRule\Model\ResourceModel\Rule\CollectionFactory as RuleCollectionFactory;
+use Magento\CatalogRule\Model\ResourceModel\Rule\RuleIdProvider;
 use Magento\CatalogRule\Model\Rule;
+use Magento\CatalogRule\Model\RuleFactory;
 use Magento\Eav\Model\Config;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\App\ResourceConnection;
@@ -192,6 +194,25 @@ class IndexBuilder
      * @var int
      */
     private $productBatchSize;
+    /**
+     * @var DynamicBatchSizeCalculator
+     */
+    private $batchSizeCalculator;
+
+    /**
+     * @var CatalogRuleInsertBatchSizeCalculator
+     */
+    private $insertBatchSizeCalculator;
+
+    /**
+     * @var RuleIdProvider
+     */
+    private $ruleIdProvider;
+
+    /**
+     * @var RuleFactory
+     */
+    private $ruleFactory;
 
     /**
      * @param RuleCollectionFactory $ruleCollectionFactory
@@ -218,6 +239,10 @@ class IndexBuilder
      * @param IndexerRegistry|null $indexerRegistry
      * @param ReindexRuleProductsPrice|null $reindexRuleProductsPrice
      * @param int $productBatchSize
+     * @param DynamicBatchSizeCalculator|null $batchSizeCalculator
+     * @param CatalogRuleInsertBatchSizeCalculator|null $insertBatchSizeCalculator
+     * @param RuleIdProvider|null $ruleIdProvider
+     * @param RuleFactory|null $ruleFactory
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
@@ -245,7 +270,11 @@ class IndexBuilder
         ?ProductCollectionFactory $productCollectionFactory = null,
         ?IndexerRegistry $indexerRegistry = null,
         ?ReindexRuleProductsPrice $reindexRuleProductsPrice = null,
-        int $productBatchSize = 1000
+        int $productBatchSize = 1000,
+        ?DynamicBatchSizeCalculator $batchSizeCalculator = null,
+        ?CatalogRuleInsertBatchSizeCalculator $insertBatchSizeCalculator = null,
+        ?RuleIdProvider $ruleIdProvider = null,
+        ?RuleFactory $ruleFactory = null
     ) {
         $this->resource = $resource;
         $this->connection = $resource->getConnection();
@@ -294,6 +323,14 @@ class IndexBuilder
             ObjectManager::getInstance()->get(ProductCollectionFactory::class);
         $this->reindexRuleProductsPrice = $reindexRuleProductsPrice ??
             ObjectManager::getInstance()->get(ReindexRuleProductsPrice::class);
+        $this->batchSizeCalculator = $batchSizeCalculator ??
+            ObjectManager::getInstance()->get(DynamicBatchSizeCalculator::class);
+        $this->insertBatchSizeCalculator = $insertBatchSizeCalculator ??
+            ObjectManager::getInstance()->get(CatalogRuleInsertBatchSizeCalculator::class);
+        $this->ruleIdProvider = $ruleIdProvider ??
+            ObjectManager::getInstance()->get(RuleIdProvider::class);
+        $this->ruleFactory = $ruleFactory ??
+            ObjectManager::getInstance()->get(RuleFactory::class);
     }
 
     /**
@@ -404,11 +441,25 @@ class IndexBuilder
      */
     protected function doReindexFull()
     {
-        foreach ($this->getAllRules() as $rule) {
-            $this->reindexRuleProduct->execute($rule, $this->batchCount, true);
+        $dynamicBatchCount = $this->insertBatchSizeCalculator->getInsertBatchSize($this->connection);
+        $ruleIds = $this->getActiveRuleIds();
+        foreach ($ruleIds as $ruleId) {
+
+            $rule = $this->loadRuleById($ruleId);
+            if (!$rule) {
+                $this->logger->warning("Rule ID {$ruleId} not found, skipping");
+                continue;
+            }
+            $this->reindexRuleProduct->execute($rule, $dynamicBatchCount, true);
+
+            $rule->clearInstance();
+            unset($rule);
         }
 
-        $this->reindexRuleProductPrice->execute($this->batchCount, null, true);
+        $priceBatchSize = $this->insertBatchSizeCalculator->getInsertBatchSize($this->connection);
+
+        $this->reindexRuleProductPrice->execute($priceBatchSize, null, true);
+
         $this->reindexRuleGroupWebsite->execute(true);
 
         $this->tableSwapper->swapIndexTables(
@@ -703,6 +754,30 @@ class IndexBuilder
     protected function getActiveRules()
     {
         return $this->ruleCollectionFactory->create()->addFieldToFilter('is_active', 1);
+    }
+
+    /**
+     * Get active rule IDs only (lightweight)
+     *
+     * @return array
+     */
+    protected function getActiveRuleIds()
+    {
+        return $this->ruleIdProvider->getActiveRuleIds();
+    }
+
+    /**
+     * Load a single rule by ID
+     *
+     * @param int $ruleId
+     * @return Rule|null
+     */
+    protected function loadRuleById($ruleId)
+    {
+        $rule = $this->ruleFactory->create();
+        $rule->load($ruleId);
+
+        return $rule->getId() ? $rule : null;
     }
 
     /**

@@ -7,8 +7,8 @@ declare(strict_types=1);
 
 namespace Magento\CatalogRuleConfigurable\Plugin\CatalogRule\Model\Rule;
 
-use Magento\CatalogRuleConfigurable\Plugin\CatalogRule\Model\ConfigurableProductsProvider;
 use Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable as ConfigurableProductsResourceModel;
+use Magento\Framework\App\ResourceConnection;
 
 /**
  * Add configurable sub products to catalog rule indexer on full reindex
@@ -21,37 +21,40 @@ class ConfigurableProductHandler
     private ConfigurableProductsResourceModel $configurable;
 
     /**
-     * @var ConfigurableProductsProvider
+     * @var ResourceConnection
      */
-    private ConfigurableProductsProvider $configurableProductsProvider;
+    private ResourceConnection $resourceConnection;
+
+    /**
+     * @var array|null
+     */
+    private static ?array $allConfigurableProductIds = null;
 
     /**
      * @var array
      */
-    private array $childrenProducts = [];
+    private static array $childrenProducts = [];
 
     /**
      * @param ConfigurableProductsResourceModel $configurable
-     * @param ConfigurableProductsProvider $configurableProductsProvider
+     * @param ResourceConnection $resourceConnection
      */
     public function __construct(
         ConfigurableProductsResourceModel $configurable,
-        ConfigurableProductsProvider     $configurableProductsProvider
+        ResourceConnection $resourceConnection
     ) {
         $this->configurable = $configurable;
-        $this->configurableProductsProvider = $configurableProductsProvider;
+        $this->resourceConnection = $resourceConnection;
     }
 
     /**
-     * Match configurable child products if configurable product match the condition
+     * Match configurable child products if configurable product matches the condition
      *
      * @param \Magento\CatalogRule\Model\Rule $rule
      * @param \Closure $proceed
      * @return array
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     * @SuppressWarnings(PHPMD.NPathComplexity)
-     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      */
     public function aroundGetMatchingProductIds(
         \Magento\CatalogRule\Model\Rule $rule,
@@ -59,62 +62,66 @@ class ConfigurableProductHandler
     ): array {
         $productsFilter = $rule->getProductsFilter() ? (array) $rule->getProductsFilter() : [];
         if ($productsFilter) {
-            $rule->setProductsFilter(
-                array_unique(
-                    array_merge(
-                        $productsFilter,
-                        $this->configurable->getParentIdsByChild($productsFilter)
+            $parentIds = $this->configurable->getParentIdsByChild($productsFilter);
+            if ($parentIds) {
+                $rule->setProductsFilter(
+                    array_unique(
+                        array_merge(
+                            $productsFilter,
+                            $parentIds
+                        )
                     )
-                )
-            );
+                );
+            }
         }
 
         $productIds = $proceed();
-        foreach ($productIds as $productId => $productData) {
-            if ($this->hasAntecedentRule((int) $productId)) {
-                $productIds[$productId]['has_antecedent_rule'] = true;
-            }
+
+        if (self::$allConfigurableProductIds === null) {
+            self::$allConfigurableProductIds = $this->loadAllConfigurableProductIds();
         }
 
-        foreach ($this->configurableProductsProvider->getIds(array_keys($productIds)) as $configurableProductId) {
-            if (!isset($this->childrenProducts[$configurableProductId])) {
-                $this->childrenProducts[$configurableProductId] =
-                    $this->configurable->getChildrenIds($configurableProductId)[0];
-            }
-
-            $parentValidationResult = isset($productIds[$configurableProductId])
-                ? array_filter($productIds[$configurableProductId])
-                : [];
-            $processAllChildren = !$productsFilter || in_array($configurableProductId, $productsFilter);
-            foreach ($this->childrenProducts[$configurableProductId] as $childrenProductId) {
-                if ($processAllChildren || in_array($childrenProductId, $productsFilter)) {
-                    $childValidationResult = isset($productIds[$childrenProductId])
-                        ? array_filter($productIds[$childrenProductId])
-                        : [];
-                    $productIds[$childrenProductId] = $parentValidationResult + $childValidationResult;
+        foreach (array_keys($productIds) as $productId) {
+            if (isset(self::$allConfigurableProductIds[$productId])) {
+                if (!isset(self::$childrenProducts[$productId])) {
+                    self::$childrenProducts[$productId] = $this->configurable->getChildrenIds($productId)[0];
                 }
+
+                $parentValidationResult = array_filter($productIds[$productId]);
+                $processAllChildren = !$productsFilter || in_array($productId, $productsFilter);
+
+                foreach (self::$childrenProducts[$productId] as $childProductId) {
+                    if ($processAllChildren || in_array($childProductId, $productsFilter)) {
+                        $childValidationResult = isset($productIds[$childProductId])
+                            ? array_filter($productIds[$childProductId])
+                            : [];
+                        $productIds[$childProductId] = $parentValidationResult + $childValidationResult;
+                    }
+                }
+                unset($productIds[$productId]);
             }
-            unset($productIds[$configurableProductId]);
         }
 
         return $productIds;
     }
 
     /**
-     * Check if simple product has previously applied rule.
+     * Load all configurable product IDs at once
      *
-     * @param int $productId
-     * @return bool
-     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+     * @return array
      */
-    private function hasAntecedentRule(int $productId): bool
+    private function loadAllConfigurableProductIds(): array
     {
-        foreach ($this->childrenProducts as $parent => $children) {
-            if (in_array($productId, $children)) {
-                return true;
-            }
-        }
+        $connection = $this->resourceConnection->getConnection();
+        $select = $connection->select()
+            ->from(
+                ['e' => $this->resourceConnection->getTableName('catalog_product_entity')],
+                ['entity_id']
+            )
+            ->where('e.type_id = ?', 'configurable');
 
-        return false;
+        $result = $connection->fetchCol($select);
+
+        return array_flip($result);
     }
 }

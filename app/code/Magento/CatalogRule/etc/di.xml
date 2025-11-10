@@ -177,4 +177,17 @@
             <argument name="productCollectionFactory" xsi:type="object">Magento\CatalogRule\Model\ResourceModel\Product\OptimizedCollectionFactory</argument>
         </arguments>
     </type>
+
+    <virtualType name="Magento\CatalogRule\Model\Indexer\CatalogRuleBatchSizeManagement" type="Magento\Framework\Indexer\BatchSizeManagement">
+        <arguments>
+            <argument name="rowSizeEstimator" xsi:type="object">Magento\CatalogRule\Model\Indexer\CatalogRuleProductPriceRowSizeEstimator</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Magento\CatalogRule\Model\Indexer\CatalogRuleInsertBatchSizeCalculator">
+        <arguments>
+            <argument name="batchSizeManagement" xsi:type="object">Magento\CatalogRule\Model\Indexer\CatalogRuleBatchSizeManagement</argument>
+            <argument name="defaultBatchSize" xsi:type="number">5000</argument>
+        </arguments>
+    </type>
 </config>

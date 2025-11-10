@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\CatalogRule\Model\ResourceModel\Product;
 
+use Magento\CatalogRule\Model\Indexer\DynamicBatchSizeCalculator;
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
 use Magento\Framework\Exception\LocalizedException;
 
@@ -19,17 +20,6 @@ use Magento\Framework\Exception\LocalizedException;
 class AttributeValuesLoader implements \ArrayAccess, \Countable
 {
     /**
-     * Number of products to load per batch
-     */
-    private const BATCH_SIZE = 5000;
-
-    /**
-     * Maximum number of batches to keep in memory
-     * With BATCH_SIZE=5000, this means ~10k products in memory max
-     */
-    private const MAX_BATCHES_IN_MEMORY = 2;
-
-    /**
      * @var Collection
      */
     private Collection $collection;
@@ -40,43 +30,55 @@ class AttributeValuesLoader implements \ArrayAccess, \Countable
     private AbstractAttribute $attribute;
 
     /**
-     * @var array<int, array<int, mixed>>
+     * @var DynamicBatchSizeCalculator
      */
-    private array $loadedData = [];
+    private $batchSizeCalculator;
 
     /**
-     * @var array<int, int>
+     * @var int
      */
-    private array $entityToBatch = [];
+    private $batchSize;
 
     /**
-     * @var array<int, bool>
+     * @var int
      */
-    private array $loadedBatches = [];
+    private $maxBatchesInMemory;
 
     /**
-     * @var array<int>
+     * @var array Loaded data: entity_id => [store_id => value]
      */
-    private array $batchQueue = [];
+    private $loadedData = [];
 
     /**
-     * @var int|null
+     * @var array Track loaded entity IDs in batches
      */
-    private ?int $totalCount = null;
+    private $loadedBatches = [];
 
     /**
-     * @var array<int>
+     * @var array Queue of loaded batch start IDs for LRU eviction
      */
-    private array $allEntityIds = [];
+    private $batchQueue = [];
+
+    /**
+     * @var int|null Cached count
+     */
+    private $totalCount = null;
 
     /**
      * @param Collection $collection
      * @param AbstractAttribute $attribute
+     * @param DynamicBatchSizeCalculator $batchSizeCalculator
      */
-    public function __construct(Collection $collection, AbstractAttribute $attribute)
-    {
+    public function __construct(
+        Collection $collection,
+        AbstractAttribute $attribute,
+        DynamicBatchSizeCalculator $batchSizeCalculator
+    ) {
         $this->collection = $collection;
         $this->attribute = $attribute;
+        $this->batchSizeCalculator = $batchSizeCalculator;
+        $this->batchSize = $batchSizeCalculator->getAttributeBatchSize();
+        $this->maxBatchesInMemory = $batchSizeCalculator->getMaxBatchesInMemory();
     }
 
     /**
@@ -87,8 +89,15 @@ class AttributeValuesLoader implements \ArrayAccess, \Countable
      */
     public function offsetExists($offset): bool
     {
-        $this->ensureEntityLoaded((int)$offset);
-        return isset($this->loadedData[$offset]);
+        $entityId = (int)$offset;
+
+        if (isset($this->loadedData[$entityId])) {
+            return true;
+        }
+
+        $this->loadBatchForEntity($entityId);
+
+        return isset($this->loadedData[$entityId]);
     }
 
     /**
@@ -99,8 +108,13 @@ class AttributeValuesLoader implements \ArrayAccess, \Countable
      */
     public function offsetGet($offset): ?array
     {
-        $this->ensureEntityLoaded((int)$offset);
-        return $this->loadedData[$offset] ?? null;
+        $entityId = (int)$offset;
+
+        if (!isset($this->loadedData[$entityId])) {
+            $this->loadBatchForEntity($entityId);
+        }
+
+        return $this->loadedData[$entityId] ?? null;
     }
 
     /**
@@ -136,102 +150,45 @@ class AttributeValuesLoader implements \ArrayAccess, \Countable
     public function count(): int
     {
         if ($this->totalCount === null) {
-            $this->loadEntityIds();
+            $this->totalCount = (int)$this->collection->getSize();
         }
         return $this->totalCount;
     }
 
     /**
-     * Ensure the batch containing the given entity is loaded
+     * Load batch containing the requested entity
      *
      * @param int $entityId
      * @return void
-     * @throws LocalizedException
      */
-    private function ensureEntityLoaded(int $entityId): void
+    private function loadBatchForEntity(int $entityId): void
     {
-        $batchNumber = $this->getBatchNumberForEntity($entityId);
+        $batchStartId = (int)(floor($entityId / $this->batchSize) * $this->batchSize);
 
-        if ($batchNumber === null || isset($this->loadedBatches[$batchNumber])) {
+        if (isset($this->loadedBatches[$batchStartId])) {
             return;
         }
 
-        $this->loadBatch($batchNumber);
-
+        $this->loadBatch($batchStartId);
         $this->evictOldBatchesIfNeeded();
     }
 
     /**
-     * Get batch number for entity
+     * Load a specific batch of attribute values
      *
-     * @param int $entityId
-     * @return int|null
-     */
-    private function getBatchNumberForEntity(int $entityId): ?int
-    {
-        if (empty($this->allEntityIds)) {
-            $this->loadEntityIds();
-        }
-
-        if (!isset($this->entityToBatch[$entityId])) {
-            return null;
-        }
-
-        return $this->entityToBatch[$entityId];
-    }
-
-    /**
-     * Load all entity IDs and build batch map
-     *
+     * @param int $batchStartId
      * @return void
+     * @throws LocalizedException|\Zend_Db_Statement_Exception
      */
-    private function loadEntityIds(): void
+    private function loadBatch(int $batchStartId): void
     {
-        $connection = $this->collection->getConnection();
-        $select = $connection->select()
-            ->from($this->collection->getMainTable(), ['entity_id'])
-            ->order('entity_id ASC');
-
-        $this->allEntityIds = $connection->fetchCol($select);
-        $this->totalCount = count($this->allEntityIds);
-
-        $batchNumber = 0;
-        foreach (array_chunk($this->allEntityIds, self::BATCH_SIZE) as $batchEntityIds) {
-            foreach ($batchEntityIds as $entityId) {
-                $this->entityToBatch[(int)$entityId] = $batchNumber;
-            }
-            $batchNumber++;
-        }
-    }
-
-    /**
-     * Load attribute values for a specific batch
-     *
-     * @param int $batchNumber
-     * @return void
-     * @throws LocalizedException
-     */
-    private function loadBatch(int $batchNumber): void
-    {
-        if (empty($this->allEntityIds)) {
-            $this->loadEntityIds();
-        }
-
-        $offset = $batchNumber * self::BATCH_SIZE;
-        $batchEntityIds = array_slice($this->allEntityIds, $offset, self::BATCH_SIZE);
-
-        if (empty($batchEntityIds)) {
-            return;
-        }
-
         $attributeId = (int)$this->attribute->getId();
         $fieldMainTable = $this->collection->getConnection()->getAutoIncrementField(
             $this->collection->getMainTable()
         );
         $fieldJoinTable = $this->attribute->getEntity()->getLinkField();
-        $connection = $this->collection->getConnection();
 
-        $select = $connection->select()
+        $select = $this->collection->getConnection()->select()
             ->from(['cpe' => $this->collection->getMainTable()], ['entity_id'])
             ->join(
                 ['cpa' => $this->attribute->getBackend()->getTable()],
@@ -239,38 +196,39 @@ class AttributeValuesLoader implements \ArrayAccess, \Countable
                 ['store_id', 'value']
             )
             ->where('attribute_id = ?', $attributeId)
-            ->where('cpe.entity_id IN (?)', $batchEntityIds);
+            ->where('cpe.entity_id >= ?', $batchStartId)
+            ->where('cpe.entity_id < ?', $batchStartId + $this->batchSize)
+            ->order(['cpe.entity_id ASC', 'cpa.store_id ASC']);
 
-        $data = $connection->fetchAll($select);
+        $stmt = $this->collection->getConnection()->query($select);
 
-        foreach ($data as $row) {
+        while ($row = $stmt->fetch()) {
             $entityId = (int)$row['entity_id'];
-            $storeId = (int)$row['store_id'];
-            $this->loadedData[$entityId][$storeId] = $row['value'];
+            if (!isset($this->loadedData[$entityId])) {
+                $this->loadedData[$entityId] = [];
+            }
+            $this->loadedData[$entityId][(int)$row['store_id']] = $row['value'];
         }
 
-        $this->loadedBatches[$batchNumber] = true;
-        $this->batchQueue[] = $batchNumber;
+        unset($stmt);
 
-        unset($data);
+        $this->loadedBatches[$batchStartId] = true;
+        $this->batchQueue[] = $batchStartId;
     }
 
     /**
-     * Evict oldest batches if memory limit exceeded
+     * Evict old batches if memory limit exceeded
      *
      * @return void
      */
     private function evictOldBatchesIfNeeded(): void
     {
-        while (count($this->batchQueue) > self::MAX_BATCHES_IN_MEMORY) {
-            $oldestBatch = array_shift($this->batchQueue);
-            unset($this->loadedBatches[$oldestBatch]);
+        while (count($this->loadedBatches) > $this->maxBatchesInMemory) {
+            $oldestBatchStart = array_shift($this->batchQueue);
+            unset($this->loadedBatches[$oldestBatchStart]);
 
-            $offset = $oldestBatch * self::BATCH_SIZE;
-            $batchEntityIds = array_slice($this->allEntityIds, $offset, self::BATCH_SIZE);
-
-            foreach ($batchEntityIds as $entityId) {
-                unset($this->loadedData[(int)$entityId]);
+            for ($id = $oldestBatchStart; $id < $oldestBatchStart + $this->batchSize; $id++) {
+                unset($this->loadedData[$id]);
             }
         }
     }
