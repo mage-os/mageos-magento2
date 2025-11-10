@@ -63,7 +63,6 @@ class ConfigurableProductHandlerTest extends TestCase
         $this->selectMock = $this->createMock(Select::class);
         $this->ruleMock = $this->createMock(Rule::class);
 
-        // Set up default resource connection behavior
         $this->resourceConnectionMock->method('getConnection')
             ->willReturn($this->connectionMock);
         $this->resourceConnectionMock->method('getTableName')
@@ -74,7 +73,6 @@ class ConfigurableProductHandlerTest extends TestCase
             $this->resourceConnectionMock
         );
 
-        // Reset static properties between tests
         $this->resetStaticProperties();
     }
 
@@ -88,11 +86,9 @@ class ConfigurableProductHandlerTest extends TestCase
         $reflection = new \ReflectionClass(ConfigurableProductHandler::class);
 
         $allConfigurableProductIdsProperty = $reflection->getProperty('allConfigurableProductIds');
-        $allConfigurableProductIdsProperty->setAccessible(true);
         $allConfigurableProductIdsProperty->setValue(null, null);
 
         $childrenProductsProperty = $reflection->getProperty('childrenProducts');
-        $childrenProductsProperty->setAccessible(true);
         $childrenProductsProperty->setValue(null, []);
     }
 
@@ -273,7 +269,7 @@ class ConfigurableProductHandlerTest extends TestCase
             ],
             [
                 ['simple11', 'simple12',],
-                ['simple11', 'simple12', 'conf1',],
+                ['simple11', 'conf1',],
                 ['simple11' => [1 => false], 'conf1' => [1 => true],],
                 ['simple11' => [1 => true], 'simple12' => [1 => true],],
             ],

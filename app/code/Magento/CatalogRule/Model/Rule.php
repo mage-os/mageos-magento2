@@ -401,7 +401,8 @@ class Rule extends AbstractModel implements RuleInterface, IdentityInterface, Re
                 $this->cachedWebsitesMap = $this->_getWebsitesMap();
                 $websiteIds = $this->getWebsiteIds();
                 $this->cachedWebsiteIdsArray = is_array($websiteIds) ? $websiteIds : explode(',', $websiteIds);
-                $this->cachedConditions = $this->getConditions();                $this->_resourceIterator->walk(
+                $this->cachedConditions = $this->getConditions();
+                $this->_resourceIterator->walk(
                     $productCollection->getSelect(),
                     [[$this, 'callbackValidateProduct']],
                     [
