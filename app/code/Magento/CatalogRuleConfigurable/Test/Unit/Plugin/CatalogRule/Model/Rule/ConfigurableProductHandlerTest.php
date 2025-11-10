@@ -8,11 +8,9 @@ declare(strict_types=1);
 namespace Magento\CatalogRuleConfigurable\Test\Unit\Plugin\CatalogRule\Model\Rule;
 
 use Magento\CatalogRule\Model\Rule;
+use Magento\CatalogRuleConfigurable\Plugin\CatalogRule\Model\ConfigurableProductsProvider;
 use Magento\CatalogRuleConfigurable\Plugin\CatalogRule\Model\Rule\ConfigurableProductHandler;
 use Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable;
-use Magento\Framework\App\ResourceConnection;
-use Magento\Framework\DB\Adapter\AdapterInterface;
-use Magento\Framework\DB\Select;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -32,19 +30,9 @@ class ConfigurableProductHandlerTest extends TestCase
     private $configurableMock;
 
     /**
-     * @var ResourceConnection|MockObject
+     * @var ConfigurableProductsProvider|MockObject
      */
-    private $resourceConnectionMock;
-
-    /**
-     * @var AdapterInterface|MockObject
-     */
-    private $connectionMock;
-
-    /**
-     * @var Select|MockObject
-     */
-    private $selectMock;
+    private $configurableProductsProviderMock;
 
     /** @var Rule|MockObject */
     private $ruleMock;
@@ -58,55 +46,16 @@ class ConfigurableProductHandlerTest extends TestCase
             Configurable::class,
             ['getChildrenIds', 'getParentIdsByChild']
         );
-        $this->resourceConnectionMock = $this->createMock(ResourceConnection::class);
-        $this->connectionMock = $this->createMock(AdapterInterface::class);
-        $this->selectMock = $this->createMock(Select::class);
+        $this->configurableProductsProviderMock = $this->createPartialMock(
+            ConfigurableProductsProvider::class,
+            ['getIds']
+        );
         $this->ruleMock = $this->createMock(Rule::class);
-
-        $this->resourceConnectionMock->method('getConnection')
-            ->willReturn($this->connectionMock);
-        $this->resourceConnectionMock->method('getTableName')
-            ->willReturnCallback(fn($tableName) => $tableName);
 
         $this->configurableProductHandler = new ConfigurableProductHandler(
             $this->configurableMock,
-            $this->resourceConnectionMock
+            $this->configurableProductsProviderMock
         );
-
-        $this->resetStaticProperties();
-    }
-
-    /**
-     * Reset static properties in ConfigurableProductHandler
-     *
-     * @return void
-     */
-    private function resetStaticProperties(): void
-    {
-        $reflection = new \ReflectionClass(ConfigurableProductHandler::class);
-
-        $allConfigurableProductIdsProperty = $reflection->getProperty('allConfigurableProductIds');
-        $allConfigurableProductIdsProperty->setValue(null, null);
-
-        $childrenProductsProperty = $reflection->getProperty('childrenProducts');
-        $childrenProductsProperty->setValue(null, []);
-    }
-
-    /**
-     * Set up mock for configurable product IDs
-     *
-     * @param array $configurableProductIds
-     * @return void
-     */
-    private function mockConfigurableProductIds(array $configurableProductIds): void
-    {
-        $this->selectMock->method('from')->willReturnSelf();
-        $this->selectMock->method('where')->willReturnSelf();
-
-        $this->connectionMock->method('select')
-            ->willReturn($this->selectMock);
-        $this->connectionMock->method('fetchCol')
-            ->willReturn($configurableProductIds);
     }
 
     /**
@@ -114,10 +63,10 @@ class ConfigurableProductHandlerTest extends TestCase
      */
     public function testAroundGetMatchingProductIdsWithSimpleProduct()
     {
-        $this->mockConfigurableProductIds([]);
+        $this->configurableProductsProviderMock->expects($this->once())->method('getIds')->willReturn([]);
         $this->configurableMock->expects($this->never())->method('getChildrenIds');
-        $this->ruleMock->method('getProductsFilter')
-            ->willReturn(null);
+        $this->ruleMock->expects($this->never())
+            ->method('setProductsFilter');
 
         $productIds = ['product' => 'valid results'];
         $this->assertEquals(
@@ -136,13 +85,14 @@ class ConfigurableProductHandlerTest extends TestCase
      */
     public function testAroundGetMatchingProductIdsWithConfigurableProduct()
     {
-        $this->mockConfigurableProductIds(['conf1', 'conf2']);
-        $this->configurableMock->method('getChildrenIds')->willReturnMap([
-            ['conf1', [0 => ['simple1']]],
-            ['conf2', [0 => ['simple1', 'simple2']]],
+        $this->configurableProductsProviderMock->expects($this->once())->method('getIds')
+            ->willReturn(['conf1', 'conf2']);
+        $this->configurableMock->expects($this->any())->method('getChildrenIds')->willReturnMap([
+            ['conf1', true, [ 0 => ['simple1']]],
+            ['conf2', true, [ 0 => ['simple1', 'simple2']]],
         ]);
-        $this->ruleMock->method('getProductsFilter')
-            ->willReturn(null);
+        $this->ruleMock->expects($this->never())
+            ->method('setProductsFilter');
 
         $this->assertEquals(
             [
@@ -193,7 +143,12 @@ class ConfigurableProductHandlerTest extends TestCase
             'conf1' => ['simple11', 'simple12'],
             'conf2' => ['simple21', 'simple22'],
         ];
-        $this->mockConfigurableProductIds(array_keys($configurableProducts));
+        $this->configurableProductsProviderMock->method('getIds')
+            ->willReturnCallback(
+                function ($ids) use ($configurableProducts) {
+                    return array_intersect($ids, array_keys($configurableProducts));
+                }
+            );
         $this->configurableMock->method('getChildrenIds')
             ->willReturnCallback(
                 function ($id) use ($configurableProducts) {
@@ -215,28 +170,11 @@ class ConfigurableProductHandlerTest extends TestCase
             );
 
         $this->ruleMock->method('getProductsFilter')
-            ->willReturn($productsFilter ?: null);
+            ->willReturn($productsFilter);
 
-        $parentIds = [];
-        foreach ($configurableProducts as $configurableProduct => $childProducts) {
-            if (array_intersect($productsFilter, $childProducts)) {
-                $parentIds[] = $configurableProduct;
-            }
-        }
-
-        if (!empty($parentIds)) {
-            $this->ruleMock->expects($this->once())
-                ->method('setProductsFilter')
-                ->with($this->callback(function ($arg) use ($expectedProductsFilter) {
-                    sort($arg);
-                    $expected = $expectedProductsFilter;
-                    sort($expected);
-                    return $arg === $expected;
-                }));
-        } else {
-            $this->ruleMock->expects($this->never())
-                ->method('setProductsFilter');
-        }
+        $this->ruleMock->expects($this->once())
+            ->method('setProductsFilter')
+            ->willReturn($expectedProductsFilter);
 
         $this->assertEquals(
             $expectedMatchingProductIds,
