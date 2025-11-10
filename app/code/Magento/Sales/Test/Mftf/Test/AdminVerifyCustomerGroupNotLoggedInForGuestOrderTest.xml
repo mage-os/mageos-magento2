@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright 2025 Adobe
+ * All Rights Reserved.
+ */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminVerifyCustomerGroupNotLoggedInForGuestOrderTest">
+        <annotations>
+            <features value="Sales"/>
+            <stories value="Order view shows customer group for guest orders"/>
+            <title value="Admin sees 'NOT LOGGED IN' customer group on guest order view"/>
+            <description value="Place a guest order on storefront via Check/Money Order, open the order in Admin, and verify the customer group is 'NOT LOGGED IN'."/>
+            <severity value="CRITICAL"/>
+            <group value="sales"/>
+            <group value="admin"/>
+        </annotations>
+
+        <before>
+            <!-- Enable required configurations -->
+            <magentoCLI command="config:set {{enabledCheckMoneyOrder.label}} {{enabledCheckMoneyOrder.value}}" stepKey="enableCheckMoneyOrder"/>
+            <magentoCLI command="config:set carriers/flatrate/active 1" stepKey="enableFlatRateShipping"/>
+            <magentoCLI command="config:set checkout/options/guest_checkout 1" stepKey="enableGuestCheckout"/>
+
+            <!-- Create a simple product for checkout -->
+            <createData entity="SimpleProduct2" stepKey="createSimpleProduct"/>
+
+            <!-- Ensure indexes are up to date -->
+            <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindexAll">
+                <argument name="indices" value=""/>
+            </actionGroup>
+        </before>
+
+        <after>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
+            <deleteData createDataKey="createSimpleProduct" stepKey="deleteProduct"/>
+        </after>
+
+        <!-- Storefront: navigate to product and add to cart -->
+        <amOnPage url="{{StorefrontProductPage.url($$createSimpleProduct.custom_attributes[url_key]$$)}}" stepKey="navigateToSimpleProductPage"/>
+        <waitForPageLoad stepKey="waitForSimpleProductPageLoad"/>
+        <actionGroup ref="StorefrontAddProductToCartActionGroup" stepKey="addProductToCart">
+            <argument name="product" value="$$createSimpleProduct$$"/>
+            <argument name="productCount" value="1"/>
+        </actionGroup>
+        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckoutFromMinicart"/>
+
+        <!-- Storefront: guest checkout shipping and payment (Check/Money Order) -->
+        <actionGroup ref="GuestCheckoutFillingShippingSectionActionGroup" stepKey="guestCheckoutFillShipping">
+            <argument name="customerVar" value="CustomerEntityOne"/>
+            <argument name="customerAddressVar" value="CustomerAddressSimple"/>
+            <argument name="shippingMethod" value="Flat Rate"/>
+        </actionGroup>
+        <actionGroup ref="CheckoutSelectCheckMoneyOrderPaymentActionGroup" stepKey="selectCheckMoneyOrder"/>
+        <actionGroup ref="ClickPlaceOrderActionGroup" stepKey="placeOrder"/>
+
+        <!-- Capture order number from success page -->
+        <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber}}" stepKey="grabOrderNumber"/>
+
+        <!-- Admin: login and open the order by ID -->
+        <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        <actionGroup ref="FilterOrderGridByIdActionGroup" stepKey="filterOrderById">
+            <argument name="orderId" value="$grabOrderNumber"/>
+        </actionGroup>
+        <actionGroup ref="AdminOrderGridClickFirstRowActionGroup" stepKey="openOrderFromGrid"/>
+
+        <!-- Assert customer group shows 'NOT LOGGED IN' -->
+        <waitForElementVisible selector="{{AdminOrderDetailsInformationSection.customerGroup}}" stepKey="waitForCustomerGroupFieldOnOrderView"/>
+        <waitForText selector="{{AdminOrderDetailsInformationSection.customerGroup}}" userInput="NOT LOGGED IN" stepKey="assertCustomerGroupIsNotLoggedIn"/>
+    </test>
+</tests>
+
+
+
