@@ -8,78 +8,60 @@
 
 <tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
-    <test name="SATest">
+    <test name="AdminVerifyCustomerGroupNotLoggedInForGuestOrderTest">
         <annotations>
-            <features value="OnePageCheckout"/>
-            <stories value="OnePageCheckout within Offline Payment Methods"/>
-            <title value="OnePageCheckout as a customer with non-existent customer group assigned to the quote"/>
-            <description value="Checkout as a customer with non-existent customer group assigned to the quote"/>
+            <features value="Checkout"/>
+            <stories value="Order view shows customer group for guest orders"/>
+            <title value="Admin sees 'NOT LOGGED IN' customer group on guest order view"/>
+            <description value="Place a guest order on storefront and verify the customer group is NOT LOGGED IN"/>
             <severity value="AVERAGE"/>
-            <testCaseId value="MC-36385"/>
+            <testCaseId value="AC-6430"/>
             <group value="checkout"/>
         </annotations>
         <before>
-            <!-- Create Simple Product -->
-            <createData entity="SimpleProduct2" stepKey="createSimpleProduct"/>
+            <!-- Precondition Step 1:Create Simple Product and Customer -->
+            <createData entity="SimpleProduct" stepKey="createSimpleProduct"/>
             <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
-
-     
-
         </before>
         <after>
             <!-- Admin log out -->
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
-
             <!-- Customer log out -->
             <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="customerLogout"/>
-
             <!-- Delete created product -->
             <deleteData createDataKey="createSimpleProduct" stepKey="deleteSimpleProduct"/>
-
             <!-- Delete customer -->
             <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
         </after>
-
-        <!-- Login as customer -->
-
-        <actionGroup ref="CliIndexerReindexActionGroup" stepKey="performReindex">
+        <!-- Step 1: Navigate to Frontend > place an order through check money with guest checkout. -->
+        <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
             <argument name="indices" value=""/>
         </actionGroup>
         <!-- Add Simple Product to cart -->
-        <amOnPage url="{{StorefrontProductPage.url($$createSimpleProduct.custom_attributes[url_key]$$)}}" stepKey="navigateToSimpleProductPage"/>
+        <actionGroup ref="StorefrontOpenProductPageActionGroup" stepKey="openProductPage">
+            <argument name="productUrl" value="$$createSimpleProduct.sku$$"/>
+        </actionGroup>
         <waitForPageLoad stepKey="waitForSimpleProductPageLoad"/>
-
-
-        <!-- Delete customer group -->
-
         <actionGroup ref="StorefrontAddProductToCartActionGroup" stepKey="addProductToCart">
             <argument name="product" value="$$createSimpleProduct$$"/>
             <argument name="productCount" value="1"/>
         </actionGroup>
         <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckoutFromMinicart"/>
+        <!-- Guest Checkout Process-->
         <actionGroup ref="GuestCheckoutFillingShippingSectionActionGroup" stepKey="guestCheckoutFillingShippingSection">
             <argument name="customerVar" value="CustomerEntityOne"/>
             <argument name="customerAddressVar" value="CustomerAddressSimple"/>
         </actionGroup>
         <actionGroup ref="CheckoutSelectCheckMoneyOrderPaymentActionGroup" stepKey="guestSelectCheckMoneyOrderPayment"/>
-
-
         <actionGroup ref="ClickPlaceOrderActionGroup" stepKey="checkoutPlaceOrder"/>
         <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber}}" stepKey="grabOrderNumber"/>
-
-        <!--Check subtotal in created order-->
+        <!-- Step 2: Navigate to admin panel > sales > orders > check customer group -->
         <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
         <actionGroup ref="FilterOrderGridByIdActionGroup" stepKey="filterOrderById">
             <argument name="orderId" value="$grabOrderNumber"/>
         </actionGroup>
-
         <actionGroup ref="AdminOrderGridClickFirstRowActionGroup" stepKey="clickOrderRow"/>
-<!--        <actionGroup ref="AdminOrderGridClickFirstRowActionGroup" stepKey="clickOrderRow"/>-->
-
         <waitForElementVisible selector="{{AdminOrderDetailsInformationSection.customerGroup}}" stepKey="waitForCustomerGroupFieldOnOrderView"/>
-        <waitForText selector="{{AdminOrderDetailsInformationSection.customerGroup}}" userInput="NOT LOGGED IN" stepKey="assertCustomerGroupIsNotLoggedIn"/>
-
-
-
+        <waitForText selector="{{AdminOrderDetailsInformationSection.customerGroup}}" userInput="{{SimpleCatalogPriceRule.customerGroups}}" stepKey="assertCustomerGroupIsNotLoggedIn"/>
     </test>
 </tests>
