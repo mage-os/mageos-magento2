@@ -20,6 +20,8 @@ use Magento\Framework\Translate\Inline\StateInterface;
  *
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class EscaperTest extends TestCase
 {
@@ -1093,10 +1095,8 @@ class EscaperTest extends TestCase
              */
             public function get($type)
             {
-                // Reference parameter to satisfy PHPMD rules
-                if ($type === '') {
-                    // no-op
-                }
+                $unusedType = $type;
+                unset($unusedType);
                 return $this->instance;
             }
 
@@ -1106,10 +1106,9 @@ class EscaperTest extends TestCase
              */
             public function create($type, array $arguments = [])
             {
-                // Reference parameters to satisfy PHPMD rules
-                if (!empty($arguments)) {
-                    // no-op
-                }
+                $unusedType = $type;
+                $unusedArguments = $arguments;
+                unset($unusedType, $unusedArguments);
                 return $this->get($type);
             }
 
@@ -1176,9 +1175,8 @@ class EscaperTest extends TestCase
              */
             public function get($type)
             {
-                if ($type === '') {
-                    // no-op
-                }
+                $unusedType = $type;
+                unset($unusedType);
                 return $this->instance;
             }
 
@@ -1188,9 +1186,9 @@ class EscaperTest extends TestCase
              */
             public function create($type, array $arguments = [])
             {
-                if (!empty($arguments)) {
-                    // no-op
-                }
+                $unusedType = $type;
+                $unusedArguments = $arguments;
+                unset($unusedType, $unusedArguments);
                 return $this->get($type);
             }
 
@@ -1243,9 +1241,8 @@ class EscaperTest extends TestCase
              */
             public function get($type)
             {
-                if ($type === '') {
-                    // no-op
-                }
+                $unusedType = $type;
+                unset($unusedType);
                 return $this->instance;
             }
 
@@ -1255,9 +1252,9 @@ class EscaperTest extends TestCase
              */
             public function create($type, array $arguments = [])
             {
-                if (!empty($arguments)) {
-                    // no-op
-                }
+                $unusedType = $type;
+                $unusedArguments = $arguments;
+                unset($unusedType, $unusedArguments);
                 return $this->get($type);
             }
 
