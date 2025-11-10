@@ -17,6 +17,9 @@ use Magento\Framework\Translate\Inline\StateInterface;
 
 /**
  * \Magento\Framework\Escaper test case
+ *
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class EscaperTest extends TestCase
 {
@@ -1084,11 +1087,19 @@ class EscaperTest extends TestCase
                 $this->escaper = $escaper;
             }
 
+            /**
+             * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+             * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+             */
             public function get($type)
             {
                 return $this->escaper;
             }
 
+            /**
+             * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+             * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+             */
             public function create($type, array $arguments = [])
             {
                 return $this->get($type);
@@ -1151,11 +1162,19 @@ class EscaperTest extends TestCase
                 $this->inline = $inline;
             }
 
+            /**
+             * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+             * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+             */
             public function get($type)
             {
                 return $this->inline;
             }
 
+            /**
+             * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+             * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+             */
             public function create($type, array $arguments = [])
             {
                 return $this->get($type);
@@ -1204,11 +1223,19 @@ class EscaperTest extends TestCase
                 $this->logger = $logger;
             }
 
+            /**
+             * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+             * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+             */
             public function get($type)
             {
                 return $this->logger;
             }
 
+            /**
+             * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+             * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+             */
             public function create($type, array $arguments = [])
             {
                 return $this->get($type);
