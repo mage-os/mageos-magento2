@@ -20,6 +20,8 @@ use PHPUnit\Framework\TestCase;
  */
 class AbstractTestCase extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * Assertions for controller execute method
      *

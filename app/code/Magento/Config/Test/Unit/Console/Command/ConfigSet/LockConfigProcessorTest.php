@@ -17,7 +17,6 @@ use Magento\Framework\App\DeploymentConfig\Writer;
 use Magento\Framework\Config\File\ConfigFilePool;
 use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Stdlib\ArrayManager;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Store\Model\ScopeInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -74,7 +73,6 @@ class LockConfigProcessorTest extends TestCase
         $this->arrayManagerMock = $this->createMock(ArrayManager::class);
         $this->configPathResolver = $this->createMock(ConfigPathResolver::class);
         
-        $objectManager = new ObjectManager($this);
         $this->valueMock = $this->createPartialMockWithReflection(
             Value::class,
             ['setValue', 'getValue', 'validateBeforeSave', 'beforeSave', 'afterSave']

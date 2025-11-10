@@ -270,7 +270,6 @@ class FormTest extends TestCase
     #[DataProvider('initGroupDataProvider')]
     public function testInitGroup($shouldCloneFields, $prefixes, $callNum)
     {
-        $helper = new ObjectManager($this);
         /** @var Form|MockObject $object */
         $object = $this->_objectBuilder->onlyMethods(['initFields'])->getMock();
         $this->_formFactoryMock->expects($this->any())->method('create')->willReturn($this->_formMock);

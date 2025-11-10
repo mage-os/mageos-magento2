@@ -11,7 +11,6 @@ use Magento\Backend\Model\Url;
 use Magento\Backend\Model\Widget\Grid\Row\UrlGenerator;
 use Magento\Framework\DataObject;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\TestCase;
 
 class UrlGeneratorTest extends TestCase
@@ -19,7 +18,6 @@ class UrlGeneratorTest extends TestCase
     use MockCreationTrait;
     public function testGetUrl()
     {
-        $objectManager = new ObjectManager($this);
         $itemId = 3;
         $urlPath = 'mng/item/edit';
 
