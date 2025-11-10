@@ -10,19 +10,22 @@ namespace Magento\CatalogRule\Model\ResourceModel\Product;
 use Magento\CatalogRule\Model\Indexer\DynamicBatchSizeCalculator;
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
 use Magento\Framework\App\ObjectManager;
+use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\Exception\LocalizedException;
 
 /**
  * Specialized product collection for catalog rule indexing
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 {
     /**
-     * Shared cache of AttributeValuesLoader instances across all collections
+     * Cache of AttributeValuesLoader instances for this collection
      *
      * @var array
      */
-    private static array $loaderCache = [];
+    private array $loaderCache = [];
 
     /**
      * @var DynamicBatchSizeCalculator
@@ -30,17 +33,77 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     private $batchSizeCalculator;
 
     /**
-     * Get dynamic batch size calculator
+     * @param \Magento\Framework\Data\Collection\EntityFactory $entityFactory
+     * @param \Psr\Log\LoggerInterface $logger
+     * @param \Magento\Framework\Data\Collection\Db\FetchStrategyInterface $fetchStrategy
+     * @param \Magento\Framework\Event\ManagerInterface $eventManager
+     * @param \Magento\Eav\Model\Config $eavConfig
+     * @param \Magento\Framework\App\ResourceConnection $resource
+     * @param \Magento\Eav\Model\EntityFactory $eavEntityFactory
+     * @param \Magento\Catalog\Model\ResourceModel\Helper $resourceHelper
+     * @param \Magento\Framework\Validator\UniversalFactory $universalFactory
+     * @param \Magento\Store\Model\StoreManagerInterface $storeManager
+     * @param \Magento\Framework\Module\Manager $moduleManager
+     * @param \Magento\Catalog\Model\Indexer\Product\Flat\State $catalogProductFlatState
+     * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
+     * @param \Magento\Catalog\Model\Product\OptionFactory $productOptionFactory
+     * @param \Magento\Catalog\Model\ResourceModel\Url $catalogUrl
+     * @param \Magento\Framework\Stdlib\DateTime\TimezoneInterface $localeDate
+     * @param \Magento\Customer\Model\Session $customerSession
+     * @param \Magento\Framework\Stdlib\DateTime $dateTime
+     * @param \Magento\Customer\Api\GroupManagementInterface $groupManagement
+     * @param DynamicBatchSizeCalculator|null $batchSizeCalculator
+     * @param AdapterInterface|null $connection
      *
-     * @return DynamicBatchSizeCalculator
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
-    private function getBatchSizeCalculator(): DynamicBatchSizeCalculator
-    {
-        if ($this->batchSizeCalculator === null) {
-            $this->batchSizeCalculator = ObjectManager::getInstance()
-                ->get(DynamicBatchSizeCalculator::class);
-        }
-        return $this->batchSizeCalculator;
+    public function __construct(
+        \Magento\Framework\Data\Collection\EntityFactory $entityFactory,
+        \Psr\Log\LoggerInterface $logger,
+        \Magento\Framework\Data\Collection\Db\FetchStrategyInterface $fetchStrategy,
+        \Magento\Framework\Event\ManagerInterface $eventManager,
+        \Magento\Eav\Model\Config $eavConfig,
+        \Magento\Framework\App\ResourceConnection $resource,
+        \Magento\Eav\Model\EntityFactory $eavEntityFactory,
+        \Magento\Catalog\Model\ResourceModel\Helper $resourceHelper,
+        \Magento\Framework\Validator\UniversalFactory $universalFactory,
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
+        \Magento\Framework\Module\Manager $moduleManager,
+        \Magento\Catalog\Model\Indexer\Product\Flat\State $catalogProductFlatState,
+        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
+        \Magento\Catalog\Model\Product\OptionFactory $productOptionFactory,
+        \Magento\Catalog\Model\ResourceModel\Url $catalogUrl,
+        \Magento\Framework\Stdlib\DateTime\TimezoneInterface $localeDate,
+        \Magento\Customer\Model\Session $customerSession,
+        \Magento\Framework\Stdlib\DateTime $dateTime,
+        \Magento\Customer\Api\GroupManagementInterface $groupManagement,
+        ?DynamicBatchSizeCalculator $batchSizeCalculator = null,
+        ?AdapterInterface $connection = null
+    ) {
+        parent::__construct(
+            $entityFactory,
+            $logger,
+            $fetchStrategy,
+            $eventManager,
+            $eavConfig,
+            $resource,
+            $eavEntityFactory,
+            $resourceHelper,
+            $universalFactory,
+            $storeManager,
+            $moduleManager,
+            $catalogProductFlatState,
+            $scopeConfig,
+            $productOptionFactory,
+            $catalogUrl,
+            $localeDate,
+            $customerSession,
+            $dateTime,
+            $groupManagement,
+            $connection
+        );
+        $this->batchSizeCalculator = $batchSizeCalculator ??
+            ObjectManager::getInstance()->get(DynamicBatchSizeCalculator::class);
     }
 
     /**
@@ -58,14 +121,14 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 
         $attributeId = (int)$attribute->getId();
 
-        if (!isset(self::$loaderCache[$attributeId])) {
-            self::$loaderCache[$attributeId] = new AttributeValuesLoader(
+        if (!isset($this->loaderCache[$attributeId])) {
+            $this->loaderCache[$attributeId] = new AttributeValuesLoader(
                 $this,
                 $attribute,
-                $this->getBatchSizeCalculator()
+                $this->batchSizeCalculator
             );
         }
 
-        return self::$loaderCache[$attributeId];
+        return $this->loaderCache[$attributeId];
     }
 }
