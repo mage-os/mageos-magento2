@@ -14,6 +14,7 @@ use Magento\CatalogImportExport\Model\Import\Product\Type\AbstractType;
 use Magento\Framework\Exception\AlreadyExistsException;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Store\Model\Store;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -154,9 +155,8 @@ class CategoryProcessorTest extends TestCase
 
     /**
      * Cover getCategoryById().
-     *
-     * @dataProvider getCategoryByIdDataProvider
      */
+    #[DataProvider('getCategoryByIdDataProvider')]
     public function testGetCategoryById($categoriesCache, $expectedResult)
     {
         $categoryId = 'category_id';

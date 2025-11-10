@@ -25,9 +25,11 @@ use Magento\Framework\Logger\Monolog;
 use Magento\Framework\Stdlib\DateTime\Timezone;
 use Magento\ImportExport\Model\Export\Adapter\AbstractAdapter;
 use Magento\ImportExport\Model\Export\ConfigInterface;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManager;
 use Magento\Store\Model\StoreManagerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -38,6 +40,8 @@ use Psr\Log\LoggerInterface;
  */
 class ProductTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Timezone|MockObject
      */
@@ -172,40 +176,30 @@ class ProductTest extends TestCase
         $this->logger = $this->createMock(Monolog::class);
 
         $this->collection = $this->createMock(\Magento\Catalog\Model\ResourceModel\Product\CollectionFactory::class);
-        $this->abstractCollection = $this->getMockForAbstractClass(
+        $this->abstractCollection = $this->createPartialMock(
             AbstractCollection::class,
-            [],
-            '',
-            false,
-            true,
-            true,
             [
-                'count',
                 'setOrder',
-                'setStoreId',
                 'getCurPage',
                 'getLastPageNumber',
             ]
         );
         $this->exportConfig = $this->createMock(\Magento\ImportExport\Model\Export\Config::class);
 
-        $this->productFactory = $this->getMockBuilder(
-            \Magento\Catalog\Model\ResourceModel\ProductFactory::class
-        )->disableOriginalConstructor()
-            ->addMethods(['getTypeId'])
-            ->onlyMethods(['create'])
-            ->getMock();
+        $this->productFactory = $this->createPartialMockWithReflection(
+            \Magento\Catalog\Model\ResourceModel\ProductFactory::class,
+            ['getTypeId', 'create']
+        );
 
-        $this->attrSetColFactory = $this->getMockBuilder(AttributeSetCollectionFactory::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['setEntityTypeFilter'])
-            ->onlyMethods(['create'])
-            ->getMock();
+        $this->attrSetColFactory = $this->createPartialMockWithReflection(
+            AttributeSetCollectionFactory::class,
+            ['setEntityTypeFilter', 'create']
+        );
 
-        $this->categoryColFactory = $this->getMockBuilder(CategoryCollectionFactory::class)
-            ->disableOriginalConstructor()->addMethods(['addNameToResult'])
-            ->onlyMethods(['create'])
-            ->getMock();
+        $this->categoryColFactory = $this->createPartialMockWithReflection(
+            CategoryCollectionFactory::class,
+            ['addNameToResult', 'create']
+        );
 
         $this->itemFactory = $this->createMock(\Magento\CatalogInventory\Model\ResourceModel\Stock\ItemFactory::class);
         $this->optionColFactory = $this->createMock(
@@ -434,9 +428,8 @@ class ProductTest extends TestCase
      *
      * @return void
      * @throws \ReflectionException
-     *
-     * @dataProvider getItemsPerPageDataProvider
      */
+    #[DataProvider('getItemsPerPageDataProvider')]
     public function testGetItemsPerPage($scenarios)
     {
 

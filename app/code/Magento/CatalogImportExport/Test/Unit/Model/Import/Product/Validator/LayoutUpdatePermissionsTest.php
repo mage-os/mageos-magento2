@@ -12,6 +12,7 @@ use Magento\Authorization\Model\UserContextInterface;
 use Magento\CatalogImportExport\Model\Import\Product;
 use Magento\CatalogImportExport\Model\Import\Product\Validator\LayoutUpdatePermissions;
 use Magento\Framework\AuthorizationInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -42,8 +43,8 @@ class LayoutUpdatePermissionsTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->userContext = $this->getMockForAbstractClass(UserContextInterface::class);
-        $this->authorization = $this->getMockForAbstractClass(AuthorizationInterface::class);
+        $this->userContext = $this->createMock(UserContextInterface::class);
+        $this->authorization = $this->createMock(AuthorizationInterface::class);
         $this->context = $this->createMock(Product::class);
         $this->context
             ->method('retrieveMessageTemplate')
@@ -61,8 +62,8 @@ class LayoutUpdatePermissionsTest extends TestCase
      * @param $userContext
      * @param $isAllowed
      * @param $isValid
-     * @dataProvider configurationsProvider
      */
+    #[DataProvider('configurationsProvider')]
     public function testValidationConfiguration($value, $userContext, $isAllowed, $isValid)
     {
         $this->userContext

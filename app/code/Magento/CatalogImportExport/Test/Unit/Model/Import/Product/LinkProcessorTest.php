@@ -19,6 +19,7 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\ImportExport\Model\ResourceModel\Helper;
 use Magento\ImportExport\Model\ResourceModel\Import\Data;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -95,16 +96,16 @@ class LinkProcessorTest extends TestCase
         $this->skuProcessor = $this->createMock(
             SkuProcessor::class
         );
-        $this->logger = $this->getMockForAbstractClass(LoggerInterface::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
         $this->skuStorage = $this->createMock(SkuStorage::class);
     }
 
     /**
-     * @dataProvider diConfigDataProvider
      * @param $expectedCallCount
      * @param $linkToNameId
      * @throws LocalizedException
      */
+    #[DataProvider('diConfigDataProvider')]
     public function testSaveLinks($expectedCallCount, $linkToNameId)
     {
         $this->linkProcessor =
@@ -118,7 +119,7 @@ class LinkProcessorTest extends TestCase
             );
 
         $importEntity = $this->createMock(Product::class);
-        $connection = $this->getMockForAbstractClass(AdapterInterface::class);
+        $connection = $this->createMock(AdapterInterface::class);
         $importEntity->method('getConnection')->willReturn($connection);
         $select = $this->createMock(Select::class);
 

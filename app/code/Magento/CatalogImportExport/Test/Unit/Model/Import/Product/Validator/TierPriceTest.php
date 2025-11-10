@@ -16,6 +16,7 @@ use Magento\Customer\Model\ResourceModel\GroupRepository;
 use Magento\Framework\Api\SearchCriteria;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -66,7 +67,7 @@ class TierPriceTest extends TestCase
      */
     protected function processInit($groupId)
     {
-        $searchResult = $this->getMockForAbstractClass(GroupSearchResultsInterface::class);
+        $searchResult = $this->createMock(GroupSearchResultsInterface::class);
         $this->groupRepositoryInterface->expects($this->once())->method('getList')->willReturn($searchResult);
         $group = $this->createMock(Group::class);
         $group->expects($this->once())->method('getId')->willReturn($groupId);
@@ -85,8 +86,8 @@ class TierPriceTest extends TestCase
      * @param int $groupId
      * @param array|null $website
      * @param array $expected
-     * @dataProvider tierPriceDataProvider
      */
+    #[DataProvider('tierPriceDataProvider')]
     public function testIsValid($data, $groupId, $website, $expected)
     {
         $this->processInit($groupId);

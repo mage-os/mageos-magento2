@@ -10,6 +10,7 @@ namespace Magento\CatalogImportExport\Test\Unit\Model\Import\Product\Validator;
 use Magento\CatalogImportExport\Model\Import\Product\SkuProcessor;
 use Magento\CatalogImportExport\Model\Import\Product\SkuStorage;
 use Magento\CatalogImportExport\Model\Import\Product\Validator\SuperProductsSku;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject as Mock;
 use PHPUnit\Framework\TestCase;
 
@@ -50,8 +51,8 @@ class SuperProductsSkuTest extends TestCase
      * @param array $oldSkus
      * @param bool $hasNewSku
      * @param bool $expectedResult
-     * @dataProvider isValidDataProvider
      */
+    #[DataProvider('isValidDataProvider')]
     public function testIsValid(array $value, array $oldSkus, $hasNewSku = false, $expectedResult = true)
     {
         $this->skuProcessorMock->expects($this->never())

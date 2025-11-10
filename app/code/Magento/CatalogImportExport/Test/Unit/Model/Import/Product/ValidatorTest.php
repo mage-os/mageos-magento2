@@ -16,6 +16,7 @@ use Magento\CatalogImportExport\Model\Import\Product\Validator\Website;
 use Magento\Framework\Stdlib\StringUtils;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\ImportExport\Model\Import;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -103,8 +104,8 @@ class ValidatorTest extends TestCase
      * @param bool $isValid
      * @param string $attrCode
      * @param bool $uniqueAttributeValidatorResult
-     * @dataProvider attributeValidationProvider
      */
+    #[DataProvider('attributeValidationProvider')]
     public function testAttributeValidation(
         string $behavior,
         array $attrParams,
