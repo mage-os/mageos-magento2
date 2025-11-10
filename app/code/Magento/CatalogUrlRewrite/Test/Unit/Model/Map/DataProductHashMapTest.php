@@ -12,10 +12,9 @@ use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
 use Magento\CatalogUrlRewrite\Model\Map\DataCategoryHashMap;
 use Magento\CatalogUrlRewrite\Model\Map\DataProductHashMap;
 use Magento\CatalogUrlRewrite\Model\Map\HashMapPool;
-use Magento\Catalog\Test\Unit\Helper\ProductCollectionTestHelper;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Select;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -45,16 +44,20 @@ class DataProductHashMapTest extends TestCase
         $this->hashMapPoolMock = $this->createMock(HashMapPool::class);
         $this->dataCategoryMapMock = $this->createMock(DataCategoryHashMap::class);
         $this->collectionFactoryMock = $this->createPartialMock(CollectionFactory::class, ['create']);
-        $this->productCollectionMock = $this->getMockBuilder(ProductCollectionTestHelper::class)
-            ->onlyMethods(['getSelect', 'getConnection', 'getAllIds'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->productCollectionMock = $this->createPartialMock(
+            ProductCollection::class,
+            ['getSelect', 'getConnection', 'getAllIds']
+        );
 
-        $this->collectionFactoryMock->method('create')->willReturn($this->productCollectionMock);
+        $this->collectionFactoryMock->expects($this->any())
+            ->method('create')
+            ->willReturn($this->productCollectionMock);
 
-        $this->hashMapPoolMock->method('getDataMap')->willReturn($this->dataCategoryMapMock);
+        $this->hashMapPoolMock->expects($this->any())
+            ->method('getDataMap')
+            ->willReturn($this->dataCategoryMapMock);
 
-        $this->model = (new ObjectManager($this))->getObject(
+        $this->model = (new ObjectManagerHelper($this))->getObject(
             DataProductHashMap::class,
             [
                 'collectionFactory' => $this->collectionFactoryMock,
@@ -75,21 +78,21 @@ class DataProductHashMapTest extends TestCase
         $selectMock = $this->createMock(Select::class);
 
         $callCount = 0;
+        $returnValues = [$productIds, $productIdsOther, $productIds];
         $this->productCollectionMock->expects($this->exactly(3))
             ->method('getAllIds')
-            ->willReturnCallback(function () use (&$callCount, $productIds, $productIdsOther) {
-                $callCount++;
-                if ($callCount === 1) {
-                    return $productIds;
-                } elseif ($callCount === 2) {
-                    return $productIdsOther;
-                } else {
-                    return $productIds;
-                }
+            ->willReturnCallback(function () use (&$callCount, $returnValues) {
+                return $returnValues[$callCount++];
             });
-        $this->productCollectionMock->method('getConnection')->willReturn($connectionMock);
-        $connectionMock->method('getTableName')->willReturnArgument(0);
-        $this->productCollectionMock->method('getSelect')->willReturn($selectMock);
+        $this->productCollectionMock->expects($this->any())
+            ->method('getConnection')
+            ->willReturn($connectionMock);
+        $connectionMock->expects($this->any())
+            ->method('getTableName')
+            ->willReturnArgument(0);
+        $this->productCollectionMock->expects($this->any())
+            ->method('getSelect')
+            ->willReturn($selectMock);
         $selectMock->expects($this->any())
             ->method('from')
             ->willReturnSelf();
@@ -99,7 +102,9 @@ class DataProductHashMapTest extends TestCase
         $selectMock->expects($this->any())
             ->method('where')
             ->willReturnSelf();
-        $this->dataCategoryMapMock->method('getAllData')->willReturn([]);
+        $this->dataCategoryMapMock->expects($this->any())
+            ->method('getAllData')
+            ->willReturn([]);
         $this->hashMapPoolMock->expects($this->any())
             ->method('resetMap')
             ->with(DataCategoryHashMap::class, 1);

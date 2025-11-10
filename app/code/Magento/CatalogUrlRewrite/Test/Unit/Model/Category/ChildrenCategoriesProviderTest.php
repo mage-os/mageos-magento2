@@ -10,15 +10,17 @@ namespace Magento\CatalogUrlRewrite\Test\Unit\Model\Category;
 use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\ResourceModel\Collection\AbstractCollection;
 use Magento\CatalogUrlRewrite\Model\Category\ChildrenCategoriesProvider;
-use Magento\Catalog\Test\Unit\Helper\AbstractCollectionTestHelper;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Select;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class ChildrenCategoriesProviderTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var MockObject
      */
@@ -44,40 +46,36 @@ class ChildrenCategoriesProviderTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->category = $this->getMockBuilder(Category::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(
-                [
-                    'getPath',
-                    'getResourceCollection',
-                    'getResource',
-                    'getLevel',
-                    '__wakeup',
-                    'isObjectNew'
-                ]
-            )
-            ->getMock();
-        $categoryCollection = $this->getMockBuilder(AbstractCollectionTestHelper::class)
-            ->onlyMethods(['addAttributeToSelect', 'addIdFilter'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->category = $this->createPartialMock(
+            Category::class,
+            [
+                'getPath',
+                'getResourceCollection',
+                'getResource',
+                'getLevel',
+                '__wakeup',
+                'isObjectNew'
+            ]
+        );
+        $categoryCollection = $this->createPartialMockWithReflection(
+            AbstractCollection::class,
+            ['addAttributeToSelect', 'addIdFilter']
+        );
         $this->category->method('getPath')->willReturn('category-path');
         $this->category->method('getResourceCollection')->willReturn($categoryCollection);
-        $categoryCollection->expects($this->any())->method('addAttributeToSelect')->willReturnSelf();
-        $categoryCollection->expects($this->any())->method('addIdFilter')->with(['id'])->willReturnSelf();
-        $this->select = $this->getMockBuilder(Select::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['where', 'deleteFromSelect', 'from'])
-            ->getMock();
+        $categoryCollection->method('addAttributeToSelect')->willReturnSelf();
+        $categoryCollection->method('addIdFilter')->with(['id'])->willReturnSelf();
+        $this->select = $this->createPartialMock(
+            Select::class,
+            ['where', 'deleteFromSelect', 'from']
+        );
         $this->connection = $this->createMock(AdapterInterface::class);
-        $categoryResource = $this->getMockBuilder(\Magento\Catalog\Model\ResourceModel\Category::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $categoryResource = $this->createMock(\Magento\Catalog\Model\ResourceModel\Category::class);
         $this->category->method('getResource')->willReturn($categoryResource);
         $categoryResource->method('getConnection')->willReturn($this->connection);
         $this->connection->method('select')->willReturn($this->select);
-        $this->connection->expects($this->any())->method('quoteIdentifier')->willReturnArgument(0);
-        $this->select->expects($this->any())->method('from')->willReturnSelf();
+        $this->connection->method('quoteIdentifier')->willReturnArgument(0);
+        $this->select->method('from')->willReturnSelf();
 
         $this->childrenCategoriesProvider = (new ObjectManager($this))->getObject(
             ChildrenCategoriesProvider::class
@@ -91,8 +89,8 @@ class ChildrenCategoriesProviderTest extends TestCase
     {
         $bind = ['c_path' => 'category-path/%'];
         $this->category->expects($this->once())->method('isObjectNew')->willReturn(false);
-        $this->select->expects($this->any())->method('where')->with('path LIKE :c_path')->willReturnSelf();
-        $this->connection->expects($this->any())->method('fetchCol')->with($this->select, $bind)->willReturn(['id']);
+        $this->select->method('where')->with('path LIKE :c_path')->willReturnSelf();
+        $this->connection->method('fetchCol')->with($this->select, $bind)->willReturn(['id']);
         $this->childrenCategoriesProvider->getChildren($this->category, true);
     }
 
@@ -120,7 +118,7 @@ class ChildrenCategoriesProviderTest extends TestCase
         $this->category->expects($this->once())->method('isObjectNew')->willReturn(false);
         $this->category->expects($this->once())->method('getLevel')->willReturn($categoryLevel);
         $bind = ['c_path' => 'category-path/%', 'c_level' => $categoryLevel + 1];
-        $this->connection->expects($this->any())->method('fetchCol')->with($this->select, $bind)->willReturn(['id']);
+        $this->connection->method('fetchCol')->with($this->select, $bind)->willReturn(['id']);
 
         $this->childrenCategoriesProvider->getChildren($this->category, false);
     }

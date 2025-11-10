@@ -7,7 +7,6 @@ declare(strict_types=1);
 
 namespace Magento\CatalogUrlRewrite\Test\Unit\Observer;
 
-use PHPUnit\Framework\Attributes\Test;
 use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\ResourceModel\Product\Collection;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
@@ -16,22 +15,23 @@ use Magento\CatalogUrlRewrite\Model\CategoryProductUrlPathGenerator;
 use Magento\CatalogUrlRewrite\Model\CategoryUrlRewriteGenerator;
 use Magento\CatalogUrlRewrite\Model\ProductUrlRewriteGenerator;
 use Magento\CatalogUrlRewrite\Observer\UrlRewriteHandler;
-use Magento\Catalog\Test\Unit\Helper\CategoryTestHelper;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Serialize\Serializer\Json;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\UrlRewrite\Model\MergeDataProvider;
 use Magento\UrlRewrite\Model\MergeDataProviderFactory;
 use Magento\UrlRewrite\Model\UrlPersistInterface;
+use Magento\CatalogUrlRewrite\Model\ProductScopeRewriteGenerator;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Magento\CatalogUrlRewrite\Model\ProductScopeRewriteGenerator;
-use Magento\Framework\App\Config\ScopeConfigInterface;
-use ArrayIterator;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class UrlRewriteHandlerTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var UrlRewriteHandler
      */
@@ -97,39 +97,22 @@ class UrlRewriteHandlerTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->childrenCategoriesProviderMock = $this->getMockBuilder(ChildrenCategoriesProvider::class)
-            ->getMock();
-        $this->categoryUrlRewriteGeneratorMock = $this->getMockBuilder(CategoryUrlRewriteGenerator::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->productUrlRewriteGeneratorMock = $this->getMockBuilder(ProductUrlRewriteGenerator::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->urlPersistMock = $this->getMockBuilder(UrlPersistInterface::class)
-            ->getMock();
-        $this->collectionFactoryMock = $this->getMockBuilder(CollectionFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->mergeDataProviderFactoryMock = $this->getMockBuilder(MergeDataProviderFactory::class)
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->mergeDataProviderMock = $this->getMockBuilder(MergeDataProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->categoryBasedProductRewriteGeneratorMock = $this->getMockBuilder(CategoryProductUrlPathGenerator::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->mergeDataProviderFactoryMock->method('create')->willReturn($this->mergeDataProviderMock);
-        $this->serializerMock = $this->getMockBuilder(Json::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->productScopeRewriteGeneratorMock = $this->getMockBuilder(ProductScopeRewriteGenerator::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->scopeConfigMock = $this->getMockBuilder(ScopeConfigInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->childrenCategoriesProviderMock = $this->createMock(ChildrenCategoriesProvider::class);
+        $this->categoryUrlRewriteGeneratorMock = $this->createMock(CategoryUrlRewriteGenerator::class);
+        $this->productUrlRewriteGeneratorMock = $this->createMock(ProductUrlRewriteGenerator::class);
+        $this->urlPersistMock = $this->createMock(UrlPersistInterface::class);
+        $this->collectionFactoryMock = $this->createMock(CollectionFactory::class);
+        $this->mergeDataProviderFactoryMock = $this->createPartialMock(
+            MergeDataProviderFactory::class,
+            ['create']
+        );
+        $this->mergeDataProviderMock = $this->createMock(MergeDataProvider::class);
+        $this->categoryBasedProductRewriteGeneratorMock = $this->createMock(CategoryProductUrlPathGenerator::class);
+        $this->mergeDataProviderFactoryMock->method('create')
+            ->willReturn($this->mergeDataProviderMock);
+        $this->serializerMock = $this->createMock(Json::class);
+        $this->productScopeRewriteGeneratorMock = $this->createMock(ProductScopeRewriteGenerator::class);
+        $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
 
         $this->urlRewriteHandler = new UrlRewriteHandler(
             $this->childrenCategoriesProviderMock,
@@ -145,18 +128,21 @@ class UrlRewriteHandlerTest extends TestCase
         );
     }
 
-    #[Test]
+    /**
+     * @test
+     */
     public function testGenerateProductUrlRewrites()
     {
         /* @var \Magento\Catalog\Model\Category|MockObject $category */
-        $category = $this->getMockBuilder(CategoryTestHelper::class)
-            ->onlyMethods(['getEntityId', 'getStoreId', 'getData', 'getChangedProductIds'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $category->method('getEntityId')->willReturn(2);
-        $category->method('getStoreId')->willReturn(1);
-        $category->expects($this->any())
-            ->method('getData')
+        $category = $this->createPartialMockWithReflection(
+            Category::class,
+            ['getChangedProductIds', 'getEntityId', 'getStoreId', 'getData']
+        );
+        $category->method('getEntityId')
+            ->willReturn(2);
+        $category->method('getStoreId')
+            ->willReturn(1);
+        $category->method('getData')
             ->willReturnCallback(function ($arg1) {
                 static $callCount = 0;
                 $callCount++;
@@ -175,18 +161,20 @@ class UrlRewriteHandlerTest extends TestCase
             });
 
         /* @var \Magento\Catalog\Model\Category|MockObject $childCategory1 */
-        $childCategory1 = $this->getMockBuilder(Category::class)
-            ->onlyMethods(['getEntityId'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $childCategory1->method('getEntityId')->willReturn(100);
+        $childCategory1 = $this->createPartialMock(
+            Category::class,
+            ['getEntityId']
+        );
+        $childCategory1->method('getEntityId')
+            ->willReturn(100);
 
-        /* @var \Magento\Catalog\Model\Category|MockObject $childCategory1 */
-        $childCategory2 = $this->getMockBuilder(Category::class)
-            ->onlyMethods(['getEntityId'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $childCategory1->method('getEntityId')->willReturn(200);
+        /* @var \Magento\Catalog\Model\Category|MockObject $childCategory2 */
+        $childCategory2 = $this->createPartialMock(
+            Category::class,
+            ['getEntityId']
+        );
+        $childCategory2->method('getEntityId')
+            ->willReturn(200);
 
         $this->childrenCategoriesProviderMock->expects($this->once())
             ->method('getChildren')
@@ -194,19 +182,15 @@ class UrlRewriteHandlerTest extends TestCase
             ->willReturn([$childCategory1, $childCategory2]);
 
         /** @var Collection|MockObject $productCollection */
-        $productCollection = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $productCollection->expects($this->any())
-            ->method('addCategoriesFilter')
+        $productCollection = $this->createMock(Collection::class);
+        $productCollection->method('addCategoriesFilter')
             ->willReturnSelf();
-        $productCollection->expects($this->any())
-            ->method('addIdFilter')
+        $productCollection->method('addIdFilter')
             ->willReturnSelf();
-        $productCollection->expects($this->any())->method('setStoreId')->willReturnSelf();
-        $productCollection->expects($this->any())->method('addStoreFilter')->willReturnSelf();
-        $productCollection->expects($this->any())->method('addAttributeToSelect')->willReturnSelf();
-        $iterator = new ArrayIterator([]);
+        $productCollection->method('setStoreId')->willReturnSelf();
+        $productCollection->method('addStoreFilter')->willReturnSelf();
+        $productCollection->method('addAttributeToSelect')->willReturnSelf();
+        $iterator = new \ArrayIterator([]);
         $productCollection->method('getIterator')->willReturn($iterator);
 
         $this->collectionFactoryMock->method('create')->willReturn($productCollection);
@@ -218,9 +202,7 @@ class UrlRewriteHandlerTest extends TestCase
 
     public function testDeleteCategoryRewritesForChildren()
     {
-        $category = $this->getMockBuilder(Category::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $category = $this->createMock(Category::class);
         $category->expects($this->once())
             ->method('getId')
             ->willReturn(2);

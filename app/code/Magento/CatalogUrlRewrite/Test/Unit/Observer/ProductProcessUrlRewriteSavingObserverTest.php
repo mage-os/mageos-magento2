@@ -98,19 +98,19 @@ class ProductProcessUrlRewriteSavingObserverTest extends TestCase
         $this->product = $this->createPartialMock(Product::class, ['getStoreIds']);
         $this->event = new Event(['product' => $this->product]);
         $this->observer = $this->createPartialMock(Observer::class, ['getEvent']);
-        $this->observer->expects($this->any())->method('getEvent')->willReturn($this->event);
+        $this->observer->method('getEvent')->willReturn($this->event);
 
         $this->scopeConfig = $this->createMock(ScopeConfigInterface::class);
 
-        $this->appendRewrites = $this->getMockBuilder(AppendUrlRewritesToProducts::class)
-            ->onlyMethods(['execute'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->appendRewrites = $this->createPartialMock(
+            AppendUrlRewritesToProducts::class,
+            ['execute']
+        );
 
-        $getStoresList = $this->getMockBuilder(GetStoresListByWebsiteIds::class)
-            ->onlyMethods(['execute'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $getStoresList = $this->createPartialMock(
+            GetStoresListByWebsiteIds::class,
+            ['execute']
+        );
 
         $this->storeViewService = $this->createMock(StoreViewService::class);
 
@@ -350,8 +350,7 @@ class ProductProcessUrlRewriteSavingObserverTest extends TestCase
                     $doesEntityHaveOverriddenVisibilityForStore
                 )
             );
-        $this->scopeConfig->expects($this->any())
-            ->method('isSetFlag')
+        $this->scopeConfig->method('isSetFlag')
             ->willReturn(true);
 
         if (!$expectedExecutionCount) {
@@ -378,8 +377,7 @@ class ProductProcessUrlRewriteSavingObserverTest extends TestCase
                 );
         }
 
-        $this->product->expects($this->any())
-            ->method('getStoreIds')
+        $this->product->method('getStoreIds')
             ->willReturn($currentData['store_ids'] ?? [1]);
 
         $this->model->execute($this->observer);

@@ -15,10 +15,10 @@ use Magento\Catalog\Model\Product;
 use Magento\Framework\Api\Data\VideoContentInterface;
 use Magento\Framework\Api\Data\VideoContentInterfaceFactory;
 use Magento\Framework\Api\DataObjectHelper;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\ProductVideo\Model\Product\Attribute\Media\ExternalVideoEntryConverter;
 use Magento\ProductVideo\Model\Product\Attribute\Media\VideoEntry;
-use Magento\ProductVideo\Test\Unit\Helper\ProductAttributeMediaGalleryEntryExtensionTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\RuntimeException;
 use PHPUnit\Framework\TestCase;
@@ -28,6 +28,8 @@ use PHPUnit\Framework\TestCase;
  */
 class ExternalVideoEntryConverterTest extends TestCase
 {
+    use MockCreationTrait;
+
     /** @var MockObject|ProductAttributeMediaGalleryEntryInterfaceFactory */
     private $mediaGalleryEntryFactoryMock;
 
@@ -108,7 +110,7 @@ class ExternalVideoEntryConverterTest extends TestCase
                 ['create']
             );
 
-        $this->mediaGalleryEntryExtensionMock = $this->getProductAttributeMediaGalleryEntryExtensionTestHelper();
+        $this->mediaGalleryEntryExtensionMock = $this->getProductAttributeMediaGalleryEntryExtensionMock();
 
         $this->mediaGalleryEntryExtensionMock->method('setVideoContent')->willReturn(null);
         $this->mediaGalleryEntryExtensionFactoryMock->method('create')->willReturn(
@@ -233,11 +235,20 @@ class ExternalVideoEntryConverterTest extends TestCase
      *
      * @return MockObject
      */
-    private function getProductAttributeMediaGalleryEntryExtensionTestHelper(): MockObject
+    private function getProductAttributeMediaGalleryEntryExtensionMock(): MockObject
     {
-        return $this->getMockBuilder(ProductAttributeMediaGalleryEntryExtensionTestHelper::class)
-            ->onlyMethods(['setVideoContent', 'getVideoContent', 'getVideoProvider'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        try {
+            return $this->createPartialMockWithReflection(
+                ProductAttributeMediaGalleryEntryExtension::class,
+                [
+                    'setVideoContent',
+                    'getVideoContent',
+                    'getVideoProvider'
+                ]
+            );
+        } catch (RuntimeException $e) {
+            // ProductAttributeMediaGalleryEntryExtension already generated and has all necessary methods.
+            return $this->createMock(ProductAttributeMediaGalleryEntryExtension::class);
+        }
     }
 }

@@ -79,17 +79,17 @@ class ClearProductUrlsObserverTest extends TestCase
     protected function setUp(): void
     {
         $this->skuStorage = $this->createMock(SkuStorage::class);
-        $this->event = $this->getMockBuilder(EventTestHelper::class)
-            ->onlyMethods(['getBunch'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->event = $this->createPartialMock(
+            EventTestHelper::class,
+            ['getBunch']
+        );
         $this->event->expects($this->once())
             ->method('getBunch')
             ->willReturn($this->products);
-        $this->observer = $this->getMockBuilder(Observer::class)
-            ->onlyMethods(['getEvent'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->observer = $this->createPartialMock(
+            Observer::class,
+            ['getEvent']
+        );
         $this->observer->expects($this->exactly(1))
             ->method('getEvent')
             ->willReturn($this->event);
@@ -108,14 +108,12 @@ class ClearProductUrlsObserverTest extends TestCase
             'sku5' => ['entity_id' => 5],
         ];
 
-        $this->skuStorage->expects($this->any())
-            ->method('has')
+        $this->skuStorage->method('has')
             ->willReturnCallback(function ($sku) use ($oldSKus) {
                 return isset($oldSKus[strtolower($sku)]);
             });
 
-        $this->skuStorage->expects($this->any())
-            ->method('get')
+        $this->skuStorage->method('get')
             ->willReturnCallback(function ($sku) use ($oldSKus) {
                 return $oldSKus[strtolower($sku)] ?? null;
             });

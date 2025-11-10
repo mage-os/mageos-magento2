@@ -12,15 +12,17 @@ use Magento\Catalog\Model\CategoryRepository;
 use Magento\Catalog\Model\ResourceModel\Category;
 use Magento\Catalog\Model\ResourceModel\CategoryFactory;
 use Magento\CatalogUrlRewrite\Model\Map\DataCategoryHashMap;
-use Magento\Catalog\Test\Unit\Helper\CategoryInterfaceTestHelper;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Select;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class DataCategoryHashMapTest extends TestCase
 {
+    use MockCreationTrait;
+
     /** @var CategoryRepository|MockObject */
     private $categoryRepository;
 
@@ -39,7 +41,8 @@ class DataCategoryHashMapTest extends TestCase
         $this->categoryResourceFactory = $this->createPartialMock(CategoryFactory::class, ['create']);
         $this->categoryResource = $this->createPartialMock(Category::class, ['getConnection', 'getEntityTable']);
 
-        $this->categoryResourceFactory->method('create')->willReturn($this->categoryResource);
+        $this->categoryResourceFactory->method('create')
+            ->willReturn($this->categoryResource);
 
         $this->model = (new ObjectManager($this))->getObject(
             DataCategoryHashMap::class,
@@ -58,26 +61,39 @@ class DataCategoryHashMapTest extends TestCase
         $categoryIds = ['1' => [1, 2, 3], '2' => [2, 3], '3' => 3];
         $categoryIdsOther = ['2' => [2, 3, 4]];
 
-        $categoryMock = $this->getMockBuilder(CategoryInterfaceTestHelper::class)
-            ->onlyMethods(['getResource'])
-            ->getMock();
+        $categoryMock = $this->createPartialMockWithReflection(
+            \Magento\Catalog\Model\Category::class,
+            ['getResource']
+        );
         $connectionAdapterMock = $this->createMock(AdapterInterface::class);
         $selectMock = $this->createMock(Select::class);
 
-        $this->categoryRepository->method('get')->willReturn($categoryMock);
-        $categoryMock->method('getResource')->willReturn($this->categoryResource);
-        $this->categoryResource->method('getConnection')->willReturn($connectionAdapterMock);
-        $this->categoryResource->method('getEntityTable')->willReturn('category_entity');
-        $connectionAdapterMock->method('select')->willReturn($selectMock);
-        $selectMock->expects($this->any())
-            ->method('from')
+        $this->categoryRepository->method('get')
+            ->willReturn($categoryMock);
+        $categoryMock->method('getResource')
+            ->willReturn($this->categoryResource);
+        $this->categoryResource->method('getConnection')
+            ->willReturn($connectionAdapterMock);
+        $this->categoryResource->method('getEntityTable')
+            ->willReturn('category_entity');
+        $connectionAdapterMock->method('select')
+            ->willReturn($selectMock);
+        $selectMock->method('from')
             ->willReturnSelf();
-        $selectMock->expects($this->any())
-            ->method('where')
+        $selectMock->method('where')
             ->willReturnSelf();
-        $connectionAdapterMock->expects($this->any())
-            ->method('fetchCol')
-            ->willReturnOnConsecutiveCalls($categoryIds, $categoryIdsOther, $categoryIds);
+        
+        $callCount = 0;
+        $connectionAdapterMock->method('fetchCol')
+            ->willReturnCallback(function () use (&$callCount, $categoryIds, $categoryIdsOther) {
+                $callCount++;
+                return match ($callCount) {
+                    1 => $categoryIds,
+                    2 => $categoryIdsOther,
+                    3 => $categoryIds,
+                    default => []
+                };
+            });
 
         $this->assertEquals($categoryIds, $this->model->getAllData(1));
         $this->assertEquals($categoryIds[2], $this->model->getData(1, 2));

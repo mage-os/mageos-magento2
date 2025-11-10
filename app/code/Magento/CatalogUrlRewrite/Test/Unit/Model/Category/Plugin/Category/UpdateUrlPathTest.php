@@ -13,7 +13,7 @@ use Magento\CatalogUrlRewrite\Model\Category\Plugin\Category\UpdateUrlPath;
 use Magento\CatalogUrlRewrite\Model\CategoryUrlPathGenerator;
 use Magento\CatalogUrlRewrite\Model\CategoryUrlRewriteGenerator;
 use Magento\CatalogUrlRewrite\Service\V1\StoreViewService;
-use Magento\Catalog\Test\Unit\Helper\CategoryTestHelper;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\UrlRewrite\Model\UrlPersistInterface;
 use Magento\UrlRewrite\Service\V1\Data\UrlRewrite;
@@ -25,6 +25,8 @@ use PHPUnit\Framework\TestCase;
  */
 class UpdateUrlPathTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var ObjectManager
      */
@@ -71,37 +73,35 @@ class UpdateUrlPathTest extends TestCase
     protected function setUp(): void
     {
         $this->objectManager = new ObjectManager($this);
-        $this->categoryUrlPathGenerator = $this->getMockBuilder(CategoryUrlPathGenerator::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getUrlPath'])
-            ->getMock();
-        $this->categoryUrlRewriteGenerator = $this->getMockBuilder(CategoryUrlRewriteGenerator::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['generate'])
-            ->getMock();
-        $this->categoryResource = $this->getMockBuilder(CategoryResource::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['saveAttribute'])
-            ->getMock();
-        $this->category = $this->getMockBuilder(CategoryTestHelper::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(
-                [
-                    'getStoreId',
-                    'getParentId',
-                    'isObjectNew',
-                    'isInRootCategoryList',
-                    'getStoreIds',
-                    'setStoreId',
-                    'unsUrlPath',
-                    'setUrlPath'
-                ]
-            )
-            ->getMock();
-        $this->storeViewService = $this->getMockBuilder(StoreViewService::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['doesEntityHaveOverriddenUrlPathForStore'])
-            ->getMock();
+        $this->categoryUrlPathGenerator = $this->createPartialMock(
+            CategoryUrlPathGenerator::class,
+            ['getUrlPath']
+        );
+        $this->categoryUrlRewriteGenerator = $this->createPartialMock(
+            CategoryUrlRewriteGenerator::class,
+            ['generate']
+        );
+        $this->categoryResource = $this->createPartialMock(
+            CategoryResource::class,
+            ['saveAttribute']
+        );
+        $this->category = $this->createPartialMockWithReflection(
+            Category::class,
+            [
+                'unsUrlPath',
+                'setUrlPath',
+                'getStoreId',
+                'getParentId',
+                'isObjectNew',
+                'isInRootCategoryList',
+                'getStoreIds',
+                'setStoreId'
+            ]
+        );
+        $this->storeViewService = $this->createPartialMock(
+            StoreViewService::class,
+            ['doesEntityHaveOverriddenUrlPathForStore']
+        );
         $this->urlPersist = $this->createMock(UrlPersistInterface::class);
 
         $this->updateUrlPathPlugin = $this->objectManager->getObject(
@@ -158,9 +158,7 @@ class UpdateUrlPathTest extends TestCase
             ->method('saveAttribute')
             ->with($this->category, 'url_path')
             ->willReturnSelf();
-        $generatedUrlRewrite = $this->getMockBuilder(UrlRewrite::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $generatedUrlRewrite = $this->createMock(UrlRewrite::class);
         $this->categoryUrlRewriteGenerator->expects($this->once())->method('generate')->with($this->category)
             ->willReturn([$generatedUrlRewrite]);
         $this->urlPersist->expects($this->once())->method('replace')->with([$generatedUrlRewrite])->willReturnSelf();

@@ -8,21 +8,23 @@ declare(strict_types=1);
 
 namespace Magento\CatalogUrlRewrite\Test\Unit\Model;
 
-use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Api\CategoryRepositoryInterface;
 use Magento\Catalog\Model\Category;
 use Magento\CatalogUrlRewrite\Model\CategoryUrlPathGenerator;
-use Magento\Catalog\Test\Unit\Helper\CategoryTestHelper;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class CategoryUrlPathGeneratorTest extends TestCase
 {
+    use MockCreationTrait;
+
     /** @var CategoryUrlPathGenerator */
     protected $categoryUrlPathGenerator;
 
@@ -40,30 +42,29 @@ class CategoryUrlPathGeneratorTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->category = $this->getMockBuilder(CategoryTestHelper::class)
-            ->onlyMethods(
-                [
-                    '__wakeup',
-                    'getParentId',
-                    'getLevel',
-                    'dataHasChangedFor',
-                    'getUrlKey',
-                    'getStoreId',
-                    'getId',
-                    'formatUrlKey',
-                    'getName',
-                    'isObjectNew',
-                    'getParentCategories',
-                    'getUrlPath'
-                ]
-            )
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->category = $this->createPartialMockWithReflection(
+            Category::class,
+            [
+                'getUrlPath',
+                '__wakeup',
+                'getParentId',
+                'getLevel',
+                'dataHasChangedFor',
+                'getUrlKey',
+                'getStoreId',
+                'getId',
+                'formatUrlKey',
+                'getName',
+                'isObjectNew',
+                'getParentCategories'
+            ]
+        );
         $this->storeManager = $this->createMock(StoreManagerInterface::class);
         $this->scopeConfig = $this->createMock(ScopeConfigInterface::class);
         $this->categoryRepository = $this->createMock(CategoryRepositoryInterface::class);
 
-        $this->category->method('getParentCategories')->willReturn([]);
+        $this->category->method('getParentCategories')
+            ->willReturn([]);
 
         $this->categoryUrlPathGenerator = (new ObjectManager($this))->getObject(
             CategoryUrlPathGenerator::class,
@@ -99,7 +100,7 @@ class CategoryUrlPathGeneratorTest extends TestCase
         $this->category->method('getLevel')->willReturn($level);
         $this->category->method('getUrlPath')->willReturn($urlPath);
         $this->category->method('getUrlKey')->willReturn($urlKey);
-        $this->category->expects($this->any())->method('dataHasChangedFor')
+        $this->category->method('dataHasChangedFor')
             ->willReturnMap([['url_key', $dataChangedForUrlKey], ['parent_id', $dataChangedForParentId]]);
 
         $this->assertEquals($result, $this->categoryUrlPathGenerator->getUrlPath($this->category));
@@ -152,37 +153,38 @@ class CategoryUrlPathGeneratorTest extends TestCase
     ) {
         $urlPath = null;
         $parentLevel = CategoryUrlPathGenerator::MINIMAL_CATEGORY_LEVEL_FOR_PROCESSING - 1;
-        $this->category->method('getParentId')->willReturn(13);
-        $this->category->method('getLevel')->willReturn($level);
+        $this->category->method('getParentId')
+            ->willReturn(13);
+        $this->category->method('getLevel')
+            ->willReturn($level);
         $this->category->method('getUrlPath')->willReturn($urlPath);
         $this->category->method('getUrlKey')->willReturn($urlKey);
         $this->category->method('isObjectNew')->willReturn($isCategoryNew);
         $this->category->method('getStoreId')->willReturn(Store::DEFAULT_STORE_ID);
 
-        $parentCategory = $this->getMockBuilder(CategoryTestHelper::class)
-            ->onlyMethods(
-                [
-                    '__wakeup',
-                    'getParentId',
-                    'getLevel',
-                    'dataHasChangedFor',
-                    'load',
-                    'getStoreId',
-                    'getParentCategories',
-                    'getUrlPath'
-                ]
-            )
-            ->disableOriginalConstructor()
-            ->getMock();
-        $parentCategory->method('getParentId')->willReturn($parentCategoryParentId);
+        $parentCategory = $this->createPartialMockWithReflection(
+            Category::class,
+            [
+                'getUrlPath',
+                '__wakeup',
+                'getParentId',
+                'getLevel',
+                'dataHasChangedFor',
+                'load',
+                'getStoreId',
+                'getParentCategories'
+            ]
+        );
+        $parentCategory->method('getParentId')
+            ->willReturn($parentCategoryParentId);
         $parentCategory->method('getLevel')->willReturn($parentLevel);
         $parentCategory->method('getUrlPath')->willReturn($parentUrlPath);
-        $parentCategory->expects($this->any())->method('dataHasChangedFor')
+        $parentCategory->method('dataHasChangedFor')
             ->willReturnMap([['url_key', false], ['path_ids', false]]);
         $parentCategory->method('getStoreId')->willReturn(Store::DEFAULT_STORE_ID);
         $parentCategory->method('getParentCategories')->willReturn([]);
 
-        $this->categoryRepository->expects($this->any())->method('get')->with(13)
+        $this->categoryRepository->method('get')->with(13)
             ->willReturn($parentCategory);
 
         $store = $this->createMock(Store::class);

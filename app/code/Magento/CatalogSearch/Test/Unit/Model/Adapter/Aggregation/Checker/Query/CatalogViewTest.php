@@ -9,7 +9,7 @@ namespace Magento\CatalogSearch\Test\Unit\Model\Adapter\Aggregation\Checker\Quer
 
 use Magento\Catalog\Api\CategoryRepositoryInterface;
 use Magento\Catalog\Api\Data\CategoryInterface;
-use Magento\Catalog\Test\Unit\Helper\CategoryInterfaceTestHelper;
+use Magento\Catalog\Model\Category;
 use Magento\CatalogSearch\Model\Adapter\Aggregation\Checker\Query\CatalogView;
 use Magento\Framework\Search\Request\Filter\Term;
 use Magento\Framework\Search\Request\Query\BoolExpression;
@@ -89,7 +89,10 @@ class CatalogViewTest extends TestCase
             ['getValue']
         );
         $this->storeMock = $this->createMock(StoreInterface::class);
-        $this->categoryMock = new CategoryInterfaceTestHelper();
+        $this->categoryMock = $this->createPartialMockWithReflection(
+            Category::class,
+            ['getIsAnchor']
+        );
         $this->queryMock = $this->createPartialMock(
             BoolExpression::class,
             ['getMust', 'getShould', 'getType']
@@ -124,7 +127,7 @@ class CatalogViewTest extends TestCase
             ->willReturn($this->storeMock);
         $this->storeMock->method('getId')
             ->willReturn(1);
-        $this->categoryMock->setIsAnchor(false);
+        $this->categoryMock->method('getIsAnchor')->willReturn(false);
         $this->categoryRepositoryMock->expects($this->once())
             ->method('get')
             ->willReturn($this->categoryMock);

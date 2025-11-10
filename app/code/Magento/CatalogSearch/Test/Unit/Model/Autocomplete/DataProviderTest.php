@@ -8,10 +8,9 @@ declare(strict_types=1);
 namespace Magento\CatalogSearch\Test\Unit\Model\Autocomplete;
 
 use Magento\CatalogSearch\Model\Autocomplete\DataProvider;
-use Magento\Search\Test\Unit\Helper\ItemTestHelper;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\DataObject;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Search\Model\Autocomplete\Item;
 use Magento\Search\Model\Autocomplete\ItemFactory;
 use Magento\Search\Model\Query;
@@ -19,7 +18,6 @@ use Magento\Search\Model\QueryFactory;
 use Magento\Search\Model\ResourceModel\Query\Collection;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use ArrayIterator;
 
 class DataProviderTest extends TestCase
 {
@@ -50,32 +48,38 @@ class DataProviderTest extends TestCase
 
     protected function setUp(): void
     {
-        $helper = new ObjectManager($this);
+        $helper = new ObjectManagerHelper($this);
 
-        $this->suggestCollection = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getIterator'])
-            ->getMock();
+        $this->suggestCollection = $this->createPartialMock(
+            Collection::class,
+            ['getIterator']
+        );
 
-        $this->query = $this->getMockBuilder(Query::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getQueryText', 'getSuggestCollection'])
-            ->getMock();
-        $this->query->method('getSuggestCollection')->willReturn($this->suggestCollection);
+        $this->query = $this->createPartialMock(
+            Query::class,
+            ['getQueryText', 'getSuggestCollection']
+        );
+        $this->query->expects($this->any())
+            ->method('getSuggestCollection')
+            ->willReturn($this->suggestCollection);
 
-        $queryFactory = $this->getMockBuilder(QueryFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['get'])
-            ->getMock();
-        $queryFactory->method('get')->willReturn($this->query);
+        $queryFactory = $this->createPartialMock(
+            QueryFactory::class,
+            ['get']
+        );
+        $queryFactory->expects($this->any())
+            ->method('get')
+            ->willReturn($this->query);
 
-        $this->itemFactory = $this->getMockBuilder(ItemFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
+        $this->itemFactory = $this->createPartialMock(
+            ItemFactory::class,
+            ['create']
+        );
 
         $scopeConfig = $this->createMock(ScopeConfigInterface::class);
-        $scopeConfig->method('getValue')->willReturn($this->limit);
+        $scopeConfig->expects($this->any())
+            ->method('getValue')
+            ->willReturn($this->limit);
 
         $this->model = $helper->getObject(
             DataProvider::class,
@@ -103,20 +107,23 @@ class DataProviderTest extends TestCase
             ->method('getQueryText')
             ->willReturn($queryString);
 
-        $itemMock =  $this->getMockBuilder(ItemTestHelper::class)
-            ->onlyMethods(['getTitle', 'toArray'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $itemMock->setTitleSequence([
-            $queryString,
-            'string1',
-            'string2',
-            'string11',
-            'string100'
-        ]);
-        $itemMock->method('toArray')->willReturn($expected);
+        $itemMock = $this->createPartialMock(
+            Item::class,
+            ['getTitle', 'toArray']
+        );
+        
+        $callCount = 0;
+        $titles = [$queryString, 'string1', 'string2', 'string11', 'string100'];
+        $itemMock->expects($this->any())
+            ->method('getTitle')
+            ->willReturnCallback(function () use (&$callCount, $titles) {
+                return $titles[$callCount++] ?? null;
+            });
+        $itemMock->expects($this->any())
+            ->method('toArray')
+            ->willReturn($expected);
 
-        $this->itemFactory->method('create')->willReturn($itemMock);
+        $this->itemFactory->expects($this->any())->method('create')->willReturn($itemMock);
 
         $result = $this->model->getItems();
         $this->assertEquals($expected, $result[0]->toArray());
@@ -132,7 +139,9 @@ class DataProviderTest extends TestCase
         foreach ($data as $collectionItem) {
             $collectionData[] = new DataObject($collectionItem);
         }
-        $this->suggestCollection->method('getIterator')->willReturn(new ArrayIterator($collectionData));
+        $this->suggestCollection->expects($this->any())
+            ->method('getIterator')
+            ->willReturn(new \ArrayIterator($collectionData));
     }
 
     public function testGetItemsWithEmptyQueryText()

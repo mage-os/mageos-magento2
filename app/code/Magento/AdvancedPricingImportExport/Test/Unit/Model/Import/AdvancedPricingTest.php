@@ -7,13 +7,14 @@ declare(strict_types=1);
 
 namespace Magento\AdvancedPricingImportExport\Test\Unit\Model\Import;
 
-use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\AdvancedPricingImportExport\Model\CurrencyResolver;
 use Magento\AdvancedPricingImportExport\Model\Import\AdvancedPricing as AdvancedPricing;
 use Magento\AdvancedPricingImportExport\Model\Import\AdvancedPricing\Validator;
 use Magento\AdvancedPricingImportExport\Model\Import\AdvancedPricing\Validator\TierPrice;
 use Magento\AdvancedPricingImportExport\Model\Import\AdvancedPricing\Validator\Website;
 use Magento\Catalog\Api\Data\ProductInterface;
+use Magento\Catalog\Helper\Data as CatalogData;
+use Magento\Catalog\Model\Product as ProductModel;
 use Magento\CatalogImportExport\Model\Import\Product;
 use Magento\CatalogImportExport\Model\Import\Product\RowValidatorInterface as RowValidatorInterface;
 use Magento\CatalogImportExport\Model\Import\Product\StoreResolver;
@@ -27,26 +28,23 @@ use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Framework\Json\Helper\Data;
 use Magento\Framework\Stdlib\DateTime\DateTime;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Magento\Catalog\Helper\Data as CatalogHelperData;
-use Magento\Catalog\Model\Product as CatalogProduct;
-use Magento\ImportExport\Helper\Data as ImportExportHelperData;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+use Magento\ImportExport\Helper\Data as ImportExportData;
 use Magento\ImportExport\Model\Import;
 use Magento\ImportExport\Model\Import\ErrorProcessing\ProcessingErrorAggregatorInterface;
 use Magento\ImportExport\Model\ResourceModel\Helper;
-use Magento\ImportExport\Model\ResourceModel\Import\Data as ResourceImportData;
+use Magento\ImportExport\Model\ResourceModel\Import\Data as ImportData;
 use Magento\ImportExport\Test\Unit\Model\Import\AbstractImportTestCase;
-use Magento\CatalogImportExport\Test\Unit\Helper\ResourceFactoryTestHelper;
-use Magento\Framework\Test\Unit\Helper\DateTimeTestHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
-use ReflectionClass;
-use Exception;
 
 /**
  * @SuppressWarnings(PHPMD)
  */
 class AdvancedPricingTest extends AbstractImportTestCase
 {
+    use MockCreationTrait;
+
     /**
      * DB Table data
      */
@@ -59,7 +57,7 @@ class AdvancedPricingTest extends AbstractImportTestCase
     protected $resourceFactory;
 
     /**
-     * @var CatalogHelperData|MockObject
+     * @var CatalogData|MockObject
      */
     protected $catalogData;
 
@@ -74,7 +72,7 @@ class AdvancedPricingTest extends AbstractImportTestCase
     protected $importProduct;
 
     /**
-     * @var CatalogProduct|MockObject
+     * @var ProductModel|MockObject
      */
     protected $productModel;
 
@@ -104,7 +102,7 @@ class AdvancedPricingTest extends AbstractImportTestCase
     protected $connection;
 
     /**
-     * @var ResourceImportData|MockObject
+     * @var ImportData|MockObject
      */
     protected $dataSourceModel;
 
@@ -124,7 +122,7 @@ class AdvancedPricingTest extends AbstractImportTestCase
     protected $jsonHelper;
 
     /**
-     * @var ImportExportHelperData|MockObject
+     * @var ImportExportData|MockObject
      */
     protected $importExportData;
 
@@ -154,36 +152,33 @@ class AdvancedPricingTest extends AbstractImportTestCase
     private $currencyResolver;
 
     /**
-     * @var ObjectManager
-     */
-    protected $objectManager;
-
-    /**
      * @inheritDoc
      */
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->objectManager = new ObjectManager($this);
-
         $this->jsonHelper = $this->createMock(Data::class);
-        $this->importExportData = $this->createMock(ImportExportHelperData::class);
+        $this->importExportData = $this->createMock(ImportExportData::class);
         $this->resourceHelper = $this->createMock(Helper::class);
         $this->resource = $this->createPartialMock(ResourceConnection::class, ['getConnection']);
         $this->connection = $this->createMock(AdapterInterface::class);
         $this->resource->method('getConnection')->willReturn($this->connection);
-        $this->dataSourceModel = $this->createMock(ResourceImportData::class);
+        $this->dataSourceModel = $this->createMock(ImportData::class);
         $entityType = $this->createMock(Type::class);
         $entityType->method('getEntityTypeId')->willReturn('');
-        $this->resourceFactory = new ResourceFactoryTestHelper();
-        $this->resourceFactory->setTableName(self::TABLE_NAME);
-        $this->catalogData = $this->createMock(CatalogHelperData::class);
+        $this->resourceFactory = $this->createPartialMockWithReflection(
+            ResourceFactory::class,
+            ['create', 'getTable']
+        );
+        $this->resourceFactory->method('create')->willReturnSelf();
+        $this->resourceFactory->method('getTable')->willReturn(self::TABLE_NAME);
+        $this->catalogData = $this->createMock(CatalogData::class);
         $this->storeResolver = $this->createMock(
             StoreResolver::class
         );
         $this->importProduct = $this->createMock(Product::class);
-        $this->productModel = $this->createMock(CatalogProduct::class);
+        $this->productModel = $this->createMock(ProductModel::class);
         $this->validator = $this->createPartialMock(
             Validator::class,
             ['isValid', 'getMessages']
@@ -195,7 +190,11 @@ class AdvancedPricingTest extends AbstractImportTestCase
             TierPrice::class
         );
         $this->errorAggregator = $this->getErrorAggregatorObject();
-        $this->dateTime = new DateTimeTestHelper();
+        $this->dateTime = $this->createPartialMockWithReflection(
+            DateTime::class,
+            ['format', 'date']
+        );
+        $this->dateTime->method('date')->willReturnSelf();
 
         $this->advancedPricing = $this->getAdvancedPricingMock(
             [
@@ -311,7 +310,7 @@ class AdvancedPricingTest extends AbstractImportTestCase
                 'getWebSiteId'
             ]
         );
-        $this->objectManager->setBackwardCompatibleProperty($advancedPricingMock, '_validatedRows', []);
+        $this->setPropertyValue($advancedPricingMock, '_validatedRows', []);
         $this->validator->expects($this->once())->method('isValid')->willReturn(false);
         $messages = ['value'];
         $this->validator->expects($this->once())->method('getMessages')->willReturn($messages);
@@ -633,17 +632,14 @@ class AdvancedPricingTest extends AbstractImportTestCase
      */
     public function testDeleteAdvancedPricingResetCachedSkuToDelete(): void
     {
-        $this->objectManager->setBackwardCompatibleProperty($this->advancedPricing, '_cachedSkuToDelete', 'some value');
+        $this->setPropertyValue($this->advancedPricing, '_cachedSkuToDelete', 'some value');
         $this->dataSourceModel
             ->method('getNextBunch')
             ->willReturnOnConsecutiveCalls([]);
 
         $this->advancedPricing->deleteAdvancedPricing();
 
-        $reflection = new ReflectionClass($this->advancedPricing);
-        $property = $reflection->getProperty('_cachedSkuToDelete');
-        $property->setAccessible(true);
-        $cachedSkuToDelete = $property->getValue($this->advancedPricing);
+        $cachedSkuToDelete = $this->getPropertyValue($this->advancedPricing, '_cachedSkuToDelete');
         $this->assertNull($cachedSkuToDelete);
     }
 
@@ -935,7 +931,7 @@ class AdvancedPricingTest extends AbstractImportTestCase
         if ($exceptionInDelete) {
             $this->connection->expects($this->exactly($numCallDelete))
                 ->method('delete')
-                ->willThrowException(new Exception());
+                ->willThrowException(new \Exception());
         } else {
             $this->connection->expects($this->exactly($numCallDelete))
                 ->method('delete')
@@ -1062,6 +1058,44 @@ class AdvancedPricingTest extends AbstractImportTestCase
     }
 
     /**
+     * Get any object property value.
+     *
+     * @param $object
+     * @param $property
+     *
+     * @return mixed
+     * @throws \ReflectionException
+     */
+    protected function getPropertyValue($object, $property)
+    {
+        $reflection = new \ReflectionClass(get_class($object));
+        $reflectionProperty = $reflection->getProperty($property);
+        $reflectionProperty->setAccessible(true);
+
+        return $reflectionProperty->getValue($object);
+    }
+
+    /**
+     * Set object property value.
+     *
+     * @param $object
+     * @param $property
+     * @param $value
+     *
+     * @return mixed
+     * @throws \ReflectionException
+     */
+    protected function setPropertyValue(&$object, $property, $value)
+    {
+        $reflection = new \ReflectionClass(get_class($object));
+        $reflectionProperty = $reflection->getProperty($property);
+        $reflectionProperty->setAccessible(true);
+        $reflectionProperty->setValue($object, $value);
+
+        return $object;
+    }
+
+    /**
      * Invoke any method of class AdvancedPricing.
      *
      * @param object $object
@@ -1073,7 +1107,7 @@ class AdvancedPricingTest extends AbstractImportTestCase
      */
     private function invokeMethod($object, $method, $args = [])
     {
-        $class = new ReflectionClass(AdvancedPricing::class);
+        $class = new \ReflectionClass(AdvancedPricing::class);
         $method = $class->getMethod($method);
         $method->setAccessible(true);
 
@@ -1100,32 +1134,29 @@ class AdvancedPricingTest extends AbstractImportTestCase
             ->with(ProductInterface::class)
             ->willReturn($metadataMock);
         $this->currencyResolver = $this->createMock(CurrencyResolver::class);
-        $advancedPricingMock = $this->getMockBuilder(
-            AdvancedPricing::class
-        )
-            ->onlyMethods($methods)
-            ->setConstructorArgs(
-                [
-                    $this->jsonHelper,
-                    $this->importExportData,
-                    $this->dataSourceModel,
-                    $this->resource,
-                    $this->resourceHelper,
-                    $this->errorAggregator,
-                    $this->dateTime,
-                    $this->resourceFactory,
-                    $this->productModel,
-                    $this->catalogData,
-                    $this->storeResolver,
-                    $this->importProduct,
-                    $this->validator,
-                    $this->websiteValidator,
-                    $this->tierPriceValidator,
-                    $this->currencyResolver
-                ]
-            )
-            ->getMock();
-        $reflection = new ReflectionClass(AdvancedPricing::class);
+        $advancedPricingMock = $this->createPartialMock(
+            AdvancedPricing::class,
+            $methods
+        );
+        $advancedPricingMock->__construct(
+            $this->jsonHelper,
+            $this->importExportData,
+            $this->dataSourceModel,
+            $this->resource,
+            $this->resourceHelper,
+            $this->errorAggregator,
+            $this->dateTime,
+            $this->resourceFactory,
+            $this->productModel,
+            $this->catalogData,
+            $this->storeResolver,
+            $this->importProduct,
+            $this->validator,
+            $this->websiteValidator,
+            $this->tierPriceValidator,
+            $this->currencyResolver
+        );
+        $reflection = new \ReflectionClass(AdvancedPricing::class);
         $reflectionProperty = $reflection->getProperty('metadataPool');
         $reflectionProperty->setAccessible(true);
         $reflectionProperty->setValue($advancedPricingMock, $metadataPoolMock);

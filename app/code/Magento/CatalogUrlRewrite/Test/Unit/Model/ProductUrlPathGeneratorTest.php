@@ -7,18 +7,18 @@ declare(strict_types=1);
 
 namespace Magento\CatalogUrlRewrite\Test\Unit\Model;
 
-use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\Product;
 use Magento\CatalogUrlRewrite\Model\CategoryUrlPathGenerator;
 use Magento\CatalogUrlRewrite\Model\ProductUrlPathGenerator;
-use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -27,6 +27,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ProductUrlPathGeneratorTest extends TestCase
 {
+    use MockCreationTrait;
     /** @var ProductUrlPathGenerator */
     protected $productUrlPathGenerator;
 
@@ -54,12 +55,10 @@ class ProductUrlPathGeneratorTest extends TestCase
     protected function setUp(): void
     {
         $this->category = $this->createMock(Category::class);
-        $this->product = $this->getMockBuilder(ProductTestHelper::class)
-            ->onlyMethods(
-                ['__wakeup', 'getData', 'getName', 'formatUrlKey', 'getId', 'load', 'setStoreId', 'getUrlKey']
-            )
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->product = $this->createPartialMockWithReflection(
+            Product::class,
+            ['getUrlKey', '__wakeup', 'getData', 'getName', 'formatUrlKey', 'getId', 'load', 'setStoreId']
+        );
         $this->storeManager = $this->createMock(StoreManagerInterface::class);
         $this->scopeConfig = $this->createMock(ScopeConfigInterface::class);
         $this->categoryUrlPathGenerator = $this->createMock(
@@ -158,9 +157,15 @@ class ProductUrlPathGeneratorTest extends TestCase
     {
         $this->product->expects($this->once())->method('getData')->with('url_path')
             ->willReturn(null);
-        $this->product->expects($this->any())->method('getUrlKey')->willReturnOnConsecutiveCalls(false, $storedUrlKey);
+        
+        $callCount = 0;
+        $this->product->method('getUrlKey')
+            ->willReturnCallback(function () use (&$callCount, $storedUrlKey) {
+                $callCount++;
+                return $callCount === 1 ? false : $storedUrlKey;
+            });
         $this->product->method('getName')->willReturn($productName);
-        $this->product->expects($this->any())->method('formatUrlKey')->willReturnArgument(0);
+        $this->product->method('formatUrlKey')->willReturnArgument(0);
         $this->assertEquals($expectedUrlKey, $this->productUrlPathGenerator->getUrlPath($this->product, null));
     }
 

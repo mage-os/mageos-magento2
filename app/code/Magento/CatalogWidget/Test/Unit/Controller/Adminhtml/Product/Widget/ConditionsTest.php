@@ -11,14 +11,17 @@ use Magento\CatalogWidget\Controller\Adminhtml\Product\Widget\Conditions;
 use Magento\CatalogWidget\Model\Rule;
 use Magento\CatalogWidget\Model\Rule\Condition\Product;
 use Magento\Framework\App\RequestInterface;
-use Magento\Framework\App\Response\HttpInterface;
+use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\ObjectManagerInterface;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class ConditionsTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Conditions
      */
@@ -35,7 +38,7 @@ class ConditionsTest extends TestCase
     protected $request;
 
     /**
-     * @var HttpInterface|MockObject
+     * @var ResponseInterface|MockObject
      */
     protected $response;
 
@@ -50,7 +53,11 @@ class ConditionsTest extends TestCase
     protected function setUp(): void
     {
         $this->rule = $this->createMock(Rule::class);
-        $this->response = $this->createMock(HttpInterface::class);
+        $this->response = $this->createPartialMockWithReflection(
+            ResponseInterface::class,
+            ['sendResponse', 'setBody']
+        );
+        $this->response->expects($this->once())->method('setBody')->willReturnSelf();
 
         $objectManagerHelper = new ObjectManagerHelper($this);
         $arguments = $objectManagerHelper->getConstructArguments(
@@ -83,12 +90,31 @@ class ConditionsTest extends TestCase
                 ['form'] => 'request_form_param_value'
             });
 
-        $condition = $this->getMockBuilder(Product::class)
-            ->onlyMethods(['asHtmlRecursive'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        // setId, setType, setRule, setPrefix, setAttribute, setJsFormObject are magic methods from DataObject
-        // They don't need to be mocked - they'll work via __call
+        $condition = $this->createPartialMockWithReflection(
+            Product::class,
+            [
+                'asHtmlRecursive',
+                'setId',
+                'setType',
+                'setRule',
+                'setPrefix',
+                'setAttribute',
+                'setJsFormObject'
+            ]
+        );
+        $condition->expects($this->once())
+            ->method('setId')->with('1--1')->willReturnSelf();
+        $condition->expects($this->once())
+            ->method('setType')
+            ->with(Product::class)->willReturnSelf();
+        $condition->expects($this->once())
+            ->method('setRule')->with($this->rule)->willReturnSelf();
+        $condition->expects($this->once())
+            ->method('setPrefix')->with('conditions')->willReturnSelf();
+        $condition->expects($this->once())
+            ->method('setJsFormObject')->with('request_form_param_value')->willReturnSelf();
+        $condition->expects($this->once())
+            ->method('setAttribute')->with('attribute_set_id')->willReturnSelf();
         $condition->expects($this->once())
             ->method('asHtmlRecursive')->willReturn('<some_html>');
 

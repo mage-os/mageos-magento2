@@ -14,8 +14,8 @@ use Magento\Catalog\Model\ProductFactory;
 use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
 use Magento\CatalogUrlRewrite\Model\Category\Plugin\Store\Group as GroupPlugin;
 use Magento\CatalogUrlRewrite\Model\ProductUrlRewriteGenerator;
-use Magento\Framework\Model\Test\Unit\Helper\AbstractModelTestHelper;
 use Magento\Framework\Model\AbstractModel;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Model\ResourceModel\Group;
 use Magento\Store\Model\StoreManagerInterface;
@@ -27,6 +27,8 @@ use PHPUnit\Framework\TestCase;
  */
 class GroupTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var ObjectManager
      */
@@ -85,38 +87,36 @@ class GroupTest extends TestCase
     protected function setUp(): void
     {
         $this->objectManager = new ObjectManager($this);
-        $this->abstractModelMock = $this->getMockBuilder(AbstractModelTestHelper::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getStoreIds', 'getWebsiteId', 'isObjectNew', 'dataHasChangedFor'])
-            ->getMock();
-        $this->subjectMock = $this->getMockBuilder(Group::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->abstractModelMock = $this->createPartialMockWithReflection(
+            AbstractModel::class,
+            ['getStoreIds', 'getWebsiteId', 'isObjectNew', 'dataHasChangedFor']
+        );
+        $this->subjectMock = $this->createMock(Group::class);
         $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
-        $this->categoryMock = $this->getMockBuilder(Category::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getCategories'])
-            ->getMock();
-        $this->categoryFactoryMock = $this->getMockBuilder(CategoryFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
-        $this->productFactoryMock = $this->getMockBuilder(ProductFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
-        $this->productCollectionMock = $this->getMockBuilder(ProductCollection::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['addCategoryIds', 'addAttributeToSelect', 'addWebsiteFilter', 'getIterator'])
-            ->getMock();
-        $this->productMock = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getCollection'])
-            ->getMock();
-        $this->productUrlRewriteGeneratorMock = $this->getMockBuilder(ProductUrlRewriteGenerator::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['generate'])
-            ->getMock();
+        $this->categoryMock = $this->createPartialMock(
+            Category::class,
+            ['getCategories']
+        );
+        $this->categoryFactoryMock = $this->createPartialMock(
+            CategoryFactory::class,
+            ['create']
+        );
+        $this->productFactoryMock = $this->createPartialMock(
+            ProductFactory::class,
+            ['create']
+        );
+        $this->productCollectionMock = $this->createPartialMock(
+            ProductCollection::class,
+            ['addCategoryIds', 'addAttributeToSelect', 'addWebsiteFilter', 'getIterator']
+        );
+        $this->productMock = $this->createPartialMock(
+            Product::class,
+            ['getCollection']
+        );
+        $this->productUrlRewriteGeneratorMock = $this->createPartialMock(
+            ProductUrlRewriteGenerator::class,
+            ['generate']
+        );
         $this->plugin = $this->objectManager->getObject(
             GroupPlugin::class,
             [
@@ -133,7 +133,8 @@ class GroupTest extends TestCase
         $this->abstractModelMock->expects($this->once())
             ->method('isObjectNew')
             ->willReturn(false);
-        $this->abstractModelMock->method('getStoreIds')->willReturn(['1']);
+        $this->abstractModelMock->method('getStoreIds')
+            ->willReturn(['1']);
         $this->abstractModelMock->expects($this->once())
             ->method('getWebsiteId')
             ->willReturn(1);
@@ -161,9 +162,9 @@ class GroupTest extends TestCase
         $this->abstractModelMock->expects($this->once())
             ->method('isObjectNew')
             ->willReturn(false);
-        $this->abstractModelMock->method('getStoreIds')->willReturn([]);
-        $this->abstractModelMock->expects($this->any())
-            ->method('dataHasChangedFor')
+        $this->abstractModelMock->method('getStoreIds')
+            ->willReturn([]);
+        $this->abstractModelMock->method('dataHasChangedFor')
             ->with('website_id')
             ->willReturn(true);
         $this->storeManagerMock->expects($this->never())->method('reinitStores');

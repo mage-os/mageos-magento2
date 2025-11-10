@@ -7,7 +7,6 @@ declare(strict_types=1);
 
 namespace Magento\CatalogUrlRewrite\Test\Unit\Observer;
 
-use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Category;
 use Magento\CatalogUrlRewrite\Block\UrlKeyRenderer;
 use Magento\CatalogUrlRewrite\Model\CategoryUrlRewriteGenerator;
@@ -17,11 +16,12 @@ use Magento\CatalogUrlRewrite\Model\Map\DataProductUrlRewriteDatabaseMap;
 use Magento\CatalogUrlRewrite\Model\UrlRewriteBunchReplacer;
 use Magento\CatalogUrlRewrite\Observer\CategoryProcessUrlRewriteMovingObserver;
 use Magento\CatalogUrlRewrite\Observer\UrlRewriteHandler;
-use Magento\Framework\Event\Test\Unit\Helper\EventTestHelper;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Event;
 use Magento\Framework\Event\Observer;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\UrlRewrite\Model\UrlPersistInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -30,6 +30,8 @@ use PHPUnit\Framework\TestCase;
  */
 class CategoryProcessUrlRewriteMovingObserverTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var CategoryProcessUrlRewriteMovingObserver
      */
@@ -97,10 +99,10 @@ class CategoryProcessUrlRewriteMovingObserverTest extends TestCase
     {
         /** @var Observer|MockObject $observerMock */
         $observerMock = $this->createMock(Observer::class);
-        $eventMock = $this->getMockBuilder(EventTestHelper::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getCategory'])
-            ->getMock();
+        $eventMock = $this->createPartialMockWithReflection(
+            Event::class,
+            ['getCategory']
+        );
         $categoryMock = $this->createPartialMock(
             Category::class,
             [
@@ -151,10 +153,10 @@ class CategoryProcessUrlRewriteMovingObserverTest extends TestCase
     {
         /** @var Observer|MockObject $observerMock */
         $observerMock = $this->createMock(Observer::class);
-        $eventMock = $this->getMockBuilder(EventTestHelper::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getCategory'])
-            ->getMock();
+        $eventMock = $this->createPartialMockWithReflection(
+            Event::class,
+            ['getCategory']
+        );
         $categoryMock = $this->createPartialMock(Category::class, ['dataHasChangedFor']);
         $observerMock->expects($this->once())->method('getEvent')->willReturn($eventMock);
         $eventMock->expects($this->once())->method('getCategory')->willReturn($categoryMock);
