@@ -26,24 +26,6 @@ class QuoteTestHelper extends Quote
      */
     private array $testData = [];
 
-    /** @var array */
-    public array $items = [];
-
-    /** @var bool */
-    private $inventoryProcessed = false;
-
-    /** @var bool */
-    private $isSuperMode = false;
-
-    /** @var mixed */
-    private $quote = null;
-
-    /** @var array */
-    private $itemsCollection = [];
-
-    /** @var array */
-    private $errorInfos = [];
-
     /**
      * @var array
      */
@@ -55,14 +37,6 @@ class QuoteTestHelper extends Quote
     public function __construct()
     {
         // Intentionally empty to skip parent constructor with complex dependencies
-    }
-
-    /**
-     * __wakeup implementation for serialization support
-     */
-    public function __wakeup(): void
-    {
-        // Empty implementation for tests
     }
 
     /**
@@ -351,7 +325,7 @@ class QuoteTestHelper extends Quote
      * @param bool $flag
      * @return $this
      */
-    public function setHasError($flag): self
+    public function setHasError($flag)
     {
         $this->testData['has_error'] = (bool)$flag;
         return $this;
@@ -361,7 +335,6 @@ class QuoteTestHelper extends Quote
      * Add message for tests.
      *
      * @param mixed $message
-     * @param string $index
      * @return $this
      */
     public function addMessage($message, $index = 'error')
@@ -697,6 +670,30 @@ class QuoteTestHelper extends Quote
     }
 
     /**
+     * Override: Get item by ID
+     * @param int $id
+     * @return mixed
+     */
+    public function getItemById($id)
+    {
+        $items = $this->getData('itemById') ?? [];
+        return $items[$id] ?? null;
+    }
+
+    /**
+     * Override: Remove item
+     * @param int $id
+     * @return $this
+     */
+    public function removeItem($id)
+    {
+        $items = $this->getData('itemById') ?? [];
+        unset($items[$id]);
+        $this->setData('itemById', $items);
+        return $this;
+    }
+
+    /**
      * Override: Get payment
      * @return mixed
      */
@@ -774,6 +771,20 @@ class QuoteTestHelper extends Quote
     public function setAllAddresses($addresses)
     {
         $this->setData('allAddresses', $addresses);
+        return $this;
+    }
+
+    // ========== CUSTOM HELPER METHODS ==========
+    // These methods provide test-specific functionality not available in parent.
+
+    /**
+     * Set super mode (stub for testing)
+     * @param mixed $value
+     * @return $this
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function setIsSuperMode($value)
+    {
         return $this;
     }
 
@@ -862,155 +873,5 @@ class QuoteTestHelper extends Quote
     private function camelCaseToSnakeCase($input)
     {
         return strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $input));
-    }
-
-    /**
-     * Get item by ID from items array (Helper branch)
-     *
-     * @param mixed $itemId
-     * @return mixed
-     */
-    public function getItemById($itemId)
-    {
-        return $this->items[$itemId] ?? false;
-    }
-
-    /**
-     * Remove item from items array (Helper branch)
-     *
-     * @param mixed $itemId
-     * @return $this
-     */
-    public function removeItem($itemId)
-    {
-        unset($this->items[$itemId]);
-        return $this;
-    }
-
-    /**
-     * Get inventory processed flag (Helper branch)
-     *
-     * @return bool
-     */
-    public function getInventoryProcessed()
-    {
-        return $this->inventoryProcessed;
-    }
-
-    /**
-     * Set inventory processed flag (Helper branch)
-     *
-     * @param bool $inventoryProcessed
-     * @return $this
-     */
-    public function setInventoryProcessed($inventoryProcessed)
-    {
-        $this->inventoryProcessed = $inventoryProcessed;
-        return $this;
-    }
-
-    /**
-     * Get super mode flag (Helper branch)
-     *
-     * @return bool
-     */
-    public function getIsSuperMode()
-    {
-        return $this->isSuperMode;
-    }
-
-    /**
-     * Set super mode flag (Helper branch)
-     *
-     * @param bool $isSuperMode
-     * @return $this
-     */
-    public function setIsSuperMode($isSuperMode)
-    {
-        $this->isSuperMode = $isSuperMode;
-        return $this;
-    }
-
-    /**
-     * Get quote reference (Helper branch)
-     *
-     * @return mixed
-     */
-    public function getQuote()
-    {
-        return $this->quote;
-    }
-
-    /**
-     * Set quote reference (Helper branch)
-     *
-     * @param mixed $quote
-     * @return $this
-     */
-    public function setQuote($quote)
-    {
-        $this->quote = $quote;
-        return $this;
-    }
-
-    /**
-     * Get error infos (Helper branch)
-     *
-     * @return array
-     */
-    public function getErrorInfos()
-    {
-        return $this->errorInfos;
-    }
-
-    /**
-     * Set error infos (Helper branch)
-     *
-     * @param array $errorInfos
-     * @return $this
-     */
-    public function setErrorInfos($errorInfos)
-    {
-        $this->errorInfos = $errorInfos;
-        return $this;
-    }
-
-    /**
-     * Remove error infos by params (Helper branch)
-     *
-     * @param mixed $origin
-     * @param mixed $params
-     * @return $this
-     */
-    public function removeErrorInfosByParams($origin, $params)
-    {
-        return $this;
-    }
-
-    /**
-     * Add error info (Helper branch)
-     *
-     * @param string $type
-     * @param mixed $origin
-     * @param mixed $code
-     * @param mixed $message
-     * @param mixed $additionalData
-     * @return $this
-     */
-    public function addErrorInfo(
-        $type = 'error',
-        $origin = null,
-        $code = null,
-        $message = null,
-        $additionalData = null
-    ) {
-        $this->errorInfos[] = [
-            'type' => $type,
-            'origin' => $origin,
-            'code' => $code,
-            'message' => $message,
-            'additionalData' => $additionalData
-        ];
-        return $this;
     }
 }

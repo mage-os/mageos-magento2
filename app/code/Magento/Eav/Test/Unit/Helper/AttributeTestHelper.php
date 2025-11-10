@@ -12,6 +12,8 @@ use Magento\Eav\Model\Entity\Attribute;
 /**
  * Test helper class for EAV Attribute with custom methods
  *
+ * This helper extends the EAV Attribute class to provide custom methods
+ * needed for testing that don't exist in the parent class.
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
 class AttributeTestHelper extends Attribute
@@ -150,57 +152,5 @@ class AttributeTestHelper extends Attribute
     public function getSource()
     {
         return $this->data['source'] ?? null;
-    }
-
-    /**
-     * Mock method for getIsFilterable
-     *
-     * @return mixed
-     */
-    public function getIsFilterable()
-    {
-        return $this->data['is_filterable'] ?? null;
-    }
-
-    /**
-     * Set the isFilterable value
-     *
-     * @param mixed $value
-     * @return $this
-     */
-    public function setIsFilterable($value)
-    {
-        $this->data['is_filterable'] = $value;
-        return $this;
-    }
-
-    /**
-     * Mock method for getSearchWeight
-     *
-     * @return mixed
-     */
-    public function getSearchWeight()
-    {
-        return $this->data['search_weight'] ?? null;
-    }
-
-    /**
-     * Set the searchWeight value
-     *
-     * @param mixed $value
-     * @return $this
-     */
-    public function setSearchWeight($value)
-    {
-        $this->data['search_weight'] = $value;
-        return $this;
-    }
-
-    /**
-     * Required method from Attribute
-     */
-    protected function _construct(): void
-    {
-        // Mock implementation
     }
 }

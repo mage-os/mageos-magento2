@@ -12,10 +12,6 @@ use Magento\Framework\View\Element\AbstractBlock;
 /**
  * Test helper for AbstractBlock
  *
- * This helper extends the concrete AbstractBlock class to provide
- * test-specific functionality without dependency injection issues.
- *
- * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  * This helper extends the concrete AbstractBlock class to provide a minimal
  * block implementation for testing without dependency injection issues.
  *
@@ -48,30 +44,5 @@ class AbstractBlockTestHelper extends AbstractBlock
     public function toHtml()
     {
         return '<span>test Message</span>';
-    }
-
-    /**
-     * Mock method for addFieldMap
-     *
-     * @param string $fieldId
-     * @param string $fieldName
-     * @return $this
-     */
-    public function addFieldMap(string $fieldId, string $fieldName): self
-    {
-        return $this;
-    }
-
-    /**
-     * Mock method for addFieldDependence
-     *
-     * @param string $fieldId
-     * @param string $dependentField
-     * @param string $value
-     * @return $this
-     */
-    public function addFieldDependence(string $fieldId, string $dependentField, string $value): self
-    {
-        return $this;
     }
 }

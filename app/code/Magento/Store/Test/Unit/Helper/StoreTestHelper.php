@@ -144,18 +144,6 @@ class StoreTestHelper extends Store
     }
 
     /**
-     * Set store ID (alias from Helper branch for backward compatibility)
-     *
-     * @param mixed $id
-     * @return $this
-     */
-    public function setIdReturn($id)
-    {
-        $this->data['store_id'] = $id;
-        return $this;
-    }
-
-    /**
      * Get website ID
      *
      * @return int|null
@@ -174,94 +162,6 @@ class StoreTestHelper extends Store
     public function setWebsiteId($id)
     {
         $this->data['website_id'] = $id;
-        return $this;
-    }
-
-    /**
-     * Get store code (Helper branch)
-     *
-     * @return string
-     */
-    public function getCode()
-    {
-        return $this->data['code'] ?? 'default';
-    }
-
-    /**
-     * Set store code (Helper branch)
-     *
-     * @param string $code
-     * @return $this
-     */
-    public function setCode($code)
-    {
-        $this->data['code'] = $code;
-        return $this;
-    }
-
-    /**
-     * Get root category ID (Helper branch)
-     *
-     * @return int
-     */
-    public function getRootCategoryId()
-    {
-        return $this->data['root_category_id'] ?? 2;
-    }
-
-    /**
-     * Set root category ID (Helper branch)
-     *
-     * @param int $id
-     * @return $this
-     */
-    public function setRootCategoryId($id)
-    {
-        $this->data['root_category_id'] = $id;
-        return $this;
-    }
-
-    /**
-     * Get filters (Helper branch)
-     *
-     * @return mixed
-     */
-    public function getFilters()
-    {
-        return $this->data['filters'] ?? null;
-    }
-
-    /**
-     * Set filters (Helper branch)
-     *
-     * @param mixed $filters
-     * @return $this
-     */
-    public function setFilters($filters)
-    {
-        $this->data['filters'] = $filters;
-        return $this;
-    }
-
-    /**
-     * Get website (Helper branch)
-     *
-     * @return mixed
-     */
-    public function getWebsite()
-    {
-        return $this->data['website'] ?? null;
-    }
-
-    /**
-     * Set website (Helper branch)
-     *
-     * @param mixed $website
-     * @return $this
-     */
-    public function setWebsite($website)
-    {
-        $this->data['website'] = $website;
         return $this;
     }
 }

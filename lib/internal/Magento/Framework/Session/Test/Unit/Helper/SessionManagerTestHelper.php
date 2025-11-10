@@ -22,11 +22,6 @@ class SessionManagerTestHelper extends SessionManager
     private $affectedItems = null;
 
     /**
-     * @var mixed
-     */
-    private $customerGroupIdReturn = null;
-
-    /**
      * Constructor
      */
     public function __construct()
@@ -57,23 +52,5 @@ class SessionManagerTestHelper extends SessionManager
         } else {
             $this->affectedItems = null;
         }
-    }
-
-    /**
-     * @param mixed $return
-     * @return $this
-     */
-    public function setCustomerGroupIdReturn($return)
-    {
-        $this->customerGroupIdReturn = $return;
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getCustomerGroupId()
-    {
-        return $this->customerGroupIdReturn;
     }
 }

@@ -25,72 +25,6 @@ class EventTestHelper extends Event
     }
 
     /**
-     * Get adapter (custom method for testing)
-     *
-     * @return mixed
-     */
-    public function getAdapter()
-    {
-        return $this->data['adapter'] ?? null;
-    }
-
-    /**
-     * Set adapter (custom method for testing)
-     *
-     * @param mixed $adapter
-     * @return $this
-     */
-    public function setAdapter($adapter): self
-    {
-        $this->data['adapter'] = $adapter;
-        return $this;
-    }
-
-    /**
-     * Get bunch (custom method for testing)
-     *
-     * @return mixed
-     */
-    public function getBunch()
-    {
-        return $this->data['bunch'] ?? null;
-    }
-
-    /**
-     * Set bunch (custom method for testing)
-     *
-     * @param mixed $bunch
-     * @return $this
-     */
-    public function setBunch($bunch): self
-    {
-        $this->data['bunch'] = $bunch;
-        return $this;
-    }
-
-    /**
-     * Get category (custom method for testing)
-     *
-     * @return mixed
-     */
-    public function getCategory()
-    {
-        return $this->data['category'] ?? null;
-    }
-
-    /**
-     * Set category (custom method for testing)
-     *
-     * @param mixed $category
-     * @return $this
-     */
-    public function setCategory($category): self
-    {
-        $this->data['category'] = $category;
-        return $this;
-    }
-
-    /**
      * Get product (custom method for testing)
      *
      * @return mixed
@@ -189,18 +123,6 @@ class EventTestHelper extends Event
     }
 
     /**
-     * Set store (custom method for testing)
-     *
-     * @param mixed $store
-     * @return $this
-     */
-    public function setStore($store): self
-    {
-        $this->data['store'] = $store;
-        return $this;
-    }
-
-    /**
      * Get result (custom method for testing)
      *
      * @return mixed
@@ -208,18 +130,6 @@ class EventTestHelper extends Event
     public function getResult()
     {
         return $this->data['result'] ?? null;
-    }
-
-    /**
-     * Set result (custom method for testing)
-     *
-     * @param mixed $result
-     * @return $this
-     */
-    public function setResult($result): self
-    {
-        $this->data['result'] = $result;
-        return $this;
     }
 
     /**
@@ -233,18 +143,6 @@ class EventTestHelper extends Event
     }
 
     /**
-     * Set quote (custom method for testing)
-     *
-     * @param mixed $quote
-     * @return $this
-     */
-    public function setQuote($quote): self
-    {
-        $this->data['quote'] = $quote;
-        return $this;
-    }
-
-    /**
      * Get order (custom method for testing)
      *
      * @return mixed
@@ -252,17 +150,5 @@ class EventTestHelper extends Event
     public function getOrder()
     {
         return $this->data['order'] ?? null;
-    }
-
-    /**
-     * Set order (custom method for testing)
-     *
-     * @param mixed $order
-     * @return $this
-     */
-    public function setOrder($order): self
-    {
-        $this->data['order'] = $order;
-        return $this;
     }
 }

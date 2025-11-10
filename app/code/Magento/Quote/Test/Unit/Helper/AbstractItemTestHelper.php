@@ -11,8 +11,6 @@ use Magento\Quote\Model\Quote\Item;
 
 /**
  * Test helper for AbstractItem mocking
- *
- * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class AbstractItemTestHelper extends Item
 {
@@ -22,8 +20,8 @@ class AbstractItemTestHelper extends Item
     private array $data = [];
 
     /**
-     * @param mixed $product
-     * @param mixed $children
+     * @param $product
+     * @param $children
      */
     public function __construct($product = null, $children = null)
     {
@@ -45,7 +43,7 @@ class AbstractItemTestHelper extends Item
     }
 
     /**
-     * @param mixed $product
+     * @param $product
      * @return $this
      */
     public function setProduct($product): self
@@ -63,35 +61,7 @@ class AbstractItemTestHelper extends Item
     }
 
     /**
-     * @param mixed $quote
-     * @return $this
-     */
-    public function setQuote($quote)
-    {
-        $this->data['quote'] = $quote;
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getAddress()
-    {
-        return $this->data['address'] ?? null;
-    }
-
-    /**
-     * @param mixed $address
-     * @return $this
-     */
-    public function setAddress($address)
-    {
-        $this->data['address'] = $address;
-        return $this;
-    }
-
-    /**
-     * @param mixed $parentItem
+     * @param $parentItem
      * @return $this
      */
     public function setParentItem($parentItem): self
@@ -101,7 +71,7 @@ class AbstractItemTestHelper extends Item
     }
 
     /**
-     * @return array
+     * @return array|AbstractItem[]
      */
     public function getChildren(): array
     {
@@ -125,14 +95,5 @@ class AbstractItemTestHelper extends Item
     public function getHasChildren(): bool
     {
         return !empty($this->data['children']);
-    }
-
-    /**
-     * @param mixed $code
-     * @return mixed
-     */
-    public function getOptionByCode($code)
-    {
-        return null;
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright 2025 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 declare(strict_types=1);
 
@@ -81,9 +81,6 @@ class ResetAfterRequestTest extends \PHPUnit\Framework\TestCase
         foreach (array_keys(Classes::collectModuleClasses('[A-Z][a-z\d][A-Za-z\d\\\\]+')) as $type) {
             if (str_contains($type, "_files")) {
                 continue; // We have to skip the fixture files that collectModuleClasses returns;
-            }
-            if (str_contains($type, "\\Test\\Unit\\Helper\\")) {
-                continue; // Skip unit test helper classes - they have mock constructors
             }
             try {
                 if (!class_exists($type)) {

@@ -7,16 +7,15 @@ declare(strict_types=1);
 
 namespace Magento\Framework\App\Test\Unit\Helper;
 
-use Magento\Framework\App\Response\Http;
+use Magento\Framework\HTTP\PhpEnvironment\Response;
 
 /**
  * Test helper for Magento\Framework\App\ResponseInterface
  */
-class ResponseTestHelper extends Http
+class ResponseTestHelper extends Response
 {
     public function __construct()
     {
-        // Skip parent constructor to avoid dependency injection issues
     }
 
     /**
@@ -53,28 +52,5 @@ class ResponseTestHelper extends Http
     public function setHeader($name, $value, $replace = false)
     {
         return $this;
-    }
-
-    /**
-     * Set redirect
-     *
-     * @param string $url
-     * @param int $code
-     * @return $this
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function setRedirect($url, $code = 302)
-    {
-        return $this;
-    }
-
-    /**
-     * Check if response is redirect
-     *
-     * @return bool
-     */
-    public function isRedirect()
-    {
-        return false;
     }
 }

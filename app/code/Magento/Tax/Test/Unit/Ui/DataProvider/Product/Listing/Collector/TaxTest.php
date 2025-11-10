@@ -13,7 +13,6 @@ use Magento\Catalog\Api\Data\ProductRender\PriceInfoInterface;
 use Magento\Catalog\Api\Data\ProductRender\PriceInfoInterfaceFactory;
 use Magento\Catalog\Api\Data\ProductRenderInterface;
 use Magento\Catalog\Model\Product;
-use Magento\Catalog\Test\Unit\Helper\PriceInfoExtensionInterfaceTestHelper;
 use Magento\Catalog\Model\ProductRender\FormattedPriceInfoBuilder;
 use Magento\Catalog\Pricing\Price\FinalPrice;
 use Magento\Framework\Pricing\Amount\AmountInterface;
@@ -71,7 +70,9 @@ class TaxTest extends TestCase
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
 
-        $this->extensionAttributes = new PriceInfoExtensionInterfaceTestHelper();
+        $this->extensionAttributes = $this->getMockBuilder(PriceInfoExtensionInterface::class)
+            ->addMethods(['setTaxAdjustments'])
+            ->getMockForAbstractClass();
 
         $this->priceInfoFactory = $this->getMockBuilder(PriceInfoInterfaceFactory::class)
             ->disableOriginalConstructor()

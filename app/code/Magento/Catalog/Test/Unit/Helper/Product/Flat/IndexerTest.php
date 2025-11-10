@@ -8,7 +8,6 @@ declare(strict_types=1);
 namespace Magento\Catalog\Test\Unit\Helper\Product\Flat;
 
 use Magento\Catalog\Helper\Product\Flat\Indexer;
-use Magento\Catalog\Model\Attribute\Config as AttributeConfig;
 use Magento\Catalog\Model\ResourceModel\ConfigFactory;
 use Magento\Eav\Model\Config;
 use Magento\Eav\Model\Entity\AttributeFactory;
@@ -73,7 +72,7 @@ class IndexerTest extends TestCase
 
         $eavConfigMock = $this->createMock(Config::class);
 
-        $attributeConfigMock = $this->createMock(AttributeConfig::class);
+        $attributeConfigMock = $this->createMock(\Magento\Catalog\Model\Attribute\Config::class);
 
         $resourceConfigFactoryMock = $this->createPartialMock(
             ConfigFactory::class,

@@ -22,16 +22,6 @@ class ProductLinkTestHelper extends Link
     private $data = [];
 
     /**
-     * @var string
-     */
-    private $linkedProductId;
-
-    /**
-     * @var array
-     */
-    private $arrayData = [];
-
-    /**
      * Constructor
      */
     public function __construct()
@@ -81,48 +71,5 @@ class ProductLinkTestHelper extends Link
     {
         $this->data['product_collection'] = $collection;
         return $this;
-    }
-
-    /**
-     * Get linked product ID
-     *
-     * @return string
-     */
-    public function getLinkedProductId()
-    {
-        return $this->linkedProductId;
-    }
-
-    /**
-     * Set linked product ID
-     *
-     * @param string $id
-     * @return void
-     */
-    public function setLinkedProductId($id)
-    {
-        $this->linkedProductId = $id;
-    }
-
-    /**
-     * Convert to array
-     *
-     * @param array $keys
-     * @return array
-     */
-    public function toArray(array $keys = [])
-    {
-        return $this->arrayData;
-    }
-
-    /**
-     * Set array data
-     *
-     * @param array $data
-     * @return void
-     */
-    public function setArrayData(array $data)
-    {
-        $this->arrayData = $data;
     }
 }

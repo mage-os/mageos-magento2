@@ -12,7 +12,8 @@ use Magento\Framework\Filter\FilterManager;
 /**
  * Test helper class for FilterManager with custom methods
  *
- * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+ * This helper is placed in Magento_Framework as it's the core module
+ * that contains the FilterManager class and is used by many other modules.
  */
 class FilterManagerTestHelper extends FilterManager
 {
@@ -26,30 +27,7 @@ class FilterManagerTestHelper extends FilterManager
      */
     public function __construct()
     {
-        // Skip parent constructor to avoid dependency injection issues
-    }
-
-    /**
-     * Custom translitUrl method for testing
-     *
-     * @param string $string
-     * @return mixed
-     */
-    public function translitUrl($string)
-    {
-        return $this->data['translitUrl'] ?? null;
-    }
-
-    /**
-     * Set return value for translitUrl
-     *
-     * @param mixed $result
-     * @return $this
-     */
-    public function setTranslitUrlResult($result)
-    {
-        $this->data['translitUrl'] = $result;
-        return $this;
+        // Skip parent constructor
     }
 
     /**
@@ -57,10 +35,24 @@ class FilterManagerTestHelper extends FilterManager
      *
      * @param string $value
      * @return string
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function stripTags($value = '')
     {
-        return $this->data['stripTags'] ?? $value;
+        return $this->data['stripTags'] ?? 'Test';
+    }
+
+    /**
+     * Custom sprintf method for testing
+     *
+     * @param string $format
+     * @param mixed ...$args
+     * @return string
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function sprintf($format, ...$args)
+    {
+        return $this->data['sprintf'] ?? $format;
     }
 
     /**
@@ -73,18 +65,6 @@ class FilterManagerTestHelper extends FilterManager
     {
         $this->data['stripTags'] = $value;
         return $this;
-    }
-
-    /**
-     * Custom sprintf method for testing
-     *
-     * @param string $format
-     * @param mixed ...$args
-     * @return string
-     */
-    public function sprintf($format, ...$args)
-    {
-        return $this->data['sprintf'] ?? $format;
     }
 
     /**

@@ -6,8 +6,8 @@
 declare(strict_types=1);
 
 namespace Magento\Framework\Session\Test\Unit\Helper;
+
 use Magento\Framework\Session\StorageInterface;
-use Magento\Framework\DataObject;
 
 /**
  * Test helper for creating StorageInterface mocks
@@ -80,29 +80,5 @@ class StorageTestHelper implements StorageInterface
             return isset($this->data[$key]);
         }
         return null;
-    }
-
-    /**
-     * @return bool
-     */
-    public function hasCompositeProductResult()
-    {
-        return true;
-    }
-
-    /**
-     * @return DataObject
-     */
-    public function getCompositeProductResult()
-    {
-        return new DataObject();
-    }
-
-    /**
-     * @return $this
-     */
-    public function unsCompositeProductResult()
-    {
-        return $this;
     }
 }

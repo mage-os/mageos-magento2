@@ -11,8 +11,6 @@ use Magento\Catalog\Model\Product\Type\Simple;
 
 /**
  * Test helper for Magento\Catalog\Model\Product\Type\Simple
- *
- * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class ProductTypeSimpleTestHelper extends Simple
 {
@@ -20,16 +18,6 @@ class ProductTypeSimpleTestHelper extends Simple
      * @var array
      */
     private $data = [];
-
-    /**
-     * @var array
-     */
-    private array $ids = [];
-
-    /**
-     * @var int
-     */
-    private int $callCount = 0;
 
     /**
      * Constructor
@@ -83,30 +71,5 @@ class ProductTypeSimpleTestHelper extends Simple
     {
         $this->data['links'] = $links;
         return $this;
-    }
-
-    /**
-     * Set IDs to return on successive getId() calls
-     *
-     * @param array $ids
-     * @return $this
-     */
-    public function setIds(array $ids)
-    {
-        $this->ids = $ids;
-        $this->callCount = 0;
-        return $this;
-    }
-
-    /**
-     * Get ID - returns different ID on each call based on call count
-     *
-     * @return mixed
-     */
-    public function getId()
-    {
-        $id = $this->ids[$this->callCount] ?? null;
-        $this->callCount++;
-        return $id;
     }
 }

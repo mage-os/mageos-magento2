@@ -10,7 +10,9 @@ namespace Magento\Catalog\Test\Unit\Helper;
 use Magento\Catalog\Model\Product\Option;
 
 /**
- * Test helper
+ * Test helper for Magento\Catalog\Model\Product\Option (used in Bundle tests)
+ *
+ * Extends Option to add custom methods for testing both Bundle and Catalog options
  */
 class OptionTestHelper extends Option
 {
@@ -128,39 +130,5 @@ class OptionTestHelper extends Option
     {
         $this->data['selections'] = $selections;
         return $this;
-    }
-
-    /**
-     * Set ignore caching (for Block compatibility)
-     *
-     * @param mixed $ignoreCaching
-     * @return $this
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function setIgnoreCaching($ignoreCaching)
-    {
-        return $this;
-    }
-
-    /**
-     * Set product (for Block compatibility)
-     *
-     * @param mixed $product
-     * @return $this
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function setProduct($product)
-    {
-        return $this;
-    }
-
-    /**
-     * Get option values (for Block compatibility)
-     *
-     * @return array
-     */
-    public function getOptionValues()
-    {
-        return [];
     }
 }

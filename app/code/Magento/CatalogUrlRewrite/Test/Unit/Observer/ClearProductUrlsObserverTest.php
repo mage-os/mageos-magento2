@@ -78,8 +78,9 @@ class ClearProductUrlsObserverTest extends TestCase
      */
     protected function setUp(): void
     {
+        $objectManager = new ObjectManagerHelper($this);
         $this->skuStorage = $this->createMock(SkuStorage::class);
-        $this->event = $this->createPartialMock(
+        $this->event = $objectManager->createPartialMockWithReflection(
             EventTestHelper::class,
             ['getBunch']
         );
