@@ -184,7 +184,6 @@ class Tree extends CategoryTree
 
     /**
      * Override parent's implementation to avoid using cached registry root
-     * which might have been built with limited recursion and miss deep nodes.
      *
      * @param array $ids
      * @return \Magento\Framework\Data\Tree\Node|array|null
