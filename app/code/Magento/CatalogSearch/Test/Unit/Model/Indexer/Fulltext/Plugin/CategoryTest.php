@@ -11,16 +11,17 @@ use Magento\Catalog\Model\Category as CategoryModel;
 use Magento\Catalog\Model\ResourceModel\Category as CategoryResourceModel;
 use Magento\CatalogSearch\Model\Indexer\Fulltext;
 use Magento\CatalogSearch\Model\Indexer\Fulltext\Plugin\Category as CategoryPlugin;
-use Magento\Framework\Test\Unit\Helper\IndexerInterfaceTestHelper;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\Indexer\IndexerInterface;
 use Magento\Framework\Indexer\IndexerRegistry;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class CategoryTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var MockObject|IndexerInterface
      */
@@ -53,23 +54,19 @@ class CategoryTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->categoryMock = $this->getMockBuilder(CategoryModel::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->categoryResourceMock = $this->getMockBuilder(CategoryResourceModel::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->categoryMock = $this->createMock(CategoryModel::class);
+
+        $this->categoryResourceMock = $this->createMock(CategoryResourceModel::class);
+
         $connection = $this->createMock(AdapterInterface::class);
         $this->categoryResourceMock->method('getConnection')->willReturn($connection);
 
-        $this->indexerMock = $this->getMockBuilder(IndexerInterfaceTestHelper::class)
-            ->onlyMethods(['getId', 'getState', '__wakeup'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->indexerRegistryMock = $this->getMockBuilder(IndexerRegistry::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['get'])
-            ->getMock();
+        $this->indexerMock = $this->createStub(IndexerInterface::class);
+
+        $this->indexerRegistryMock = $this->createPartialMock(
+            IndexerRegistry::class,
+            ['get']
+        );
 
         $this->proceed = function () {
             return $this->categoryResourceMock;

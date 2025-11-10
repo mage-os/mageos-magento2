@@ -7,21 +7,20 @@ declare(strict_types=1);
 
 namespace Magento\CatalogSearch\Test\Unit\Model\Search\Request;
 
-use PHPUnit\Framework\Attributes\DataProvider;
-use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
 use Magento\Catalog\Model\ResourceModel\Product\Attribute\Collection;
 use Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory;
 use Magento\CatalogSearch\Model\Search\Request\PartialSearchModifier;
-use Magento\Eav\Test\Unit\Helper\AttributeTestHelper;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use ReflectionProperty;
 
 /**
  * Test "partial" search requests modifier
  */
 class PartialSearchModifierTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var Collection|MockObject
      */
@@ -39,10 +38,10 @@ class PartialSearchModifierTest extends TestCase
     {
         parent::setUp();
         $collectionFactory = $this->createMock(CollectionFactory::class);
-        $this->collection = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['load', 'addFieldToFilter'])
-            ->getMock();
+        $this->collection = $this->createPartialMock(
+            Collection::class,
+            ['load', 'addFieldToFilter']
+        );
         $collectionFactory->method('create')
             ->willReturn($this->collection);
         $this->model = new PartialSearchModifier($collectionFactory);
@@ -61,17 +60,17 @@ class PartialSearchModifierTest extends TestCase
         $items = [];
         $searchWeight = 10;
         foreach ($attributes as $attribute) {
-            $item = $this->getMockBuilder(AttributeTestHelper::class)
-                ->onlyMethods(['getSearchWeight', 'getAttributeCode'])
-                ->disableOriginalConstructor()
-                ->getMock();
+            $item = $this->createPartialMockWithReflection(
+                \Magento\Catalog\Model\ResourceModel\Eav\Attribute::class,
+                ['getSearchWeight', 'getAttributeCode']
+            );
             $item->method('getAttributeCode')
                 ->willReturn($attribute);
             $item->method('getSearchWeight')
                 ->willReturn($searchWeight);
             $items[] = $item;
         }
-        $reflectionProperty = new ReflectionProperty($this->collection, '_items');
+        $reflectionProperty = new \ReflectionProperty($this->collection, '_items');
         $reflectionProperty->setAccessible(true);
         $reflectionProperty->setValue($this->collection, $items);
         $this->assertEquals($expected, $this->model->modify($requests));

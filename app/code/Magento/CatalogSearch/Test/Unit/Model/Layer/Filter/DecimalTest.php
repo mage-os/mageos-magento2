@@ -7,9 +7,6 @@ declare(strict_types=1);
 
 namespace Magento\CatalogSearch\Test\Unit\Model\Layer\Filter;
 
-use Magento\Framework\UrlInterface;
-use Magento\Theme\Block\Html\Pager;
-use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Layer;
 use Magento\Catalog\Model\Layer\Filter\Item;
 use Magento\Catalog\Model\Layer\Filter\ItemFactory;
@@ -17,12 +14,12 @@ use Magento\Catalog\Model\Layer\State;
 use Magento\Catalog\Model\ResourceModel\Layer\Filter\DecimalFactory;
 use Magento\CatalogSearch\Model\Layer\Filter\Decimal;
 use Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection;
-use Magento\Eav\Test\Unit\Helper\AttributeTestHelper;
-use Magento\Catalog\Test\Unit\Helper\FilterItemTestHelper;
 use Magento\Eav\Model\Entity\Attribute;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -33,6 +30,7 @@ use PHPUnit\Framework\TestCase;
  */
 class DecimalTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var Item|MockObject
      */
@@ -80,63 +78,57 @@ class DecimalTest extends TestCase
     {
         self::$request = $this->createMock(RequestInterface::class);
 
-        $this->layer = $this->getMockBuilder(Layer::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getState', 'getProductCollection'])
-            ->getMock();
-        $this->filterItemFactory = $this->getMockBuilder(ItemFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
+        $this->layer = $this->createPartialMock(
+            Layer::class,
+            ['getState', 'getProductCollection']
+        );
 
-        $this->filterItem = $this->getMockBuilder(FilterItemTestHelper::class)
-            ->onlyMethods(['setFilter', 'setLabel', 'setValue', 'setCount'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->filterItem->expects($this->any())
-            ->method($this->anything())->willReturnSelf();
-        $this->filterItemFactory->expects($this->any())
-            ->method('create')
+        $this->filterItemFactory = $this->createPartialMock(
+            ItemFactory::class,
+            ['create']
+        );
+
+        $this->filterItem = $this->createPartialMockWithReflection(
+            Item::class,
+            ['setFilter', 'setLabel', 'setValue', 'setCount']
+        );
+        $this->filterItem->method($this->anything())->willReturnSelf();
+        $this->filterItemFactory->method('create')
             ->willReturnCallback(
                 function (array $data) {
                     return new Item(
-                        $this->createMock(UrlInterface::class),
-                        $this->createMock(Pager::class),
+                        $this->createMock(\Magento\Framework\UrlInterface::class),
+                        $this->createMock(\Magento\Theme\Block\Html\Pager::class),
                         $data
                     );
                 }
             );
 
-        $this->fulltextCollection = $this->getMockBuilder(
-            Collection::class
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->fulltextCollection = $this->createMock(Collection::class);
 
-        $this->layer->method('getProductCollection')->willReturn($this->fulltextCollection);
+        $this->layer->method('getProductCollection')
+            ->willReturn($this->fulltextCollection);
 
-        $filterDecimalFactory =
-            $this->getMockBuilder(DecimalFactory::class)
-                ->disableOriginalConstructor()
-                ->onlyMethods(['create'])
-                ->getMock();
-        $resource = $this->getMockBuilder(\Magento\Catalog\Model\ResourceModel\Layer\Filter\Decimal::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $filterDecimalFactory = $this->createPartialMock(
+            DecimalFactory::class,
+            ['create']
+        );
+        $resource = $this->createMock(\Magento\Catalog\Model\ResourceModel\Layer\Filter\Decimal::class);
         $filterDecimalFactory->expects($this->once())
             ->method('create')
             ->willReturn($resource);
 
-        $this->attribute = $this->getMockBuilder(AttributeTestHelper::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getAttributeCode', 'getFrontend', 'getIsFilterable'])
-            ->getMock();
+        $this->attribute = $this->createPartialMockWithReflection(
+            Attribute::class,
+            ['getAttributeCode', 'getFrontend', 'getIsFilterable']
+        );
 
-        $this->state = $this->getMockBuilder(State::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['addFilter'])
-            ->getMock();
-        $this->layer->method('getState')->willReturn($this->state);
+        $this->state = $this->createPartialMock(
+            State::class,
+            ['addFilter']
+        );
+        $this->layer->method('getState')
+            ->willReturn($this->state);
 
         $objectManagerHelper = new ObjectManagerHelper($this);
         $priceFormatter = $this->createMock(PriceCurrencyInterface::class);
@@ -231,7 +223,8 @@ class DecimalTest extends TestCase
             );
 
         $attributeCode = 'AttributeCode';
-        $this->attribute->method('getAttributeCode')->willReturn($attributeCode);
+        $this->attribute->method('getAttributeCode')
+            ->willReturn($attributeCode);
 
         $this->fulltextCollection->expects($this->once())
             ->method('addFieldToFilter')
@@ -248,9 +241,11 @@ class DecimalTest extends TestCase
     #[DataProvider('itemDataDataProvider')]
     public function testItemData(array $facets, array $expected): void
     {
-        $this->fulltextCollection->method('getSize')->willReturn(5);
+        $this->fulltextCollection->method('getSize')
+            ->willReturn(5);
 
-        $this->fulltextCollection->method('getFacetedData')->willReturn($facets);
+        $this->fulltextCollection->method('getFacetedData')
+            ->willReturn($facets);
         $actual = [];
         foreach (self::$target->getItems() as $item) {
             $actual[] = ['label' => $item->getLabel(), 'value' => $item->getValue(), 'count' => $item->getCount()];

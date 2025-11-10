@@ -9,13 +9,14 @@ namespace Magento\CatalogSearch\Test\Unit\Model\Adapter\Aggregation\Checker\Quer
 
 use Magento\Catalog\Api\CategoryRepositoryInterface;
 use Magento\Catalog\Api\Data\CategoryInterface;
-use Magento\CatalogSearch\Model\Adapter\Aggregation\Checker\Query\CatalogView;
 use Magento\Catalog\Test\Unit\Helper\CategoryInterfaceTestHelper;
-use Magento\Framework\Test\Unit\Helper\QueryInterfaceTestHelper;
+use Magento\CatalogSearch\Model\Adapter\Aggregation\Checker\Query\CatalogView;
 use Magento\Framework\Search\Request\Filter\Term;
+use Magento\Framework\Search\Request\Query\BoolExpression;
 use Magento\Framework\Search\Request\Query\Filter;
 use Magento\Framework\Search\Request\QueryInterface;
 use Magento\Framework\Search\RequestInterface;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -23,6 +24,7 @@ use PHPUnit\Framework\TestCase;
 
 class CatalogViewTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var CatalogView
      */
@@ -78,17 +80,20 @@ class CatalogViewTest extends TestCase
         $this->categoryRepositoryMock = $this->createMock(CategoryRepositoryInterface::class);
         $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
         $this->requestMock = $this->createMock(RequestInterface::class);
-        $this->queryFilterMock = $this->createMock(Filter::class);
-        $this->termFilterMock = $this->createMock(Term::class);
+        $this->queryFilterMock = $this->createPartialMock(
+            Filter::class,
+            ['getReference']
+        );
+        $this->termFilterMock = $this->createPartialMock(
+            Term::class,
+            ['getValue']
+        );
         $this->storeMock = $this->createMock(StoreInterface::class);
-        $this->categoryMock = $this->getMockBuilder(CategoryInterfaceTestHelper::class)
-            ->onlyMethods(['getIsAnchor'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->queryMock = $this->getMockBuilder(QueryInterfaceTestHelper::class)
-            ->onlyMethods(['getMust', 'getShould', 'getType'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->categoryMock = new CategoryInterfaceTestHelper();
+        $this->queryMock = $this->createPartialMock(
+            BoolExpression::class,
+            ['getMust', 'getShould', 'getType']
+        );
         $this->name = 'Request';
 
         $this->catalogViewMock = new CatalogView($this->categoryRepositoryMock, $this->storeManagerMock, $this->name);
@@ -104,21 +109,25 @@ class CatalogViewTest extends TestCase
         $this->requestMock->expects($this->once())
             ->method('getName')
             ->willReturn($this->name);
-        $this->requestMock->method('getQuery')->willReturn($this->queryMock);
+        $this->requestMock->method('getQuery')
+            ->willReturn($this->queryMock);
         $this->queryMock->expects($this->once())
             ->method('getType')
             ->willReturn(QueryInterface::TYPE_BOOL);
-        $this->queryMock->method('getMust')->willReturn(['category' => $this->queryFilterMock]);
-        $this->queryFilterMock->method('getReference')->willReturn($this->termFilterMock);
-        $this->termFilterMock->method('getValue')->willReturn(1);
-        $this->storeManagerMock->method('getStore')->willReturn($this->storeMock);
-        $this->storeMock->method('getId')->willReturn(1);
+        $this->queryMock->method('getMust')
+            ->willReturn(['category' => $this->queryFilterMock]);
+        $this->queryFilterMock->method('getReference')
+            ->willReturn($this->termFilterMock);
+        $this->termFilterMock->method('getValue')
+            ->willReturn(1);
+        $this->storeManagerMock->method('getStore')
+            ->willReturn($this->storeMock);
+        $this->storeMock->method('getId')
+            ->willReturn(1);
+        $this->categoryMock->setIsAnchor(false);
         $this->categoryRepositoryMock->expects($this->once())
             ->method('get')
             ->willReturn($this->categoryMock);
-        $this->categoryMock->expects($this->once())
-            ->method('getIsAnchor')
-            ->willReturn(false);
         $this->assertFalse($this->catalogViewMock->isApplicable($this->requestMock));
     }
 }

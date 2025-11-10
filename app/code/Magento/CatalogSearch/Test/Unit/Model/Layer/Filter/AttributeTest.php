@@ -7,7 +7,6 @@ declare(strict_types=1);
 
 namespace Magento\CatalogSearch\Test\Unit\Model\Layer\Filter;
 
-use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Layer;
 use Magento\Catalog\Model\Layer\Filter\AbstractFilter;
 use Magento\Catalog\Model\Layer\Filter\Item;
@@ -18,12 +17,13 @@ use Magento\Catalog\Model\ResourceModel\Eav\Attribute as EavAttribute;
 use Magento\Catalog\Model\ResourceModel\Layer\Filter\AttributeFactory;
 use Magento\CatalogSearch\Model\Layer\Filter\Attribute;
 use Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection;
-use Magento\Catalog\Test\Unit\Helper\FilterItemTestHelper;
 use Magento\Eav\Model\Entity\Attribute\Frontend\AbstractFrontend;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Filter\StripTags;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Store\Model\StoreManagerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -34,6 +34,7 @@ use PHPUnit\Framework\TestCase;
  */
 class AttributeTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var Attribute
      */
@@ -95,67 +96,70 @@ class AttributeTest extends TestCase
     protected function setUp(): void
     {
         /** @var ItemFactory $filterItemFactory */
-        $this->filterItemFactory = $this->getMockBuilder(ItemFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
+        $this->filterItemFactory = $this->createPartialMock(
+            ItemFactory::class,
+            ['create']
+        );
 
         /** @var StoreManagerInterface $storeManager */
-        $this->storeManager = $this->getMockBuilder(StoreManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->storeManager = $this->createMock(StoreManagerInterface::class);
+
         /** @var Layer $layer */
-        $this->layer = $this->getMockBuilder(Layer::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getState', 'getProductCollection'])
-            ->getMock();
-        $this->fulltextCollection =
-            $this->getMockBuilder(Collection::class)
-                ->disableOriginalConstructor()
-                ->onlyMethods(['addFieldToFilter', 'getFacetedData', 'getSize'])
-                ->getMock();
+        $this->layer = $this->createPartialMock(
+            Layer::class,
+            ['getState', 'getProductCollection']
+        );
+
+        $this->fulltextCollection = $this->createPartialMock(
+            Collection::class,
+            ['addFieldToFilter', 'getFacetedData', 'getSize']
+        );
+
         $this->layer->expects($this->atLeastOnce())
             ->method('getProductCollection')
             ->willReturn($this->fulltextCollection);
+
         /** @var DataBuilder $itemDataBuilder */
-        $this->itemDataBuilder = $this->getMockBuilder(DataBuilder::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['addItemData', 'build'])
-            ->getMock();
+        $this->itemDataBuilder = $this->createPartialMock(
+            DataBuilder::class,
+            ['addItemData', 'build']
+        );
 
-        $this->filterAttributeFactory = $this->getMockBuilder(AttributeFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
+        $this->filterAttributeFactory = $this->createPartialMock(
+            AttributeFactory::class,
+            ['create']
+        );
 
-        $this->state = $this->getMockBuilder(State::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['addFilter'])
-            ->getMock();
-        $this->layer->method('getState')->willReturn($this->state);
+        $this->state = $this->createPartialMock(
+            State::class,
+            ['addFilter']
+        );
 
-        $this->frontend = $this->getMockBuilder(AbstractFrontend::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getOption', 'getSelectOptions'])
-            ->getMock();
-        $this->attribute = $this->getMockBuilder(EavAttribute::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([
+        $this->layer->method('getState')
+            ->willReturn($this->state);
+
+        $this->frontend = $this->createPartialMock(
+            AbstractFrontend::class,
+            ['getOption', 'getSelectOptions']
+        );
+
+        $this->attribute = $this->createPartialMock(
+            EavAttribute::class,
+            [
                 'getAttributeCode',
                 'getFrontend',
                 'getIsFilterable',
                 'getBackendType'
-            ])
-            ->getMock();
+            ]
+        );
 
         $this->request = $this->createMock(RequestInterface::class);
 
-        $stripTagsFilter = $this->getMockBuilder(StripTags::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['filter'])
-            ->getMock();
-        $stripTagsFilter->expects($this->any())
-            ->method('filter')
+        $stripTagsFilter = $this->createPartialMock(
+            StripTags::class,
+            ['filter']
+        );
+        $stripTagsFilter->method('filter')
             ->willReturnArgument(0);
 
         $objectManagerHelper = new ObjectManagerHelper($this);
@@ -528,10 +532,10 @@ class AttributeTest extends TestCase
      */
     private function createFilterItem($label, $value, $count): MockObject
     {
-        $filterItem = $this->getMockBuilder(FilterItemTestHelper::class)
-            ->onlyMethods(['setFilter', 'setLabel', 'setValue', 'setCount'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $filterItem = $this->createPartialMockWithReflection(
+            Item::class,
+            ['setFilter', 'setLabel', 'setValue', 'setCount']
+        );
 
         $filterItem->expects($this->once())
             ->method('setFilter')

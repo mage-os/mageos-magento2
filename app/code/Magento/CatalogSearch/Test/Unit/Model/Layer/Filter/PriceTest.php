@@ -7,10 +7,6 @@ declare(strict_types=1);
 
 namespace Magento\CatalogSearch\Test\Unit\Model\Layer\Filter;
 
-use Magento\Framework\UrlInterface;
-use Magento\Theme\Block\Html\Pager;
-use Magento\Framework\Pricing\PriceCurrencyInterface;
-use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Layer;
 use Magento\Catalog\Model\Layer\Filter\DataProvider\Price;
 use Magento\Catalog\Model\Layer\Filter\DataProvider\PriceFactory;
@@ -19,12 +15,12 @@ use Magento\Catalog\Model\Layer\Filter\Item\DataBuilder;
 use Magento\Catalog\Model\Layer\Filter\ItemFactory;
 use Magento\Catalog\Model\Layer\State;
 use Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection;
-use Magento\Eav\Test\Unit\Helper\AttributeTestHelper;
-use Magento\Catalog\Test\Unit\Helper\PriceDataProviderTestHelper;
 use Magento\Eav\Model\Entity\Attribute;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Escaper;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -35,6 +31,7 @@ use PHPUnit\Framework\TestCase;
  */
 class PriceTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var Attribute|MockObject
      */
@@ -87,56 +84,58 @@ class PriceTest extends TestCase
     {
         $this->request = $this->createMock(RequestInterface::class);
 
-        $dataProviderFactory = $this->getMockBuilder(PriceFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])->getMock();
+        $dataProviderFactory = $this->createPartialMock(
+            PriceFactory::class,
+            ['create']
+        );
 
-        $this->dataProvider = $this->getMockBuilder(PriceDataProviderTestHelper::class)
-            ->onlyMethods(['setPriceId', 'getPrice'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->dataProvider = $this->createPartialMockWithReflection(
+            Price::class,
+            ['setPriceId', 'getPrice']
+        );
 
         $dataProviderFactory->expects($this->once())
             ->method('create')
             ->willReturn($this->dataProvider);
 
-        $this->layer = $this->getMockBuilder(Layer::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getState', 'getProductCollection'])
-            ->getMock();
+        $this->layer = $this->createPartialMock(
+            Layer::class,
+            ['getState', 'getProductCollection']
+        );
 
         $this->state = new State();
-        $this->layer->method('getState')->willReturn($this->state);
+        $this->layer->method('getState')
+            ->willReturn($this->state);
 
-        $this->fulltextCollection = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['addFieldToFilter', 'getFacetedData'])
-            ->getMock();
+        $this->fulltextCollection = $this->createPartialMock(
+            Collection::class,
+            ['addFieldToFilter', 'getFacetedData']
+        );
 
-        $this->layer->method('getProductCollection')->willReturn($this->fulltextCollection);
+        $this->layer->method('getProductCollection')
+            ->willReturn($this->fulltextCollection);
 
-        $this->itemDataBuilder = $this->getMockBuilder(DataBuilder::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['addItemData', 'build'])
-            ->getMock();
+        $this->itemDataBuilder = $this->createPartialMock(
+            DataBuilder::class,
+            ['addItemData', 'build']
+        );
 
-        $this->filterItemFactory = $this->getMockBuilder(ItemFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
+        $this->filterItemFactory = $this->createPartialMock(
+            ItemFactory::class,
+            ['create']
+        );
 
-        $this->filterItemFactory->expects($this->any())
-            ->method('create')
+        $this->filterItemFactory->method('create')
             ->willReturnCallback(
                 function (array $data) {
                     return new Item(
-                        $this->createMock(UrlInterface::class),
-                        $this->createMock(Pager::class),
+                        $this->createMock(\Magento\Framework\UrlInterface::class),
+                        $this->createMock(\Magento\Theme\Block\Html\Pager::class),
                         $data
                     );
                 }
             );
-        $priceFormatter = $this->createMock(PriceCurrencyInterface::class);
+        $priceFormatter = $this->createMock(\Magento\Framework\Pricing\PriceCurrencyInterface::class);
         $priceFormatter->method('format')
             ->willReturnCallback(
                 function ($number) {
@@ -144,19 +143,19 @@ class PriceTest extends TestCase
                 }
             );
 
-        $escaper = $this->getMockBuilder(Escaper::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['escapeHtml'])
-            ->getMock();
-        $escaper->expects($this->any())
-            ->method('escapeHtml')
+        $escaper = $this->createPartialMock(
+            Escaper::class,
+            ['escapeHtml']
+        );
+        $escaper->method('escapeHtml')
             ->willReturnArgument(0);
 
-        $this->attribute = $this->getMockBuilder(AttributeTestHelper::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getAttributeCode', 'getFrontend', 'getIsFilterable'])
-            ->getMock();
-        $objectManagerHelper = new ObjectManagerHelper($this);
+        $this->attribute = $this->createPartialMockWithReflection(
+            Attribute::class,
+            ['getAttributeCode', 'getFrontend', 'getIsFilterable']
+        );
+
+        $objectManagerHelper = new ObjectManager($this);
         $this->target = $objectManagerHelper->getObject(
             \Magento\CatalogSearch\Model\Layer\Filter\Price::class,
             [
@@ -277,7 +276,8 @@ class PriceTest extends TestCase
         $this->target->setAttributeModel($this->attribute);
 
         $attributeCode = 'attributeCode';
-        $this->attribute->method('getAttributeCode')->willReturn($attributeCode);
+        $this->attribute->method('getAttributeCode')
+            ->willReturn($attributeCode);
 
         $this->fulltextCollection->expects($this->once())
             ->method('getFacetedData')
