@@ -42,21 +42,44 @@ class TreeTest extends TestCase
     private function createCategoryCollectionStub(array $paths)
     {
         // Simple iterable stub with chainable methods
-        return new class($paths) extends \ArrayObject {
+        return new class($paths) implements \IteratorAggregate, \Countable {
+            /** @var array */
+            private $items;
             public function __construct(array $paths)
             {
                 $items = [];
                 foreach ($paths as $path) {
                     $items[] = new class($path) {
+                        /** @var string */
                         private $path;
-                        public function __construct($p) { $this->path = $p; }
-                        public function getPath() { return $this->path; }
+                        public function __construct($p)
+                        {
+                            $this->path = $p;
+                        }
+                        public function getPath()
+                        {
+                            return $this->path;
+                        }
                     };
                 }
-                parent::__construct($items);
+                $this->items = $items;
             }
-            public function addAttributeToSelect($arg) { return $this; }
-            public function addAttributeToFilter($field, $cond) { return $this; }
+            public function addAttributeToSelect($arg)
+            {
+                return $this;
+            }
+            public function addAttributeToFilter($field, $cond)
+            {
+                return $this;
+            }
+            public function getIterator(): \Traversable
+            {
+                return new \ArrayIterator($this->items);
+            }
+            public function count(): int
+            {
+                return count($this->items);
+            }
         };
     }
 
@@ -149,11 +172,32 @@ class TreeTest extends TestCase
         $block = $this->buildBlockMock();
 
         // Custom stub that captures the last filter applied
-        $collectionStub = new class([]) extends \ArrayObject {
+        $collectionStub = new class([]) implements \IteratorAggregate, \Countable {
+            /** @var array */
+            private $items = [];
+            /** @var array|null */
             public $lastFilter;
-            public function __construct($paths) { parent::__construct([]); }
-            public function addAttributeToSelect($arg) { return $this; }
-            public function addAttributeToFilter($field, $cond) { $this->lastFilter = [$field, $cond]; return $this; }
+            public function __construct($paths)
+            {
+                $this->items = [];
+            }
+            public function addAttributeToSelect($arg)
+            {
+                return $this;
+            }
+            public function addAttributeToFilter($field, $cond)
+            {
+                $this->lastFilter = [$field, $cond];
+                return $this;
+            }
+            public function getIterator(): \Traversable
+            {
+                return new \ArrayIterator($this->items);
+            }
+            public function count(): int
+            {
+                return count($this->items);
+            }
         };
         $categoryModelMock = $this->getMockBuilder(\stdClass::class)
             ->addMethods(['getCollection'])
@@ -176,7 +220,14 @@ class TreeTest extends TestCase
         $block = $this->buildBlockMock();
         $parent = new Node(['id' => 99, 'children' => []], 'id', new \Magento\Framework\Data\Tree());
         $block->expects($this->once())->method('getRoot')->with($parent)->willReturn($parent);
-        $block->expects($this->once())->method('_getNodeJson')->with($parent)->willReturn(['children' => [['id' => 1]]]);
+        $block->expects($this->once())
+            ->method('_getNodeJson')
+            ->with($parent)
+            ->willReturn([
+                'children' => [
+                    ['id' => 1],
+                ],
+            ]);
         $tree = $block->getTree($parent);
         $this->assertSame([['id' => 1]], $tree);
     }
@@ -240,7 +291,14 @@ class TreeTest extends TestCase
         $block = $this->buildBlockMock();
         $root = new Node(['id' => 1, 'children' => []], 'id', new \Magento\Framework\Data\Tree());
         $block->expects($this->once())->method('getRoot')->with(null)->willReturn($root);
-        $block->expects($this->once())->method('_getNodeJson')->with($root)->willReturn(['children' => [['id' => 3]]]);
+        $block->expects($this->once())
+            ->method('_getNodeJson')
+            ->with($root)
+            ->willReturn([
+                'children' => [
+                    ['id' => 3],
+                ],
+            ]);
         $this->jsonEncoderMock->method('encode')->with([['id' => 3]])->willReturn('[{"id":3}]');
         $this->assertSame('[{"id":3}]', $block->getTreeJson());
     }
@@ -250,8 +308,16 @@ class TreeTest extends TestCase
         $block = $this->buildBlockMock();
         $parent = new Node(['id' => 99, 'children' => []], 'id', new \Magento\Framework\Data\Tree());
         $block->expects($this->once())->method('getRoot')->with($parent)->willReturn($parent);
-        $block->expects($this->once())->method('_getNodeJson')->with($parent)->willReturn(['children' => [['id' => 11]]]);
-        $this->jsonEncoderMock->method('encode')->with([[ 'id' => 11 ]])->willReturn('[{"id":11}]');
+        $block->expects($this->once())->method('_getNodeJson')->with($parent)->willReturn(
+            ['children' => [['id' => 11]]]
+        );
+        $this->jsonEncoderMock->method('encode')
+            ->with([
+                [
+                    'id' => 11,
+                ],
+            ])
+            ->willReturn('[{"id":11}]');
 
         $json = $block->getTreeJson($parent);
         $this->assertSame('[{"id":11}]', $json);
@@ -267,7 +333,9 @@ class TreeTest extends TestCase
 
         // Inject _categoryTree and other props
         $resourceTree = $this->createMock(CategoryTreeResource::class);
-        $resourceTree->method('getExistingCategoryIdsBySpecifiedIds')->willReturnCallback(function ($ids) { return $ids; });
+        $resourceTree->method('getExistingCategoryIdsBySpecifiedIds')->willReturnCallback(function ($ids) {
+            return $ids;
+        });
         $resourceTree->method('loadByIds')->willReturn($resourceTree);
         $rootNode = new Node(['id' => 1, 'children' => []], 'id', new \Magento\Framework\Data\Tree());
         $resourceTree->method('getNodeById')->willReturn($rootNode);
@@ -290,7 +358,20 @@ class TreeTest extends TestCase
         $setProp($block, '_jsonEncoder', $this->jsonEncoderMock);
 
         // Stub category collection
-        $block->method('getCategoryCollection')->willReturn(new \ArrayObject());
+        $block->method('getCategoryCollection')->willReturn(
+            new class() implements \IteratorAggregate, \Countable {
+                /** @var array */
+                private $items = [];
+                public function getIterator(): \Traversable
+                {
+                    return new \ArrayIterator($this->items);
+                }
+                public function count(): int
+                {
+                    return count($this->items);
+                }
+            }
+        );
 
         $result = $block->getRootByIds([10]);
         $this->assertInstanceOf(Node::class, $result);
@@ -305,7 +386,9 @@ class TreeTest extends TestCase
             ->onlyMethods(['escapeHtml'])
             ->getMock();
 
-        $block->method('escapeHtml')->willReturnCallback(function ($v) { return $v; });
+        $block->method('escapeHtml')->willReturnCallback(function ($v) {
+            return $v;
+        });
 
         // Inject required props
         $setProp = function ($object, $prop, $value) {
@@ -366,7 +449,9 @@ class TreeTest extends TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['escapeHtml'])
             ->getMock();
-        $block->method('escapeHtml')->willReturnCallback(function ($v) { return $v; });
+        $block->method('escapeHtml')->willReturnCallback(function ($v) {
+            return $v;
+        });
 
         $node = new Node([
             'id' => 2,
@@ -391,7 +476,9 @@ class TreeTest extends TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['escapeHtml'])
             ->getMock();
-        $block->method('escapeHtml')->willReturnCallback(function ($v) { return $v; });
+        $block->method('escapeHtml')->willReturnCallback(function ($v) {
+            return $v;
+        });
 
         $child = new Node([
             'id' => 6,
@@ -429,7 +516,9 @@ class TreeTest extends TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['escapeHtml'])
             ->getMock();
-        $block->method('escapeHtml')->willReturnCallback(function ($v) { return $v; });
+        $block->method('escapeHtml')->willReturnCallback(function ($v) {
+            return $v;
+        });
 
         $node = new Node([
             'id' => 8,
