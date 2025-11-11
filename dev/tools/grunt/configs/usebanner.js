@@ -6,9 +6,10 @@
 'use strict';
 
 function printCopyright(lang) {
-    var copyrightText = {
-            firstLine: 'Copyright © Magento, Inc. All rights reserved.',
-            secondLine: 'See COPYING.txt for license details.'
+    var currentYear = new Date().getFullYear(),
+        copyrightText = {
+            firstLine: 'Copyright ' + currentYear + ' Adobe',
+            secondLine: 'All Rights Reserved.'
         },
         nlWin = '\r\n';
     switch (lang) {

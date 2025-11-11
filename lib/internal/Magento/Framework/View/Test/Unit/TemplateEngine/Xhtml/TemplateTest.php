@@ -47,8 +47,8 @@ HTML;
         $expected = <<<HTML
 <!--
 /**
- * Copyright &copy; Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2020 Adobe
+ * All Rights Reserved.
  */
 --><html xmlns="http://www.w3.org/1999/xhtml">
     <head>

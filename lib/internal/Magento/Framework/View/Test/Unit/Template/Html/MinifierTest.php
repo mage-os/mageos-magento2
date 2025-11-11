@@ -188,7 +188,7 @@ SOMETEXT;
 TEXT;
 
         $expectedContent = <<<TEXT
-<?php /** * Copyright © Magento, Inc. All rights reserved. * See COPYING.txt for license details. */ ?> <?php ?> <span><?php ?><?php ?></span> <html><head><title>Test title</title></head><link rel="stylesheet" href='https://www.example.com/2' type="text/css" /><link rel="stylesheet" type="text/css" media="all" href="https://www.example.com/1" type="text/css" /><body><a href="http://somelink.com/text.html">Text Link</a> <img src="test.png" alt="some text" /><?php echo \$block->someMethod(); ?> <img src="data:image/gif;base64,P///yH5BAEAAAA" data-component="main-image"><?= \$block->someMethod(); ?> <div style="width: 800px" class="<?php echo \$block->getClass() ?>" /><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-component="main-image"><script>
+<?php /** * Copyright 2015 Adobe * All Rights Reserved. */ ?> <?php ?> <span><?php ?><?php ?></span> <html><head><title>Test title</title></head><link rel="stylesheet" href='https://www.example.com/2' type="text/css" /><link rel="stylesheet" type="text/css" media="all" href="https://www.example.com/1" type="text/css" /><body><a href="http://somelink.com/text.html">Text Link</a> <img src="test.png" alt="some text" /><?php echo \$block->someMethod(); ?> <img src="data:image/gif;base64,P///yH5BAEAAAA" data-component="main-image"><?= \$block->someMethod(); ?> <div style="width: 800px" class="<?php echo \$block->getClass() ?>" /><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-component="main-image"><script>
             var i = 1;
             var j = 1;
 
