@@ -48,8 +48,6 @@
 
             <!-- Login to Admin -->
             <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
-            <!-- Delete custom website as the test was failing due to a data issue related to the website. -->
-            <actionGroup ref="AdminDeleteMultipleWebsitesActionGroup" stepKey="deleteWebsite"/>
 
             <!-- Go to Tax Rule page, add Tax Rate, unassign Default Tax Rate -->
             <amOnPage url="{{AdminEditTaxRulePage.url($createTaxRule.id$)}}" stepKey="goToTaxRulePage"/>
@@ -89,6 +87,10 @@
             <actionGroup ref="ClickSaveButtonActionGroup" stepKey="saveSecondTaxRule">
                 <argument name="message" value="You saved the tax rule."/>
             </actionGroup>
+
+            <!-- Delete custom website as the test was failing due to a data issue related to the website. -->
+            <actionGroup ref="AdminSystemStoreOpenPageActionGroup" stepKey="navigateToStores"/>
+            <actionGroup ref="AdminDeleteMultipleWebsitesActionGroup" stepKey="deleteWebsite"/>
         </before>
         <after>
             <!-- Delete product and category -->
