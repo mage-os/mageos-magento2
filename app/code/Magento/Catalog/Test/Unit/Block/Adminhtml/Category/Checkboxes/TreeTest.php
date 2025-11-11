@@ -74,6 +74,9 @@ class TreeTest extends TestCase
              */
             public function addAttributeToFilter($field, $cond)
             {
+                if ($field || $cond) {
+                    // no-op: reference parameters to satisfy static analyzers
+                }
                 return $this;
             }
             public function getIterator(): \Traversable
