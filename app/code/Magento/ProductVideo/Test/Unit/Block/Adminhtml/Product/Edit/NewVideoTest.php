@@ -78,9 +78,7 @@ class NewVideoTest extends TestCase
     protected $directoryHelperMock;
 
     /**
-     * |\Magento\ProductVideo\Block\Adminhtml\Product\Edit\NewVideo
-     *
-     * @var ObjectManager
+     * @var NewVideo|MockObject
      */
     protected $block;
 
@@ -108,7 +106,7 @@ class NewVideoTest extends TestCase
     public function testGetHtmlId()
     {
         $expectedId = 'id_test123';
-        $this->block->expects($this->once())->method('getHtmlId')->willReturn($expectedId);
+        $this->block->method('getHtmlId')->willReturn($expectedId);
         $result = $this->block->getHtmlId();
         $this->assertEquals($expectedId, $result);
     }
@@ -117,7 +115,7 @@ class NewVideoTest extends TestCase
     {
         $expectedOptions = '{"saveVideoUrl":"test_url","saveRemoteVideoUrl":"test_remote_url","htmlId":"test_id",'
             . '"youTubeApiKey":null,"videoSelector":"#media_gallery_content"}';
-        $this->block->expects($this->once())->method('getWidgetOptions')->willReturn($expectedOptions);
+        $this->block->method('getWidgetOptions')->willReturn($expectedOptions);
         $result = $this->block->getWidgetOptions();
         $this->assertEquals($expectedOptions, $result);
     }

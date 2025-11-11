@@ -18,7 +18,10 @@ use Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection;
 use Magento\Eav\Model\Entity\Attribute;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Escaper;
+use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+use Magento\Framework\UrlInterface;
+use Magento\Theme\Block\Html\Pager;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -129,13 +132,13 @@ class PriceTest extends TestCase
             ->willReturnCallback(
                 function (array $data) {
                     return new Item(
-                        $this->createMock(\Magento\Framework\UrlInterface::class),
-                        $this->createMock(\Magento\Theme\Block\Html\Pager::class),
+                        $this->createMock(UrlInterface::class),
+                        $this->createMock(Pager::class),
                         $data
                     );
                 }
             );
-        $priceFormatter = $this->createMock(\Magento\Framework\Pricing\PriceCurrencyInterface::class);
+        $priceFormatter = $this->createMock(PriceCurrencyInterface::class);
         $priceFormatter->method('format')
             ->willReturnCallback(
                 function ($number) {

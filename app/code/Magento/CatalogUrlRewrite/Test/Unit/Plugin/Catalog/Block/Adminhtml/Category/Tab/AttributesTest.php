@@ -12,8 +12,9 @@ use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\Category\DataProvider as CategoryDataProvider;
 use Magento\CatalogUrlRewrite\Plugin\Catalog\Block\Adminhtml\Category\Tab\Attributes;
 use Magento\Framework\App\Config\ScopeConfigInterface;
-use PHPUnit\Framework\MockObject\MockObject;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -68,7 +69,7 @@ class AttributesTest extends TestCase
      * @param string $expectedValueMap
      * @return void
      */
-    #[\PHPUnit\Framework\Attributes\DataProvider('attributesMetaDataProvider')]
+    #[DataProvider('attributesMetaDataProvider')]
     public function testGetAttributesMeta(bool $configEnabled, string $expectedValue, string $expectedValueMap): void
     {
         $this->categoryMock->expects($this->once())

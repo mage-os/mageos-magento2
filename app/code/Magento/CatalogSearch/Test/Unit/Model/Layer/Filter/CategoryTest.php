@@ -13,6 +13,7 @@ use Magento\Catalog\Model\Layer\Filter\DataProvider\CategoryFactory;
 use Magento\Catalog\Model\Layer\Filter\Item;
 use Magento\Catalog\Model\Layer\Filter\Item\DataBuilder;
 use Magento\Catalog\Model\Layer\Filter\ItemFactory;
+use Magento\CatalogSearch\Model\Layer\Filter\Category as CategoryFilter;
 use Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Escaper;
@@ -138,7 +139,7 @@ class CategoryTest extends TestCase
 
         $objectManagerHelper = new ObjectManagerHelper($this);
         $this->target = $objectManagerHelper->getObject(
-            \Magento\CatalogSearch\Model\Layer\Filter\Category::class,
+            CategoryFilter::class,
             [
                 'categoryDataProviderFactory' => $dataProviderFactory,
                 'layer' => $this->layer,

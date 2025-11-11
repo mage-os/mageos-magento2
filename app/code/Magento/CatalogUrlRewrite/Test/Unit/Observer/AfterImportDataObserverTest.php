@@ -11,6 +11,7 @@ use Magento\Catalog\Api\Data\ProductAttributeInterface;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Eav\Model\ResourceModel\AttributeValue;
 use Magento\Catalog\Api\ProductRepositoryInterface;
+use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ProductFactory;
 use Magento\Catalog\Model\ResourceModel\Category\CollectionFactory as CategoryCollectionFactory;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
@@ -194,7 +195,7 @@ class AfterImportDataObserverTest extends TestCase
     {
         $this->skuStorageMock = $this->createMock(ImportProduct\SkuStorage::class);
         $this->importProduct = $this->createPartialMock(
-            \Magento\CatalogImportExport\Model\Import\Product::class,
+            ImportProduct::class,
             [
                 'getNewSku',
                 'getProductCategories',
@@ -237,7 +238,7 @@ class AfterImportDataObserverTest extends TestCase
         );
         $this->urlFinder = $this->createMock(UrlFinderInterface::class);
         $this->urlRewrite = $this->createMock(UrlRewrite::class);
-        $this->product = $this->createMock(\Magento\Catalog\Model\Product::class);
+        $this->product = $this->createMock(Product::class);
         $this->objectRegistry = $this->createMock(ObjectRegistry::class);
         $mergeDataProviderFactory = $this->createPartialMock(
             MergeDataProviderFactory::class,
@@ -290,12 +291,10 @@ class AfterImportDataObserverTest extends TestCase
             ]
         );
         $storeIds = [1, Store::DEFAULT_STORE_ID];
-        $websiteMock
-            ->expects($this->once())
+        $websiteMock->expects($this->once())
             ->method('getStoreIds')
             ->willReturn($storeIds);
-        $this->storeManager
-            ->expects($this->once())
+        $this->storeManager->expects($this->once())
             ->method('getWebsite')
             ->with($websiteId)
             ->willReturn($websiteMock);

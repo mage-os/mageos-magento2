@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\CatalogUrlRewrite\Test\Unit\Model\Map;
 
 use Magento\Catalog\Api\Data\CategoryInterface;
+use Magento\Catalog\Model\Category as CategoryModel;
 use Magento\Catalog\Model\CategoryRepository;
 use Magento\Catalog\Model\ResourceModel\Category;
 use Magento\Catalog\Model\ResourceModel\CategoryFactory;
@@ -62,7 +63,7 @@ class DataCategoryHashMapTest extends TestCase
         $categoryIdsOther = ['2' => [2, 3, 4]];
 
         $categoryMock = $this->createPartialMockWithReflection(
-            \Magento\Catalog\Model\Category::class,
+            CategoryModel::class,
             ['getResource']
         );
         $connectionAdapterMock = $this->createMock(AdapterInterface::class);
@@ -96,11 +97,11 @@ class DataCategoryHashMapTest extends TestCase
             });
 
         $this->assertEquals($categoryIds, $this->model->getAllData(1));
-        $this->assertEquals($categoryIds[2], $this->model->getData(1, 2));
+        $this->assertEquals($categoryIds['2'], $this->model->getData(1, '2'));
         $this->assertEquals($categoryIdsOther, $this->model->getAllData(2));
-        $this->assertEquals($categoryIdsOther[2], $this->model->getData(2, 2));
+        $this->assertEquals($categoryIdsOther['2'], $this->model->getData(2, '2'));
         $this->model->resetData(1);
-        $this->assertEquals($categoryIds[2], $this->model->getData(1, 2));
+        $this->assertEquals($categoryIds['2'], $this->model->getData(1, '2'));
         $this->assertEquals($categoryIds, $this->model->getAllData(1));
     }
 }

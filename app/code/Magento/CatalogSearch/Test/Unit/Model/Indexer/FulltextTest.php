@@ -11,6 +11,7 @@ use Magento\Framework\Registry;
 use Magento\CatalogSearch\Model\Indexer\Fulltext;
 use Magento\CatalogSearch\Model\Indexer\Fulltext\Action\Full;
 use Magento\CatalogSearch\Model\Indexer\Fulltext\Action\FullFactory;
+use Magento\CatalogSearch\Model\ResourceModel\Fulltext as FulltextResource;
 use Magento\Elasticsearch\Model\Indexer\IndexerHandler;
 use Magento\Framework\Amqp\ConfigPool as AmqpConfigPool;
 use Magento\Framework\Indexer\SaveHandler\IndexerInterface;
@@ -48,7 +49,7 @@ class FulltextTest extends TestCase
     protected $saveHandler;
 
     /**
-     * @var \Magento\CatalogSearch\Model\ResourceModel\Fulltext|MockObject
+     * @var FulltextResource|MockObject
      */
     protected $fulltextResource;
 
@@ -77,7 +78,7 @@ class FulltextTest extends TestCase
         );
         $indexerHandlerFactory->method('create')->willReturn($this->saveHandler);
 
-        $this->fulltextResource = $this->getClassMock(\Magento\CatalogSearch\Model\ResourceModel\Fulltext::class);
+        $this->fulltextResource = $this->getClassMock(FulltextResource::class);
 
         $this->dimensionProviderMock = $this->getMockBuilder(DimensionProviderInterface::class)
             ->getMock();
@@ -101,8 +102,14 @@ class FulltextTest extends TestCase
         ];
         $objectManagerHelper->prepareObjectManager($objects);
 
-        $this->processManager = new ProcessManager(
-            $this->getClassMock(ResourceConnection::class)
+        $this->processManager = $this->createMock(ProcessManager::class);
+        $this->processManager->method('execute')->willReturnCallback(
+            function ($userFunctions) {
+                // Execute each function in the array
+                foreach ($userFunctions as $callback) {
+                    $callback();
+                }
+            }
         );
 
         $this->model = $objectManagerHelper->getObject(

@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\CatalogSearch\Test\Unit\Model\Search\Request;
 
+use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
 use Magento\Catalog\Model\ResourceModel\Product\Attribute\Collection;
 use Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory;
 use Magento\CatalogSearch\Model\Search\Request\PartialSearchModifier;
@@ -61,7 +62,7 @@ class PartialSearchModifierTest extends TestCase
         $searchWeight = 10;
         foreach ($attributes as $attribute) {
             $item = $this->createPartialMockWithReflection(
-                \Magento\Catalog\Model\ResourceModel\Eav\Attribute::class,
+                Attribute::class,
                 ['getSearchWeight', 'getAttributeCode']
             );
             $item->method('getAttributeCode')

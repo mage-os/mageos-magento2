@@ -11,6 +11,7 @@ use Magento\Catalog\Model\Layer;
 use Magento\Catalog\Model\Layer\Filter\Item;
 use Magento\Catalog\Model\Layer\Filter\ItemFactory;
 use Magento\Catalog\Model\Layer\State;
+use Magento\Catalog\Model\ResourceModel\Layer\Filter\Decimal as DecimalResource;
 use Magento\Catalog\Model\ResourceModel\Layer\Filter\DecimalFactory;
 use Magento\CatalogSearch\Model\Layer\Filter\Decimal;
 use Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection;
@@ -113,7 +114,7 @@ class DecimalTest extends TestCase
             DecimalFactory::class,
             ['create']
         );
-        $resource = $this->createMock(\Magento\Catalog\Model\ResourceModel\Layer\Filter\Decimal::class);
+        $resource = $this->createMock(DecimalResource::class);
         $filterDecimalFactory->expects($this->once())
             ->method('create')
             ->willReturn($resource);

@@ -90,18 +90,11 @@ class DataCategoryUsedInProductsHashMapTest extends TestCase
 
         $this->connectionMock->method('getConnection')->willReturn($connectionMock);
         $connectionMock->method('select')->willReturn($selectMock);
-        $connectionMock->expects($this->any())
-            ->method('fetchCol')
+        $connectionMock->method('fetchCol')
             ->willReturnOnConsecutiveCalls($categoryIds, $categoryIdsOther, $categoryIds);
-        $selectMock->expects($this->any())
-            ->method('from')
-            ->willReturnSelf();
-        $selectMock->expects($this->any())
-            ->method('joinInner')
-            ->willReturnSelf();
-        $selectMock->expects($this->any())
-            ->method('where')
-            ->willReturnSelf();
+        $selectMock->method('from')->willReturnSelf();
+        $selectMock->method('joinInner')->willReturnSelf();
+        $selectMock->method('where')->willReturnSelf();
         $this->hashMapPoolMock
             ->method('resetMap')
             ->willReturnCallback(function ($arg1, $arg2) {
@@ -111,11 +104,11 @@ class DataCategoryUsedInProductsHashMapTest extends TestCase
             });
 
         $this->assertEquals($categoryIds, $this->model->getAllData(1));
-        $this->assertEquals($categoryIds[2], $this->model->getData(1, 2));
+        $this->assertEquals($categoryIds['2'], $this->model->getData(1, '2'));
         $this->assertEquals($categoryIdsOther, $this->model->getAllData(2));
-        $this->assertEquals($categoryIdsOther[2], $this->model->getData(2, 2));
+        $this->assertEquals($categoryIdsOther['2'], $this->model->getData(2, '2'));
         $this->model->resetData(1);
-        $this->assertEquals($categoryIds[2], $this->model->getData(1, 2));
+        $this->assertEquals($categoryIds['2'], $this->model->getData(1, '2'));
         $this->assertEquals($categoryIds, $this->model->getAllData(1));
     }
 }

@@ -94,7 +94,8 @@ class TierPriceTest extends TestCase
         $groups = [$groupTest];
         $groupSearchResult->method('getItems')->willReturn($groups);
 
-        $this->tierPrice->init(null);
+        $productMock = $this->createMock(Product::class);
+        $this->tierPrice->init($productMock);
     }
 
     public function testInitAddToCustomerGroups()
@@ -119,7 +120,8 @@ class TierPriceTest extends TestCase
         $groups = [$groupTest];
         $groupSearchResult->method('getItems')->willReturn($groups);
 
-        $this->tierPrice->init(null);
+        $productMock = $this->createMock(Product::class);
+        $this->tierPrice->init($productMock);
 
         $reflection = new ReflectionClass($this->tierPrice);
         $property = $reflection->getProperty('customerGroups');
@@ -146,19 +148,7 @@ class TierPriceTest extends TestCase
     #[DataProvider('isValidAddMessagesCallDataProvider')]
     public function testIsValidAddMessagesCall($value, $hasEmptyColumns, $customerGroups, $expectedMessages)
     {
-        $priceContextMock = $this->getMockBuilder(Product::class)
-            ->setConstructorArgs(
-                [
-                    Data::class,
-                    ImportExportHelperData::class,
-                    ResourceImportData::class,
-                    Config::class,
-                    ResourceConnection::class,
-                    Helper::class,
-                    StringUtils::class,
-                    'ProcessingErrorAggregatorInterface'
-                ]
-            );
+        $priceContextMock = $this->createMock(Product::class);
 
         $this->tierPrice->expects($this->once())->method('isValidValueAndLength')->willReturn(true);
         $this->tierPrice->method('hasEmptyColumns')->willReturn($hasEmptyColumns);
