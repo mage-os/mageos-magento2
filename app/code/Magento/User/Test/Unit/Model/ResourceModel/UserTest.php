@@ -23,6 +23,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\User\Model\ResourceModel\User;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\User\Model\User as UserModel;
 
 /**
  * Test class for \Magento\User\Model\ResourceModel\User testing
@@ -36,7 +37,7 @@ class UserTest extends TestCase
     /** @var User */
     protected $model;
 
-    /** @var \Magento\User\Model\User|MockObject */
+    /** @var UserModel|MockObject */
     protected $userMock;
 
     /** @var Context|MockObject */
@@ -67,7 +68,7 @@ class UserTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->userMock = $this->createMock(\Magento\User\Model\User::class);
+        $this->userMock = $this->createMock(UserModel::class);
         $this->resourceMock = $this->createMock(ResourceConnection::class);
         $this->roleFactoryMock = $this->createPartialMock(RoleFactory::class, ['create']);
         $this->roleMock = $this->createMock(Role::class);
@@ -394,7 +395,7 @@ class UserTest extends TestCase
         $roleId = 123;
         $objectManager = new ObjectManager($this);
         $methodUserMock = $this->createPartialMockWithReflection(
-            \Magento\User\Model\User::class,
+            UserModel::class,
             ['hasRoleId', 'getRoleId', 'getExtra', 'setExtra']
         );
         $methodUserMock->expects($this->once())->method('hasRoleId')->willReturn(true);
@@ -433,7 +434,7 @@ class UserTest extends TestCase
     {
         $objectManager = new ObjectManager($this);
         $methodUserMock = $this->createPartialMockWithReflection(
-            \Magento\User\Model\User::class,
+            UserModel::class,
             ['getExtra', 'setExtra']
         );
         $extraData = ['user', 'extra', 'data'];
@@ -464,7 +465,7 @@ class UserTest extends TestCase
     {
         $objectManager = new ObjectManager($this);
         $methodUserMock = $this->createPartialMockWithReflection(
-            \Magento\User\Model\User::class,
+            UserModel::class,
             ['getExtra', 'setExtra']
         );
         $extraData = null;

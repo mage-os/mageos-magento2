@@ -72,6 +72,12 @@ class JwsFactoryTest extends TestCase
 
     /**
      * Test "create" method.
+     *
+     * @param array $headers
+     * @param string $content
+     * @param array|null $unprotected
+     * @param string $payloadClass
+     * @return void
      */
     #[DataProvider('getCreateCases')]
     public function testCreate(

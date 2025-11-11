@@ -76,7 +76,7 @@ class AuthObserverTest extends TestCase
 
         $this->configInterfaceMock = $this->createMock(ConfigInterface::class);
         $this->userMock = $this->createPartialMock(
-            \Magento\User\Model\ResourceModel\User::class,
+            User::class,
             ['unlock', 'updateFailure', 'getLatestPassword']
         );
         $this->urlInterfaceMock = $this->createMock(UrlInterface::class);
@@ -92,9 +92,9 @@ class AuthObserverTest extends TestCase
         );
         $this->userFactoryMock = $this->createPartialMock(UserFactory::class, ['create']);
         $this->encryptorMock = $this->createMock(EncryptorInterface::class);
-        $this->managerInterfaceMock = $this->createMock(\Magento\Framework\Message\ManagerInterface::class);
+        $this->managerInterfaceMock = $this->createMock(ManagerInterface::class);
         $this->messageInterfaceMock = $this->createMock(MessageInterface::class);
-        $this->eventManagerMock = $this->createMock(\Magento\Framework\Event\ManagerInterface::class);
+        $this->eventManagerMock = $this->createMock(EventManagerInterface::class);
 
         $this->observerConfig = $helper->getObject(
             ObserverConfig::class,
@@ -141,7 +141,7 @@ class AuthObserverTest extends TestCase
 
         /** @var ModelUser|MockObject $userMock */
         $userMock = $this->createPartialMockWithReflection(
-            \Magento\User\Model\User::class,
+            ModelUser::class,
             ['getLockExpires', 'getId', 'getPassword', 'save']
         );
 
@@ -190,7 +190,7 @@ class AuthObserverTest extends TestCase
 
         /** @var ModelUser|MockObject $userMock */
         $userMock = $this->createPartialMockWithReflection(
-            \Magento\User\Model\User::class,
+            ModelUser::class,
             ['getLockExpires', 'getId', 'getPassword']
         );
 
@@ -235,7 +235,7 @@ class AuthObserverTest extends TestCase
 
         /** @var ModelUser|MockObject $userMock */
         $userMock = $this->createPartialMockWithReflection(
-            \Magento\User\Model\User::class,
+            ModelUser::class,
             ['getLockExpires', 'getId', 'getPassword', 'save']
         );
 
@@ -286,7 +286,7 @@ class AuthObserverTest extends TestCase
 
         /** @var ModelUser|MockObject $userMock */
         $userMock = $this->createPartialMockWithReflection(
-            \Magento\User\Model\User::class,
+            ModelUser::class,
             ['getId', 'getFailuresNum', 'getFirstFailure']
         );
 

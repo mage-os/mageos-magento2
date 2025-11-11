@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\Captcha\Test\Unit\Cron;
 
 use Magento\Captcha\Cron\DeleteExpiredImages;
+use Magento\Captcha\Helper\Adminhtml\Data as AdminhtmlData;
 use Magento\Captcha\Helper\Data;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Directory\Write;
@@ -74,7 +75,7 @@ class DeleteExpiredImagesTest extends TestCase
     protected function setUp(): void
     {
         $this->_helper = $this->createMock(Data::class);
-        $this->_adminHelper = $this->createMock(\Magento\Captcha\Helper\Adminhtml\Data::class);
+        $this->_adminHelper = $this->createMock(AdminhtmlData::class);
         $this->_filesystem = $this->createMock(Filesystem::class);
         $this->_directory = $this->createMock(Write::class);
         $this->_storeManager = $this->createMock(StoreManager::class);

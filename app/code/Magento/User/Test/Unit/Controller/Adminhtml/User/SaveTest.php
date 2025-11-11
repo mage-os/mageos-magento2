@@ -14,6 +14,7 @@ use Magento\Framework\App\Response\RedirectInterface;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\ObjectManagerInterface;
+use Magento\Framework\Registry;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\User\Controller\Adminhtml\User\Save;
@@ -80,7 +81,7 @@ class SaveTest extends TestCase
             Session::class,
             ['setUserData']
         );
-        $registryMock = $this->createMock(\Magento\Framework\Registry::class);
+        $registryMock = $this->createMock(Registry::class);
         $this->contextMock = $this->createMock(Context::class);
         $this->userFactoryMock->expects($this->once())
             ->method('create')

@@ -17,6 +17,7 @@ use Magento\Customer\Model\Session;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\ActionFlag;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\App\Request\Http as RequestHttp;
 use Magento\Framework\App\Response\Http;
 use Magento\Framework\App\Response\RedirectInterface;
 use Magento\Framework\Event\Observer;
@@ -117,7 +118,7 @@ class CheckUserEditObserverTest extends TestCase
             ->willReturn($captcha);
 
         $response = $this->createMock(Http::class);
-        $request = $this->createMock(\Magento\Framework\App\Request\Http::class);
+        $request = $this->createMock(RequestHttp::class);
         $request->expects($this->any())
             ->method('getPost')
             ->with(Data::INPUT_NAME_FIELD_VALUE, null)

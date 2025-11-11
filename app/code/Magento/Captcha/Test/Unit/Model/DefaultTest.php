@@ -393,6 +393,10 @@ class DefaultTest extends TestCase
         return $store;
     }
 
+    /**
+     * @param boolean $expectedResult
+     * @param string $formId
+     */
     #[DataProvider('isShownToLoggedInUserDataProvider')]
     public function testIsShownToLoggedInUser($expectedResult, $formId)
     {
@@ -417,6 +421,10 @@ class DefaultTest extends TestCase
         ];
     }
 
+    /**
+     * @param string $string
+     * @throws \ReflectionException
+     */
     #[DataProvider('generateWordProvider')]
     public function testGenerateWord($string)
     {

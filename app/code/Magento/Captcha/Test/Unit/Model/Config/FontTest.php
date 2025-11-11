@@ -49,6 +49,12 @@ class FontTest extends TestCase
         );
     }
 
+    /**
+     * Test toOptionArray() with data provider below
+     *
+     * @param array $fonts
+     * @param array $expectedResult
+     */
     #[DataProvider('toOptionArrayDataProvider')]
     public function testToOptionArray($fonts, $expectedResult)
     {

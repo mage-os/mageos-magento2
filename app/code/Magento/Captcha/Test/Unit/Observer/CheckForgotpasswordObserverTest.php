@@ -14,6 +14,7 @@ use Magento\Captcha\Observer\CheckForgotpasswordObserver;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\ActionFlag;
 use Magento\Framework\App\Request\Http;
+use Magento\Framework\App\Response\Http as ResponseHttp;
 use Magento\Framework\App\Response\RedirectInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Message\ManagerInterface;
@@ -96,7 +97,7 @@ class CheckForgotpasswordObserverTest extends TestCase
         $redirectUrl = 'http://magento.com/customer/account/forgotpassword/';
 
         $request = $this->createMock(Http::class);
-        $response = $this->createMock(\Magento\Framework\App\Response\Http::class);
+        $response = $this->createMock(ResponseHttp::class);
         $request->expects(
             $this->any()
         )->method(

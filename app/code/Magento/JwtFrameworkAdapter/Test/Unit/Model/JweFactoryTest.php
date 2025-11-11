@@ -77,6 +77,13 @@ class JweFactoryTest extends TestCase
 
     /**
      * Test "create" method.
+     *
+     * @param array $headers
+     * @param string $content
+     * @param array|null $unprotected
+     * @param array|null $perRecipient
+     * @param string $payloadClass
+     * @return void
      */
     #[DataProvider('getCreateCases')]
     public function testCreate(

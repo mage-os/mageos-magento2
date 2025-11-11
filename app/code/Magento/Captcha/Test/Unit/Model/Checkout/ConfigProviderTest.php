@@ -63,6 +63,11 @@ class ConfigProviderTest extends TestCase
         );
     }
 
+    /**
+     * @param $isRequired
+     * @param $captchaGenerations
+     * @param $expectedConfig
+     */
     #[DataProvider('getConfigDataProvider')]
     public function testGetConfig($isRequired, $captchaGenerations, $expectedConfig)
     {

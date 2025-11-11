@@ -49,6 +49,12 @@ class FrontendTest extends TestCase
         );
     }
 
+    /**
+     * Test toOptionArray() with data provider below
+     *
+     * @param string|array $config
+     * @param array $expectedResult
+     */
     #[DataProvider('toOptionArrayDataProvider')]
     public function testToOptionArray($config, $expectedResult)
     {

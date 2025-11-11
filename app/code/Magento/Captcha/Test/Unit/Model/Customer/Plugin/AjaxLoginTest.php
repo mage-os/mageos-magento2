@@ -13,6 +13,7 @@ use Magento\Captcha\Model\DefaultModel;
 use Magento\Checkout\Model\Session;
 use Magento\Customer\Controller\Ajax\Login;
 use Magento\Framework\App\Request\Http;
+use Magento\Framework\Controller\Result\Json as ResultJson;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
@@ -86,7 +87,7 @@ class AjaxLoginTest extends TestCase
             JsonFactory::class,
             ['create']
         );
-        $this->resultJsonMock = $this->createMock(\Magento\Framework\Controller\Result\Json::class);
+        $this->resultJsonMock = $this->createMock(ResultJson::class);
         $this->requestMock = $this->createMock(Http::class);
         $this->loginControllerMock = $this->createMock(Login::class);
 
@@ -180,6 +181,10 @@ class AjaxLoginTest extends TestCase
         $this->assertEquals($this->resultJsonMock, $this->model->aroundExecute($this->loginControllerMock, $closure));
     }
 
+    /**
+     * @param string $username
+     * @param array $requestContent
+     */
     #[DataProvider('aroundExecuteCaptchaIsNotRequired')]
     public function testAroundExecuteCaptchaIsNotRequired($username, $requestContent)
     {

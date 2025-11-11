@@ -121,6 +121,10 @@ class DeleteTest extends TestCase
     /**
      * Test method \Magento\User\Controller\Adminhtml\User\Delete::execute
      *
+     * @param string $currentUserPassword
+     * @param int $userId
+     * @param int $currentUserId
+     * @param string $resultMethod
      * @return void
      */
     #[DataProvider('executeDataProvider')]

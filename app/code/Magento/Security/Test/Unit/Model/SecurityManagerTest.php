@@ -10,6 +10,7 @@ namespace Magento\Security\Test\Unit\Model;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
+use Magento\Framework\Message\ManagerInterface as MessageManagerInterface;
 use Magento\Framework\Stdlib\DateTime\DateTime;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Security\Model\Config\Source\ResetMethod;
@@ -116,7 +117,7 @@ class SecurityManagerTest extends TestCase
      */
     public function testConstructorException()
     {
-        $securityChecker = $this->createMock(\Magento\Framework\Message\ManagerInterface::class);
+        $securityChecker = $this->createMock(MessageManagerInterface::class);
 
         $this->expectException(LocalizedException::class);
         $this->expectExceptionMessage(

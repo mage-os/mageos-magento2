@@ -15,6 +15,7 @@ use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\ActionFlag;
 use Magento\Framework\App\Request\DataPersistorInterface;
 use Magento\Framework\App\Request\Http;
+use Magento\Framework\App\Response\Http as ResponseHttp;
 use Magento\Framework\App\Response\RedirectInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Message\ManagerInterface;
@@ -142,7 +143,7 @@ class CheckContactUsFormObserverTest extends TestCase
         $postData = ['name' => 'Some Name'];
 
         $request = $this->createMock(Http::class);
-        $response = $this->createMock(\Magento\Framework\App\Response\Http::class);
+        $response = $this->createMock(ResponseHttp::class);
         $request->method('getPost')
             ->with(Data::INPUT_NAME_FIELD_VALUE, null)
             ->willReturn([$formId => $captchaValue]);

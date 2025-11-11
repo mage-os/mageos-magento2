@@ -18,6 +18,7 @@ use Magento\Customer\Model\Session;
 use Magento\Customer\Model\Url;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\ActionFlag;
+use Magento\Framework\App\Request\Http as RequestHttp;
 use Magento\Framework\App\Response\Http;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Message\ManagerInterface;
@@ -131,7 +132,7 @@ class CheckUserLoginObserverTest extends TestCase
             ->method('setRedirect')
             ->with($redirectUrl);
 
-        $request = $this->createMock(\Magento\Framework\App\Request\Http::class);
+        $request = $this->createMock(RequestHttp::class);
         $request->expects($this->any())
             ->method('getPost')
             ->with('login')
