@@ -31,7 +31,6 @@ use PHPUnit\Framework\TestCase;
 class WeeeTaxTest extends TestCase
 {
     /**
-     * #@+
      * Constants for array keys
      */
     public const KEY_WEEE_TOTALS = 'weee_total_excl_tax';

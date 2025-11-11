@@ -1,8 +1,4 @@
-<?php
-/**
- * Copyright 2018 Adobe
- * All Rights Reserved.
- */ declare(strict_types=1);
+<?php declare(strict_types=1);
 /**
  * Copyright 2015 Adobe
  * All Rights Reserved.

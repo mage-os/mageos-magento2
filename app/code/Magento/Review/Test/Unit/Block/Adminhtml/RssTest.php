@@ -80,7 +80,7 @@ class RssTest extends TestCase
             'charset' => 'UTF-8',
             'entries' => [
                 'title' => 'Product: "Product Name" reviewed by: Product Nick',
-                'link' => 'http://example.com/product',
+                'link' => 'http://product.magento.com',
                 'description' => [
                     'rss_url' => $rssUrl,
                     'name' => 'Product Name',
@@ -93,7 +93,7 @@ class RssTest extends TestCase
         ];
         // Mock URL model to return product URL
         $urlModel = $this->createMock(ProductUrl::class);
-        $urlModel->method('getProductUrl')->willReturn('http://example.com/product');
+        $urlModel->method('getProductUrl')->willReturn('http://product.magento.com');
         
         $productModel = $this->createPartialMock(ProductModel::class, ['getUrlModel']);
         
