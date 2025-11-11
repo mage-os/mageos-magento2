@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright 2025 Adobe
  * All Rights Reserved.
@@ -52,9 +53,9 @@ class TreeTest extends TestCase
                     $items[] = new class($path) {
                         /** @var string */
                         private $path;
-                        public function __construct($p)
+                        public function __construct(string $path)
                         {
-                            $this->path = $p;
+                            $this->path = $path;
                         }
                         public function getPath()
                         {
@@ -68,6 +69,9 @@ class TreeTest extends TestCase
             {
                 return $this;
             }
+            /**
+             * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+             */
             public function addAttributeToFilter($field, $cond)
             {
                 return $this;
@@ -172,15 +176,11 @@ class TreeTest extends TestCase
         $block = $this->buildBlockMock();
 
         // Custom stub that captures the last filter applied
-        $collectionStub = new class([]) implements \IteratorAggregate, \Countable {
+        $collectionStub = new class() implements \IteratorAggregate, \Countable {
             /** @var array */
             private $items = [];
             /** @var array|null */
             public $lastFilter;
-            public function __construct($paths)
-            {
-                $this->items = [];
-            }
             public function addAttributeToSelect($arg)
             {
                 return $this;
