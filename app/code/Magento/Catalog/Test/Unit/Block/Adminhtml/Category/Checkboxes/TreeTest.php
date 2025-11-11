@@ -186,7 +186,7 @@ class TreeTest extends TestCase
                 return $this;
             }
             /**
-             * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+             * @SuppressWarnings(PHPMD.UnusedLocalVariable)
              */
             public function addAttributeToFilter($field, $cond)
             {
