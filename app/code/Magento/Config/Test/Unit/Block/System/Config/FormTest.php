@@ -120,7 +120,7 @@ class FormTest extends TestCase
             ['section', '', 'section_code'],
             ['store', '', 'store_code'],
         ];
-        $requestMock->expects($this->any())->method('getParam')->willReturnMap($requestParams);
+        $requestMock->method('getParam')->willReturnMap($requestParams);
 
         $layoutMock = $this->createMock(Layout::class);
 
@@ -187,13 +187,11 @@ class FormTest extends TestCase
         $this->_objectBuilder = $this->getMockBuilder(Form::class)
             ->setConstructorArgs($objectArguments);
         $deploymentConfigMock = $this->createMock(DeploymentConfig::class);
-        $deploymentConfigMock->expects($this->any())
-            ->method('get')
+        $deploymentConfigMock->method('get')
             ->willReturn([]);
 
         $objectManagerMock = $this->createMock(ObjectManagerInterface::class);
-        $objectManagerMock->expects($this->any())
-            ->method('get')
+        $objectManagerMock->method('get')
             ->willReturnMap([
                 [DeploymentConfig::class, $deploymentConfigMock]
             ]);
@@ -211,10 +209,10 @@ class FormTest extends TestCase
         /** @var Form|MockObject $object */
         $object = $this->_objectBuilder->onlyMethods(['_initGroup'])->getMock();
         $object->setData('scope_id', 1);
-        $this->_formFactoryMock->expects($this->any())->method('create')->willReturn($this->_formMock);
+        $this->_formFactoryMock->method('create')->willReturn($this->_formMock);
         $this->_formMock->expects($this->once())->method('setParent')->with($object);
         $this->_formMock->expects($this->once())->method('setBaseUrl')->with('base_url');
-        $this->_urlModelMock->expects($this->any())->method('getBaseUrl')->willReturn('base_url');
+        $this->_urlModelMock->method('getBaseUrl')->willReturn('base_url');
 
         $sectionMock = $this->createMock(Section::class);
         if ($sectionIsVisible) {
@@ -272,10 +270,10 @@ class FormTest extends TestCase
     {
         /** @var Form|MockObject $object */
         $object = $this->_objectBuilder->onlyMethods(['initFields'])->getMock();
-        $this->_formFactoryMock->expects($this->any())->method('create')->willReturn($this->_formMock);
+        $this->_formFactoryMock->method('create')->willReturn($this->_formMock);
         $this->_formMock->expects($this->once())->method('setParent')->with($object);
         $this->_formMock->expects($this->once())->method('setBaseUrl')->with('base_url');
-        $this->_urlModelMock->expects($this->any())->method('getBaseUrl')->willReturn('base_url');
+        $this->_urlModelMock->method('getBaseUrl')->willReturn('base_url');
 
         $fieldsetRendererMock = $this->createMock(Fieldset::class);
         $this->_fieldsetFactoryMock->expects(
@@ -293,7 +291,7 @@ class FormTest extends TestCase
 
         $groupMock = $this->createMock(Group::class);
         $groupMock->expects($this->once())->method('getFrontendModel')->willReturn(false);
-        $groupMock->expects($this->any())->method('getPath')->willReturn('section_id_group_id');
+        $groupMock->method('getPath')->willReturn('section_id_group_id');
         $groupMock->expects($this->once())->method('getLabel')->willReturn('label');
         $groupMock->expects($this->once())->method('getComment')->willReturn('comment');
         $groupMock->expects($this->once())->method('isExpanded')->willReturn(false);
@@ -438,9 +436,7 @@ class FormTest extends TestCase
             $backendConfigValue
         );
 
-        $this->_coreConfigMock->expects(
-            $this->any()
-        )->method(
+        $this->_coreConfigMock->method(
             'getValue'
         )->with(
             $configPath
@@ -461,9 +457,9 @@ class FormTest extends TestCase
 
         // Field mock configuration
         $fieldMock = $this->createMock(StructureField::class);
-        $fieldMock->expects($this->any())->method('getPath')->willReturn('section1/group1/field1');
-        $fieldMock->expects($this->any())->method('getConfigPath')->willReturn($configPath);
-        $fieldMock->expects($this->any())->method('getGroupPath')->willReturn('some/config/path');
+        $fieldMock->method('getPath')->willReturn('section1/group1/field1');
+        $fieldMock->method('getConfigPath')->willReturn($configPath);
+        $fieldMock->method('getGroupPath')->willReturn('some/config/path');
         $fieldMock->expects($this->once())->method('getSectionId')->willReturn('some_section');
 
         $fieldMock->expects(
@@ -482,17 +478,17 @@ class FormTest extends TestCase
         )->willReturn(
             []
         );
-        $fieldMock->expects($this->any())->method('getType')->willReturn('field');
+        $fieldMock->method('getType')->willReturn('field');
         $fieldMock->expects($this->once())->method('getLabel')->willReturn('label');
         $fieldMock->expects($this->once())->method('getComment')->willReturn('comment');
         $fieldMock->expects($this->once())->method('getTooltip')->willReturn('tooltip');
         $fieldMock->expects($this->once())->method('getHint')->willReturn('hint');
         $fieldMock->expects($this->once())->method('getFrontendClass')->willReturn('frontClass');
         $fieldMock->expects($this->once())->method('showInDefault')->willReturn(false);
-        $fieldMock->expects($this->any())->method('showInWebsite')->willReturn(false);
+        $fieldMock->method('showInWebsite')->willReturn(false);
         $fieldMock->expects($this->once())->method('getData')->willReturn('fieldData');
-        $fieldMock->expects($this->any())->method('getRequiredFields')->willReturn([]);
-        $fieldMock->expects($this->any())->method('getRequiredGroups')->willReturn([]);
+        $fieldMock->method('getRequiredFields')->willReturn([]);
+        $fieldMock->method('getRequiredGroups')->willReturn([]);
 
         $fields = [$fieldMock];
         $groupMock->expects($this->once())->method('getChildren')->willReturn($fields);
@@ -541,16 +537,14 @@ class FormTest extends TestCase
         $fieldMock->expects($this->once())->method('populateInput');
 
         $settingCheckerMock = $this->createMock(SettingChecker::class);
-        $settingCheckerMock->expects($this->any())
-            ->method('isReadOnly')
+        $settingCheckerMock->method('isReadOnly')
             ->willReturn($isReadOnly);
         $settingCheckerMock->expects($this->once())
             ->method('getPlaceholderValue')
             ->willReturn($placeholderValue);
 
         $elementVisibilityMock = $this->createMock(ElementVisibilityInterface::class);
-        $elementVisibilityMock->expects($this->any())
-            ->method('isDisabled')
+        $elementVisibilityMock->method('isDisabled')
             ->willReturn($isDisabled);
 
         $helper = new ObjectManager($this);

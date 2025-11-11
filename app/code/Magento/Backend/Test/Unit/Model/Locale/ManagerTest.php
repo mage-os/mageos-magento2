@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\Backend\Test\Unit\Model\Locale;
 
 use Magento\Backend\App\ConfigInterface;
+use Magento\Backend\Model\Auth\Session as AuthSession;
 use Magento\Backend\Model\Locale\Manager;
 use Magento\Backend\Model\Session;
 use Magento\Framework\DataObject;
@@ -38,7 +39,7 @@ class ManagerTest extends TestCase
     private $_session;
 
     /**
-     * @var MockObject|\Magento\Backend\Model\Auth\Session
+     * @var MockObject|AuthSession
      */
     private $_authSession;
 
@@ -61,7 +62,7 @@ class ManagerTest extends TestCase
         $this->_session = $this->createMock(Session::class);
 
         $this->_authSession = $this->createPartialMockWithReflection(
-            \Magento\Backend\Model\Auth\Session::class,
+            AuthSession::class,
             ['getUser']
         );
 

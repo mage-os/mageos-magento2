@@ -29,6 +29,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\Session\SessionStartChecker;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\Data\CartInterface;
+use Magento\Quote\Model\Quote as QuoteModel;
 use Magento\Quote\Model\QuoteFactory;
 use Magento\Sales\Model\OrderFactory;
 use Magento\Store\Model\StoreManagerInterface;
@@ -222,8 +223,8 @@ class QuoteTest extends TestCase
         $storeId = 10;
         $customerId = 66;
         $customerGroupId = 77;
-        $this->quote->expects($this->any())->method('getQuoteId')->willReturn(null);
-        $this->quote->expects($this->any())->method('setQuoteId')->with($quoteId);
+        $this->quote->method('getQuoteId')->willReturn(null);
+        $this->quote->method('setQuoteId')->with($quoteId);
         $cartInterfaceMock = $this->createPartialMockWithReflection(
             CartInterface::class,
             [
@@ -240,11 +241,11 @@ class QuoteTest extends TestCase
             ]
         );
         $this->quoteFactoryMock->expects($this->once())->method('create')->willReturn($cartInterfaceMock);
-        $this->quote->expects($this->any())->method('getStoreId')->willReturn($storeId);
+        $this->quote->method('getStoreId')->willReturn($storeId);
         $this->quote->expects($this->any())->method('getCustomerId')->willReturn($customerId);
-        $cartInterfaceMock->expects($this->atLeastOnce())->method('getId')->willReturn($quoteId);
+        $cartInterfaceMock->method('getId')->willReturn($quoteId);
         $defaultGroup = $this->createMock(GroupInterface::class);
-        $defaultGroup->expects($this->any())->method('getId')->willReturn($customerGroupId);
+        $defaultGroup->method('getId')->willReturn($customerGroupId);
         $this->groupManagementMock
             ->method('getDefaultGroup')
             ->with($storeId)
@@ -257,7 +258,7 @@ class QuoteTest extends TestCase
             ->willReturn($dataCustomerMock);
 
         $quoteMock = $this->createPartialMockWithReflection(
-            \Magento\Quote\Model\Quote::class,
+            QuoteModel::class,
             [
                 'setCustomerGroupId', 'setIgnoreOldQty', 'setIsSuperMode', 'setStoreId',
                 'setIsActive', 'assignCustomer', '__wakeup'
@@ -284,17 +285,13 @@ class QuoteTest extends TestCase
         $quoteId = 22;
         $storeId = 10;
 
-        $this->quote->expects($this->any())
-            ->method('getQuoteId')
+        $this->quote->method('getQuoteId')
             ->willReturn($quoteId);
-        $this->quote->expects($this->any())
-            ->method('setQuoteId')
+        $this->quote->method('setQuoteId')
             ->with($quoteId);
-        $this->quote->expects($this->any())
-            ->method('getStoreId')
+        $this->quote->method('getStoreId')
             ->willReturn($storeId);
-        $this->quote->expects($this->any())
-            ->method('getCustomerId')
+        $this->quote->method('getCustomerId')
             ->willReturn($customerId);
 
         $dataCustomerMock = $this->createMock(CustomerInterface::class);
@@ -304,7 +301,7 @@ class QuoteTest extends TestCase
             ->willReturn($dataCustomerMock);
 
         $quoteMock = $this->createPartialMockWithReflection(
-            \Magento\Quote\Model\Quote::class,
+            QuoteModel::class,
             [
                 'setCustomerGroupId', 'setIgnoreOldQty', 'setIsSuperMode', 'getCustomerId',
                 'setStoreId', 'setIsActive', 'getId', 'assignCustomer', '__wakeup'

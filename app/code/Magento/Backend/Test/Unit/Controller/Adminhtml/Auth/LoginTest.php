@@ -17,6 +17,7 @@ use Magento\Backend\Model\Auth;
 use Magento\Backend\Model\Url;
 use Magento\Backend\Model\UrlFactory;
 use Magento\Backend\Model\View\Result\Redirect;
+use Magento\Framework\App\Request\Http as RequestHttp;
 use Magento\Framework\App\RequestInterface as Request;
 use Magento\Framework\Controller\Result\RedirectFactory;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
@@ -101,7 +102,7 @@ class LoginTest extends TestCase
 
         $this->helperMock = $this->createMock(Data::class);
         $this->requestMock = $this->createPartialMockWithReflection(
-            \Magento\Framework\App\Request\Http::class,
+            RequestHttp::class,
             ['getUri', 'getRequestUri']
         );
         $this->redirectMock = $this->createMock(Redirect::class);

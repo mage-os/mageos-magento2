@@ -23,6 +23,7 @@ use Magento\Reports\Model\ResourceModel\Order\CollectionFactory;
 use Magento\Backend\Model\Dashboard\Period;
 use Magento\Reports\Model\ResourceModel\Order\Collection;
 use Magento\Sales\Model\Order\Config;
+use Magento\Sales\Model\ResourceModel\EntitySnapshot;
 use Magento\Sales\Model\ResourceModel\Report\OrderFactory;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
@@ -68,7 +69,7 @@ class DateTest extends TestCase
     private $managerMock;
 
     /**
-     * @var \Magento\Sales\Model\ResourceModel\EntitySnapshot|MockObject
+     * @var EntitySnapshot|MockObject
      */
     private $entitySnapshotMock;
 
@@ -236,7 +237,7 @@ class DateTest extends TestCase
             ['getConnection', 'getMainTable', 'getTable', '_construct']
         );
         $this->resourceMock
-            ->expects($this->any())
+            ->expects($this->once())
             ->method('getConnection')
             ->willReturn($this->connectionMock);
         $this->resourceMock

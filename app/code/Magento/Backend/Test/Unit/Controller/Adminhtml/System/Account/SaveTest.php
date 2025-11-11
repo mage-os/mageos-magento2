@@ -21,10 +21,12 @@ use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\Response\Http as ResponseHttp;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\ResultFactory;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as HelperObjectManager;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\Event\ManagerInterface as EventManagerInterface;
+use Magento\Framework\Message\Manager as MessageManager;
+use Magento\Framework\Message\ManagerInterface as MessageManagerInterface;
 use Magento\Framework\ObjectManager\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as HelperObjectManager;
 use Magento\Framework\TranslateInterface;
 use Magento\Framework\Validator\Locale;
 use Magento\User\Model\User;
@@ -61,7 +63,7 @@ class SaveTest extends TestCase
     protected $objectManagerMock;
 
     /**
-     * @var MockObject|\Magento\Framework\Message\ManagerInterface
+     * @var MockObject|MessageManagerInterface
      */
     protected $messagesMock;
 
@@ -101,7 +103,7 @@ class SaveTest extends TestCase
     protected $eventManagerMock;
 
     /**
-     * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
+     * @var HelperObjectManager
      */
     private $objectManagerHelper;
 
@@ -118,7 +120,7 @@ class SaveTest extends TestCase
 
         $this->helperMock = $this->createPartialMock(Data::class, ['getUrl']);
         $this->messagesMock = $this->createPartialMock(
-            \Magento\Framework\Message\Manager::class,
+            MessageManager::class,
             ['addSuccessMessage']
         );
 

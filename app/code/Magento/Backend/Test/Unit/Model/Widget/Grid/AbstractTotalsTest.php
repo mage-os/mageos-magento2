@@ -50,8 +50,8 @@ class AbstractTotalsTest extends TestCase
             ->setConstructorArgs($arguments)
             ->onlyMethods(['_countSum', '_countAverage'])
             ->getMock();
-        $this->_model->expects($this->any())->method('_countSum')->willReturn(2);
-        $this->_model->expects($this->any())->method('_countAverage')->willReturn(2);
+        $this->_model->method('_countSum')->willReturn(2);
+        $this->_model->method('_countAverage')->willReturn(2);
 
         $this->_setUpColumns();
     }
@@ -117,9 +117,7 @@ class AbstractTotalsTest extends TestCase
             ['test1/test2', ['test1', 'test2', '/']],
             ['test1/0', ['test1', '0', '/']],
         ];
-        $this->_parserMock->expects(
-            $this->any()
-        )->method(
+        $this->_parserMock->method(
             'parseExpression'
         )->willReturnMap(
             $columnsValueMap
@@ -134,9 +132,7 @@ class AbstractTotalsTest extends TestCase
             ['test2', false],
             ['0', false],
         ];
-        $this->_parserMock->expects(
-            $this->any()
-        )->method(
+        $this->_parserMock->method(
             'isOperation'
         )->willReturnMap(
             $isOperationValueMap
@@ -175,7 +171,7 @@ class AbstractTotalsTest extends TestCase
             ],
             [[], new DataObject()],
         ];
-        $this->_factoryMock->expects($this->any())->method('create')->willReturnMap($createValueMap);
+        $this->_factoryMock->method('create')->willReturnMap($createValueMap);
     }
 
     public function testColumns()
