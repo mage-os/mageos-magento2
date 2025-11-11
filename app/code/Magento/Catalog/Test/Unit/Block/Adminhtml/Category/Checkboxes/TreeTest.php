@@ -185,6 +185,9 @@ class TreeTest extends TestCase
             {
                 return $this;
             }
+            /**
+             * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+             */
             public function addAttributeToFilter($field, $cond)
             {
                 $this->lastFilter = [$field, $cond];
