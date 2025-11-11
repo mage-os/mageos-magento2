@@ -10,6 +10,7 @@ namespace Magento\CardinalCommerce\Test\Unit\Model\Response;
 use Magento\CardinalCommerce\Model\Response\JwtPayloadValidator;
 use Magento\Framework\Intl\DateTimeFactory;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class JwtPayloadValidatorTest extends TestCase
 {
@@ -28,10 +29,10 @@ class JwtPayloadValidatorTest extends TestCase
 
     /**
      * Tests successful cases.
-     *
+     * 
      * @param array $token
-     * @dataProvider validateSuccessDataProvider
      */
+    #[DataProvider('validateSuccessDataProvider')]
     public function testValidateSuccess(array $token)
     {
         $this->assertTrue(
@@ -61,10 +62,8 @@ class JwtPayloadValidatorTest extends TestCase
 
     /**
      * Case when 3DS authentication is either failed or could not be attempted.
-     *
-     * @param array $token
-     * @dataProvider validationEciFailsDataProvider
      */
+    #[DataProvider('validationEciFailsDataProvider')]
     public function testValidationEciFails(array $token)
     {
         $this->assertFalse(
@@ -91,10 +90,10 @@ class JwtPayloadValidatorTest extends TestCase
 
     /**
      * Case when resulting state of the transaction is negative.
-     *
+     * 
      * @param array $token
-     * @dataProvider validationActionCodeFailsDataProvider
      */
+    #[DataProvider('validationActionCodeFailsDataProvider')]
     public function testValidationActionCodeFails(array $token)
     {
         $this->assertFalse(
