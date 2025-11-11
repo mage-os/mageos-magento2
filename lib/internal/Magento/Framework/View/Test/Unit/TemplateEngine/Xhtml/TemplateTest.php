@@ -28,7 +28,7 @@ class TemplateTest extends TestCase
     {
         parent::setUp();
         $this->model = new Template(
-            $this->getMockForAbstractClass(LoggerInterface::class),
+            $this->createMock(LoggerInterface::class),
             file_get_contents(__DIR__ . '/../_files/simple.xml')
         );
     }

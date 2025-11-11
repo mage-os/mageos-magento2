@@ -56,12 +56,9 @@ class MinifierTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->htmlDirectoryMock = $this->getMockBuilder(WriteInterface::class)
-            ->getMockForAbstractClass();
-        $this->appDirectoryMock = $this->getMockBuilder(ReadInterface::class)
-            ->getMockForAbstractClass();
-        $this->rootDirectoryMock = $this->getMockBuilder(ReadInterface::class)
-            ->getMockForAbstractClass();
+        $this->htmlDirectoryMock = $this->createMock(WriteInterface::class);
+        $this->appDirectoryMock = $this->createMock(ReadInterface::class);
+        $this->rootDirectoryMock = $this->createMock(ReadInterface::class);
         $this->filesystemMock = $this->getMockBuilder(Filesystem::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -242,7 +239,7 @@ TEXT;
         $file = '/absolute/path/to/phtml/template/file';
         $relativeGeneratedPath = 'absolute/path/to/phtml/template/file';
 
-        $htmlDriver = $this->getMockForAbstractClass(DriverInterface::class);
+        $htmlDriver = $this->createMock(DriverInterface::class);
         $htmlDriver
             ->expects($this->once())
             ->method('getRealPathSafety')
