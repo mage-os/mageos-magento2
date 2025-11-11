@@ -46,6 +46,8 @@ class TreeTest extends TestCase
         return new class($paths) implements \IteratorAggregate, \Countable {
             /** @var array */
             private $items;
+            /** @var array|null */
+            public $lastFilter;
             public function __construct(array $paths)
             {
                 $items = [];
@@ -74,9 +76,7 @@ class TreeTest extends TestCase
              */
             public function addAttributeToFilter($field, $cond)
             {
-                if ($field || $cond) {
-                    // no-op: reference parameters to satisfy static analyzers
-                }
+                $this->lastFilter = [$field, $cond];
                 return $this;
             }
             public function getIterator(): \Traversable
