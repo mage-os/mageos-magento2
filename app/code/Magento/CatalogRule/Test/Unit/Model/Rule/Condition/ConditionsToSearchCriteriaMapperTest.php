@@ -27,6 +27,7 @@ use PHPUnit\Framework\TestCase;
  * Unit test for ConditionsToSearchCriteriaMapper
  *
  * Tests the critical instanceof that allows custom condition classes
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class ConditionsToSearchCriteriaMapperTest extends TestCase
 {
