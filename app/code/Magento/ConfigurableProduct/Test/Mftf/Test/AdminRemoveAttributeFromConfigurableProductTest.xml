@@ -37,9 +37,6 @@
             <click selector="{{AdminNewAttributePanel.deleteOptionByName(ColorOptionPink.label)}}" stepKey="removePinkFromColor"/>
             <click selector="{{AdminNewAttributePanel.deleteOptionByName(ColorOptionWhite.label)}}" stepKey="removeWhiteFromColor"/>
             <actionGroup ref="SaveProductAttributeActionGroup" stepKey="saveAttribute"/>
-            <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
-                <argument name="indices" value=""/>
-            </actionGroup>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
         </after>
         <!-- Step 2: Navigate to Products - Catalog -->
