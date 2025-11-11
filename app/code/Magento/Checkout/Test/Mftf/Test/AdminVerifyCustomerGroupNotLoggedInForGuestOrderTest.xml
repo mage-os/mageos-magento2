@@ -20,7 +20,7 @@
         </annotations>
         <before>
             <!-- Precondition Step 1:Create Simple Product and Customer -->
-            <createData entity="SimpleProduct" stepKey="createSimpleProduct"/>
+            <createData entity="SimpleProduct_100" stepKey="simpleProductOne"/>
             <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
         </before>
         <after>
@@ -36,8 +36,8 @@
         <!-- Step 1: Navigate to Frontend > place an order through check money with guest checkout. -->
         <actionGroup ref="StorefrontOpenHomePageActionGroup" stepKey="openStorefrontPage"/>
         <!-- Add Simple Product to cart -->
-        <actionGroup ref="StorefrontOpenProductPageActionGroup" stepKey="openProductPage">
-            <argument name="productUrl" value="$$createSimpleProduct.sku$$"/>
+        <actionGroup ref="OpenStoreFrontProductPageActionGroup" stepKey="openProductFromCategory">
+            <argument name="productUrlKey" value="$simpleProductOne.custom_attributes[url_key]$"/>
         </actionGroup>
         <waitForPageLoad stepKey="waitForSimpleProductPageLoad"/>
         <actionGroup ref="StorefrontAddProductToCartActionGroup" stepKey="addProductToCart">
