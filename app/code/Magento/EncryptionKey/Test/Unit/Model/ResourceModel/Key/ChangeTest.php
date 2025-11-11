@@ -17,6 +17,7 @@ use Magento\Framework\DB\Select;
 use Magento\Framework\Encryption\EncryptorInterface;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Math\Random;
+use Magento\Framework\Model\ResourceModel\Db\Context;
 use Magento\Framework\Model\ResourceModel\Db\ObjectRelationProcessor;
 use Magento\Framework\Model\ResourceModel\Db\TransactionManagerInterface;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
@@ -96,7 +97,7 @@ class ChangeTest extends TestCase
         $this->randomMock = $this->createMock(Random::class);
 
         $contextMock = $this->createPartialMock(
-            \Magento\Framework\Model\ResourceModel\Db\Context::class,
+            Context::class,
             ['getResources']
         );
         $contextMock->method('getResources')->willReturn($this->resourceMock);

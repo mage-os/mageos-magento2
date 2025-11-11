@@ -102,6 +102,10 @@ class EditTest extends TestCase
         $this->assertEquals($mappedResources, $this->model->getTree());
     }
 
+    /**
+     * @param bool $isAllowed
+     * @dataProvider dataProviderBoolValues
+     */
     #[DataProvider('dataProviderBoolValues')]
     public function testIsEverythingAllowed($isAllowed)
     {
