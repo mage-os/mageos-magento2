@@ -41,7 +41,7 @@
         </actionGroup>
         <waitForPageLoad stepKey="waitForSimpleProductPageLoad"/>
         <actionGroup ref="StorefrontAddProductToCartActionGroup" stepKey="addProductToCart">
-            <argument name="product" value="$$createSimpleProduct$$"/>
+            <argument name="product" value="$$simpleProductOne$$"/>
             <argument name="productCount" value="1"/>
         </actionGroup>
         <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckoutFromMinicart"/>
