@@ -22,7 +22,7 @@ use Magento\Framework\Message\Manager as MessageManager;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Item;
 use Magento\Wishlist\Controller\Index\Fromcart;
-use Magento\Quote\Test\Unit\Helper\QuoteItemTestHelper;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Wishlist\Controller\WishlistProviderInterface;
 use Magento\Wishlist\Helper\Data as WishlistHelper;
 use Magento\Wishlist\Model\Wishlist;
@@ -34,6 +34,8 @@ use PHPUnit\Framework\TestCase;
  */
 class FromcartTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Fromcart
      */
@@ -380,10 +382,13 @@ class FromcartTest extends TestCase
             ->method('getName')
             ->willReturn($productName);
 
-        $quoteItemMock = new QuoteItemTestHelper();
-        $quoteItemMock->setProductId($productId);
-        $quoteItemMock->setBuyRequest($dataObjectMock);
-        $quoteItemMock->setProduct($productMock);
+        $quoteItemMock = $this->createPartialMockWithReflection(
+            Item::class,
+            ['getProductId', 'getBuyRequest', 'getProduct']
+        );
+        $quoteItemMock->method('getProductId')->willReturn($productId);
+        $quoteItemMock->method('getBuyRequest')->willReturn($dataObjectMock);
+        $quoteItemMock->method('getProduct')->willReturn($productMock);
 
         $quoteMock = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()

@@ -10,7 +10,7 @@ namespace Magento\WishlistGraphQl\Test\Unit\Model\Resolver;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\GraphQl\Model\Query\ContextExtensionInterface;
 use Magento\GraphQl\Model\Query\ContextInterface;
-use Magento\GraphQl\Test\Unit\Helper\ContextExtensionInterfaceTestHelper;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
@@ -28,6 +28,8 @@ use PHPUnit\Framework\TestCase;
  */
 class WishlistItemsTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var WishlistItemCollectionFactory|MockObject
      */
@@ -66,7 +68,20 @@ class WishlistItemsTest extends TestCase
         $store->expects($this->once())->method('getWebsiteId')->willReturn($webId);
         $store->expects($this->any())->method('getId')->willReturn($storeId);
 
-        $extensionAttributes = new ContextExtensionInterfaceTestHelper();
+        $storeValue = null;
+        $extensionAttributes = $this->createPartialMockWithReflection(
+            ContextExtensionInterface::class,
+            ['setStore', 'getStore']
+        );
+        $extensionAttributes->method('setStore')
+            ->willReturnCallback(function ($value) use (&$storeValue, &$extensionAttributes) {
+                $storeValue = $value;
+                return $extensionAttributes;
+            });
+        $extensionAttributes->method('getStore')
+            ->willReturnCallback(function () use (&$storeValue) {
+                return $storeValue;
+            });
         $extensionAttributes->setStore($store);
 
         $context->expects($this->exactly(2))

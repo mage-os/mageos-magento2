@@ -19,8 +19,7 @@ use Magento\Wishlist\Helper\Data;
 use Magento\Wishlist\Model\Wishlist;
 use Magento\Wishlist\Model\WishlistFactory;
 use Magento\Wishlist\Observer\CartUpdateBefore as Observer;
-use Magento\Wishlist\Test\Unit\Helper\ItemTestHelper;
-use Magento\Quote\Test\Unit\Helper\QuoteTestHelper;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -29,6 +28,8 @@ use PHPUnit\Framework\TestCase;
  */
 class CartUpdateBeforeTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Observer
      */
@@ -101,7 +102,7 @@ class CartUpdateBeforeTest extends TestCase
             ->method('getEvent')
             ->willReturn($event);
 
-        $quoteItem = new ItemTestHelper();
+        $quoteItem = $this->createPartialMockWithReflection(Item::class, ['getProductId', 'getBuyRequest']);
 
         $buyRequest = $this->createPartialMock(DataObject::class, []);
         $reflection = new \ReflectionClass($buyRequest);
@@ -115,7 +116,10 @@ class CartUpdateBeforeTest extends TestCase
             ->willReturn([$itemId => ['qty' => $itemQty, 'wishlist' => true]]);
 
         $cart = $this->createMock(Cart::class);
-        $quote = new QuoteTestHelper();
+        $quote = $this->createPartialMockWithReflection(
+            Quote::class,
+            ['getCustomerId', 'getItemById', 'removeItem']
+        );
 
         $event->setCart($cart);
         $event->setInfo($infoData);
@@ -124,13 +128,13 @@ class CartUpdateBeforeTest extends TestCase
             ->method('getQuote')
             ->willReturn($quote);
 
-        $quoteItem->productId = $productId;
-        $quoteItem->buyRequest = $buyRequest;
+        $quoteItem->method('getProductId')->willReturn($productId);
+        $quoteItem->method('getBuyRequest')->willReturn($buyRequest);
 
         $buyRequest->setQty($itemQty);
 
-        $quote->customerId = $customerId;
-        $quote->items[$itemId] = $quoteItem;
+        $quote->method('getCustomerId')->willReturn($customerId);
+        $quote->method('getItemById')->with($itemId)->willReturn($quoteItem);
 
         $this->wishlist->expects($this->once())
             ->method('loadByCustomerId')

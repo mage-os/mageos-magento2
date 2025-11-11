@@ -12,6 +12,7 @@ use Magento\Checkout\Model\Session;
 use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\ResponseInterface;
+use Magento\Framework\App\Response\Http as HttpResponse;
 use Magento\Framework\Event;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Wishlist\Helper\Data;
@@ -19,7 +20,7 @@ use Magento\Wishlist\Model\ResourceModel\Wishlist\Collection;
 use Magento\Wishlist\Model\Wishlist;
 use Magento\Wishlist\Model\WishlistFactory;
 use Magento\Wishlist\Observer\AddToCart as Observer;
-use Magento\Framework\App\Test\Unit\Helper\ResponseInterfaceTestHelper;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -28,6 +29,8 @@ use PHPUnit\Framework\TestCase;
  */
 class AddToCartTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Observer
      */
@@ -128,7 +131,7 @@ class AddToCartTest extends TestCase
 
     private function createResponseMock()
     {
-        return new ResponseInterfaceTestHelper();
+        return $this->createPartialMockWithReflection(HttpResponse::class, ['setRedirect']);
     }
 
     private function createCustomerSessionMock()

@@ -14,6 +14,7 @@ use Magento\Framework\App\ViewInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Json\Helper\Data;
 use Magento\Framework\ObjectManagerInterface;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Framework\View\Element\BlockInterface;
 use Magento\Framework\View\LayoutInterface;
@@ -30,6 +31,7 @@ use PHPUnit\Framework\TestCase;
  */
 class LoadOptionsTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var ObjectManagerHelper
      */
@@ -175,7 +177,10 @@ class LoadOptionsTest extends TestCase
             ->with(Data::class)
             ->willReturn($jsonDataHelperMock);
 
-        $blockMock = new \Magento\Widget\Test\Unit\Helper\WidgetOptionsBlockTestHelper();
+        $blockMock = $this->createPartialMockWithReflection(
+            BlockInterface::class,
+            ['setWidgetType', 'setWidgetValues', 'toHtml']
+        );
 
         /** @var LayoutInterface|MockObject $layoutMock */
         $layoutMock = $this->createMock(LayoutInterface::class);

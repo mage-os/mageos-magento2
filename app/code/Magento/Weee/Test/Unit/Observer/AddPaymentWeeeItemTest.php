@@ -12,7 +12,6 @@ use Magento\Framework\Event\Observer;
 use Magento\Payment\Model\Cart;
 use Magento\Payment\Model\Cart\SalesModel\SalesModelInterface;
 use Magento\Quote\Model\Quote\Item;
-use Magento\Quote\Test\Unit\Helper\QuoteItemTestHelper;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
@@ -76,7 +75,7 @@ class AddPaymentWeeeItemTest extends TestCase
         $observerMock = $this->createMock(Observer::class);
         $cartModelMock = $this->createMock(Cart::class);
         $salesModelMock = $this->createMock(SalesModelInterface::class);
-        $itemMock = new QuoteItemTestHelper();
+        $itemMock = $this->createPartialMock(Item::class, ['getProduct']);
         $originalItemMock = $this->createPartialMock(Item::class, ['getParentItem']);
         $parentItemMock = $this->createMock(Item::class);
         $eventMock = $this->createPartialMock(Event::class, []);

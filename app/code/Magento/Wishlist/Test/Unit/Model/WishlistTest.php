@@ -35,7 +35,6 @@ use Magento\Wishlist\Model\ResourceModel\Item\CollectionFactory;
 use Magento\Wishlist\Model\ResourceModel\Wishlist as WishlistResource;
 use Magento\Wishlist\Model\ResourceModel\Wishlist\Collection as WishlistCollection;
 use Magento\Wishlist\Model\Wishlist;
-use Magento\Wishlist\Test\Unit\Helper\ItemTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -312,7 +311,7 @@ class WishlistTest extends TestCase
      */
     private function prepareWishlistItem(): Item
     {
-        $newItem = new ItemTestHelper();
+        $newItem = $this->createStub(Item::class);
 
         return $newItem;
     }

@@ -24,7 +24,7 @@ use Magento\Wishlist\Controller\WishlistProviderInterface;
 use Magento\Wishlist\Helper\Data;
 use Magento\Wishlist\Model\Item as WishlistItem;
 use Magento\Wishlist\Model\Wishlist;
-use Magento\Wishlist\Test\Unit\Helper\WishlistItemDataTestHelper;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -37,6 +37,8 @@ use PHPUnit\Framework\TestCase;
  */
 class DataTest extends TestCase
 {
+    use MockCreationTrait;
+
     /** @var  Data */
     protected $model;
 
@@ -116,12 +118,30 @@ class DataTest extends TestCase
 
         $this->postDataHelper = $this->createMock(PostHelper::class);
 
-        $this->wishlistItem = new WishlistItemDataTestHelper();
-        $this->wishlistItem->setId(1);
-        $this->wishlistItem->setWishlistItemId(1);
-        $this->wishlistItem->setProductId(null);
-        $this->wishlistItem->setQty(0);
-        $this->wishlistItem->setData('product', $this->product);
+        $this->wishlistItem = $this->createPartialMockWithReflection(
+            WishlistItem::class,
+            ['getId', 'getWishlistItemId', 'getProductId', 'getQty', 'getData', 'hasData', 'getProduct',
+             'load', 'save', 'getResource']
+        );
+        $this->wishlistItem->method('getId')->willReturn(1);
+        $this->wishlistItem->method('getWishlistItemId')->willReturn(1);
+        $this->wishlistItem->method('getProductId')->willReturn(1);
+        $this->wishlistItem->method('getQty')->willReturn(0);
+        $this->wishlistItem->method('getData')->willReturnCallback(function ($key) {
+            if ($key === 'product') {
+                return $this->product;
+            }
+            return null;
+        });
+        $this->wishlistItem->method('hasData')->willReturnCallback(function ($key) {
+            return $key === 'product';
+        });
+        $this->wishlistItem->method('getProduct')->willReturnCallback(function () {
+            return $this->product;
+        });
+        $this->wishlistItem->method('load')->willReturnSelf();
+        $this->wishlistItem->method('save')->willReturnSelf();
+        $this->wishlistItem->method('getResource')->willReturn(null);
 
         $this->wishlist = $this->createMock(Wishlist::class);
 
@@ -165,10 +185,16 @@ class DataTest extends TestCase
         $url = 'http://magento2ce/wishlist/index/configure/id/4/product_id/30/qty/1000';
 
         /** @var WishlistItem $wishlistItem */
-        $wishlistItem = new WishlistItemDataTestHelper();
-        $wishlistItem->setWishlistItemId(4);
-        $wishlistItem->setProductId(null);
-        $wishlistItem->setQty(0);
+        $wishlistItem = $this->createPartialMockWithReflection(
+            WishlistItem::class,
+            ['getWishlistItemId', 'getProductId', 'getQty', 'load', 'save', 'getResource']
+        );
+        $wishlistItem->method('getWishlistItemId')->willReturn(4);
+        $wishlistItem->method('getProductId')->willReturn(null);
+        $wishlistItem->method('getQty')->willReturn(0);
+        $wishlistItem->method('load')->willReturnSelf();
+        $wishlistItem->method('save')->willReturnSelf();
+        $wishlistItem->method('getResource')->willReturn(null);
 
         $this->urlBuilder->expects($this->once())
             ->method('getUrl')
@@ -286,9 +312,15 @@ class DataTest extends TestCase
         $url = 'result url';
         $wishlistItemId = 1;
 
-        $wishlistItem = new WishlistItemDataTestHelper();
-        $wishlistItem->setId($wishlistItemId);
-        $wishlistItem->setWishlistItemId($wishlistItemId);
+        $wishlistItem = $this->createPartialMockWithReflection(
+            WishlistItem::class,
+            ['getId', 'getWishlistItemId', 'load', 'save', 'getResource']
+        );
+        $wishlistItem->method('getId')->willReturn($wishlistItemId);
+        $wishlistItem->method('getWishlistItemId')->willReturn($wishlistItemId);
+        $wishlistItem->method('load')->willReturnSelf();
+        $wishlistItem->method('save')->willReturnSelf();
+        $wishlistItem->method('getResource')->willReturn(null);
 
         $this->urlEncoderMock->expects($this->never())
             ->method('encode');
@@ -313,9 +345,15 @@ class DataTest extends TestCase
         $referer = 'referer';
         $refererEncoded = 'referer_encoded';
 
-        $wishlistItem = new WishlistItemDataTestHelper();
-        $wishlistItem->setId($wishlistItemId);
-        $wishlistItem->setWishlistItemId($wishlistItemId);
+        $wishlistItem = $this->createPartialMockWithReflection(
+            WishlistItem::class,
+            ['getId', 'getWishlistItemId', 'load', 'save', 'getResource']
+        );
+        $wishlistItem->method('getId')->willReturn($wishlistItemId);
+        $wishlistItem->method('getWishlistItemId')->willReturn($wishlistItemId);
+        $wishlistItem->method('load')->willReturnSelf();
+        $wishlistItem->method('save')->willReturnSelf();
+        $wishlistItem->method('getResource')->willReturn(null);
 
         $this->requestMock->expects($this->once())
             ->method('getServer')

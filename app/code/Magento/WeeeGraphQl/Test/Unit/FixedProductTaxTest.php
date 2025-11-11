@@ -10,11 +10,10 @@ namespace Magento\WeeeGraphQl\Test\Unit;
 use Magento\Framework\DataObject;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\GraphQl\Config\Element\Field;
-use Magento\GraphQl\Model\Query\Context;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+use Magento\GraphQl\Model\Query\Context;
 use Magento\GraphQl\Model\Query\ContextExtensionInterface;
-use Magento\GraphQl\Test\Unit\Helper\ContextExtensionInterfaceTestHelper;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Tax\Helper\Data as TaxHelper;
 use Magento\Weee\Helper\Data as WeeeHelper;
@@ -24,6 +23,7 @@ use PHPUnit\Framework\TestCase;
 
 class FixedProductTaxTest extends TestCase
 {
+    use MockCreationTrait;
     public const STUB_STORE_ID = 1;
 
     /**
@@ -62,7 +62,22 @@ class FixedProductTaxTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->extensionAttributesMock = new ContextExtensionInterfaceTestHelper();
+        $this->extensionAttributesMock = $this->createPartialMockWithReflection(
+            ContextExtensionInterface::class,
+            ['setStore', 'getStore']
+        );
+        
+        $store = null;
+        $this->extensionAttributesMock->method('setStore')->willReturnCallback(
+            function ($storeValue) use (&$store) {
+                $store = $storeValue;
+            }
+        );
+        $this->extensionAttributesMock->method('getStore')->willReturnCallback(
+            function () use (&$store) {
+                return $store;
+            }
+        );
 
         $this->contextMock = $this->createPartialMock(Context::class, ['getExtensionAttributes']);
         $this->contextMock->method('getExtensionAttributes')

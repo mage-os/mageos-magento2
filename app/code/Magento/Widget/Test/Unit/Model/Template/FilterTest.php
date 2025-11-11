@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Widget\Test\Unit\Model\Template;
 
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Framework\Translate\Inline\StateInterface;
 use Magento\Framework\UrlInterface;
@@ -27,6 +28,7 @@ use PHPUnit\Framework\TestCase;
  */
 class FilterTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var Filter
      */
@@ -247,8 +249,11 @@ class FilterTest extends TestCase
      */
     protected function getBlockMock($returnedResult = '')
     {
-        $block = new \Magento\Widget\Test\Unit\Helper\WidgetBlockTestHelper();
-        $block->setResult($returnedResult);
+        $block = $this->createPartialMockWithReflection(
+            BlockInterface::class,
+            ['toHtml', 'addData', 'setData']
+        );
+        $block->method('toHtml')->willReturn($returnedResult);
         return $block;
     }
 

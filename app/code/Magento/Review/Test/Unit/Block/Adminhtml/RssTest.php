@@ -7,9 +7,9 @@ declare(strict_types=1);
 
 namespace Magento\Review\Test\Unit\Block\Adminhtml;
 
+use Magento\Catalog\Model\Product as ProductModel;
 use Magento\Catalog\Model\Product\Url as ProductUrl;
 use Magento\Catalog\Model\ResourceModel\Product;
-use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Framework\UrlInterface;
 use Magento\Review\Block\Adminhtml\Rss;
@@ -91,15 +91,20 @@ class RssTest extends TestCase
                 ],
             ],
         ];
-        $productModel = new ProductTestHelper();
-        $productModel->setName('Product Name');
-        $productModel->setStoreId(1);
-        
         // Mock URL model to return product URL
         $urlModel = $this->createMock(ProductUrl::class);
         $urlModel->method('getProductUrl')->willReturn('http://example.com/product');
-        $productModel->setUrlModel($urlModel);
         
+        $productModel = $this->createPartialMock(ProductModel::class, ['getUrlModel']);
+        
+        // Initialize _data array for DataObject magic methods
+        $reflection = new \ReflectionClass($productModel);
+        $dataProperty = $reflection->getProperty('_data');
+        $dataProperty->setValue($productModel, []);
+        
+        $productModel->method('getUrlModel')->willReturn($urlModel);
+        $productModel->setName('Product Name');
+        $productModel->setStoreId(1);
         $productModel->setNickname('Product Nick');
         $productModel->setTitle('Product Title');
         $productModel->setDetail('Product Detail');

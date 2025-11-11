@@ -306,14 +306,18 @@ class TaxTest extends TestCase
             'type_id' => $productTypeId,
             'price_type' => $productPriceType
         ]);
-        $weeeDataHelper = new \Magento\Weee\Test\Unit\Helper\WeeeDataTestHelper();
-        $weeeDataHelper->setAmounts([10, 30]);
+        $weeeDataHelper1 = new DataObject();
+        $weeeDataHelper1->setData('amount_excl_tax', 10);
+        
+        $weeeDataHelper2 = new DataObject();
+        $weeeDataHelper2->setData('amount_excl_tax', 30);
+        
         $tax = $this->getMockBuilder(Tax::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getProductWeeeAttributes'])
             ->getMock();
         $tax->expects($this->once())->method('getProductWeeeAttributes')
-            ->willReturn([$weeeDataHelper, $weeeDataHelper]);
+            ->willReturn([$weeeDataHelper1, $weeeDataHelper2]);
         $this->assertEquals(40, $tax->getWeeeAmountExclTax($product));
     }
 

@@ -14,6 +14,7 @@ use Magento\Customer\Model\Data\Customer as CustomerData;
 use Magento\Customer\Model\Session;
 use Magento\Framework\App\Action\Context as ActionContext;
 use Magento\Framework\App\RequestInterface;
+use Magento\Framework\App\Request\Http as HttpRequest;
 use Magento\Framework\Controller\Result\Redirect as ResultRedirect;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Data\Form\FormKey\Validator as FormKeyValidator;
@@ -37,7 +38,6 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Captcha\Observer\CaptchaStringResolver;
 use Magento\Framework\Escaper;
-use Magento\Framework\App\Test\Unit\Helper\RequestInterfaceTestHelper;
 use Magento\Customer\Model\Session as CustomerSession;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -89,7 +89,7 @@ class SendTest extends TestCase
     protected $resultLayout;
 
     /**
-     * @var RequestInterface|MockObject
+     * @var HttpRequest|MockObject
      */
     protected $request;
 
@@ -197,7 +197,7 @@ class SendTest extends TestCase
                 ]
             );
 
-        $this->request = new RequestInterfaceTestHelper();
+        $this->request = $this->createMock(HttpRequest::class);
 
         $this->messageManager = $this->createStub(ManagerInterface::class);
 
@@ -308,10 +308,11 @@ class SendTest extends TestCase
             ->with($this->request)
             ->willReturn(true);
 
-        $this->request->postData = [
-            'emails' => 'some.email2@gmail.com',
-            'message' => null
-        ];
+        $this->request->method('getPost')
+            ->willReturnMap([
+                ['emails', null, 'some.email2@gmail.com'],
+                ['message', null, null]
+            ]);
 
         $wishlist = $this->createMock(Wishlist::class);
         $this->wishlistProvider->expects($this->once())

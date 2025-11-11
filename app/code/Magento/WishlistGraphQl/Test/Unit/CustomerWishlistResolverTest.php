@@ -16,12 +16,14 @@ use Magento\Wishlist\Model\Wishlist;
 use Magento\Wishlist\Model\Wishlist\Config;
 use Magento\Wishlist\Model\WishlistFactory;
 use Magento\WishlistGraphQl\Model\Resolver\CustomerWishlistResolver;
-use Magento\GraphQl\Test\Unit\Helper\ContextExtensionInterfaceTestHelper;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class CustomerWishlistResolverTest extends TestCase
 {
+    use MockCreationTrait;
+
     private const STUB_CUSTOMER_ID = 1;
 
     /**
@@ -59,7 +61,22 @@ class CustomerWishlistResolverTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->extensionAttributesMock = new ContextExtensionInterfaceTestHelper();
+        $isCustomer = false;
+
+        $this->extensionAttributesMock = $this->createPartialMockWithReflection(
+            ContextExtensionInterface::class,
+            ['setIsCustomer', 'getIsCustomer']
+        );
+        $this->extensionAttributesMock->method('setIsCustomer')
+            ->willReturnCallback(function ($value) use (&$isCustomer) {
+                $isCustomer = $value;
+                return $this->extensionAttributesMock;
+            });
+        $this->extensionAttributesMock->method('getIsCustomer')
+            ->willReturnCallback(function () use (&$isCustomer) {
+                return $isCustomer;
+            });
+
         $this->contextMock = $this->createMock(Context::class);
         $this->contextMock->method('getUserId')->willReturn(self::STUB_CUSTOMER_ID);
         $this->contextMock->method('getUserType')->willReturn(null);

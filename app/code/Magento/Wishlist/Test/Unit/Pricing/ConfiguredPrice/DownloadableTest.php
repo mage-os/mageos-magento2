@@ -18,12 +18,14 @@ use Magento\Framework\Pricing\SaleableInterface;
 use Magento\Wishlist\Model\Item\Option;
 use Magento\Wishlist\Pricing\ConfiguredPrice\Downloadable;
 use Magento\Catalog\Model\Product;
-use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class DownloadableTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var SaleableInterface|MockObject
      */
@@ -53,9 +55,56 @@ class DownloadableTest extends TestCase
     {
         $this->priceInfoMock = $this->createMock(PriceInfoInterface::class);
 
-        $this->saleableItem = new ProductTestHelper();
+        $this->saleableItem = $this->createPartialMockWithReflection(
+            Product::class,
+            [
+                'getPriceInfo',
+                'setPriceInfo',
+                'getCustomOption',
+                'setCustomOption',
+                'getTypeInstance',
+                'setTypeInstance',
+                'getLinksPurchasedSeparately',
+                'setLinksPurchasedSeparately'
+            ]
+        );
         
-        $this->saleableItem->setPriceInfo($this->priceInfoMock);
+        $customOptions = [];
+        $this->saleableItem->method('getCustomOption')->willReturnCallback(
+            function ($key) use (&$customOptions) {
+                return $customOptions[$key] ?? null;
+            }
+        );
+        $this->saleableItem->method('setCustomOption')->willReturnCallback(
+            function ($key, $value) use (&$customOptions) {
+                $customOptions[$key] = $value;
+                return $this->saleableItem;
+            }
+        );
+        
+        $typeInstance = null;
+        $this->saleableItem->method('getTypeInstance')->willReturnCallback(function () use (&$typeInstance) {
+            return $typeInstance;
+        });
+        $this->saleableItem->method('setTypeInstance')->willReturnCallback(function ($instance) use (&$typeInstance) {
+            $typeInstance = $instance;
+            return $this->saleableItem;
+        });
+        
+        $linksPurchased = false;
+        $this->saleableItem->method('getLinksPurchasedSeparately')->willReturnCallback(
+            function () use (&$linksPurchased) {
+                return $linksPurchased;
+            }
+        );
+        $this->saleableItem->method('setLinksPurchasedSeparately')->willReturnCallback(
+            function ($value) use (&$linksPurchased) {
+                $linksPurchased = $value;
+                return $this->saleableItem;
+            }
+        );
+        
+        $this->saleableItem->method('getPriceInfo')->willReturn($this->priceInfoMock);
 
         $this->calculator = $this->createMock(CalculatorInterface::class);
 
@@ -101,6 +150,7 @@ class DownloadableTest extends TestCase
 
         $this->saleableItem->setCustomOption('downloadable_link_ids', $optionMock);
         $this->saleableItem->setTypeInstance($productTypeMock);
+        $this->saleableItem->setLinksPurchasedSeparately(true);
 
         $this->assertEquals(20, $this->model->getValue());
     }
@@ -149,6 +199,7 @@ class DownloadableTest extends TestCase
 
         $this->saleableItem->setCustomOption('downloadable_link_ids', $optionMock);
         $this->saleableItem->setTypeInstance($productTypeMock);
+        $this->saleableItem->setLinksPurchasedSeparately(true);
 
         $this->assertEquals($priceValue, $this->model->getValue());
     }

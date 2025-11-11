@@ -9,10 +9,10 @@ namespace Magento\WeeeGraphQl\Test\Unit\Model\Resolver;
 
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\GraphQl\Config\Element\Field;
-use Magento\GraphQl\Model\Query\Context;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+use Magento\GraphQl\Model\Query\Context;
 use Magento\GraphQl\Model\Query\ContextExtensionInterface;
-use Magento\GraphQl\Test\Unit\Helper\ContextExtensionInterfaceTestHelper;
 use Magento\Quote\Api\Data\CartItemInterface;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Tax\Helper\Data as TaxHelper;
@@ -27,6 +27,8 @@ use PHPUnit\Framework\TestCase;
  */
 class FixedProductTaxResolverTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var MockObject|Context
      */
@@ -117,7 +119,22 @@ class FixedProductTaxResolverTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->contextExtensionAttributesMock = new ContextExtensionInterfaceTestHelper();
+        $this->contextExtensionAttributesMock = $this->createPartialMockWithReflection(
+            ContextExtensionInterface::class,
+            ['setStore', 'getStore']
+        );
+        
+        $store = null;
+        $this->contextExtensionAttributesMock->method('setStore')->willReturnCallback(
+            function ($storeValue) use (&$store) {
+                $store = $storeValue;
+            }
+        );
+        $this->contextExtensionAttributesMock->method('getStore')->willReturnCallback(
+            function () use (&$store) {
+                return $store;
+            }
+        );
 
         $this->contextMock = $this->createPartialMock(Context::class, ['getExtensionAttributes']);
         $this->contextMock->method('getExtensionAttributes')

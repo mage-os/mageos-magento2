@@ -7,16 +7,16 @@ declare(strict_types=1);
 
 namespace Magento\Weee\Test\Unit\Ui\DataProvider\Product\Listing\Collector;
 
+use Magento\Catalog\Api\Data\ProductRender\PriceInfoExtensionInterface;
 use Magento\Catalog\Api\Data\ProductRender\PriceInfoExtensionInterfaceFactory;
 use Magento\Catalog\Api\Data\ProductRenderInterface;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ProductRender\FormattedPriceInfoBuilder;
 use Magento\Catalog\Pricing\Price\FinalPrice;
-use Magento\Catalog\Test\Unit\Helper\PriceInfoExtensionInterfaceTestHelper;
 use Magento\Framework\Pricing\Amount\AmountInterface;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Framework\Pricing\PriceInfo\Base;
-use Magento\Framework\Pricing\Test\Unit\Helper\PriceInfoBaseTestHelper;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Weee\Api\Data\ProductRender\WeeeAdjustmentAttributeInterface;
 use Magento\Weee\Api\Data\ProductRender\WeeeAdjustmentAttributeInterfaceFactory;
 use Magento\Weee\Helper\Data;
@@ -32,6 +32,7 @@ use PHPUnit\Framework\TestCase;
  */
 class WeeeTest extends TestCase
 {
+    use MockCreationTrait;
     /** @var Weee */
     protected $model;
 
@@ -66,7 +67,10 @@ class WeeeTest extends TestCase
             ['create']
         );
 
-        $this->extensionAttributes = new PriceInfoExtensionInterfaceTestHelper();
+        $this->extensionAttributes = $this->createPartialMockWithReflection(
+            PriceInfoExtensionInterface::class,
+            ['setWeeeAttributes', 'getWeeeAttributes', 'setWeeeAdjustment', 'getWeeeAdjustment']
+        );
 
         $this->priceInfoExtensionFactory = $this->createPartialMock(
             PriceInfoExtensionInterfaceFactory::class,
@@ -101,6 +105,8 @@ class WeeeTest extends TestCase
         $weeAttribute->setAttributeCode('');
         $productRender->method('getPriceInfo')->willReturn($priceInfo);
         $priceInfo->setExtensionAttributes($this->extensionAttributes);
+        $priceInfo->method('getExtensionAttributes')->willReturn($this->extensionAttributes);
+        $priceInfo->method('getPrice')->willReturn($price);
         $productMock->method('getPriceInfo')->willReturn($priceInfo);
         $priceInfo->setPrice($price);
         $amount = $this->createMock(AmountInterface::class);
@@ -175,6 +181,9 @@ class WeeeTest extends TestCase
      */
     private function createPriceInfoMock(): Base
     {
-        return new PriceInfoBaseTestHelper();
+        return $this->createPartialMockWithReflection(
+            Base::class,
+            ['getPrice', 'setExtensionAttributes', 'getExtensionAttributes', 'setPrice']
+        );
     }
 }

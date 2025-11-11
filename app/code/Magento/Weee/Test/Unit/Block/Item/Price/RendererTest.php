@@ -8,9 +8,9 @@ declare(strict_types=1);
 namespace Magento\Weee\Test\Unit\Block\Item\Price;
 
 use Magento\Directory\Model\PriceCurrency;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Quote\Model\Quote\Item;
-use Magento\Quote\Test\Unit\Helper\QuoteItemTestHelper;
 use Magento\Weee\Block\Item\Price\Renderer;
 use Magento\Weee\Helper\Data;
 use Magento\Weee\Model\Tax as WeeeDisplayConfig;
@@ -28,6 +28,8 @@ use PHPUnit\Framework\TestCase;
  */
 class RendererTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Renderer
      */
@@ -91,11 +93,146 @@ class RendererTest extends TestCase
     /**
      * Create item mock with all required methods
      *
-     * @return Item
+     * @return Item|MockObject
      */
-    private function createItemMock(): Item
+    private function createItemMock()
     {
-        return new QuoteItemTestHelper();
+        $methods = [
+            'setStoreId', 'getStoreId',
+            'setWeeeTaxAppliedAmount', 'getWeeeTaxAppliedAmount',
+            'setPriceInclTax', 'getPriceInclTax',
+            'setBasePriceInclTax', 'getBasePriceInclTax',
+            'setCalculationPrice', 'getCalculationPrice',
+            'setBaseWeeeTaxAppliedAmount', 'getBaseWeeeTaxAppliedAmount',
+            'setBaseRowTotal', 'getBaseRowTotal',
+            'setQtyOrdered', 'getQtyOrdered',
+            'setWeeeTaxAppliedRowAmount', 'getWeeeTaxAppliedRowAmount',
+            'setRowTotal', 'getRowTotal',
+            'setBaseWeeeTaxAppliedRowAmnt', 'getBaseWeeeTaxAppliedRowAmnt',
+            'setRowTotalInclTax', 'getRowTotalInclTax',
+            'setBaseRowTotalInclTax', 'getBaseRowTotalInclTax',
+            'getData', 'setData'
+        ];
+        
+        $itemMock = $this->createPartialMockWithReflection(Item::class, $methods);
+        
+        // Configure data storage
+        $data = ['store_id' => 1];
+        $itemMock->method('setData')->willReturnCallback(function ($key, $value = null) use (&$data, $itemMock) {
+            if (is_array($key)) {
+                $data = array_merge($data, $key);
+            } else {
+                $data[$key] = $value;
+            }
+            return $itemMock;
+        });
+        $itemMock->method('getData')->willReturnCallback(function ($key = '', $index = null) use (&$data) {
+            if ($key === '') {
+                return $data;
+            }
+            $value = $data[$key] ?? null;
+            if ($index !== null && is_array($value)) {
+                return $value[$index] ?? null;
+            }
+            return $value;
+        });
+        
+        // Configure all setters to store data and return self
+        $itemMock->method('setStoreId')->willReturnCallback(function ($val) use (&$data, $itemMock) {
+            $data['store_id'] = $val;
+            return $itemMock;
+        });
+        $itemMock->method('getStoreId')->willReturnCallback(function () use (&$data) {
+            return $data['store_id'] ?? null;
+        });
+        $itemMock->method('setWeeeTaxAppliedAmount')->willReturnCallback(function ($val) use (&$data, $itemMock) {
+            $data['weee_tax_applied_amount'] = $val;
+            return $itemMock;
+        });
+        $itemMock->method('setPriceInclTax')->willReturnCallback(function ($val) use (&$data, $itemMock) {
+            $data['price_incl_tax'] = $val;
+            return $itemMock;
+        });
+        $itemMock->method('setBasePriceInclTax')->willReturnCallback(function ($val) use (&$data, $itemMock) {
+            $data['base_price_incl_tax'] = $val;
+            return $itemMock;
+        });
+        $itemMock->method('setCalculationPrice')->willReturnCallback(function ($val) use (&$data, $itemMock) {
+            $data['calculation_price'] = $val;
+            return $itemMock;
+        });
+        $itemMock->method('setBaseWeeeTaxAppliedAmount')->willReturnCallback(function ($val) use (&$data, $itemMock) {
+            $data['base_weee_tax_applied_amount'] = $val;
+            return $itemMock;
+        });
+        $itemMock->method('setBaseRowTotal')->willReturnCallback(function ($val) use (&$data, $itemMock) {
+            $data['base_row_total'] = $val;
+            return $itemMock;
+        });
+        $itemMock->method('setQtyOrdered')->willReturnCallback(function ($val) use (&$data, $itemMock) {
+            $data['qty_ordered'] = $val;
+            return $itemMock;
+        });
+        $itemMock->method('setWeeeTaxAppliedRowAmount')->willReturnCallback(function ($val) use (&$data, $itemMock) {
+            $data['weee_tax_applied_row_amount'] = $val;
+            return $itemMock;
+        });
+        $itemMock->method('setRowTotal')->willReturnCallback(function ($val) use (&$data, $itemMock) {
+            $data['row_total'] = $val;
+            return $itemMock;
+        });
+        $itemMock->method('setBaseWeeeTaxAppliedRowAmnt')->willReturnCallback(function ($val) use (&$data, $itemMock) {
+            $data['base_weee_tax_applied_row_amnt'] = $val;
+            return $itemMock;
+        });
+        $itemMock->method('setRowTotalInclTax')->willReturnCallback(function ($val) use (&$data, $itemMock) {
+            $data['row_total_incl_tax'] = $val;
+            return $itemMock;
+        });
+        $itemMock->method('setBaseRowTotalInclTax')->willReturnCallback(function ($val) use (&$data, $itemMock) {
+            $data['base_row_total_incl_tax'] = $val;
+            return $itemMock;
+        });
+        
+        // Configure all getters to retrieve data
+        $itemMock->method('getWeeeTaxAppliedAmount')->willReturnCallback(function () use (&$data) {
+            return $data['weee_tax_applied_amount'] ?? null;
+        });
+        $itemMock->method('getPriceInclTax')->willReturnCallback(function () use (&$data) {
+            return $data['price_incl_tax'] ?? null;
+        });
+        $itemMock->method('getBasePriceInclTax')->willReturnCallback(function () use (&$data) {
+            return $data['base_price_incl_tax'] ?? null;
+        });
+        $itemMock->method('getCalculationPrice')->willReturnCallback(function () use (&$data) {
+            return $data['calculation_price'] ?? null;
+        });
+        $itemMock->method('getBaseWeeeTaxAppliedAmount')->willReturnCallback(function () use (&$data) {
+            return $data['base_weee_tax_applied_amount'] ?? null;
+        });
+        $itemMock->method('getBaseRowTotal')->willReturnCallback(function () use (&$data) {
+            return $data['base_row_total'] ?? null;
+        });
+        $itemMock->method('getQtyOrdered')->willReturnCallback(function () use (&$data) {
+            return $data['qty_ordered'] ?? 1;  // Default to 1 to avoid division by zero
+        });
+        $itemMock->method('getWeeeTaxAppliedRowAmount')->willReturnCallback(function () use (&$data) {
+            return $data['weee_tax_applied_row_amount'] ?? null;
+        });
+        $itemMock->method('getRowTotal')->willReturnCallback(function () use (&$data) {
+            return $data['row_total'] ?? null;
+        });
+        $itemMock->method('getBaseWeeeTaxAppliedRowAmnt')->willReturnCallback(function () use (&$data) {
+            return $data['base_weee_tax_applied_row_amnt'] ?? null;
+        });
+        $itemMock->method('getRowTotalInclTax')->willReturnCallback(function () use (&$data) {
+            return $data['row_total_incl_tax'] ?? null;
+        });
+        $itemMock->method('getBaseRowTotalInclTax')->willReturnCallback(function () use (&$data) {
+            return $data['base_row_total_incl_tax'] ?? null;
+        });
+        
+        return $itemMock;
     }
 
     /**
