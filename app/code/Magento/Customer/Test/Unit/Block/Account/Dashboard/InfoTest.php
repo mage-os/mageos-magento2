@@ -30,11 +30,11 @@ use PHPUnit\Framework\TestCase;
 class InfoTest extends TestCase
 {
     /** Constant values used for testing */
-    const CUSTOMER_ID = 1;
+    private const CUSTOMER_ID = 1;
 
-    const CHANGE_PASSWORD_URL = 'http://localhost/index.php/account/edit/changepass/1';
+    private const CHANGE_PASSWORD_URL = 'http://localhost/index.php/account/edit/changepass/1';
 
-    const EMAIL_ADDRESS = 'john.doe@example.com';
+    private const EMAIL_ADDRESS = 'john.doe@example.com';
 
     /** @var MockObject|Context */
     private $_context;

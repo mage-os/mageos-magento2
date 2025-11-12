@@ -91,7 +91,11 @@ class EditTest extends TestCase
         $this->addressRepositoryMock = $this->getMockBuilder(AddressRepositoryInterface::class)
             ->getMock();
 
-        $this->customerSessionMock = $this->createPartialMockWithReflection(Session::class, ['getAddressFormData', 'getCustomerId']);
+        $this->customerSessionMock = $this->createPartialMockWithReflection(
+            Session::class,
+            ['getAddressFormData', 'getCustomerId'
+                                    ]
+        );
 
         $this->pageConfigMock = $this->getMockBuilder(Config::class)
             ->disableOriginalConstructor()

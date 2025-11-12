@@ -27,7 +27,7 @@ class RegionTest extends TestCase
 
     /**
      * Simulate "serialize" method of a form element.
-     *
+     * 
      * @param string[] $keys
      * @param array $data
      * @return string
@@ -46,7 +46,9 @@ class RegionTest extends TestCase
     }
 
     /**
-     * @param array $regionCollection */
+     * @param array $regionCollection
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     **/
     #[DataProvider('renderDataProvider')]
     public function testRender($regionCollection)
     {

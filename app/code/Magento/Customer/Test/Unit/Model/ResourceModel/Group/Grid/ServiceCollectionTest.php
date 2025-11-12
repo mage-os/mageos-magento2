@@ -259,7 +259,9 @@ class ServiceCollectionTest extends TestCase
     public function testAddFieldToFilterEmptyArrays($fields, $conditions)
     {
         $this->expectException(LocalizedException::class);
-        $this->expectExceptionMessage('The field array failed to pass. The array must have a matching condition array.');
+        $this->expectExceptionMessage(
+            'The field array failed to pass. The array must have a matching condition array.'
+        );
 
         $this->serviceCollection->addFieldToFilter($fields, $conditions);
     }

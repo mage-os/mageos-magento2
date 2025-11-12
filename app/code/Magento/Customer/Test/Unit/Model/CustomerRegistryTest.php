@@ -42,9 +42,9 @@ class CustomerRegistryTest extends TestCase
     /**#@+
      * Sample customer data
      */
-    const CUSTOMER_ID = 1;
-    const CUSTOMER_EMAIL = 'customer@example.com';
-    const WEBSITE_ID = 1;
+    private const CUSTOMER_ID = 1;
+    private const CUSTOMER_EMAIL = 'customer@example.com';
+    private const WEBSITE_ID = 1;
 
     protected function setUp(): void
     {

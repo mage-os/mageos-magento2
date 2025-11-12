@@ -17,8 +17,8 @@ use PHPUnit\Framework\TestCase;
 
 class AddressTest extends TestCase
 {
-    const ORIG_CUSTOMER_ID = 1;
-    const ORIG_PARENT_ID = 2;
+    private const ORIG_CUSTOMER_ID = 1;
+    private const ORIG_PARENT_ID = 2;
 
     /**
      * @var ObjectManager

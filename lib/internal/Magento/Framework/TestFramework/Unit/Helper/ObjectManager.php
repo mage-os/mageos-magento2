@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2012 Adobe  
+ * Copyright 2012 Adobe
  * All Rights Reserved.
  */
 namespace Magento\Framework\TestFramework\Unit\Helper;
@@ -16,6 +16,7 @@ use PHPUnit\Framework\MockObject\MockObject;
  * @deprecated Class under test should be instantiated with `new` keyword with explicit dependencies declaration
  * @see https://github.com/magento/magento2/pull/29272
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.UnusedLocalVariable)
  */
 class ObjectManager
 {
@@ -335,7 +336,7 @@ class ObjectManager
             $anyMethod->invoke($this->_testObject)
         )->method(
             'getIterator'
-            )->willReturn($iterator);
+        )->willReturn($iterator);
         return $mock;
     }
 

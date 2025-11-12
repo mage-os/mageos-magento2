@@ -18,13 +18,13 @@ use PHPUnit\Framework\TestCase;
 class AbstractWidgetTest extends TestCase
 {
     /** Constants used in the various unit tests. */
-    const KEY_FIELD_ID_FORMAT = 'field_id_format';
+    private const KEY_FIELD_ID_FORMAT = 'field_id_format';
 
-    const KEY_FIELD_NAME_FORMAT = 'field_name_format';
+    private const KEY_FIELD_NAME_FORMAT = 'field_name_format';
 
-    const FORMAT_D = '%d';
+    private const FORMAT_D = '%d';
 
-    const FORMAT_S = '%s';
+    private const FORMAT_S = '%s';
 
     /** @var MockObject|Address */
     private $_addressHelper;

@@ -113,14 +113,11 @@ class PasswordTest extends TestCase
     /**
      * @param mixed $randomValue
      */
-    #[DataProvider('customerGetPasswordAndGetPasswordConfirmAlwaysReturnsAStringDataProvider')]
+    #[DataProvider('randomValuesProvider')]
     public function testCustomerGetPasswordAndGetPasswordConfirmAlwaysReturnsAString($randomValue)
     {
         /** @var Customer|MockObject $customer */
-        $customer = $this->getMockBuilder(Customer::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getData'])
-            ->getMock();
+        $customer = $this->createPartialMock(Customer::class, ['getData']);
 
         $customer->expects($this->exactly(2))->method('getData')->willReturn($randomValue);
 

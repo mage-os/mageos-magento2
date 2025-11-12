@@ -55,8 +55,8 @@ class SetCustomerStoreTest extends TestCase
             $storeId = 200;
             $websiteMock = $this->createPartialMockWithReflection(
                 WebsiteInterface::class,
-                ['getId', 'setId', 'getCode', 'setCode', 'getName', 'setName', 
-                 'getDefaultGroupId', 'setDefaultGroupId', 'getExtensionAttributes', 
+                ['getId', 'setId', 'getCode', 'setCode', 'getName', 'setName',
+                 'getDefaultGroupId', 'setDefaultGroupId', 'getExtensionAttributes',
                  'setExtensionAttributes', 'getStoreIds']
             );
             $websiteMock->expects($this->once())

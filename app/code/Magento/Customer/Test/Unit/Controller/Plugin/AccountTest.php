@@ -27,7 +27,7 @@ class AccountTest extends TestCase
     /**
      * @var string
      */
-    const EXPECTED_VALUE = 'expected_value';
+    private const EXPECTED_VALUE = 'expected_value';
 
     /**
      * @var Account

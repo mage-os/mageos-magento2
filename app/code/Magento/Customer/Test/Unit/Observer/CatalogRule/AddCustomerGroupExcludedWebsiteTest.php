@@ -41,8 +41,9 @@ class AddCustomerGroupExcludedWebsiteTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->groupExcludedWebsiteRepositoryMock = $this->getMockBuilder(GroupExcludedWebsiteRepositoryInterface::class)
-            ->getMock();
+        $this->groupExcludedWebsiteRepositoryMock = $this->getMockBuilder(
+            GroupExcludedWebsiteRepositoryInterface::class
+        )->getMock();
         $this->observerMock = $this->getMockBuilder(Observer::class)
             ->disableOriginalConstructor()
             ->getMock();

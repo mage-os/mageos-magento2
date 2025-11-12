@@ -36,19 +36,19 @@ class RegisterTest extends TestCase
     use MockCreationTrait;
 
     /** Constants used by the various unit tests */
-    const POST_ACTION_URL = 'http://localhost/index.php/customer/account/createpost';
+    private const POST_ACTION_URL = 'http://localhost/index.php/customer/account/createpost';
 
-    const LOGIN_URL = 'http://localhost/index.php/customer/account/login';
+    private const LOGIN_URL = 'http://localhost/index.php/customer/account/login';
 
-    const COUNTRY_ID = 'US';
+    private const COUNTRY_ID = 'US';
 
-    const FORM_DATA = 'form_data';
+    private const FORM_DATA = 'form_data';
 
-    const REGION_ATTRIBUTE_VALUE = 'California';
+    private const REGION_ATTRIBUTE_VALUE = 'California';
 
-    const REGION_ID_ATTRIBUTE_CODE = 'region_id';
+    private const REGION_ID_ATTRIBUTE_CODE = 'region_id';
 
-    const REGION_ID_ATTRIBUTE_VALUE = '12';
+    private const REGION_ID_ATTRIBUTE_VALUE = '12';
 
     /** @var MockObject|Data */
     private $directoryHelperMock;

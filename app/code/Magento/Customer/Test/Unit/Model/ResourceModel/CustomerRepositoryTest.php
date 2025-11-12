@@ -12,11 +12,13 @@ use Magento\Customer\Api\Data\AddressSearchResultsInterface;
 use Magento\Customer\Api\Data\AttributeMetadataInterface;
 use Magento\Customer\Api\Data\CustomerInterface;
 use Magento\Customer\Api\Data\CustomerSearchResultsInterfaceFactory;
+use Magento\Customer\Api\GroupRepositoryInterface;
 use Magento\Customer\Model\Customer\NotificationStorage;
 use Magento\Customer\Model\CustomerFactory;
 use Magento\Customer\Model\CustomerRegistry;
 use Magento\Customer\Model\Data\CustomerSecure;
 use Magento\Customer\Model\Data\CustomerSecureFactory;
+use Magento\Customer\Model\Delegation\Storage as DelegatedStorage;
 use Magento\Customer\Model\ResourceModel\AddressRepository;
 use Magento\Customer\Model\ResourceModel\Customer;
 use Magento\Customer\Model\ResourceModel\Customer\Collection;
@@ -30,7 +32,6 @@ use Magento\Framework\Api\SearchCriteria\CollectionProcessorInterface;
 use Magento\Framework\Api\SearchCriteriaInterface;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Store\Model\StoreManagerInterface;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
@@ -124,6 +125,16 @@ class CustomerRepositoryTest extends TestCase
     private $notificationStorage;
 
     /**
+     * @var DelegatedStorage|MockObject
+     */
+    private $delegatedStorage;
+
+    /**
+     * @var GroupRepositoryInterface|MockObject
+     */
+    private $groupRepository;
+
+    /**
      * @var CustomerRepository
      */
     private $model;
@@ -144,43 +155,18 @@ class CustomerRepositoryTest extends TestCase
             ['create']
         );
         $this->addressRepository = $this->createMock(AddressRepository::class);
-        $this->customerMetadata = $this->createMock(
-            CustomerMetadataInterface::class,
-            [],
-            '',
-            false
-        );
+        $this->customerMetadata = $this->createMock(CustomerMetadataInterface::class);
         $this->searchResultsFactory = $this->createPartialMock(
             CustomerSearchResultsInterfaceFactory::class,
             ['create']
         );
-        $this->eventManager = $this->createMock(
-            ManagerInterface::class,
-            [],
-            '',
-            false
-        );
-        $this->storeManager = $this->createMock(
-            StoreManagerInterface::class,
-            [],
-            '',
-            false
-        );
+        $this->eventManager = $this->createMock(ManagerInterface::class);
+        $this->storeManager = $this->createMock(StoreManagerInterface::class);
         $this->extensibleDataObjectConverter = $this->createMock(
             ExtensibleDataObjectConverter::class
         );
-        $this->imageProcessor = $this->createMock(
-            ImageProcessorInterface::class,
-            [],
-            '',
-            false
-        );
-        $this->extensionAttributesJoinProcessor = $this->createMock(
-            JoinProcessorInterface::class,
-            [],
-            '',
-            false
-        );
+        $this->imageProcessor = $this->createMock(ImageProcessorInterface::class);
+        $this->extensionAttributesJoinProcessor = $this->createMock(JoinProcessorInterface::class);
         $this->customer = $this->createPartialMockWithReflection(
             \Magento\Customer\Model\Data\Customer::class,
             ['__toArray', 'getId', 'getEmail', 'getWebsiteId', 'setWebsiteId', 'setStoreId',
@@ -188,27 +174,27 @@ class CustomerRepositoryTest extends TestCase
         );
         $this->collectionProcessorMock = $this->createMock(CollectionProcessorInterface::class);
         $this->notificationStorage = $this->createMock(NotificationStorage::class);
+        $this->delegatedStorage = $this->createMock(DelegatedStorage::class);
+        $this->groupRepository = $this->createMock(GroupRepositoryInterface::class);
 
-        $objectManager = new ObjectManager($this);
-        $this->model = $objectManager->getObject(
-            CustomerRepository::class,
-            [
-                'customerFactory' => $this->customerFactory,
-                'customerSecureFactory' => $this->customerSecureFactory,
-                'customerRegistry' => $this->customerRegistry,
-                'addressRepository' => $this->addressRepository,
-                'customerResourceModel' => $this->customerResourceModel,
-                'customerMetadataService' => $this->customerMetadata,
-                'searchResultsFactory' => $this->searchResultsFactory,
-                'eventManager' => $this->eventManager,
-                'storeManager' => $this->storeManager,
-                'extensibleDataObjectConverter' => $this->extensibleDataObjectConverter,
-                'dataObjectHelper' => $this->dataObjectHelper,
-                'imageProcessor' => $this->imageProcessor,
-                'extensionAttributesJoinProcessor' => $this->extensionAttributesJoinProcessor,
-                'collectionProcessor' => $this->collectionProcessorMock,
-                'notificationStorage' => $this->notificationStorage
-            ]
+        $this->model = new CustomerRepository(
+            $this->customerFactory,
+            $this->customerSecureFactory,
+            $this->customerRegistry,
+            $this->addressRepository,
+            $this->customerResourceModel,
+            $this->customerMetadata,
+            $this->searchResultsFactory,
+            $this->eventManager,
+            $this->storeManager,
+            $this->extensibleDataObjectConverter,
+            $this->dataObjectHelper,
+            $this->imageProcessor,
+            $this->extensionAttributesJoinProcessor,
+            $this->collectionProcessorMock,
+            $this->notificationStorage,
+            $this->delegatedStorage,
+            $this->groupRepository
         );
     }
 
@@ -538,18 +524,8 @@ class CustomerRepositoryTest extends TestCase
     public function testGetList(): void
     {
         $collection = $this->createMock(Collection::class);
-        $searchResults = $this->createMock(
-            AddressSearchResultsInterface::class,
-            [],
-            '',
-            false
-        );
-        $searchCriteria = $this->createMock(
-            SearchCriteriaInterface::class,
-            [],
-            '',
-            false
-        );
+        $searchResults = $this->createMock(AddressSearchResultsInterface::class);
+        $searchCriteria = $this->createMock(SearchCriteriaInterface::class);
         $customerModel = $this->createPartialMockWithReflection(
             \Magento\Customer\Model\Customer::class,
             [
@@ -566,12 +542,7 @@ class CustomerRepositoryTest extends TestCase
                 'setPasswordHash'
             ]
         );
-        $metadata = $this->createMock(
-            AttributeMetadataInterface::class,
-            [],
-            '',
-            false
-        );
+        $metadata = $this->createMock(AttributeMetadataInterface::class);
 
         $this->searchResultsFactory->expects($this->once())
             ->method('create')
@@ -648,9 +619,6 @@ class CustomerRepositoryTest extends TestCase
         $collection->expects($this->once())
             ->method('getIterator')
             ->willReturn(new \ArrayIterator([$customerModel]));
-        $collection->expects($this->once())
-            ->method('getItems')
-            ->willReturn([$customerModel]);
         $customerModel->expects($this->atLeastOnce())
             ->method('getDataModel')
             ->willReturn($this->customer);

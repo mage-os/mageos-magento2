@@ -187,7 +187,14 @@ class NewsletterTest extends TestCase
         $customer->method('getId')->willReturn($customerId);
         $this->customerRepository->method('getById')->with($customerId)->willReturn($customer);
 
-        $subscriberMock = $this->createPartialMockWithReflection(Subscriber::class, ['getChangeStatusAt', 'loadByCustomer', 'isSubscribed', 'getData']);
+        $subscriberMock = $this->createPartialMockWithReflection(
+            Subscriber::class,
+            ['getChangeStatusAt',
+                            'loadByCustomer',
+                            'isSubscribed',
+                            'getData'
+                            ]
+        );
         $statusDate = new \DateTime($statusDate);
         $this->localeDateMock->method('formatDateTime')->with($statusDate)->willReturn($dateExpected);
 

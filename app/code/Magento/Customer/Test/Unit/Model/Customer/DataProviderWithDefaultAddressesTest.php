@@ -92,7 +92,12 @@ class DataProviderWithDefaultAddressesTest extends TestCase
     {
         $this->eavConfigMock = $this->createMock(Config::class);
         $this->customerCollectionFactoryMock = $this->createPartialMock(CustomerCollectionFactory::class, ['create']);
-        $this->sessionMock = $this->createPartialMockWithReflection(GenericSession::class, ['getCustomerFormData', 'unsCustomerFormData']);
+        $this->sessionMock = $this->createPartialMockWithReflection(
+            GenericSession::class,
+            ['getCustomerFormData',
+                            'unsCustomerFormData'
+                            ]
+        );
         $this->countryFactoryMock = $this->createPartialMockWithReflection(
             CountryFactory::class,
             ['create', 'loadByCode', 'getName']

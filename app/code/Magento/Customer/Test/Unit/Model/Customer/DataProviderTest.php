@@ -87,7 +87,12 @@ class DataProviderTest extends TestCase
             ->getMockBuilder(EavValidationRules::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->sessionMock = $this->createPartialMockWithReflection(GenericSession::class, ['getCustomerFormData', 'unsCustomerFormData']);
+        $this->sessionMock =$this->createPartialMockWithReflection(
+            GenericSession::class,
+            ['getCustomerFormData',
+                            'unsCustomerFormData'
+                            ]
+        );
 
         $this->fileProcessor = $this->createMock(FileProcessor::class);
         $this->fileUploaderDataResolver = $this->getMockBuilder(FileUploaderDataResolver::class)

@@ -96,7 +96,14 @@ class PersonalInfoTest extends TestCase
         $backendSession = $this->createPartialMockWithReflection(Session::class, ['getCustomerData']);
         $backendSession->expects($this->any())->method('getCustomerData')->willReturn(['account' => []]);
 
-        $this->customerLog = $this->createPartialMockWithReflection(Log::class, ['loadByCustomer', 'getLastLoginAt', 'getLastVisitAt', 'getLastLogoutAt']);
+        $this->customerLog = $this->createPartialMockWithReflection(
+            Log::class,
+            ['loadByCustomer',
+                            'getLastLoginAt',
+                            'getLastVisitAt',
+                            'getLastLogoutAt'
+                            ]
+        );
         $this->customerLog->expects($this->any())->method('loadByCustomer')->willReturnSelf();
 
         $customerLogger = $this->createPartialMock(Logger::class, ['get']);

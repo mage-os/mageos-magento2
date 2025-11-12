@@ -444,7 +444,6 @@ class DobTest extends TestCase
                 ->willReturn(strtotime(self::MAX_DATE));
         }
 
-
         return $validationRule;
     }
 

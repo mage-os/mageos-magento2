@@ -51,7 +51,7 @@ class TransactionWrapperTest extends TestCase
      */
     protected $passwordHash = true;
 
-    const ERROR_MSG = "error occurred";
+    private const ERROR_MSG = "error occurred";
 
     protected function setUp(): void
     {

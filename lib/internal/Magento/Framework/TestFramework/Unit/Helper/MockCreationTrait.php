@@ -43,4 +43,3 @@ trait MockCreationTrait
         return $mockBuilder->getMock();
     }
 }
-

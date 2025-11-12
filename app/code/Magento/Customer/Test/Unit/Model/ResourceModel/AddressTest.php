@@ -366,15 +366,14 @@ class AddressTest extends TestCase
 /**
  * Mock method getAttributeLoader
  * @codingStandardsIgnoreStart
+ * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class SubResourceModelAddress extends \Magento\Customer\Model\ResourceModel\Address
 {
     protected $attributeLoader;
 
-    /**
-     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
     public function __construct(
         Context                     $context,
         Snapshot                    $entitySnapshot,

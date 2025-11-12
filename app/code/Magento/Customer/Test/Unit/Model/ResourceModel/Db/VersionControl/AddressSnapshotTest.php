@@ -58,7 +58,7 @@ class AddressSnapshotTest extends TestCase
      * @param bool $expected
      * @throws LocalizedException
      */
-    #[DataProvider('isModifiedDataProvider')]
+    #[DataProvider('dataProviderIsModified')]
     public function testIsModified($isCustomerSaveTransaction, $isDefaultBilling, $isDefaultShipping, $expected): void
     {
         $entityId = 1;
@@ -66,8 +66,12 @@ class AddressSnapshotTest extends TestCase
         $dataObjectMock = $this->createPartialMockWithReflection(
             DataObject::class,
             [
+                'getId',
                 'getData',
-                'getDataByKey'
+                'getDataByKey',
+                'getIsCustomerSaveTransaction',
+                'getIsDefaultBilling',
+                'getIsDefaultShipping'
             ]
         );
 
