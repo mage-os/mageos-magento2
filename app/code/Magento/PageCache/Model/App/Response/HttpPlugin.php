@@ -43,7 +43,7 @@ class HttpPlugin
 
         $currentVary = $this->context->getVaryString();
         $varyCookie = $this->request->get(HttpResponse::COOKIE_VARY_STRING);
-        if (isset($varyCookie) && $currentVary !== $varyCookie) {
+        if (isset($varyCookie) && ($currentVary !== $varyCookie)) {
             $subject->setNoCacheHeaders();
         }
         $subject->sendVary();
