@@ -18,6 +18,9 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Unit test for order item class.
+ * 
+ * @suppressWarnings(PHPMD.TooManyPublicMethods)
+ * @suppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class ItemTest extends TestCase
 {
