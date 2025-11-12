@@ -43,6 +43,10 @@ class TreeTest extends TestCase
     private function createCategoryCollectionStub(array $paths)
     {
         // Simple iterable stub with chainable methods
+        /**
+         * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+         * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+         */
         return new class($paths) implements \IteratorAggregate, \Countable {
             /** @var array */
             private $items;
@@ -73,6 +77,7 @@ class TreeTest extends TestCase
             }
             /**
              * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+             * @SuppressWarnings(PHPMD.UnusedLocalVariable)
              */
             public function addAttributeToFilter($field, $cond)
             {
@@ -179,6 +184,10 @@ class TreeTest extends TestCase
         $block = $this->buildBlockMock();
 
         // Custom stub that captures the last filter applied
+        /**
+         * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+         * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+         */
         $collectionStub = new class() implements \IteratorAggregate, \Countable {
             /** @var array */
             private $items = [];
