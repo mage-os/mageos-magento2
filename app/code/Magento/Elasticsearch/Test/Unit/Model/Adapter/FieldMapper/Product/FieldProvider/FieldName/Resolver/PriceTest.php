@@ -11,7 +11,7 @@ use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Elasticsearch\Model\Adapter\FieldMapper\Product\AttributeAdapter;
 use Magento\Elasticsearch\Model\Adapter\FieldMapper\Product\FieldProvider\FieldName\Resolver\Price;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
-use Magento\Store\Api\Data\StoreInterface;
+use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManager;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -79,7 +79,7 @@ class PriceTest extends TestCase
         $this->customerSession->expects($this->any())
             ->method('getCustomerGroupId')
             ->willReturn(1);
-        $store = $this->createPartialMock(\Magento\Store\Model\Store::class, ['getWebsiteId']);
+        $store = $this->createPartialMock(Store::class, ['getWebsiteId']);
         $store->expects($this->any())
             ->method('getWebsiteId')
             ->willReturn(2);
