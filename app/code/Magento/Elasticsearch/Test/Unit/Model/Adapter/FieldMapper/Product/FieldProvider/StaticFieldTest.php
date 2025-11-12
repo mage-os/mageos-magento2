@@ -132,6 +132,7 @@ class StaticFieldTest extends TestCase
      * @return void
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     #[DataProvider('attributeProvider')]
     public function testGetAllAttributesTypes(
