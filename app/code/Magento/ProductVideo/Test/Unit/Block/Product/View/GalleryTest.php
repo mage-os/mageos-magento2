@@ -9,11 +9,14 @@ namespace Magento\ProductVideo\Test\Unit\Block\Product\View;
 
 use Magento\Catalog\Block\Product\Context;
 use Magento\Catalog\Model\Product;
+use Magento\Catalog\Model\Product\Gallery\ImagesConfigFactoryInterface;
+use Magento\Catalog\Model\Product\Image\UrlBuilder;
 use Magento\Catalog\Model\Product\Type\AbstractType;
 use Magento\Framework\DataObject;
 use Magento\Framework\Json\EncoderInterface;
 use Magento\Framework\Registry;
 use Magento\Framework\Stdlib\ArrayUtils;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\ProductVideo\Block\Product\View\Gallery;
 use Magento\ProductVideo\Helper\Media;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -47,7 +50,17 @@ class GalleryTest extends TestCase
     protected $coreRegistry;
 
     /**
-     * @var Gallery|MockObject
+     * @var ImagesConfigFactoryInterface|MockObject
+     */
+    protected $imagesConfigFactoryMock;
+
+    /**
+     * @var UrlBuilder|MockObject
+     */
+    protected $urlBuilderMock;
+
+    /**
+     * @var Gallery
      */
     protected $gallery;
 
@@ -66,14 +79,36 @@ class GalleryTest extends TestCase
         $this->mediaHelperMock = $this->createMock(Media::class);
         $this->jsonEncoderMock = $this->createMock(EncoderInterface::class);
         $this->coreRegistry = $this->createMock(Registry::class);
-        $this->contextMock->method('getRegistry')->willReturn($this->coreRegistry);
+        $this->contextMock->expects($this->once())->method('getRegistry')->willReturn($this->coreRegistry);
+
+        $this->imagesConfigFactoryMock = $this->createMock(ImagesConfigFactoryInterface::class);
+        $this->urlBuilderMock = $this->createMock(UrlBuilder::class);
 
         $this->productModelMock = $this->createMock(Product::class);
 
-        $this->gallery = $this->getMockBuilder(Gallery::class)
-            ->onlyMethods(['getMediaGalleryDataJson', 'getVideoSettingsJson'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $objectManager = new ObjectManager($this);
+
+        $objects = [
+            [
+                ImagesConfigFactoryInterface::class,
+                $this->imagesConfigFactoryMock
+            ],
+            [
+                UrlBuilder::class,
+                $this->urlBuilderMock
+            ]
+        ];
+        $objectManager->prepareObjectManager($objects);
+
+        $this->gallery = $objectManager->getObject(
+            Gallery::class,
+            [
+                'context' => $this->contextMock,
+                'arrayUtils' => $this->arrayUtilsMock,
+                'mediaHelper' => $this->mediaHelperMock,
+                'jsonEncoder' => $this->jsonEncoderMock,
+            ]
+        );
     }
 
     /**
@@ -101,11 +136,11 @@ class GalleryTest extends TestCase
         ];
         $mediaGalleryData->setData($data);
 
-        $this->coreRegistry->method('registry')->willReturn($this->productModelMock);
+        $this->coreRegistry->expects($this->any())->method('registry')->willReturn($this->productModelMock);
         $typeInstance = $this->createMock(AbstractType::class);
-        $typeInstance->method('getStoreFilter')->willReturn('_cache_instance_store_filter');
-        $this->productModelMock->method('getTypeInstance')->willReturn($typeInstance);
-        $this->productModelMock->method('getMediaGalleryImages')->willReturn(
+        $typeInstance->expects($this->any())->method('getStoreFilter')->willReturn('_cache_instance_store_filter');
+        $this->productModelMock->expects($this->any())->method('getTypeInstance')->willReturn($typeInstance);
+        $this->productModelMock->expects($this->any())->method('getMediaGalleryImages')->willReturn(
             [$mediaGalleryData]
         );
         $this->gallery->getMediaGalleryDataJson();
@@ -117,11 +152,11 @@ class GalleryTest extends TestCase
     public function testGetMediaEmptyGalleryDataJson()
     {
         $mediaGalleryData = [];
-        $this->coreRegistry->method('registry')->willReturn($this->productModelMock);
+        $this->coreRegistry->expects($this->any())->method('registry')->willReturn($this->productModelMock);
         $typeInstance = $this->createMock(AbstractType::class);
         $typeInstance->expects($this->any())->method('getStoreFilter')->willReturn('_cache_instance_store_filter');
-        $this->productModelMock->method('getTypeInstance')->willReturn($typeInstance);
-        $this->productModelMock->method('getMediaGalleryImages')->willReturn($mediaGalleryData);
+        $this->productModelMock->expects($this->any())->method('getTypeInstance')->willReturn($typeInstance);
+        $this->productModelMock->expects($this->any())->method('getMediaGalleryImages')->willReturn($mediaGalleryData);
         $this->gallery->getMediaGalleryDataJson();
     }
 
@@ -130,9 +165,9 @@ class GalleryTest extends TestCase
      */
     public function testGetVideoSettingsJson()
     {
-        $this->mediaHelperMock->method('getPlayIfBaseAttribute')->willReturn(1);
-        $this->mediaHelperMock->method('getShowRelatedAttribute')->willReturn(0);
-        $this->mediaHelperMock->method('getVideoAutoRestartAttribute')->willReturn(0);
+        $this->mediaHelperMock->expects($this->once())->method('getPlayIfBaseAttribute')->willReturn(1);
+        $this->mediaHelperMock->expects($this->once())->method('getShowRelatedAttribute')->willReturn(0);
+        $this->mediaHelperMock->expects($this->once())->method('getVideoAutoRestartAttribute')->willReturn(0);
         $this->gallery->getVideoSettingsJson();
     }
 }
