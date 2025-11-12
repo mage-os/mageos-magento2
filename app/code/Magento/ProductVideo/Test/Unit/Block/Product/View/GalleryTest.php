@@ -9,6 +9,8 @@ namespace Magento\ProductVideo\Test\Unit\Block\Product\View;
 
 use Magento\Catalog\Block\Product\Context;
 use Magento\Catalog\Model\Product;
+use Magento\Catalog\Model\Product\Type\AbstractType;
+use Magento\Framework\DataObject;
 use Magento\Framework\Json\EncoderInterface;
 use Magento\Framework\Registry;
 use Magento\Framework\Stdlib\ArrayUtils;
@@ -79,10 +81,34 @@ class GalleryTest extends TestCase
      */
     public function testGetMediaGalleryDataJson()
     {
-        $expectedJson = '[{"media_type":"external-video","video_url":"http://example.com/video.mp4"}]';
-        $this->gallery->method('getMediaGalleryDataJson')->willReturn($expectedJson);
-        $result = $this->gallery->getMediaGalleryDataJson();
-        $this->assertEquals($expectedJson, $result);
+        $mediaGalleryData = new DataObject();
+        $data = [
+            [
+                'media_type' => 'external-video',
+                'video_url' => 'http://magento.ce/media/catalog/product/9/b/9br6ujuthnc.jpg',
+                'is_base' => true,
+            ],
+            [
+                'media_type' => 'external-video',
+                'video_url' => 'https://www.youtube.com/watch?v=QRYX7GIvdLE',
+                'is_base' => false,
+            ],
+            [
+                'media_type' => '',
+                'video_url' => '',
+                'is_base' => null,
+            ]
+        ];
+        $mediaGalleryData->setData($data);
+
+        $this->coreRegistry->method('registry')->willReturn($this->productModelMock);
+        $typeInstance = $this->createMock(AbstractType::class);
+        $typeInstance->method('getStoreFilter')->willReturn('_cache_instance_store_filter');
+        $this->productModelMock->method('getTypeInstance')->willReturn($typeInstance);
+        $this->productModelMock->method('getMediaGalleryImages')->willReturn(
+            [$mediaGalleryData]
+        );
+        $this->gallery->getMediaGalleryDataJson();
     }
 
     /**
@@ -90,10 +116,13 @@ class GalleryTest extends TestCase
      */
     public function testGetMediaEmptyGalleryDataJson()
     {
-        $expectedJson = '[]';
-        $this->gallery->method('getMediaGalleryDataJson')->willReturn($expectedJson);
-        $result = $this->gallery->getMediaGalleryDataJson();
-        $this->assertEquals($expectedJson, $result);
+        $mediaGalleryData = [];
+        $this->coreRegistry->method('registry')->willReturn($this->productModelMock);
+        $typeInstance = $this->createMock(AbstractType::class);
+        $typeInstance->expects($this->any())->method('getStoreFilter')->willReturn('_cache_instance_store_filter');
+        $this->productModelMock->method('getTypeInstance')->willReturn($typeInstance);
+        $this->productModelMock->method('getMediaGalleryImages')->willReturn($mediaGalleryData);
+        $this->gallery->getMediaGalleryDataJson();
     }
 
     /**
@@ -101,9 +130,9 @@ class GalleryTest extends TestCase
      */
     public function testGetVideoSettingsJson()
     {
-        $expectedJson = '{"playIfBase":1,"showRelated":0,"videoAutoRestart":0}';
-        $this->gallery->method('getVideoSettingsJson')->willReturn($expectedJson);
-        $result = $this->gallery->getVideoSettingsJson();
-        $this->assertEquals($expectedJson, $result);
+        $this->mediaHelperMock->method('getPlayIfBaseAttribute')->willReturn(1);
+        $this->mediaHelperMock->method('getShowRelatedAttribute')->willReturn(0);
+        $this->mediaHelperMock->method('getVideoAutoRestartAttribute')->willReturn(0);
+        $this->gallery->getVideoSettingsJson();
     }
 }

@@ -14,14 +14,12 @@ use Magento\CatalogSearch\Model\Indexer\Fulltext\Plugin\Category as CategoryPlug
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\Indexer\IndexerInterface;
 use Magento\Framework\Indexer\IndexerRegistry;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class CategoryTest extends TestCase
 {
-    use MockCreationTrait;
     /**
      * @var MockObject|IndexerInterface
      */

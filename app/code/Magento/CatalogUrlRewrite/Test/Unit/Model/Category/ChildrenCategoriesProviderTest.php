@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\CatalogUrlRewrite\Test\Unit\Model\Category;
 
 use Magento\Catalog\Model\Category;
+use Magento\Catalog\Model\ResourceModel\Category as CategoryResource;
 use Magento\Catalog\Model\ResourceModel\Collection\AbstractCollection;
 use Magento\CatalogUrlRewrite\Model\Category\ChildrenCategoriesProvider;
 use Magento\Framework\DB\Adapter\AdapterInterface;
@@ -70,7 +71,7 @@ class ChildrenCategoriesProviderTest extends TestCase
             ['where', 'deleteFromSelect', 'from']
         );
         $this->connection = $this->createMock(AdapterInterface::class);
-        $categoryResource = $this->createMock(\Magento\Catalog\Model\ResourceModel\Category::class);
+        $categoryResource = $this->createMock(CategoryResource::class);
         $this->category->method('getResource')->willReturn($categoryResource);
         $categoryResource->method('getConnection')->willReturn($this->connection);
         $this->connection->method('select')->willReturn($this->select);

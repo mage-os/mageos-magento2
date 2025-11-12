@@ -9,6 +9,7 @@ namespace Magento\CatalogSearch\Test\Unit\Model\Layer\Filter;
 
 use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\Layer;
+use Magento\Catalog\Model\Layer\Filter\DataProvider\Category as CategoryDataProvider;
 use Magento\Catalog\Model\Layer\Filter\DataProvider\CategoryFactory;
 use Magento\Catalog\Model\Layer\Filter\Item;
 use Magento\Catalog\Model\Layer\Filter\Item\DataBuilder;
@@ -51,7 +52,7 @@ class CategoryTest extends TestCase
     private $layer;
 
     /**
-     * @var \Magento\Catalog\Model\Layer\Filter\DataProvider\Category|MockObject
+     * @var CategoryDataProvider|MockObject
      */
     private $dataProvider;
 
@@ -83,7 +84,7 @@ class CategoryTest extends TestCase
         );
 
         $this->dataProvider = $this->createPartialMock(
-            \Magento\Catalog\Model\Layer\Filter\DataProvider\Category::class,
+            CategoryDataProvider::class,
             ['setCategoryId', 'getCategory']
         );
 
