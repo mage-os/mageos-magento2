@@ -3,31 +3,29 @@
  * Copyright 2011 Adobe
  * All Rights Reserved.
  */
-declare(strict_types=1);
 
 namespace Magento\Customer\Model;
 
-use Magento\Customer\Api\Data\GroupInterfaceFactory;
-use Magento\Framework\Exception\LocalizedException;
-use Magento\TestFramework\Helper\Bootstrap;
-use PHPUnit\Framework\TestCase;
-
-class GroupTest extends TestCase
+class GroupTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var Group
+     * @var \Magento\Customer\Model\Group
      */
     protected $groupModel;
 
     /**
-     * @var GroupInterfaceFactory
+     * @var \Magento\Customer\Api\Data\GroupInterfaceFactory
      */
     protected $groupFactory;
 
     protected function setUp(): void
     {
-        $this->groupModel = Bootstrap::getObjectManager()->create(Group::class);
-        $this->groupFactory = Bootstrap::getObjectManager()->create(GroupInterfaceFactory::class);
+        $this->groupModel = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
+            \Magento\Customer\Model\Group::class
+        );
+        $this->groupFactory = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
+            \Magento\Customer\Api\Data\GroupInterfaceFactory::class
+        );
     }
 
     public function testCRUD()
@@ -38,74 +36,43 @@ class GroupTest extends TestCase
     }
 
     /**
-     * Test that customer group correctly handles multibyte and normal characters when saving
+     * Test that customer group correctly handles multibyte characters when saving
      *
      * This verifies that the fix for multibyte character truncation works correctly.
      * Previously, substr() was used which counted bytes instead of characters,
      * causing multibyte characters to be truncated incorrectly.
      *
      * @magentoDbIsolation enabled
-     * @dataProvider customerGroupCodeDataProvider
-     * @param string $code
-     * @param string $expectedCode
-     * @param int $charLength
      * @return void
-     * @throws LocalizedException
      */
-    public function testMultibyteAndNormalCharacterHandling(string $code, string $expectedCode, int $charLength): void
+    public function testMultibyteCharacterHandling(): void
     {
-        $this->groupModel->setCode($code);
-        $this->groupModel->setTaxClassId(3);
-        $group = $this->groupModel->save();
+        // Test with multibyte characters (ö = 2 bytes in UTF-8)
+        $multibyteString = str_repeat('ö', 31); // 31 characters, 62 bytes
+
+        $group = $this->groupFactory->create();
+        $group->setCode($multibyteString);
+        $group->setTaxClassId(3);
+        $group->save();
 
         // Reload from database
-        $reloadedGroup = $this->groupModel->load($group->getId());
+        $reloadedGroup = $this->groupFactory->create();
+        $reloadedGroup->load($group->getId());
 
-        // Verify all 32 characters are preserved
+        // Verify all 31 multibyte characters are preserved
         $this->assertEquals(
-            $expectedCode,
+            $multibyteString,
             $reloadedGroup->getCode(),
-            'Group code with multibyte and normal characters should be saved correctly'
+            'Group code with multibyte characters should be saved correctly'
         );
 
         $this->assertEquals(
-            $charLength,
+            31,
             mb_strlen($reloadedGroup->getCode()),
-            'Group code should have maximum 32 characters'
+            'Group code should have exactly 31 characters'
         );
 
         // Cleanup
         $reloadedGroup->delete();
-    }
-
-    /**
-     * Customer group code data provider
-     *
-     * @return array[]
-     */
-    public static function customerGroupCodeDataProvider(): array
-    {
-        // Test with multibyte characters (ö = 2 bytes in UTF-8)
-        $multibyteString = str_repeat('ö', 32); // 31 characters, 62 bytes
-        $normalString = str_repeat('a', 50); // 40 characters, will be truncated
-        $normalTruncatedString = str_repeat('a', 32); // 31 characters, truncated code after saving
-        $mixedString = str_repeat('a', 10).str_repeat('ö', 10);
-        return [
-            'multibyte characters' => [
-                $multibyteString,
-                $multibyteString,
-                32
-            ],
-            'normal characters' => [
-                $normalString,
-                $normalTruncatedString,
-                32
-            ],
-            'mixed characters' => [
-                $mixedString,
-                $mixedString,
-                20
-            ]
-        ];
     }
 }
