@@ -9,7 +9,6 @@ namespace Magento\Customer\Test\Unit\Model\Plugin;
 
 use Magento\Customer\Model\Plugin\CustomerFlushFormKey;
 use Magento\Customer\Model\Session;
-use Magento\Customer\Test\Unit\Helper\SessionTestHelper;
 use Magento\Framework\App\PageCache\FormKey as CookieFormKey;
 use Magento\Framework\Data\Form\FormKey as DataFormKey;
 use Magento\Framework\Event\Observer;
@@ -17,9 +16,12 @@ use Magento\PageCache\Observer\FlushFormKey;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 class CustomerFlushFormKeyTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var CookieFormKey | MockObject
      */
@@ -37,11 +39,20 @@ class CustomerFlushFormKeyTest extends TestCase
 
     protected function setUp(): void
     {
+
+        /** @var CookieFormKey | MockObject */
         $this->cookieFormKey = $this->createMock(CookieFormKey::class);
+
+        /** @var DataFormKey | MockObject */
         $this->dataFormKey = $this->createMock(DataFormKey::class);
-        $this->customerSession = $this->createPartialMock(
-            SessionTestHelper::class,
-            ['getBeforeRequestParams', 'setBeforeRequestParams']
+
+        /** @var Session | MockObject */
+        $this->customerSession = $this->createPartialMockWithReflection(
+            Session::class,
+            [
+                'getBeforeRequestParams',
+                'setBeforeRequestParams'
+            ]
         );
     }
 
@@ -77,7 +88,7 @@ class CustomerFlushFormKeyTest extends TestCase
             ->with($beforeParams);
 
         $proceed = function ($observerDto) use ($observer) {
-            $observer->execute($observerDto);
+            return $observer->execute($observerDto);
         };
 
         $plugin->aroundExecute($observer, $proceed, $observerDto);

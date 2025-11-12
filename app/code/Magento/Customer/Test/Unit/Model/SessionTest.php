@@ -16,9 +16,6 @@ use Magento\Customer\Model\CustomerRegistry;
 use Magento\Customer\Model\ResourceModel\Customer as ResourceCustomer;
 use Magento\Customer\Model\Session;
 use Magento\Customer\Model\Session\Storage;
-use Magento\Customer\Test\Unit\Helper\StorageTestHelper;
-use Magento\Customer\Test\Unit\Helper\CustomerFactoryTestHelper;
-use Magento\Customer\Test\Unit\Helper\CustomerTestHelper;
 use Magento\Framework\App\Http\Context;
 use Magento\Framework\App\Response\Http;
 use Magento\Framework\Event\ManagerInterface;
@@ -29,12 +26,15 @@ use Magento\Framework\Url;
 use Magento\Framework\UrlFactory;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class SessionTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var ResourceCustomer|MockObject
      */
@@ -90,21 +90,24 @@ class SessionTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->_storageMock = $this->createPartialMock(
-            StorageTestHelper::class,
-            ['getIsCustomerEmulated', 'unsIsCustomerEmulated', 'getData']
+        $this->_storageMock = $this->createPartialMockWithReflection(
+            Storage::class,
+            [
+                'getIsCustomerEmulated',
+                'unsIsCustomerEmulated',
+                'getData'
+            ]
         );
         $this->_eventManagerMock = $this->createMock(ManagerInterface::class);
         $this->_httpContextMock = $this->createMock(Context::class);
         $this->urlFactoryMock = $this->createMock(UrlFactory::class);
-        $this->customerFactoryMock = $this->createPartialMock(
-            CustomerFactoryTestHelper::class,
+        $this->customerFactoryMock = $this->createPartialMockWithReflection(
+            CustomerFactory::class,
             ['create', 'save']
         );
-        $this->_customerResourceMock = $this->createPartialMock(
-            ResourceCustomer::class,
-            ['load', 'save']
-        );
+        $this->_customerResourceMock = $this->getMockBuilder(ResourceCustomer::class)->disableOriginalConstructor()
+            ->onlyMethods(['load', 'save'])
+            ->getMock();
         $this->customerRepositoryMock = $this->createMock(CustomerRepositoryInterface::class);
         $helper = new ObjectManagerHelper($this);
         $objects = [
@@ -255,9 +258,14 @@ class SessionTest extends TestCase
             ->method('getId')
             ->willReturn($customerId);
 
-        $customerMock = $this->createPartialMock(
-            CustomerTestHelper::class,
-            ['getConfirmation', 'getId', 'updateData', 'getGroupId']
+        $customerMock = $this->createPartialMockWithReflection(
+            Customer::class,
+            [
+                'getConfirmation',
+                'getId',
+                'updateData',
+                'getGroupId'
+            ]
         );
         $customerMock->expects($this->exactly(3))
             ->method('getId')

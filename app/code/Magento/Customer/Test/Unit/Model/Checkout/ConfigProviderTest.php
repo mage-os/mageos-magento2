@@ -14,8 +14,8 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\UrlInterface;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\ScopeInterface;
+use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
-use Magento\Store\Test\Unit\Helper\StoreInterfaceTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -42,7 +42,7 @@ class ConfigProviderTest extends TestCase
     protected $scopeConfig;
 
     /**
-     * @var StoreInterface|MockObject
+     * @var Store|MockObject
      */
     protected $store;
 
@@ -53,13 +53,30 @@ class ConfigProviderTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->storeManager = $this->createMock(StoreManagerInterface::class);
+        $this->storeManager = $this->createMock(
+            StoreManagerInterface::class,
+            [],
+            '',
+            false
+        );
 
-        $this->urlBuilder = $this->createMock(UrlInterface::class);
+        $this->urlBuilder = $this->createMock(
+            UrlInterface::class,
+            [],
+            '',
+            false
+        );
 
-        $this->scopeConfig = $this->createMock(ScopeConfigInterface::class);
-
-        $this->store = $this->createPartialMock(StoreInterfaceTestHelper::class, ['getBaseUrl']);
+        $this->scopeConfig = $this->createMock(
+            ScopeConfigInterface::class,
+            [],
+            '',
+            false
+        );
+        $this->store = $this->createPartialMock(
+            Store::class,
+            ['getBaseUrl']
+        );
 
         $this->customerUrl = $this->createMock(Url::class);
 

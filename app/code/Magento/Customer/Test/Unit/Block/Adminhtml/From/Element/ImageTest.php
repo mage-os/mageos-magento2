@@ -51,7 +51,9 @@ class ImageTest extends TestCase
             ]
         ];
         $objectManager->prepareObjectManager($objects);
-        $this->backendHelperMock = $this->createMock(Data::class);
+        $this->backendHelperMock = $this->getMockBuilder(Data::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->urlEncoder = $this->createMock(EncoderInterface::class);
         $this->image = $objectManager->getObject(
             Image::class,

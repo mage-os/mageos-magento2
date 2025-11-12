@@ -9,7 +9,6 @@ namespace Magento\Customer\Test\Unit\Model\Address\Validator;
 
 use Magento\Customer\Model\Address\AbstractAddress;
 use Magento\Customer\Model\Address\Validator\General;
-use Magento\Customer\Test\Unit\Helper\AbstractAddressTestHelper;
 use Magento\Directory\Helper\Data;
 use Magento\Eav\Model\Config;
 use Magento\Eav\Model\Entity\Attribute;
@@ -17,12 +16,15 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * Magento\Customer\Model\Address\Validator\General tests.
  */
 class GeneralTest extends TestCase
 {
+    use MockCreationTrait;
+
     /** @var Data|MockObject  */
     private $directoryDataMock;
 
@@ -53,12 +55,12 @@ class GeneralTest extends TestCase
      * @param array $data
      * @param array $expected
      * @return void
-     */
+     * */
     #[DataProvider('validateDataProvider')]
     public function testValidate(array $data, array $expected)
     {
-        $addressMock = $this->createPartialMock(
-            AbstractAddressTestHelper::class,
+        $addressMock = $this->createPartialMockWithReflection(
+            AbstractAddress::class,
             [
                 'getFirstname',
                 'getLastname',

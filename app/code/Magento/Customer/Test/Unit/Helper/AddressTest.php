@@ -22,9 +22,9 @@ use Magento\Framework\View\Element\BlockInterface;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -77,8 +77,6 @@ class AddressTest extends TestCase
      * @param int $expectedNumLines
      */
     #[DataProvider('providerGetStreetLines')]
-    /**
-     */
     public function testGetStreetLines($numLines, $expectedNumLines)
     {
         $attributeMock = $this->getMockBuilder(
@@ -120,10 +118,9 @@ class AddressTest extends TestCase
     }
 
     /**
-     */
-    #[DataProvider('getRendererDataProvider')]
-    /**
-     */
+          */
+
+     #[DataProvider('getRendererDataProvider')]
     public function testGetRenderer($renderer, $blockFactory, $result)
     {
         if ($renderer!="some_test_block") {
@@ -231,10 +228,9 @@ class AddressTest extends TestCase
      * @param $origStreets
      * @param $toCount
      * @param $result
-     */
-    #[DataProvider('getConvertStreetLinesDataProvider')]
-    /**
-     */
+          */
+
+     #[DataProvider('getConvertStreetLinesDataProvider')]
     public function testConvertStreetLines($origStreets, $toCount, $result)
     {
         $this->assertEquals($result, $this->helper->convertStreetLines($origStreets, $toCount));
@@ -254,10 +250,9 @@ class AddressTest extends TestCase
     /**
      * @param $store
      * @param $result
-     */
-    #[DataProvider('getVatValidationEnabledDataProvider')]
-    /**
-     */
+          */
+
+     #[DataProvider('getVatValidationEnabledDataProvider')]
     public function testIsVatValidationEnabled($store, $result)
     {
         $this->scopeConfig->expects($this->once())
@@ -286,10 +281,9 @@ class AddressTest extends TestCase
     /**
      * @param $store
      * @param $result
-     */
-    #[DataProvider('getValidateOnEachTransactionDataProvider')]
-    /**
-     */
+          */
+
+     #[DataProvider('getValidateOnEachTransactionDataProvider')]
     public function testHasValidateOnEachTransaction($store, $result)
     {
         $this->scopeConfig->expects($this->once())
@@ -318,10 +312,9 @@ class AddressTest extends TestCase
     /**
      * @param $store
      * @param $result
-     */
-    #[DataProvider('getTaxCalculationAddressTypeDataProvider')]
-    /**
-     */
+          */
+
+     #[DataProvider('getTaxCalculationAddressTypeDataProvider')]
     public function testGetTaxCalculationAddressType($store, $result)
     {
         $this->scopeConfig->expects($this->once())
@@ -374,10 +367,9 @@ class AddressTest extends TestCase
     /**
      * @param string $code
      * @param RendererInterface|null $result
-     */
-    #[DataProvider('getFormatTypeRendererDataProvider')]
-    /**
-     */
+          */
+
+     #[DataProvider('getFormatTypeRendererDataProvider')]
     public function testGetFormatTypeRenderer($code, $result)
     {
         if (is_callable($result)) {
@@ -413,10 +405,9 @@ class AddressTest extends TestCase
     /**
      * @param string $code
      * @param array $result
-     */
-    #[DataProvider('getFormatDataProvider')]
-    /**
-     */
+          */
+
+     #[DataProvider('getFormatDataProvider')]
     public function testGetFormat($code, $result)
     {
         if ($result) {
@@ -449,10 +440,9 @@ class AddressTest extends TestCase
     /**
      * @param string $attributeCode
      * @param bool $isMetadataExists
-     */
-    #[DataProvider('isAttributeVisibleDataProvider')]
-    /**
-     */
+          */
+
+     #[DataProvider('isAttributeVisibleDataProvider')]
     public function testIsAttributeVisible($attributeCode, $isMetadataExists)
     {
         $attributeMetadata = null;

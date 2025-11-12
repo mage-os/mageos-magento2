@@ -31,8 +31,7 @@ class XsdTest extends TestCase
 
     /**
      * @param string $fixtureXml
-     * @param array $expectedErrors
-     */
+     * @param array $expectedErrors */
     #[DataProvider('exemplarXmlDataProvider')]
     public function testExemplarXml($fixtureXml, array $expectedErrors)
     {

@@ -17,7 +17,7 @@ use Magento\Customer\Model\AttributeMetadataDataProvider;
 use Magento\Customer\Model\Indexer\Attribute\Filter;
 use Magento\Customer\Ui\Component\Listing\AttributeRepository;
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
-use Magento\Eav\Test\Unit\Helper\AbstractAttributeTestHelper;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -26,6 +26,7 @@ use PHPUnit\Framework\TestCase;
  */
 class AttributeRepositoryTest extends TestCase
 {
+    use MockCreationTrait;
     /** @var CustomerMetadataManagementInterface|MockObject */
     protected $customerMetadataManagement;
 
@@ -63,18 +64,35 @@ class AttributeRepositoryTest extends TestCase
     protected function setUp(): void
     {
         $this->customerMetadataManagement = $this->createMock(
-            CustomerMetadataManagementInterface::class
+            CustomerMetadataManagementInterface::class,
+            [],
+            '',
+            false
         );
         $this->addressMetadataManagement = $this->createMock(
-            AddressMetadataManagementInterface::class
+            AddressMetadataManagementInterface::class,
+            [],
+            '',
+            false
         );
         $this->customerMetadata = $this->createMock(
-            CustomerMetadataInterface::class
+            CustomerMetadataInterface::class,
+            [],
+            '',
+            false
         );
         $this->addressMetadata = $this->createMock(
-            AddressMetadataInterface::class
+            AddressMetadataInterface::class,
+            [],
+            '',
+            false
         );
-        $this->attribute = $this->createMock(AttributeMetadataInterface::class);
+        $this->attribute = $this->createMock(
+            AttributeMetadataInterface::class,
+            [],
+            '',
+            false
+        );
         $this->option = $this->createMock(OptionInterface::class);
 
         $this->attributeFilter = $this->createMock(Filter::class);
@@ -83,8 +101,8 @@ class AttributeRepositoryTest extends TestCase
             AttributeMetadataDataProvider::class
         );
 
-        $this->attributeModel = $this->createPartialMock(
-            AbstractAttributeTestHelper::class,
+        $this->attributeModel = $this->createPartialMockWithReflection(
+            AbstractAttribute::class,
             ['getGridFilterConditionType']
         );
 
@@ -154,7 +172,8 @@ class AttributeRepositoryTest extends TestCase
             ->method('filter')
             ->willReturnArgument(0);
 
-        $this->attributeModel->method('getGridFilterConditionType')
+        $this->attributeModel->expects($this->any())
+            ->method('getGridFilterConditionType')
             ->willReturn(1);
         $this->attributeMetadataDataProvider->method('getAttribute')
             ->willReturn($this->attributeModel);

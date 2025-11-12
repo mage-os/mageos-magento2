@@ -18,9 +18,12 @@ use Magento\Framework\Controller\ResultFactory;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 class UploadTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Upload
      */

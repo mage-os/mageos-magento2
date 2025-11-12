@@ -12,8 +12,7 @@ class BooleanTest extends AbstractFormTestCase
 {
     /**
      * @param mixed $value to assign to boolean
-     * @param mixed $expected text output
-     */
+     * @param mixed $expected text output */
     #[DataProvider('getOptionTextDataProvider')]
     public function testGetOptionText($value, $expected)
     {

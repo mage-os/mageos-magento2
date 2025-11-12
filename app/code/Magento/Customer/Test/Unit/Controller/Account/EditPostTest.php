@@ -30,7 +30,7 @@ use Magento\Framework\Controller\Result\Redirect;
 use Magento\Framework\Data\Form\FormKey\Validator;
 use Magento\Framework\Event\ManagerInterface as EventManagerInterface;
 use Magento\Framework\Message\ManagerInterface as MessageManagerInterface;
-use Magento\Framework\Test\Unit\Helper\HttpRequestTestHelper;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -40,6 +40,8 @@ use PHPUnit\Framework\TestCase;
  */
 class EditPostTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var EditPost
      */
@@ -136,21 +138,26 @@ class EditPostTest extends TestCase
         $this->filesystem = $this->createMock(Filesystem::class);
         $this->sessionCleaner = $this->createMock(SessionCleanerInterface::class);
         $this->accountConfirmation = $this->createMock(AccountConfirmation::class);
-        $this->customerUrl = $this->createMock(Url::class);
-        $this->customerMapper = $this->createMock(Mapper::class);
+        $this->customerUrl = $this->getMockBuilder(Url::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->customerMapper = $this->getMockBuilder(Mapper::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $this->request = $this->createPartialMock(
-            HttpRequestTestHelper::class,
-            ['getParam']
-        );
+        $this->request = $this->createMock(\Magento\Framework\App\Request\Http::class);
         $this->context->expects($this->any())
             ->method('getRequest')
             ->willReturn($this->request);
-        $resultRedirectFactory = $this->createMock(RedirectFactory::class);
+        $resultRedirectFactory = $this->getMockBuilder(RedirectFactory::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->context->expects($this->any())
             ->method('getResultRedirectFactory')
             ->willReturn($resultRedirectFactory);
-        $redirect = $this->createMock(Redirect::class);
+        $redirect = $this->getMockBuilder(Redirect::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $resultRedirectFactory->expects($this->any())
             ->method('create')
             ->willReturn($redirect);
@@ -192,7 +199,9 @@ class EditPostTest extends TestCase
             ->method('validate')
             ->with($this->request)
             ->willReturn(true);
-        $this->request->setIsPost(true);
+        $this->request->expects($this->once())
+            ->method('isPost')
+            ->willReturn(true);
 
         $customer = $this->createMock(CustomerInterface::class);
         $customer->expects($this->any())

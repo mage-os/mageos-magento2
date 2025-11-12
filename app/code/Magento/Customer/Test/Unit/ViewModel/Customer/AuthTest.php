@@ -36,13 +36,9 @@ class AuthTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->contextMock = $this->getMockBuilder(Context::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->contextMock = $this->createMock(Context::class);
 
-        $this->scopeConfigMock = $this->getMockBuilder(ScopeConfigInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
 
         $this->model = new Auth(
             $this->contextMock,
@@ -68,6 +64,7 @@ class AuthTest extends TestCase
         );
     }
 
+    /** */
     #[DataProvider('getCustomerShareScopeDataProvider')]
     public function testGetCustomerShareScope($configValue, int $expected): void
     {

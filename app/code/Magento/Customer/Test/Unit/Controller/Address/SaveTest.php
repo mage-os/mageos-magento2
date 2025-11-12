@@ -15,7 +15,6 @@ use Magento\Customer\Api\Data\CustomerInterface;
 use Magento\Customer\Controller\Adminhtml\Address\Save;
 use Magento\Customer\Model\Customer;
 use Magento\Customer\Model\CustomerRegistry;
-use Magento\Customer\Test\Unit\Helper\CustomerTestHelper;
 use Magento\Customer\Model\Metadata\Form;
 use Magento\Customer\Model\Metadata\FormFactory;
 use Magento\Framework\Api\DataObjectHelper;
@@ -27,6 +26,7 @@ use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -34,6 +34,8 @@ use Psr\Log\LoggerInterface;
  */
 class SaveTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Save
      */
@@ -112,13 +114,19 @@ class SaveTest extends TestCase
         $this->loggerMock = $this->createMock(LoggerInterface::class);
         $this->requestMock = $this->createMock(RequestInterface::class);
         $this->address = $this->createMock(AddressInterface::class);
-        $this->resultJsonFactory = $this->createPartialMock(
-            JsonFactory::class,
-            ['create']
-        );
-        $this->json = $this->createMock(Json::class);
-        $this->storeManager = $this->createMock(StoreManagerInterface::class);
-        $this->customerRegistry = $this->createMock(CustomerRegistry::class);
+        $this->resultJsonFactory = $this->getMockBuilder(JsonFactory::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['create'])
+            ->getMock();
+        $this->json = $this->getMockBuilder(Json::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->storeManager = $this->getMockBuilder(StoreManagerInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->customerRegistry = $this->getMockBuilder(CustomerRegistry::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $objectManager = new ObjectManagerHelper($this);
 
@@ -238,8 +246,8 @@ class SaveTest extends TestCase
                 ]
             )->willReturnSelf();
 
-        $customerModel = $this->createPartialMock(
-            CustomerTestHelper::class,
+        $customerModel = $this->createPartialMockWithReflection(
+            Customer::class,
             ['getStoreId']
         );
         $customerModel->method('getStoreId')

@@ -62,8 +62,7 @@ class ServiceCollectionTest extends TestCase
         $this->sortOrderBuilder = $this->objectManager->getObject(
             SortOrderBuilder::class
         );
-        $this->groupRepositoryMock = $this->getMockBuilder(GroupRepositoryInterface::class)
-            ->getMock();
+        $this->groupRepositoryMock = $this->createMock(GroupRepositoryInterface::class);
 
         $this->searchResults = $this->createMock(SearchResultsInterface::class);
 
@@ -226,11 +225,8 @@ class ServiceCollectionTest extends TestCase
     /**
      * @param string[] $fields
      * @param array $conditions
-     *
-     */
+     * */
     #[DataProvider('addFieldToFilterInconsistentArraysDataProvider')]
-    /**
-     */
     public function testAddFieldToFilterInconsistentArrays($fields, $conditions)
     {
         $this->expectException(LocalizedException::class);
@@ -258,14 +254,13 @@ class ServiceCollectionTest extends TestCase
         ];
     }
 
-    /**
-     * Test adding field to filter with empty arrays
-     */
-    public function testAddFieldToFilterEmptyArrays()
+    /** */
+    #[DataProvider('addFieldToFilterInconsistentArraysDataProvider')]
+    public function testAddFieldToFilterEmptyArrays($fields, $conditions)
     {
         $this->expectException(LocalizedException::class);
-        $this->expectExceptionMessage('The array of fields failed to pass. The array must include at one field.');
+        $this->expectExceptionMessage('The field array failed to pass. The array must have a matching condition array.');
 
-        $this->serviceCollection->addFieldToFilter([], []);
+        $this->serviceCollection->addFieldToFilter($fields, $conditions);
     }
 }

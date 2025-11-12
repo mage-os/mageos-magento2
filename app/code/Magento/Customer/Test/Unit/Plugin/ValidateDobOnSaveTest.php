@@ -13,11 +13,11 @@ use Magento\Customer\Api\Data\CustomerInterface;
 use Magento\Customer\Plugin\ValidateDobOnSave;
 use Magento\Eav\Model\Config as EavConfig;
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
-use Magento\Eav\Test\Unit\Helper\AbstractAttributeTestHelper;
 use Magento\Framework\Exception\InputException;
 use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * Unit test for validate date of birth plugin
@@ -26,6 +26,8 @@ use PHPUnit\Framework\TestCase;
  */
 class ValidateDobOnSaveTest extends TestCase
 {
+    use MockCreationTrait;
+
     /** @var EavConfig&MockObject */
     private $eavConfig;
 
@@ -209,10 +211,10 @@ class ValidateDobOnSaveTest extends TestCase
      */
     private function createAttributeMockForGetData(string $key, $value)
     {
-        $attribute = $this->createPartialMock(
-            AbstractAttributeTestHelper::class,
-            ['getData']
-        );
+        $attribute = $this->getMockBuilder(AbstractAttribute::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getData'])
+            ->getMock();
 
         $attribute->method('getData')->with($key)->willReturn($value);
         return $attribute;
@@ -283,8 +285,8 @@ class ValidateDobOnSaveTest extends TestCase
      */
     private function mockAttributeRulesViaGetValidateRules(array $rules): void
     {
-        $attribute = $this->createPartialMock(
-            AbstractAttributeTestHelper::class,
+        $attribute = $this->createPartialMockWithReflection(
+            \Magento\Eav\Model\Entity\Attribute\AbstractAttribute::class,
             ['getData', 'getValidateRules']
         );
 

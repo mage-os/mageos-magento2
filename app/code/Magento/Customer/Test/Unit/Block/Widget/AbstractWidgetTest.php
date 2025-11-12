@@ -18,13 +18,13 @@ use PHPUnit\Framework\TestCase;
 class AbstractWidgetTest extends TestCase
 {
     /** Constants used in the various unit tests. */
-    private const KEY_FIELD_ID_FORMAT = 'field_id_format';
+    const KEY_FIELD_ID_FORMAT = 'field_id_format';
 
-    private const KEY_FIELD_NAME_FORMAT = 'field_name_format';
+    const KEY_FIELD_NAME_FORMAT = 'field_name_format';
 
-    private const FORMAT_D = '%d';
+    const FORMAT_D = '%d';
 
-    private const FORMAT_S = '%s';
+    const FORMAT_S = '%s';
 
     /** @var MockObject|Address */
     private $_addressHelper;
@@ -46,7 +46,7 @@ class AbstractWidgetTest extends TestCase
     /**
      * @param string $key
      * @param string|null $expectedValue
-     */
+     * */
     #[DataProvider('getConfigDataProvider')]
     public function testGetConfig($key, $expectedValue)
     {
@@ -114,7 +114,7 @@ class AbstractWidgetTest extends TestCase
      * @param string $fieldId Field id
      * @param string $expectedValue The value we expect from AbstractWidget::getFieldId()
      * @param string $method The method to invoke on the result from getFieldId() should return true
-     */
+     * */
     #[DataProvider('getFieldIdDataProvider')]
     public function testGetFieldId($format, $fieldId, $expectedValue, $method)
     {
@@ -143,7 +143,7 @@ class AbstractWidgetTest extends TestCase
      * @param string $fieldName The field name
      * @param string $expectedValue The value we expect from AbstractWidget::getFieldName
      * @param string $method The method to invoke on the result from getFieldName() should return true
-     */
+     * */
     #[DataProvider('getFieldNameDataProvider')]
     public function testGetFieldName($format, $fieldName, $expectedValue, $method)
     {

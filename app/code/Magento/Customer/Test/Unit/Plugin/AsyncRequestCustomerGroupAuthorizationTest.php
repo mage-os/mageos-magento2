@@ -65,8 +65,7 @@ class AsyncRequestCustomerGroupAuthorizationTest extends TestCase
      * @param bool $isAllowed
      * @param int $willThrowException
      * @return void
-     * @throws AuthorizationException
-     */
+     * @throws AuthorizationException */
     #[DataProvider('customerDataProvider')]
     public function testBeforePublishMass(
         int $groupId,

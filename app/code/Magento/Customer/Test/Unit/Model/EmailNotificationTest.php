@@ -148,7 +148,9 @@ class EmailNotificationTest extends TestCase
 
         $this->senderResolverMock = $this->createPartialMock(
             SenderResolverInterface::class,
-            ['resolve']
+            [
+                'resolve'
+            ]
         );
         $this->emulation = $this->createMock(Emulation::class);
 

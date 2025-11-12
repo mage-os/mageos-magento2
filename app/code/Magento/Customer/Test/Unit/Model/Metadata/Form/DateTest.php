@@ -7,12 +7,12 @@ declare(strict_types=1);
 
 namespace Magento\Customer\Test\Unit\Model\Metadata\Form;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Customer\Api\Data\AttributeMetadataInterface;
 use Magento\Customer\Api\Data\ValidationRuleInterface;
 use Magento\Customer\Model\Metadata\Form\Date;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
-use PHPUnit\Framework\Attributes\DataProvider;
 
 class DateTest extends AbstractFormTestCase
 {
@@ -75,9 +75,7 @@ class DateTest extends AbstractFormTestCase
     public function testExtractValueWithoutInputFilter()
     {
         /* local version of locale */
-        $localeMock = $this->getMockBuilder(TimezoneInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $localeMock = $this->createMock(TimezoneInterface::class);
         $localeMock->expects($this->any())->method('getDateFormat')->willReturn('d/M/yy');
 
         /* local version of attribute meta data */
@@ -119,11 +117,8 @@ class DateTest extends AbstractFormTestCase
      * @param array $validation Array of more validation metadata
      * @param bool $required Whether field is required
      * @param array|bool $expected Expected output
-     *
-     */
+     * */
     #[DataProvider('validateValueDataProvider')]
-    /**
-     */
     public function testValidateValue($value, $validation, $required, $expected)
     {
         $validationRules = [];
@@ -210,11 +205,8 @@ class DateTest extends AbstractFormTestCase
     /**
      * @param array|string $value value to pass to compactValue()
      * @param array|string|bool $expected expected output
-     *
-     */
+     * */
     #[DataProvider('compactAndRestoreValueDataProvider')]
-    /**
-     */
     public function testCompactValue($value, $expected)
     {
         $this->assertSame($expected, $this->date->compactValue($value));
@@ -237,11 +229,8 @@ class DateTest extends AbstractFormTestCase
     /**
      * @param array|string $value Value to pass to restoreValue()
      * @param array|string|bool $expected Expected output
-     *
-     */
+     * */
     #[DataProvider('compactAndRestoreValueDataProvider')]
-    /**
-     */
     public function testRestoreValue($value, $expected)
     {
         $this->assertSame($expected, $this->date->restoreValue($value));

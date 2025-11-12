@@ -86,8 +86,7 @@ class SubscriptionsTest extends TestCase
      * @param array $data
      * @param array $elementsHtml
      * @param string $expectedHtml
-     * @return void
-     */
+     * @return void */
     #[DataProvider('getElementHtmlDataProvider')]
     public function testGetElementHtml(array $data, array $elementsHtml, string $expectedHtml): void
     {

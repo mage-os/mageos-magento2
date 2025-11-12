@@ -26,6 +26,7 @@ use Magento\Newsletter\Model\SubscriptionManagerInterface;
 use Magento\Ui\Component\MassAction\Filter;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * Class to test mass unsubscribe customers by ids
@@ -34,6 +35,7 @@ use PHPUnit\Framework\TestCase;
  */
 class MassUnsubscribeTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var MassUnsubscribe
      */
@@ -104,30 +106,18 @@ class MassUnsubscribeTest extends TestCase
         $this->contextMock = $this->createMock(BackendContext::class);
         $resultRedirectFactory = $this->createMock(RedirectFactory::class);
         $this->responseMock = $this->createMock(ResponseInterface::class);
-        $this->requestMock = $this->getMockBuilder(Http::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->requestMock = $this->createMock(Http::class);
         $this->objectManagerMock = $this->createPartialMock(
             ObjectManager::class,
             ['create']
         );
         $this->messageManagerMock = $this->createMock(Manager::class);
         $this->customerCollectionMock =
-            $this->getMockBuilder(Collection::class)
-                ->disableOriginalConstructor()
-                ->getMock();
-        $this->customerCollectionFactoryMock =
-            $this->getMockBuilder(CollectionFactory::class)
-                ->disableOriginalConstructor()
-                ->onlyMethods(['create'])
-                ->getMock();
-        $redirectMock = $this->getMockBuilder(Redirect::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+            $this->createMock(Collection::class);
+        $this->customerCollectionFactoryMock = $this->createPartialMock(CollectionFactory::class, ['create']);
+        $redirectMock = $this->createMock(Redirect::class);
 
-        $resultFactoryMock = $this->getMockBuilder(ResultFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $resultFactoryMock = $this->createMock(ResultFactory::class);
         $resultFactoryMock->expects($this->any())
             ->method('create')
             ->with(ResultFactory::TYPE_REDIRECT)

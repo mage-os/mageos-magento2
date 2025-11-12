@@ -12,12 +12,14 @@ use Magento\Customer\Model\Logger;
 use Magento\Customer\Observer\LogLastLoginAtObserver;
 use Magento\Framework\Event;
 use Magento\Framework\Event\Observer;
-use Magento\Framework\Test\Unit\Helper\EventTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 class LogLastLoginAtObserverTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var LogLastLoginAtObserver
      */
@@ -45,8 +47,8 @@ class LogLastLoginAtObserverTest extends TestCase
         $id = 1;
 
         $observerMock = $this->createMock(Observer::class);
-        $eventMock = $this->createPartialMock(
-            EventTestHelper::class,
+        $eventMock = $this->createPartialMockWithReflection(
+            Event::class,
             ['getCustomer']
         );
         $customerMock = $this->createMock(Customer::class);

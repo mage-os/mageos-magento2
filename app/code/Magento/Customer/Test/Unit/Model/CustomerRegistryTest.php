@@ -10,11 +10,11 @@ namespace Magento\Customer\Test\Unit\Model;
 use Magento\Customer\Model\Customer;
 use Magento\Customer\Model\CustomerFactory;
 use Magento\Customer\Model\CustomerRegistry;
-use Magento\Customer\Test\Unit\Helper\CustomerTestHelper;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * Test for CustomerRegistry
@@ -22,6 +22,8 @@ use PHPUnit\Framework\TestCase;
  */
 class CustomerRegistryTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var CustomerRegistry
      */
@@ -40,32 +42,32 @@ class CustomerRegistryTest extends TestCase
     /**#@+
      * Sample customer data
      */
-    private const CUSTOMER_ID = 1;
-    private const CUSTOMER_EMAIL = 'customer@example.com';
-    private const WEBSITE_ID = 1;
+    const CUSTOMER_ID = 1;
+    const CUSTOMER_EMAIL = 'customer@example.com';
+    const WEBSITE_ID = 1;
 
     protected function setUp(): void
     {
-        $this->customerFactory = $this->createPartialMock(
-            CustomerFactory::class,
-            ['create']
-        );
+        $this->customerFactory = $this->getMockBuilder(CustomerFactory::class)
+            ->onlyMethods(['create'])
+            ->disableOriginalConstructor()
+            ->getMock();
         $objectManager = new ObjectManager($this);
         $this->customerRegistry = $objectManager->getObject(
             CustomerRegistry::class,
             ['customerFactory' => $this->customerFactory]
         );
-        $this->customer = $this->createPartialMock(
-            CustomerTestHelper::class,
+        $this->customer = $this->createPartialMockWithReflection(
+            Customer::class,
             [
-                'getEmail',
-                'getWebsiteId',
-                'setEmail',
-                'setWebsiteId',
                 'load',
                 'getId',
                 '__wakeup',
-                'loadByEmail'
+                'loadByEmail',
+                'getEmail',
+                'getWebsiteId',
+                'setEmail',
+                'setWebsiteId'
             ]
         );
     }

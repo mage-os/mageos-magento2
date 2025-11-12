@@ -9,20 +9,21 @@ namespace Magento\Customer\Test\Unit\Model;
 
 use Magento\Customer\Model\Session;
 use Magento\Customer\Model\Url;
-use Magento\Customer\Test\Unit\Helper\CustomerSessionTestHelper;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\RequestInterface;
-use Magento\Framework\Test\Unit\Helper\HttpRequestTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\UrlInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * Unit test for \Magento\Customer\Model\Url
  */
 class UrlTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var ScopeConfigInterface|MockObject
      */
@@ -61,13 +62,12 @@ class UrlTest extends TestCase
         $this->objectManager = new ObjectManager($this);
 
         $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
-        $this->requestMock = $this->createPartialMock(
-            HttpRequestTestHelper::class,
-            ['isGet', 'getParam']
-        );
-        $this->customerSessionMock = $this->createPartialMock(
-            CustomerSessionTestHelper::class,
-            ['getNoReferer']
+        $this->requestMock = $this->createMock(\Magento\Framework\App\Request\Http::class);
+        $this->customerSessionMock = $this->createPartialMockWithReflection(
+            Session::class,
+            [
+                'getNoReferer'
+            ]
         );
         $this->urlBuilderMock = $this->createMock(UrlInterface::class);
 

@@ -48,6 +48,7 @@ class CustomerTest extends TestCase
      * @param array|string $options
      * @param array $expectedResult
      *
+     *
      * @return void
      */
     #[DataProvider('getCreatedInDataProvider')]

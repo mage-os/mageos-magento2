@@ -14,19 +14,18 @@ use Magento\Customer\Model\Customer\DataProviderWithDefaultAddresses;
 use Magento\Customer\Model\FileUploaderDataResolver;
 use Magento\Customer\Model\ResourceModel\Customer\Collection as CustomerCollection;
 use Magento\Customer\Model\ResourceModel\Customer\CollectionFactory as CustomerCollectionFactory;
-use Magento\Customer\Test\Unit\Helper\AbstractAttributeTestHelper;
-use Magento\Customer\Test\Unit\Helper\CountryFactoryTestHelper;
-use Magento\Customer\Test\Unit\Helper\SessionManagerTestHelper;
 use Magento\Directory\Model\CountryFactory;
 use Magento\Eav\Model\Config;
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
 use Magento\Eav\Model\Entity\Type;
 use Magento\Framework\Session\SessionManagerInterface;
+use Magento\Framework\Session\Generic as GenericSession;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Ui\Component\Form\Field;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * Test for class \Magento\Customer\Model\Customer\DataProviderWithDefaultAddresses
@@ -35,6 +34,8 @@ use PHPUnit\Framework\TestCase;
  */
 class DataProviderWithDefaultAddressesTest extends TestCase
 {
+    use MockCreationTrait;
+
     private const ATTRIBUTE_CODE = 'test-code';
 
     /**
@@ -91,12 +92,9 @@ class DataProviderWithDefaultAddressesTest extends TestCase
     {
         $this->eavConfigMock = $this->createMock(Config::class);
         $this->customerCollectionFactoryMock = $this->createPartialMock(CustomerCollectionFactory::class, ['create']);
-        $this->sessionMock = $this->createPartialMock(
-            SessionManagerTestHelper::class,
-            ['getCustomerFormData', 'unsCustomerFormData']
-        );
-        $this->countryFactoryMock = $this->createPartialMock(
-            CountryFactoryTestHelper::class,
+        $this->sessionMock = $this->createPartialMockWithReflection(GenericSession::class, ['getCustomerFormData', 'unsCustomerFormData']);
+        $this->countryFactoryMock = $this->createPartialMockWithReflection(
+            CountryFactory::class,
             ['create', 'loadByCode', 'getName']
         );
         $this->customerMock = $this->createMock(Customer::class);
@@ -110,10 +108,10 @@ class DataProviderWithDefaultAddressesTest extends TestCase
             ->with('customer')
             ->willReturn($this->getTypeCustomerMock([]));
         $this->fileUploaderDataResolver = $this->createMock(FileUploaderDataResolver::class);
-        $this->attributeMetadataResolver = $this->createPartialMock(
-            AttributeMetadataResolver::class,
-            ['getAttributesMeta']
-        );
+        $this->attributeMetadataResolver = $this->getMockBuilder(AttributeMetadataResolver::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getAttributesMeta'])
+            ->getMock();
         $this->attributeMetadataResolver
             ->method('getAttributesMeta')
             ->willReturnOnConsecutiveCalls(
@@ -184,7 +182,7 @@ class DataProviderWithDefaultAddressesTest extends TestCase
      *
      * @param array $expected
      * @return void
-     */
+     * */
     #[DataProvider('getAttributesMetaDataProvider')]
     public function testGetAttributesMetaWithOptions(array $expected): void
     {
@@ -281,8 +279,8 @@ class DataProviderWithDefaultAddressesTest extends TestCase
      */
     protected function getAttributeMock(array $options = []): array
     {
-        $attributeMock = $this->createPartialMock(
-            AbstractAttributeTestHelper::class,
+        $attributeMock = $this->createPartialMockWithReflection(
+            AbstractAttribute::class,
             [
                 'getAttributeCode',
                 'getDataUsingMethod',
@@ -304,8 +302,8 @@ class DataProviderWithDefaultAddressesTest extends TestCase
             ->method('getAttributeCode')
             ->willReturn($attributeCode);
 
-        $attributeBooleanMock = $this->createPartialMock(
-            AbstractAttributeTestHelper::class,
+        $attributeBooleanMock = $this->createPartialMockWithReflection(
+            AbstractAttribute::class,
             [
                 'getAttributeCode',
                 'getDataUsingMethod',

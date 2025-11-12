@@ -30,10 +30,7 @@ use Magento\Customer\Model\Data\CustomerSecure;
 use Magento\Customer\Model\EmailNotificationInterface;
 use Magento\Customer\Model\Metadata\Validator;
 use Magento\Customer\Model\ResourceModel\Visitor\CollectionFactory;
-use Magento\Customer\Test\Unit\Helper\AddressTestHelper;
-use Magento\Customer\Test\Unit\Helper\CustomerSecureTestHelper;
 use Magento\Directory\Model\AllowedCountries;
-use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Email\Model\ResourceModel\Template\CollectionFactory as TemplateCollectionFactory;
 use Magento\Framework\Api\DataObjectHelper;
 use Magento\Framework\Api\ExtensibleDataObjectConverter;
@@ -67,9 +64,11 @@ use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Store\Model\Website;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyFields)
@@ -77,6 +76,8 @@ use Psr\Log\LoggerInterface;
  */
 class AccountManagementTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var AccountManagement
      */
@@ -331,8 +332,8 @@ class AccountManagementTest extends TestCase
         $this->authenticationMock = $this->createMock(AuthenticationInterface::class);
         $this->emailNotificationMock = $this->createMock(EmailNotificationInterface::class);
 
-        $this->customerSecure = $this->createPartialMock(
-            CustomerSecureTestHelper::class,
+        $this->customerSecure = $this->createPartialMockWithReflection(
+            CustomerSecure::class,
             ['addData', 'setData', 'setRpToken', 'setRpTokenCreatedAt']
         );
 
@@ -908,8 +909,8 @@ class AccountManagementTest extends TestCase
         $this->random->expects($this->once())
             ->method('getUniqueHash')
             ->willReturn($newLinkToken);
-        $customerSecure = $this->createPartialMock(
-            CustomerSecureTestHelper::class,
+        $customerSecure = $this->createPartialMockWithReflection(
+            CustomerSecure::class,
             ['setRpToken', 'setRpTokenCreatedAt', 'getPasswordHash']
         );
         $customerSecure->expects($this->any())
@@ -1189,8 +1190,8 @@ class AccountManagementTest extends TestCase
         $this->random->expects($this->once())
             ->method('getUniqueHash')
             ->willReturn($newLinkToken);
-        $customerSecure = $this->createPartialMock(
-            CustomerSecureTestHelper::class,
+        $customerSecure = $this->createPartialMockWithReflection(
+            CustomerSecure::class,
             ['setRpToken', 'setRpTokenCreatedAt', 'getPasswordHash']
         );
         $customerSecure->expects($this->any())
@@ -1362,8 +1363,8 @@ class AccountManagementTest extends TestCase
         $this->random->expects($this->once())
             ->method('getUniqueHash')
             ->willReturn($newLinkToken);
-        $customerSecure = $this->createPartialMock(
-            CustomerSecureTestHelper::class,
+        $customerSecure = $this->createPartialMockWithReflection(
+            CustomerSecure::class,
             ['setRpToken', 'setRpTokenCreatedAt', 'getPasswordHash']
         );
         $customerSecure->expects($this->any())
@@ -1547,12 +1548,12 @@ class AccountManagementTest extends TestCase
             ->willReturn($this->store);
 
         /** @var Address|MockObject $addressModel */
-        $addressModel = $this->createPartialMock(
-            AddressTestHelper::class,
+        $addressModel = $this->createPartialMockWithReflection(
+            Address::class,
             ['setShouldIgnoreValidation']
         );
 
-        /** @var AddressInterface|MockObject $address */
+        /** @var AddressInterface|MockObject $customer */
         $address = $this->createMock(AddressInterface::class);
         $address->expects($this->once())
             ->method('getId')
@@ -1818,8 +1819,8 @@ class AccountManagementTest extends TestCase
      */
     private function reInitModel(): void
     {
-        $this->customerSecure = $this->createPartialMock(
-            CustomerSecureTestHelper::class,
+        $this->customerSecure = $this->createPartialMockWithReflection(
+            CustomerSecure::class,
             [
                 'getRpToken',
                 'getRpTokenCreatedAt',
@@ -1839,25 +1840,25 @@ class AccountManagementTest extends TestCase
         $this->customerSecure->expects($this->any())
             ->method('getRpTokenCreatedAt')
             ->willReturn($pastDateTime);
-        $this->customer = $this->createPartialMock(
-            \Magento\Customer\Model\Customer::class,
-            ['getResetPasswordLinkExpirationPeriod']
-        );
+        $this->customer = $this->getMockBuilder(\Magento\Customer\Model\Customer::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getResetPasswordLinkExpirationPeriod'])
+            ->getMock();
 
         $this->prepareDateTimeFactory();
         $this->sessionManager = $this->createMock(SessionManagerInterface::class);
-        $this->visitorCollectionFactory = $this->createPartialMock(
-            CollectionFactory::class,
-            ['create']
-        );
+        $this->visitorCollectionFactory = $this->getMockBuilder(CollectionFactory::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['create'])
+            ->getMock();
         $this->saveHandler = $this->createMock(SaveHandlerInterface::class);
 
         $dateTime = '2017-10-25 18:57:08';
         $timestamp = 1508983028;
-        $dateTimeMock = $this->createPartialMock(
-            \DateTime::class,
-            ['format', 'getTimestamp', 'setTimestamp']
-        );
+        $dateTimeMock = $this->getMockBuilder(\DateTime::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['format', 'getTimestamp', 'setTimestamp'])
+            ->getMock();
 
         $dateTimeMock->expects($this->any())
             ->method('format')
@@ -1869,10 +1870,10 @@ class AccountManagementTest extends TestCase
         $dateTimeMock->expects($this->any())
             ->method('setTimestamp')
             ->willReturnSelf();
-        $dateTimeFactory = $this->createPartialMock(
-            DateTimeFactory::class,
-            ['create']
-        );
+        $dateTimeFactory = $this->getMockBuilder(DateTimeFactory::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['create'])
+            ->getMock();
         $dateTimeFactory->expects($this->any())->method('create')->willReturn($dateTimeMock);
         $this->sessionCleanerMock = $this->createMock(SessionCleanerInterface::class);
 
@@ -1999,12 +2000,12 @@ class AccountManagementTest extends TestCase
 
         $this->reInitModel();
         /** @var Address|MockObject $addressModel */
-        $addressModel = $this->createPartialMock(
-            AddressTestHelper::class,
+        $addressModel = $this->createPartialMockWithReflection(
+            Address::class,
             ['setShouldIgnoreValidation']
         );
 
-        /** @var AddressInterface|MockObject $address */
+        /** @var AddressInterface|MockObject $customer */
         $address = $this->createMock(AddressInterface::class);
         $address->expects($this->any())
             ->method('getId')
@@ -2035,9 +2036,9 @@ class AccountManagementTest extends TestCase
         $this->customerRegistry->expects($this->atLeastOnce())->method('retrieveSecureData')
             ->willReturn($this->customerSecure);
 
-        $this->customerSecure->expects($this->once())->method('setRpToken')->with(null)->willReturnSelf();
-        $this->customerSecure->expects($this->once())->method('setRpTokenCreatedAt')->with(null)->willReturnSelf();
-        $this->customerSecure->expects($this->any())->method('setPasswordHash')->willReturnSelf();
+        $this->customerSecure->expects($this->once())->method('setRpToken')->with(null);
+        $this->customerSecure->expects($this->once())->method('setRpTokenCreatedAt')->with(null);
+        $this->customerSecure->expects($this->any())->method('setPasswordHash')->willReturn(null);
         $this->customerSecure->expects($this->once())->method('setFailuresNum')->with(0);
         $this->customerSecure->expects($this->once())->method('setFirstFailure')->with(null);
         $this->customerSecure->expects($this->once())->method('setLockExpires')->with(null);
@@ -2230,8 +2231,8 @@ class AccountManagementTest extends TestCase
             ->method('getById')
             ->with($customerId)
             ->willReturn($customer);
-        $customerSecure = $this->createPartialMock(
-            CustomerSecureTestHelper::class,
+        $customerSecure = $this->createPartialMockWithReflection(
+            CustomerSecure::class,
             ['setRpToken', 'setRpTokenCreatedAt', 'getPasswordHash']
         );
         $customerSecure->expects($this->once())
@@ -2422,8 +2423,8 @@ class AccountManagementTest extends TestCase
         $this->random->expects($this->once())
             ->method('getUniqueHash')
             ->willReturn($newLinkToken);
-        $customerSecure = $this->createPartialMock(
-            CustomerSecureTestHelper::class,
+        $customerSecure = $this->createPartialMockWithReflection(
+            CustomerSecure::class,
             ['setRpToken', 'setRpTokenCreatedAt', 'getPasswordHash']
         );
         $customerSecure->expects($this->any())

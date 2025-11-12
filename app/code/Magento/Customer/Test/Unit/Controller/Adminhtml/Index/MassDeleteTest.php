@@ -23,12 +23,14 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHe
 use Magento\Ui\Component\MassAction\Filter;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class MassDeleteTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var MassDelete
      */
@@ -91,37 +93,23 @@ class MassDeleteTest extends TestCase
         $this->contextMock = $this->createMock(BackendContext::class);
         $resultRedirectFactory = $this->createMock(RedirectFactory::class);
         $this->responseMock = $this->createMock(ResponseInterface::class);
-        $this->requestMock = $this->getMockBuilder(Http::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->requestMock = $this->createMock(Http::class);
         $this->objectManagerMock = $this->createPartialMock(
             \Magento\Framework\ObjectManager\ObjectManager::class,
             ['create']
         );
         $this->messageManagerMock = $this->createMock(Manager::class);
         $this->customerCollectionMock =
-            $this->getMockBuilder(Collection::class)
-                ->disableOriginalConstructor()
-                ->getMock();
-        $this->customerCollectionFactoryMock =
-            $this->getMockBuilder(CollectionFactory::class)
-                ->disableOriginalConstructor()
-                ->onlyMethods(['create'])
-                ->getMock();
-        $redirectMock = $this->getMockBuilder(Redirect::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $resultFactoryMock = $this->getMockBuilder(ResultFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+            $this->createMock(Collection::class);
+        $this->customerCollectionFactoryMock = $this->createPartialMock(CollectionFactory::class, ['create']);
+        $redirectMock = $this->createMock(Redirect::class);
+        $resultFactoryMock = $this->createMock(ResultFactory::class);
         $resultFactoryMock->expects($this->any())
             ->method('create')
             ->with(ResultFactory::TYPE_REDIRECT)
             ->willReturn($redirectMock);
 
-        $this->resultRedirectMock = $this->getMockBuilder(Redirect::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->resultRedirectMock = $this->createMock(Redirect::class);
 
         $resultRedirectFactory->expects($this->any())->method('create')->willReturn($this->resultRedirectMock);
 

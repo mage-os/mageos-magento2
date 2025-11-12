@@ -11,13 +11,15 @@ use Magento\Customer\Api\Data\CustomerInterface;
 use Magento\Customer\Model\SetCustomerStore;
 use Magento\Store\Api\Data\WebsiteInterface;
 use Magento\Store\Model\StoreManagerInterface;
-use Magento\Store\Test\Unit\Helper\WebsiteInterfaceTestHelper;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 class SetCustomerStoreTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var SetCustomerStore
      */
@@ -43,8 +45,7 @@ class SetCustomerStoreTest extends TestCase
     /**
      * Test for setting up the customer's current store.
      *
-     * @param $requestData
-     */
+     * @param $requestData */
     #[DataProvider('requestParamsDataProvider')]
     public function testSetStore($requestData)
     {
@@ -52,9 +53,11 @@ class SetCustomerStoreTest extends TestCase
         $websiteId = $requestData[CustomerInterface::WEBSITE_ID] ?? null;
         if (!$storeId && $websiteId) {
             $storeId = 200;
-            $websiteMock = $this->createPartialMock(
-                WebsiteInterfaceTestHelper::class,
-                ['getStoreIds']
+            $websiteMock = $this->createPartialMockWithReflection(
+                WebsiteInterface::class,
+                ['getId', 'setId', 'getCode', 'setCode', 'getName', 'setName', 
+                 'getDefaultGroupId', 'setDefaultGroupId', 'getExtensionAttributes', 
+                 'setExtensionAttributes', 'getStoreIds']
             );
             $websiteMock->expects($this->once())
                 ->method('getStoreIds')

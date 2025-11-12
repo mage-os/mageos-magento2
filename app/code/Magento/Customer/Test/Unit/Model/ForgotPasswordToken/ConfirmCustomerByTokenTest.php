@@ -9,17 +9,20 @@ namespace Magento\Customer\Test\Unit\Model\ForgotPasswordToken;
 
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Customer\Api\Data\CustomerInterface;
+use Magento\Customer\Model\Data\Customer;
 use Magento\Customer\Model\ForgotPasswordToken\ConfirmCustomerByToken;
 use Magento\Customer\Model\ForgotPasswordToken\GetCustomerByToken;
-use Magento\Customer\Test\Unit\Helper\CustomerInterfaceTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * Test for \Magento\Customer\Model\ForgotPasswordToken\ConfirmCustomerByToken.
  */
 class ConfirmCustomerByTokenTest extends TestCase
 {
+    use MockCreationTrait;
+
     private const STUB_RESET_PASSWORD_TOKEN = 'resetPassword';
 
     /**
@@ -43,8 +46,8 @@ class ConfirmCustomerByTokenTest extends TestCase
     protected function setUp(): void
     {
         $this->customerMock = $this->createPartialMock(
-            CustomerInterfaceTestHelper::class,
-            ['getConfirmation', 'setConfirmation', 'setData']
+            Customer::class,
+            ['getConfirmation', 'setData', 'setConfirmation']
         );
 
         $this->customerRepositoryMock = $this->createMock(CustomerRepositoryInterface::class);

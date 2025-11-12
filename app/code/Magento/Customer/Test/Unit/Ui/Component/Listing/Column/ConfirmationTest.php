@@ -50,9 +50,11 @@ class ConfirmationTest extends TestCase
      */
     protected $accountConfirmation;
 
-    protected function setUp(): void
+    protected function setup(): void
     {
-        $this->processor = $this->createMock(Processor::class);
+        $this->processor = $this->getMockBuilder(Processor::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->context = $this->createMock(ContextInterface::class);
 
@@ -60,7 +62,9 @@ class ConfirmationTest extends TestCase
             ->method('getProcessor')
             ->willReturn($this->processor);
 
-        $this->uiComponentFactory = $this->createMock(UiComponentFactory::class);
+        $this->uiComponentFactory = $this->getMockBuilder(UiComponentFactory::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->scopeConfig = $this->createMock(ScopeConfigInterface::class);
 
@@ -79,8 +83,7 @@ class ConfirmationTest extends TestCase
     /**
      * @param int $isConfirmationRequired
      * @param string|null $confirmation
-     * @param Phrase $expected
-     */
+     * @param Phrase $expected */
     #[DataProvider('dataProviderPrepareDataSource')]
     public function testPrepareDataSource(
         $isConfirmationRequired,

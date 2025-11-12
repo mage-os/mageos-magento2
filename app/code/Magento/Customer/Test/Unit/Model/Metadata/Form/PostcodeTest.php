@@ -29,9 +29,7 @@ class PostcodeTest extends AbstractFormTestCase
     {
         parent::setUp();
         $this->stringHelper = new StringUtils();
-        $this->directoryHelper = $this->getMockBuilder(\Magento\Directory\Helper\Data::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->directoryHelper = $this->createMock(\Magento\Directory\Helper\Data::class);
     }
 
     /**
@@ -60,11 +58,8 @@ class PostcodeTest extends AbstractFormTestCase
      * @param bool $expected text output
      * @param string $countryId
      * @param bool $isOptional
-     *
-     */
+     * */
     #[DataProvider('validateValueDataProvider')]
-    /**
-     */
     public function testValidateValue($value, $expected, $countryId, $isOptional)
     {
         $storeLabel = 'Zip/Postal Code';
@@ -100,11 +95,8 @@ class PostcodeTest extends AbstractFormTestCase
 
     /**
      * @param string|int|bool|null $value to assign to boolean
-     * @param string|bool $expected text output
-     */
+     * @param string|bool $expected text output */
     #[DataProvider('validateValueLengthDataProvider')]
-    /**
-     */
     public function testValidateValueLength($value, $expected)
     {
         $minTextLengthRule = $this->createMock(ValidationRuleInterface::class);

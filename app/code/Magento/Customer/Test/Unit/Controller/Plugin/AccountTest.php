@@ -18,13 +18,16 @@ use Magento\Framework\Controller\ResultInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 class AccountTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var string
      */
-    private const EXPECTED_VALUE = 'expected_value';
+    const EXPECTED_VALUE = 'expected_value';
 
     /**
      * @var Account
@@ -58,17 +61,17 @@ class AccountTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->sessionMock = $this->createPartialMock(
-            \Magento\Customer\Test\Unit\Helper\CustomerSessionTestHelper::class,
+        $this->sessionMock = $this->createPartialMockWithReflection(
+            Session::class,
             ['authenticate', 'setNoReferer', 'unsNoReferer']
         );
 
-        $this->actionMock = new \Magento\Customer\Test\Unit\Helper\AccountInterfaceTestHelper();
-
-        $this->requestMock = $this->createPartialMock(
-            HttpRequest::class,
-            ['getActionName']
+        $this->actionMock = $this->createPartialMockWithReflection(
+            AccountInterface::class,
+            ['getActionFlag', 'execute']
         );
+
+        $this->requestMock = $this->createPartialMock(HttpRequest::class, ['getActionName']);
 
         $this->resultMock = $this->createMock(ResultInterface::class);
 
@@ -79,7 +82,7 @@ class AccountTest extends TestCase
      * @param string $action
      * @param array $allowedActions
      * @param boolean $isAllowed
-     */
+     * */
     #[DataProvider('beforeExecuteDataProvider')]
     public function testAroundExecuteInterruptsOriginalCallWhenNotAllowed(
         string $action,
@@ -87,7 +90,7 @@ class AccountTest extends TestCase
         bool $isAllowed
     ) {
         /** @var callable|MockObject $proceedMock */
-        $proceedMock = new \Magento\Framework\Test\Unit\Helper\CallableTestHelper();
+        $proceedMock = $this->createPartialMockWithReflection(\stdClass::class, ['__invoke']);
 
         $closureMock = Closure::fromCallable($proceedMock);
 
@@ -96,10 +99,9 @@ class AccountTest extends TestCase
             ->willReturn($action);
 
         if ($isAllowed) {
-            $proceedMock->setReturnValue($this->resultMock);
-            $proceedMock->setExpectedCallCount(1);
+            $proceedMock->expects($this->once())->method('__invoke')->willReturn($this->resultMock);
         } else {
-            $proceedMock->setExpectedCallCount(0);
+            $proceedMock->expects($this->never())->method('__invoke');
         }
 
         $plugin = new Account($this->requestMock, $this->sessionMock, $allowedActions);
@@ -107,10 +109,8 @@ class AccountTest extends TestCase
 
         if ($isAllowed) {
             $this->assertSame($this->resultMock, $result);
-            $this->assertTrue($proceedMock->verifyCallCount());
         } else {
             $this->assertNull($result);
-            $this->assertTrue($proceedMock->verifyCallCount());
         }
     }
 

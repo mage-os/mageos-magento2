@@ -47,14 +47,11 @@ class AccountConfirmationTest extends TestCase
     }
 
     /**
-     * Test if confirmation is required
-     *
-     * @param int|null $customerId
-     * @param string $customerEmail
-     * @param string|null $skipConfirmationIfEmail
-     * @param bool $isConfirmationEnabled
-     * @param bool $expected
-     */
+     * @param $customerId
+     * @param $customerEmail
+     * @param $skipConfirmationIfEmail
+     * @param $isConfirmationEnabled
+     * @param $expected */
     #[DataProvider('dataProviderIsConfirmationRequired')]
     public function testIsConfirmationRequired(
         $customerId,

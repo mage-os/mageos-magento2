@@ -65,8 +65,7 @@ class SessionCheckerTest extends TestCase
     /**
      * @param bool $result
      * @param string $callCount
-     * @return void
-     */
+     * @return void */
     #[DataProvider('beforeStartDataProvider')]
     public function testBeforeStart($result, $callCount)
     {

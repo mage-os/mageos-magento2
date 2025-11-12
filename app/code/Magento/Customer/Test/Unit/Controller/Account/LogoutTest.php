@@ -9,7 +9,6 @@ namespace Magento\Customer\Test\Unit\Controller\Account;
 
 use Magento\Customer\Controller\Account\Logout;
 use Magento\Customer\Model\Session;
-use Magento\Customer\Test\Unit\Helper\CustomerSessionTestHelper;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\Response\RedirectInterface;
 use Magento\Framework\Controller\Result\Redirect;
@@ -19,9 +18,12 @@ use Magento\Framework\Stdlib\Cookie\CookieMetadataFactory;
 use Magento\Framework\Stdlib\Cookie\PhpCookieManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 class LogoutTest extends TestCase
 {
+    use MockCreationTrait;
+
     /** @var Logout */
     protected $controller;
 
@@ -52,8 +54,9 @@ class LogoutTest extends TestCase
     protected function setUp(): void
     {
         $this->contextMock = $this->createMock(Context::class);
-        $this->sessionMock = $this->createPartialMock(
-            CustomerSessionTestHelper::class,
+        
+        $this->sessionMock = $this->createPartialMockWithReflection(
+            Session::class,
             ['getId', 'logout', 'setBeforeAuthUrl', 'setLastCustomerId']
         );
 
@@ -62,6 +65,7 @@ class LogoutTest extends TestCase
         $this->cookieMetadata = $this->createMock(CookieMetadata::class);
         $this->redirectFactory = $this->createMock(RedirectFactory::class);
         $this->resultRedirect = $this->createMock(Redirect::class);
+        
         $this->contextMock->expects($this->once())
             ->method('getResultRedirectFactory')
             ->willReturn($this->redirectFactory);

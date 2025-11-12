@@ -25,16 +25,6 @@ class PageTestHelper extends Page
      */
     private $config;
 
-     /**
-      * @var string|null
-      */
-    private $activeMenu = null;
-
-    /**
-     * @var array
-     */
-    private $breadcrumbs = [];
-
     /**
      * Constructor that accepts config
      *
@@ -53,7 +43,6 @@ class PageTestHelper extends Page
      */
     public function setActiveMenu($menuId)
     {
-        $this->activeMenu = $menuId;
         return $this;
     }
 
@@ -67,18 +56,7 @@ class PageTestHelper extends Page
      */
     public function addBreadcrumb($label, $title, $link = null)
     {
-        $this->breadcrumbs[] = ['label' => $label, 'title' => $title];
         return $this;
-    }
-
-     /**
-      * Get breadcrumbs
-      *
-      * @return array
-      */
-    public function getBreadcrumbs(): array
-    {
-        return $this->breadcrumbs;
     }
 
     /**

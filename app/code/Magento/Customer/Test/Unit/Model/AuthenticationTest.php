@@ -15,7 +15,6 @@ use Magento\Customer\Model\Customer;
 use Magento\Customer\Model\CustomerAuthUpdate;
 use Magento\Customer\Model\CustomerRegistry;
 use Magento\Customer\Model\Data\CustomerSecure;
-use Magento\Customer\Test\Unit\Helper\CustomerSecureTestHelper;
 use Magento\Framework\Encryption\EncryptorInterface;
 use Magento\Framework\Exception\InvalidEmailOrPasswordException;
 use Magento\Framework\Stdlib\DateTime;
@@ -23,12 +22,15 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHe
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class AuthenticationTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var ConfigInterface|MockObject
      */
@@ -89,8 +91,8 @@ class AuthenticationTest extends TestCase
         $this->dateTimeMock->expects($this->any())
             ->method('formatDate')
             ->willReturn('formattedDate');
-        $this->customerSecureMock = $this->createPartialMock(
-            CustomerSecureTestHelper::class,
+        $this->customerSecureMock = $this->createPartialMockWithReflection(
+            CustomerSecure::class,
             [
                 'getId',
                 'getPasswordHash',
@@ -149,8 +151,7 @@ class AuthenticationTest extends TestCase
      * @param int $setFirstFailureCallCtr
      * @param int $setFirstFailureValue
      * @param int $setLockExpiresCallCtr
-     * @param int $setLockExpiresValue
-     */
+     * @param int $setLockExpiresValue */
     #[DataProvider('processAuthenticationFailureDataProvider')]
     public function testProcessAuthenticationFailureFirstAttempt(
         $failureNum,
@@ -254,8 +255,7 @@ class AuthenticationTest extends TestCase
     }
 
     /**
-     * @param bool $result
-     */
+     * @param bool $result */
     #[DataProvider('validateCustomerPassword')]
     public function testAuthenticate($result)
     {

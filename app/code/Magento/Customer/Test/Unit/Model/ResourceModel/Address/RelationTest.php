@@ -11,17 +11,18 @@ use Magento\Customer\Model\Address;
 use Magento\Customer\Model\Customer;
 use Magento\Customer\Model\CustomerFactory;
 use Magento\Customer\Model\ResourceModel\Address\Relation;
-use Magento\Customer\Test\Unit\Helper\AddressTestHelper;
-use Magento\Customer\Test\Unit\Helper\CustomerTestHelper;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 class RelationTest extends TestCase
 {
+    use MockCreationTrait;
+
     /** @var  CustomerFactory|MockObject */
     protected $customerFactoryMock;
 
@@ -45,14 +46,16 @@ class RelationTest extends TestCase
     /**
      * @param $addressId
      * @param $isDefaultBilling
-     * @param $isDefaultShipping
-     */
+     * @param $isDefaultShipping */
     #[DataProvider('getRelationDataProvider')]
     public function testProcessRelation($addressId, $isDefaultBilling, $isDefaultShipping)
     {
-        $addressModel = $this->createPartialMock(
-            AddressTestHelper::class,
+        $addressModel = $this->createPartialMockWithReflection(
+            Address::class,
             [
+                'getIsDefaultBilling',
+                'getIsDefaultShipping',
+                'getIsCustomerSaveTransaction',
                 '__wakeup',
                 'getId',
                 'getEntityTypeId',
@@ -60,31 +63,41 @@ class RelationTest extends TestCase
                 'validateBeforeSave',
                 'beforeSave',
                 'afterSave',
-                'isSaveAllowed',
-                'getIsDefaultBilling',
-                'getIsDefaultShipping',
-                'getIsCustomerSaveTransaction'
+                'isSaveAllowed'
             ]
         );
-        $customerModel = $this->createPartialMock(
-            CustomerTestHelper::class,
+        $customerModel = $this->createPartialMockWithReflection(
+            Customer::class,
             [
+                'setDefaultBilling',
+                'setDefaultShipping',
                 '__wakeup',
                 'save',
                 'load',
                 'getResource',
                 'getId',
                 'getDefaultShippingAddress',
-                'getDefaultBillingAddress',
-                'setDefaultBilling',
-                'setDefaultShipping'
+                'getDefaultBillingAddress'
             ]
         );
-        $customerResource = $this->createPartialMock(
+        $customerResource = $this->createMock(
             AbstractDb::class,
-            ['getConnection', 'getTable', '_construct']
+            [],
+            '',
+            false,
+            false,
+            true,
+            ['getConnection', 'getTable']
         );
-        $connectionMock = $this->createMock(AdapterInterface::class);
+        $connectionMock = $this->createMock(
+            AdapterInterface::class,
+            [],
+            '',
+            false,
+            false,
+            true,
+            ['update', 'quoteInto']
+        );
         $customerModel->expects($this->any())->method('getResource')->willReturn($customerResource);
         $addressModel->expects($this->any())->method('getId')->willReturn($addressId);
         $addressModel->expects($this->any())->method('getIsDefaultShipping')->willReturn($isDefaultShipping);

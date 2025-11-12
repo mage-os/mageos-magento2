@@ -63,16 +63,4 @@ class AbstractResourceTestHelper extends AbstractResource
     {
         return null;
     }
-
-     /**
-      * Save in set including (custom method for tests)
-      *
-      * @param mixed $object
-      * @return $this
-      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-      */
-    public function saveInSetIncluding($object): self
-    {
-        return $this;
-    }
 }

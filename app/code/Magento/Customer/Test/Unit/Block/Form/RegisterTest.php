@@ -12,7 +12,6 @@ use Magento\Customer\Model\AccountManagement;
 use Magento\Customer\Model\Metadata\Form;
 use Magento\Customer\Model\Session;
 use Magento\Customer\Model\Url;
-use Magento\Customer\Test\Unit\Helper\CustomerSessionTestHelper;
 use Magento\Directory\Helper\Data;
 use Magento\Directory\Model\ResourceModel\Region\CollectionFactory;
 use Magento\Framework\App\Config\ScopeConfigInterface;
@@ -20,9 +19,9 @@ use Magento\Framework\App\RequestInterface;
 use Magento\Framework\DataObject;
 use Magento\Framework\Json\EncoderInterface;
 use Magento\Framework\Module\Manager;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Newsletter\Model\Config;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -34,20 +33,22 @@ use PHPUnit\Framework\TestCase;
  */
 class RegisterTest extends TestCase
 {
+    use MockCreationTrait;
+
     /** Constants used by the various unit tests */
-    private const POST_ACTION_URL = 'http://localhost/index.php/customer/account/createpost';
+    const POST_ACTION_URL = 'http://localhost/index.php/customer/account/createpost';
 
-    private const LOGIN_URL = 'http://localhost/index.php/customer/account/login';
+    const LOGIN_URL = 'http://localhost/index.php/customer/account/login';
 
-    private const COUNTRY_ID = 'US';
+    const COUNTRY_ID = 'US';
 
-    private const FORM_DATA = 'form_data';
+    const FORM_DATA = 'form_data';
 
-    private const REGION_ATTRIBUTE_VALUE = 'California';
+    const REGION_ATTRIBUTE_VALUE = 'California';
 
-    private const REGION_ID_ATTRIBUTE_CODE = 'region_id';
+    const REGION_ID_ATTRIBUTE_CODE = 'region_id';
 
-    private const REGION_ID_ATTRIBUTE_VALUE = '12';
+    const REGION_ID_ATTRIBUTE_VALUE = '12';
 
     /** @var MockObject|Data */
     private $directoryHelperMock;
@@ -76,18 +77,15 @@ class RegisterTest extends TestCase
         $this->_moduleManager = $this->createMock(Manager::class);
         $this->directoryHelperMock = $this->createMock(Data::class);
         $this->_customerUrl = $this->createMock(Url::class);
-        $this->_customerSession = new CustomerSessionTestHelper();
+        $this->_customerSession = $this->createPartialMockWithReflection(Session::class, ['getCustomerFormData']);
         $this->newsletterConfig = $this->createMock(Config::class);
         $context = $this->createMock(Context::class);
         $context->expects($this->any())->method('getScopeConfig')->willReturn($this->_scopeConfig);
 
-        $objectManagerHelper = new ObjectManager($this);
-        $objectManagerHelper->prepareObjectManager();
-
         $this->_block = new Register(
             $context,
             $this->directoryHelperMock,
-            $this->createMock(EncoderInterface::class),
+            $this->createMock(EncoderInterface::class, [], '', false),
             $this->createMock(\Magento\Framework\App\Cache\Type\Config::class),
             $this->createMock(CollectionFactory::class),
             $this->createMock(\Magento\Directory\Model\ResourceModel\Country\CollectionFactory::class),
@@ -102,7 +100,7 @@ class RegisterTest extends TestCase
     /**
      * @param string $path
      * @param mixed $configValue
-     */
+     * */
     #[DataProvider('getConfigProvider')]
     public function testGetConfig($path, $configValue)
     {
@@ -174,7 +172,7 @@ class RegisterTest extends TestCase
     public function testGetFormDataNullFormData()
     {
         $data = new DataObject();
-        $this->_customerSession->setCustomerFormData(null);
+        $this->_customerSession->expects($this->once())->method('getCustomerFormData')->willReturn(null);
         $this->assertEquals($data, $this->_block->getFormData());
         $this->assertEquals($data, $this->_block->getData(self::FORM_DATA));
     }
@@ -189,7 +187,13 @@ class RegisterTest extends TestCase
         $data->setFirstname('John');
         $data->setCustomerData(1);
         $customerFormData = ['firstname' => 'John'];
-        $this->_customerSession->setCustomerFormData($customerFormData);
+        $this->_customerSession->expects(
+            $this->once()
+        )->method(
+            'getCustomerFormData'
+        )->willReturn(
+            $customerFormData
+        );
         $this->assertEquals($data, $this->_block->getFormData());
         $this->assertEquals($data, $this->_block->getData(self::FORM_DATA));
     }
@@ -205,7 +209,13 @@ class RegisterTest extends TestCase
         $data->setCustomerData(1);
         $data[self::REGION_ID_ATTRIBUTE_CODE] = (int)self::REGION_ID_ATTRIBUTE_VALUE;
         $customerFormData = [self::REGION_ID_ATTRIBUTE_CODE => self::REGION_ID_ATTRIBUTE_VALUE];
-        $this->_customerSession->setCustomerFormData($customerFormData);
+        $this->_customerSession->expects(
+            $this->once()
+        )->method(
+            'getCustomerFormData'
+        )->willReturn(
+            $customerFormData
+        );
         $formData = $this->_block->getFormData();
         $this->assertEquals($data, $formData);
         $this->assertArrayHasKey(self::REGION_ID_ATTRIBUTE_CODE, $formData);
@@ -289,7 +299,7 @@ class RegisterTest extends TestCase
      * @param boolean $isNewsletterEnabled
      * @param string $isNewsletterActive
      * @param boolean $expectedValue
-     */
+     * */
     #[DataProvider('isNewsletterEnabledProvider')]
     public function testIsNewsletterEnabled($isNewsletterEnabled, $isNewsletterActive, $expectedValue)
     {
@@ -333,9 +343,15 @@ class RegisterTest extends TestCase
         $data->setCustomerData(1);
         $data[self::REGION_ID_ATTRIBUTE_CODE] = (int)self::REGION_ID_ATTRIBUTE_VALUE;
         $customerFormData = [self::REGION_ID_ATTRIBUTE_CODE => self::REGION_ID_ATTRIBUTE_VALUE];
-        $this->_customerSession->setCustomerFormData($customerFormData);
+        $this->_customerSession->expects(
+            $this->once()
+        )->method(
+            'getCustomerFormData'
+        )->willReturn(
+            $customerFormData
+        );
         $form = $this->createMock(Form::class);
-        $request = $this->createMock(RequestInterface::class);
+        $request = $this->createMock(RequestInterface::class, [], '', false);
         $formData = $this->_block->getFormData();
         $form->expects(
             $this->once()

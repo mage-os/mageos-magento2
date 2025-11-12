@@ -10,14 +10,12 @@ namespace Magento\Customer\Test\Unit\Model\Address;
 use Magento\Customer\Model\Address\AbstractAddress;
 use Magento\Customer\Model\Address\CompositeValidator;
 use Magento\Customer\Model\ResourceModel\Customer;
-use Magento\Customer\Test\Unit\Helper\RegionTestHelper;
 use Magento\Directory\Helper\Data;
 use Magento\Directory\Model\Country;
 use Magento\Directory\Model\CountryFactory;
 use Magento\Directory\Model\Region;
 use Magento\Directory\Model\RegionFactory;
 use Magento\Directory\Model\ResourceModel\Region\Collection;
-use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Eav\Model\Config;
 use Magento\Framework\Api\AttributeInterface;
 use Magento\Framework\Api\AttributeValue;
@@ -26,16 +24,20 @@ use Magento\Framework\DataObject;
 use Magento\Framework\Model\Context;
 use Magento\Framework\Registry;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Magento\Customer\Model\Address\AbstractAddress\RegionModelsCache;
 use Magento\Customer\Model\Address\AbstractAddress\CountryModelsCache;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class AbstractAddressTest extends TestCase
 {
+    use MockCreationTrait;
+
     /** @var Context|MockObject  */
     protected $contextMock;
 
@@ -179,8 +181,8 @@ class AbstractAddressTest extends TestCase
         $this->model->setData('region_id', 0);
         $this->model->setData('region', '');
         $this->model->setData('country_id', 'GB');
-        $region = $this->createPartialMock(
-            RegionTestHelper::class,
+        $region = $this->createPartialMockWithReflection(
+            Region::class,
             ['getCountryId', 'getCode', '__wakeup', 'load', 'loadByCode', 'getId']
         );
         $region->method('loadByCode')
@@ -222,8 +224,8 @@ class AbstractAddressTest extends TestCase
      */
     protected function prepareGetRegion($countryId, $regionName = 'RegionName')
     {
-        $region = $this->createPartialMock(
-            RegionTestHelper::class,
+        $region = $this->createPartialMockWithReflection(
+            Region::class,
             ['getCountryId', 'getName', '__wakeup', 'load']
         );
         $region->expects($this->once())
@@ -242,8 +244,8 @@ class AbstractAddressTest extends TestCase
      */
     protected function prepareGetRegionCode($countryId, $regionCode = 'UK')
     {
-        $region = $this->createPartialMock(
-            RegionTestHelper::class,
+        $region = $this->createPartialMockWithReflection(
+            Region::class,
             ['getCountryId', 'getCode', '__wakeup', 'load', 'loadByCode']
         );
         $region->method('loadByCode')
@@ -334,7 +336,7 @@ class AbstractAddressTest extends TestCase
      * @param array $data
      * @param array|bool $expected
      * @return void
-     */
+     * */
     #[DataProvider('validateDataProvider')]
     public function testValidate(array $data, $expected)
     {
@@ -403,6 +405,7 @@ class AbstractAddressTest extends TestCase
         ];
     }
 
+    /** */
     #[DataProvider('getStreetFullDataProvider')]
     public function testGetStreetFullAlwaysReturnsString($expectedResult, $street)
     {
@@ -410,6 +413,7 @@ class AbstractAddressTest extends TestCase
         $this->assertEquals($expectedResult, $this->model->getStreetFull());
     }
 
+    /** */
     #[DataProvider('getStreetFullDataProvider')]
     public function testSetDataStreetAlwaysConvertedToString($expectedResult, $street)
     {

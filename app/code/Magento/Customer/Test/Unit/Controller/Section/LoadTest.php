@@ -90,8 +90,7 @@ class LoadTest extends TestCase
      * @param string $sectionNames
      * @param bool $forceNewSectionTimestamp
      * @param string[] $sectionNamesAsArray
-     * @param bool $forceNewTimestamp
-     */
+     * @param bool $forceNewTimestamp */
     #[DataProvider('executeDataProvider')]
     public function testExecute($sectionNames, $forceNewSectionTimestamp, $sectionNamesAsArray, $forceNewTimestamp)
     {

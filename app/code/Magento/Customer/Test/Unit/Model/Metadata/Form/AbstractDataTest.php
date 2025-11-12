@@ -78,16 +78,13 @@ class AbstractDataTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->localeMock = $this->getMockBuilder(
+        $this->localeMock = $this->createMock(
             TimezoneInterface::class
-        )->disableOriginalConstructor()
-            ->getMock();
-        $this->localeResolverMock = $this->getMockBuilder(
+        );
+        $this->localeResolverMock = $this->createMock(
             ResolverInterface::class
-        )->disableOriginalConstructor()
-            ->getMock();
-        $this->loggerMock = $this->getMockBuilder(LoggerInterface::class)
-            ->getMock();
+        );
+        $this->loggerMock = $this->createMock(LoggerInterface::class);
         $this->attributeMock = $this->createMock(AttributeMetadataInterface::class);
         $this->value = 'VALUE';
         $this->entityTypeCode = 'ENTITY_TYPE_CODE';
@@ -136,11 +133,8 @@ class AbstractDataTest extends TestCase
     /**
      * @param bool $bool
      *
-     * @return void
-     */
+     * @return void */
     #[DataProvider('trueFalseDataProvider')]
-    /**
-     */
     public function testSetRequestScopeOnly($bool): void
     {
         $this->assertSame($this->model, $this->model->setRequestScopeOnly($bool));
@@ -172,11 +166,8 @@ class AbstractDataTest extends TestCase
      * @param bool|string $output
      * @param bool|string $filter
      *
-     * @return void
-     */
+     * @return void */
     #[DataProvider('applyInputFilterProvider')]
-    /**
-     */
     public function testApplyInputFilter($input, $output, $filter): void
     {
         if ($input) {
@@ -203,11 +194,8 @@ class AbstractDataTest extends TestCase
      * @param null|bool|string $format
      * @param string           $output
      *
-     * @return void
-     */
+     * @return void */
     #[DataProvider('dateFilterFormatProvider')]
-    /**
-     */
     public function testDateFilterFormat($format, $output): void
     {
         // Since model is instantiated in setup, if I use it directly in the dataProvider, it will be null.
@@ -243,11 +231,8 @@ class AbstractDataTest extends TestCase
      * @param bool|string $output
      * @param bool|string $filter
      *
-     * @return void
-     */
+     * @return void */
     #[DataProvider('applyOutputFilterDataProvider')]
-    /**
-     */
     public function testApplyOutputFilter($input, $output, $filter): void
     {
         if ($input) {
@@ -280,11 +265,8 @@ class AbstractDataTest extends TestCase
      * @param null|string $inputValidation
      * @param bool|array  $expectedOutput
      *
-     * @return void
-     */
+     * @return void */
     #[DataProvider('validateInputRuleDataProvider')]
-    /**
-     */
     public function testValidateInputRule($value, $label, $inputValidation, $expectedOutput): void
     {
         $validationRule = $this->createMock(ValidationRuleInterface::class);
@@ -368,11 +350,8 @@ class AbstractDataTest extends TestCase
     /**
      * @param bool $ajaxRequest
      *
-     * @return void
-     */
+     * @return void */
     #[DataProvider('trueFalseDataProvider')]
-    /**
-     */
     public function testGetIsAjaxRequest($ajaxRequest): void
     {
         $this->model = new ExtendsAbstractData(
@@ -394,11 +373,8 @@ class AbstractDataTest extends TestCase
      * @param bool                          $requestScopeOnly
      * @param string                        $expectedValue
      *
-     * @return void
-     */
+     * @return void */
     #[DataProvider('getRequestValueDataProvider')]
-    /**
-     */
     public function testGetRequestValue(
         $request,
         $attributeCode,
@@ -428,9 +404,7 @@ class AbstractDataTest extends TestCase
      */
     public function getRequestMock($expectedValue): array
     {
-        $requestMock = $this->getMockBuilder(RequestInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $requestMock = $this->createMock(RequestInterface::class);
         $requestMock->method('getParam')
             ->willReturnCallback(
                 function ($arg) use ($expectedValue) {
@@ -447,9 +421,7 @@ class AbstractDataTest extends TestCase
                     }
                 }
             );
-        $requestMockHttp = $this->getMockBuilder(Http::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $requestMockHttp = $this->createMock(Http::class);
         $requestMockHttp
             ->expects($this->any())
             ->method('getParams')

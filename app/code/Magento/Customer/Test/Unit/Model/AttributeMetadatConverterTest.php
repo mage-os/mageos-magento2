@@ -73,7 +73,7 @@ class AttributeMetadatConverterTest extends TestCase
             AttributeMetadataInterfaceFactory::class,
             ['create']
         );
-        $this->dataObjectHelper = $this->createMock(DataObjectHelper::class);
+        $this->dataObjectHelper =  $this->createMock(DataObjectHelper::class);
         $this->scopeConfig = $this->createMock(ScopeConfigInterface::class);
         $this->attribute = $this->createMock(Attribute::class);
 
@@ -87,7 +87,7 @@ class AttributeMetadatConverterTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return array<string, string>
      */
     private function prepareValidateRules()
     {
@@ -98,7 +98,7 @@ class AttributeMetadatConverterTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return array<int, array<string, mixed>>
      */
     private function prepareOptions()
     {
@@ -119,6 +119,7 @@ class AttributeMetadatConverterTest extends TestCase
     /**
      * @return void
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     * @SuppressWarnings(PHPMD)
      */
     public function testCreateAttributeMetadataTestWithSource()
     {
@@ -128,7 +129,7 @@ class AttributeMetadatConverterTest extends TestCase
         $optionDataObjectForSimpleValue2 = $this->createMock(Option::class);
         $optionObject1 = $this->createMock(OptionInterface::class);
         $optionObject2 = $this->createMock(OptionInterface::class);
-        $this->optionFactory->expects($this->exactly(4))
+        $this->optionFactory->expects($this->exactly(4)) // @phpstan-ignore method.notFound
             ->method('create')
             ->willReturnOnConsecutiveCalls(
                 $optionDataObjectForSimpleValue2,
@@ -140,10 +141,10 @@ class AttributeMetadatConverterTest extends TestCase
         $source->expects($this->once())
             ->method('getAllOptions')
             ->willReturn($options);
-        $this->attribute->expects($this->once())
+        $this->attribute->expects($this->once()) // @phpstan-ignore method.notFound
             ->method('usesSource')
             ->willReturn(true);
-        $this->attribute->expects($this->once())
+        $this->attribute->expects($this->once()) // @phpstan-ignore method.notFound
             ->method('getSource')
             ->willReturn($source);
         $optionDataObjectForSimpleValue1->expects($this->once())
@@ -155,7 +156,7 @@ class AttributeMetadatConverterTest extends TestCase
         $optionDataObjectForSimpleValue1->expects($this->once())
             ->method('setLabel')
             ->with('one_value');
-        $this->dataObjectHelper->expects($this->exactly(2))
+        $this->dataObjectHelper->expects($this->exactly(2)) // @phpstan-ignore method.notFound
             ->method('populateWithArray')
             ->willReturnCallback(
                 function ($arg1, $arg2, $arg3) use ($optionObject1, $optionObject2) {
@@ -168,7 +169,7 @@ class AttributeMetadatConverterTest extends TestCase
             );
         $validationRule1 = $this->createMock(ValidationRuleInterface::class);
         $validationRule2 = $this->createMock(ValidationRuleInterface::class);
-        $this->validationRuleFactory->expects($this->exactly(2))
+        $this->validationRuleFactory->expects($this->exactly(2)) // @phpstan-ignore method.notFound
             ->method('create')
             ->willReturnOnConsecutiveCalls($validationRule1, $validationRule2);
         $validationRule1->expects($this->once())
@@ -195,19 +196,20 @@ class AttributeMetadatConverterTest extends TestCase
             $attributeMetaData->expects($this->once())->method($method)->willReturnSelf();
         }
 
-        $this->attribute->expects($this->once())
+        $this->attribute->expects($this->once()) // @phpstan-ignore method.notFound
             ->method('getValidateRules')
             ->willReturn($validatedRules);
-        $this->attributeMetadataFactory->expects($this->once())
+        $this->attributeMetadataFactory->expects($this->once()) // @phpstan-ignore method.notFound
             ->method('create')
             ->willReturn($attributeMetaData);
         $frontend = $this->createMock(AbstractFrontend::class);
-        $this->attribute->expects($this->once())
+        $this->attribute->expects($this->once()) // @phpstan-ignore method.notFound
             ->method('getFrontend')
             ->willReturn($frontend);
         $optionDataObjectForSimpleValue2->expects($this->once())
             ->method('setOptions')
             ->with([$optionObject1, $optionObject2]);
+        // @phpstan-ignore argument.type
         $this->model->createMetadataAttribute($this->attribute);
     }
 }

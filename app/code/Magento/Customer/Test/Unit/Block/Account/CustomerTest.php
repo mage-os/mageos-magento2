@@ -24,7 +24,9 @@ class CustomerTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->httpContext = $this->createMock(Context::class);
+        $this->httpContext = $this->getMockBuilder(Context::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->block = (new ObjectManager($this))
             ->getObject(Customer::class, ['httpContext' => $this->httpContext]);
@@ -43,8 +45,7 @@ class CustomerTest extends TestCase
 
     /**
      * @param $isLoggedIn
-     * @param $result
-     */
+     * @param $result */
     #[DataProvider('customerLoggedInDataProvider')]
     public function testCustomerLoggedIn($isLoggedIn, $result)
     {

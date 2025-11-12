@@ -10,17 +10,19 @@ namespace Magento\Customer\Test\Unit\Model\Attribute\Data;
 use Magento\Customer\Model\Attribute\Data\Postcode;
 use Magento\Directory\Helper\Data as DirectoryHelper;
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
-use Magento\Eav\Test\Unit\Helper\AbstractAttributeTestHelper;
 use Magento\Framework\Locale\ResolverInterface;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
-use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Framework\Stdlib\StringUtils;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 class PostcodeTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var DirectoryHelper|MockObject
      */
@@ -56,22 +58,22 @@ class PostcodeTest extends TestCase
         $this->localeMock = $this->createMock(TimezoneInterface::class);
         $this->localeResolverMock = $this->createMock(ResolverInterface::class);
         $this->loggerMock = $this->createMock(LoggerInterface::class);
-        $this->directoryHelperMock = $this->createMock(DirectoryHelper::class);
+        $this->directoryHelperMock = $this->createMock(\Magento\Directory\Helper\Data::class);
         $this->stringHelperMock = $this->createMock(StringUtils::class);
-        $this->attributeMock = $this->createPartialMock(
-            AbstractAttributeTestHelper::class,
+        $this->attributeMock = $this->createPartialMockWithReflection(
+            AbstractAttribute::class,
             ['getStoreLabel', 'getValidateRules']
         );
     }
 
     /**
      * @param string $value to assign to boolean
-     * @param bool|array $expected text output
+     * @param bool $expected text output
      * @param string $countryId
      * @param bool $isOptional
-     */
+     * */
     #[DataProvider('validateValueDataProvider')]
-    public function testValidateValue(string $value, bool|array $expected, string $countryId, bool $isOptional): void
+    public function testValidateValue($value, $expected, $countryId, $isOptional)
     {
         $storeLabel = 'Zip/Postal Code';
         $this->attributeMock->expects($this->any())
@@ -101,7 +103,7 @@ class PostcodeTest extends TestCase
     /**
      * @return array
      */
-    public static function validateValueDataProvider(): array
+    public static function validateValueDataProvider()
     {
         return [
             ['', ['"Zip/Postal Code" is a required value.'], 'US', false],
@@ -119,7 +121,7 @@ class PostcodeTest extends TestCase
      * @param array $validateRules
      * @param string $countryId
      * @param bool $isOptional
-     */
+     * */
     #[DataProvider('validateValueWithRulesDataProvider')]
     public function testValidateValueWithRules(
         string $value,
@@ -127,7 +129,7 @@ class PostcodeTest extends TestCase
         array $validateRules,
         string $countryId,
         bool $isOptional
-    ): void {
+    ) {
         $storeLabel = 'Zip/Postal Code';
         $this->attributeMock->expects($this->any())
             ->method('getStoreLabel')
@@ -182,7 +184,7 @@ class PostcodeTest extends TestCase
     /**
      * @return array
      */
-    public static function validateValueWithRulesDataProvider(): array
+    public static function validateValueWithRulesDataProvider()
     {
         return [
             // Test min length validation

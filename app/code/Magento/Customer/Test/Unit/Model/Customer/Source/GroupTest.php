@@ -51,16 +51,10 @@ class GroupTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->moduleManagerMock = $this->getMockBuilder(Manager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->moduleManagerMock = $this->createMock(Manager::class);
         $this->groupRepositoryMock = $this->createMock(GroupRepositoryInterface::class);
-        $this->searchCriteriaBuilderMock = $this->getMockBuilder(SearchCriteriaBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->searchCriteriaMock = $this->getMockBuilder(SearchCriteria::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->searchCriteriaBuilderMock = $this->createMock(SearchCriteriaBuilder::class);
+        $this->searchCriteriaMock = $this->createMock(SearchCriteria::class);
         $this->searchResultMock = $this->createMock(GroupSearchResultsInterface::class);
 
         $this->model = new Group(

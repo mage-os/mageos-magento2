@@ -33,29 +33,29 @@ class NameTest extends TestCase
     /**#@+
      * Constant values used throughout the various unit tests.
      */
-    private const PREFIX = 'Mr';
+    const PREFIX = 'Mr';
 
-    private const MIDDLENAME = 'Middle';
+    const MIDDLENAME = 'Middle';
 
-    private const SUFFIX = 'Jr';
+    const SUFFIX = 'Jr';
 
-    private const KEY_CLASS_NAME = 'class_name';
+    const KEY_CLASS_NAME = 'class_name';
 
-    private const DEFAULT_CLASS_NAME = 'customer-name';
+    const DEFAULT_CLASS_NAME = 'customer-name';
 
-    private const CUSTOM_CLASS_NAME = 'my-class-name';
+    const CUSTOM_CLASS_NAME = 'my-class-name';
 
-    private const CONTAINER_CLASS_NAME_PREFIX = '-prefix';
+    const CONTAINER_CLASS_NAME_PREFIX = '-prefix';
 
-    private const CONTAINER_CLASS_NAME_MIDDLENAME = '-middlename';
+    const CONTAINER_CLASS_NAME_MIDDLENAME = '-middlename';
 
-    private const CONTAINER_CLASS_NAME_SUFFIX = '-suffix';
+    const CONTAINER_CLASS_NAME_SUFFIX = '-suffix';
 
-    private const PREFIX_ATTRIBUTE_CODE = 'prefix';
+    const PREFIX_ATTRIBUTE_CODE = 'prefix';
 
-    private const INVALID_ATTRIBUTE_CODE = 'invalid attribute code';
+    const INVALID_ATTRIBUTE_CODE = 'invalid attribute code';
 
-    private const PREFIX_STORE_LABEL = 'Name Prefix';
+    const PREFIX_STORE_LABEL = 'Name Prefix';
     /**#@-*/
 
     /**
@@ -173,8 +173,7 @@ class NameTest extends TestCase
     /**
      * @param $method
      *
-     * @return void
-     */
+     * @return void */
     #[DataProvider('methodDataProvider')]
     public function testMethodWithNoSuchEntityException($method): void
     {
@@ -263,7 +262,9 @@ class NameTest extends TestCase
          * Added some padding so that the trim() call on Customer::getPrefix() will remove it. Also added
          * special characters so that the escapeHtml() method returns a htmlspecialchars translated value.
          */
-        $customer = $this->createMock(CustomerInterface::class);
+        $customer = $this->createMock(
+            CustomerInterface::class
+        );
         $customer->expects($this->once())->method('getPrefix')->willReturn('  <' . self::PREFIX . '>  ');
 
         $this->_block->setObject($customer);
@@ -291,7 +292,9 @@ class NameTest extends TestCase
      */
     public function testGetPrefixOptionsEmpty(): void
     {
-        $customer = $this->createMock(CustomerInterface::class);
+        $customer = $this->createMock(
+            CustomerInterface::class
+        );
         $this->_block->setObject($customer);
 
         $this->_options->expects(
@@ -314,7 +317,9 @@ class NameTest extends TestCase
          * Added padding and special characters to show that trim() works on Customer::getSuffix() and that
          * a properly htmlspecialchars translated value is returned.
          */
-        $customer = $this->createMock(CustomerInterface::class);
+        $customer = $this->createMock(
+            CustomerInterface::class
+        );
         $customer->expects($this->once())->method('getSuffix')->willReturn('  <' . self::SUFFIX . '>  ');
         $this->_block->setObject($customer);
 
@@ -341,7 +346,9 @@ class NameTest extends TestCase
      */
     public function testGetSuffixOptionsEmpty(): void
     {
-        $customer = $this->createMock(CustomerInterface::class);
+        $customer = $this->createMock(
+            CustomerInterface::class
+        );
         $this->_block->setObject($customer);
 
         $this->_options->expects(
@@ -374,8 +381,7 @@ class NameTest extends TestCase
      * @param bool $isSuffixVisible Value returned by Name::showSuffix()
      * @param string $expectedValue The expected value of Name::getContainerClassName()
      *
-     * @return void
-     */
+     * @return void */
     #[DataProvider('getContainerClassNameProvider')]
     public function testGetContainerClassName(
         $isPrefixVisible,
@@ -420,8 +426,7 @@ class NameTest extends TestCase
      * @param string $storeLabel The attribute's store label
      * @param string $expectedValue The expected value of Name::getStoreLabel()
      *
-     * @return void
-     */
+     * @return void */
     #[DataProvider('getStoreLabelProvider')]
     public function testGetStoreLabel($attributeCode, $storeLabel, $expectedValue): void
     {

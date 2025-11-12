@@ -30,11 +30,11 @@ use PHPUnit\Framework\TestCase;
 class InfoTest extends TestCase
 {
     /** Constant values used for testing */
-    private const CUSTOMER_ID = 1;
+    const CUSTOMER_ID = 1;
 
-    private const CHANGE_PASSWORD_URL = 'http://localhost/index.php/account/edit/changepass/1';
+    const CHANGE_PASSWORD_URL = 'http://localhost/index.php/account/edit/changepass/1';
 
-    private const EMAIL_ADDRESS = 'john.doe@example.com';
+    const EMAIL_ADDRESS = 'john.doe@example.com';
 
     /** @var MockObject|Context */
     private $_context;
@@ -71,17 +71,19 @@ class InfoTest extends TestCase
     {
         $this->currentCustomer = $this->createMock(CurrentCustomer::class);
 
-        $urlBuilder = $this->createMock(UrlInterface::class);
+        $urlBuilder = $this->createMock(UrlInterface::class, [], '', false);
         $urlBuilder->expects($this->any())->method('getUrl')->willReturn(self::CHANGE_PASSWORD_URL);
 
-        $layout = $this->createMock(LayoutInterface::class);
+        $layout = $this->createMock(LayoutInterface::class, [], '', false);
         $this->_formRegister = $this->createMock(Register::class);
         $layout->expects($this->any())
             ->method('getBlockSingleton')
             ->with(Register::class)
             ->willReturn($this->_formRegister);
 
-        $this->_context = $this->createMock(Context::class);
+        $this->_context = $this->getMockBuilder(Context::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->_context->expects($this->once())->method('getUrlBuilder')->willReturn($urlBuilder);
         $this->_context->expects($this->once())->method('getLayout')->willReturn($layout);
 
@@ -90,7 +92,10 @@ class InfoTest extends TestCase
 
         $this->_customer = $this->createMock(CustomerInterface::class);
         $this->_customer->expects($this->any())->method('getEmail')->willReturn(self::EMAIL_ADDRESS);
-        $this->_helperView = $this->createMock(View::class);
+        $this->_helperView = $this->getMockBuilder(
+            View::class
+        )->disableOriginalConstructor()
+            ->getMock();
         $this->_subscriberFactory = $this->createPartialMock(
             SubscriberFactory::class,
             ['create']
@@ -164,7 +169,7 @@ class InfoTest extends TestCase
     /**
      * @param bool $isSubscribed Is the subscriber subscribed?
      * @param bool $expectedValue The expected value - Whether the subscriber is subscribed or not.
-     */
+     * */
     #[DataProvider('getIsSubscribedProvider')]
     public function testGetIsSubscribed($isSubscribed, $expectedValue)
     {
@@ -183,7 +188,7 @@ class InfoTest extends TestCase
     /**
      * @param bool $isNewsletterEnabled Determines if the newsletter is enabled
      * @param bool $expectedValue The expected value - Whether the newsletter is enabled or not
-     */
+     * */
     #[DataProvider('isNewsletterEnabledProvider')]
     public function testIsNewsletterEnabled($isNewsletterEnabled, $expectedValue)
     {

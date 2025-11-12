@@ -111,7 +111,12 @@ class DobTest extends TestCase
         $zendCacheCore = new Zend_Cache_Core();
         $zendCacheCore->setBackend(new Zend_Cache_Backend_BlackHole());
 
-        $frontendCache = $this->createMock(FrontendInterface::class);
+        $frontendCache = $this->createMock(
+            FrontendInterface::class,
+            [],
+            '',
+            false
+        );
         $frontendCache->expects($this->any())->method('getLowLevelFrontend')->willReturn($zendCacheCore);
         $cache = $this->createMock(CacheInterface::class);
         $cache->expects($this->any())->method('getFrontend')->willReturn($frontendCache);
@@ -134,10 +139,10 @@ class DobTest extends TestCase
         $this->_locale = Resolver::DEFAULT_LOCALE;
         $this->context = $this->createMock(Context::class);
         $this->context->expects($this->any())->method('getLocaleDate')->willReturn($timezone);
-        $this->escaper = $this->createPartialMock(
-            Escaper::class,
-            ['escapeHtml']
-        );
+        $this->escaper = $this->getMockBuilder(Escaper::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['escapeHtml'])
+            ->getMock();
         $this->context->expects($this->any())->method('getEscaper')->willReturn($this->escaper);
 
         $this->attribute = $this->createMock(AttributeMetadataInterface::class);
@@ -180,7 +185,7 @@ class DobTest extends TestCase
     /**
      * @param bool $isVisible Determines whether the 'dob' attribute is visible or enabled
      * @param bool $expectedValue The value we expect from Dob::isEnabled()
-     */
+     * */
     #[DataProvider('isEnabledDataProvider')]
     public function testIsEnabled($isVisible, $expectedValue)
     {
@@ -217,7 +222,7 @@ class DobTest extends TestCase
     /**
      * @param bool $isRequired Determines whether the 'dob' attribute is required
      * @param bool $expectedValue The value we expect from Dob::isRequired()
-     */
+     * */
     #[DataProvider('isRequiredDataProvider')]
     public function testIsRequired($isRequired, $expectedValue)
     {
@@ -252,8 +257,7 @@ class DobTest extends TestCase
      * @param string|bool $date Date (e.g. '01/01/2020' or false for no date)
      * @param int|bool $expectedTime The value we expect from Dob::getTime()
      * @param string|bool $expectedDate The value we expect from Dob::getData('date')
-     * @param string $locale
-     */
+     * @param string $locale */
     #[DataProvider('setDateDataProvider')]
     public function testSetDate($date, $expectedTime, $expectedDate, $locale = Resolver::DEFAULT_LOCALE)
     {
@@ -286,7 +290,7 @@ class DobTest extends TestCase
     /**
      * @param string|bool $date The date (e.g. '01/01/2020' or false for no date)
      * @param string $expectedDay The value we expect from Dob::getDay()
-     */
+     * */
     #[DataProvider('getDayDataProvider')]
     public function testGetDay($date, $expectedDay)
     {
@@ -305,7 +309,7 @@ class DobTest extends TestCase
     /**
      * @param string|bool $date The date (e.g. '01/01/2020' or false for no date)
      * @param string $expectedMonth The value we expect from Dob::getMonth()
-     */
+     * */
     #[DataProvider('getMonthDataProvider')]
     public function testGetMonth($date, $expectedMonth)
     {
@@ -324,7 +328,7 @@ class DobTest extends TestCase
     /**
      * @param string|bool $date The date (e.g. '01/01/2020' or false for no date)
      * @param string $expectedYear The value we expect from Dob::getYear()
-     */
+     * */
     #[DataProvider('getYearDataProvider')]
     public function testGetYear($date, $expectedYear)
     {
@@ -344,8 +348,7 @@ class DobTest extends TestCase
      * Is used to derive the Locale that is used to determine the value of Dob::getDateFormat() for that Locale
      *
      * @param string $locale
-     * @param string $expectedFormat
-     */
+     * @param string $expectedFormat */
     #[DataProvider('getDateFormatDataProvider')]
     public function testGetDateFormat(string $locale, string $expectedFormat)
     {
@@ -409,7 +412,7 @@ class DobTest extends TestCase
     /**
      * @param array $validationRules The date Min/Max validation rules
      * @param int $expectedValue The value we expect from Dob::getMinDateRange()
-     */
+     * */
     #[DataProvider('getMinDateRangeDataProvider')]
     public function testGetMinDateRange($validationRules, $expectedValue)
     {
@@ -440,6 +443,7 @@ class DobTest extends TestCase
                 ->method('getValue')
                 ->willReturn(strtotime(self::MAX_DATE));
         }
+
 
         return $validationRule;
     }
@@ -497,7 +501,7 @@ class DobTest extends TestCase
     /**
      * @param array $validationRules The date Min/Max validation rules
      * @param int $expectedValue The value we expect from Dob::getMaxDateRange()
-     */
+     * */
     #[DataProvider('getMaxDateRangeDataProvider')]
     public function testGetMaxDateRange($validationRules, $expectedValue)
     {

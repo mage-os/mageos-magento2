@@ -26,10 +26,12 @@ class AccountLockTest extends TestCase
     /** @var UiComponentFactory */
     protected $uiComponentFactory;
 
-    protected function setUp(): void
+    protected function setup(): void
     {
         $this->context = $this->createMock(ContextInterface::class);
-        $processor = $this->createMock(Processor::class);
+        $processor = $this->getMockBuilder(Processor::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->context->expects($this->never())->method('getProcessor')->willReturn($processor);
         $this->uiComponentFactory = $this->createMock(UiComponentFactory::class);
         $this->component = new AccountLock(
@@ -39,11 +41,10 @@ class AccountLockTest extends TestCase
     }
 
     /**
-     * @param array $lockExpirationDate
-     * @param array $expectedResult
-     */
-    #[DataProvider('prepareDataSourceDataProvider')]
-    public function testPrepareDataSource(array $lockExpirationDate, array $expectedResult): void
+     * @param string $lockExpirationDate
+     * @param Phrase $expectedResult */
+    #[DataProvider('testPrepareDataSourceDataProvider')]
+    public function testPrepareDataSource($lockExpirationDate, $expectedResult)
     {
         $dataSource = $this->component->prepareDataSource($lockExpirationDate);
 
@@ -53,7 +54,7 @@ class AccountLockTest extends TestCase
     /**
      * @return array
      */
-    public static function prepareDataSourceDataProvider(): array
+    public static function testPrepareDataSourceDataProvider()
     {
         return [
             [

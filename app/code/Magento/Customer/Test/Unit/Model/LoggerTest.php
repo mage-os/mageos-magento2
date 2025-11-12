@@ -73,8 +73,6 @@ class LoggerTest extends TestCase
     }
 
     /**
-     * Test log method
-     *
      * @param int $customerId
      * @param array $data
      * @return void
@@ -118,8 +116,6 @@ class LoggerTest extends TestCase
     }
 
     /**
-     * Test get method
-     *
      * @param int $customerId
      * @param array $data
      * @return void

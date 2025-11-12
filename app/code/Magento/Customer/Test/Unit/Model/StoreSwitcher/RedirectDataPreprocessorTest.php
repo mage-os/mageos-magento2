@@ -94,8 +94,6 @@ class RedirectDataPreprocessorTest extends TestCase
     }
 
     /**
-     * Test process method
-     *
      * @param int|null $customerId
      * @param array $data
      */

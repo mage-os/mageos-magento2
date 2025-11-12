@@ -36,7 +36,7 @@ class EditTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
+        $this->scopeConfigMock =  $this->createMock(ScopeConfigInterface::class);
 
         /** @var Context|MockObject $context */
         $context = $this->createMock(Context::class);

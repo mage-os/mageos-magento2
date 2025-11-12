@@ -21,19 +21,21 @@ use Magento\Customer\Model\ResourceModel\Address\CollectionFactory;
 use Magento\Eav\Model\Config;
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
 use Magento\Eav\Model\Entity\Type;
-use Magento\Eav\Test\Unit\Helper\AbstractAttributeTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Element\UiComponent\ContextInterface;
 use Magento\Ui\Component\Form\Element\Multiline;
 use Magento\Ui\Component\Form\Field;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class DataProviderTest extends TestCase
 {
+    use MockCreationTrait;
+
     private const ATTRIBUTE_CODE = 'street';
 
     /**
@@ -99,10 +101,10 @@ class DataProviderTest extends TestCase
         $objectManagerHelper = new ObjectManager($this);
         $this->fileUploaderDataResolver = $this->createMock(FileUploaderDataResolver::class);
         $this->attributeMetadataResolver = $this->createMock(AttributeMetadataResolver::class);
-        $this->addressCollectionFactory = $this->createPartialMock(
-            CollectionFactory::class,
-            ['create']
-        );
+        $this->addressCollectionFactory = $this->getMockBuilder(CollectionFactory::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['create'])
+            ->getMock();
         $this->collection = $this->createMock(AddressCollection::class);
         $this->customerRepository = $this->createMock(CustomerRepositoryInterface::class);
         $this->context = $this->createMock(ContextInterface::class);
@@ -312,8 +314,8 @@ class DataProviderTest extends TestCase
      */
     protected function getAttributeMock(array $options = []): array
     {
-        $attributeMock = $this->createPartialMock(
-            AbstractAttributeTestHelper::class,
+        $attributeMock = $this->createPartialMockWithReflection(
+            AbstractAttribute::class,
             [
                 'getAttributeCode',
                 'getDataUsingMethod',
@@ -335,8 +337,8 @@ class DataProviderTest extends TestCase
             ->method('getAttributeCode')
             ->willReturn($attributeCode);
 
-        $attributeBooleanMock = $this->createPartialMock(
-            AbstractAttributeTestHelper::class,
+        $attributeBooleanMock = $this->createPartialMockWithReflection(
+            AbstractAttribute::class,
             [
                 'getAttributeCode',
                 'getDataUsingMethod',

@@ -13,19 +13,21 @@ use Magento\Framework\Api\SearchCriteria;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Event;
 use Magento\Framework\Event\Observer;
-use Magento\Framework\Test\Unit\Helper\EventTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\ResourceModel\Order\Collection;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * For testing upgrade order customer email
  */
 class UpgradeOrderCustomerEmailObserverTest extends TestCase
 {
+    use MockCreationTrait;
+
     private const NEW_CUSTOMER_EMAIL = "test@test.com";
     private const ORIGINAL_CUSTOMER_EMAIL = "origtest@test.com";
 
@@ -64,16 +66,21 @@ class UpgradeOrderCustomerEmailObserverTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->orderRepositoryMock = $this->createMock(OrderRepositoryInterface::class);
+        $this->orderRepositoryMock = $this->getMockBuilder(OrderRepositoryInterface::class)
+            ->getMock();
 
-        $this->searchCriteriaBuilderMock = $this->createMock(SearchCriteriaBuilder::class);
+        $this->searchCriteriaBuilderMock = $this->getMockBuilder(SearchCriteriaBuilder::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $this->eventMock = $this->createPartialMock(
-            EventTestHelper::class,
+        $this->eventMock = $this->createPartialMockWithReflection(
+            Event::class,
             ['getCustomerDataObject', 'getOrigCustomerDataObject']
         );
 
-        $this->observerMock = $this->createMock(Observer::class);
+        $this->observerMock = $this->getMockBuilder(Observer::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->observerMock->expects($this->any())->method('getEvent')->willReturn($this->eventMock);
 
@@ -135,12 +142,20 @@ class UpgradeOrderCustomerEmailObserverTest extends TestCase
 
     private function createCustomerMock(): MockObject
     {
-        return $this->createMock(CustomerInterface::class);
+        $customer = $this->getMockBuilder(CustomerInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        return $customer;
     }
 
     private function createOrderMock(): MockObject
     {
-        return $this->createMock(Collection::class);
+        $orderCollectionMock = $this->getMockBuilder(Collection::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        return $orderCollectionMock;
     }
 
     private function setCustomerToEventMock(MockObject $customer): void
@@ -166,7 +181,9 @@ class UpgradeOrderCustomerEmailObserverTest extends TestCase
 
     private function whenOrderRepositoryGetListIsCalled(MockObject $orderCollectionMock): void
     {
-        $searchCriteriaMock = $this->createMock(SearchCriteria::class);
+        $searchCriteriaMock = $this->getMockBuilder(SearchCriteria::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->searchCriteriaBuilderMock->expects($this->once())
             ->method('create')

@@ -35,7 +35,9 @@ class AddressFieldsetTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->context = $this->createMock(ContextInterface::class);
+        $this->context = $this->createMock(
+            ContextInterface::class
+        );
         $this->fieldset = new AddressFieldset(
             $this->context,
             [],

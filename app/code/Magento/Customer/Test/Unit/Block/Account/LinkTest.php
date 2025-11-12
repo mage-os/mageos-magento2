@@ -9,21 +9,28 @@ namespace Magento\Customer\Test\Unit\Block\Account;
 
 use Magento\Customer\Block\Account\Link;
 use Magento\Customer\Model\Url;
-use Magento\Framework\Test\Unit\Helper\LayoutTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Layout;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 class LinkTest extends TestCase
 {
+    use MockCreationTrait;
+
     public function testGetHref()
     {
         $objectManager = new ObjectManager($this);
-        $helper = $this->createPartialMock(
-            Url::class,
-            ['getAccountUrl']
+        $helper = $this->getMockBuilder(
+            Url::class
+        )->disableOriginalConstructor()
+            ->onlyMethods(
+                ['getAccountUrl']
+            )->getMock();
+        $layout = $this->createPartialMockWithReflection(
+            Layout::class,
+            ['helper']
         );
-        $layout = new LayoutTestHelper();
 
         $objectManager->prepareObjectManager();
         $block = $objectManager->getObject(

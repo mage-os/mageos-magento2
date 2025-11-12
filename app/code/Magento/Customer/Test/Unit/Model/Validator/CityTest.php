@@ -9,33 +9,38 @@ namespace Magento\Customer\Test\Unit\Model\Validator;
 
 use Magento\Customer\Model\Validator\City;
 use Magento\Customer\Model\Customer;
-use Magento\Customer\Test\Unit\Helper\CustomerTestHelper;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * Customer city validator tests
  */
 class CityTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var City
      */
     private City $nameValidator;
 
     /**
-     * @var CustomerTestHelper
+     * @var Customer|MockObject
      */
-    private CustomerTestHelper $customerMock;
+    private MockObject $customerMock;
 
     /**
      * @return void
      */
     protected function setUp(): void
     {
-        $this->nameValidator = new City();
-        $this->customerMock = new CustomerTestHelper();
+        $this->nameValidator = new City;
+        $this->customerMock = $this->createPartialMockWithReflection(
+            Customer::class,
+            ['getCity']
+        );
     }
 
     /**
@@ -43,21 +48,20 @@ class CityTest extends TestCase
      *
      * @param string $city
      * @param string $message
-     * @return void
-     */
+     * @return void */
     #[DataProvider('expectedPunctuationInNamesDataProvider')]
     public function testValidateCorrectPunctuationInNames(
         string $city,
         string $message
-    ): void {
-        $this->customerMock->setCity($city);
+    ) {
+        $this->customerMock->expects($this->once())->method('getCity')->willReturn($city);
 
         $isValid = $this->nameValidator->isValid($this->customerMock);
         $this->assertTrue($isValid, $message);
     }
 
     /**
-     * @return array<int, array<string, string>>
+     * @return array
      */
     public static function expectedPunctuationInNamesDataProvider(): array
     {

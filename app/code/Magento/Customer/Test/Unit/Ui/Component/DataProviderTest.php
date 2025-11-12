@@ -60,15 +60,23 @@ class DataProviderTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->reporting = $this->createMock(Reporting::class);
+        $this->reporting = $this->getMockBuilder(
+            Reporting::class
+        )->disableOriginalConstructor()
+            ->getMock();
 
         $searchCriteriaBuilder = $this->mockSearchCriteria();
 
         $this->request = $this->createMock(RequestInterface::class);
 
-        $this->filterBuilder = $this->createMock(FilterBuilder::class);
+        $this->filterBuilder = $this->getMockBuilder(FilterBuilder::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $this->attributeRepository = $this->createMock(AttributeRepository::class);
+        $this->attributeRepository = $this->getMockBuilder(
+            AttributeRepository::class
+        )->disableOriginalConstructor()
+            ->getMock();
 
         $this->model = new DataProvider(
             self::TEST_REQUEST_NAME,
@@ -152,7 +160,9 @@ class DataProviderTest extends TestCase
     {
         $this->searchCriteria = $this->createMock(SearchCriteriaInterface::class);
 
-        $searchCriteriaBuilder = $this->createMock(SearchCriteriaBuilder::class);
+        $searchCriteriaBuilder = $this->getMockBuilder(SearchCriteriaBuilder::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $searchCriteriaBuilder->expects($this->any())
             ->method('create')

@@ -30,6 +30,7 @@ use Magento\Framework\Message\MessageInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -40,6 +41,8 @@ use Psr\Log\LoggerInterface;
  */
 class InlineEditTest extends TestCase
 {
+
+    use MockCreationTrait;
     /**
      * @var InlineEdit
      */
@@ -153,9 +156,24 @@ class InlineEditTest extends TestCase
     {
         $objectManager = new ObjectManager($this);
         $this->escaper = new Escaper();
-        $this->request = $this->createMock(RequestInterface::class);
-        $this->messageManager = $this->createMock(ManagerInterface::class);
-        $this->customerData = $this->createMock(CustomerInterface::class);
+        $this->request = $this->createMock(
+            RequestInterface::class,
+            [],
+            '',
+            false
+        );
+        $this->messageManager = $this->createMock(
+            ManagerInterface::class,
+            [],
+            '',
+            false
+        );
+        $this->customerData = $this->createMock(
+            CustomerInterface::class,
+            [],
+            '',
+            false
+        );
 
         $this->address = $this->getMock(AddressInterface::class, 'address');
 
@@ -166,16 +184,36 @@ class InlineEditTest extends TestCase
             ['create']
         );
         $this->resultJson = $this->createMock(Json::class);
-        $this->customerRepository = $this->createMock(CustomerRepositoryInterface::class);
+        $this->customerRepository = $this->createMock(
+            CustomerRepositoryInterface::class,
+            [],
+            '',
+            false
+        );
         $this->dataObjectHelper = $this->createMock(DataObjectHelper::class);
         $this->addressDataFactory = $this->createPartialMock(
             AddressInterfaceFactory::class,
             ['create']
         );
-        $this->addressRepository = $this->createMock(AddressRepositoryInterface::class);
+        $this->addressRepository = $this->createMock(
+            AddressRepositoryInterface::class,
+            [],
+            '',
+            false
+        );
         $this->messageCollection = $this->createMock(Collection::class);
-        $this->message = $this->createMock(MessageInterface::class);
-        $this->logger = $this->createMock(LoggerInterface::class);
+        $this->message = $this->createMock(
+            MessageInterface::class,
+            [],
+            '',
+            false
+        );
+        $this->logger = $this->createMock(
+            LoggerInterface::class,
+            [],
+            '',
+            false
+        );
         $this->emailNotification = $this->createMock(EmailNotificationInterface::class);
 
         $this->context = $objectManager->getObject(

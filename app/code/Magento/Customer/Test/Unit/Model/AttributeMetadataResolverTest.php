@@ -14,12 +14,12 @@ use Magento\Customer\Model\Config\Share as ShareConfig;
 use Magento\Customer\Model\FileUploaderDataResolver;
 use Magento\Customer\Model\GroupManagement;
 use Magento\Customer\Model\ResourceModel\Address\Attribute\Source\CountryWithWebsites;
-use Magento\Customer\Test\Unit\Helper\GroupManagementTestHelper;
 use Magento\Eav\Model\Entity\Type;
 use Magento\Framework\View\Element\UiComponent\ContextInterface;
 use Magento\Ui\DataProvider\EavValidationRules;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  *
@@ -27,6 +27,8 @@ use PHPUnit\Framework\TestCase;
  */
 class AttributeMetadataResolverTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var CountryWithWebsites|MockObject
      */
@@ -58,6 +60,11 @@ class AttributeMetadataResolverTest extends TestCase
     private $context;
 
     /**
+     * @var AttributeWebsiteRequired|MockObject
+     */
+    private $attributeWebsiteRequired;
+
+    /**
      * @var AttributeMetadataResolver
      */
     private $model;
@@ -66,11 +73,6 @@ class AttributeMetadataResolverTest extends TestCase
      * @var Attribute|MockObject
      */
     private $attribute;
-
-    /**
-     * @var AttributeWebsiteRequired|MockObject
-     */
-    private $attributeWebsiteRequired;
 
     /**
      * @inheritDoc
@@ -89,12 +91,16 @@ class AttributeMetadataResolverTest extends TestCase
             FileUploaderDataResolver::class,
             ['overrideFileUploaderMetadata']
         );
-        $this->context = $this->createMock(ContextInterface::class);
-        $this->shareConfig = $this->createMock(ShareConfig::class);
-        $this->groupManagement = $this->createPartialMock(
-            GroupManagementTestHelper::class,
-            ['getDefaultGroup', 'getId']
+        $this->context =  $this->createMock(ContextInterface::class);
+        $this->shareConfig =  $this->createMock(ShareConfig::class);
+        $this->groupManagement =  $this->createPartialMockWithReflection(
+            GroupManagement::class,
+            [
+                'getDefaultGroup',
+                'getId'
+            ]
         );
+        $this->attributeWebsiteRequired = $this->createMock(AttributeWebsiteRequired::class);
         $this->attribute = $this->createPartialMock(
             Attribute::class,
             [
@@ -106,7 +112,6 @@ class AttributeMetadataResolverTest extends TestCase
                 'setDataUsingMethod'
             ]
         );
-        $this->attributeWebsiteRequired = $this->createMock(AttributeWebsiteRequired::class);
 
         $this->model = new AttributeMetadataResolver(
             $this->countryWithWebsiteSource,
@@ -114,7 +119,7 @@ class AttributeMetadataResolverTest extends TestCase
             $this->fileUploaderDataResolver,
             $this->context,
             $this->shareConfig,
-            $this->groupManagement,
+            $this->groupManagement, // @phpstan-ignore argument.type
             $this->attributeWebsiteRequired
         );
     }
@@ -123,6 +128,7 @@ class AttributeMetadataResolverTest extends TestCase
      * Test to get meta data of the customer or customer address attribute.
      *
      * @return void
+     * @SuppressWarnings(PHPMD)
      */
     public function testGetAttributesMetaHasDefaultAttributeValue(): void
     {
@@ -133,19 +139,19 @@ class AttributeMetadataResolverTest extends TestCase
         $allowToShowHiddenAttributes = false;
         $usesSource = false;
         $entityType = $this->createMock(Type::class);
-        $this->attribute->expects($this->once())
+        $this->attribute->expects($this->once()) // @phpstan-ignore method.notFound
             ->method('usesSource')
             ->willReturn($usesSource);
-        $this->attribute->expects($this->once())
+        $this->attribute->expects($this->once()) // @phpstan-ignore method.notFound
             ->method('getAttributeCode')
             ->willReturn('group_id');
-        $this->groupManagement->expects($this->once())
+        $this->groupManagement->expects($this->once()) // @phpstan-ignore method.notFound
             ->method('getDefaultGroup')
             ->willReturnSelf();
-        $this->groupManagement->expects($this->once())
+        $this->groupManagement->expects($this->once()) // @phpstan-ignore method.notFound
             ->method('getId')
             ->willReturn($defaultGroupId);
-        $this->attribute
+        $this->attribute // @phpstan-ignore method.notFound
             ->method('getDataUsingMethod')
             ->willReturnCallback(function ($arg1) use ($defaultGroupId) {
                 if (empty($arg1)) {
@@ -154,18 +160,19 @@ class AttributeMetadataResolverTest extends TestCase
                     return $defaultGroupId;
                 }
             });
-        $this->attribute->expects($this->once())
+        $this->attribute->expects($this->once()) // @phpstan-ignore method.notFound
             ->method('setDataUsingMethod')
             ->willReturnSelf();
-        $this->eavValidationRules->expects($this->once())
+        $this->eavValidationRules->expects($this->once()) // @phpstan-ignore method.notFound
             ->method('build')
             ->with($this->attribute)
             ->willReturn($rules);
-        $this->fileUploaderDataResolver->expects($this->once())
+        $this->fileUploaderDataResolver->expects($this->once()) // @phpstan-ignore method.notFound
             ->method('overrideFileUploaderMetadata')
             ->with($entityType, $this->attribute)
             ->willReturnSelf();
 
+        // @phpstan-ignore argument.type
         $meta = $this->model->getAttributesMeta($this->attribute, $entityType, $allowToShowHiddenAttributes);
         $this->assertArrayHasKey('default', $meta['arguments']['data']['config']);
         $this->assertEquals($defaultGroupId, $meta['arguments']['data']['config']['default']);

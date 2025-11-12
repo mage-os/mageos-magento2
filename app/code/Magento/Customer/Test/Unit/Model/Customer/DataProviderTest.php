@@ -13,8 +13,6 @@ use Magento\Customer\Model\Address;
 use Magento\Customer\Model\Config\Share;
 use Magento\Customer\Model\Customer;
 use Magento\Customer\Model\Customer\DataProvider as CustomerDataProvider;
-use Magento\Customer\Test\Unit\Helper\AbstractAttributeTestHelper;
-use Magento\Customer\Test\Unit\Helper\SessionManagerTestHelper;
 use Magento\Customer\Model\FileProcessor;
 use Magento\Customer\Model\FileUploaderDataResolver;
 use Magento\Customer\Model\ResourceModel\Address\Attribute\Source\CountryWithWebsites;
@@ -26,6 +24,7 @@ use Magento\Eav\Model\Entity\Attribute\Source\AbstractSource;
 use Magento\Eav\Model\Entity\Type;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\Session\SessionManagerInterface;
+use Magento\Framework\Session\Generic as GenericSession;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Element\UiComponent\ContextInterface;
 use Magento\Ui\Component\Form\Field;
@@ -33,6 +32,7 @@ use Magento\Ui\DataProvider\EavValidationRules;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * Unit tests for \Magento\Customer\Model\Customer\DataProvider class.
@@ -41,6 +41,8 @@ use PHPUnit\Framework\TestCase;
  */
 class DataProviderTest extends TestCase
 {
+    use MockCreationTrait;
+
     private const ATTRIBUTE_CODE = 'test-code';
     private const OPTIONS_RESULT = 'test-options';
 
@@ -81,16 +83,17 @@ class DataProviderTest extends TestCase
     {
         $this->eavConfigMock = $this->createMock(Config::class);
         $this->customerCollectionFactoryMock = $this->createPartialMock(CollectionFactory::class, ['create']);
-        $this->eavValidationRulesMock = $this->createMock(EavValidationRules::class);
-        $this->sessionMock = $this->createPartialMock(
-            SessionManagerTestHelper::class,
-            ['getCustomerFormData', 'unsCustomerFormData']
-        );
+        $this->eavValidationRulesMock = $this
+            ->getMockBuilder(EavValidationRules::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->sessionMock = $this->createPartialMockWithReflection(GenericSession::class, ['getCustomerFormData', 'unsCustomerFormData']);
+
         $this->fileProcessor = $this->createMock(FileProcessor::class);
-        $this->fileUploaderDataResolver = $this->createPartialMock(
-            FileUploaderDataResolver::class,
-            ['overrideFileUploaderMetadata', 'overrideFileUploaderData']
-        );
+        $this->fileUploaderDataResolver = $this->getMockBuilder(FileUploaderDataResolver::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['overrideFileUploaderMetadata', 'overrideFileUploaderData'])
+            ->getMock();
     }
 
     /**
@@ -98,7 +101,7 @@ class DataProviderTest extends TestCase
      *
      * @param array $expected
      * @return void
-     */
+     * */
     #[DataProvider('getAttributesMetaDataProvider')]
     public function testGetAttributesMetaWithOptions(array $expected): void
     {
@@ -382,8 +385,8 @@ class DataProviderTest extends TestCase
      */
     protected function getAttributeMock(string $type = 'customer', array $options = []): array
     {
-        $attributeMock = $this->createPartialMock(
-            AbstractAttributeTestHelper::class,
+        $attributeMock = $this->createPartialMockWithReflection(
+            AbstractAttribute::class,
             [
                 'getAttributeCode',
                 'getDataUsingMethod',
@@ -422,8 +425,8 @@ class DataProviderTest extends TestCase
             ->method('getSource')
             ->willReturn($sourceMock);
 
-        $attributeBooleanMock = $this->createPartialMock(
-            AbstractAttributeTestHelper::class,
+        $attributeBooleanMock = $this->createPartialMockWithReflection(
+            AbstractAttribute::class,
             [
                 'getAttributeCode',
                 'getDataUsingMethod',
@@ -505,8 +508,8 @@ class DataProviderTest extends TestCase
                 ]
             );
         \Magento\Framework\App\ObjectManager::setInstance($objectManagerMock);
-        $countryAttrMock = $this->createPartialMock(
-            AbstractAttributeTestHelper::class,
+        $countryAttrMock = $this->createPartialMockWithReflection(
+            AbstractAttribute::class,
             ['getAttributeCode', 'getDataUsingMethod', 'usesSource', 'getSource', 'getLabel']
         );
 
@@ -826,8 +829,8 @@ class DataProviderTest extends TestCase
             ->willReturn($collectionMock);
 
         $attributeMock = $this->createPartialMock(
-            AbstractAttributeTestHelper::class,
-            ['getAttributeCode', 'getFrontendInput', 'getDataUsingMethod', 'getId', 'getIsVisible']
+            AbstractAttribute::class,
+            ['getAttributeCode', 'getFrontendInput', 'getDataUsingMethod']
         );
         $attributeMock->expects($this->any())
             ->method('getAttributeCode')
@@ -842,12 +845,6 @@ class DataProviderTest extends TestCase
                     return $origName;
                 }
             );
-        $attributeMock->expects($this->any())
-            ->method('getId')
-            ->willReturn(null);
-        $attributeMock->expects($this->any())
-            ->method('getIsVisible')
-            ->willReturn(null);
 
         $typeCustomerMock = $this->createMock(Type::class);
         $typeCustomerMock->expects($this->once())
@@ -892,35 +889,10 @@ class DataProviderTest extends TestCase
             );
 
         $objectManager = new ObjectManager($this);
-        $this->fileUploaderDataResolver = $this->createPartialMock(
-            FileUploaderDataResolver::class,
-            ['overrideFileUploaderMetadata', 'overrideFileUploaderData']
-        );
-        
-        // Set up the fileUploaderDataResolver to actually modify the meta for image attributes
-        $this->fileUploaderDataResolver->expects($this->any())
-            ->method('overrideFileUploaderMetadata')
-            ->willReturnCallback(
-                function ($entityType, $attribute, &$config) use ($maxFileSize, $allowedExtension) {
-                    // Call getEntityTypeCode to satisfy mock expectations
-                    $entityType->getEntityTypeCode();
-                    
-                    if ($attribute->getFrontendInput() === 'image') {
-                        $config['formElement'] = 'fileUploader';
-                        $config['componentType'] = 'fileUploader';
-                        $config['maxFileSize'] = $maxFileSize;
-                        $config['allowedExtensions'] = $allowedExtension;
-                        $config['uploaderConfig'] = [
-                            'url' => 'customer/file/customer_upload'
-                        ];
-                        $config['visible'] = null;
-                        $config['attributeId'] = $attribute->getId();
-                        // Remove properties that shouldn't be in file uploader config
-                        unset($config['notice'], $config['default'], $config['size']);
-                    }
-                }
-            );
-        
+        $this->fileUploaderDataResolver = $this->getMockBuilder(FileUploaderDataResolver::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods([])
+            ->getMock();
         $dataProvider = $objectManager->getObject(
             CustomerDataProvider::class,
             [

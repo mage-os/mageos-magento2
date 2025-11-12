@@ -67,7 +67,9 @@ class ColumnsTest extends TestCase
     protected function setUp(): void
     {
         $this->context = $this->createMock(ContextInterface::class);
-        $processor = $this->createMock(Processor::class);
+        $processor = $this->getMockBuilder(Processor::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->context->expects($this->atLeastOnce())->method('getProcessor')->willReturn($processor);
         $this->columnFactory = $this->createPartialMock(
             ColumnFactory::class,
@@ -77,9 +79,17 @@ class ColumnsTest extends TestCase
             AttributeRepository::class
         );
         $this->attribute = $this->createMock(Attribute::class);
-        $this->column = $this->createMock(ColumnInterface::class);
+        $this->column = $this->createMock(
+            ColumnInterface::class,
+            [],
+            '',
+            false
+        );
 
-        $this->inlineEditUpdater = $this->createMock(InlineEditUpdater::class);
+        $this->inlineEditUpdater = $this->getMockBuilder(
+            InlineEditUpdater::class
+        )->disableOriginalConstructor()
+            ->getMock();
 
         $this->textFilterConfigProvider = $this->createMock(FilterConfigProviderInterface::class);
         $this->textFilterConfigProvider->method('getConfig')

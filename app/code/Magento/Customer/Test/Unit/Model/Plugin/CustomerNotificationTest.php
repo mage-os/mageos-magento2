@@ -12,7 +12,6 @@ use Magento\Customer\Api\Data\CustomerInterface;
 use Magento\Customer\Model\Customer\NotificationStorage;
 use Magento\Customer\Model\Plugin\CustomerNotification;
 use Magento\Customer\Model\Session;
-use Magento\Customer\Test\Unit\Helper\StorageInterfaceTestHelper;
 use Magento\Framework\App\ActionInterface;
 use Magento\Framework\App\Area;
 use Magento\Framework\App\RequestInterface;
@@ -22,7 +21,9 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Magento\Framework\Session\StorageInterface;
+use Magento\Framework\Session\Storage;
 use Magento\Framework\App\Request\Http as RequestHttp;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * Unit test for CustomerNotification plugin
@@ -31,6 +32,8 @@ use Magento\Framework\App\Request\Http as RequestHttp;
  */
 class CustomerNotificationTest extends TestCase
 {
+    use MockCreationTrait;
+
     private const STUB_CUSTOMER_ID = 1;
 
     /**
@@ -100,8 +103,8 @@ class CustomerNotificationTest extends TestCase
             ->willReturn(true);
 
         $this->storage = $this->createPartialMock(
-            StorageInterfaceTestHelper::class,
-            ['getData', 'setData']
+            Storage::class,
+            ['getData', 'setData', 'init', 'getNamespace']
         );
 
         $this->plugin = new CustomerNotification(

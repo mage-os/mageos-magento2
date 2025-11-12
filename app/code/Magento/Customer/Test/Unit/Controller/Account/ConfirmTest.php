@@ -142,7 +142,7 @@ class ConfirmTest extends TestCase
     protected function setUp(): void
     {
         $this->customerSessionMock = $this->createMock(Session::class);
-        $this->requestMock = $this->createMock(RequestInterface::class);
+        $this->requestMock = $this->createMock(\Magento\Framework\App\Request\Http::class);
         $this->responseMock = $this->createPartialMock(
             Http::class,
             ['setRedirect', '__wakeup']
@@ -238,8 +238,7 @@ class ConfirmTest extends TestCase
     /**
      * @param $customerId
      * @param $key
-     * @return void
-     */
+     * @return void */
     #[DataProvider('getParametersDataProvider')]
     public function testNoCustomerIdInRequest($customerId, $key): void
     {
@@ -430,8 +429,7 @@ class ConfirmTest extends TestCase
      * @param $successMessage
      * @param $lastLoginAt
      *
-     * @return void
-     */
+     * @return void */
     #[DataProvider('getSuccessRedirectDataProvider')]
     public function testSuccessRedirect(
         $customerId,

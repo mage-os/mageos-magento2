@@ -33,8 +33,7 @@ class ValidationRulesTest extends TestCase
      * Tests input validation rules
      *
      * @param String $validationRule - provided input validation rules
-     * @param String $validationClass - expected input validation class
-     */
+     * @param String $validationClass - expected input validation class */
     #[DataProvider('validationRulesDataProvider')]
     public function testGetValidationRules(String $validationRule, String $validationClass): void
     {

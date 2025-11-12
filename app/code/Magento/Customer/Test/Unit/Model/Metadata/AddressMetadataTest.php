@@ -32,14 +32,10 @@ class AddressMetadataTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->attributeConverterMock = $this->getMockBuilder(AttributeMetadataConverter::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->attributeProviderMock = $this->getMockBuilder(
+        $this->attributeConverterMock = $this->createMock(AttributeMetadataConverter::class);
+        $this->attributeProviderMock = $this->createMock(
             AttributeMetadataDataProvider::class
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
+        );
 
         $this->model = new AddressMetadata(
             $this->attributeConverterMock,
@@ -53,15 +49,11 @@ class AddressMetadataTest extends TestCase
         $attributeCode = 'attr';
 
         /** @var Attribute|MockObject $attributeMock */
-        $attributeMock = $this->getMockBuilder(Attribute::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $attributeMock = $this->createMock(Attribute::class);
         $attributes = [$attributeMock];
 
         /** @var Collection|MockObject $collectionMock */
-        $collectionMock = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $collectionMock = $this->createMock(Collection::class);
 
         $this->attributeProviderMock->expects($this->once())
             ->method('loadAttributesCollection')
@@ -97,9 +89,7 @@ class AddressMetadataTest extends TestCase
         $attributes = [];
 
         /** @var Collection|MockObject $collectionMock */
-        $collectionMock = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $collectionMock = $this->createMock(Collection::class);
 
         $this->attributeProviderMock->expects($this->once())
             ->method('loadAttributesCollection')
@@ -119,10 +109,10 @@ class AddressMetadataTest extends TestCase
         $attributeId = 12;
 
         /** @var AbstractAttribute|MockObject $attributeMock */
-        $attributeMock = $this->getMockBuilder(AbstractAttribute::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getId'])
-            ->getMock();
+        $attributeMock = $this->createPartialMock(
+            AbstractAttribute::class,
+            ['getId']
+        );
 
         $this->attributeProviderMock->expects($this->once())
             ->method('getAttribute')
@@ -244,10 +234,10 @@ class AddressMetadataTest extends TestCase
             ->willReturn($attributeCodes);
 
         /** @var AbstractAttribute|MockObject $attributeMock */
-        $attributeMock = $this->getMockBuilder(AbstractAttribute::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getId'])
-            ->getMock();
+        $attributeMock = $this->createPartialMock(
+            AbstractAttribute::class,
+            ['getId']
+        );
 
         $this->attributeProviderMock->expects($this->once())
             ->method('getAttribute')
@@ -289,10 +279,10 @@ class AddressMetadataTest extends TestCase
             ->willReturn($attributeCodes);
 
         /** @var AbstractAttribute|MockObject $attributeMock */
-        $attributeMock = $this->getMockBuilder(AbstractAttribute::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getId'])
-            ->getMock();
+        $attributeMock = $this->createPartialMock(
+            AbstractAttribute::class,
+            ['getId']
+        );
 
         $this->attributeProviderMock->expects($this->once())
             ->method('getAttribute')

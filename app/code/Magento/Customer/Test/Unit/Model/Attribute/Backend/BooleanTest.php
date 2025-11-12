@@ -29,17 +29,15 @@ class BooleanTest extends TestCase
      * @param mixed $value
      * @param mixed $defaultValue
      * @param string|mixed $result
-     */
+     * */
     #[DataProvider('beforeSaveDataProvider')]
     public function testBeforeSave($value, $defaultValue, $result)
     {
-        $attributeMock = $this->getMockBuilder(AbstractAttribute::class)
-            ->onlyMethods(['getName', 'getDefaultValue'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $customerMock = $this->getMockBuilder(Customer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $attributeMock = $this->createPartialMock(
+            AbstractAttribute::class,
+            ['getName', 'getDefaultValue']
+        );
+        $customerMock = $this->createMock(Customer::class);
 
         $this->model->setAttribute($attributeMock);
 

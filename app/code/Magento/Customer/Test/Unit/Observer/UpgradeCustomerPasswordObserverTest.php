@@ -13,18 +13,19 @@ use Magento\Customer\Model\Customer;
 use Magento\Customer\Model\CustomerRegistry;
 use Magento\Customer\Model\Data\CustomerSecure;
 use Magento\Customer\Observer\UpgradeCustomerPasswordObserver;
-use Magento\Customer\Test\Unit\Helper\CustomerInterfaceTestHelper;
-use Magento\Customer\Test\Unit\Helper\CustomerSecureTestHelper;
 use Magento\Framework\DataObject;
 use Magento\Framework\Encryption\Encryptor;
 use Magento\Framework\Event\Observer;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /** for testing upgrade password observer
  */
 class UpgradeCustomerPasswordObserverTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var UpgradeCustomerPasswordObserver
      */
@@ -50,9 +51,15 @@ class UpgradeCustomerPasswordObserverTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->customerRepository = $this->createMock(CustomerRepositoryInterface::class);
-        $this->customerRegistry = $this->createMock(CustomerRegistry::class);
-        $this->encryptorMock = $this->createMock(Encryptor::class);
+        $this->customerRepository = $this
+            ->getMockBuilder(CustomerRepositoryInterface::class)
+            ->getMock();
+        $this->customerRegistry = $this->getMockBuilder(CustomerRegistry::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->encryptorMock = $this->getMockBuilder(Encryptor::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->model = new UpgradeCustomerPasswordObserver(
             $this->encryptorMock,
@@ -69,13 +76,16 @@ class UpgradeCustomerPasswordObserverTest extends TestCase
         $customerId = '1';
         $password = 'password';
         $passwordHash = 'hash:salt:999';
-        $model = $this->createPartialMock(Customer::class, ['getId']);
-        $customer = $this->createPartialMock(
-            CustomerInterfaceTestHelper::class,
-            ['setData']
+        $model = $this->getMockBuilder(Customer::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getId'])
+            ->getMock();
+        $customer = $this->createPartialMockWithReflection(
+            \Magento\Customer\Model\Data\Customer::class,
+            ['setData', 'getId', 'getEmail']
         );
-        $customerSecure = $this->createPartialMock(
-            CustomerSecureTestHelper::class,
+        $customerSecure = $this->createPartialMockWithReflection(
+            CustomerSecure::class,
             ['getPasswordHash', 'setPasswordHash']
         );
         $model->expects($this->exactly(2))

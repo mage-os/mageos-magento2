@@ -264,11 +264,8 @@ class CustomerTest extends TestCase
     }
 
     /**
-     * Test if customer is locked
-     *
-     * @param string|null $lockExpires
-     * @param bool $expectedResult
-     */
+     * @param $lockExpires
+     * @param $expectedResult */
     #[DataProvider('isCustomerLockedDataProvider')]
     public function testIsCustomerLocked($lockExpires, $expectedResult)
     {
@@ -288,13 +285,10 @@ class CustomerTest extends TestCase
     }
 
     /**
-     * Test if confirmation is required
-     *
      * @param int $customerId
      * @param int $websiteId
      * @param bool $isConfirmationRequired
-     * @param bool $expected
-     */
+     * @param bool $expected */
     #[DataProvider('dataProviderIsConfirmationRequired')]
     public function testIsConfirmationRequired(
         $customerId,

@@ -32,8 +32,8 @@ use Magento\Framework\Message\Manager;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\Message\Warning;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Backend\Test\Unit\Helper\BackendSessionTestHelper;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * Unit test for \Magento\Customer\Controller\Adminhtml\Index controller
@@ -42,6 +42,9 @@ use PHPUnit\Framework\TestCase;
  */
 class ResetPasswordTest extends TestCase
 {
+
+    use MockCreationTrait;
+
     /**
      * Request mock instance
      *
@@ -117,12 +120,16 @@ class ResetPasswordTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->_request = $this->createMock(Http::class);
+        $this->_request = $this->getMockBuilder(Http::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $this->_response = $this->createPartialMock(
-            \Magento\Framework\App\Response\Http::class,
-            ['setRedirect', 'getHeader', '__wakeup']
-        );
+        $this->_response = $this->getMockBuilder(
+            \Magento\Framework\App\Response\Http::class
+        )->disableOriginalConstructor()
+            ->onlyMethods(
+                ['setRedirect', 'getHeader', '__wakeup']
+            )->getMock();
 
         $this->_response->expects(
             $this->any()
@@ -134,55 +141,100 @@ class ResetPasswordTest extends TestCase
             true
         );
 
-        $this->_objectManager = $this->createPartialMock(
-            ObjectManager::class,
-            ['get', 'create']
+        $this->_objectManager = $this->getMockBuilder(
+            ObjectManager::class
+        )->disableOriginalConstructor()
+            ->onlyMethods(
+                ['get', 'create']
+            )->getMock();
+        $frontControllerMock = $this->getMockBuilder(
+            FrontController::class
+        )->disableOriginalConstructor()
+            ->getMock();
+
+        $actionFlagMock = $this->getMockBuilder(ActionFlag::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->_session = $this->createPartialMockWithReflection(
+            Session::class,
+            ['setIsUrlNotice', '__wakeup']
         );
-        $frontControllerMock = $this->createMock(FrontController::class);
+        $this->_session->expects($this->any())->method('setIsUrlNotice');
 
-        $actionFlagMock = $this->createMock(ActionFlag::class);
+        $this->_helper = $this->getMockBuilder(
+            Data::class
+        )->disableOriginalConstructor()
+            ->onlyMethods(
+                ['getUrl']
+            )->getMock();
 
-        $this->_session = new BackendSessionTestHelper();
-        // setIsUrlNotice is now available through the helper
+        $this->messageManager = $this->getMockBuilder(
+            Manager::class
+        )->disableOriginalConstructor()
+            ->onlyMethods(
+                ['addSuccessMessage', 'addMessage', 'addExceptionMessage', 'addErrorMessage']
+            )->getMock();
 
-        $this->_helper = $this->createPartialMock(
-            Data::class,
-            ['getUrl']
-        );
-
-        $this->messageManager = $this->createPartialMock(
-            Manager::class,
-            ['addSuccessMessage', 'addMessage', 'addExceptionMessage', 'addErrorMessage']
-        );
-
-        $this->resultRedirectFactoryMock = $this->createPartialMock(
-            RedirectFactory::class,
-            ['create']
-        );
-        $this->resultRedirectMock = $this->createMock(Redirect::class);
+        $this->resultRedirectFactoryMock = $this->getMockBuilder(
+            RedirectFactory::class
+        )
+            ->disableOriginalConstructor()
+            ->onlyMethods(['create'])
+            ->getMock();
+        $this->resultRedirectMock = $this->getMockBuilder(Redirect::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->resultRedirectFactoryMock->expects($this->once())
             ->method('create')
             ->willReturn($this->resultRedirectMock);
 
-        $contextMock = new \Magento\Backend\Test\Unit\Helper\ContextTestHelper();
-        $contextMock->setRequest($this->_request);
-        $contextMock->setResponse($this->_response);
-        $contextMock->setObjectManager($this->_objectManager);
-        $contextMock->setFrontController($frontControllerMock);
-        $contextMock->setActionFlag($actionFlagMock);
-        $contextMock->setHelper($this->_helper);
-        $contextMock->setSession($this->_session);
-        $contextMock->setMessageManager($this->messageManager);
-        
-        $viewMock = $this->createMock(ViewInterface::class);
+        $addContextArgs = [
+            'getTranslator',
+            'getFrontController',
+            'getLayoutFactory'
+        ];
+
+        $contextArgs = [
+            'getHelper',
+            'getSession',
+            'getAuthorization',
+            'getObjectManager',
+            'getActionFlag',
+            'getMessageManager',
+            'getEventManager',
+            'getRequest',
+            'getResponse',
+            'getView',
+            'getResultRedirectFactory'
+        ];
+
+        $allMethods = array_merge($contextArgs, $addContextArgs);
+        $contextMock = $this->createPartialMockWithReflection(Context::class, $allMethods);
+        $contextMock->expects($this->any())->method('getRequest')->willReturn($this->_request);
+        $contextMock->expects($this->any())->method('getResponse')->willReturn($this->_response);
+        $contextMock->expects($this->any())->method('getObjectManager')->willReturn($this->_objectManager);
+        $contextMock->expects($this->any())->method('getFrontController')->willReturn($frontControllerMock);
+        $contextMock->expects($this->any())->method('getActionFlag')->willReturn($actionFlagMock);
+        $contextMock->expects($this->any())->method('getHelper')->willReturn($this->_helper);
+        $contextMock->expects($this->any())->method('getSession')->willReturn($this->_session);
+        $contextMock->expects($this->any())->method('getMessageManager')->willReturn($this->messageManager);
+        $viewMock =  $this->getMockBuilder(ViewInterface::class)
+            ->getMock();
         $viewMock->expects($this->any())->method('loadLayout')->willReturnSelf();
-        $contextMock->setView($viewMock);
-        $contextMock->setResultRedirectFactory($this->resultRedirectFactoryMock);
+        $contextMock->expects($this->any())->method('getView')->willReturn($viewMock);
+        $contextMock->expects($this->any())
+            ->method('getResultRedirectFactory')
+            ->willReturn($this->resultRedirectFactoryMock);
 
-        $this->_customerAccountManagementMock = $this->createMock(AccountManagementInterface::class);
+        $this->_customerAccountManagementMock = $this->getMockBuilder(
+            AccountManagementInterface::class
+        )->getMock();
 
-        $this->_customerRepositoryMock = $this->createMock(CustomerRepositoryInterface::class);
+        $this->_customerRepositoryMock = $this->getMockBuilder(
+            CustomerRepositoryInterface::class
+        )->getMock();
 
         $args = [
             'context' => $contextMock,

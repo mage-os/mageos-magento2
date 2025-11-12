@@ -16,19 +16,20 @@ use Magento\Framework\App\Request\Http;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Page\Config;
 use Magento\Framework\View\Page\Title;
-use Magento\Framework\Test\Unit\Helper\PageTestHelper;
 use Magento\Framework\View\Result\Page;
 use Magento\Framework\View\Result\PageFactory;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Backend\Test\Unit\Helper\BackendSessionTestHelper as SessionTestHelper;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * @covers \Magento\Customer\Controller\Adminhtml\Index\Index
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class IndexTest extends TestCase
 {
+
+    use MockCreationTrait;
+
     /**
      * @var Index
      */
@@ -81,21 +82,33 @@ class IndexTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->requestMock = $this->createMock(Http::class);
-        $this->resultForwardFactoryMock = $this->createPartialMock(
-            ForwardFactory::class,
-            ['create']
-        );
-        $this->resultForwardMock = $this->createMock(Forward::class);
-        $this->resultPageFactoryMock = $this->createMock(PageFactory::class);
-        $this->resultPageMock = $this->createPartialMock(
-            PageTestHelper::class,
+        $this->requestMock = $this->getMockBuilder(Http::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->resultForwardFactoryMock = $this->getMockBuilder(
+            ForwardFactory::class
+        )
+            ->disableOriginalConstructor()
+            ->onlyMethods(['create'])
+            ->getMock();
+        $this->resultForwardMock = $this->getMockBuilder(Forward::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->resultPageFactoryMock = $this->getMockBuilder(PageFactory::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->resultPageMock = $this->createPartialMockWithReflection(
+            Page::class,
             ['getConfig', 'setActiveMenu', 'addBreadcrumb']
         );
-        $this->pageConfigMock = $this->createMock(Config::class);
-        $this->pageTitleMock = $this->createMock(Title::class);
-        $this->sessionMock = $this->createPartialMock(
-            SessionTestHelper::class,
+        $this->pageConfigMock = $this->getMockBuilder(Config::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->pageTitleMock = $this->getMockBuilder(Title::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->sessionMock = $this->createPartialMockWithReflection(
+            Session::class,
             ['unsCustomerData', 'unsCustomerFormData']
         );
 
@@ -141,7 +154,15 @@ class IndexTest extends TestCase
             ->with('Customers');
         $this->resultPageMock->expects($this->atLeastOnce())
             ->method('addBreadcrumb')
-            ->willReturnSelf();
+            ->willReturnCallback(
+                function ($arg1, $arg2) {
+                    if ($arg1 == 'Customers' && $arg2 == 'Customers') {
+                        return null;
+                    } elseif ($arg1 == 'Manage Customers' && $arg2 == 'Manage Customers') {
+                        return null;
+                    }
+                }
+            );
         $this->sessionMock->expects($this->once())
             ->method('unsCustomerData');
         $this->sessionMock->expects($this->once())

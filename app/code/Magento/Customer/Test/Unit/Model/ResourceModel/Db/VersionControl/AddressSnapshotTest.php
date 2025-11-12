@@ -8,7 +8,6 @@ declare(strict_types=1);
 namespace Magento\Customer\Test\Unit\Model\ResourceModel\Db\VersionControl;
 
 use Magento\Customer\Model\ResourceModel\Db\VersionControl\AddressSnapshot;
-use Magento\Customer\Test\Unit\Helper\DataObjectTestHelper;
 use Magento\Framework\DataObject;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Model\ResourceModel\Db\VersionControl\Metadata;
@@ -16,9 +15,12 @@ use Magento\Framework\Serialize\SerializerInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 class AddressSnapshotTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var AddressSnapshot
      */
@@ -56,20 +58,16 @@ class AddressSnapshotTest extends TestCase
      * @param bool $expected
      * @throws LocalizedException
      */
-    #[DataProvider('dataProviderIsModified')]
+    #[DataProvider('isModifiedDataProvider')]
     public function testIsModified($isCustomerSaveTransaction, $isDefaultBilling, $isDefaultShipping, $expected): void
     {
         $entityId = 1;
 
-        $dataObjectMock = $this->createPartialMock(
-            DataObjectTestHelper::class,
+        $dataObjectMock = $this->createPartialMockWithReflection(
+            DataObject::class,
             [
                 'getData',
-                'getDataByKey',
-                'getId',
-                'getIsDefaultBilling',
-                'getIsDefaultShipping',
-                'getIsCustomerSaveTransaction'
+                'getDataByKey'
             ]
         );
 
@@ -122,9 +120,12 @@ class AddressSnapshotTest extends TestCase
      */
     public function testIsModifiedBypass(): void
     {
-        $dataObjectMock = $this->createPartialMock(
-            DataObjectTestHelper::class,
-            ['getData', 'getId']
+        $dataObjectMock = $this->createPartialMockWithReflection(
+            DataObject::class,
+            [
+                'getId',
+                'getData'
+            ]
         );
 
         $dataObjectMock->expects($this->any())

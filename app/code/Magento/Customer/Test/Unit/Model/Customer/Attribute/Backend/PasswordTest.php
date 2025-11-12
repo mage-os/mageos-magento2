@@ -9,16 +9,18 @@ namespace Magento\Customer\Test\Unit\Model\Customer\Attribute\Backend;
 
 use Magento\Customer\Model\Customer;
 use Magento\Customer\Model\Customer\Attribute\Backend\Password;
-use Magento\Customer\Test\Unit\Helper\DataObjectTestHelper;
 use Magento\Framework\DataObject;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Stdlib\StringUtils;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 class PasswordTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Password
      */
@@ -35,8 +37,8 @@ class PasswordTest extends TestCase
         $password = 'password';
 
         /** @var DataObject|MockObject $object */
-        $object = $this->createPartialMock(
-            DataObjectTestHelper::class,
+        $object = $this->createPartialMockWithReflection(
+            DataObject::class,
             ['getPassword', 'getPasswordConfirm']
         );
 
@@ -58,16 +60,14 @@ class PasswordTest extends TestCase
         ];
     }
 
+    /** */
     #[DataProvider('passwordNegativeDataProvider')]
     public function testBeforeSaveNegative($password)
     {
         $this->expectException(LocalizedException::class);
 
         /** @var DataObject|MockObject $object */
-        $object = $this->createPartialMock(
-            DataObjectTestHelper::class,
-            ['getPassword']
-        );
+        $object = $this->createPartialMockWithReflection(DataObject::class, ['getPassword']);
 
         $object->expects($this->once())->method('getPassword')->willReturn($password);
 
@@ -80,8 +80,8 @@ class PasswordTest extends TestCase
         $passwordHash = 'password-hash';
 
         /** @var DataObject|MockObject $object */
-        $object = $this->createPartialMock(
-            DataObjectTestHelper::class,
+        $object = $this->createPartialMockWithReflection(
+            DataObject::class,
             ['getPassword', 'setPasswordHash', 'hashPassword']
         );
 
@@ -113,14 +113,14 @@ class PasswordTest extends TestCase
     /**
      * @param mixed $randomValue
      */
-    #[DataProvider('randomValuesProvider')]
+    #[DataProvider('customerGetPasswordAndGetPasswordConfirmAlwaysReturnsAStringDataProvider')]
     public function testCustomerGetPasswordAndGetPasswordConfirmAlwaysReturnsAString($randomValue)
     {
         /** @var Customer|MockObject $customer */
-        $customer = $this->createPartialMock(
-            Customer::class,
-            ['getData']
-        );
+        $customer = $this->getMockBuilder(Customer::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getData'])
+            ->getMock();
 
         $customer->expects($this->exactly(2))->method('getData')->willReturn($randomValue);
 

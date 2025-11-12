@@ -30,7 +30,10 @@ class InlineEditUpdaterTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->validationRules = $this->createMock(ValidationRules::class);
+        $this->validationRules = $this->getMockBuilder(
+            ValidationRules::class
+        )->disableOriginalConstructor()
+            ->getMock();
 
         $this->validationRule = $this->createMock(ValidationRuleInterface::class);
 

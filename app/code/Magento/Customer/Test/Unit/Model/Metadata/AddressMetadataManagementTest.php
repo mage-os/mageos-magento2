@@ -25,9 +25,7 @@ class AddressMetadataManagementTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->attributeResolverMock = $this->getMockBuilder(AttributeResolver::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->attributeResolverMock = $this->createMock(AttributeResolver::class);
 
         $this->model = new AddressMetadataManagement(
             $this->attributeResolverMock
@@ -40,9 +38,7 @@ class AddressMetadataManagementTest extends TestCase
         $attributeMock = $this->createMock(AttributeMetadataInterface::class);
 
         /** @var Attribute|MockObject $modelMock */
-        $modelMock = $this->getMockBuilder(Attribute::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $modelMock = $this->createMock(Attribute::class);
 
         $this->attributeResolverMock->expects($this->once())
             ->method('getModelByAttribute')
@@ -62,9 +58,7 @@ class AddressMetadataManagementTest extends TestCase
         $attributeMock = $this->createMock(AttributeMetadataInterface::class);
 
         /** @var Attribute|MockObject $modelMock */
-        $modelMock = $this->getMockBuilder(Attribute::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $modelMock = $this->createMock(Attribute::class);
 
         $this->attributeResolverMock->expects($this->once())
             ->method('getModelByAttribute')

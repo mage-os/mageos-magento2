@@ -23,6 +23,7 @@ use Magento\Framework\View\LayoutInterface;
 use Magento\Theme\Block\Html\Pager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * Unit tests for \Magento\Customer\Block\Address\Grid class
@@ -30,6 +31,8 @@ use PHPUnit\Framework\TestCase;
  */
 class GridTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var ObjectManager
      */
@@ -64,20 +67,20 @@ class GridTest extends TestCase
     {
         $this->objectManager = new ObjectManager($this);
 
-        $this->currentCustomer = $this->createPartialMock(
-            CurrentCustomer::class,
-            ['getCustomer']
-        );
+        $this->currentCustomer = $this->getMockBuilder(CurrentCustomer::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getCustomer'])
+            ->getMock();
 
-        $this->addressCollectionFactory = $this->createPartialMock(
-            CollectionFactory::class,
-            ['create']
-        );
+        $this->addressCollectionFactory = $this->getMockBuilder(CollectionFactory::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['create'])
+            ->getMock();
 
-        $this->countryFactory = $this->createPartialMock(
-            CountryFactory::class,
-            ['create']
-        );
+        $this->countryFactory = $this->getMockBuilder(CountryFactory::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['create'])
+            ->getMock();
 
         $this->urlBuilder = $this->createMock(UrlInterface::class);
 
@@ -100,19 +103,16 @@ class GridTest extends TestCase
         $customerId = 1;
         $outputString = 'OutputString';
         /** @var Pager|MockObject $block */
-        $block = $this->createPartialMock(
-            Pager::class,
-            ['setCollection']
-        );
+        $block = $this->createPartialMock(Pager::class, ['setCollection']);
         /** @var LayoutInterface|MockObject $layout */
         $layout = $this->createMock(LayoutInterface::class);
         /** @var CustomerInterface|MockObject $customer */
         $customer = $this->createMock(CustomerInterface::class);
         /** @var MockObject */
-        $addressCollection = $this->createPartialMock(
-            Collection::class,
-            ['setOrder', 'setCustomerFilter', 'load', 'addFieldToFilter']
-        );
+        $addressCollection = $this->getMockBuilder(Collection::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['setOrder', 'setCustomerFilter', 'load','addFieldToFilter'])
+            ->getMock();
 
         $layout->expects($this->atLeastOnce())->method('getChildName')->with('NameInLayout', 'pager')
             ->willReturn('ChildName');
@@ -154,15 +154,15 @@ class GridTest extends TestCase
         /** @var CustomerInterface|MockObject $customer */
         $customer = $this->createMock(CustomerInterface::class);
         /** @var MockObject */
-        $addressCollection = $this->createPartialMock(
-            Collection::class,
-            ['setOrder', 'setCustomerFilter', 'load', 'getIterator', 'addFieldToFilter']
-        );
+        $addressCollection = $this->getMockBuilder(Collection::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['setOrder', 'setCustomerFilter', 'load', 'getIterator','addFieldToFilter'])
+            ->getMock();
         $addressDataModel = $this->createMock(AddressInterface::class);
-        $address = $this->createPartialMock(
-            Address::class,
-            ['getId', 'getDataModel']
-        );
+        $address = $this->getMockBuilder(Address::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getId', 'getDataModel'])
+            ->getMock();
         $collection = [$address, $address, $address];
         $address->expects($this->exactly(3))->method('getId')
             ->willReturnOnConsecutiveCalls(1, 2, 3);
@@ -204,10 +204,10 @@ class GridTest extends TestCase
     {
         $countryId = 'US';
         $countryName = 'United States';
-        $country = $this->createPartialMock(
-            Country::class,
-            ['loadByCode', 'getName']
-        );
+        $country = $this->getMockBuilder(Country::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['loadByCode', 'getName'])
+            ->getMock();
         $this->countryFactory->expects($this->atLeastOnce())->method('create')->willReturn($country);
         $country->expects($this->atLeastOnce())->method('loadByCode')->with($countryId)->willReturnSelf();
         $country->expects($this->atLeastOnce())->method('getName')->willReturn($countryName);

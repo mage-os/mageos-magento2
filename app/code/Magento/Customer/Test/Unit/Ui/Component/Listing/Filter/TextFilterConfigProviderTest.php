@@ -13,6 +13,7 @@ use PHPUnit\Framework\TestCase;
 
 class TextFilterConfigProviderTest extends TestCase
 {
+    /** */
     #[DataProvider('getConfigDataProvider')]
     public function testGetConfig(array $input, array $output): void
     {

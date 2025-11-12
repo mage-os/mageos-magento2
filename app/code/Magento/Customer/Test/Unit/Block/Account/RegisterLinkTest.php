@@ -48,26 +48,25 @@ class RegisterLinkTest extends TestCase
      * @param bool $isRegistrationAllowed
      * @param bool $result
      * @return void
-     * @SuppressWarnings(PHPMD.LongVariable)
      */
     #[DataProvider('dataProviderToHtml')]
     public function testToHtml($isAuthenticated, $isRegistrationAllowed, $result)
     {
         $context = $this->_objectManager->getObject(\Magento\Framework\View\Element\Template\Context::class);
 
-        $httpContext = $this->createPartialMock(
-            \Magento\Framework\App\Http\Context::class,
-            ['getValue']
-        );
+        $httpContext = $this->getMockBuilder(\Magento\Framework\App\Http\Context::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getValue'])
+            ->getMock();
         $httpContext->expects($this->any())
             ->method('getValue')
             ->with(Context::CONTEXT_AUTH)
             ->willReturn($isAuthenticated);
 
-        $registrationMock = $this->createPartialMock(
-            Registration::class,
-            ['isAllowed']
-        );
+        $registrationMock = $this->getMockBuilder(Registration::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['isAllowed'])
+            ->getMock();
         $registrationMock->expects($this->any())
             ->method('isAllowed')
             ->willReturn($isRegistrationAllowed);
@@ -101,10 +100,12 @@ class RegisterLinkTest extends TestCase
     public function testGetHref()
     {
         $this->_objectManager = new ObjectManager($this);
-        $helper = $this->createPartialMock(
-            Url::class,
-            ['getRegisterUrl']
-        );
+        $helper = $this->getMockBuilder(
+            Url::class
+        )->disableOriginalConstructor()
+            ->onlyMethods(
+                ['getRegisterUrl']
+            )->getMock();
 
         $helper->expects($this->any())->method('getRegisterUrl')->willReturn('register url');
 

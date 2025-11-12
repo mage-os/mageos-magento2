@@ -8,14 +8,16 @@ declare(strict_types=1);
 namespace Magento\Customer\Test\Unit\Model\Customer\Attribute\Backend;
 
 use Magento\Customer\Model\Customer\Attribute\Backend\Store;
-use Magento\Customer\Test\Unit\Helper\DataObjectTestHelper;
 use Magento\Framework\DataObject;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 class StoreTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Store
      */
@@ -35,8 +37,8 @@ class StoreTest extends TestCase
 
     public function testBeforeSaveWithId()
     {
-        $object = $this->createPartialMock(
-            DataObjectTestHelper::class,
+        $object = $this->createPartialMockWithReflection(
+            DataObject::class,
             ['getId']
         );
 
@@ -52,13 +54,20 @@ class StoreTest extends TestCase
     {
         $storeId = 1;
         $storeName = 'store';
-        $object = $this->createPartialMock(
-            DataObjectTestHelper::class,
-            ['getId', 'hasStoreId', 'setStoreId', 'getStoreId', 'hasData', 'setData']
+        $object = $this->createPartialMockWithReflection(
+            DataObject::class,
+            [
+                'getId',
+                'hasStoreId',
+                'setStoreId',
+                'getStoreId',
+                'hasData',
+                'setData'
+            ]
         );
 
-        $store = $this->createPartialMock(
-            DataObjectTestHelper::class,
+        $store = $this->createPartialMockWithReflection(
+            DataObject::class,
             ['getId', 'getName']
         );
         $store->expects($this->once())->method('getId')->willReturn($storeId);
@@ -70,7 +79,7 @@ class StoreTest extends TestCase
 
         $object->expects($this->once())->method('getId')->willReturn(false);
         $object->expects($this->once())->method('hasStoreId')->willReturn(false);
-        $object->expects($this->once())->method('setStoreId')->with($storeId)->willReturnSelf();
+        $object->expects($this->once())->method('setStoreId')->with($storeId)->willReturn(false);
         $object->expects($this->once())->method('getStoreId')->willReturn($storeId);
         $object->expects($this->once())->method('hasData')->with('created_in')->willReturn(false);
         $object->expects($this->once())

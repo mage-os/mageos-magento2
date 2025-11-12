@@ -8,10 +8,10 @@ declare(strict_types=1);
 
 namespace Magento\Customer\Test\Unit\Model\Metadata\Form;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Customer\Api\Data\OptionInterface;
 use Magento\Customer\Model\Metadata\Form\Select;
 use Magento\Framework\Phrase;
-use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * test Magento\Customer\Model\Metadata\Form\Select
@@ -38,11 +38,8 @@ class SelectTest extends AbstractFormTestCase
 
     /**
      * @param string|int|bool|null $value to assign to Select
-     * @param bool $expected text output
-     */
+     * @param bool $expected text output */
     #[DataProvider('validateValueDataProvider')]
-    /**
-     */
     public function testValidateValue($value, $expected)
     {
         $select = $this->getClass($value);
@@ -68,11 +65,8 @@ class SelectTest extends AbstractFormTestCase
 
     /**
      * @param string|int|bool|null $value to assign to boolean
-     * @param string|bool $expected text output
-     */
+     * @param string|bool $expected text output */
     #[DataProvider('validateValueRequiredDataProvider')]
-    /**
-     */
     public function testValidateValueRequired($value, $expected)
     {
         $this->attributeMetadataMock->expects($this->any())->method('isRequired')->willReturn(true);
@@ -114,11 +108,8 @@ class SelectTest extends AbstractFormTestCase
 
     /**
      * @param string|int|bool|null $value
-     * @param string|int $expected
-     */
+     * @param string|int $expected */
     #[DataProvider('outputValueDataProvider')]
-    /**
-     */
     public function testOutputValue($value, $expected)
     {
         $option1 = $this->createMock(OptionInterface::class);

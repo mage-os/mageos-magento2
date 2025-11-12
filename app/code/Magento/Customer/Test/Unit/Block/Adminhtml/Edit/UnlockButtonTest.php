@@ -79,8 +79,7 @@ class UnlockButtonTest extends TestCase
 
     /**
      * @param array $result
-     * @param bool $expectedValue
-     */
+     * @param bool $expectedValue */
     #[DataProvider('getButtonDataProvider')]
     public function testGetButtonData($result, $expectedValue)
     {

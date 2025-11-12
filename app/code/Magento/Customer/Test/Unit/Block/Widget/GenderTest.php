@@ -23,9 +23,9 @@ use PHPUnit\Framework\TestCase;
 class GenderTest extends TestCase
 {
     /** Constants used in the unit tests */
-    private const CUSTOMER_ENTITY_TYPE = 'customer';
+    const CUSTOMER_ENTITY_TYPE = 'customer';
 
-    private const GENDER_ATTRIBUTE_CODE = 'gender';
+    const GENDER_ATTRIBUTE_CODE = 'gender';
 
     /**
      * @var MockObject|CustomerMetadataInterface
@@ -72,7 +72,7 @@ class GenderTest extends TestCase
      * @param bool $isVisible Determines whether the 'gender' attribute is visible or enabled
      * @param bool $expectedValue The value we expect from Gender::isEnabled()
      * @return void
-     */
+     * */
     #[DataProvider('isEnabledDataProvider')]
     public function testIsEnabled($isVisible, $expectedValue)
     {
@@ -112,7 +112,7 @@ class GenderTest extends TestCase
      * @param bool $isRequired Determines whether the 'gender' attribute is required
      * @param bool $expectedValue The value we expect from Gender::isRequired()
      * @return void
-     */
+     * */
     #[DataProvider('isRequiredDataProvider')]
     public function testIsRequired($isRequired, $expectedValue)
     {

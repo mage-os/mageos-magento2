@@ -21,20 +21,21 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\Url\DecoderInterface;
 use Magento\Framework\Url\HostChecker;
 use Magento\Framework\UrlInterface;
-use Magento\Customer\Test\Unit\Helper\CustomerSessionTestHelper;
-use Magento\Customer\Test\Unit\Helper\CustomerUrlTestHelper;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\FrameworkMockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class RedirectTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Redirect
      */
@@ -111,8 +112,8 @@ class RedirectTest extends TestCase
     protected function setUp(): void
     {
         $this->request = $this->createMock(RequestInterface::class);
-        $this->customerSession = $this->createPartialMock(
-            CustomerSessionTestHelper::class,
+        $this->customerSession = $this->createPartialMockWithReflection(
+            Session::class,
             [
                 'getLastCustomerId',
                 'setLastCustomerId',
@@ -135,9 +136,10 @@ class RedirectTest extends TestCase
         $this->storeManager = $this->createMock(StoreManagerInterface::class);
         $this->url = $this->createMock(UrlInterface::class);
         $this->urlDecoder = $this->createMock(DecoderInterface::class);
-        $this->customerUrl = $this->createPartialMock(
-            CustomerUrlTestHelper::class,
+        $this->customerUrl = $this->createPartialMockWithReflection(
+            \Magento\Customer\Model\Url::class,
             [
+                'DashboardUrl',
                 'getAccountUrl',
                 'getLoginUrl',
                 'getLogoutUrl',

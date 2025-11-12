@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2025 Adobe
+ * Copyright 2014 Adobe
  * All Rights Reserved.
  */
 declare(strict_types=1);
@@ -13,9 +13,9 @@ use Magento\Customer\Api\Data\CustomerInterface;
 use Magento\Customer\Helper\View;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\Escaper;
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class ViewTest extends TestCase
 {
@@ -51,10 +51,9 @@ class ViewTest extends TestCase
     }
 
     /**
+     * Test get customer name
      */
     #[DataProvider('getCustomerServiceDataProvider')]
-    /**
-     */
     public function testGetCustomerName($prefix, $firstName, $middleName, $lastName, $suffix, $result)
     {
         $customerData = $this->createMock(CustomerInterface::class);

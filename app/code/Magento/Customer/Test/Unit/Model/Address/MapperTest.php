@@ -10,14 +10,16 @@ namespace Magento\Customer\Test\Unit\Model\Address;
 use Magento\Customer\Api\Data\AddressInterface;
 use Magento\Customer\Api\Data\RegionInterface;
 use Magento\Customer\Model\Address\Mapper;
-use Magento\Customer\Test\Unit\Helper\AddressInterfaceTestHelper;
 use Magento\Framework\Api\ExtensibleDataObjectConverter;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 class MapperTest extends TestCase
 {
+    use MockCreationTrait;
+
     /** @var ObjectManager  */
     protected $_objectManager;
 
@@ -31,7 +33,9 @@ class MapperTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->extensibleObjectConverter = $this->createMock(ExtensibleDataObjectConverter::class);
+        $this->extensibleObjectConverter = $this->createMock(
+            ExtensibleDataObjectConverter::class
+        );
         $this->_objectManager = new ObjectManager($this);
         $this->addressMapper = $this->_objectManager->getObject(
             Mapper::class,
@@ -75,27 +79,28 @@ class MapperTest extends TestCase
     protected function createAddressMock()
     {
         /** @var RegionInterface|MockObject $regionMock */
-        $regionMock = $this->createMock(RegionInterface::class);
+        $regionMock = $this->createMock(RegionInterface::class, [], '', false);
         $regionMock->expects($this->any())->method('getRegion')->willReturn('Texas');
         $regionMock->expects($this->any())->method('getRegionId')->willReturn(1);
         $regionMock->expects($this->any())->method('getRegionCode')->willReturn('TX');
+        // Use concrete Address class since we need to mock methods not in AddressInterface
         $addressMock = $this->createPartialMock(
-            AddressInterfaceTestHelper::class,
+            \Magento\Customer\Model\Data\Address::class,
             [
-                'getDefaultBilling',
-                'getDefaultShipping',
                 'getId',
                 'getCity',
                 'getFirstname',
                 'getLastname',
                 'getCountryId',
                 'getRegion',
-                'getStreet'
+                'getStreet',
+                'isDefaultBilling',
+                'isDefaultShipping'
             ]
         );
         $addressMock->expects($this->any())->method('getId')->willReturn('1');
-        $addressMock->expects($this->any())->method('getDefaultBilling')->willReturn(true);
-        $addressMock->expects($this->any())->method('getDefaultShipping')->willReturn(false);
+        $addressMock->expects($this->any())->method('isDefaultBilling')->willReturn(true);
+        $addressMock->expects($this->any())->method('isDefaultShipping')->willReturn(false);
         $addressMock->expects($this->any())->method('getCity')->willReturn('Austin');
         $addressMock->expects($this->any())->method('getFirstname')->willReturn('John');
         $addressMock->expects($this->any())->method('getLastname')->willReturn('Doe');

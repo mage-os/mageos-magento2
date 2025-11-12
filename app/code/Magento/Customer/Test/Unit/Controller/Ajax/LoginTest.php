@@ -30,12 +30,15 @@ use Magento\Framework\Stdlib\CookieManagerInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class LoginTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Login
      */
@@ -106,32 +109,50 @@ class LoginTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->request = $this->createMock(Http::class);
-        $this->response = new \Magento\Framework\Test\Unit\Helper\ResponseInterfaceTestHelper();
-        $this->customerSession = $this->createPartialMock(
-            \Magento\Customer\Test\Unit\Helper\CustomerSessionTestHelper::class,
-            ['isLoggedIn', 'setBeforeAuthUrl', 'setCustomerDataAsLoggedIn', 'regenerateId', 'getData',
-             'getLastCustomerId', 'getBeforeAuthUrl']
+        $this->request = $this->getMockBuilder(Http::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->response = $this->createPartialMockWithReflection(
+            ResponseInterface::class,
+            ['sendResponse', 'setRedirect', 'representJson', 'setHttpResponseCode']
+        );
+        $this->customerSession = $this->createPartialMockWithReflection(
+            Session::class,
+            [
+                'isLoggedIn',
+                'setBeforeAuthUrl',
+                'setCustomerDataAsLoggedIn',
+                'regenerateId',
+                'getData',
+                'getLastCustomerId',
+                'getBeforeAuthUrl'
+            ]
         );
         $this->objectManager = $this->createPartialMock(FakeObjectManager::class, ['get']);
         $this->accountManagement = $this->createPartialMock(AccountManagement::class, ['authenticate']);
 
         $this->jsonHelper = $this->createPartialMock(Data::class, ['jsonDecode']);
 
-        $this->resultJson = $this->createMock(Json::class);
-        $this->resultJsonFactory = $this->createPartialMock(
-            JsonFactory::class,
-            ['create']
-        );
+        $this->resultJson = $this->getMockBuilder(Json::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->resultJsonFactory = $this->getMockBuilder(JsonFactory::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['create'])
+            ->getMock();
 
         $this->cookieManager = $this->createMock(CookieManagerInterface::class);
-        $this->cookieMetadataFactory = $this->createMock(CookieMetadataFactory::class);
+        $this->cookieMetadataFactory = $this->getMockBuilder(CookieMetadataFactory::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $this->resultRaw = $this->createMock(Raw::class);
-        $resultRawFactory = $this->createPartialMock(
-            RawFactory::class,
-            ['create']
-        );
+        $this->resultRaw = $this->getMockBuilder(Raw::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $resultRawFactory = $this->getMockBuilder(RawFactory::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['create'])
+            ->getMock();
         $resultRawFactory->method('create')
             ->willReturn($this->resultRaw);
 
@@ -278,7 +299,9 @@ class LoginTest extends TestCase
         $this->cookieManager->method('getCookie')
             ->with('mage-cache-sessid')
             ->willReturn(true);
-        $cookieMetadata = $this->createMock(CookieMetadata::class);
+        $cookieMetadata = $this->getMockBuilder(CookieMetadata::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->cookieMetadataFactory->method('createCookieMetadata')
             ->willReturn($cookieMetadata);
         $cookieMetadata->method('setPath')

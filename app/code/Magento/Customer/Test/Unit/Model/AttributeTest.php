@@ -31,13 +31,13 @@ use Magento\Framework\Registry;
 use Magento\Eav\Api\Data\AttributeExtensionFactory;
 use Magento\Framework\Stdlib\DateTime\DateTimeFormatterInterface;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
-use Magento\Framework\Test\Unit\Helper\AbstractResourceTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Framework\Validator\UniversalFactory;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyFields)
@@ -45,6 +45,8 @@ use PHPUnit\Framework\TestCase;
  */
 class AttributeTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Attribute
      */
@@ -164,25 +166,33 @@ class AttributeTest extends TestCase
         $objectManagerHelper = new ObjectManagerHelper($this);
         $this->contextMock = $this->createMock(Context::class);
         $this->registryMock = $this->createMock(Registry::class);
-        $this->extensionAttributesFactory = $this->createMock(ExtensionAttributesFactory::class);
+        $this->extensionAttributesFactory = $this->createMock(
+            ExtensionAttributesFactory::class
+        );
         $this->attributeValueFactoryMock = $this->createMock(AttributeValueFactory::class);
         $this->configMock = $this->createMock(Config::class);
         $this->typeFactoryMock = $this->createMock(TypeFactory::class);
         $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
         $this->helperMock = $this->createMock(Helper::class);
         $this->universalFactoryMock = $this->createMock(UniversalFactory::class);
-        $this->attributeOptionFactoryMock = $this->createMock(AttributeOptionInterfaceFactory::class);
+        $this->attributeOptionFactoryMock =
+            $this->createMock(AttributeOptionInterfaceFactory::class);
         $this->dataObjectProcessorMock = $this->createMock(DataObjectProcessor::class);
         $this->dataObjectHelperMock = $this->createMock(DataObjectHelper::class);
         $this->timezoneMock = $this->createMock(TimezoneInterface::class);
-        $this->reservedAttributeListMock = $this->createMock(ReservedAttributeList::class);
-        $this->resolverMock = $this->createMock(ResolverInterface::class);
-        $this->dateTimeFormatter = $this->createMock(DateTimeFormatterInterface::class);
-
-        $this->resourceMock = $this->createPartialMock(
-            AbstractResourceTestHelper::class,
-            ['getIdFieldName', 'saveInSetIncluding', '_construct', 'getConnection']
+        $this->reservedAttributeListMock = $this->createMock(
+            ReservedAttributeList::class
         );
+        $this->resolverMock = $this->createMock(ResolverInterface::class);
+        $this->dateTimeFormatter = $this->createMock(
+            DateTimeFormatterInterface::class
+        );
+
+        $this->resourceMock = $this->createPartialMockWithReflection(
+            AbstractResource::class,
+            ['getIdFieldName', '_construct', 'getConnection', 'saveInSetIncluding']
+        );
+        $this->resourceMock->method('getIdFieldName')->willReturn('attribute_id');
         $this->cacheManager = $this->createMock(CacheInterface::class);
         $this->eventDispatcher = $this->createMock(ManagerInterface::class);
 
@@ -273,8 +283,7 @@ class AttributeTest extends TestCase
     /**
      * @param int $isSearchableInGrid
      * @param string $frontendInput
-     * @param bool $result
-     */
+     * @param bool $result */
     #[DataProvider('dataProviderCanBeSearchableInGrid')]
     public function testCanBeSearchableInGrid($isSearchableInGrid, $frontendInput, $result)
     {
@@ -309,8 +318,7 @@ class AttributeTest extends TestCase
     /**
      * @param int $isFilterableInGrid
      * @param string $frontendInput
-     * @param bool $result
-     */
+     * @param bool $result */
     #[DataProvider('dataProviderCanBeFilterableInGrid')]
     public function testCanBeFilterableInGrid($isFilterableInGrid, $frontendInput, $result)
     {

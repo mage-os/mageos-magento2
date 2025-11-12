@@ -54,10 +54,10 @@ class FileUploaderTest extends TestCase
 
         $this->elementFactory = $this->createMock(ElementFactory::class);
 
-        $this->fileProcessorFactory = $this->createPartialMock(
-            FileProcessorFactory::class,
-            ['create']
-        );
+        $this->fileProcessorFactory = $this->getMockBuilder(FileProcessorFactory::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['create'])
+            ->getMock();
 
         $this->attributeMetadata = $this->createMock(AttributeMetadataInterface::class);
     }
@@ -100,9 +100,7 @@ class FileUploaderTest extends TestCase
             ],
         ];
 
-        $formElement = $this->getMockBuilder(Image::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $formElement = $this->createMock(Image::class);
         $formElement->expects($this->once())
             ->method('validateValue')
             ->with(['name' => $filename])
@@ -149,9 +147,7 @@ class FileUploaderTest extends TestCase
             'url' => $resultFileUrl,
         ];
 
-        $fileProcessor = $this->getMockBuilder(FileProcessor::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $fileProcessor = $this->createMock(FileProcessor::class);
         $fileProcessor->expects($this->once())
             ->method('saveTemporaryFile')
             ->with('customer[' . $attributeCode . ']')

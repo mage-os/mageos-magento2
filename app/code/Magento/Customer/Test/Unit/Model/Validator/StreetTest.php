@@ -9,55 +9,59 @@ namespace Magento\Customer\Test\Unit\Model\Validator;
 
 use Magento\Customer\Model\Validator\Street;
 use Magento\Customer\Model\Customer;
-use Magento\Customer\Test\Unit\Helper\CustomerTestHelper;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * Customer street validator tests
  */
 class StreetTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Street
      */
     private Street $nameValidator;
 
     /**
-     * @var CustomerTestHelper
+     * @var Customer|MockObject
      */
-    private CustomerTestHelper $customerMock;
+    private MockObject $customerMock;
 
     /**
      * @return void
      */
     protected function setUp(): void
     {
-        $this->nameValidator = new Street();
-        $this->customerMock = new CustomerTestHelper();
+        $this->nameValidator = new Street;
+        $this->customerMock = $this->createPartialMockWithReflection(
+            Customer::class,
+            ['getStreet']
+        );
     }
 
     /**
      * Test for allowed apostrophe and other punctuation characters in customer names
      *
-     * @param array<int, string> $street
+     * @param array $street
      * @param string $message
-     * @return void
-     */
+     * @return void */
     #[DataProvider('expectedPunctuationInNamesDataProvider')]
     public function testValidateCorrectPunctuationInNames(
         array $street,
         string $message
-    ): void {
-        $this->customerMock->setStreet($street);
+    ) {
+        $this->customerMock->expects($this->once())->method('getStreet')->willReturn($street);
 
         $isValid = $this->nameValidator->isValid($this->customerMock);
         $this->assertTrue($isValid, $message);
     }
 
     /**
-     * @return array<int, array<string, array<int, string>|string>>
+     * @return array
      */
     public static function expectedPunctuationInNamesDataProvider(): array
     {

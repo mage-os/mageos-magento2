@@ -61,19 +61,18 @@ class NavigationTest extends TestCase
      * Test get links with block customer account link and wish list link
      *
      * @return void
-     * @SuppressWarnings(PHPMD.LongVariable)
      */
     public function testGetLinksWithCustomerAndWishList()
     {
-        $wishListLinkMock = $this->createPartialMock(
-            WishListLink::class,
-            ['getSortOrder']
-        );
+        $wishListLinkMock = $this->getMockBuilder(WishListLink::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getSortOrder'])
+            ->getMock();
 
-        $customerAccountLinkMock = $this->createPartialMock(
-            CustomerAccountLink::class,
-            ['getSortOrder']
-        );
+        $customerAccountLinkMock = $this->getMockBuilder(CustomerAccountLink::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getSortOrder'])
+            ->getMock();
 
         $wishListLinkMock->expects($this->any())
             ->method('getSortOrder')

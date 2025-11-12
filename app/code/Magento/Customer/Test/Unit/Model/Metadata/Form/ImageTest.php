@@ -103,24 +103,12 @@ class ImageTest extends AbstractFormTestCase
     {
         parent::setUp();
 
-        $this->urlEncode = $this->getMockBuilder(EncoderInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->fileValidatorMock = $this->getMockBuilder(NotProtectedExtension::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->fileSystemMock = $this->getMockBuilder(Filesystem::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->requestMock = $this->getMockBuilder(Http::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->uploaderFactoryMock = $this->getMockBuilder(UploaderFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->fileProcessorMock = $this->getMockBuilder(FileProcessor::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->urlEncode = $this->createMock(EncoderInterface::class);
+        $this->fileValidatorMock = $this->createMock(NotProtectedExtension::class);
+        $this->fileSystemMock = $this->createMock(Filesystem::class);
+        $this->requestMock = $this->createMock(Http::class);
+        $this->uploaderFactoryMock = $this->createMock(UploaderFactory::class);
+        $this->fileProcessorMock = $this->createMock(FileProcessor::class);
         $this->imageContentFactory = $this->getMockBuilder(ImageContentInterfaceFactory::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['create'])
@@ -142,16 +130,12 @@ class ImageTest extends AbstractFormTestCase
             ->method('getDirectoryReadByPath')
             ->willReturn($this->readDirectoryMock);
 
-        $this->mediaWriteDirectoryMock = $this->getMockBuilder(Write::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->mediaWriteDirectoryMock = $this->createMock(Write::class);
         $this->fileSystemMock->expects($this->once())
             ->method('getDirectoryWrite')
             ->willReturn($this->mediaWriteDirectoryMock);
 
-        $this->driverMock = $this->getMockBuilder(Driver::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->driverMock = $this->createMock(Driver::class);
         $this->mediaWriteDirectoryMock->expects($this->any())
             ->method('getDriver')
             ->willReturn($this->driverMock);
@@ -278,9 +262,7 @@ class ImageTest extends AbstractFormTestCase
 
         $maxFileSize = 1;
 
-        $validationRuleMock = $this->createMock(
-            ValidationRuleInterface::class
-        );
+        $validationRuleMock = $this->createMock(ValidationRuleInterface::class);
         $validationRuleMock->expects($this->any())
             ->method('getName')
             ->willReturn('max_file_size');
@@ -332,9 +314,7 @@ class ImageTest extends AbstractFormTestCase
 
         $maxImageWidth = 1;
 
-        $validationRuleMock = $this->createMock(
-            ValidationRuleInterface::class
-        );
+        $validationRuleMock = $this->createMock(ValidationRuleInterface::class);
         $validationRuleMock->expects($this->any())
             ->method('getName')
             ->willReturn('max_image_width');
@@ -378,9 +358,7 @@ class ImageTest extends AbstractFormTestCase
 
         $maxImageHeight = 1;
 
-        $validationRuleMock = $this->createMock(
-            ValidationRuleInterface::class
-        );
+        $validationRuleMock = $this->createMock(ValidationRuleInterface::class);
         $validationRuleMock->expects($this->any())
             ->method('getName')
             ->willReturn('max_image_height');
@@ -498,9 +476,7 @@ class ImageTest extends AbstractFormTestCase
             ->with(FileProcessor::TMP_DIR . '/' . $value['file'])
             ->willReturnSelf();
 
-        $imageContentMock = $this->getMockBuilder(
-            ImageContentInterface::class
-        )->getMock();
+        $imageContentMock = $this->createMock(ImageContentInterface::class);
         $imageContentMock->expects($this->once())
             ->method('setName')
             ->with($value['name'])

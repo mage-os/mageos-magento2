@@ -21,12 +21,11 @@ use Magento\Framework\View\Layout;
 use Magento\Framework\View\LayoutInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
 class CurrentCustomerTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var CurrentCustomer
      */
@@ -89,11 +88,11 @@ class CurrentCustomerTest extends TestCase
     {
         $this->customerSessionMock = $this->createMock(Session::class);
         $this->layoutMock = $this->createMock(Layout::class);
-        $this->customerInterfaceFactoryMock = $this->createPartialMock(
+        $this->customerInterfaceFactoryMock = $this->createPartialMockWithReflection(
             CustomerInterfaceFactory::class,
-            ['create']
+            ['create', 'setGroupId']
         );
-        $this->customerDataMock = new \Magento\Customer\Test\Unit\Helper\CustomerInterfaceTestHelper();
+        $this->customerDataMock = $this->createMock(CustomerInterface::class);
         $this->customerRepositoryMock = $this->createMock(CustomerRepositoryInterface::class);
         $this->requestMock = $this->createMock(Http::class);
         $this->moduleManagerMock = $this->createMock(Manager::class);
@@ -128,10 +127,11 @@ class CurrentCustomerTest extends TestCase
         $this->customerInterfaceFactoryMock->expects($this->once())
             ->method('create')
             ->willReturn($this->customerDataMock);
-        
-        $result = $this->currentCustomer->getCustomer();
-        $this->assertInstanceOf(\Magento\Customer\Api\Data\CustomerInterface::class, $result);
-        $this->assertEquals($this->customerGroupId, $result->getGroupId());
+        $this->customerDataMock->expects($this->once())
+            ->method('setGroupId')
+            ->with($this->customerGroupId)
+            ->willReturnSelf();
+        $this->assertEquals($this->customerDataMock, $this->currentCustomer->getCustomer());
     }
 
     /**

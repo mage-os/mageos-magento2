@@ -62,22 +62,57 @@ class CustomerExtractorTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->formFactory = $this->createPartialMock(
+        $this->formFactory = $this->createMock(
             FormFactory::class,
+            [],
+            '',
+            false,
+            false,
+            true,
             ['create']
         );
-        $this->customerFactory = $this->createPartialMock(
+        $this->customerFactory = $this->createMock(
             CustomerInterfaceFactory::class,
+            [],
+            '',
+            false,
+            false,
+            true,
             ['create']
         );
-        $this->storeManager = $this->createMock(StoreManagerInterface::class);
-        $this->customerGroupManagement = $this->createMock(GroupManagementInterface::class);
+        $this->storeManager = $this->createMock(
+            StoreManagerInterface::class,
+            [],
+            '',
+            false
+        );
+        $this->customerGroupManagement = $this->createMock(
+            GroupManagementInterface::class,
+            [],
+            '',
+            false
+        );
         $this->dataObjectHelper = $this->createMock(DataObjectHelper::class);
-        $this->request = $this->createMock(RequestInterface::class);
+        $this->request = $this->createMock(RequestInterface::class, [], '', false);
         $this->customerForm = $this->createMock(Form::class);
-        $this->customerData = $this->createMock(CustomerInterface::class);
-        $this->store = $this->createMock(StoreInterface::class);
-        $this->customerGroup = $this->createMock(GroupInterface::class);
+        $this->customerData = $this->createMock(
+            CustomerInterface::class,
+            [],
+            '',
+            false
+        );
+        $this->store = $this->createMock(
+            StoreInterface::class,
+            [],
+            '',
+            false
+        );
+        $this->customerGroup = $this->createMock(
+            GroupInterface::class,
+            [],
+            '',
+            false
+        );
         $this->customerExtractor = new CustomerExtractor(
             $this->formFactory,
             $this->customerFactory,
@@ -88,8 +123,6 @@ class CustomerExtractorTest extends TestCase
     }
 
     /**
-     * Test extract customer data
-     *
      * @param int $storeId
      * @param int $websiteId
      * @param array $customerData

@@ -41,14 +41,34 @@ class FilterFactoryTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->context = $this->createMock(ContextInterface::class);
+        $this->context = $this->createMock(
+            ContextInterface::class,
+            [],
+            '',
+            false
+        );
         $this->componentFactory = $this->createPartialMock(
             UiComponentFactory::class,
             ['create']
         );
-        $this->attributeMetadata = $this->createMock(AttributeMetadataInterface::class);
-        $this->filter = $this->createMock(ColumnInterface::class);
-        $this->attributeOption = $this->createMock(OptionInterface::class);
+        $this->attributeMetadata = $this->createMock(
+            AttributeMetadataInterface::class,
+            [],
+            '',
+            false
+        );
+        $this->filter = $this->createMock(
+            ColumnInterface::class,
+            [],
+            '',
+            false
+        );
+        $this->attributeOption = $this->createMock(
+            OptionInterface::class,
+            [],
+            '',
+            false
+        );
 
         $this->filterFactory = new FilterFactory($this->componentFactory);
     }

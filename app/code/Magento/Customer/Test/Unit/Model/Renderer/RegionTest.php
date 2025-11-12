@@ -8,8 +8,6 @@ declare(strict_types=1);
 namespace Magento\Customer\Test\Unit\Model\Renderer;
 
 use Magento\Customer\Model\Renderer\Region;
-use Magento\Customer\Test\Unit\Helper\AbstractElementTestHelper;
-use Magento\Customer\Test\Unit\Helper\CountryTestHelper;
 use Magento\Directory\Helper\Data;
 use Magento\Directory\Model\Country;
 use Magento\Directory\Model\CountryFactory;
@@ -21,9 +19,12 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 class RegionTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * Simulate "serialize" method of a form element.
      *
@@ -45,8 +46,7 @@ class RegionTest extends TestCase
     }
 
     /**
-     * @param array $regionCollection
-     */
+     * @param array $regionCollection */
     #[DataProvider('renderDataProvider')]
     public function testRender($regionCollection)
     {
@@ -68,8 +68,8 @@ class RegionTest extends TestCase
                 return $this->mockSerialize($attributes, $elementMock->getData());
             }
         );
-        $countryMock = $this->createPartialMock(
-            AbstractElementTestHelper::class,
+        $countryMock = $this->createPartialMockWithReflection(
+            AbstractElement::class,
             ['serialize', 'getValue']
         );
         $countryMock->method('serialize')->willReturnCallback(
@@ -80,9 +80,14 @@ class RegionTest extends TestCase
         $regionMock = $this->createMock(
             AbstractElement::class
         );
-        $countryModelMock = $this->createPartialMock(
-            CountryTestHelper::class,
-            ['setId', 'getLoadedRegionCollection', '__wakeup', 'toOptionArray']
+        $countryModelMock = $this->createPartialMockWithReflection(
+            Country::class,
+            [
+                'toOptionArray',
+                'setId',
+                'getLoadedRegionCollection',
+                '__wakeup'
+            ]
         );
         $formMock = $this->createPartialMock(Form::class, ['getElement']);
 

@@ -8,14 +8,16 @@ declare(strict_types=1);
 namespace Magento\Customer\Test\Unit\Model\Customer\Attribute\Backend;
 
 use Magento\Customer\Model\Customer\Attribute\Backend\Website;
-use Magento\Customer\Test\Unit\Helper\DataObjectTestHelper;
 use Magento\Framework\DataObject;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 class WebsiteTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Website
      */
@@ -35,7 +37,10 @@ class WebsiteTest extends TestCase
 
     public function testBeforeSaveWithId()
     {
-        $object = $this->createPartialMock(DataObjectTestHelper::class, ['getId']);
+        $object = $this->createPartialMockWithReflection(
+            DataObject::class,
+            ['getId']
+        );
 
         $object->expects($this->once())->method('getId')->willReturn(1);
         /** @var DataObject $object */
@@ -48,9 +53,12 @@ class WebsiteTest extends TestCase
     public function testBeforeSave()
     {
         $websiteId = 1;
-        $object = $this->createPartialMock(DataObject::class, ['hasData', 'setData']);
+        $object = $this->getMockBuilder(DataObject::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['hasData', 'setData'])
+            ->getMock();
 
-        $store = $this->createPartialMock(DataObjectTestHelper::class, ['getWebsiteId']);
+        $store = $this->createPartialMockWithReflection(DataObject::class, ['getWebsiteId']);
         $store->expects($this->once())->method('getWebsiteId')->willReturn($websiteId);
 
         $this->storeManager->expects($this->once())

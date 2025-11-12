@@ -9,33 +9,38 @@ namespace Magento\Customer\Test\Unit\Model\Validator;
 
 use Magento\Customer\Model\Validator\Name;
 use Magento\Customer\Model\Customer;
-use Magento\Customer\Test\Unit\Helper\CustomerTestHelper;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * Customer name validator tests
  */
 class NameTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Name
      */
     private Name $nameValidator;
 
     /**
-     * @var CustomerTestHelper
+     * @var Customer|MockObject
      */
-    private CustomerTestHelper $customerMock;
+    private MockObject $customerMock;
 
     /**
      * @return void
      */
     protected function setUp(): void
     {
-        $this->nameValidator = new Name();
-        $this->customerMock = new CustomerTestHelper();
+        $this->nameValidator = new Name;
+        $this->customerMock = $this->createPartialMockWithReflection(
+            Customer::class,
+            ['getFirstname', 'getLastname', 'getMiddlename']
+        );
     }
 
     /**
@@ -45,25 +50,24 @@ class NameTest extends TestCase
      * @param string $middleName
      * @param string $lastName
      * @param string $message
-     * @return void
-     */
+     * @return void */
     #[DataProvider('expectedPunctuationInNamesDataProvider')]
     public function testValidateCorrectPunctuationInNames(
         string $firstName,
         string $middleName,
         string $lastName,
         string $message
-    ): void {
-        $this->customerMock->setFirstname($firstName);
-        $this->customerMock->setMiddlename($middleName);
-        $this->customerMock->setLastname($lastName);
+    ) {
+        $this->customerMock->expects($this->once())->method('getFirstname')->willReturn($firstName);
+        $this->customerMock->expects($this->once())->method('getMiddlename')->willReturn($middleName);
+        $this->customerMock->expects($this->once())->method('getLastname')->willReturn($lastName);
 
         $isValid = $this->nameValidator->isValid($this->customerMock);
         $this->assertTrue($isValid, $message);
     }
 
     /**
-     * @return array<int, array<string, string>>
+     * @return array
      */
     public static function expectedPunctuationInNamesDataProvider(): array
     {

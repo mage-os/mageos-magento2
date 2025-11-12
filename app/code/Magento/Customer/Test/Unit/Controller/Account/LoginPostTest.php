@@ -13,7 +13,6 @@ use Magento\Customer\Controller\Account\LoginPost;
 use Magento\Customer\Model\Account\Redirect as AccountRedirect;
 use Magento\Customer\Model\Session;
 use Magento\Customer\Model\Url;
-use Magento\Customer\Test\Unit\Helper\CustomerSessionTestHelper;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Request\Http;
@@ -31,6 +30,7 @@ use Magento\Framework\Stdlib\Cookie\PhpCookieManager;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * Test customer account controller
@@ -39,6 +39,8 @@ use PHPUnit\Framework\TestCase;
  */
 class LoginPostTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var LoginPost
      */
@@ -108,8 +110,8 @@ class LoginPostTest extends TestCase
     {
         $this->prepareContext();
 
-        $this->session = $this->createPartialMock(
-            CustomerSessionTestHelper::class,
+        $this->session = $this->createPartialMockWithReflection(
+            Session::class,
             [
                 'isLoggedIn',
                 'setCustomerDataAsLoggedIn',
@@ -144,8 +146,7 @@ class LoginPostTest extends TestCase
 
     /**
      * @param boolean $isLoggedIn
-     * @param boolean $isValidFormKey
-     */
+     * @param boolean $isValidFormKey */
     #[DataProvider('invalidFormKeyDataProvider')]
     public function testExecuteInvalidFormKey(
         $isLoggedIn,
@@ -309,7 +310,9 @@ class LoginPostTest extends TestCase
             ->method('getRedirect')
             ->willReturn($this->resultRedirect);
 
-        $cookieMetadataManager = $this->createMock(PhpCookieManager::class);
+        $cookieMetadataManager = $this->getMockBuilder(PhpCookieManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $cookieMetadataManager->expects($this->once())
             ->method('getCookie')
             ->with('mage-cache-sessid')
@@ -372,13 +375,19 @@ class LoginPostTest extends TestCase
             ->method('getRedirect')
             ->willReturn($this->resultRedirect);
 
-        $cookieMetadataManager = $this->createMock(PhpCookieManager::class);
+        $cookieMetadataManager = $this->getMockBuilder(PhpCookieManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $cookieMetadataManager->expects($this->once())
             ->method('getCookie')
             ->with('mage-cache-sessid')
             ->willReturn(true);
-        $cookieMetadataFactory = $this->createMock(CookieMetadataFactory::class);
-        $cookieMetadata = $this->createMock(CookieMetadata::class);
+        $cookieMetadataFactory = $this->getMockBuilder(CookieMetadataFactory::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $cookieMetadata = $this->getMockBuilder(CookieMetadata::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $cookieMetadataFactory->expects($this->once())
             ->method('createCookieMetadata')
             ->willReturn($cookieMetadata);
@@ -403,7 +412,7 @@ class LoginPostTest extends TestCase
 
     /**
      * @param array $exceptionData
-     */
+     * */
     #[DataProvider('exceptionDataProvider')]
     public function testExecuteWithException(
         $exceptionData
@@ -484,23 +493,31 @@ class LoginPostTest extends TestCase
 
     protected function prepareContext()
     {
-        $this->context = $this->createMock(Context::class);
+        $this->context = $this->getMockBuilder(Context::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $this->request = $this->createPartialMock(
-            Http::class,
-            [
-                'isPost',
-                'getPost',
-            ]
-        );
+        $this->request = $this->getMockBuilder(Http::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(
+                [
+                    'isPost',
+                    'getPost',
+                ]
+            )->getMock();
 
-        $this->resultRedirect = $this->createMock(\Magento\Framework\Controller\Result\Redirect::class);
+        $this->resultRedirect = $this->getMockBuilder(\Magento\Framework\Controller\Result\Redirect::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->messageManager = $this->createMock(ManagerInterface::class);
 
-        $this->redirectFactory = $this->createMock(RedirectFactory::class);
+        $this->redirectFactory = $this->getMockBuilder(RedirectFactory::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $this->redirect = $this->createMock(RedirectInterface::class);
+        $this->redirect = $this->getMockBuilder(RedirectInterface::class)
+            ->getMock();
         $this->context->expects($this->atLeastOnce())
             ->method('getRedirect')
             ->willReturn($this->redirect);

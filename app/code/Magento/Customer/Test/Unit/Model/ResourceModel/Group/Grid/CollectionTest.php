@@ -83,14 +83,10 @@ class CollectionTest extends TestCase
         $this->loggerMock = $this->createMock(LoggerInterface::class);
         $this->fetchStrategyMock = $this->createMock(FetchStrategyInterface::class);
         $this->eventManagerMock = $this->createMock(ManagerInterface::class);
-        $this->resourceMock = $this->getMockBuilder(AbstractDb::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->resourceMock = $this->createMock(AbstractDb::class);
         $this->aggregationsMock = $this->createMock(AggregationInterface::class);
         $this->connectionMock = $this->createMock(AdapterInterface::class);
-        $this->selectMock = $this->getMockBuilder(Select::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->selectMock = $this->createMock(Select::class);
 
         $this->resourceMock->expects($this->any())
             ->method('getConnection')

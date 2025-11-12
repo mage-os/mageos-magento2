@@ -30,6 +30,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ViewfileTest extends TestCase
 {
+
     /**
      * @var RawFactory|MockObject
      */

@@ -6,11 +6,11 @@
 
 namespace Magento\Customer\Test\Unit\Model\Metadata\Form;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Customer\Api\Data\ValidationRuleInterface;
 use Magento\Customer\Model\Metadata\Form\Text;
 use Magento\Framework\Phrase;
 use Magento\Framework\Stdlib\StringUtils;
-use PHPUnit\Framework\Attributes\DataProvider;
 
 class TextTest extends AbstractFormTestCase
 {
@@ -48,11 +48,8 @@ class TextTest extends AbstractFormTestCase
 
     /**
      * @param string|int|bool $value to assign to boolean
-     * @param bool $expected text output
-     */
+     * @param bool $expected text output */
     #[DataProvider('validateValueDataProvider')]
-    /**
-     */
     public function testValidateValue($value, $expected)
     {
         $sut = $this->getClass($value);
@@ -78,11 +75,8 @@ class TextTest extends AbstractFormTestCase
 
     /**
      * @param string|int|bool|null $value to assign to boolean
-     * @param string|bool|null $expected text output
-     */
+     * @param string|bool|null $expected text output */
     #[DataProvider('validateValueRequiredDataProvider')]
-    /**
-     */
     public function testValidateValueRequired($value, $expected)
     {
         $this->attributeMetadataMock->expects($this->any())->method('isRequired')->willReturn(true);
@@ -124,11 +118,8 @@ class TextTest extends AbstractFormTestCase
 
     /**
      * @param string|int|bool|null $value to assign to boolean
-     * @param string|bool $expected text output
-     */
+     * @param string|bool $expected text output */
     #[DataProvider('validateValueLengthDataProvider')]
-    /**
-     */
     public function testValidateValueLength($value, $expected)
     {
         $minTextLengthRule = $this->createMock(ValidationRuleInterface::class);

@@ -33,16 +33,23 @@ class AttributeColumnTest extends TestCase
     /** @var AttributeMetadataInterface|MockObject */
     protected $attributeMetadata;
 
-    protected function setUp(): void
+    protected function setup(): void
     {
         $this->context = $this->createMock(ContextInterface::class);
-        $processor = $this->createMock(Processor::class);
+        $processor = $this->getMockBuilder(Processor::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->context->expects($this->never())->method('getProcessor')->willReturn($processor);
         $this->uiComponentFactory = $this->createMock(UiComponentFactory::class);
         $this->attributeRepository = $this->createMock(
             AttributeRepository::class
         );
-        $this->attributeMetadata = $this->createMock(AttributeMetadataInterface::class);
+        $this->attributeMetadata = $this->createMock(
+            AttributeMetadataInterface::class,
+            [],
+            '',
+            false
+        );
 
         $this->component = new AttributeColumn(
             $this->context,

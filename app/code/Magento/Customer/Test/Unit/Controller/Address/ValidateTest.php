@@ -17,16 +17,18 @@ use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\DataObject;
 use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Framework\Test\Unit\Helper\DataObjectTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class ValidateTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Validate
      */
@@ -117,9 +119,9 @@ class ValidateTest extends TestCase
         $this->resultJsonFactoryMock->method('create')
             ->willReturn($resultJson);
 
-        $validateResponseMock = $this->createPartialMock(
-            DataObjectTestHelper::class,
-            ['setMessages', 'getError']
+        $validateResponseMock = $this->createPartialMockWithReflection(
+            DataObject::class,
+            ['getError', 'setMessages']
         );
         $validateResponseMock->method('setMessages')->willReturnSelf();
         $validateResponseMock->method('getError')->willReturn(1);

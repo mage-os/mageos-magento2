@@ -10,15 +10,17 @@ namespace Magento\Customer\Test\Unit\Observer\CatalogRule;
 use Magento\CatalogRule\Api\Data\RuleExtension;
 use Magento\CatalogRule\Model\ResourceModel\Rule\Collection;
 use Magento\CatalogRule\Model\Rule;
-use Magento\CatalogRule\Test\Unit\Helper\RuleExtensionTestHelper;
 use Magento\Customer\Api\GroupExcludedWebsiteRepositoryInterface;
 use Magento\Customer\Observer\CatalogRule\AddCustomerGroupExcludedWebsite;
 use Magento\Framework\Event\Observer;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 class AddCustomerGroupExcludedWebsiteTest extends TestCase
 {
+    use MockCreationTrait;
+
     /** @var GroupExcludedWebsiteRepositoryInterface|MockObject */
     private $groupExcludedWebsiteRepositoryMock;
 
@@ -39,14 +41,19 @@ class AddCustomerGroupExcludedWebsiteTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->groupExcludedWebsiteRepositoryMock = $this->createMock(
-            GroupExcludedWebsiteRepositoryInterface::class
-        );
-        $this->observerMock = $this->createMock(Observer::class);
-        $this->ruleCollectionMock = $this->createMock(Collection::class);
-        $this->ruleMock = $this->createMock(Rule::class);
-        $this->ruleExtensionMock = $this->createPartialMock(
-            RuleExtensionTestHelper::class,
+        $this->groupExcludedWebsiteRepositoryMock = $this->getMockBuilder(GroupExcludedWebsiteRepositoryInterface::class)
+            ->getMock();
+        $this->observerMock = $this->getMockBuilder(Observer::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->ruleCollectionMock = $this->getMockBuilder(Collection::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->ruleMock = $this->getMockBuilder(Rule::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->ruleExtensionMock = $this->createPartialMockWithReflection(
+            RuleExtension::class,
             ['setExcludeWebsiteIds']
         );
         $this->observerMock->expects(self::atLeastOnce())

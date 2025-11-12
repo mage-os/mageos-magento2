@@ -14,8 +14,6 @@ use Magento\Customer\Api\Data\CustomerInterface;
 use Magento\Customer\Api\Data\ValidationResultsInterfaceFactory;
 use Magento\Customer\Api\SessionCleanerInterface;
 use Magento\Customer\Helper\View;
-use Magento\Customer\Test\Unit\Helper\CustomerInterfaceTestHelper;
-use Magento\Customer\Test\Unit\Helper\CustomerSecureTestHelper;
 use Magento\Customer\Model\AccountConfirmation;
 use Magento\Customer\Model\AccountManagement;
 use Magento\Customer\Model\AccountManagement\Authenticate;
@@ -61,6 +59,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * Test for validating anonymous request for synchronous operations containing group id.
@@ -70,6 +69,8 @@ use Psr\Log\LoggerInterface;
  */
 class AccountManagementApiTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var AccountManagement
      */
@@ -291,15 +292,23 @@ class AccountManagementApiTest extends TestCase
             ExtensibleDataObjectConverter::class
         );
         $this->allowedCountriesReader = $this->createMock(AllowedCountries::class);
-        $this->customerSecure = new CustomerSecureTestHelper();
+        $this->customerSecure = $this->createPartialMockWithReflection(
+            CustomerSecure::class,
+            [
+                'addData',
+                'setData',
+                'setRpToken',
+                'setRpTokenCreatedAt'
+            ]
+        );
         $this->dateTimeFactory = $this->createMock(DateTimeFactory::class);
         $this->accountConfirmation = $this->createMock(AccountConfirmation::class);
         $this->searchCriteriaBuilderMock = $this->createMock(SearchCriteriaBuilder::class);
 
-        $this->visitorCollectionFactory = $this->createPartialMock(
-            CollectionFactory::class,
-            ['create']
-        );
+        $this->visitorCollectionFactory = $this->getMockBuilder(CollectionFactory::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['create'])
+            ->getMock();
         $this->sessionManager = $this->createMock(SessionManagerInterface::class);
         $this->saveHandler = $this->createMock(SaveHandlerInterface::class);
         $this->authorizationMock = $this->createMock(Authorization::class);
@@ -410,7 +419,9 @@ class AccountManagementApiTest extends TestCase
         );
         $this->accountManagementMock = $this->createMock(AccountManagement::class);
 
-        $this->storeMock = $this->createMock(StoreInterface::class);
+        $this->storeMock = $this->createMock(
+            StoreInterface::class
+        );
     }
 
     /**
@@ -422,8 +433,7 @@ class AccountManagementApiTest extends TestCase
      * @param int $willThrowException
      * @return void
      * @throws AuthorizationException
-     * @throws LocalizedException
-     */
+     * @throws LocalizedException */
     #[DataProvider('customerDataProvider')]
     public function testBeforeCreateAccount(
         int $groupId,
@@ -440,12 +450,16 @@ class AccountManagementApiTest extends TestCase
             ->with('Magento_Customer::manage')
             ->willReturn($isAllowed);
 
-        $customer = new CustomerInterfaceTestHelper();
-        $customer->setId($customerId);
-        $customer->setGroupId($groupId);
-        $customer->setWebsiteId(2);
-        $customer->setStoreId(1);
-        $customer->setEmail('email@email.com');
+        // Use concrete class since setData is called in the actual code
+        $customer =  $this->createPartialMock(
+            \Magento\Customer\Model\Data\Customer::class,
+            ['getGroupId', 'getId', 'getWebsiteId', 'getStoreId', 'getEmail', 'setData']
+        );
+        $customer->method('getGroupId')->willReturn($groupId);
+        $customer->method('getId')->willReturn($customerId);
+        $customer->method('getWebsiteId')->willReturn(2);
+        $customer->method('getStoreId')->willReturn(1);
+        $customer->method('getEmail')->willReturn('email@email.com');
 
         $this->customerRepository->method('get')->willReturn($customer);
         $this->customerRepository->method('getById')->with($customerId)->willReturn($customer);

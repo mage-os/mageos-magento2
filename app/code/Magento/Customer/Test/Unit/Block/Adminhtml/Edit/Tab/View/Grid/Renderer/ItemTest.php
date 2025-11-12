@@ -101,8 +101,7 @@ class ItemTest extends TestCase
         $this->itemBlock->render($this->item);
     }
 
-    /**
-     */
+    /** */
     #[DataProvider('optionHtmlProvider')]
     public function testRender($amountOption, $expectedHtml)
     {

@@ -42,11 +42,8 @@ class MultiselectTest extends AbstractFormTestCase
      * @param string|int|bool|array $value to assign to boolean
      * @param bool $expected text output
      *
-     * @return void
-     */
+     * @return void */
     #[DataProvider('extractValueDataProvider')]
-    /**
-     */
     public function testExtractValue($value, $expected)
     {
         /** @var MockObject|Multiselect $multiselect */
@@ -58,8 +55,7 @@ class MultiselectTest extends AbstractFormTestCase
             )->getMock();
         $multiselect->expects($this->once())->method('_getRequestValue')->willReturn($value);
 
-        $request = $this->getMockBuilder(RequestInterface::class)
-            ->getMock();
+        $request = $this->createMock(RequestInterface::class);
         $actual = $multiselect->extractValue($request);
         $this->assertEquals($expected, $actual);
     }
@@ -85,11 +81,8 @@ class MultiselectTest extends AbstractFormTestCase
      * @param string|int|bool|array $value to assign to boolean
      * @param bool $expected text output
      *
-     * @return void
-     */
+     * @return void */
     #[DataProvider('compactValueDataProvider')]
-    /**
-     */
     public function testCompactValue($value, $expected)
     {
         $multiselect = $this->getClass($value);
@@ -118,11 +111,8 @@ class MultiselectTest extends AbstractFormTestCase
      * @param string|int|null|string[]|int[] $value
      * @param string $expected
      *
-     * @return void
-     */
+     * @return void */
     #[DataProvider('outputValueTextDataProvider')]
-    /**
-     */
     public function testOutputValueText($value, $expected)
     {
         $this->runOutputValueTest($value, $expected, ElementFactory::OUTPUT_FORMAT_TEXT);
@@ -134,11 +124,8 @@ class MultiselectTest extends AbstractFormTestCase
      * @param string|int|null|string[]|int[] $value
      * @param string $expected
      *
-     * @return void
-     */
+     * @return void */
     #[DataProvider('outputValueTextDataProvider')]
-    /**
-     */
     public function testOutputValueHtml($value, $expected)
     {
         $this->runOutputValueTest($value, $expected, ElementFactory::OUTPUT_FORMAT_HTML);
@@ -167,11 +154,8 @@ class MultiselectTest extends AbstractFormTestCase
      * @param string|int|null|string[]|int[] $value
      * @param string[] $expected
      *
-     * @return void
-     */
+     * @return void */
     #[DataProvider('outputValueJsonDataProvider')]
-    /**
-     */
     public function testOutputValueJson($value, $expected)
     {
         $this->runOutputValueTest($value, $expected, ElementFactory::OUTPUT_FORMAT_JSON);

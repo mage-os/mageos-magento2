@@ -20,9 +20,9 @@ use PHPUnit\Framework\TestCase;
 class TaxvatTest extends TestCase
 {
     /** Constants used in the unit tests */
-    private const CUSTOMER_ENTITY_TYPE = 'customer';
+    const CUSTOMER_ENTITY_TYPE = 'customer';
 
-    private const TAXVAT_ATTRIBUTE_CODE = 'taxvat';
+    const TAXVAT_ATTRIBUTE_CODE = 'taxvat';
 
     /**
      * @var MockObject|CustomerMetadataInterface
@@ -60,7 +60,7 @@ class TaxvatTest extends TestCase
      * @param bool $isVisible Determines whether the 'taxvat' attribute is visible or enabled
      * @param bool $expectedValue The value we expect from Taxvat::isEnabled()
      * @return void
-     */
+     * */
     #[DataProvider('isEnabledDataProvider')]
     public function testIsEnabled($isVisible, $expectedValue)
     {
@@ -97,7 +97,7 @@ class TaxvatTest extends TestCase
      * @param bool $isRequired Determines whether the 'taxvat' attribute is required
      * @param bool $expectedValue The value we expect from Taxvat::isRequired()
      * @return void
-     */
+     * */
     #[DataProvider('isRequiredDataProvider')]
     public function testIsRequired($isRequired, $expectedValue)
     {

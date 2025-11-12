@@ -74,10 +74,10 @@ class FileProcessorTest extends TestCase
             ->with(DirectoryList::MEDIA)
             ->willReturn($this->mediaDirectory);
 
-        $this->uploaderFactory = $this->createPartialMock(
-            UploaderFactory::class,
-            ['create']
-        );
+        $this->uploaderFactory = $this->getMockBuilder(UploaderFactory::class)
+            ->onlyMethods(['create'])
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->urlBuilder = $this->createMock(UrlInterface::class);
 
@@ -151,14 +151,11 @@ class FileProcessorTest extends TestCase
     }
 
     /**
-     * Test get view URL
-     *
      * @param array $params
      * @param string $filePath
      * @param string $expectedUrl
      *
-     * @return void
-     */
+     * @return void */
     #[DataProvider('getViewUrlDataProvider')]
     public function testGetViewUrlTest(
         array $params,

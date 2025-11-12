@@ -15,6 +15,7 @@ use Magento\Framework\Indexer\StateInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -24,6 +25,8 @@ use PHPUnit\Framework\TestCase;
  */
 class RecurringDataTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var ObjectManagerHelper
      */
@@ -70,10 +73,10 @@ class RecurringDataTest extends TestCase
         $this->indexer->expects($this->any())
             ->method('getState')
             ->willReturn($this->state);
-        $this->indexerRegistry = $this->createPartialMock(
-            IndexerRegistry::class,
-            ['get']
-        );
+        $this->indexerRegistry = $this->getMockBuilder(IndexerRegistry::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['get'])
+            ->getMock();
         $this->indexerRegistry->expects($this->any())
             ->method('get')
             ->with(Customer::CUSTOMER_GRID_INDEXER_ID)
@@ -93,8 +96,7 @@ class RecurringDataTest extends TestCase
      * @param bool $isTableExists
      * @param string $indexerState
      * @param int $countReindex
-     * @return void
-     */
+     * @return void */
     #[DataProvider('installDataProvider')]
     public function testInstall(bool $isTableExists, string $indexerState, int $countReindex)
     {
