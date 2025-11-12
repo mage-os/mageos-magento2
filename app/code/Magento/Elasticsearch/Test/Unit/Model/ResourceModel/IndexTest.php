@@ -32,6 +32,7 @@ use Magento\Framework\Search\Request\IndexScopeResolverInterface;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Store\Api\Data\StoreInterface;
+use Magento\Store\Model\StoreManager;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -44,7 +45,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 class IndexTest extends TestCase
 {
     use MockCreationTrait;
-    
+
     /**
      * @var Index
      */
@@ -138,7 +139,7 @@ class IndexTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->storeManager = $this->createPartialMock(\Magento\Store\Model\StoreManager::class, ['getStore']);
+        $this->storeManager = $this->createPartialMock(StoreManager::class, ['getStore']);
 
         $this->storeInterface = $this->createMock(StoreInterface::class);
 
@@ -482,6 +483,7 @@ class IndexTest extends TestCase
 
     /**
      * Test getFullCategoryProductIndexData method
+     */
     public function testGetFullCategoryProductIndexData()
     {
         $this->categoryRepository->expects($this->once())

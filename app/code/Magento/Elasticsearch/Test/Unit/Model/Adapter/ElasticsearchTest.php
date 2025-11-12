@@ -9,6 +9,7 @@ namespace Magento\Elasticsearch\Test\Unit\Model\Adapter;
 
 use Elasticsearch\Client;
 use Elasticsearch\Namespaces\IndicesNamespace;
+use Elasticsearch\ClientBuilder;
 use Exception;
 use Magento\AdvancedSearch\Model\Client\ClientInterface as ElasticsearchClient;
 use Magento\AdvancedSearch\Model\Client\ClientOptionsInterface;
@@ -110,7 +111,7 @@ class ElasticsearchTest extends TestCase
      */
     protected function setUp(): void
     {
-        if (!class_exists(\Elasticsearch\ClientBuilder::class)) {
+        if (!class_exists(ClientBuilder::class)) {
             $this->markTestSkipped('AC-6597: Skipped as Elasticsearch 8 is configured');
         }
 

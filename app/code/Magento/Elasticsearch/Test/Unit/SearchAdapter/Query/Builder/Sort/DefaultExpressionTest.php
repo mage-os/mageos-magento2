@@ -38,6 +38,14 @@ class DefaultExpressionTest extends TestCase
     }
 
     /**
+     * @param string $attributeCode
+     * @param string $direction
+     * @param bool $isSortable
+     * @param bool $isFloatType
+     * @param bool $isIntegerType
+     * @param bool $isComplexType
+     * @param array $expected
+     * @return void
      */
     #[DataProvider('buildDataProvider')]
     public function testBuild(

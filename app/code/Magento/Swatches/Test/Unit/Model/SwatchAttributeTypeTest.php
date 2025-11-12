@@ -165,7 +165,7 @@ class SwatchAttributeTypeTest extends TestCase
     protected function createAttributeMock($getDataReturns, bool $hasDataReturns = true)
     {
         $attributeMock = $this->createPartialMock(
-            \Magento\Catalog\Model\ResourceModel\Eav\Attribute::class,
+            Attribute::class,
             ['hasData', 'getData']
         );
         $attributeMock->method('hasData')->willReturn($hasDataReturns);

@@ -77,8 +77,6 @@ class ProductAttributeGridBuildObserverTest extends TestCase
             ->with('Magento_LayeredNavigation')
             ->willReturn($enabledOutput);
 
-        // getGrid() is directly implemented, no expects() needed
-
         $this->observer->execute($this->observerMock);
     }
 
@@ -93,8 +91,6 @@ class ProductAttributeGridBuildObserverTest extends TestCase
             ->method('isOutputEnabled')
             ->with('Magento_LayeredNavigation')
             ->willReturn($enabledOutput);
-
-        // getGrid() is directly implemented, no expects() needed
 
         $this->observer->execute($this->observerMock);
     }

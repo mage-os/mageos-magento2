@@ -118,18 +118,10 @@ class BuilderTest extends TestCase
             );
             $childFilter->method('getType')->willReturn('termFilter');
             $filter = $this->createPartialMock($filterMock, ['getMust', 'getType', 'getShould', 'getMustNot']);
-            $filter->expects($this->any())
-                ->method('getType')
-                ->willReturn($filterType);
-            $filter->expects($this->any())
-                ->method('getMust')
-                ->willReturn([$childFilter]);
-            $filter->expects($this->any())
-                ->method('getShould')
-                ->willReturn([$childFilter]);
-            $filter->expects($this->any())
-                ->method('getMustNot')
-                ->willReturn([$childFilter]);
+            $filter->method('getType')->willReturn($filterType);
+            $filter->method('getMust')->willReturn([$childFilter]);
+            $filter->method('getShould')->willReturn([$childFilter]);
+            $filter->method('getMustNot')->willReturn([$childFilter]);
         }
 
         $result = $this->model->build($filter, 'must');
@@ -140,31 +132,22 @@ class BuilderTest extends TestCase
      * Test build() method with negation
      * @param string $filterMock
      * @param string $filterType
+     */
     #[DataProvider('buildDataProvider')]
     public function testBuildNegation($filterMock, $filterType)
     {
-        if($filterMock=="Magento\Framework\Search\Request\Filter\BoolExpression")
-        {
+        if ($filterMock == "Magento\Framework\Search\Request\Filter\BoolExpression") {
             $childFilter = $this->createPartialMockWithReflection(
                 FilterInterface::class,
                 ['getType', 'getName', 'getMust', 'getShould', 'getMustNot']
             );
             $childFilter->method('getType')->willReturn('termFilter');
             $filter = $this->createPartialMock($filterMock, ['getType', 'getMust', 'getShould', 'getMustNot']);
-            $filter->expects($this->any())
-                ->method('getType')
-                ->willReturn($filterType);
-            $filter->expects($this->any())
-                ->method('getMust')
-                ->willReturn([$childFilter]);
-            $filter->expects($this->any())
-                ->method('getShould')
-                ->willReturn([$childFilter]);
-            $filter->expects($this->any())
-                ->method('getMustNot')
-                ->willReturn([$childFilter]);
-        }
-        else{
+            $filter->method('getType')->willReturn($filterType);
+            $filter->method('getMust')->willReturn([$childFilter]);
+            $filter->method('getShould')->willReturn([$childFilter]);
+            $filter->method('getMustNot')->willReturn([$childFilter]);
+        } else {
             $childFilter = $this->createPartialMockWithReflection(
                 FilterInterface::class,
                 ['getType', 'getName', 'getMust', 'getShould', 'getMustNot']

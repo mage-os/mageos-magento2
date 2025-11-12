@@ -46,7 +46,7 @@ class AttributeAdapterTest extends TestCase
              'usesSource', 'setUsesSource', 'getCustomAttributes', 'setCustomAttributes',
              'getCustomAttribute', 'setCustomAttribute']
         );
-        
+
         // Create stateful mock data storage
         $data = [
             'isFilterable' => false,
@@ -57,7 +57,7 @@ class AttributeAdapterTest extends TestCase
             'frontendInput' => 'text',
             'usesSource' => false
         ];
-        
+
         $this->attribute->method('getIsFilterable')->willReturnCallback(function () use (&$data) {
             return $data['isFilterable'];
         });
@@ -121,6 +121,10 @@ class AttributeAdapterTest extends TestCase
     }
 
     /**
+     * @param $isFilterable
+     * @param $isFilterableInSearch
+     * @param $expected
+     * @return void
      */
     #[DataProvider('isFilterableProvider')]
     public function testIsFilterable($isFilterable, $isFilterableInSearch, $expected)
@@ -134,6 +138,12 @@ class AttributeAdapterTest extends TestCase
     }
 
     /**
+     * @param $isSearchable
+     * @param $isVisibleInAdvancedSearch
+     * @param $isFilterable
+     * @param $isFilterableInSearch
+     * @param $expected
+     * @return void
      */
     #[DataProvider('isSearchableProvider')]
     public function testIsSearchable(
@@ -154,6 +164,8 @@ class AttributeAdapterTest extends TestCase
     }
 
     /**
+     * @param $expected
+     * @return void
      */
     #[DataProvider('isAlwaysIndexableProvider')]
     public function testIsAlwaysIndexable($expected)
@@ -165,6 +177,9 @@ class AttributeAdapterTest extends TestCase
     }
 
     /**
+     * @param $backendType
+     * @param $expected
+     * @return void
      */
     #[DataProvider('isDateTimeTypeProvider')]
     public function testIsDateTimeType($backendType, $expected)
@@ -177,6 +192,9 @@ class AttributeAdapterTest extends TestCase
     }
 
     /**
+     * @param $backendType
+     * @param $expected
+     * @return void
      */
     #[DataProvider('isFloatTypeProvider')]
     public function testIsFloatType($backendType, $expected)
@@ -189,6 +207,9 @@ class AttributeAdapterTest extends TestCase
     }
 
     /**
+     * @param $backendType
+     * @param $expected
+     * @return void
      */
     #[DataProvider('isIntegerTypeProvider')]
     public function testIsIntegerType($backendType, $expected)
@@ -201,6 +222,10 @@ class AttributeAdapterTest extends TestCase
     }
 
     /**
+     * @param $frontendInput
+     * @param $backendType
+     * @param $expected
+     * @return void
      */
     #[DataProvider('isBooleanTypeProvider')]
     public function testIsBooleanType($frontendInput, $backendType, $expected)

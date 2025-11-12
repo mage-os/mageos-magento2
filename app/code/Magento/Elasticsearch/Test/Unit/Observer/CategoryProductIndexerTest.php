@@ -97,7 +97,7 @@ class CategoryProductIndexerTest extends TestCase
         $eventMock = $this->createPartialMockWithReflection(Event::class, ['getProductIds']);
         $this->configMock->expects($this->once())->method('isElasticsearchEnabled')->willReturn(true);
 
-        $eventMock->method('getProductIds')->willReturn([]);
+        $eventMock->expects($this->once())->method('getProductIds')->willReturn([]);
         $this->observerMock->expects($this->once())->method('getEvent')->willReturn($eventMock);
 
         $this->processorMock->expects($this->never())->method('isIndexerScheduled');
@@ -116,7 +116,7 @@ class CategoryProductIndexerTest extends TestCase
         /** @var Event|MockObject $eventMock */
         $eventMock = $this->createPartialMockWithReflection(Event::class, ['getProductIds']);
         $this->configMock->expects($this->once())->method('isElasticsearchEnabled')->willReturn(false);
-        $eventMock->method('getProductIds')->willReturn([]);
+        $eventMock->expects($this->never())->method('getProductIds')->willReturn([]);
         $this->observer->execute($this->observerMock);
     }
 
@@ -130,7 +130,7 @@ class CategoryProductIndexerTest extends TestCase
         /** @var Event|MockObject $eventMock */
         $eventMock = $this->createPartialMockWithReflection(Event::class, ['getProductIds']);
         $this->configMock->expects($this->once())->method('isElasticsearchEnabled')->willReturn(true);
-        $eventMock->method('getProductIds')->willReturn([1]);
+        $eventMock->expects($this->once())->method('getProductIds')->willReturn([1]);
         $this->observerMock->expects($this->once())->method('getEvent')->willReturn($eventMock);
     }
 }

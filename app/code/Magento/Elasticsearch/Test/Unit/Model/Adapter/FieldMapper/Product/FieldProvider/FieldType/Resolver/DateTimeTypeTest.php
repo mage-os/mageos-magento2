@@ -50,6 +50,9 @@ class DateTimeTypeTest extends TestCase
     }
 
     /**
+     * @param $isDateTimeType
+     * @param $expected
+     * @return void
      */
     #[DataProvider('getFieldTypeProvider')]
     public function testGetFieldType($isDateTimeType, $expected)

@@ -37,6 +37,7 @@ use Magento\Store\Model\StoreManagerInterface;
 use Magento\Swatches\Block\Product\Renderer\Configurable;
 use Magento\Swatches\Block\Product\Renderer\Listing\Configurable as ConfigurableRenderer;
 use Magento\Swatches\Helper\Media;
+use Magento\Framework\UrlInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -353,7 +354,7 @@ class ConfigurableTest extends TestCase
         $storeManager->method('getStore')->willReturn($store);
         $appState = $this->createMock(\Magento\Framework\App\State::class);
         $resolver = $this->createMock(\Magento\Framework\View\Element\Template\File\Resolver::class);
-        $urlBuilder = $this->createStub(\Magento\Framework\UrlInterface::class);
+        $urlBuilder = $this->createStub(UrlInterface::class);
         $registry = $this->createMock(\Magento\Framework\Registry::class);
         $product = $this->createMock(\Magento\Catalog\Model\Product::class);
         $productType = $this->createMock(\Magento\Catalog\Model\Product\Type\AbstractType::class);

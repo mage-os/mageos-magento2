@@ -50,6 +50,8 @@ class DefaultResolverTest extends TestCase
     }
 
     /**
+     * @param $expected
+     * @return void
      */
     #[DataProvider('getFieldTypeProvider')]
     public function testGetFieldType($expected)

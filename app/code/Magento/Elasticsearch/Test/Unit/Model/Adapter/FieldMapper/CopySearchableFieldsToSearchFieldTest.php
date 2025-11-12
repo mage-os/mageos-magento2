@@ -20,6 +20,8 @@ class CopySearchableFieldsToSearchFieldTest extends TestCase
     /**
      * Test "copy_to" parameter should be added to searchable fields.
      *
+     * @param array $mappingBefore
+     * @param array $mappingAfter
      */
     #[DataProvider('processDataProvider')]
     public function testProcess(array $mappingBefore, array $mappingAfter)

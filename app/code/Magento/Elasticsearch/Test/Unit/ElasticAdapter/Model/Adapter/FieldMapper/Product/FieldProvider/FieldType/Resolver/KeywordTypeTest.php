@@ -51,6 +51,13 @@ class KeywordTypeTest extends TestCase
     }
 
     /**
+     * @param bool $isComplexType
+     * @param bool $isSearchable
+     * @param bool $isAlwaysIndexable
+     * @param bool $isFilterable
+     * @param bool $isBoolean
+     * @param string $expected
+     * @return void
      */
     #[DataProvider('getFieldTypeProvider')]
     public function testGetFieldType(

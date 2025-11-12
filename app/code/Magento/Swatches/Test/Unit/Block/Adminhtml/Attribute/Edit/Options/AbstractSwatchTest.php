@@ -21,9 +21,9 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\Validator\UniversalFactory;
 use Magento\Swatches\Block\Adminhtml\Attribute\Edit\Options\AbstractSwatch;
 use Magento\Swatches\Helper\Media;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Backend swatch abstract block
@@ -116,112 +116,104 @@ class AbstractSwatchTest extends TestCase
                 []
             ]);
         }
-            $this->connectionMock = $this->createStub(AdapterInterface::class);
+        $this->connectionMock = $this->createMock(AdapterInterface::class);
     }
 
     /**
-     * Test getStoreOptionValues with cached data
-     *
      * @return void
      */
-    public function testGetStoreOptionValuesWithCachedData(): void
+    #[DataProvider('dataForGetStoreOptionValues')]
+    public function testGetStoreOptionValues($values): void
     {
-        $cachedValues = [
-            14 => 'Blue',
-            15 => 'Black'
-        ];
+        $this->block->expects($this->once())->method('getData')->with('store_option_values_1')->willReturn($values);
+        if ($values === null) {
+            $objectManager = new ObjectManager($this);
 
-        $this->block->expects($this->once())
-            ->method('getData')
-            ->with('store_option_values_1')
-            ->willReturn($cachedValues);
+            $option = $this->createPartialMockWithReflection(
+                Option::class,
+                ['getId', 'getValue', 'getLabel']
+            );
 
+            $attrOptionCollectionMock = $objectManager->getCollectionMock(
+                Collection::class,
+                [$option, $option]
+            );
+
+            $this->attrOptionCollectionFactoryMock
+                ->expects($this->once())
+                ->method('create')
+                ->willReturn($attrOptionCollectionMock);
+
+            $attribute = $this->createPartialMockWithReflection(
+                Attribute::class,
+                ['getId']
+            );
+            $attribute->expects($this->once())->method('getId')->willReturn(23);
+
+            $this->registryMock
+                ->expects($this->once())
+                ->method('registry')
+                ->with('entity_attribute')
+                ->willReturn($attribute);
+
+            $attrOptionCollectionMock
+                ->expects($this->once())
+                ->method('setAttributeFilter')
+                ->with(23)
+                ->willReturnSelf();
+
+            $this->connectionMock
+                ->expects($this->any())
+                ->method('quoteInto')
+                ->willReturn('quoted_string_with_value');
+
+            $attrOptionCollectionMock
+                ->expects($this->any())
+                ->method('getConnection')
+                ->willReturn($this->connectionMock);
+
+            $zendDbSelectMock = $this->createMock(Select::class);
+            $attrOptionCollectionMock->expects($this->any())->method('getSelect')->willReturn($zendDbSelectMock);
+            $zendDbSelectMock->expects($this->any())->method('joinLeft')->willReturnSelf();
+
+            $option
+                ->method('getId')
+                ->willReturnOnConsecutiveCalls(14, 14, 15, 15);
+            $option
+                ->method('getLabel')
+                ->willReturnOnConsecutiveCalls('#0000FF', '#000000');
+            $option
+                ->method('getValue')
+                ->willReturnOnConsecutiveCalls('Blue', 'Black');
+
+            $values = [
+                14 => 'Blue',
+                'swatch' => [
+                    14 => '#0000FF',
+                    15 => '#000000'
+                ],
+                15 =>'Black'
+            ];
+        }
         $result = $this->block->getStoreOptionValues(1);
-        $this->assertEquals($cachedValues, $result);
+        $this->assertEquals($result, $values);
     }
 
     /**
-     * Test getStoreOptionValues with null data (database fetch scenario)
-     *
-     * @return void
+     * @return array
      */
-    public function testGetStoreOptionValuesWithNullData(): void
+    public static function dataForGetStoreOptionValues(): array
     {
-        $this->block->expects($this->once())
-            ->method('getData')
-            ->with('store_option_values_1')
-            ->willReturn(null);
-
-        $option = $this->createPartialMockWithReflection(\stdClass::class, ['getId', 'getValue', 'getLabel']);
-        $option->method('getId')->willReturn(14);
-        $option->method('getValue')->willReturn('Blue');
-        $option->method('getLabel')->willReturn('#0000FF');
-
-        $attrOptionCollectionMock = $this->createPartialMock(
-            Collection::class,
+        return [
             [
-                'addFieldToFilter',
-                'getIterator',
-                'setAttributeFilter',
-                'getConnection',
-                'getTable',
-                'load',
-                'getSelect'
-            ]
-        );
-
-        $attrOptionCollectionMock->method('getIterator')->willReturn(new \ArrayIterator([$option]));
-
-        $this->attrOptionCollectionFactoryMock
-            ->expects($this->once())
-            ->method('create')
-            ->willReturn($attrOptionCollectionMock);
-
-        $attribute = $this->createPartialMockWithReflection(\stdClass::class, ['getId']);
-        $attribute->method('getId')->willReturn(23);
-
-        $this->registryMock
-            ->expects($this->once())
-            ->method('registry')
-            ->with('entity_attribute')
-            ->willReturn($attribute);
-
-        $attrOptionCollectionMock
-            ->expects($this->once())
-            ->method('setAttributeFilter')
-            ->with(23)
-            ->willReturnSelf();
-
-        $attrOptionCollectionMock
-            ->expects($this->once())
-            ->method('getConnection')
-            ->willReturn($this->connectionMock);
-
-        $attrOptionCollectionMock
-            ->expects($this->atLeastOnce())
-            ->method('getTable')
-            ->willReturnMap([
-                ['eav_attribute_option_value', 'eav_attribute_option_value'],
-                ['eav_attribute_option_swatch', 'eav_attribute_option_swatch']
-            ]);
-
-        $attrOptionCollectionMock
-            ->expects($this->once())
-            ->method('load')
-            ->willReturnSelf();
-
-        $zendDbSelectMock = $this->createMock(Select::class);
-        $attrOptionCollectionMock->expects($this->atLeastOnce())->method('getSelect')->willReturn($zendDbSelectMock);
-        $zendDbSelectMock->expects($this->atLeastOnce())->method('joinLeft')->willReturnSelf();
-
-        $expectedValues = [
-            14 => 'Blue',
-            'swatch' => [
-                14 => '#0000FF'
+                [
+                    14 => 'Blue',
+                    15 => 'Black'
+                ]
+            ],
+            [
+                null
             ]
         ];
-
-        $result = $this->block->getStoreOptionValues(1);
-        $this->assertEquals($expectedValues, $result);
     }
 }

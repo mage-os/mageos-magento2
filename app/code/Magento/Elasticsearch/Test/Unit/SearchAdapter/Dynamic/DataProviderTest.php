@@ -27,6 +27,7 @@ use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Store\Model\StoreManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -122,7 +123,7 @@ class DataProviderTest extends TestCase
         $this->range = $this->createPartialMock(Range::class, ['getPriceRange']);
         $this->intervalFactory = $this->createMock(IntervalFactory::class);
         $this->clientConfig = $this->createPartialMock(Config::class, ['getIndexPrefix', 'getEntityType']);
-        $this->storeManager = $this->createPartialMock(\Magento\Store\Model\StoreManager::class, ['getStore']);
+        $this->storeManager = $this->createPartialMock(StoreManager::class, ['getStore']);
         $this->customerSession = $this->createPartialMock(Session::class, ['getCustomerGroupId']);
         $this->entityStorage = $this->createPartialMock(EntityStorage::class, ['getSource']);
         $this->entityStorage->expects($this->any())
@@ -244,9 +245,10 @@ class DataProviderTest extends TestCase
         $this->queryContainer->expects($this->once())
             ->method('getQuery')
             ->willReturn([]);
-        
-        // Set empty results to simulate no data
-        $this->clientMock->method('query')->willReturn([]);
+
+        $this->clientMock->expects($this->once())
+            ->method('query')
+            ->willThrowException(new \Exception());
 
         $result = $this->model->getAggregations($this->entityStorage);
         $this->assertIsArray($result);
@@ -344,9 +346,10 @@ class DataProviderTest extends TestCase
         $this->queryContainer->expects($this->once())
             ->method('getQuery')
             ->willReturn([]);
-        
-        // Set empty results to simulate no data
-        $this->clientMock->method('query')->willReturn([]);
+
+        $this->clientMock->expects($this->once())
+            ->method('query')
+            ->willThrowException(new \Exception());
 
         $result = $this->model->getAggregation($bucket, [$dimension], 10, $this->entityStorage);
         $this->assertIsArray($result);

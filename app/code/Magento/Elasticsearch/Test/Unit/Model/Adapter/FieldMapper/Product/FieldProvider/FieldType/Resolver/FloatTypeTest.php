@@ -50,6 +50,9 @@ class FloatTypeTest extends TestCase
     }
 
     /**
+     * @param $isFloatType
+     * @param $expected
+     * @return void
      */
     #[DataProvider('getFieldTypeProvider')]
     public function testGetFieldType($isFloatType, $expected)

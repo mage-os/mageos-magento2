@@ -61,6 +61,10 @@ class PriceTest extends TestCase
     }
 
     /**
+     * @param $attributeCode
+     * @param $context
+     * @param $expected
+     * @return void
      */
     #[DataProvider('getFieldNameProvider')]
     public function testGetFieldName($attributeCode, $context, $expected)

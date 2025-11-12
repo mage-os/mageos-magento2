@@ -37,6 +37,9 @@ class ConverterTest extends TestCase
     }
 
     /**
+     * @param $internalType
+     * @param $expected
+     * @return void
      */
     #[DataProvider('convertProvider')]
     public function testConvert($internalType, $expected)

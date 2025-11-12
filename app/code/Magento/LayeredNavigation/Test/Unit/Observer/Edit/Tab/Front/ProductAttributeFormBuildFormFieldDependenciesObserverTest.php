@@ -61,8 +61,6 @@ class ProductAttributeFormBuildFormFieldDependenciesObserverTest extends TestCas
             ->with('Magento_LayeredNavigation')
             ->willReturn(false);
 
-        // getDependencies() is directly implemented, no expects() needed
-
         $this->observer->execute($this->event);
     }
 
@@ -83,7 +81,6 @@ class ProductAttributeFormBuildFormFieldDependenciesObserverTest extends TestCas
         $dependencies->expects($this->once())
             ->method('addFieldDependence')
             ->with('filterable_in_search', 'searchable', '1');
-        // getDependencies() is directly implemented, no expects() needed
 
         $this->observer->execute($this->event);
     }

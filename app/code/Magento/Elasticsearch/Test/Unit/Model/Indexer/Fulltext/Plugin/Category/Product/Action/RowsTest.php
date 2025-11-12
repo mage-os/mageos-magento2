@@ -19,6 +19,7 @@ use Magento\Elasticsearch\Model\Indexer\Fulltext\Plugin\Category\Product\Action\
 use Magento\Catalog\Model\Indexer\Category\Product\Action\Rows as ActionRows;
 use Magento\Framework\App\ResourceConnection;
 use Magento\CatalogSearch\Model\Indexer\Fulltext as FulltextIndexer;
+use Magento\Store\Model\StoreManager;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -63,7 +64,7 @@ class RowsTest extends TestCase
     {
         parent::setUp();
         $this->indexerRegistryMock = $this->createMock(IndexerRegistry::class);
-        $this->storeManagerMock = $this->createPartialMock(\Magento\Store\Model\StoreManager::class, ['getStores']);
+        $this->storeManagerMock = $this->createPartialMock(StoreManager::class, ['getStores']);
         $this->connectionMock = $this->createMock(AdapterInterface::class);
         $this->selectMock = $this->createMock(Select::class);
         $this->connectionMock->expects($this->any())->method('select')->willReturn($this->selectMock);

@@ -78,8 +78,6 @@ class ProductAttributeFormBuildFrontTabObserverTest extends TestCase
             ->with('Magento_LayeredNavigation')
             ->willReturn(false);
 
-        // getForm() is directly implemented, no expects() needed
-
         $this->observer->execute($this->eventObserverMock);
     }
 
@@ -100,8 +98,6 @@ class ProductAttributeFormBuildFrontTabObserverTest extends TestCase
             ->method('getElement')
             ->with('front_fieldset')
             ->willReturn($fieldsetMock);
-
-        // getForm() is directly implemented, no expects() needed
 
         $this->observer->execute($this->eventObserverMock);
     }

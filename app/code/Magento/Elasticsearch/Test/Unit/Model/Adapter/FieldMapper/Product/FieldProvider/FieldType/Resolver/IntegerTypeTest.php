@@ -50,6 +50,11 @@ class IntegerTypeTest extends TestCase
     }
 
     /**
+     * @param string $attributeCode
+     * @param bool $isIntegerType
+     * @param bool $isBooleanType
+     * @param string|null $expected
+     * @return void
      */
     #[DataProvider('getFieldTypeProvider')]
     public function testGetFieldType(

@@ -61,7 +61,9 @@ class AddSwatchAttributeTypeObserverTest extends TestCase
         $response->method('getTypes')->willReturn($exp['outputArray']);
 
         $eventMock = $this->createPartialMockWithReflection(Event::class, ['getResponse']);
-        $eventMock->method('getResponse')->willReturn($response);
+        $eventMock->expects($this->exactly($exp['methods_count']))
+            ->method('getResponse')
+            ->willReturn($response);
 
         $this->eventObserverMock->method('getEvent')->willReturn($eventMock);
 

@@ -38,6 +38,9 @@ class SpecialAttributeTest extends TestCase
     }
 
     /**
+     * @param $attributeCode
+     * @param $expected
+     * @return void
      */
     #[DataProvider('getFieldNameProvider')]
     public function testGetFieldName($attributeCode, $expected)
