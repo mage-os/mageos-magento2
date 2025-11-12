@@ -89,19 +89,19 @@ class ItemTest extends TestCase
         DataFixture(InvoiceFixture::class, ['order_id' => '$order.id$'], 'invoice'),
         DataFixture(
             ShipmentFixture::class,
-            ['order_id' => '$order.id$', 'items' => [['product_id' => '$product.id$', 'qty' => 1]]]
+            ['order_id' => '$order.id$', 'items' => [['sku' => '$product.sku$', 'qty' => 1]]]
         ),
         DataFixture(
             CreditmemoFixture::class,
-            ['order_id' => '$order.id$', 'items' => [['product_id' => '$product.id$', 'qty' => 2]]]
+            ['order_id' => '$order.id$', 'items' => [['sku' => '$product.sku$', 'qty' => 2]]]
         ),
         DataFixture(
             ShipmentFixture::class,
-            ['order_id' => '$order.id$', 'items' => [['product_id' => '$product.id$', 'qty' => 1]]]
+            ['order_id' => '$order.id$', 'items' => [['sku' => '$product.sku$', 'qty' => 1]]]
         ),
         DataFixture(
             CreditmemoFixture::class,
-            ['order_id' => '$order.id$', 'items' => [['product_id' => '$product.id$', 'qty' => 2]]]
+            ['order_id' => '$order.id$', 'items' => [['sku' => '$product.sku$', 'qty' => 2]]]
         )
     ]
     public function testGetSimpleQtyToShip()
