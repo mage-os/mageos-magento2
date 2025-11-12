@@ -17,13 +17,13 @@ namespace Magento\Customer\Model;
  */
 class Group extends \Magento\Framework\Model\AbstractModel
 {
-    public const NOT_LOGGED_IN_ID = 0;
+    const NOT_LOGGED_IN_ID = 0;
 
-    public const CUST_GROUP_ALL = 32000;
+    const CUST_GROUP_ALL = 32000;
 
-    public const ENTITY = 'customer_group';
+    const ENTITY = 'customer_group';
 
-    public const GROUP_CODE_MAX_LENGTH = 32;
+    const GROUP_CODE_MAX_LENGTH = 32;
 
     /**
      * Prefix of model events names
@@ -92,8 +92,6 @@ class Group extends \Magento\Framework\Model\AbstractModel
     }
 
     /**
-     * Initialize model
-     *
      * @return void
      */
     protected function _construct()
@@ -174,7 +172,7 @@ class Group extends \Magento\Framework\Model\AbstractModel
      */
     protected function _prepareData()
     {
-        $this->setCode(mb_substr($this->getCode(), 0, self::GROUP_CODE_MAX_LENGTH));
+        $this->setCode(substr($this->getCode(), 0, self::GROUP_CODE_MAX_LENGTH));
         return $this;
     }
 }
