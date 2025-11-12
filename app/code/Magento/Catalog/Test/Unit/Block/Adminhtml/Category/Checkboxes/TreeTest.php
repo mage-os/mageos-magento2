@@ -39,6 +39,8 @@ class TreeTest extends TestCase
 
     /**
      * Provide a stub collection that supports chaining and iteration.
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     private function createCategoryCollectionStub(array $paths)
     {
@@ -175,6 +177,10 @@ class TreeTest extends TestCase
         $this->assertSame([], $block->getCategoryIds());
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public function testSetCategoryIdsWithScalarCastsToIntArrayAndFiltersCollection()
     {
         $block = $this->buildBlockMock();
