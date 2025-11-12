@@ -124,6 +124,6 @@ class ItemTest extends TestCase
 
         // Assert getSimpleQtyToShip value
         // Qty to ship = Qty ordered (10) - Qty shipped (2) - Qty refunded (4) = 4
-        $this->assertEquals(4, $orderItem->getSimpleQtyToShip(), 'Simple qty to ship should be 3');
+        $this->assertEquals(4, $orderItem->getSimpleQtyToShip(), 'Simple qty to ship should be 4');
     }
 }

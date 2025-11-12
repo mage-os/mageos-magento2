@@ -105,9 +105,7 @@ class ItemTest extends TestCase
             ->willReturnSelf();
 
         // Create a mock factory for this specific test
-        $mockFactory = $this->getMockBuilder(OrderFactoryStub::class)
-            ->onlyMethods(['create'])
-            ->getMock();
+        $mockFactory = $this->createPartialMock(SalesOrderFactory::class, ['create']);
         $mockFactory->expects($this->once())
             ->method('create')
             ->willReturn($order);
