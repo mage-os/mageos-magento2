@@ -82,7 +82,6 @@ class CatalogRuleProductPriceRowSizeEstimatorTest extends TestCase
     public function testEstimateRowSizeWithSingleWebsiteAndGroup(): void
     {
         $customerGroupCount = 1;
-        $websiteCount = 1;
 
         $this->customerGroupCollectionMock->expects($this->once())
             ->method('getSize')
