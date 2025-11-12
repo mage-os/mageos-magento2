@@ -71,6 +71,10 @@ class TreeTest extends TestCase
             {
                 return $this;
             }
+            /**
+             * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+             * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+             */
             public function addAttributeToFilter(...$args)
             {
                 $this->lastFilter = $args;
@@ -185,6 +189,10 @@ class TreeTest extends TestCase
             {
                 return $this;
             }
+            /**
+             * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+             * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+             */
             public function addAttributeToFilter(...$args)
             {
                 $this->lastFilter = $args;
