@@ -10,7 +10,6 @@ namespace Magento\CatalogImportExport\Test\Unit\Model\Import\Product\Validator;
 use Magento\CatalogImportExport\Model\Import\Product;
 use Magento\CatalogImportExport\Model\Import\Product\Validator\Weight;
 use Magento\ImportExport\Model\Import;
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class WeightTest extends TestCase
@@ -38,8 +37,8 @@ class WeightTest extends TestCase
     /**
      * @param bool $expectedResult
      * @param array $value
+     * @dataProvider isValidDataProvider
      */
-    #[DataProvider('isValidDataProvider')]
     public function testIsValid($expectedResult, $value)
     {
         $result = $this->weight->isValid($value);

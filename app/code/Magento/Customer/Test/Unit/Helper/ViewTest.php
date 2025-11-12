@@ -15,7 +15,6 @@ use Magento\Framework\App\Helper\Context;
 use Magento\Framework\Escaper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use PHPUnit\Framework\Attributes\DataProvider;
 
 class ViewTest extends TestCase
 {
@@ -38,9 +37,9 @@ class ViewTest extends TestCase
         $this->context = $this->getMockBuilder(Context::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->customerMetadataService = $this->createMock(CustomerMetadataInterface::class);
+        $this->customerMetadataService = $this->getMockForAbstractClass(CustomerMetadataInterface::class);
 
-        $attributeMetadata = $this->createMock(AttributeMetadataInterface::class);
+        $attributeMetadata = $this->getMockForAbstractClass(AttributeMetadataInterface::class);
         $attributeMetadata->expects($this->any())->method('isVisible')->willReturn(true);
         $this->customerMetadataService->expects($this->any())
             ->method('getAttributeMetadata')
@@ -51,9 +50,8 @@ class ViewTest extends TestCase
     }
 
     /**
-     * Test get customer name
+     * @dataProvider getCustomerServiceDataProvider
      */
-    #[DataProvider('getCustomerServiceDataProvider')]
     public function testGetCustomerName($prefix, $firstName, $middleName, $lastName, $suffix, $result)
     {
         $customerData = $this->createMock(CustomerInterface::class);

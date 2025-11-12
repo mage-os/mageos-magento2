@@ -24,7 +24,6 @@ use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -75,8 +74,8 @@ class AddressTest extends TestCase
     /**
      * @param int $numLines
      * @param int $expectedNumLines
+     * @dataProvider providerGetStreetLines
      */
-    #[DataProvider('providerGetStreetLines')]
     public function testGetStreetLines($numLines, $expectedNumLines)
     {
         $attributeMock = $this->getMockBuilder(
@@ -118,9 +117,8 @@ class AddressTest extends TestCase
     }
 
     /**
-          */
-
-     #[DataProvider('getRendererDataProvider')]
+     * @dataProvider getRendererDataProvider
+     */
     public function testGetRenderer($renderer, $blockFactory, $result)
     {
         if ($renderer!="some_test_block") {
@@ -201,7 +199,8 @@ class AddressTest extends TestCase
         $attributeCode = 'attr_code';
         $attributeClass = 'Attribute_Class';
 
-        $attributeMock = $this->createMock(AttributeMetadataInterface::class);
+        $attributeMock = $this->getMockBuilder(AttributeMetadataInterface::class)
+            ->getMockForAbstractClass();
         $attributeMock->expects($this->once())
             ->method('getFrontendClass')
             ->willReturn($attributeClass);
@@ -228,9 +227,8 @@ class AddressTest extends TestCase
      * @param $origStreets
      * @param $toCount
      * @param $result
-          */
-
-     #[DataProvider('getConvertStreetLinesDataProvider')]
+     * @dataProvider getConvertStreetLinesDataProvider
+     */
     public function testConvertStreetLines($origStreets, $toCount, $result)
     {
         $this->assertEquals($result, $this->helper->convertStreetLines($origStreets, $toCount));
@@ -250,9 +248,8 @@ class AddressTest extends TestCase
     /**
      * @param $store
      * @param $result
-          */
-
-     #[DataProvider('getVatValidationEnabledDataProvider')]
+     * @dataProvider getVatValidationEnabledDataProvider
+     */
     public function testIsVatValidationEnabled($store, $result)
     {
         $this->scopeConfig->expects($this->once())
@@ -281,9 +278,8 @@ class AddressTest extends TestCase
     /**
      * @param $store
      * @param $result
-          */
-
-     #[DataProvider('getValidateOnEachTransactionDataProvider')]
+     * @dataProvider getValidateOnEachTransactionDataProvider
+     */
     public function testHasValidateOnEachTransaction($store, $result)
     {
         $this->scopeConfig->expects($this->once())
@@ -312,9 +308,8 @@ class AddressTest extends TestCase
     /**
      * @param $store
      * @param $result
-          */
-
-     #[DataProvider('getTaxCalculationAddressTypeDataProvider')]
+     * @dataProvider getTaxCalculationAddressTypeDataProvider
+     */
     public function testGetTaxCalculationAddressType($store, $result)
     {
         $this->scopeConfig->expects($this->once())
@@ -367,12 +362,12 @@ class AddressTest extends TestCase
     /**
      * @param string $code
      * @param RendererInterface|null $result
-          */
-
-     #[DataProvider('getFormatTypeRendererDataProvider')]
+     * @dataProvider getFormatTypeRendererDataProvider
+     */
     public function testGetFormatTypeRenderer($code, $result)
     {
-        if (is_callable($result)) {
+        if(is_callable($result))
+        {
             $result = $result($this);
         }
         $this->addressConfig->expects($this->once())
@@ -386,7 +381,9 @@ class AddressTest extends TestCase
 
     protected function getMockForRendererClass()
     {
-        $renderer = $this->createMock(RendererInterface::class);
+        $renderer = $this->getMockBuilder(RendererInterface::class)
+            ->disableOriginalConstructor()
+            ->getMockForAbstractClass();
         return $renderer;
     }
 
@@ -405,13 +402,14 @@ class AddressTest extends TestCase
     /**
      * @param string $code
      * @param array $result
-          */
-
-     #[DataProvider('getFormatDataProvider')]
+     * @dataProvider getFormatDataProvider
+     */
     public function testGetFormat($code, $result)
     {
         if ($result) {
-            $renderer = $this->createMock(RendererInterface::class);
+            $renderer = $this->getMockBuilder(RendererInterface::class)
+                ->disableOriginalConstructor()
+                ->getMockForAbstractClass();
             $renderer->expects($this->once())
                 ->method('getFormatArray')
                 ->willReturn(['key' => 'value']);
@@ -440,14 +438,14 @@ class AddressTest extends TestCase
     /**
      * @param string $attributeCode
      * @param bool $isMetadataExists
-          */
-
-     #[DataProvider('isAttributeVisibleDataProvider')]
+     * @dataProvider isAttributeVisibleDataProvider
+     */
     public function testIsAttributeVisible($attributeCode, $isMetadataExists)
     {
         $attributeMetadata = null;
         if ($isMetadataExists) {
-            $attributeMetadata = $this->createMock(AttributeMetadataInterface::class);
+            $attributeMetadata = $this->getMockBuilder(AttributeMetadataInterface::class)
+                ->getMockForAbstractClass();
             $attributeMetadata->expects($this->once())
                 ->method('isVisible')
                 ->willReturn(true);

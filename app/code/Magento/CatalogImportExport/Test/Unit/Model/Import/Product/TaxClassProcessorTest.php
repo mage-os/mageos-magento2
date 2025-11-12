@@ -81,7 +81,13 @@ class TaxClassProcessorTest extends TestCase
                 $taxClassFactory
             );
 
-        $this->product = $this->createMock(AbstractType::class);
+        $this->product =
+            $this->getMockForAbstractClass(
+                AbstractType::class,
+                [],
+                '',
+                false
+            );
     }
 
     public function testUpsertTaxClassExist()

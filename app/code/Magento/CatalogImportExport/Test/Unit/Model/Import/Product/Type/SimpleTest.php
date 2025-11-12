@@ -18,9 +18,7 @@ use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Adapter\Pdo\Mysql;
 use Magento\Framework\DB\Select;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -30,8 +28,6 @@ use PHPUnit\Framework\TestCase;
  */
 class SimpleTest extends TestCase
 {
-    use MockCreationTrait;
-
     /**
      * @var Product|MockObject
      */
@@ -68,23 +64,25 @@ class SimpleTest extends TestCase
         $attrSetColFactory = $this->createMock(AttributeSetCollectionFactory::class);
         $attrColFactory = $this->createMock(AttributeCollectionFactory::class);
         $attrCollection = $this->createMock(AttributeCollection::class);
-        $attribute = $this->createPartialMockWithReflection(
-            Attribute::class,
-            [
-                'getFrontendLabel',
-                'getAttributeCode',
-                'getId',
-                'getIsRequired',
-                'getIsUnique',
-                'isStatic',
-                'getDefaultValue',
-                'usesSource',
-                'getFrontendInput',
-                'getIsVisible',
-                'getApplyTo',
-                'getIsGlobal',
-            ]
-        );
+        $attribute = $this->getMockBuilder(Attribute::class)
+            ->addMethods(['getFrontendLabel'])
+            ->onlyMethods(
+                [
+                    'getAttributeCode',
+                    'getId',
+                    'getIsRequired',
+                    'getIsUnique',
+                    'isStatic',
+                    'getDefaultValue',
+                    'usesSource',
+                    'getFrontendInput',
+                    'getIsVisible',
+                    'getApplyTo',
+                    'getIsGlobal',
+                ]
+            )
+            ->disableOriginalConstructor()
+            ->getMock();
         $attribute->method('getIsVisible')
             ->willReturn(true);
         $attribute->method('getIsGlobal')
@@ -162,10 +160,11 @@ class SimpleTest extends TestCase
         $attrCollection->method('getItems')
             ->willReturnOnConsecutiveCalls([$attribute1, $attribute2, $attribute3], []);
 
-        $this->connection = $this->createPartialMockWithReflection(
-            Mysql::class,
-            ['joinLeft', 'select', 'fetchAll', 'fetchPairs', 'insertOnDuplicate', 'delete', 'quoteInto']
-        );
+        $this->connection = $this->getMockBuilder(Mysql::class)
+            ->addMethods(['joinLeft'])
+            ->onlyMethods(['select', 'fetchAll', 'fetchPairs', 'insertOnDuplicate', 'delete', 'quoteInto'])
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->select = $this->createPartialMock(
             Select::class,
             [
@@ -233,9 +232,8 @@ class SimpleTest extends TestCase
     }
 
     /**
-     * Test add attribute option
+     * @dataProvider addAttributeOptionDataProvider
      */
-    #[DataProvider('addAttributeOptionDataProvider')]
     public function testAddAttributeOption($code, $optionKey, $optionValue, $initAttributes, $resultAttributes)
     {
         $this->setPropertyValue($this->simpleType, '_attributes', $initAttributes);

@@ -57,10 +57,8 @@ use Magento\ImportExport\Model\Import;
 use Magento\ImportExport\Model\Import\ErrorProcessing\ProcessingError;
 use Magento\ImportExport\Model\Import\ErrorProcessing\ProcessingErrorAggregatorInterface;
 use Magento\ImportExport\Model\ResourceModel\Helper;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\ImportExport\Test\Unit\Model\Import\AbstractImportTestCase;
 use phpseclib3\Exception\NoKeyLoadedException;
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 
@@ -74,8 +72,6 @@ use Psr\Log\LoggerInterface;
  */
 class ProductTest extends AbstractImportTestCase
 {
-    use MockCreationTrait;
-
     private const MEDIA_DIRECTORY = 'media/import';
 
     private const ENTITY_TYPE_ID = 1;
@@ -477,7 +473,9 @@ class ProductTest extends AbstractImportTestCase
                 ->disableOriginalConstructor()
                 ->getMock();
 
-        $this->scopeConfig = $this->createMock(ScopeConfigInterface::class);
+        $this->scopeConfig = $this->getMockBuilder(ScopeConfigInterface::class)
+            ->disableOriginalConstructor()
+            ->getMockForAbstractClass();
 
         $this->productUrl = $this->getMockBuilder(Url::class)
             ->disableOriginalConstructor()
@@ -591,7 +589,7 @@ class ProductTest extends AbstractImportTestCase
         $type->expects($this->any())->method('getEntityTypeId')->willReturn(self::ENTITY_TYPE_ID);
         $this->config->expects($this->any())->method('getEntityType')->with(self::ENTITY_TYPE_CODE)->willReturn($type);
 
-        $this->_connection = $this->createMock(AdapterInterface::class);
+        $this->_connection = $this->getMockForAbstractClass(AdapterInterface::class);
         $this->select = $this->getMockBuilder(Select::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['from', 'where', 'joinLeft'])
@@ -721,7 +719,10 @@ class ProductTest extends AbstractImportTestCase
         $this->_connection->expects($this->once())
             ->method('insertOnDuplicate')
             ->with($testTable, $tableData, ['value']);
-        $attribute = $this->createPartialMock(AbstractAttribute::class, ['getId']);
+        $attribute = $this->getMockBuilder(AbstractAttribute::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getId'])
+            ->getMockForAbstractClass();
         $attribute->expects($this->once())->method('getId')->willReturn(1);
         $resource = $this->getMockBuilder(ResourceModel::class)
             ->disableOriginalConstructor()
@@ -742,8 +743,8 @@ class ProductTest extends AbstractImportTestCase
 
     /**
      * @return void
+     * @dataProvider isAttributeValidAssertAttrValidDataProvider
      */
-    #[DataProvider('isAttributeValidAssertAttrValidDataProvider')]
     public function testIsAttributeValidAssertAttrValid($attrParams, $rowData): void
     {
         $attrCode = 'code';
@@ -759,8 +760,8 @@ class ProductTest extends AbstractImportTestCase
 
     /**
      * @return void
+     * @dataProvider isAttributeValidAssertAttrInvalidDataProvider
      */
-    #[DataProvider('isAttributeValidAssertAttrInvalidDataProvider')]
     public function testIsAttributeValidAssertAttrInvalid($attrParams, $rowData): void
     {
         $attrCode = 'code';
@@ -871,7 +872,9 @@ class ProductTest extends AbstractImportTestCase
         $this->setPropertyValue($this->importProduct, '_mediaGalleryAttributeId', null);
 
         $expectedId = '100';
-        $attribute = $this->createPartialMock(AbstractAttribute::class, ['getId']);
+        $attribute = $this->getMockBuilder(AbstractAttribute::class)->disableOriginalConstructor()
+            ->onlyMethods(['getId'])
+            ->getMockForAbstractClass();
         $attribute->expects($this->once())->method('getId')->willReturn($expectedId);
         $resource = $this->getMockBuilder(ResourceModel::class)
             ->disableOriginalConstructor()
@@ -886,8 +889,8 @@ class ProductTest extends AbstractImportTestCase
 
     /**
      * @return void
+     * @dataProvider getRowScopeDataProvider
      */
-    #[DataProvider('getRowScopeDataProvider')]
     public function testGetRowScope($rowData, $expectedResult): void
     {
         $result = $this->importProduct->getRowScope($rowData);
@@ -908,8 +911,8 @@ class ProductTest extends AbstractImportTestCase
 
     /**
      * @return void
+     * @dataProvider validateRowDataProvider
      */
-    #[DataProvider('validateRowDataProvider')]
     public function testValidateRow($rowScope, $oldSku, $expectedResult, $behaviour = Import::BEHAVIOR_DELETE): void
     {
         $importProduct = $this->getMockBuilder(Product::class)->disableOriginalConstructor()
@@ -1043,8 +1046,8 @@ class ProductTest extends AbstractImportTestCase
      * Cover getStoreIdByCode().
      *
      * @return void
+     * @dataProvider getStoreIdByCodeDataProvider
      */
-    #[DataProvider('getStoreIdByCodeDataProvider')]
     public function testGetStoreIdByCode($storeCode, $expectedResult): void
     {
         $this->storeResolver
@@ -1109,8 +1112,8 @@ class ProductTest extends AbstractImportTestCase
 
     /**
      * @return void
+     * @dataProvider validateRowCheckSpecifiedSkuDataProvider
      */
-    #[DataProvider('validateRowCheckSpecifiedSkuDataProvider')]
     public function testValidateRowCheckSpecifiedSku($sku): void
     {
         $importProduct = $this->createModelMockWithErrorAggregator(
@@ -1271,8 +1274,8 @@ class ProductTest extends AbstractImportTestCase
      * @param string $error
      *
      * @return void
+     * @dataProvider validateRowValidateNewProductTypeAddRowErrorCallDataProvider
      */
-    #[DataProvider('validateRowValidateNewProductTypeAddRowErrorCallDataProvider')]
     public function testValidateRowValidateNewProductTypeAddRowErrorCall(
         $colType,
         $productTypeModelsColType,
@@ -1466,8 +1469,8 @@ class ProductTest extends AbstractImportTestCase
 
     /**
      * @return void
+     * @dataProvider getImagesFromRowDataProvider
      */
-    #[DataProvider('getImagesFromRowDataProvider')]
     public function testGetImagesFromRow($rowData, $expectedResult): void
     {
         $this->assertEquals(
@@ -1516,13 +1519,17 @@ class ProductTest extends AbstractImportTestCase
      */
     public function testParseAttributesWithWrappedValuesWillReturnsLowercasedAttributeCodes(): void
     {
-        $attribute1 = $this->createPartialMock(AbstractAttribute::class, ['getFrontendInput']);
+        $attribute1 = $this->getMockBuilder(AbstractAttribute::class)->disableOriginalConstructor()
+            ->onlyMethods(['getFrontendInput'])
+            ->getMockForAbstractClass();
 
         $attribute1->expects($this->once())
             ->method('getFrontendInput')
             ->willReturn('text');
 
-        $attribute2 = $this->createPartialMock(AbstractAttribute::class, ['getFrontendInput']);
+        $attribute2 = $this->getMockBuilder(AbstractAttribute::class)->disableOriginalConstructor()
+            ->onlyMethods(['getFrontendInput'])
+            ->getMockForAbstractClass();
 
         $attribute2->expects($this->once())
             ->method('getFrontendInput')
@@ -1558,8 +1565,8 @@ class ProductTest extends AbstractImportTestCase
      * @param string $message
      *
      * @return void
+     * @dataProvider fillUploaderObjectDataProvider
      */
-    #[DataProvider('fillUploaderObjectDataProvider')]
     public function testFillUploaderObject($isRead, $isWrite, $message): void
     {
         $dir = $this->createMock(WriteInterface::class);
@@ -1623,8 +1630,8 @@ class ProductTest extends AbstractImportTestCase
      * @param bool $throwException
      *
      * @return void
+     * @dataProvider uploadMediaFilesDataProvider
      */
-    #[DataProvider('uploadMediaFilesDataProvider')]
     public function testUploadMediaFiles(string $fileName, bool $throwException): void
     {
         $exception = new \Exception();
@@ -1671,8 +1678,8 @@ class ProductTest extends AbstractImportTestCase
      * @param array $categoriesData
      * @param string $tableName
      * @param array $result
+     * @dataProvider productCategoriesDataProvider
      */
-    #[DataProvider('productCategoriesDataProvider')]
     public function testGetProductCategoriesDataSave(array $categoriesData, string $tableName, array $result)
     {
         $this->_connection->method('fetchOne')->willReturnOnConsecutiveCalls('0', '-2');
@@ -2210,9 +2217,8 @@ class ProductTest extends AbstractImportTestCase
     }
 
     /**
-     * Test parse multiselect values
+     * @dataProvider valuesDataProvider
      */
-    #[DataProvider('valuesDataProvider')]
     public function testParseMultiselectValues($value, $fieldSeparator, $valueSeparator)
     {
         $this->importProduct->setParameters(
@@ -2282,9 +2288,9 @@ class ProductTest extends AbstractImportTestCase
      *
      * @param array $dataProvider
      *
+     * @dataProvider duplicatedUrlCheckDataProvider
      * @return void
      */
-    #[DataProvider('duplicatedUrlCheckDataProvider')]
     public function testImportProductOnDuplicatedUrlKey(array $dataProvider): void
     {
         $tableName = $dataProvider['table_name'];
@@ -2392,51 +2398,55 @@ class ProductTest extends AbstractImportTestCase
     public static function duplicatedUrlCheckDataProvider(): array
     {
         return [
-            'Record duplicated by category. Should Throw Validation Error' => [[
-                'is_error_expected' => true,
-                'store_id' => 0,
-                'table_name' => 'url_rewrite',
-                'table_name_product' => 'catalog_product_entity',
-                'request_path' => 'adobe.html',
-                'entity' => [
-                    'request_path' => 'adobe.html',
+            'Record duplicated by category. Should Throw Validation Error' => [
+                'data' => [
+                    'is_error_expected' => true,
                     'store_id' => 0,
-                    'entity_type' => 'category',
-                    'entity_id' => rand(),
-                    'url_rewrite_id' => rand(),
-                    'url_entity' => rand()
-                ],
-                'error_message_template' => 'Url key: \'%s\' was already generated for a %s with the ID: %s. ' .
-                    'You need to specify the unique URL key manually',
-                'fields' => [
-                    'request_path',
-                    'store_id',
-                    'entity_type'
+                    'table_name' => 'url_rewrite',
+                    'table_name_product' => 'catalog_product_entity',
+                    'request_path' => 'adobe.html',
+                    'entity' => [
+                        'request_path' => 'adobe.html',
+                        'store_id' => 0,
+                        'entity_type' => 'category',
+                        'entity_id' => rand(),
+                        'url_rewrite_id' => rand(),
+                        'url_entity' => rand()
+                    ],
+                    'error_message_template' => 'Url key: \'%s\' was already generated for a %s with the ID: %s. ' .
+                        'You need to specify the unique URL key manually',
+                    'fields' => [
+                        'request_path',
+                        'store_id',
+                        'entity_type'
+                    ]
                 ]
-            ]],
-            'Record duplicated by product. Should Throw Validation Error' => [[
-                'is_error_expected' => true,
-                'store_id' => 0,
-                'table_name' => 'url_rewrite',
-                'table_name_product' => 'catalog_product_entity',
-                'request_path' => 'adobe.html',
-                'entity' => [
-                    'request_path' => 'adobe.html',
+            ],
+            'Record duplicated by product. Should Throw Validation Error' => [
+                'data' => [
+                    'is_error_expected' => true,
                     'store_id' => 0,
-                    'entity_type' => 'product',
-                    'entity_id' => 42,
-                    'url_rewrite_id' => rand(),
-                    'url_entity' => rand(),
-                    'sku' => rand()
-                ],
-                'fields' => [
-                    'request_path',
-                    'store_id',
-                    'entity_type',
-                ],
-                'error_message_template' => 'Url key: \'%s\' was already generated for an item with the SKU: ' .
-                    '\'%s\'. You need to specify the unique URL key manually'
-            ]]
+                    'table_name' => 'url_rewrite',
+                    'table_name_product' => 'catalog_product_entity',
+                    'request_path' => 'adobe.html',
+                    'entity' => [
+                        'request_path' => 'adobe.html',
+                        'store_id' => 0,
+                        'entity_type' => 'product',
+                        'entity_id' => 42,
+                        'url_rewrite_id' => rand(),
+                        'url_entity' => rand(),
+                        'sku' => rand()
+                    ],
+                    'fields' => [
+                        'request_path',
+                        'store_id',
+                        'entity_type',
+                    ],
+                    'error_message_template' => 'Url key: \'%s\' was already generated for an item with the SKU: ' .
+                        '\'%s\'. You need to specify the unique URL key manually'
+                ]
+            ]
         ];
     }
 

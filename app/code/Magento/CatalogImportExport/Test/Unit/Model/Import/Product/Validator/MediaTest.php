@@ -12,7 +12,6 @@ use Magento\CatalogImportExport\Model\Import\Product\Validator\Media;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Framework\Url\Validator;
 use Magento\ImportExport\Model\Import;
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -64,8 +63,8 @@ class MediaTest extends TestCase
     /**
      * @param array $data
      * @param array $expected
+     * @dataProvider isMediaValidDataProvider
      */
-    #[DataProvider('isMediaValidDataProvider')]
     public function testIsValid($data, $expected)
     {
         $this->validatorMock->expects($this->never())
@@ -88,8 +87,8 @@ class MediaTest extends TestCase
     /**
      * @param array $data
      * @param array $expected
+     * @dataProvider isValidAdditionalImagesPathDataProvider
      */
-    #[DataProvider('isValidAdditionalImagesPathDataProvider')]
     public function testIsValidAdditionalImagesPath($data, $expected)
     {
         if ($expected['result']) {
@@ -111,8 +110,8 @@ class MediaTest extends TestCase
     /**
      * @param array $data
      * @param array $expected
+     * @dataProvider isValidAdditionalImagesUrlDataProvider
      */
-    #[DataProvider('isValidAdditionalImagesUrlDataProvider')]
     public function testIsValidAdditionalImagesUrl($data, $expected)
     {
         $this->validatorMock->expects($this->once())

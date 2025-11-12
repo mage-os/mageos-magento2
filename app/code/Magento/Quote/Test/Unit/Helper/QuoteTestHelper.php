@@ -22,11 +22,6 @@ use BadMethodCallException;
 class QuoteTestHelper extends Quote
 {
     /**
-     * @var mixed
-     */
-    private $website = null;
-  
-    /**
      * @var array
      */
     private array $testData = [];
@@ -108,7 +103,6 @@ class QuoteTestHelper extends Quote
      */
     public function setWebsite($website)
     {
-        $this->website = $website;
         $this->testData['website'] = $website;
         return $this;
     }
@@ -879,15 +873,5 @@ class QuoteTestHelper extends Quote
     private function camelCaseToSnakeCase($input)
     {
         return strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $input));
-    }
-
-   /**
-    * Get website
-    *
-    * @return mixed
-    */
-    public function getWebsite()
-    {
-        return $this->website;
     }
 }

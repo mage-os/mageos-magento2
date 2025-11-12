@@ -11,7 +11,6 @@ use Magento\CatalogImportExport\Model\Import\Product;
 use Magento\CatalogImportExport\Model\Import\Product\SkuStorage;
 use Magento\CatalogImportExport\Model\Import\Product\Validator\Name;
 use PHPUnit\Framework\MockObject\Exception;
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -36,8 +35,8 @@ class NameTest extends TestCase
      * @param $value
      * @return void
      * @throws Exception
+     * @dataProvider getRowData
      */
-    #[DataProvider('getRowData')]
     public function testIsValid($expected, $value): void
     {
         $this->skuStorage->expects($this->any())->method('has')->willReturn(false);

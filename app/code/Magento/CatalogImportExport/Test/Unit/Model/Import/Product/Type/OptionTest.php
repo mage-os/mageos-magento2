@@ -26,10 +26,8 @@ use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\ImportExport\Model\Import;
 use Magento\ImportExport\Model\Import\ErrorProcessing\ProcessingErrorAggregatorInterface;
 use Magento\ImportExport\Model\ResourceModel\Helper;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\ImportExport\Test\Unit\Model\Import\AbstractImportTestCase;
 use Magento\Store\Model\StoreManagerInterface;
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 
@@ -41,8 +39,6 @@ use Psr\Log\LoggerInterface;
  */
 class OptionTest extends AbstractImportTestCase
 {
-    use MockCreationTrait;
-
     /**
      * Path to csv file to import
      */
@@ -268,9 +264,9 @@ class OptionTest extends AbstractImportTestCase
 
         $catalogDataMock = $this->createPartialMock(Data::class, ['__construct']);
 
-        $scopeConfig = $this->createMock(ScopeConfigInterface::class);
+        $scopeConfig = $this->getMockForAbstractClass(ScopeConfigInterface::class);
 
-        $timezoneInterface = $this->createMock(TimezoneInterface::class);
+        $timezoneInterface = $this->getMockForAbstractClass(TimezoneInterface::class);
         $date = new \DateTime();
         $timezoneInterface->expects($this->any())->method('date')->willReturn($date);
         $this->metadataPoolMock = $this->createMock(MetadataPool::class);
@@ -300,7 +296,7 @@ class OptionTest extends AbstractImportTestCase
             $this->createMock(\Magento\ImportExport\Model\ResourceModel\Import\Data::class),
             $this->createMock(ResourceConnection::class),
             $this->createMock(Helper::class),
-            $this->createMock(StoreManagerInterface::class),
+            $this->getMockForAbstractClass(StoreManagerInterface::class),
             $this->createMock(\Magento\Catalog\Model\ProductFactory::class),
             $this->createMock(\Magento\Catalog\Model\ResourceModel\Product\Option\CollectionFactory::class),
             $this->createMock(\Magento\ImportExport\Model\ResourceModel\CollectionByPagesIteratorFactory::class),
@@ -353,7 +349,9 @@ class OptionTest extends AbstractImportTestCase
         bool $deleteBehavior = false,
         bool $doubleOptions = false
     ): array {
-        $connection = $this->createMock(AdapterInterface::class);
+        $connection = $this->getMockBuilder(AdapterInterface::class)
+            ->disableOriginalConstructor()
+            ->getMockForAbstractClass();
         if ($addExpectations) {
             if ($deleteBehavior) {
                 $connection->expects(
@@ -381,7 +379,9 @@ class OptionTest extends AbstractImportTestCase
             }
         }
 
-        $resourceHelper = $this->createPartialMockWithReflection(\stdClass::class, ['getNextAutoincrement']);
+        $resourceHelper = $this->getMockBuilder(\stdClass::class)->addMethods(['getNextAutoincrement'])
+            ->disableOriginalConstructor()
+            ->getMock();
         if ($addExpectations) {
             $resourceHelper->expects($this->any())->method('getNextAutoincrement')->willReturn(2);
         }
@@ -412,7 +412,9 @@ class OptionTest extends AbstractImportTestCase
     {
         $csvData = $this->_loadCsvFile();
 
-        $dataSourceModel = $this->createPartialMockWithReflection(\stdClass::class, ['getNextUniqueBunch']);
+        $dataSourceModel = $this->getMockBuilder(\stdClass::class)->addMethods(['getNextUniqueBunch'])
+            ->disableOriginalConstructor()
+            ->getMock();
         if ($addExpectations) {
             $dataSourceModel
                 ->method('getNextUniqueBunch')
@@ -445,7 +447,9 @@ class OptionTest extends AbstractImportTestCase
         $reflectionProperty->setAccessible(true);
         $reflectionProperty->setValue($this->productEntity, $this->metadataPoolMock);
 
-        $productModelMock = $this->createPartialMockWithReflection(\stdClass::class, ['getProductEntitiesInfo']);
+        $productModelMock = $this->getMockBuilder(\stdClass::class)->addMethods(['getProductEntitiesInfo'])
+            ->disableOriginalConstructor()
+            ->getMock();
         $productModelMock->expects(
             $this->any()
         )->method(
@@ -466,24 +470,27 @@ class OptionTest extends AbstractImportTestCase
             return isset($products[$skuLowered]);
         });
 
-        $fetchStrategy = $this->createMock(FetchStrategyInterface::class);
-        $logger = $this->createMock(LoggerInterface::class);
+        $fetchStrategy = $this->getMockForAbstractClass(
+            FetchStrategyInterface::class
+        );
+        $logger = $this->getMockForAbstractClass(LoggerInterface::class);
         $entityFactory = $this->createMock(EntityFactory::class);
 
-        $optionCollection = $this->createPartialMockWithReflection(
-            AbstractDb::class,
-            ['getSelect', 'getNewEmptyItem', 'reset', 'addProductToFilter', 'getResource']
-        );
-        
-        // Set the _fetchStrategy property using reflection
-        $reflection = new \ReflectionClass(AbstractDb::class);
-        $fetchStrategyProperty = $reflection->getProperty('_fetchStrategy');
-        $fetchStrategyProperty->setAccessible(true);
-        $fetchStrategyProperty->setValue($optionCollection, $fetchStrategy);
+        $optionCollection = $this->getMockBuilder(AbstractDb::class)->setConstructorArgs(
+            [
+                $entityFactory,
+                $logger,
+                $fetchStrategy
+            ]
+        )
+            ->onlyMethods(['getSelect', 'getNewEmptyItem'])
+            ->addMethods(['reset', 'addProductToFilter'])
+            ->getMockForAbstractClass();
 
         $select = $this->createPartialMock(Select::class, ['join', 'where']);
         $select->expects($this->any())->method('join')->willReturnSelf();
         $select->expects($this->any())->method('where')->willReturnSelf();
+
         $optionCollection->expects(
             $this->any()
         )->method(
@@ -506,7 +513,9 @@ class OptionTest extends AbstractImportTestCase
 
         $fetchStrategy->expects($this->any())->method('fetchAll')->willReturn($optionsData);
 
-        $collectionIterator = $this->createPartialMockWithReflection(\stdClass::class, ['iterate']);
+        $collectionIterator = $this->getMockBuilder(\stdClass::class)->addMethods(['iterate'])
+            ->disableOriginalConstructor()
+            ->getMock();
         $collectionIterator->expects(
             $this->any()
         )->method(
@@ -785,8 +794,8 @@ class OptionTest extends AbstractImportTestCase
      * @covers \Magento\CatalogImportExport\Model\Import\Product\Option::_validateSecondaryRow
      * @covers \Magento\CatalogImportExport\Model\Import\Product\Option::_validateSpecificTypeParameters
      * @covers \Magento\CatalogImportExport\Model\Import\Product\Option::_validateSpecificParameterData
+     * @dataProvider validateRowDataProvider
      */
-    #[DataProvider('validateRowDataProvider')]
     public function testValidateRow(array $rowData, array $errors): void
     {
         $this->_bypassModelMethodGetMultiRowFormat($rowData);
@@ -813,8 +822,8 @@ class OptionTest extends AbstractImportTestCase
      * @covers \Magento\CatalogImportExport\Model\Import\Product\Option::_findOldOptionsWithTheSameTitles
      * @covers \Magento\CatalogImportExport\Model\Import\Product\Option::_findNewOldOptionsTypeMismatch
      * @covers \Magento\CatalogImportExport\Model\Import\Product\Option::_saveNewOptionData
+     * @dataProvider validateAmbiguousDataDataProvider
      */
-    #[DataProvider('validateAmbiguousDataDataProvider')]
     public function testValidateAmbiguousData(
         array $rowData,
         array $errors,
@@ -850,8 +859,8 @@ class OptionTest extends AbstractImportTestCase
      *
      * @return void
      * @covers \Magento\CatalogImportExport\Model\Import\Product\Option::_parseCustomOptions
+     * @dataProvider validateRowStoreViewCodeFieldDataProvider
      */
-    #[DataProvider('validateRowStoreViewCodeFieldDataProvider')]
     public function testValidateRowDataForStoreViewCodeField(array $rowData, array $responseData): void
     {
         $reflection = new \ReflectionClass(Option::class);
@@ -922,9 +931,9 @@ class OptionTest extends AbstractImportTestCase
      * @param array $responseData
      *
      * @return void
+     * @dataProvider validateParseCustomOptionsDataProvider
      * @throws \ReflectionException
      */
-    #[DataProvider('validateParseCustomOptionsDataProvider')]
     public function testValidateParseCustomOptions(array $rowData, array $responseData): void
     {
         $reflection = new \ReflectionClass(Option::class);
@@ -1165,7 +1174,9 @@ class OptionTest extends AbstractImportTestCase
      */
     public function testParseRequiredData(): void
     {
-        $modelData = $this->createPartialMockWithReflection(\stdClass::class, ['getNextUniqueBunch']);
+        $modelData = $this->getMockBuilder(\stdClass::class)->addMethods(['getNextUniqueBunch'])
+            ->disableOriginalConstructor()
+            ->getMock();
         $modelData
             ->method('getNextUniqueBunch')
             ->willReturnOnConsecutiveCalls(
@@ -1179,7 +1190,9 @@ class OptionTest extends AbstractImportTestCase
                 null
             );
 
-        $productModel = $this->createPartialMockWithReflection(\stdClass::class, ['getProductEntitiesInfo']);
+        $productModel = $this->getMockBuilder(\stdClass::class)->addMethods(['getProductEntitiesInfo'])
+            ->disableOriginalConstructor()
+            ->getMock();
         $productModel->expects($this->any())->method('getProductEntitiesInfo')->willReturn([]);
 
         /** @var Product $productEntityMock */

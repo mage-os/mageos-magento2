@@ -21,8 +21,6 @@ use Magento\Framework\Math\Random;
 use Magento\MediaStorage\Helper\File\Storage;
 use Magento\MediaStorage\Helper\File\Storage\Database;
 use Magento\MediaStorage\Model\File\Validator\NotProtectedExtension;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -31,8 +29,6 @@ use PHPUnit\Framework\TestCase;
  */
 class UploaderTest extends TestCase
 {
-    use MockCreationTrait;
-
     /**
      * @var Database|MockObject
      */
@@ -151,13 +147,13 @@ class UploaderTest extends TestCase
     }
 
     /**
+     * @dataProvider moveFileUrlDataProvider
      * @param $fileUrl
      * @param $expectedHost
      * @param $expectedFileName
      * @param $checkAllowedExtension
      * @throws LocalizedException
      */
-    #[DataProvider('moveFileUrlDataProvider')]
     public function testMoveFileUrl($fileUrl, $expectedHost, $expectedFileName, $checkAllowedExtension)
     {
         $tmpDir = 'var/tmp';
@@ -285,16 +281,16 @@ class UploaderTest extends TestCase
     }
 
     /**
-     * Test move file URL drive pool
+     * @dataProvider moveFileUrlDriverPoolDataProvider
      */
-    #[DataProvider('moveFileUrlDriverPoolDataProvider')]
     public function testMoveFileUrlDrivePool($fileUrl, $expectedHost, $expectedDriverPool, $expectedScheme)
     {
         $driverPool = $this->createPartialMock(DriverPool::class, ['getDriver']);
-        $driverMock = $this->createPartialMockWithReflection(
-            $expectedDriverPool,
-            ['readAll', 'isExists']
-        );
+        $driverMock = $this->getMockBuilder($expectedDriverPool)
+            ->disableOriginalConstructor()
+            ->addMethods(['readAll'])
+            ->onlyMethods(['isExists'])
+            ->getMock();
         $driverMock->method('isExists')->willReturn(true);
         $driverMock->method('readAll')->willReturn(null);
         $driverPool->method('getDriver')->willReturn($driverMock);
