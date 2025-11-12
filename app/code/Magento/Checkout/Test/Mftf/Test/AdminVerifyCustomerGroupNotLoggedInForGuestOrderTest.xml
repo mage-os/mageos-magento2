@@ -21,17 +21,12 @@
         <before>
             <!-- Precondition Step 1:Create Simple Product and Customer -->
             <createData entity="SimpleProduct_100" stepKey="simpleProductOne"/>
-            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
         </before>
         <after>
             <!-- Admin log out -->
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
-            <!-- Customer log out -->
-            <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="customerLogout"/>
             <!-- Delete created product -->
             <deleteData createDataKey="simpleProductOne" stepKey="deleteSimpleProduct"/>
-            <!-- Delete customer -->
-            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
         </after>
         <!-- Step 1: Navigate to Frontend > place an order through check money with guest checkout. -->
         <actionGroup ref="StorefrontOpenHomePageActionGroup" stepKey="openStorefrontPage"/>
