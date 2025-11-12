@@ -34,7 +34,6 @@
         <actionGroup ref="OpenStoreFrontProductPageActionGroup" stepKey="openProductFromCategory">
             <argument name="productUrlKey" value="$simpleProductOne.custom_attributes[url_key]$"/>
         </actionGroup>
-        <waitForPageLoad stepKey="waitForSimpleProductPageLoad"/>
         <actionGroup ref="StorefrontAddProductToCartActionGroup" stepKey="addProductToCart">
             <argument name="product" value="$$simpleProductOne$$"/>
             <argument name="productCount" value="1"/>
