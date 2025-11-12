@@ -95,6 +95,12 @@ class PaymentMethodListTest extends TestCase
 
     /**
      * Test getList.
+     *
+     * @param int $storeId
+     * @param array $paymentMethodConfig
+     * @param array $methodInstancesMap
+     * @param array $expected
+     * @return void
      */
     #[DataProvider('getListDataProvider')]
     public function testGetList($storeId, $paymentMethodConfig, $methodInstancesMap, $expected)
@@ -130,8 +136,26 @@ class PaymentMethodListTest extends TestCase
                 1,
                 ['method_code_1' => [], 'method_code_2' => []],
                 [
-                    ['method_code_1', static fn (self $testCase) => $testCase->mockPaymentMethodInstance(1, 10, 'method_code_1', 'title', true)],
-                    ['method_code_2', static fn (self $testCase) => $testCase->mockPaymentMethodInstance(1, 5, 'method_code_2', 'title', true)]
+                    [
+                        'method_code_1',
+                        static fn (self $testCase) => $testCase->mockPaymentMethodInstance(
+                            1,
+                            10,
+                            'method_code_1',
+                            'title',
+                            true
+                        )
+                    ],
+                    [
+                        'method_code_2',
+                        static fn (self $testCase) => $testCase->mockPaymentMethodInstance(
+                            1,
+                            5,
+                            'method_code_2',
+                            'title',
+                            true
+                        )
+                    ]
                 ],
                 ['method_code_2', 'method_code_1']
             ]
@@ -140,6 +164,12 @@ class PaymentMethodListTest extends TestCase
 
     /**
      * Test getActiveList.
+     *
+     * @param int $storeId
+     * @param array $paymentMethodConfig
+     * @param array $methodInstancesMap
+     * @param array $expected
+     * @return void
      */
     #[DataProvider('getActiveListDataProvider')]
     public function testGetActiveList($storeId, $paymentMethodConfig, $methodInstancesMap, $expected)
@@ -175,8 +205,26 @@ class PaymentMethodListTest extends TestCase
                 1,
                 ['method_code_1' => [], 'method_code_2' => []],
                 [
-                    ['method_code_1', static fn (self $testCase) => $testCase->mockPaymentMethodInstance(1, 10, 'method_code_1', 'title', false)],
-                    ['method_code_2', static fn (self $testCase) => $testCase->mockPaymentMethodInstance(1, 5, 'method_code_2', 'title', true)]
+                    [
+                        'method_code_1',
+                        static fn (self $testCase) => $testCase->mockPaymentMethodInstance(
+                            1,
+                            10,
+                            'method_code_1',
+                            'title',
+                            false
+                        )
+                    ],
+                    [
+                        'method_code_2',
+                        static fn (self $testCase) => $testCase->mockPaymentMethodInstance(
+                            1,
+                            5,
+                            'method_code_2',
+                            'title',
+                            true
+                        )
+                    ]
                 ],
                 ['method_code_2']
             ]

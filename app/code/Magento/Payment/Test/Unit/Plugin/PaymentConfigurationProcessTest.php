@@ -67,6 +67,11 @@ class PaymentConfigurationProcessTest extends TestCase
 
     /**
      * Test before process
+     *
+     * @param array $jsLayout
+     * @param array $activePaymentList
+     * @param array $expectedResult
+     * @return void
      */
     #[DataProvider('beforeProcessDataProvider')]
     public function testBeforeProcess($jsLayout, $activePaymentList, $expectedResult)

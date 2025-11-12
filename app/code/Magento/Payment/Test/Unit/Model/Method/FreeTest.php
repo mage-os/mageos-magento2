@@ -82,6 +82,11 @@ class FreeTest extends TestCase
 
     /**
      * Test get config payment action
+     *
+     * @param string $orderStatus
+     * @param string $paymentAction
+     * @param string|null $result
+     * @return void
      */
     #[DataProvider('getConfigPaymentActionProvider')]
     public function testGetConfigPaymentAction($orderStatus, $paymentAction, $result): void
