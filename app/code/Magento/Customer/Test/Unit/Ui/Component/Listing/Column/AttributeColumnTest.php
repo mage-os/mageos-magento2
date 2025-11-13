@@ -45,10 +45,7 @@ class AttributeColumnTest extends TestCase
             AttributeRepository::class
         );
         $this->attributeMetadata = $this->createMock(
-            AttributeMetadataInterface::class,
-            [],
-            '',
-            false
+            AttributeMetadataInterface::class
         );
 
         $this->component = new AttributeColumn(

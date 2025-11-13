@@ -112,10 +112,7 @@ class DobTest extends TestCase
         $zendCacheCore->setBackend(new Zend_Cache_Backend_BlackHole());
 
         $frontendCache = $this->createMock(
-            FrontendInterface::class,
-            [],
-            '',
-            false
+            FrontendInterface::class
         );
         $frontendCache->expects($this->any())->method('getLowLevelFrontend')->willReturn($zendCacheCore);
         $cache = $this->createMock(CacheInterface::class);

@@ -63,55 +63,28 @@ class CustomerExtractorTest extends TestCase
     protected function setUp(): void
     {
         $this->formFactory = $this->createMock(
-            FormFactory::class,
-            [],
-            '',
-            false,
-            false,
-            true,
-            ['create']
+            FormFactory::class
         );
         $this->customerFactory = $this->createMock(
-            CustomerInterfaceFactory::class,
-            [],
-            '',
-            false,
-            false,
-            true,
-            ['create']
+            CustomerInterfaceFactory::class
         );
         $this->storeManager = $this->createMock(
-            StoreManagerInterface::class,
-            [],
-            '',
-            false
+            StoreManagerInterface::class
         );
         $this->customerGroupManagement = $this->createMock(
-            GroupManagementInterface::class,
-            [],
-            '',
-            false
+            GroupManagementInterface::class
         );
         $this->dataObjectHelper = $this->createMock(DataObjectHelper::class);
         $this->request = $this->createMock(RequestInterface::class, [], '', false);
         $this->customerForm = $this->createMock(Form::class);
         $this->customerData = $this->createMock(
-            CustomerInterface::class,
-            [],
-            '',
-            false
+            CustomerInterface::class
         );
         $this->store = $this->createMock(
-            StoreInterface::class,
-            [],
-            '',
-            false
+            StoreInterface::class
         );
         $this->customerGroup = $this->createMock(
-            GroupInterface::class,
-            [],
-            '',
-            false
+            GroupInterface::class
         );
         $this->customerExtractor = new CustomerExtractor(
             $this->formFactory,

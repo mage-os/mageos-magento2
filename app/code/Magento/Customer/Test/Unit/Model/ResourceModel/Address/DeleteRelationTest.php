@@ -63,22 +63,10 @@ class DeleteRelationTest extends TestCase
         );
 
         $addressResource = $this->createMock(
-            AbstractDb::class,
-            [],
-            '',
-            false,
-            false,
-            true,
-            ['getConnection', 'getTable']
+            AbstractDb::class
         );
         $connectionMock = $this->createMock(
-            AdapterInterface::class,
-            [],
-            '',
-            false,
-            false,
-            true,
-            ['update', 'quoteInto']
+            AdapterInterface::class
         );
         $addressModel->expects($this->any())->method('getResource')->willReturn($addressResource);
         $addressModel->expects($this->any())->method('getId')->willReturn($addressId);

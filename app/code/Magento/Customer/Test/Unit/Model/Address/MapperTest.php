@@ -79,7 +79,7 @@ class MapperTest extends TestCase
     protected function createAddressMock()
     {
         /** @var RegionInterface|MockObject $regionMock */
-        $regionMock = $this->createMock(RegionInterface::class, [], '', false);
+        $regionMock = $this->createMock(RegionInterface::class);
         $regionMock->expects($this->any())->method('getRegion')->willReturn('Texas');
         $regionMock->expects($this->any())->method('getRegionId')->willReturn(1);
         $regionMock->expects($this->any())->method('getRegionCode')->willReturn('TX');

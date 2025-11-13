@@ -17,9 +17,6 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @phpstan-ignore-next-line
- */
 class ViewTest extends TestCase
 {
     /** @var Context|MockObject */

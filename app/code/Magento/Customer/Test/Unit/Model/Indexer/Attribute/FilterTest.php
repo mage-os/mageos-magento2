@@ -46,24 +46,15 @@ class FilterTest extends TestCase
     {
         $this->resource = $this->createMock(ResourceConnection::class);
         $this->connection = $this->createMock(
-            AdapterInterface::class,
-            [],
-            '',
-            false
+            AdapterInterface::class
         );
         $this->flatScopeResolver = $this->createMock(FlatScopeResolver::class);
         $this->indexerRegistry = $this->createMock(IndexerRegistry::class);
         $this->indexer = $this->createMock(
-            IndexerInterface::class,
-            [],
-            '',
-            false
+            IndexerInterface::class
         );
         $this->indexerState = $this->createMock(
-            StateInterface::class,
-            [],
-            '',
-            false
+            StateInterface::class
         );
 
         $this->model = new Filter(

@@ -21,6 +21,8 @@ use Magento\Framework\Json\EncoderInterface;
 use Magento\Framework\Module\Manager;
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Newsletter\Model\Config;
+use Magento\Framework\App\Cache\Type\Config as CacheConfig;
+use Magento\Directory\Model\ResourceModel\Country\CollectionFactory as CountryCollectionFactory;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -85,10 +87,10 @@ class RegisterTest extends TestCase
         $this->_block = new Register(
             $context,
             $this->directoryHelperMock,
-            $this->createMock(EncoderInterface::class, [], '', false),
-            $this->createMock(\Magento\Framework\App\Cache\Type\Config::class),
+            $this->createMock(EncoderInterface::class),
+            $this->createMock(CacheConfig::class),
             $this->createMock(CollectionFactory::class),
-            $this->createMock(\Magento\Directory\Model\ResourceModel\Country\CollectionFactory::class),
+            $this->createMock(CountryCollectionFactory::class),
             $this->_moduleManager,
             $this->_customerSession,
             $this->_customerUrl,
@@ -351,7 +353,7 @@ class RegisterTest extends TestCase
             $customerFormData
         );
         $form = $this->createMock(Form::class);
-        $request = $this->createMock(RequestInterface::class, [], '', false);
+        $request = $this->createMock(RequestInterface::class);
         $formData = $this->_block->getFormData();
         $form->expects(
             $this->once()

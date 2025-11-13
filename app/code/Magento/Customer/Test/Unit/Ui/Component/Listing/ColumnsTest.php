@@ -80,10 +80,7 @@ class ColumnsTest extends TestCase
         );
         $this->attribute = $this->createMock(Attribute::class);
         $this->column = $this->createMock(
-            ColumnInterface::class,
-            [],
-            '',
-            false
+            ColumnInterface::class
         );
 
         $this->inlineEditUpdater = $this->getMockBuilder(

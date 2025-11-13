@@ -27,10 +27,6 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @phpstan-ignore-next-line
- */
 class AddressTest extends TestCase
 {
     use MockCreationTrait;

@@ -172,7 +172,6 @@ class AttributeMetadataResolverTest extends TestCase
             ->with($entityType, $this->attribute)
             ->willReturnSelf();
 
-        // @phpstan-ignore argument.type
         $meta = $this->model->getAttributesMeta($this->attribute, $entityType, $allowToShowHiddenAttributes);
         $this->assertArrayHasKey('default', $meta['arguments']['data']['config']);
         $this->assertEquals($defaultGroupId, $meta['arguments']['data']['config']['default']);

@@ -96,10 +96,7 @@ class GroupActionsTest extends TestCase
         $this->escaperMock = $this->createMock(Escaper::class);
         $this->groupManagementMock = $this->createMock(GroupManagementInterface::class);
         $this->urlBuilderMock = $this->createMock(
-            UrlInterface::class,
-            [],
-            '',
-            false
+            UrlInterface::class
         );
 
         $this->component = $objectManager->getObject(

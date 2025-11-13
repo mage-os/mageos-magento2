@@ -64,34 +64,19 @@ class AttributeRepositoryTest extends TestCase
     protected function setUp(): void
     {
         $this->customerMetadataManagement = $this->createMock(
-            CustomerMetadataManagementInterface::class,
-            [],
-            '',
-            false
+            CustomerMetadataManagementInterface::class
         );
         $this->addressMetadataManagement = $this->createMock(
-            AddressMetadataManagementInterface::class,
-            [],
-            '',
-            false
+            AddressMetadataManagementInterface::class
         );
         $this->customerMetadata = $this->createMock(
-            CustomerMetadataInterface::class,
-            [],
-            '',
-            false
+            CustomerMetadataInterface::class
         );
         $this->addressMetadata = $this->createMock(
-            AddressMetadataInterface::class,
-            [],
-            '',
-            false
+            AddressMetadataInterface::class
         );
         $this->attribute = $this->createMock(
-            AttributeMetadataInterface::class,
-            [],
-            '',
-            false
+            AttributeMetadataInterface::class
         );
         $this->option = $this->createMock(OptionInterface::class);
 

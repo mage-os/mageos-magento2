@@ -81,22 +81,10 @@ class RelationTest extends TestCase
             ]
         );
         $customerResource = $this->createMock(
-            AbstractDb::class,
-            [],
-            '',
-            false,
-            false,
-            true,
-            ['getConnection', 'getTable']
+            AbstractDb::class
         );
         $connectionMock = $this->createMock(
-            AdapterInterface::class,
-            [],
-            '',
-            false,
-            false,
-            true,
-            ['update', 'quoteInto']
+            AdapterInterface::class
         );
         $customerModel->expects($this->any())->method('getResource')->willReturn($customerResource);
         $addressModel->expects($this->any())->method('getId')->willReturn($addressId);

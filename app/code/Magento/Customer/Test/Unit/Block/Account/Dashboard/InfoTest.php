@@ -71,10 +71,10 @@ class InfoTest extends TestCase
     {
         $this->currentCustomer = $this->createMock(CurrentCustomer::class);
 
-        $urlBuilder = $this->createMock(UrlInterface::class, [], '', false);
+        $urlBuilder = $this->createMock(UrlInterface::class);
         $urlBuilder->expects($this->any())->method('getUrl')->willReturn(self::CHANGE_PASSWORD_URL);
 
-        $layout = $this->createMock(LayoutInterface::class, [], '', false);
+        $layout = $this->createMock(LayoutInterface::class);
         $this->_formRegister = $this->createMock(Register::class);
         $layout->expects($this->any())
             ->method('getBlockSingleton')

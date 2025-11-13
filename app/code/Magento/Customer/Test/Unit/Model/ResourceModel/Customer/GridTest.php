@@ -50,23 +50,14 @@ class GridTest extends TestCase
         $this->indexerRegistry = $this->createMock(IndexerRegistry::class);
         $this->flatScopeResolver = $this->createMock(FlatScopeResolver::class);
         $this->indexer = $this->createMock(
-            IndexerInterface::class,
-            [],
-            '',
-            false
+            IndexerInterface::class
         );
         $this->connection = $this->createMock(
-            AdapterInterface::class,
-            [],
-            '',
-            false
+            AdapterInterface::class
         );
         $this->select = $this->createMock(Select::class);
         $this->queryResult = $this->createMock(
-            \Zend_Db_Statement_Interface::class,
-            [],
-            '',
-            false
+            \Zend_Db_Statement_Interface::class
         );
 
         $this->observer = new Grid(

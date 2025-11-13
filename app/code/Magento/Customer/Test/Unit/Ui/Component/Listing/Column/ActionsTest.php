@@ -41,10 +41,7 @@ class ActionsTest extends TestCase
         $this->context->expects($this->never())->method('getProcessor')->willReturn($processor);
         $this->uiComponentFactory = $this->createMock(UiComponentFactory::class);
         $this->urlBuilder = $this->createMock(
-            UrlInterface::class,
-            [],
-            '',
-            false
+            UrlInterface::class
         );
         $this->component = new Actions(
             $this->context,

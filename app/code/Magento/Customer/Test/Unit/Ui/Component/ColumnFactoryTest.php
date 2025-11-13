@@ -46,32 +46,20 @@ class ColumnFactoryTest extends TestCase
     protected function setUp(): void
     {
         $this->context = $this->createMock(
-            ContextInterface::class,
-            [],
-            '',
-            false
+            ContextInterface::class
         );
         $this->componentFactory = $this->createPartialMock(
             UiComponentFactory::class,
             ['create']
         );
         $this->attributeMetadata = $this->createMock(
-            AttributeMetadataInterface::class,
-            [],
-            '',
-            false
+            AttributeMetadataInterface::class
         );
         $this->column = $this->createMock(
-            ColumnInterface::class,
-            [],
-            '',
-            false
+            ColumnInterface::class
         );
         $this->attributeOption = $this->createMock(
-            OptionInterface::class,
-            [],
-            '',
-            false
+            OptionInterface::class
         );
 
         $this->inlineEditUpdater = $this->getMockBuilder(

@@ -54,24 +54,15 @@ class ConfigProviderTest extends TestCase
     protected function setUp(): void
     {
         $this->storeManager = $this->createMock(
-            StoreManagerInterface::class,
-            [],
-            '',
-            false
+            StoreManagerInterface::class
         );
 
         $this->urlBuilder = $this->createMock(
-            UrlInterface::class,
-            [],
-            '',
-            false
+            UrlInterface::class
         );
 
         $this->scopeConfig = $this->createMock(
-            ScopeConfigInterface::class,
-            [],
-            '',
-            false
+            ScopeConfigInterface::class
         );
         $this->store = $this->createPartialMock(
             Store::class,

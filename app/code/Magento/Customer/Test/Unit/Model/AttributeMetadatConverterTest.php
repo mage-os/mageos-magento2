@@ -129,7 +129,7 @@ class AttributeMetadatConverterTest extends TestCase
         $optionDataObjectForSimpleValue2 = $this->createMock(Option::class);
         $optionObject1 = $this->createMock(OptionInterface::class);
         $optionObject2 = $this->createMock(OptionInterface::class);
-        $this->optionFactory->expects($this->exactly(4)) // @phpstan-ignore method.notFound
+        $this->optionFactory->expects($this->exactly(4))
             ->method('create')
             ->willReturnOnConsecutiveCalls(
                 $optionDataObjectForSimpleValue2,
