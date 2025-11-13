@@ -20,6 +20,8 @@ class AddDefaultSearchFieldTest extends TestCase
     /**
      * Test default search field "_search" should be prepended and overwrite if exist.
      *
+     * @param array $mappingBefore
+     * @param array $mappingAfter
      */
     #[DataProvider('processDataProvider')]
     public function testProcess(array $mappingBefore, array $mappingAfter)

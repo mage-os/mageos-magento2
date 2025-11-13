@@ -136,7 +136,7 @@ class BuilderTest extends TestCase
     #[DataProvider('buildDataProvider')]
     public function testBuildNegation($filterMock, $filterType)
     {
-        if ($filterMock == "Magento\Framework\Search\Request\Filter\BoolExpression") {
+        if ($filterMock == "BoolExpression") {
             $childFilter = $this->createPartialMockWithReflection(
                 FilterInterface::class,
                 ['getType', 'getName', 'getMust', 'getShould', 'getMustNot']

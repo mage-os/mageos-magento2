@@ -58,6 +58,13 @@ class DefaultResolverTest extends TestCase
     }
 
     /**
+     * @param $fieldType
+     * @param $attributeCode
+     * @param $frontendInput
+     * @param $isSortable
+     * @param $context
+     * @param $expected
+     * @return void
      */
     #[DataProvider('getFieldNameProvider')]
     public function testGetFieldName(

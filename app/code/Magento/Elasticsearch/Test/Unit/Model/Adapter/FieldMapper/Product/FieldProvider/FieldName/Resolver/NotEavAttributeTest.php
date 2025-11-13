@@ -38,6 +38,11 @@ class NotEavAttributeTest extends TestCase
     }
 
     /**
+     * @param $attributeCode
+     * @param $isEavAttribute
+     * @param $context
+     * @param $expected
+     * @return void
      */
     #[DataProvider('getFieldNameProvider')]
     public function testGetFieldName($attributeCode, $isEavAttribute, $context, $expected)

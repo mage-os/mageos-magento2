@@ -239,6 +239,10 @@ class AttributeAdapterTest extends TestCase
     }
 
     /**
+     * @param $frontendInput
+     * @param $usesSource
+     * @param $expected
+     * @return void
      */
     #[DataProvider('isComplexTypeProvider')]
     public function testIsComplexType($frontendInput, $usesSource, $expected)
@@ -252,6 +256,8 @@ class AttributeAdapterTest extends TestCase
     }
 
     /**
+     * @param $expected
+     * @return void
      */
     #[DataProvider('isEavAttributeProvider')]
     public function testIsEavAttribute($expected)

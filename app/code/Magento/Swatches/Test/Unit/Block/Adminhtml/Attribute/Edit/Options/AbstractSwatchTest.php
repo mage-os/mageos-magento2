@@ -21,6 +21,8 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\Validator\UniversalFactory;
 use Magento\Swatches\Block\Adminhtml\Attribute\Edit\Options\AbstractSwatch;
 use Magento\Swatches\Helper\Media;
+use Magento\Framework\Json\Helper\Data;
+use Magento\Framework\View\Element\Html\Select as HtmlSelect;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -81,12 +83,12 @@ class AbstractSwatchTest extends TestCase
         $objectManager = new ObjectManager($this);
         $objects = [
             [
-                \Magento\Framework\Json\Helper\Data::class,
-                $this->createMock(\Magento\Framework\Json\Helper\Data::class)
+                Data::class,
+                $this->createMock(Data::class)
             ],
             [
-                \Magento\Framework\View\Element\Html\Select::class,
-                $this->createMock(\Magento\Framework\View\Element\Html\Select::class)
+                HtmlSelect::class,
+                $this->createMock(HtmlSelect::class)
             ]
         ];
         $objectManager->prepareObjectManager($objects);

@@ -48,6 +48,11 @@ class IndexResolverTest extends TestCase
     }
 
     /**
+     * @param $isSearchable
+     * @param $isAlwaysIndexable
+     * @param $serviceFieldType
+     * @param $expected
+     * @return void
      */
     #[DataProvider('getFieldIndexProvider')]
     public function testGetFieldName(
