@@ -332,6 +332,12 @@ class CreateHandler implements ExtensionInterface
                     : null;
                 $data['disabled'] = isset($image['disabled']) ? (int)$image['disabled'] : 0;
                 $data['store_id'] = (int)$product->getStoreId();
+                if ($data['store_id'] !== Store::DEFAULT_STORE_ID) {
+                    $data = [
+                        ...$data,
+                        ...($this->prepareUseDefault($image, $isNew))
+                    ];
+                }
 
                 $data[$this->metadata->getLinkField()] = (int)$product->getData($this->metadata->getLinkField());
 
@@ -346,6 +352,30 @@ class CreateHandler implements ExtensionInterface
                 $this->saveGalleryStoreValue($data, $isNew);
             }
         }
+    }
+
+    /**
+     * Sets default values for fields marked to use default
+     *
+     * @param array $image
+     * @param bool $isNew
+     * @return array
+     */
+    private function prepareUseDefault(array $image, bool $isNew): array
+    {
+        $result = [];
+        $fields = [
+            'label' => null,
+            'position' => null,
+            'disabled' => $isNew ? 0 : null,
+        ];
+        foreach ($fields as $field => $defaultValue) {
+            $useDefaultKey = $field . '_use_default';
+            if (isset($image[$useDefaultKey]) && $image[$useDefaultKey]) {
+                $result[$field] = $defaultValue;
+            }
+        }
+        return $result;
     }
 
     /**
