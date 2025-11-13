@@ -1,10 +1,6 @@
 <?php
 /**
-<<<<<<< HEAD
- * Copyright 2018 Adobe
-=======
  * Copyright 2015 Adobe
->>>>>>> origin/2.4-develop
  * All Rights Reserved.
  */
 declare(strict_types=1);
@@ -14,17 +10,18 @@ namespace Magento\MediaStorage\Test\Unit\Helper\File;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\Model\AbstractModel;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\MediaStorage\Helper\File\Storage;
 use Magento\MediaStorage\Helper\File\Storage\Database as DatabaseHelper;
 use Magento\MediaStorage\Model\File\Storage\File;
-use Magento\Framework\Model\Test\Unit\Helper\AbstractModelTestHelper;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class StorageTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var ObjectManager
      */
@@ -136,18 +133,22 @@ class StorageTest extends TestCase
             ->with($filename)
             ->willReturn($relativePath);
 
-        $storageModelMock = new AbstractModelTestHelper();
-        $this->storageMock->expects($this->exactly($callNum))
-            ->method('getStorageModel')
-            ->willReturn($storageModelMock);
         $fileMock = $this->createPartialMock(
             \Magento\MediaStorage\Model\File\Storage\Database::class,
             ['getId', '__wakeup']
         );
-        $storageModelMock->setFileMock($fileMock);
         $fileMock->expects($this->exactly($callNum))
             ->method('getId')
             ->willReturn($fileId);
+
+        $storageModelMock = $this->createPartialMockWithReflection(
+            AbstractModel::class,
+            ['loadByFilename']
+        );
+        $storageModelMock->method('loadByFilename')->willReturn($fileMock);
+        $this->storageMock->expects($this->exactly($callNum))
+            ->method('getStorageModel')
+            ->willReturn($storageModelMock);
 
         $this->filesystemStorageMock->expects($this->exactly($callSaveFileNum))
             ->method('saveFile')

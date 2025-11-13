@@ -1,10 +1,6 @@
 <?php
 /**
-<<<<<<< HEAD
- * Copyright 2018 Adobe
-=======
  * Copyright 2015 Adobe
->>>>>>> origin/2.4-develop
  * All Rights Reserved.
  */
 declare(strict_types=1);
@@ -18,11 +14,11 @@ use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Directory\ReadInterface;
 use Magento\Framework\Filesystem\Directory\WriteInterface;
 use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\MediaStorage\Helper\File\Storage\Database;
 use Magento\MediaStorage\Model\File\Storage;
 use Magento\MediaStorage\Model\File\Storage\DatabaseFactory;
-use Magento\Framework\Model\Test\Unit\Helper\AbstractDbTestHelper;
 use Magento\MediaStorage\Model\File\Storage\File;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -33,6 +29,7 @@ use PHPUnit\Framework\TestCase;
  */
 class DatabaseTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var ObjectManager
      */
@@ -364,7 +361,10 @@ class DatabaseTest extends TestCase
         $this->dbStorageFactoryMock->expects($this->exactly($callNum))
             ->method('create')
             ->willReturn($dbModelMock);
-        $resourceModelMock = new AbstractDbTestHelper();
+        $resourceModelMock = $this->createPartialMockWithReflection(
+            AbstractDb::class,
+            ['deleteFolder', '_construct']
+        );
         $dbModelMock->expects($this->exactly($callNum))
             ->method('getResource')
             ->willReturn($resourceModelMock);
