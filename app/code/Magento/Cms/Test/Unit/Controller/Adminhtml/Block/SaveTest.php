@@ -19,6 +19,7 @@ use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\ObjectManager\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -27,6 +28,7 @@ use PHPUnit\Framework\TestCase;
  */
 class SaveTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var RequestInterface|MockObject
      */
@@ -120,14 +122,14 @@ class SaveTest extends TestCase
         $this->dataPersistorMock = $this->getMockBuilder(DataPersistorInterface::class)
             ->getMock();
 
-        $this->requestMock = $this->createMock(
+        // Use MockCreationTrait to add non-existent methods like getPostValue
+        $this->requestMock = $this->createPartialMockWithReflection(
             RequestInterface::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['getParam', 'getPostValue']
+            ['getPostValue', 'getParam', 'isPost', 'getFullActionName', 'setParam',
+             'getModuleName', 'setModuleName', 'getActionName', 'setActionName',
+             'getCookie', 'getBeforeForwardInfo', 'getPathInfo', 'setPathInfo',
+             'getOriginalPathInfo', 'getFrontName', 'getControllerName', 'getRouteName',
+             'setParams', 'getParams', 'isSecure']
         );
 
         $this->blockMock = $this->getMockBuilder(
@@ -137,13 +139,8 @@ class SaveTest extends TestCase
 
         $this->messageManagerMock = $this->createMock(ManagerInterface::class);
 
-        $this->eventManagerMock = $this->createMock(
+        $this->eventManagerMock = $this->createPartialMock(
             \Magento\Framework\Event\ManagerInterface::class,
-            [],
-            '',
-            false,
-            true,
-            true,
             ['dispatch']
         );
 
@@ -165,9 +162,7 @@ class SaveTest extends TestCase
             ->onlyMethods(['create'])
             ->getMock();
 
-        $this->blockRepository = $this->getMockBuilder(BlockRepositoryInterface::class)
-            ->disableOriginalConstructor()
-            ->createMock();
+        $this->blockRepository = $this->createMock(BlockRepositoryInterface::class);
 
         $this->saveController = $this->objectManager->getObject(
             Save::class,

@@ -29,7 +29,7 @@ class BlockTest extends TestCase
     private $blockModel;
 
     /**
-     * Object Manager
+     * Object Manager helper
      *
      * @var ObjectManager
      */

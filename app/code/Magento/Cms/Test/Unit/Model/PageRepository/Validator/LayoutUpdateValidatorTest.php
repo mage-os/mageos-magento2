@@ -16,6 +16,7 @@ use Magento\Framework\Config\ValidationStateInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\View\Model\Layout\Update\Validator;
 use Magento\Framework\View\Model\Layout\Update\ValidatorFactory;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -49,8 +50,8 @@ class LayoutUpdateValidatorTest extends TestCase
     }
 
     /**
-     * @dataProvider validationSetDataProvider
      */
+    #[DataProvider('validationSetDataProvider')]
     public function testValidate($data, $expectedExceptionMessage, $layoutValidatorException, $isLayoutValid = false)
     {
         if ($expectedExceptionMessage) {

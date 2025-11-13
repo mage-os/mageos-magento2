@@ -14,6 +14,7 @@ use Magento\Cms\Model\PageRepository\ValidationComposite;
 use Magento\Cms\Model\PageRepository\ValidatorInterface;
 use Magento\Framework\Api\SearchCriteriaInterface;
 use Magento\Framework\Exception\LocalizedException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Magento\Framework\EntityManager\HydratorInterface;
@@ -44,8 +45,8 @@ class ValidationCompositeTest extends TestCase
 
     /**
      * @param $validators
-     * @dataProvider constructorArgumentProvider
      */
+    #[DataProvider('constructorArgumentProvider')]
     public function testConstructorValidation($validators)
     {
         if (!empty($validators[0]) && is_callable($validators[0])) {
@@ -116,8 +117,8 @@ class ValidationCompositeTest extends TestCase
     /**
      * @param $method
      * @param $arg
-     * @dataProvider passthroughMethodDataProvider
      */
+    #[DataProvider('passthroughMethodDataProvider')]
     public function testPassthroughMethods($method, $arg)
     {
         if (is_callable($arg)) {
@@ -137,14 +138,14 @@ class ValidationCompositeTest extends TestCase
     public static function constructorArgumentProvider()
     {
         return [
-            [[null], false],
-            [[''], false],
-            [['foo'], false],
-            [[new \stdClass()], false],
+            [[null]],
+            [['']],
+            [['foo']],
+            [[new \stdClass()]],
             [
                 [
                     static fn (self $testCase) =>
-                    $testCase->getMockForAbstractClass(ValidatorInterface::class), 'foo'], false
+                    $testCase->createMock(ValidatorInterface::class), 'foo']
                 ],
         ];
     }
@@ -152,14 +153,14 @@ class ValidationCompositeTest extends TestCase
     public static function passthroughMethodDataProvider()
     {
         return [
-            ['save', static fn (self $testCase) => $testCase->getMockForAbstractClass(PageInterface::class)],
+            ['save', static fn (self $testCase) => $testCase->createMock(PageInterface::class)],
             ['getById', 1],
             [
                 'getList',
                 static fn (self $testCase) =>
-                $testCase->getMockForAbstractClass(SearchCriteriaInterface::class)
+                $testCase->createMock(SearchCriteriaInterface::class)
             ],
-            ['delete', static fn (self $testCase) => $testCase->getMockForAbstractClass(PageInterface::class)],
+            ['delete', static fn (self $testCase) => $testCase->createMock(PageInterface::class)],
             ['deleteById', 1],
         ];
     }

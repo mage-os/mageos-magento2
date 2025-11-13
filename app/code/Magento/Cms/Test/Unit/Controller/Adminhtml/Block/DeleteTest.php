@@ -80,13 +80,7 @@ class DeleteTest extends TestCase
         $this->messageManagerMock = $this->createMock(ManagerInterface::class);
 
         $this->requestMock = $this->createMock(
-            RequestInterface::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['getParam']
+            RequestInterface::class
         );
 
         $this->blockMock = $this->getMockBuilder(Block::class)

@@ -105,9 +105,14 @@ class SaveTest extends TestCase
             ->getMock();
         $this->dataPersistorMock = $this->getMockBuilder(DataPersistorInterface::class)
             ->getMock();
+        // Use MockCreationTrait to add non-existent methods like getPostValue
         $this->requestMock = $this->createPartialMockWithReflection(
             RequestInterface::class,
-            ['getPostValue', 'getParam']
+            ['getPostValue', 'getParam', 'isPost', 'getFullActionName', 'setParam',
+             'getModuleName', 'setModuleName', 'getActionName', 'setActionName',
+             'getCookie', 'getBeforeForwardInfo', 'getPathInfo', 'setPathInfo',
+             'getOriginalPathInfo', 'getFrontName', 'getControllerName', 'getRouteName',
+             'setParams', 'getParams', 'isSecure']
         );
         $this->messageManagerMock = $this->createMock(ManagerInterface::class);
         $this->eventManagerMock = $this->createPartialMock(

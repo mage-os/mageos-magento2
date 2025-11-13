@@ -31,6 +31,8 @@ use Magento\MediaStorage\Model\File\Storage\Directory\Database;
 use Magento\MediaStorage\Model\File\Storage\FileFactory;
 use Magento\MediaStorage\Model\File\Uploader;
 use Magento\MediaStorage\Model\File\UploaderFactory;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -42,6 +44,8 @@ use Psr\Log\LoggerInterface;
  */
 class StorageTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * Directory paths samples
      */
@@ -177,9 +181,7 @@ class StorageTest extends TestCase
     {
         $this->objectManagerHelper = new ObjectManager($this);
         $this->filesystemMock = $this->createMock(Filesystem::class);
-        $this->driverMock = $this->getMockBuilder(DriverInterface::class)
-            ->onlyMethods(['getRealPathSafety'])
-            ->createMock();
+        $this->driverMock = $this->createMock(DriverInterface::class);
 
         $this->directoryMock = $this->createPartialMock(
             Write::class,
@@ -256,19 +258,17 @@ class StorageTest extends TestCase
         $this->uploaderFactoryMock = $this->getMockBuilder(UploaderFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->sessionMock = $this->getMockBuilder(Session::class)
-            ->addMethods(['getCurrentPath'])
-            ->onlyMethods(
-                [
-                    'getName',
-                    'getSessionId',
-                    'getCookieLifetime',
-                    'getCookiePath',
-                    'getCookieDomain',
-                ]
-            )
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->sessionMock = $this->createPartialMockWithReflection(
+            Session::class,
+            [
+                'getCurrentPath',
+                'getName',
+                'getSessionId',
+                'getCookieLifetime',
+                'getCookiePath',
+                'getCookieDomain',
+            ]
+        );
         $this->backendUrlMock = $this->createMock(Url::class);
 
         $this->coreFileStorageMock = $this->getMockBuilder(\Magento\MediaStorage\Helper\File\Storage\Database::class)
@@ -394,8 +394,8 @@ class StorageTest extends TestCase
      * @return void
      * @throws LocalizedException
      * @throws FileSystemException
-     * @dataProvider fileItemsDataProvider
      */
+    #[DataProvider('fileItemsDataProvider')]
     public function testGetFilesCollection(
         int $timesWarningTriggered,
         string $thumbnailPath,
@@ -517,8 +517,8 @@ class StorageTest extends TestCase
      * @param $callNum
      * @param string $dirsFilter
      * @throws \Exception
-     * @dataProvider dirsCollectionDataProvider
      */
+    #[DataProvider('dirsCollectionDataProvider')]
     public function testGetDirsCollection($path, $callNum, $dirsFilter = '')
     {
         $this->generalTestGetDirsCollection($path, $callNum, $dirsFilter);
@@ -668,11 +668,10 @@ class StorageTest extends TestCase
             ->method('fileGetContents')
             ->willReturn('some content');
 
-        $image = $this->getMockBuilder(Image::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['open', 'keepAspectRatio'])
-            ->onlyMethods(['resize', 'save'])
-            ->getMock();
+        $image = $this->createPartialMockWithReflection(
+            Image::class,
+            ['open', 'keepAspectRatio', 'resize', 'save']
+        );
         $image->expects($this->atLeastOnce())->method('open')->with($realPath);
         $image->expects($this->atLeastOnce())->method('keepAspectRatio')->with(true);
         $image->expects($this->atLeastOnce())->method('resize')->with(100, 50);

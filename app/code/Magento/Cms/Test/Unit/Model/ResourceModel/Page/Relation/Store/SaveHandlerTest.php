@@ -13,11 +13,14 @@ use Magento\Cms\Model\ResourceModel\Page\Relation\Store\SaveHandler;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\EntityManager\EntityMetadata;
 use Magento\Framework\EntityManager\MetadataPool;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class SaveHandlerTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var SaveHandler
      */
@@ -57,8 +60,7 @@ class SaveHandlerTest extends TestCase
         $newStore = 2;
         $linkField = 'link_id';
 
-        $adapter = $this->getMockBuilder(AdapterInterface::class)
-            ->createMock();
+        $adapter = $this->createMock(AdapterInterface::class);
 
         $whereForDelete = [
             $linkField . ' = ?' => $linkId,
@@ -101,15 +103,15 @@ class SaveHandlerTest extends TestCase
             ->with('cms_page_store')
             ->willReturn('cms_page_store');
 
-        $page = $this->getMockBuilder(\Magento\Cms\Model\Page::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getStoreId'])
-            ->onlyMethods([
+        $page = $this->createPartialMockWithReflection(
+            \Magento\Cms\Model\Page::class,
+            [
+                'getStoreId',
                 'getStores',
                 'getId',
                 'getData',
-            ])
-            ->getMock();
+            ]
+        );
         $page->expects($this->once())
             ->method('getStores')
             ->willReturn(null);

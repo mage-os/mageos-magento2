@@ -14,6 +14,7 @@ use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\Message\MessageInterface;
 use Magento\Framework\Validation\ValidationException;
 use Magento\Framework\Validator\HTML\WYSIWYGValidatorInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Magento\Framework\Message\Factory as MessageFactory;
@@ -41,8 +42,8 @@ class ValidatorTest extends TestCase
      * @param \Throwable|null $thrown
      * @param bool $exceptionThrown
      * @param bool $warned
-     * @dataProvider getValidationCases
      */
+    #[DataProvider('getValidationCases')]
     public function testValidate(bool $isFlagSet, ?\Throwable $thrown, bool $exceptionThrown, bool $warned): void
     {
         $actuallyWarned = false;

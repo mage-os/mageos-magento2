@@ -10,11 +10,13 @@ namespace Magento\Cms\Test\Unit\Model\Template;
 use Magento\Cms\Model\Template\Filter;
 use Magento\Cms\Model\Template\FilterProvider;
 use Magento\Framework\ObjectManagerInterface;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class FilterProviderTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var FilterProvider
      */
@@ -77,9 +79,10 @@ class FilterProviderTest extends TestCase
     public function testGetPageWrongInstance(): void
     {
         $this->expectException('Exception');
-        $someClassMock = $this->getMockBuilder('SomeClass')
-            ->allowMockingUnknownTypes()
-            ->getMock();
+        $someClassMock = $this->createPartialMockWithReflection(
+            \stdClass::class,
+            []
+        );
         $objectManagerMock = $this->createMock(ObjectManagerInterface::class);
         $objectManagerMock->expects($this->once())->method('get')->willReturn($someClassMock);
         $model = new FilterProvider($objectManagerMock, 'SomeClass', 'SomeClass');

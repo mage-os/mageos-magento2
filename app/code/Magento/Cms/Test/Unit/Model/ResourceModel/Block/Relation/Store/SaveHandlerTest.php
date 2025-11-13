@@ -57,8 +57,7 @@ class SaveHandlerTest extends TestCase
         $newStore = 2;
         $linkField = 'link_id';
 
-        $adapter = $this->getMockBuilder(AdapterInterface::class)
-            ->createMock();
+        $adapter = $this->createMock(AdapterInterface::class);
 
         $whereForDelete = [
             $linkField . ' = ?' => $linkId,

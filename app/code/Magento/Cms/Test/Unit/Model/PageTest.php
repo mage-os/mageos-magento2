@@ -14,6 +14,7 @@ use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\Model\Context;
 use Magento\Framework\Model\ResourceModel\AbstractResource;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -23,6 +24,8 @@ use PHPUnit\Framework\TestCase;
  */
 class PageTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var \Magento\Cms\Model\Page
      */
@@ -55,25 +58,19 @@ class PageTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->eventManagerMock = $this->getMockBuilder(ManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->createMock();
+        $this->eventManagerMock = $this->createMock(ManagerInterface::class);
         $this->contextMock = $this->getMockBuilder(Context::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->resourcePageMock = $this->getMockBuilder(PageResource::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getResources'])
-            ->onlyMethods(['getIdFieldName', 'checkIdentifier'])
-            ->getMock();
-        $this->eventManagerMock = $this->getMockBuilder(ManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->createMock();
-        $this->resourcesMock = $this->getMockBuilder(AbstractResource::class)
-            ->addMethods(['getIdFieldName', 'load', 'checkIdentifier'])
-            ->createMock();
-        $this->scopeConfigMock = $this->getMockBuilder(ScopeConfigInterface::class)
-            ->createMock();
+        $this->resourcePageMock = $this->createPartialMockWithReflection(
+            PageResource::class,
+            ['getResources', 'getIdFieldName', 'checkIdentifier']
+        );
+        $this->resourcesMock = $this->createPartialMockWithReflection(
+            AbstractResource::class,
+            ['getIdFieldName', 'load', 'checkIdentifier', '_construct', 'getConnection']
+        );
+        $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
 
         $this->contextMock->expects($this->any())
             ->method('getEventDispatcher')

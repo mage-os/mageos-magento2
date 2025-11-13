@@ -117,13 +117,7 @@ class EditTest extends TestCase
         $this->resultPageFactoryMock = $this->createMock(PageFactory::class);
 
         $this->requestMock = $this->createMock(
-            RequestInterface::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            []
+            RequestInterface::class
         );
 
         $this->contextMock = $this->createMock(Context::class);
@@ -185,8 +179,8 @@ class EditTest extends TestCase
      * @param string $title
      *
      * @return void
-     * @dataProvider editActionData
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('editActionData')]
     public function testEditAction(?int $pageId, string $label, string $title): void
     {
         $this->requestMock->expects($this->once())
@@ -260,8 +254,16 @@ class EditTest extends TestCase
     public static function editActionData(): array
     {
         return [
-            [null, 'New Page', 'New Page'],
-            [2, 'Edit Page', 'Edit Page']
+            'new_page' => [
+                null,        // $pageId
+                'New Page',  // $label
+                'New Page'   // $title
+            ],
+            'edit_page' => [
+                2,           // $pageId
+                'Edit Page', // $label
+                'Edit Page'  // $title
+            ]
         ];
     }
 }

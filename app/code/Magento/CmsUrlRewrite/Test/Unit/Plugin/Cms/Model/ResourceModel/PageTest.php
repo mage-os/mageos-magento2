@@ -41,8 +41,7 @@ class PageTest extends TestCase
     {
         $objectManager = new ObjectManager($this);
 
-        $this->urlPersistMock = $this->getMockBuilder(UrlPersistInterface::class)
-            ->getMockForAbstractClass();
+        $this->urlPersistMock = $this->createMock(UrlPersistInterface::class);
 
         $this->cmsPageMock = $this->getMockBuilder(\Magento\Cms\Model\Page::class)
             ->disableOriginalConstructor()

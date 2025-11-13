@@ -23,6 +23,7 @@ use Magento\Framework\View\Asset\Repository;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Ui\Block\Wysiwyg\ActiveEditor;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -100,27 +101,19 @@ class ConfigTest extends TestCase
     protected function setUp(): void
     {
         $this->filesystemMock = $this->createMock(Filesystem::class);
-        $this->backendUrlMock = $this->getMockBuilder(UrlInterface::class)
-            ->disableOriginalConstructor()
-            ->createMock();
+        $this->backendUrlMock = $this->createMock(UrlInterface::class);
         $this->assetRepoMock = $this->getMockBuilder(Repository::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->authorizationMock = $this->getMockBuilder(AuthorizationInterface::class)
-            ->disableOriginalConstructor()
-            ->createMock();
+        $this->authorizationMock = $this->createMock(AuthorizationInterface::class);
         $this->variableConfigMock = $this->getMockBuilder(\Magento\Variable\Model\Variable\Config::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->widgetConfigMock = $this->getMockBuilder(\Magento\Widget\Model\Widget\Config::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->scopeConfigMock = $this->getMockBuilder(ScopeConfigInterface::class)
-            ->disableOriginalConstructor()
-            ->createMock();
-        $this->storeManagerMock = $this->getMockBuilder(StoreManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->createMock();
+        $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
+        $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
         $this->storeMock = $this->getMockBuilder(Store::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -176,9 +169,8 @@ class ConfigTest extends TestCase
      * @param array $data
      * @param boolean $isAuthorizationAllowed
      * @param array $expectedResults
-     *
-     * @dataProvider getConfigDataProvider
      */
+    #[DataProvider('getConfigDataProvider')]
     public function testGetConfig($data, $isAuthorizationAllowed, $expectedResults)
     {
         $this->backendUrlMock->expects($this->atLeastOnce())
@@ -275,9 +267,8 @@ class ConfigTest extends TestCase
      * @covers \Magento\Cms\Model\Wysiwyg\Config::isEnabled
      * @param string $wysiwygState
      * @param boolean $expectedResult
-     *
-     * @dataProvider isEnabledDataProvider
      */
+    #[DataProvider('isEnabledDataProvider')]
     public function testIsEnabled($wysiwygState, $expectedResult)
     {
         $storeId = 1;
@@ -307,9 +298,8 @@ class ConfigTest extends TestCase
      * @covers \Magento\Cms\Model\Wysiwyg\Config::isHidden
      * @param string $status
      * @param boolean $expectedResult
-     *
-     * @dataProvider isHiddenDataProvider
      */
+    #[DataProvider('isHiddenDataProvider')]
     public function testIsHidden($status, $expectedResult)
     {
         $this->scopeConfigMock->expects($this->atLeastOnce())
