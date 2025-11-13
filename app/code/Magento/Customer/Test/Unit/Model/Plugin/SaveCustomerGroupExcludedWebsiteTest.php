@@ -27,6 +27,7 @@ use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @phpstan-ignore-next-line
  */
 class SaveCustomerGroupExcludedWebsiteTest extends TestCase
 {
@@ -87,10 +88,10 @@ class SaveCustomerGroupExcludedWebsiteTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->groupExcludedWebsiteFactoryMock = $this->getMockBuilder(GroupExcludedWebsiteFactory::class)
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->groupExcludedWebsiteFactoryMock = $this->createPartialMock(
+            GroupExcludedWebsiteFactory::class,
+            ['create']
+        );
         $this->groupExcludedWebsiteRepositoryMock = $this->createMock(
             GroupExcludedWebsiteRepositoryInterface::class
         );
@@ -98,7 +99,10 @@ class SaveCustomerGroupExcludedWebsiteTest extends TestCase
         $this->groupRepositoryMock = $this->createMock(GroupRepositoryInterface::class);
 
         $this->groupMock = $this->createMock(GroupInterface::class);
-        $this->groupExtensionMock = $this->createMock(GroupExtensionInterface::class);
+        $this->groupExtensionMock = $this->createPartialMockWithReflection(
+            GroupExtensionInterface::class,
+            ['getExcludeWebsiteIds']
+        );
 
         $this->groupMock->method('getExtensionAttributes')
             ->willReturn($this->groupExtensionMock);

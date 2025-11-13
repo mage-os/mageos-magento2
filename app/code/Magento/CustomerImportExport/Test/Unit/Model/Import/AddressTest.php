@@ -15,9 +15,6 @@ use Magento\Customer\Model\ResourceModel\Address\Attribute as AddressAttribute;
 use Magento\CustomerImportExport\Model\Import\CountryWithWebsites;
 use Magento\CustomerImportExport\Model\Import\Address;
 use Magento\CustomerImportExport\Model\ResourceModel\Import\Customer\Storage;
-use Magento\CustomerImportExport\Test\Unit\Helper\CustomerEntityTestHelper;
-use Magento\CustomerImportExport\Test\Unit\Helper\DataSourceModelTestHelper;
-use Magento\Framework\Test\Unit\Helper\CollectionTestHelper;
 use Magento\CustomerImportExport\Model\ResourceModel\Import\Customer\StorageFactory;
 use Magento\Directory\Model\ResourceModel\Region\CollectionFactory;
 use Magento\Eav\Model\Config;
@@ -45,14 +42,17 @@ use Magento\Store\Model\StoreManager;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * Tests Magento\CustomerImportExport\Model\Import\Address.
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @phpstan-ignore-next-line
  */
 class AddressTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * Customer address entity adapter mock
      *
@@ -193,11 +193,26 @@ class AddressTest extends TestCase
      */
     protected function _getModelDependencies()
     {
-        $dataSourceModel = new DataSourceModelTestHelper();
+        // Create mock for data source model
+        $dataSourceModel = $this->createPartialMockWithReflection(
+            \stdClass::class,
+            ['getNextBunch', 'getColNames', 'rewind', 'valid', 'current', 'key', 'next']
+        );
+        $dataSourceModel->method('getNextBunch')->willReturn([]);
+        $dataSourceModel->method('getColNames')->willReturn([]);
+        
         $connection = $this->createMock(\stdClass::class);
         $attributeCollection = $this->_createAttrCollectionMock();
         $customerStorage = $this->_createCustomerStorageMock();
-        $customerEntity = new CustomerEntityTestHelper();
+        
+        // Create mock for customer entity
+        $customerEntity = $this->createPartialMockWithReflection(
+            \Magento\Framework\Model\AbstractModel::class,
+            ['filterEntityCollection', 'getEntityTable']
+        );
+        $customerEntity->method('filterEntityCollection')->willReturnArgument(0);
+        $customerEntity->method('getEntityTable')->willReturn('customer_entity');
+        
         $addressCollection = new Collection(
             $this->createMock(EntityFactory::class)
         );
@@ -237,9 +252,15 @@ class AddressTest extends TestCase
      */
     protected function _createAttrCollectionMock()
     {
-        $attributeCollection = new CollectionTestHelper();
-        $attributeCollection->setEntityTypeCode('customer_address');
+        $attributeCollection = $this->createPartialMockWithReflection(
+            Collection::class,
+            ['setEntityTypeCode', 'addItem', 'getIterator', 'getEntityTypeCode']
+        );
+        $attributeCollection->method('setEntityTypeCode')->with('customer_address')->willReturnSelf();
+        $attributeCollection->method('getEntityTypeCode')->willReturn('customer_address');
+        $attributeCollection->method('addItem')->willReturnSelf();
         
+        $attributes = [];
         foreach ($this->_attributes as $attributeData) {
             $attribute = $this->createPartialMock(
                 AbstractAttribute::class,
@@ -251,8 +272,10 @@ class AddressTest extends TestCase
             $backend->method('getTable')->willReturn($attributeData['table']);
             
             $attribute->method('getBackend')->willReturn($backend);
-            $attributeCollection->addItem($attribute);
+            $attributes[] = $attribute;
         }
+        $attributeCollection->method('getIterator')->willReturn(new \ArrayIterator($attributes));
+        
         return $attributeCollection;
     }
 

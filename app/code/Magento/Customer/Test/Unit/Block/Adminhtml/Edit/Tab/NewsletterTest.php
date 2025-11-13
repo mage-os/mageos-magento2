@@ -276,7 +276,10 @@ class NewsletterTest extends TestCase
             )
             ->willReturn($statusElementMock);
         $fieldsetMock->expects($this->once())->method('setReadonly')->with(true, true);
-        $formMock = $this->createPartialMockWithReflection(Form::class, ['setHtmlIdPrefix', 'setForm', 'setParent', 'setBaseUrl', 'addFieldset']);
+        $formMock = $this->createPartialMockWithReflection(
+            Form::class,
+            ['setHtmlIdPrefix', 'setForm', 'setParent', 'setBaseUrl', 'addFieldset']
+        );
         $formMock->expects($this->once())->method('setHtmlIdPrefix')->with('_newsletter');
         $formMock->expects($this->once())->method('addFieldset')->willReturn($fieldsetMock);
         $this->formFactoryMock->expects($this->once())->method('create')->willReturn($formMock);
@@ -353,7 +356,10 @@ class NewsletterTest extends TestCase
         $storeElementForm = $this->createPartialMockWithReflection(Select::class, ['setValue']);
         $storeElementForm->method('setValue')
             ->with(Store::DEFAULT_STORE_ID);
-        $formMock = $this->createPartialMockWithReflection(Form::class, ['setHtmlIdPrefix', 'setForm', 'setParent', 'setBaseUrl', 'addFieldset', 'getElement']);
+        $formMock = $this->createPartialMockWithReflection(
+            Form::class,
+            ['setHtmlIdPrefix', 'setForm', 'setParent', 'setBaseUrl', 'addFieldset', 'getElement']
+        );
         $formMock->expects($this->once())->method('setHtmlIdPrefix')->with('_newsletter');
         $formMock->expects($this->once())->method('addFieldset')->willReturn($fieldsetMock);
         $formMock->method('getElement')

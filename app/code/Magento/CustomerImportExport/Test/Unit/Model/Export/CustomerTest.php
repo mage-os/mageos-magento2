@@ -24,15 +24,17 @@ use Magento\ImportExport\Model\Export\Factory;
 use Magento\ImportExport\Model\ResourceModel\CollectionByPagesIteratorFactory;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManager;
-use Magento\CustomerImportExport\Test\Unit\Helper\AbstractModelTestHelper;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+ * @phpstan-ignore-next-line
  */
 class CustomerTest extends TestCase
 {
+    use MockCreationTrait;
     /**#@+
      * Test attribute code
      */
@@ -213,8 +215,17 @@ class CustomerTest extends TestCase
 
         $this->_model->setWriter($writer);
 
-        // Use AbstractModelTestHelper to support AbstractModel type requirement
-        $item = new AbstractModelTestHelper($this->_customerData);
+        // Create mock item with getData support
+        $item = $this->createPartialMockWithReflection(
+            AbstractModel::class,
+            ['getData']
+        );
+        $item->method('getData')->willReturnCallback(function ($key = null) {
+            if ($key === null) {
+                return $this->_customerData;
+            }
+            return $this->_customerData[$key] ?? null;
+        });
 
         $this->_model->exportItem($item);
     }

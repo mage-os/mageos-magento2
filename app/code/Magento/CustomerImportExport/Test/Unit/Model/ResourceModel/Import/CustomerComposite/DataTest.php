@@ -19,16 +19,18 @@ use Magento\Framework\DB\Statement\Pdo\Mysql;
 use Magento\Framework\Json\DecoderInterface;
 use Magento\Framework\Json\Helper\Data;
 use Magento\Framework\Model\ResourceModel\Db\Context;
-use Magento\Framework\Test\Unit\Helper\PdoMysqlAdapterTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @phpstan-ignore-next-line
  */
 class DataTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * Array of customer attributes
      *
@@ -64,9 +66,15 @@ class DataTest extends TestCase
         $selectMock->expects($this->any())->method('order')->willReturnSelf();
 
         /** @var AdapterInterface $connectionMock */
-        $connectionMock = new PdoMysqlAdapterTestHelper();
-        $connectionMock->setSelectMock($selectMock);
-        $connectionMock->setQueryResult($statementMock);
+        $connectionMock = $this->createPartialMockWithReflection(
+            \stdClass::class,
+            ['select', 'query', 'fetchAll', 'fetchRow', 'getTransactionLevel']
+        );
+        $connectionMock->method('select')->willReturn($selectMock);
+        $connectionMock->method('query')->willReturn($statementMock);
+        $connectionMock->method('fetchAll')->willReturn($bunchData);
+        $connectionMock->method('fetchRow')->willReturn($bunchData[0] ?? []);
+        $connectionMock->method('getTransactionLevel')->willReturn(0);
 
         /** @var $resourceModelMock \Magento\Framework\App\ResourceConnection */
         $resourceModelMock = $this->createMock(ResourceConnection::class);

@@ -27,7 +27,7 @@ class RegionTest extends TestCase
 
     /**
      * Simulate "serialize" method of a form element.
-     * 
+     *
      * @param string[] $keys
      * @param array $data
      * @return string

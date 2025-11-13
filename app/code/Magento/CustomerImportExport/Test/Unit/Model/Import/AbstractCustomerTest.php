@@ -11,7 +11,6 @@ declare(strict_types=1);
 namespace Magento\CustomerImportExport\Test\Unit\Model\Import;
 
 use Magento\CustomerImportExport\Model\Import\AbstractCustomer;
-use Magento\CustomerImportExport\Test\Unit\Helper\AbstractCustomerTestHelper;
 use Magento\Framework\Data\Collection;
 use Magento\Framework\Data\Collection\EntityFactory;
 use Magento\Framework\DataObject;
@@ -19,9 +18,14 @@ use Magento\ImportExport\Model\Import;
 use Magento\ImportExport\Test\Unit\Model\Import\AbstractImportTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
+/**
+ * @phpstan-ignore-next-line
+ */
 class AbstractCustomerTest extends AbstractImportTestCase
 {
+    use MockCreationTrait;
     /**
      * Abstract customer export model
      *
@@ -84,17 +88,21 @@ class AbstractCustomerTest extends AbstractImportTestCase
             $customerCollection->addItem(new DataObject($customer));
         }
 
-        $modelMock = $this->createPartialMock(
-            AbstractCustomerTestHelper::class,
+        $modelMock = $this->createPartialMockWithReflection(
+            AbstractCustomer::class,
             [
                 'getErrorAggregator',
                 '_validateRowForUpdate',
-                '_validateRowForDelete'
+                '_validateRowForDelete',
+                '_importData',
+                'getEntityTypeCode',
+                'setCustomerCollection'
             ]
         );
         $modelMock->method('getErrorAggregator')->willReturn($this->getErrorAggregatorObject());
         
         // Set customer collection using the helper's setter
+        $modelMock->method('setCustomerCollection')->willReturnSelf();
         $modelMock->setCustomerCollection($customerCollection);
 
         $property = new \ReflectionProperty($modelMock, '_websiteCodeToId');
