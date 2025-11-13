@@ -332,6 +332,9 @@ class ObjectManager
         $method->setAccessible(true);
         $mock = $method->invoke($this->_testObject, $className);
         $iterator = new \ArrayIterator($data);
+        $reflection = new \ReflectionClass($this->_testObject);
+        $anyMethod = $reflection->getMethod('any');
+        $anyMethod->setAccessible(true);
         $mock->expects(
             $anyMethod->invoke($this->_testObject)
         )->method(
