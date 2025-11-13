@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2015 Adobe
+ * Copyright 2014 Adobe
  * All Rights Reserved.
  */
 declare(strict_types=1);
@@ -702,7 +702,7 @@ class RendererTest extends TestCase
             ->willReturn($weeeEnabled);
 
         $this->item->setWeeeTaxAppliedAmount($weeeTax);
-
+      
         $this->item->setCalculationPrice($rowTotal);
 
         $this->assertEquals($expectedValue, $this->renderer->getFinalUnitDisplayPriceExclTax());
