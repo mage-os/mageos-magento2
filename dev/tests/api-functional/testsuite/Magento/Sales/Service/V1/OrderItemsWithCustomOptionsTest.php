@@ -40,6 +40,11 @@ class OrderItemsWithCustomOptionsTest extends WebapiAbstract
      */
     private DataFixtureStorage $fixtures;
 
+    /**
+     * Set up test dependencies
+     *
+     * @return void
+     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -52,6 +57,8 @@ class OrderItemsWithCustomOptionsTest extends WebapiAbstract
 
     /**
      * Test creating order with products having all custom option types and retrieving via REST API
+     *
+     * @return void
      */
     #[DataFixture(
         ProductFixture::class,
@@ -291,6 +298,11 @@ class OrderItemsWithCustomOptionsTest extends WebapiAbstract
         }
     }
 
+    /**
+     * Create a guest cart via REST API
+     *
+     * @return string Cart ID
+     */
     private function createGuestCart(): string
     {
         $serviceInfo = [
@@ -303,6 +315,15 @@ class OrderItemsWithCustomOptionsTest extends WebapiAbstract
         return (string)$this->_webApiCall($serviceInfo);
     }
 
+    /**
+     * Prepare custom options data for a product by SKU
+     *
+     * This method loads the product and prepares custom option values for all option types
+     * including field, area, drop_down, radio, checkbox, multiple, date, date_time, and time
+     *
+     * @param string $sku Product SKU
+     * @return array Array of custom options with option_id and option_value
+     */
     private function prepareCustomOptionsForProductBySku(string $sku): array
     {
         $objectManager = Bootstrap::getObjectManager();
@@ -338,6 +359,14 @@ class OrderItemsWithCustomOptionsTest extends WebapiAbstract
         return $customOptions;
     }
 
+    /**
+     * Get the first option value ID from a custom option
+     *
+     * Used for drop_down and radio button options where only one value can be selected
+     *
+     * @param \Magento\Catalog\Api\Data\ProductCustomOptionInterface $option Product custom option
+     * @return string|null Option type ID or null if no values exist
+     */
     private function getFirstOptionValue(\Magento\Catalog\Api\Data\ProductCustomOptionInterface $option): ?string
     {
         $values = $option->getValues();
@@ -349,6 +378,14 @@ class OrderItemsWithCustomOptionsTest extends WebapiAbstract
         return (string)$firstValue->getOptionTypeId();
     }
 
+    /**
+     * Get all option value IDs from a custom option as comma-separated string
+     *
+     * Used for checkbox and multiple select options where multiple values can be selected
+     *
+     * @param \Magento\Catalog\Api\Data\ProductCustomOptionInterface $option Product custom option
+     * @return string|null Comma-separated option type IDs or null if no values exist
+     */
     private function getAllOptionValues(\Magento\Catalog\Api\Data\ProductCustomOptionInterface $option): ?string
     {
         $values = $option->getValues();
@@ -364,6 +401,14 @@ class OrderItemsWithCustomOptionsTest extends WebapiAbstract
         return implode(',', $valueIds);
     }
 
+    /**
+     * Add a product to cart with custom options via REST API
+     *
+     * @param string $cartId Guest cart ID
+     * @param ProductInterface $product Product to add
+     * @param array $customOptions Array of custom options with option_id and option_value
+     * @return array Response containing the added cart item
+     */
     private function addProductToCart(string $cartId, ProductInterface $product, array $customOptions): array
     {
         $serviceInfo = [
@@ -389,6 +434,12 @@ class OrderItemsWithCustomOptionsTest extends WebapiAbstract
         return $this->_webApiCall($serviceInfo, $requestData);
     }
 
+    /**
+     * Set shipping information for the cart via REST API
+     *
+     * @param string $cartId Guest cart ID
+     * @return array Response containing payment methods and totals
+     */
     private function setShippingInformation(string $cartId): array
     {
         $serviceInfo = [
@@ -424,6 +475,12 @@ class OrderItemsWithCustomOptionsTest extends WebapiAbstract
         return $this->_webApiCall($serviceInfo, $requestData);
     }
 
+    /**
+     * Place order for the cart via REST API
+     *
+     * @param string $cartId Guest cart ID
+     * @return int Order ID
+     */
     private function placeOrder(string $cartId): int
     {
         $serviceInfo = [
@@ -442,6 +499,12 @@ class OrderItemsWithCustomOptionsTest extends WebapiAbstract
         return (int)$this->_webApiCall($serviceInfo, $requestData);
     }
 
+    /**
+     * Get order details via REST API
+     *
+     * @param int $orderId Order ID
+     * @return array Order data including entity_id, items, and other order details
+     */
     private function getOrder(int $orderId): array
     {
         $serviceInfo = [
@@ -454,6 +517,16 @@ class OrderItemsWithCustomOptionsTest extends WebapiAbstract
         return $this->_webApiCall($serviceInfo);
     }
 
+    /**
+     * Get order items by order ID via REST API
+     *
+     * This method retrieves order items from the sales_order_item table
+     * using the /V1/orders/items endpoint with order_id filter.
+     * Equivalent to querying: SELECT * FROM sales_order_item WHERE order_id = ?
+     *
+     * @param int $orderId Order entity ID
+     * @return array Array containing items, search_criteria, and total_count
+     */
     private function getOrderItemsByOrderId(int $orderId): array
     {
         $searchCriteria = [
