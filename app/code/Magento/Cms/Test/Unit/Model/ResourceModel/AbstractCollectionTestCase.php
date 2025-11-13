@@ -50,7 +50,7 @@ abstract class AbstractCollectionTestCase extends TestCase
         $this->resource = $this->getMockBuilder(AbstractDb::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getConnection', 'getMainTable', 'getTable'])
-            ->getMockForAbstractClass();
+            ->createMock();
         $this->resource->expects($this->any())->method('getConnection')->willReturn($this->connection);
         $this->resource->expects($this->any())->method('getMainTable')->willReturn('table_test');
         $this->resource->expects($this->any())->method('getTable')->willReturn('test');

@@ -40,7 +40,7 @@ class CollectionTest extends AbstractCollectionTestCase
         parent::setUp();
 
         $this->storeManagerMock  = $this->getMockBuilder(StoreManagerInterface::class)
-            ->getMockForAbstractClass();
+            ->createMock();
 
         $this->metadataPoolMock  = $this->getMockBuilder(MetadataPool::class)
             ->disableOriginalConstructor()
@@ -116,7 +116,7 @@ class CollectionTest extends AbstractCollectionTestCase
 
         $storeDataMock = $this->getMockBuilder(
             StoreInterface::class
-        )->getMockForAbstractClass();
+        )->createMock();
         $storeDataMock->expects($this->any())->method('getId')->willReturn(current($expectedResult[$item->getId()]));
         $storeDataMock->expects($this->any())->method('getCode')->willReturn('some_code');
         $this->storeManagerMock->expects($this->any())->method('getStores')->willReturn([$storeDataMock]);

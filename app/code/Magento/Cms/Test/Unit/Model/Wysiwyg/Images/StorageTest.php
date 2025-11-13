@@ -179,7 +179,7 @@ class StorageTest extends TestCase
         $this->filesystemMock = $this->createMock(Filesystem::class);
         $this->driverMock = $this->getMockBuilder(DriverInterface::class)
             ->onlyMethods(['getRealPathSafety'])
-            ->getMockForAbstractClass();
+            ->createMock();
 
         $this->directoryMock = $this->createPartialMock(
             Write::class,

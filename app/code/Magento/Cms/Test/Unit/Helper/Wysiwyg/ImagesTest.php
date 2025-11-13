@@ -108,9 +108,9 @@ class ImagesTest extends TestCase
     {
         $this->path = 'PATH';
         $this->objectManager = new ObjectManager($this);
-        $this->eventManagerMock = $this->getMockForAbstractClass(ManagerInterface::class);
-        $this->requestMock = $this->getMockForAbstractClass(RequestInterface::class);
-        $this->urlEncoderMock = $this->getMockForAbstractClass(EncoderInterface::class);
+        $this->eventManagerMock = $this->createMock(ManagerInterface::class);
+        $this->requestMock = $this->createMock(RequestInterface::class);
+        $this->urlEncoderMock = $this->createMock(EncoderInterface::class);
         $this->backendDataMock = $this->createMock(Data::class);
         $this->contextMock = $this->createMock(Context::class);
         $this->contextMock->expects($this->any())
@@ -147,7 +147,7 @@ class ImagesTest extends TestCase
                 ]
             )
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->createMock();
         $this->storeMock = $this->createMock(Store::class);
         $this->escaperMock = $this->createMock(Escaper::class);
         $this->imagesHelper = $this->objectManager->getObject(

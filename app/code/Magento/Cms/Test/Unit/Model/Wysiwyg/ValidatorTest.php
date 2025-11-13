@@ -51,20 +51,20 @@ class ValidatorTest extends TestCase
         $messageFactoryMock->method('create')
             ->willReturnCallback(
                 function () {
-                    return $this->getMockForAbstractClass(MessageInterface::class);
+                    return $this->createMock(MessageInterface::class);
                 }
             );
-        $configMock = $this->getMockForAbstractClass(ScopeConfigInterface::class);
+        $configMock = $this->createMock(ScopeConfigInterface::class);
         $configMock->method('isSetFlag')
             ->with(Validator::CONFIG_PATH_THROW_EXCEPTION)
             ->willReturn($isFlagSet);
 
-        $backendMock = $this->getMockForAbstractClass(WYSIWYGValidatorInterface::class);
+        $backendMock = $this->createMock(WYSIWYGValidatorInterface::class);
         if ($thrown) {
             $backendMock->method('validate')->willThrowException($thrown);
         }
 
-        $messagesMock = $this->getMockForAbstractClass(ManagerInterface::class);
+        $messagesMock = $this->createMock(ManagerInterface::class);
         $messagesMock->method('addUniqueMessages')
             ->willReturnCallback(
                 function () use (&$actuallyWarned): void {
@@ -72,7 +72,7 @@ class ValidatorTest extends TestCase
                 }
             );
 
-        $loggerMock = $this->getMockForAbstractClass(LoggerInterface::class);
+        $loggerMock = $this->createMock(LoggerInterface::class);
 
         $validator = new Validator($backendMock, $messagesMock, $configMock, $loggerMock, $messageFactoryMock);
         try {

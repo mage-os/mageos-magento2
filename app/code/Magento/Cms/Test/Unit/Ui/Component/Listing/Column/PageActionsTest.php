@@ -58,11 +58,11 @@ class PageActionsTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->urlBuilderMock = $this->getMockForAbstractClass(UrlInterface::class);
+        $this->urlBuilderMock = $this->createMock(UrlInterface::class);
         $this->scopeUrlBuilderMock = $this->createMock(UrlBuilder::class);
         $this->processorMock = $this->createMock(Processor::class);
         $this->contextMock = $this->getMockBuilder(ContextInterface::class)
-            ->getMockForAbstractClass();
+            ->createMock();
         $this->escaperMock = $this->getMockBuilder(Escaper::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['escapeHtml'])

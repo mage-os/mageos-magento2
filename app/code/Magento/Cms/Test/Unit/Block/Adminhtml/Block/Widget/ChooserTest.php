@@ -17,6 +17,7 @@ use Magento\Framework\Data\Form\Element\AbstractElement;
 use Magento\Framework\Escaper;
 use Magento\Framework\Math\Random;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\UrlInterface;
 use Magento\Framework\View\Element\BlockInterface;
 use Magento\Framework\View\LayoutInterface;
@@ -29,6 +30,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ChooserTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var Chooser
      */
@@ -91,15 +93,11 @@ class ChooserTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->layoutMock = $this->getMockBuilder(LayoutInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->layoutMock = $this->createMock(LayoutInterface::class);
         $this->mathRandomMock = $this->getMockBuilder(Random::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->urlBuilderMock = $this->getMockBuilder(UrlInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->urlBuilderMock = $this->createMock(UrlInterface::class);
         $this->escaper = $this->getMockBuilder(Escaper::class)
             ->disableOriginalConstructor()
             ->onlyMethods(
@@ -117,16 +115,10 @@ class ChooserTest extends TestCase
             )
             ->disableOriginalConstructor()
             ->getMock();
-        $this->elementMock = $this->getMockBuilder(AbstractElement::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getValue'])
-            ->onlyMethods(
-                [
-                    'getId',
-                    'setData',
-                ]
-            )
-            ->getMock();
+        $this->elementMock = $this->createPartialMockWithReflection(
+            AbstractElement::class,
+            ['getValue', 'getId', 'setData']
+        );
         $this->modelBlockMock = $this->getMockBuilder(Block::class)
             ->disableOriginalConstructor()
             ->onlyMethods(
@@ -137,20 +129,18 @@ class ChooserTest extends TestCase
                 ]
             )
             ->getMock();
-        $this->chooserMock = $this->getMockBuilder(BlockInterface::class)
-            ->disableOriginalConstructor()
-            ->addMethods(
-                [
-                    'setElement',
-                    'setConfig',
-                    'setFieldsetId',
-                    'setSourceUrl',
-                    'setUniqId',
-                    'setLabel'
-                ]
-            )
-            ->onlyMethods(['toHtml'])
-            ->getMockForAbstractClass();
+        $this->chooserMock = $this->createPartialMockWithReflection(
+            BlockInterface::class,
+            [
+                'setElement',
+                'setConfig',
+                'setFieldsetId',
+                'setSourceUrl',
+                'setUniqId',
+                'setLabel',
+                'toHtml'
+            ]
+        );
         $this->backendHelperMock = $this->getMockBuilder(Data::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -183,9 +173,8 @@ class ChooserTest extends TestCase
      * @covers \Magento\Cms\Block\Adminhtml\Block\Widget\Chooser::prepareElementHtml
      * @param string $elementValue
      * @param integer|null $modelBlockId
-     *
-     * @dataProvider prepareElementHtmlDataProvider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('prepareElementHtmlDataProvider')]
     public function testPrepareElementHtml($elementValue, $modelBlockId)
     {
         $elementId    = 1;
@@ -278,16 +267,16 @@ class ChooserTest extends TestCase
     {
         return [
             'elementValue NOT EMPTY, modelBlockId NOT EMPTY' => [
-                'elementValue' => 'some value',
-                'modelBlockId' => 1,
+                'some value', // $elementValue
+                1,            // $modelBlockId
             ],
             'elementValue NOT EMPTY, modelBlockId IS EMPTY' => [
-                'elementValue' => 'some value',
-                'modelBlockId' => null,
+                'some value', // $elementValue
+                null,         // $modelBlockId
             ],
             'elementValue IS EMPTY, modelBlockId NEVER REACHED' => [
-                'elementValue' => '',
-                'modelBlockId' => 1,
+                '',  // $elementValue
+                1,   // $modelBlockId
             ]
         ];
     }

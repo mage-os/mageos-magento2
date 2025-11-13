@@ -77,9 +77,9 @@ class DeleteTest extends TestCase
     {
         $this->objectManager = new ObjectManager($this);
 
-        $this->messageManagerMock = $this->getMockForAbstractClass(ManagerInterface::class);
+        $this->messageManagerMock = $this->createMock(ManagerInterface::class);
 
-        $this->requestMock = $this->getMockForAbstractClass(
+        $this->requestMock = $this->createMock(
             RequestInterface::class,
             [],
             '',

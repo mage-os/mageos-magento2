@@ -190,7 +190,7 @@ class LinkTest extends TestCase
 //        $objectManagerMock = $this->getMockBuilder(ObjectManagerInterface::class)
 //            ->addMethods(['getInstance'])
 //            ->onlyMethods(['get'])
-//            ->getMockForAbstractClass();
+//            ->createMock();
 //
 //        $objectManagerMock->method('getInstance')->willReturnSelf();
 //        $objectManagerMock->method('get')->willReturnMap($map);

@@ -55,14 +55,14 @@ class UrlBuilderTest extends TestCase
     {
         $this->frontendUrlBuilderMock = $this->getMockBuilder(UrlInterface::class)
             ->onlyMethods(['getUrl', 'setScope'])
-            ->getMockForAbstractClass();
-        $this->urlEncoderMock = $this->getMockForAbstractClass(EncoderInterface::class);
+            ->createMock();
+        $this->urlEncoderMock = $this->createMock(EncoderInterface::class);
         $this->storeManagerMock = $this->getMockBuilder(StoreManagerInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->createMock();
         $this->getTargetUrlMock = $this->getMockBuilder(TargetUrlBuilderInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->createMock();
         $this->viewModel = new UrlBuilder(
             $this->frontendUrlBuilderMock,
             $this->urlEncoderMock,
@@ -128,7 +128,7 @@ class UrlBuilderTest extends TestCase
         array $expectedUrls
     ) {
         /** @var StoreInterface|MockObject $storeMock */
-        $storeMock = $this->getMockForAbstractClass(StoreInterface::class);
+        $storeMock = $this->createMock(StoreInterface::class);
         $storeMock->expects($this->any())
             ->method('getCode')
             ->willReturn('en');

@@ -116,13 +116,13 @@ class DirectiveTest extends TestCase
             ->getMock();
         $this->requestMock = $this->getMockBuilder(RequestInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->createMock();
         $this->urlDecoderMock = $this->getMockBuilder(DecoderInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->createMock();
         $this->objectManagerMock = $this->getMockBuilder(ObjectManagerInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->createMock();
         $this->templateFilterMock = $this->getMockBuilder(Filter::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -147,18 +147,18 @@ class DirectiveTest extends TestCase
                 ]
             )
             ->addMethods(['getMimeType'])
-            ->getMockForAbstractClass();
+            ->createMock();
         $this->responseMock = $this->getMockBuilder(ResponseInterface::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['sendResponse'])
             ->addMethods(['setHeader', 'setBody'])
-            ->getMockForAbstractClass();
+            ->createMock();
         $this->wysiwygConfigMock = $this->getMockBuilder(Config::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->loggerMock = $this->getMockBuilder(LoggerInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->createMock();
         $this->rawFactoryMock = $this->getMockBuilder(RawFactory::class)
             ->onlyMethods(['create'])
             ->disableOriginalConstructor()

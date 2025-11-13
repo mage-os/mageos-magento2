@@ -120,7 +120,7 @@ class SaveTest extends TestCase
         $this->dataPersistorMock = $this->getMockBuilder(DataPersistorInterface::class)
             ->getMock();
 
-        $this->requestMock = $this->getMockForAbstractClass(
+        $this->requestMock = $this->createMock(
             RequestInterface::class,
             [],
             '',
@@ -135,9 +135,9 @@ class SaveTest extends TestCase
         )->disableOriginalConstructor()
             ->getMock();
 
-        $this->messageManagerMock = $this->getMockForAbstractClass(ManagerInterface::class);
+        $this->messageManagerMock = $this->createMock(ManagerInterface::class);
 
-        $this->eventManagerMock = $this->getMockForAbstractClass(
+        $this->eventManagerMock = $this->createMock(
             \Magento\Framework\Event\ManagerInterface::class,
             [],
             '',
@@ -167,7 +167,7 @@ class SaveTest extends TestCase
 
         $this->blockRepository = $this->getMockBuilder(BlockRepositoryInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->createMock();
 
         $this->saveController = $this->objectManager->getObject(
             Save::class,

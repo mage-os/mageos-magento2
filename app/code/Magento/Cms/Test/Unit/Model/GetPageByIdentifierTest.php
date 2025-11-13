@@ -10,6 +10,7 @@ namespace Magento\Cms\Test\Unit\Model;
 use Magento\Cms\Model\GetPageByIdentifier;
 use Magento\Cms\Model\Page;
 use Magento\Cms\Model\PageFactory;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -19,6 +20,7 @@ use PHPUnit\Framework\TestCase;
 
 class GetPageByIdentifierTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var GetPageByIdentifier
      */
@@ -50,11 +52,10 @@ class GetPageByIdentifierTest extends TestCase
             ->disableOriginalConstructor(true)
             ->getMock();
 
-        $this->page = $this->getMockBuilder(Page::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['setStoreId'])
-            ->onlyMethods(['getId'])
-            ->getMock();
+        $this->page = $this->createPartialMockWithReflection(
+            Page::class,
+            ['setStoreId', 'getId']
+        );
 
         $this->getPageByIdentifierCommand = new GetPageByIdentifier($this->pageFactory, $this->pageResource);
     }

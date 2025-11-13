@@ -38,7 +38,7 @@ class LayoutUpdateValidatorTest extends TestCase
     {
         $layoutValidatorFactory = $this->createMock(ValidatorFactory::class);
         $this->layoutValidator = $this->createMock(Validator::class);
-        $layoutValidatorState = $this->getMockForAbstractClass(ValidationStateInterface::class);
+        $layoutValidatorState = $this->createMock(ValidationStateInterface::class);
 
         $layoutValidatorFactory
             ->method('create')
@@ -75,7 +75,7 @@ class LayoutUpdateValidatorTest extends TestCase
                 ->willReturn($isLayoutValid);
         }
 
-        $page = $this->getMockForAbstractClass(PageInterface::class);
+        $page = $this->createMock(PageInterface::class);
         foreach ($data as $method => $value) {
             $page
                 ->method($method)

@@ -61,7 +61,7 @@ class RouterTest extends TestCase
     protected function setUp(): void
     {
         $this->eventManagerMock = $this->getMockBuilder(ManagerInterface::class)
-            ->getMockForAbstractClass();
+            ->createMock();
 
         $this->pageFactoryMock = $this->getMockBuilder(PageFactory::class)
             ->disableOriginalConstructor()
@@ -69,10 +69,10 @@ class RouterTest extends TestCase
             ->getMock();
 
         $this->storeMock = $this->getMockBuilder(StoreInterface::class)
-            ->getMockForAbstractClass();
+            ->createMock();
 
         $this->storeManagerMock = $this->getMockBuilder(StoreManagerInterface::class)
-            ->getMockForAbstractClass();
+            ->createMock();
         $this->storeManagerMock->expects($this->any())
             ->method('getStore')
             ->willReturn($this->storeMock);
@@ -112,7 +112,7 @@ class RouterTest extends TestCase
                 'setModuleName',
                 'setActionName'
             ])
-            ->getMockForAbstractClass();
+            ->createMock();
         $requestMock->expects($this->once())
             ->method('getPathInfo')
             ->willReturn($identifier);
@@ -167,7 +167,7 @@ class RouterTest extends TestCase
             ->willReturn($storeId);
 
         $actionMock = $this->getMockBuilder(ActionInterface::class)
-            ->getMockForAbstractClass();
+            ->createMock();
 
         $this->actionFactoryMock->expects($this->once())
             ->method('create')

@@ -85,15 +85,15 @@ class CollectionTest extends TestCase
     protected function setUp(): void
     {
         $this->entityFactoryMock = $this->getMockBuilder(EntityFactoryInterface::class)
-            ->getMockForAbstractClass();
+            ->createMock();
         $this->loggerMock = $this->getMockBuilder(LoggerInterface::class)
-            ->getMockForAbstractClass();
+            ->createMock();
         $this->fetchStrategyMock = $this->getMockBuilder(FetchStrategyInterface::class)
-            ->getMockForAbstractClass();
+            ->createMock();
         $this->eventManagerMock = $this->getMockBuilder(ManagerInterface::class)
-            ->getMockForAbstractClass();
+            ->createMock();
         $this->storeManagerMock = $this->getMockBuilder(StoreManagerInterface::class)
-            ->getMockForAbstractClass();
+            ->createMock();
         $this->metadataPoolMock = $this->getMockBuilder(MetadataPool::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -101,9 +101,9 @@ class CollectionTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->aggregationsMock = $this->getMockBuilder(AggregationInterface::class)
-            ->getMockForAbstractClass();
+            ->createMock();
         $this->connectionMock = $this->getMockBuilder(AdapterInterface::class)
-            ->getMockForAbstractClass();
+            ->createMock();
         $this->selectMock = $this->getMockBuilder(Select::class)
             ->disableOriginalConstructor()
             ->getMock();

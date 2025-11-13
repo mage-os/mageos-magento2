@@ -17,6 +17,7 @@ use Magento\Framework\Message\Collection;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\UrlInterface;
 use Magento\Framework\View\DesignInterface;
 use Magento\Framework\View\Element\AbstractBlock;
@@ -38,6 +39,7 @@ use PHPUnit\Framework\TestCase;
  */
 class PageTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var Page
      */
@@ -155,30 +157,29 @@ class PageTest extends TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['create'])
             ->getMock();
-        $this->pageMock = $this->getMockBuilder(\Magento\Cms\Model\Page::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['setStoreId', 'getCustomPageLayout'])
-            ->onlyMethods(
-                [
-                    'getId',
-                    'load',
-                    'getCustomThemeFrom',
-                    'getCustomThemeTo',
-                    'getCustomTheme',
-                    'getPageLayout',
-                    'getIdentifier',
-                    'getCustomLayoutUpdateXml',
-                    'getLayoutUpdateXml',
-                    'getContentHeading',
-                ]
-            )
-            ->getMock();
+        $this->pageMock = $this->createPartialMockWithReflection(
+            \Magento\Cms\Model\Page::class,
+            [
+                'setStoreId',
+                'getCustomPageLayout',
+                'getId',
+                'load',
+                'getCustomThemeFrom',
+                'getCustomThemeTo',
+                'getCustomTheme',
+                'getPageLayout',
+                'getIdentifier',
+                'getCustomLayoutUpdateXml',
+                'getLayoutUpdateXml',
+                'getContentHeading',
+            ]
+        );
         $this->storeManagerMock = $this->getMockBuilder(StoreManagerInterface::class)
-            ->getMockForAbstractClass();
+            ->createMock();
         $this->localeDateMock = $this->getMockBuilder(TimezoneInterface::class)
-            ->getMockForAbstractClass();
+            ->createMock();
         $this->designMock = $this->getMockBuilder(DesignInterface::class)
-            ->getMockForAbstractClass();
+            ->createMock();
         $this->pageConfigMock = $this->getMockBuilder(Config::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -186,11 +187,11 @@ class PageTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->eventManagerMock = $this->getMockBuilder(\Magento\Framework\Event\ManagerInterface::class)
-            ->getMockForAbstractClass();
+            ->createMock();
         $this->urlBuilderMock = $this->getMockBuilder(UrlInterface::class)
-            ->getMockForAbstractClass();
+            ->createMock();
         $this->httpRequestMock = $this->getMockBuilder(RequestInterface::class)
-            ->getMockForAbstractClass();
+            ->createMock();
         $this->storeMock = $this->getMockBuilder(Store::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -198,18 +199,18 @@ class PageTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->layoutMock = $this->getMockBuilder(LayoutInterface::class)
-            ->getMockForAbstractClass();
+            ->createMock();
         $this->layoutProcessorMock = $this->getMockBuilder(ProcessorInterface::class)
-            ->getMockForAbstractClass();
-        $this->blockMock = $this->getMockBuilder(AbstractBlock::class)
-            ->addMethods(['setContentHeading'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->createMock();
+        $this->blockMock = $this->createPartialMockWithReflection(
+            AbstractBlock::class,
+            ['setContentHeading']
+        );
         $this->messagesBlockMock = $this->getMockBuilder(Messages::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->messageManagerMock = $this->getMockBuilder(ManagerInterface::class)
-            ->getMockForAbstractClass();
+            ->createMock();
         $this->messageCollectionMock = $this->getMockBuilder(Collection::class)
             ->disableOriginalConstructor()
             ->getMock();

@@ -36,10 +36,10 @@ class ValidationCompositeTest extends TestCase
     protected function setUp(): void
     {
         /** @var PageRepositoryInterface subject */
-        $this->subject = $this->getMockForAbstractClass(PageRepositoryInterface::class);
+        $this->subject = $this->createMock(PageRepositoryInterface::class);
 
         /** @var PageRepositoryInterface subject */
-        $this->hydratorMock = $this->getMockForAbstractClass(HydratorInterface::class);
+        $this->hydratorMock = $this->createMock(HydratorInterface::class);
     }
 
     /**
@@ -57,9 +57,9 @@ class ValidationCompositeTest extends TestCase
 
     public function testSaveInvokesValidatorsWithSuccess()
     {
-        $validator1 = $this->getMockForAbstractClass(ValidatorInterface::class);
-        $validator2 = $this->getMockForAbstractClass(ValidatorInterface::class);
-        $page = $this->getMockForAbstractClass(PageInterface::class);
+        $validator1 = $this->createMock(ValidatorInterface::class);
+        $validator2 = $this->createMock(ValidatorInterface::class);
+        $page = $this->createMock(PageInterface::class);
 
         // Assert each are called
         $validator1
@@ -88,9 +88,9 @@ class ValidationCompositeTest extends TestCase
     {
         $this->expectException('Magento\Framework\Exception\LocalizedException');
         $this->expectExceptionMessage('Oh no. That isn\'t right.');
-        $validator1 = $this->getMockForAbstractClass(ValidatorInterface::class);
-        $validator2 = $this->getMockForAbstractClass(ValidatorInterface::class);
-        $page = $this->getMockForAbstractClass(PageInterface::class);
+        $validator1 = $this->createMock(ValidatorInterface::class);
+        $validator2 = $this->createMock(ValidatorInterface::class);
+        $page = $this->createMock(PageInterface::class);
 
         // Assert the first is called
         $validator1
