@@ -13,6 +13,7 @@ use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Directory\ReadInterface;
 use Magento\MediaGalleryApi\Api\IsPathExcludedInterface;
 use Magento\MediaGalleryUi\Model\Directories\GetDirectoryTree;
+use Magento\Framework\Filesystem\Directory\Read;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -116,7 +117,7 @@ class GetDirectoryTreeTest extends TestCase
             ->willReturnCallback(
                 function (string $path) {
                     $directory = $this->createPartialMock(
-                        \Magento\Framework\Filesystem\Directory\Read::class,
+                        Read::class,
                         ['readRecursively', 'isDirectory', 'getAbsolutePath', 'getRelativePath']
                     );
                     $directory->method('isDirectory')->willReturn(true);

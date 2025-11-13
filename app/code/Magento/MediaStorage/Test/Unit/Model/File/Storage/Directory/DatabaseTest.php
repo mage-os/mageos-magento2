@@ -1,10 +1,6 @@
 <?php
 /**
-<<<<<<< HEAD
- * Copyright 2018 Adobe
-=======
  * Copyright 2015 Adobe
->>>>>>> origin/2.4-develop
  * All Rights Reserved.
  */
 declare(strict_types=1);
@@ -16,15 +12,18 @@ use Magento\Framework\Model\Context;
 use Magento\Framework\Registry;
 use Magento\Framework\Stdlib\DateTime\DateTime;
 use Magento\MediaStorage\Helper\File\Storage\Database as DatabaseHelper;
+use Magento\MediaStorage\Model\File\Storage\Directory\Database as DirectoryDatabase;
 use Magento\MediaStorage\Model\File\Storage;
 use Magento\MediaStorage\Model\File\Storage\Directory\DatabaseFactory;
 use Magento\MediaStorage\Model\ResourceModel\File\Storage\Directory\Database;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
 class DatabaseTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var \Magento\MediaStorage\Model\File\Storage\Directory\Database|MockObject
      */
@@ -89,11 +88,10 @@ class DatabaseTest extends TestCase
         $this->registryMock = $this->createMock(Registry::class);
         $this->helperStorageDatabase = $this->createMock(DatabaseHelper::class);
         $this->dateModelMock = $this->createMock(DateTime::class);
-        
-        // Use reflection to set data instead of helper
-        $this->directoryMock = $this->createPartialMock(
-            \Magento\MediaStorage\Model\File\Storage\Directory\Database::class,
-            ['save']
+
+        $this->directoryMock = $this->createPartialMockWithReflection(
+            DirectoryDatabase::class,
+            ['save', 'getParentId', 'setPath']
         );
         $reflection = new \ReflectionClass($this->directoryMock);
         $dataProperty = $reflection->getProperty('_data');
@@ -104,7 +102,7 @@ class DatabaseTest extends TestCase
             'parent_id' => 1
         ]);
         $this->directoryMock->method('save')->willReturnSelf();
-        
+
         $this->directoryFactoryMock = $this->createPartialMock(
             DatabaseFactory::class,
             ['create']
@@ -155,6 +153,17 @@ class DatabaseTest extends TestCase
      */
     public function testImportDirectories()
     {
+        $this->directoryMock->expects($this->any())
+            ->method('getParentId')
+            ->willReturn(1);
+        $this->directoryMock->expects($this->any())
+            ->method('save');
+        $this->directoryMock->expects($this->exactly(2))
+            ->method('setPath')
+            ->with($this->logicalOr(
+                $this->equalTo('path/number/one'),
+                $this->equalTo('path/number/two')
+            ));
 
         $this->directoryDatabase->importDirectories(
             [
@@ -169,9 +178,10 @@ class DatabaseTest extends TestCase
      */
     public function testImportDirectoriesFailureWithoutParent()
     {
-
+        $this->directoryMock->expects($this->any())
+            ->method('getParentId')
+            ->willReturn(null);
         $this->loggerMock->expects($this->any())->method('critical');
-
         $this->directoryDatabase->importDirectories([]);
     }
 
@@ -180,6 +190,8 @@ class DatabaseTest extends TestCase
      */
     public function testImportDirectoriesFailureNotArray()
     {
+        $this->directoryMock->expects($this->never())
+            ->method('getParentId');
 
         $this->directoryDatabase->importDirectories('not an array');
     }

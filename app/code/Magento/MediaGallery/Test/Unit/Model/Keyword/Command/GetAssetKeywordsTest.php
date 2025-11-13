@@ -18,6 +18,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use Zend_Db_Statement_Interface;
 
 class GetAssetKeywordsTest extends TestCase
 {
@@ -124,7 +125,7 @@ class GetAssetKeywordsTest extends TestCase
      */
     private function configureResourceConnectionStub(array $queryResult): void
     {
-        $statementMock = $this->createMock(\Zend_Db_Statement_Interface::class);
+        $statementMock = $this->createMock(Zend_Db_Statement_Interface::class);
         $statementMock
             ->method('fetchAll')
             ->willReturn($queryResult);

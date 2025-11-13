@@ -15,6 +15,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\MediaStorage\Helper\File\Storage;
 use Magento\MediaStorage\Helper\File\Storage\Database as DatabaseHelper;
 use Magento\MediaStorage\Model\File\Storage\File;
+use Magento\MediaStorage\Model\File\Storage\Database;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -134,7 +135,7 @@ class StorageTest extends TestCase
             ->willReturn($relativePath);
 
         $fileMock = $this->createPartialMock(
-            \Magento\MediaStorage\Model\File\Storage\Database::class,
+            Database::class,
             ['getId', '__wakeup']
         );
         $fileMock->expects($this->exactly($callNum))

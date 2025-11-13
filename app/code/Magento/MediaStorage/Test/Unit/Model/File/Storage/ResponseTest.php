@@ -11,6 +11,7 @@ use Laminas\Http\Headers;
 use Magento\Framework\File\Transfer\Adapter\Http;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\MediaStorage\Model\File\Storage\Response;
+use Magento\Framework\View\Element\Template\Context;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -33,15 +34,15 @@ class ResponseTest extends TestCase
     protected function setUp(): void
     {
         $objectManager = new ObjectManager($this);
-        
+
         $objects = [
             [
-                \Magento\Framework\View\Element\Template\Context::class,
-                $this->createMock(\Magento\Framework\View\Element\Template\Context::class)
+                Context::class,
+                $this->createMock(Context::class)
             ]
         ];
         $objectManager->prepareObjectManager($objects);
-        
+
         $this->transferAdapter = $this->createPartialMock(Http::class, ['send']);
         $this->response = $objectManager->getObject(
             Response::class,

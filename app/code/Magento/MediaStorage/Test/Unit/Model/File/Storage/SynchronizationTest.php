@@ -1,10 +1,6 @@
 <?php
 /**
-<<<<<<< HEAD
- * Copyright 2018 Adobe
-=======
  * Copyright 2015 Adobe
->>>>>>> origin/2.4-develop
  * All Rights Reserved.
  */
 declare(strict_types=1);
@@ -13,6 +9,7 @@ namespace Magento\MediaStorage\Test\Unit\Model\File\Storage;
 
 use Magento\Framework\Filesystem\Directory\WriteInterface;
 use Magento\Framework\Filesystem\File\Write;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\MediaStorage\Model\File\Storage\Database;
 use Magento\MediaStorage\Model\File\Storage\DatabaseFactory;
@@ -21,14 +18,18 @@ use PHPUnit\Framework\TestCase;
 
 class SynchronizationTest extends TestCase
 {
+    use MockCreationTrait;
     public function testSynchronize(): void
     {
         $content = 'content';
         $relativeFileName = 'config.xml';
 
         $storageFactoryMock = $this->createPartialMock(DatabaseFactory::class, ['create']);
-        
-        $storageMock = $this->createPartialMock(Database::class, ['loadByFilename']);
+
+        $storageMock = $this->createPartialMockWithReflection(
+            Database::class,
+            ['loadByFilename', 'getId', 'getContent']
+        );
         $reflection = new \ReflectionClass($storageMock);
         $dataProperty = $reflection->getProperty('_data');
         $dataProperty->setAccessible(true);
@@ -36,8 +37,11 @@ class SynchronizationTest extends TestCase
             'id' => true,
             'content' => $content
         ]);
-        $storageMock->method('loadByFilename')->willReturnSelf();
         
+        $storageMock->expects($this->once())->method('loadByFilename');
+        $storageMock->expects($this->once())->method('getId')->willReturn(true);
+        $storageMock->expects($this->once())->method('getContent')->willReturn($content);
+
         $storageFactoryMock->expects($this->once())->method('create')->willReturn($storageMock);
 
         $file = $this->createPartialMock(

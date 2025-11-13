@@ -1,10 +1,6 @@
 <?php
 /**
-<<<<<<< HEAD
- * Copyright 2018 Adobe
-=======
  * Copyright 2022 Adobe
->>>>>>> origin/2.4-develop
  * All Rights Reserved.
  */
 declare(strict_types=1);

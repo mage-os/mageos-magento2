@@ -18,6 +18,7 @@ use Magento\MediaGalleryApi\Api\Data\AssetInterfaceFactory;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use Zend_Db_Statement_Interface;
 
 /**
  * Test the GetById command with exception during get media data
@@ -89,7 +90,7 @@ class GetByIdExceptionOnGetDataTest extends TestCase
         $this->selectStub->method('where')->willReturnSelf();
         $this->adapter->method('select')->willReturn($this->selectStub);
 
-        $this->statementMock = $this->createMock(\Zend_Db_Statement_Interface::class);
+        $this->statementMock = $this->createMock(Zend_Db_Statement_Interface::class);
     }
 
     /**
