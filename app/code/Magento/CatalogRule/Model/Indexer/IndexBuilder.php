@@ -815,13 +815,11 @@ class IndexBuilder
 
         foreach ($customerGroupIds as $customerGroupId) {
             if (isset($allExcludedWebsites[$customerGroupId])) {
-                foreach ($allExcludedWebsites[$customerGroupId] as $websiteId) {
-                    $ruleExcludedWebsites[$websiteId] = $websiteId;
-                }
+                $ruleExcludedWebsites[$customerGroupId] = $allExcludedWebsites[$customerGroupId];
             }
         }
 
-        return array_values($ruleExcludedWebsites);
+        return $ruleExcludedWebsites;
     }
 
     /**
