@@ -16,7 +16,6 @@ use Magento\Framework\Controller\Result\Json as ResultJson;
 use Magento\Framework\Controller\Result\JsonFactory as ResultJsonFactory;
 use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
-use Magento\Framework\View\Element\AbstractBlock;
 use Magento\Framework\View\Element\BlockInterface;
 use Magento\Framework\View\LayoutInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -61,7 +60,7 @@ class IndexTest extends TestCase
         $this->requestMock = $this->createPartialMock(HttpRequest::class, ['getPost', 'getContent']);
         $this->layoutMock = $this->createMock(LayoutInterface::class);
         $this->blockMock = $this->createPartialMockWithReflection(
-            AbstractBlock::class,
+            BlockInterface::class,
             ['setFormId', 'setIsAjax', 'toHtml']
         );
         $this->jsonResultFactoryMock = $this->createMock(ResultJsonFactory::class);
