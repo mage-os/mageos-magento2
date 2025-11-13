@@ -131,4 +131,17 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 
         return $this->loaderCache[$attributeId];
     }
+
+    /**
+     * Clear attribute loader cache
+     *
+     * @return void
+     */
+    public function __destruct()
+    {
+        foreach ($this->loaderCache as $loader) {
+            $loader->resetCache();
+        }
+        $this->loaderCache = [];
+    }
 }

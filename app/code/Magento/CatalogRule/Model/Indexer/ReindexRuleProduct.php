@@ -173,9 +173,12 @@ class ReindexRuleProduct
         $toTimeInAdminTz = $this->parseDateByWebsiteTz((string)$rule->getToDate(), self::ADMIN_WEBSITE_ID);
 
         $excludedWebsites = [];
+
         $ruleExtensionAttributes = $rule->getExtensionAttributes();
         if ($ruleExtensionAttributes && $ruleExtensionAttributes->getExcludeWebsiteIds()) {
             $excludedWebsites = $ruleExtensionAttributes->getExcludeWebsiteIds();
+        } elseif ($rule->hasData('excluded_website_ids')) {
+            $excludedWebsites = $rule->getData('excluded_website_ids') ?: [];
         }
 
         return [

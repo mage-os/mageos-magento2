@@ -232,4 +232,17 @@ class AttributeValuesLoader implements \ArrayAccess, \Countable
             }
         }
     }
+
+    /**
+     * Reset all loaded data and clear cache
+     *
+     * @return void
+     */
+    public function resetCache(): void
+    {
+        $this->loadedData = [];
+        $this->loadedBatches = [];
+        $this->batchQueue = [];
+        $this->totalCount = null;
+    }
 }

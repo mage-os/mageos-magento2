@@ -20,6 +20,7 @@ use Magento\CatalogRule\Model\ResourceModel\Rule\CollectionFactory as RuleCollec
 use Magento\CatalogRule\Model\ResourceModel\Rule\RuleIdProvider;
 use Magento\CatalogRule\Model\Rule;
 use Magento\CatalogRule\Model\RuleFactory;
+use Magento\Customer\Api\GroupExcludedWebsiteRepositoryInterface;
 use Magento\Eav\Model\Config;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\App\ResourceConnection;
@@ -215,6 +216,11 @@ class IndexBuilder
     private $ruleFactory;
 
     /**
+     * @var GroupExcludedWebsiteRepositoryInterface
+     */
+    private $groupExcludedWebsiteRepository;
+
+    /**
      * @param RuleCollectionFactory $ruleCollectionFactory
      * @param PriceCurrencyInterface $priceCurrency
      * @param ResourceConnection $resource
@@ -243,6 +249,7 @@ class IndexBuilder
      * @param CatalogRuleInsertBatchSizeCalculator|null $insertBatchSizeCalculator
      * @param RuleIdProvider|null $ruleIdProvider
      * @param RuleFactory|null $ruleFactory
+     * @param GroupExcludedWebsiteRepositoryInterface|null $groupExcludedWebsiteRepository
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
@@ -274,7 +281,8 @@ class IndexBuilder
         ?DynamicBatchSizeCalculator $batchSizeCalculator = null,
         ?CatalogRuleInsertBatchSizeCalculator $insertBatchSizeCalculator = null,
         ?RuleIdProvider $ruleIdProvider = null,
-        ?RuleFactory $ruleFactory = null
+        ?RuleFactory $ruleFactory = null,
+        ?GroupExcludedWebsiteRepositoryInterface $groupExcludedWebsiteRepository = null
     ) {
         $this->resource = $resource;
         $this->connection = $resource->getConnection();
@@ -331,6 +339,8 @@ class IndexBuilder
             ObjectManager::getInstance()->get(RuleIdProvider::class);
         $this->ruleFactory = $ruleFactory ??
             ObjectManager::getInstance()->get(RuleFactory::class);
+        $this->groupExcludedWebsiteRepository = $groupExcludedWebsiteRepository ??
+            ObjectManager::getInstance()->get(GroupExcludedWebsiteRepositoryInterface::class);
     }
 
     /**
@@ -443,6 +453,9 @@ class IndexBuilder
     {
         $dynamicBatchCount = $this->insertBatchSizeCalculator->getInsertBatchSize($this->connection);
         $ruleIds = $this->getActiveRuleIds();
+
+        $allExcludedWebsites = $this->groupExcludedWebsiteRepository->getAllExcludedWebsites();
+
         foreach ($ruleIds as $ruleId) {
 
             $rule = $this->loadRuleById($ruleId);
@@ -450,6 +463,10 @@ class IndexBuilder
                 $this->logger->warning("Rule ID {$ruleId} not found, skipping");
                 continue;
             }
+
+            $ruleExcludedWebsites = $this->filterExcludedWebsitesForRule($rule, $allExcludedWebsites);
+            $rule->setData('excluded_website_ids', $ruleExcludedWebsites);
+
             $this->reindexRuleProduct->execute($rule, $dynamicBatchCount, true);
 
             $rule->clearInstance();
@@ -778,6 +795,33 @@ class IndexBuilder
         $rule->load($ruleId);
 
         return $rule->getId() ? $rule : null;
+    }
+
+    /**
+     * Filter excluded websites for a specific rule based on its customer groups
+     *
+     * @param Rule $rule
+     * @param array $allExcludedWebsites
+     * @return array
+     */
+    private function filterExcludedWebsitesForRule(Rule $rule, array $allExcludedWebsites): array
+    {
+        $ruleExcludedWebsites = [];
+        $customerGroupIds = $rule->getCustomerGroupIds();
+
+        if (empty($customerGroupIds) || empty($allExcludedWebsites)) {
+            return $ruleExcludedWebsites;
+        }
+
+        foreach ($customerGroupIds as $customerGroupId) {
+            if (isset($allExcludedWebsites[$customerGroupId])) {
+                foreach ($allExcludedWebsites[$customerGroupId] as $websiteId) {
+                    $ruleExcludedWebsites[$websiteId] = $websiteId;
+                }
+            }
+        }
+
+        return array_values($ruleExcludedWebsites);
     }
 
     /**
