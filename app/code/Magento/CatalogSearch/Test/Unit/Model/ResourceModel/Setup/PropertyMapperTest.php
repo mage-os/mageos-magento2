@@ -52,7 +52,6 @@ class PropertyMapperTest extends TestCase
      * @param array $result
      * @return void
      */
-    #[Test]
     #[DataProvider('caseProvider')]
     public function testMapCorrectlyMapsValue(array $input, array $result): void
     {
