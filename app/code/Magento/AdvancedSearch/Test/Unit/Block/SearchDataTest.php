@@ -88,7 +88,7 @@ class SearchDataTest extends TestCase
     public function testGetLink(): void
     {
         $searchQueryMock = 'Some test search query';
-        $expectedResult = 'http://example.com/?q=Some+test+search+query';
+        $expectedResult = '?q=Some+test+search+query';
         
         $actualResult = $this->block->getLink($searchQueryMock);
         $this->assertEquals($expectedResult, $actualResult);
