@@ -153,6 +153,7 @@
         </actionGroup>
         <waitForElementVisible selector="{{StorefrontProductMediaSection.gallery}}" stepKey="waitGalleryOnPdp"/>
         <!--  Step 10: Verify the order of the images in the frontend -->
+        <waitForElementVisible selector="{{StorefrontProductMediaSection.fotoramaImageThumbnailImgByNumber('5')}}" stepKey="waitForImagesToVisible"/>
         <actionGroup ref="AssertStorefrontProductPageGalleryImagePositionInThumbnailRibbonActionGroup" stepKey="assertImage1">
             <argument name="image" value="{{MagentoLogo.filename}}"/>
             <argument name="extension" value="{{MagentoLogo.file_extension}}"/>
