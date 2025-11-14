@@ -276,7 +276,7 @@ class GroupRepositoryTest extends TestCase
     {
         $this->expectException(InvalidTransitionException::class);
 
-        $taxClass = $this->createMock(TaxClassInterface::class, [], '', false);
+        $taxClass = $this->createMock(TaxClassInterface::class);
 
         $this->groupFactory->expects($this->once())
             ->method('create')

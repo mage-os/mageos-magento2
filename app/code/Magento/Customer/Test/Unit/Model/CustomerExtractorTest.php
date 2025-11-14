@@ -75,7 +75,7 @@ class CustomerExtractorTest extends TestCase
             GroupManagementInterface::class
         );
         $this->dataObjectHelper = $this->createMock(DataObjectHelper::class);
-        $this->request = $this->createMock(RequestInterface::class, [], '', false);
+        $this->request = $this->createMock(RequestInterface::class);
         $this->customerForm = $this->createMock(Form::class);
         $this->customerData = $this->createMock(
             CustomerInterface::class
