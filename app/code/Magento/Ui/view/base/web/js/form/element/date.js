@@ -87,12 +87,22 @@ define([
         initConfig: function () {
             this._super();
 
+            // Adopt picker format if provided under options in UI XML
+            if (this.options && this.options.pickerDateTimeFormat) {
+                this.pickerDateTimeFormat = this.options.pickerDateTimeFormat;
+            }
+
             if (!this.options.dateFormat) {
                 this.options.dateFormat = this.pickerDefaultDateFormat;
             }
 
             if (!this.options.timeFormat) {
                 this.options.timeFormat = this.pickerDefaultTimeFormat;
+            }
+
+            // If date-only and a picker format is explicitly configured, prefer it for calendar display format
+            if (!this.options.showsTime && this.pickerDateTimeFormat) {
+                this.options.dateFormat = this.pickerDateTimeFormat;
             }
 
             this.prepareDateTimeFormats();
@@ -177,13 +187,15 @@ define([
          * with moment.js library.
          */
         prepareDateTimeFormats: function () {
-            if (this.options.timeOnly) {
-                this.pickerDateTimeFormat = this.options.timeFormat;
-            } else {
-                this.pickerDateTimeFormat = this.options.dateFormat;
-
-                if (this.options.showsTime) {
-                    this.pickerDateTimeFormat += ' ' + this.options.timeFormat;
+            // Respect explicitly configured picker format if provided; otherwise compose from options.
+            if (!this.pickerDateTimeFormat) {
+                if (this.options.timeOnly) {
+                    this.pickerDateTimeFormat = this.options.timeFormat;
+                } else {
+                    this.pickerDateTimeFormat = this.options.dateFormat;
+                    if (this.options.showsTime) {
+                        this.pickerDateTimeFormat += ' ' + this.options.timeFormat;
+                    }
                 }
             }
 

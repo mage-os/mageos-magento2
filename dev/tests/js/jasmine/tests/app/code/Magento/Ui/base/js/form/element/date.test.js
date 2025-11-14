@@ -82,5 +82,30 @@ define([
             model.value('2:43 am');
             expect(model.getPreview()).toBe('02:43:00');
         });
+
+        it('Prefers pickerDateTimeFormat for date-only display format', function () {
+            // simulate UI XML providing pickerDateTimeFormat while showsTime is false
+            model.options.showsTime = false;
+            model.options.pickerDateTimeFormat = 'y-MM-dd';
+
+            // Re-init to adopt option and set options.dateFormat accordingly
+            model.initConfig();
+
+            expect(model.options.dateFormat).toBe('y-MM-dd');
+        });
+
+        it('Displays value using pickerDateTimeFormat when date-only', function () {
+            model.options.showsTime = false;
+            // Ensure consistent IO formats for this test case
+            model.outputDateFormat = 'y-MM-dd';
+            model.inputDateFormat = 'y-MM-dd';
+            model.pickerDateTimeFormat = 'y-MM-dd';
+
+            // Make sure formats are prepared
+            model.prepareDateTimeFormats();
+
+            model.value('2025-11-21');
+            expect(model.getPreview()).toBe('2025-11-21');
+        });
     });
 });
