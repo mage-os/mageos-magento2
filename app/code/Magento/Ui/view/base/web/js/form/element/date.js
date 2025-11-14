@@ -187,15 +187,13 @@ define([
          * with moment.js library.
          */
         prepareDateTimeFormats: function () {
-            // Respect explicitly configured picker format if provided; otherwise compose from options.
-            if (!this.pickerDateTimeFormat) {
-                if (this.options.timeOnly) {
-                    this.pickerDateTimeFormat = this.options.timeFormat;
-                } else {
-                    this.pickerDateTimeFormat = this.options.dateFormat;
-                    if (this.options.showsTime) {
-                        this.pickerDateTimeFormat += ' ' + this.options.timeFormat;
-                    }
+            if (this.options.timeOnly) {
+                this.pickerDateTimeFormat = this.options.timeFormat;
+            } else {
+                this.pickerDateTimeFormat = this.options.dateFormat;
+
+                if (this.options.showsTime) {
+                    this.pickerDateTimeFormat += ' ' + this.options.timeFormat;
                 }
             }
 
