@@ -192,6 +192,7 @@
         <!-- Shift ribbon then assert remaining images-->
         <waitForElementClickable selector="{{StorefrontProductMediaSection.fotoramaNextButton}}" stepKey="waitToShiftRibbonNext"/>
         <click selector="{{StorefrontProductMediaSection.fotoramaNextButton}}" stepKey="shiftRibbonNext"/>
+        <waitForElementVisible selector="{{StorefrontProductMediaSection.fotoramaImageThumbnailImgByNumber('10')}}" stepKey="waitForTheImagesToVisible"/>
         <actionGroup ref="AssertStorefrontProductPageGalleryImagePositionInThumbnailRibbonActionGroup" stepKey="assertImage8">
             <argument name="image" value="{{MagentoImage.filename}}"/>
             <argument name="extension" value="{{MagentoImage.file_extension}}"/>
