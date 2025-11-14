@@ -10,6 +10,7 @@ namespace Magento\Cms\Test\Unit\Model;
 use Magento\Cms\Model\GetPageByIdentifier;
 use Magento\Cms\Model\Page;
 use Magento\Cms\Model\PageFactory;
+use Magento\Cms\Model\ResourceModel\Page as CmsModelResourcePage;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -37,7 +38,7 @@ class GetPageByIdentifierTest extends TestCase
     protected $pageFactory;
 
     /**
-     * @var MockObject|\Magento\Cms\Model\ResourceModel\Page
+     * @var MockObject|CmsModelResourcePage
      */
     protected $pageResource;
 
@@ -48,7 +49,7 @@ class GetPageByIdentifierTest extends TestCase
             ->onlyMethods(['create'])
             ->getMock();
 
-        $this->pageResource = $this->getMockBuilder(\Magento\Cms\Model\ResourceModel\Page::class)
+        $this->pageResource = $this->getMockBuilder(CmsModelResourcePage::class)
             ->disableOriginalConstructor(true)
             ->getMock();
 

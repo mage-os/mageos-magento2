@@ -13,6 +13,7 @@ use Magento\Cms\Api\Data\BlockSearchResultsInterface;
 use Magento\Cms\Api\Data\BlockSearchResultsInterfaceFactory;
 use Magento\Cms\Model\BlockFactory;
 use Magento\Cms\Model\BlockRepository;
+use Magento\Cms\Model\Block as CmsModelBlock;
 use Magento\Cms\Model\ResourceModel\Block;
 use Magento\Cms\Model\ResourceModel\Block\Collection;
 use Magento\Cms\Model\ResourceModel\Block\CollectionFactory;
@@ -45,7 +46,7 @@ class BlockRepositoryTest extends TestCase
     protected $blockResource;
 
     /**
-     * @var MockObject|\Magento\Cms\Model\Block
+     * @var MockObject|CmsModelBlock
      */
     protected $block;
 
@@ -118,7 +119,7 @@ class BlockRepositoryTest extends TestCase
         $store->expects($this->any())->method('getId')->willReturn(0);
         $this->storeManager->expects($this->any())->method('getStore')->willReturn($store);
 
-        $this->block = $this->getMockBuilder(\Magento\Cms\Model\Block::class)->disableOriginalConstructor()
+        $this->block = $this->getMockBuilder(CmsModelBlock::class)->disableOriginalConstructor()
             ->getMock();
         $this->blockData = $this->getMockBuilder(BlockInterface::class)
             ->getMock();

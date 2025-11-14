@@ -11,6 +11,7 @@ use Magento\Backend\Block\Template\Context;
 use Magento\Cms\Block\Adminhtml\Page\Widget\Chooser;
 use Magento\Cms\Model\Page;
 use Magento\Cms\Model\PageFactory;
+use Magento\Widget\Block\Adminhtml\Widget\Chooser as WidgetChooser;
 use Magento\Framework\Data\Form\Element\AbstractElement;
 use Magento\Framework\Escaper;
 use Magento\Framework\Math\Random;
@@ -21,6 +22,7 @@ use Magento\Framework\View\Element\BlockInterface;
 use Magento\Framework\View\LayoutInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * @covers \Magento\Cms\Block\Adminhtml\Page\Widget\Chooser
@@ -154,7 +156,7 @@ class ChooserTest extends TestCase
      * @param string $elementValue
      * @param integer|null $cmsPageId
      */
-    #[\PHPUnit\Framework\Attributes\DataProvider('prepareElementHtmlDataProvider')]
+    #[DataProvider('prepareElementHtmlDataProvider')]
     public function testPrepareElementHtml($elementValue, $cmsPageId)
     {
         //$elementValue = 12345;
@@ -184,7 +186,7 @@ class ChooserTest extends TestCase
             ->willReturn($sourceUrl);
         $this->layoutMock->expects($this->atLeastOnce())
             ->method('createBlock')
-            ->with(\Magento\Widget\Block\Adminhtml\Widget\Chooser::class)
+            ->with(WidgetChooser::class)
             ->willReturn($this->chooserMock);
         $this->chooserMock->expects($this->atLeastOnce())
             ->method('setElement')

@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\Cms\Test\Unit\Controller\Index;
 
 use Magento\Cms\Controller\Index\Index;
+use Magento\Cms\Helper\Page as CmsPageHelperPage;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Response\Http;
 use Magento\Framework\Controller\Result\Forward;
@@ -16,6 +17,7 @@ use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Result\Page;
 use Magento\Store\Model\ScopeInterface;
+use Magento\Framework\App\Request\Http as FrameworkHttpRequestHttp;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -82,19 +84,19 @@ class IndexTest extends TestCase
             ->willReturn($this->forwardMock);
 
         $scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
-        $this->requestMock = $this->createMock(\Magento\Framework\App\Request\Http::class);
-        $this->cmsHelperMock = $this->createMock(\Magento\Cms\Helper\Page::class);
+        $this->requestMock = $this->createMock(FrameworkHttpRequestHttp::class);
+        $this->cmsHelperMock = $this->createMock(CmsPageHelperPage::class);
         $valueMap = [
             [ScopeConfigInterface::class,
                 $scopeConfigMock,
             ],
-            [\Magento\Cms\Helper\Page::class, $this->cmsHelperMock],
+            [CmsPageHelperPage::class, $this->cmsHelperMock],
         ];
         $objectManagerMock->expects($this->any())->method('get')->willReturnMap($valueMap);
         $scopeConfigMock->expects($this->once())
             ->method('getValue')
             ->with(
-                \Magento\Cms\Helper\Page::XML_PATH_HOME_PAGE,
+                CmsPageHelperPage::XML_PATH_HOME_PAGE,
                 ScopeInterface::SCOPE_STORE
             )
             ->willReturn($this->pageId);

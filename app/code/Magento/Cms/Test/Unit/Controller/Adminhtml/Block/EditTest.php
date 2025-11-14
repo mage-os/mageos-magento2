@@ -18,11 +18,13 @@ use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\Phrase;
 use Magento\Framework\Registry;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\ObjectManager\ObjectManager as FrameworkObjectManager;
 use Magento\Framework\View\Page\Config;
 use Magento\Framework\View\Page\Title;
 use Magento\Framework\View\Result\PageFactory;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -70,7 +72,7 @@ class EditTest extends TestCase
     protected $blockMock;
 
     /**
-     * @var \Magento\Framework\ObjectManager\ObjectManager|MockObject
+     * @var FrameworkObjectManager|MockObject
      */
     protected $objectManagerMock;
 
@@ -97,7 +99,7 @@ class EditTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->objectManagerMock = $this->getMockBuilder(\Magento\Framework\ObjectManager\ObjectManager::class)
+        $this->objectManagerMock = $this->getMockBuilder(FrameworkObjectManager::class)
             ->onlyMethods(['create', 'get'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -181,7 +183,7 @@ class EditTest extends TestCase
      *
      * @return void
      */
-    #[\PHPUnit\Framework\Attributes\DataProvider('editActionData')]
+    #[DataProvider('editActionData')]
     public function testEditAction(?int $blockId, string $label, string $title): void
     {
         $this->requestMock->expects($this->once())

@@ -28,6 +28,10 @@ use Magento\Framework\View\LayoutInterface;
 use Magento\Framework\View\Page\Config;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Cms\Model\Page as CmsPage;
+use Magento\Framework\Event\ManagerInterface as EventManagerInterface;
+use Magento\Framework\View\Result\Page as ResultPage;
+use Magento\Framework\View\Result\PageFactory as ResultPageFactory;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -57,7 +61,7 @@ class PageTest extends TestCase
     protected $pageFactoryMock;
 
     /**
-     * @var \Magento\Cms\Model\Page|MockObject
+     * @var CmsPage|MockObject
      */
     protected $pageMock;
 
@@ -92,7 +96,7 @@ class PageTest extends TestCase
     protected $messageManagerMock;
 
     /**
-     * @var \Magento\Framework\Event\ManagerInterface|MockObject
+     * @var EventManagerInterface|MockObject
      */
     protected $eventManagerMock;
 
@@ -107,7 +111,7 @@ class PageTest extends TestCase
     protected $storeMock;
 
     /**
-     * @var \Magento\Framework\View\Result\Page|MockObject
+     * @var ResultPage|MockObject
      */
     protected $resultPageMock;
 
@@ -137,7 +141,7 @@ class PageTest extends TestCase
     protected $messageCollectionMock;
 
     /**
-     * @var \Magento\Framework\View\Result\PageFactory|MockObject
+     * @var ResultPageFactory|MockObject
      */
     protected $resultPageFactory;
 
@@ -159,7 +163,7 @@ class PageTest extends TestCase
             ->onlyMethods(['create'])
             ->getMock();
         $this->pageMock = $this->createPartialMockWithReflection(
-            \Magento\Cms\Model\Page::class,
+            CmsPage::class,
             [
                 'setStoreId',
                 'getCustomPageLayout',
@@ -184,13 +188,13 @@ class PageTest extends TestCase
         $this->escaperMock = $this->getMockBuilder(Escaper::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->eventManagerMock = $this->createMock(\Magento\Framework\Event\ManagerInterface::class);
+        $this->eventManagerMock = $this->createMock(EventManagerInterface::class);
         $this->urlBuilderMock = $this->createMock(UrlInterface::class);
         $this->httpRequestMock = $this->createMock(RequestInterface::class);
         $this->storeMock = $this->getMockBuilder(Store::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->resultPageMock = $this->getMockBuilder(\Magento\Framework\View\Result\Page::class)
+        $this->resultPageMock = $this->getMockBuilder(ResultPage::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->layoutMock = $this->createMock(LayoutInterface::class);
@@ -217,7 +221,7 @@ class PageTest extends TestCase
             ]
         );
 
-        $this->resultPageFactory = $this->createMock(\Magento\Framework\View\Result\PageFactory::class);
+        $this->resultPageFactory = $this->createMock(ResultPageFactory::class);
 
         $this->object = $objectManager->getObject(
             Page::class,

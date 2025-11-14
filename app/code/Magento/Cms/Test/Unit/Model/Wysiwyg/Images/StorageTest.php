@@ -26,6 +26,10 @@ use Magento\Framework\Filesystem\Io\File;
 use Magento\Framework\Image\AdapterFactory;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Asset\Repository;
+use Magento\Framework\Filesystem\Driver\File as FilesystemDriverFile;
+use Magento\Framework\Data\Collection\Filesystem as FrameworkDataCollectionFilesystem;
+use Magento\MediaStorage\Model\File\Storage\Directory\DatabaseFactory as MediaStorageDirectoryDatabaseFactory;
+use Magento\MediaStorage\Helper\File\Storage\Database as MediaStorageHelperFileStorageDatabase;
 use Magento\MediaStorage\Model\File\Storage\DatabaseFactory;
 use Magento\MediaStorage\Model\File\Storage\Directory\Database;
 use Magento\MediaStorage\Model\File\Storage\FileFactory;
@@ -94,7 +98,7 @@ class StorageTest extends TestCase
     private $storageDatabaseFactoryMock;
 
     /**
-     * @var \Magento\MediaStorage\Model\File\Storage\Directory\DatabaseFactory|MockObject
+     * @var MediaStorageDirectoryDatabaseFactory|MockObject
      */
     private $directoryDatabaseFactoryMock;
 
@@ -129,7 +133,7 @@ class StorageTest extends TestCase
     private $driverMock;
 
     /**
-     * @var \Magento\MediaStorage\Helper\File\Storage\Database|MockObject
+     * @var MediaStorageHelperFileStorageDatabase|MockObject
      */
     private $coreFileStorageMock;
 
@@ -144,7 +148,7 @@ class StorageTest extends TestCase
     private $ioFileMock;
 
     /**
-     * @var \Magento\Framework\Filesystem\Driver\File|MockObject
+     * @var FilesystemDriverFile|MockObject
      */
     private $fileMock;
 
@@ -206,7 +210,7 @@ class StorageTest extends TestCase
             $this->directoryMock
         );
 
-        $this->fileMock   = $this->objectManagerHelper->getObject(\Magento\Framework\Filesystem\Driver\File::class);
+        $this->fileMock   = $this->objectManagerHelper->getObject(FilesystemDriverFile::class);
         $this->ioFileMock = $this->createPartialMock(File::class, ['getPathInfo']);
         $this->ioFileMock->expects(
             $this->any()
@@ -242,7 +246,7 @@ class StorageTest extends TestCase
             DatabaseFactory::class
         );
         $this->directoryDatabaseFactoryMock = $this->createPartialMock(
-            \Magento\MediaStorage\Model\File\Storage\Directory\DatabaseFactory::class,
+            MediaStorageDirectoryDatabaseFactory::class,
             ['create']
         );
         $this->directoryCollectionMock = $this->createMock(
@@ -271,7 +275,7 @@ class StorageTest extends TestCase
         );
         $this->backendUrlMock = $this->createMock(Url::class);
 
-        $this->coreFileStorageMock = $this->getMockBuilder(\Magento\MediaStorage\Helper\File\Storage\Database::class)
+        $this->coreFileStorageMock = $this->getMockBuilder(MediaStorageHelperFileStorageDatabase::class)
             ->disableOriginalConstructor()
             ->getMock();
         $allowedExtensions = [
@@ -593,7 +597,7 @@ class StorageTest extends TestCase
             ->willReturnSelf();
         $storageCollectionMock->expects($this->once())
             ->method('setOrder')
-            ->with('basename', \Magento\Framework\Data\Collection\Filesystem::SORT_ORDER_ASC)
+            ->with('basename', FrameworkDataCollectionFilesystem::SORT_ORDER_ASC)
             ->willReturnSelf();
         $storageCollectionMock->expects($this->exactly($callNum))
             ->method('setDirsFilter')

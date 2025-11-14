@@ -18,6 +18,8 @@ use Magento\Framework\App\Request\DataPersistorInterface;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Message\ManagerInterface;
+use Magento\Framework\Event\ManagerInterface as EventManagerInterface;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as TestFrameworkObjectManager;
 use Magento\Framework\ObjectManager\ObjectManager;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -70,12 +72,12 @@ class SaveTest extends TestCase
     protected $messageManagerMock;
 
     /**
-     * @var \Magento\Framework\Event\ManagerInterface|MockObject
+     * @var EventManagerInterface|MockObject
      */
     protected $eventManagerMock;
 
     /**
-     * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
+     * @var TestFrameworkObjectManager
      */
     protected $objectManager;
 
@@ -104,7 +106,7 @@ class SaveTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
+        $this->objectManager = new TestFrameworkObjectManager($this);
 
         $this->contextMock = $this->createMock(Context::class);
 
@@ -140,7 +142,7 @@ class SaveTest extends TestCase
         $this->messageManagerMock = $this->createMock(ManagerInterface::class);
 
         $this->eventManagerMock = $this->createPartialMock(
-            \Magento\Framework\Event\ManagerInterface::class,
+            EventManagerInterface::class,
             ['dispatch']
         );
 

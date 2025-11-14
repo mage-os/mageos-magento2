@@ -22,6 +22,9 @@ use Magento\Framework\View\Page\Title;
 use Magento\Framework\View\Result\PageFactory;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use Magento\Framework\ObjectManager\ObjectManager as FrameworkObjectManager;
+use Magento\Backend\Model\View\Result\Page as BackendModelViewResultPage;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -64,12 +67,12 @@ class EditTest extends TestCase
     protected $requestMock;
 
     /**
-     * @var \Magento\Cms\Model\Page|MockObject
+     * @var Page|MockObject
      */
     protected $pageMock;
 
     /**
-     * @var \Magento\Framework\ObjectManager\ObjectManager|MockObject
+     * @var FrameworkObjectManager|MockObject
      */
     protected $objectManagerMock;
 
@@ -96,7 +99,7 @@ class EditTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->objectManagerMock = $this->getMockBuilder(\Magento\Framework\ObjectManager\ObjectManager::class)
+        $this->objectManagerMock = $this->getMockBuilder(FrameworkObjectManager::class)
             ->onlyMethods(['create', 'get'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -180,7 +183,7 @@ class EditTest extends TestCase
      *
      * @return void
      */
-    #[\PHPUnit\Framework\Attributes\DataProvider('editActionData')]
+    #[DataProvider('editActionData')]
     public function testEditAction(?int $pageId, string $label, string $title): void
     {
         $this->requestMock->expects($this->once())
@@ -202,7 +205,7 @@ class EditTest extends TestCase
             ->method('register')
             ->with('cms_page', $this->pageMock);
 
-        $resultPageMock = $this->createMock(\Magento\Backend\Model\View\Result\Page::class);
+        $resultPageMock = $this->createMock(BackendModelViewResultPage::class);
 
         $this->resultPageFactoryMock->expects($this->once())
             ->method('create')

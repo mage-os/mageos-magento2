@@ -12,6 +12,8 @@ use Magento\Cms\Model\Wysiwyg\CompositeConfigProvider;
 use Magento\Cms\Model\Wysiwyg\Config;
 use Magento\Cms\Model\Wysiwyg\ConfigProviderFactory;
 use Magento\Cms\Model\WysiwygDefaultConfig;
+use Magento\Variable\Model\Variable\Config as VariableConfig;
+use Magento\Widget\Model\Widget\Config as WidgetConfig;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\AuthorizationInterface;
 use Magento\Framework\DataObject;
@@ -54,12 +56,12 @@ class ConfigTest extends TestCase
     protected $authorizationMock;
 
     /**
-     * @var \Magento\Variable\Model\Variable\Config|MockObject
+     * @var VariableConfig|MockObject
      */
     protected $variableConfigMock;
 
     /**
-     * @var \Magento\Widget\Model\Widget\Config|MockObject
+     * @var WidgetConfig|MockObject
      */
     protected $widgetConfigMock;
 
@@ -106,10 +108,10 @@ class ConfigTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->authorizationMock = $this->createMock(AuthorizationInterface::class);
-        $this->variableConfigMock = $this->getMockBuilder(\Magento\Variable\Model\Variable\Config::class)
+        $this->variableConfigMock = $this->getMockBuilder(VariableConfig::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->widgetConfigMock = $this->getMockBuilder(\Magento\Widget\Model\Widget\Config::class)
+        $this->widgetConfigMock = $this->getMockBuilder(WidgetConfig::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
