@@ -12,13 +12,11 @@
         <annotations>
             <features value="Checkout"/>
             <stories value="Guest Checkout with Special Characters in City Name"/>
+            <description value="Verify checkout with special characters in city names"/>
             <title value="Verify guest checkout accepts city names with digits, ampersand, period, and parenthesis"/>
-            <description value="Test validates that orders can be placed successfully with city names containing: digits (0-9), ampersand (&amp;), period (.), parenthesis (). Tests multiple city variations: St. Moritz, St. Petersburg, Brighton &amp; Hove, St. Davids, 29 Palms, Anywhere (North)"/>
             <severity value="MINOR"/>
             <testCaseId value="AC-15276"/>
             <group value="checkout"/>
-            <group value="address_validation"/>
-            <group value="special_characters"/>
         </annotations>
         <before>
             <!-- Create simple product for checkout -->
@@ -36,7 +34,7 @@
             <argument name="product" value="$$createProduct$$"/>
         </actionGroup>
         <actionGroup ref="StorefrontOpenCheckoutPageActionGroup" stepKey="goToCheckoutToPlaceOrderWithStMoritzAddress"/>
-        <!--Fill Shipping Address-->
+        <!-- Fill Shipping Address -->
        <actionGroup ref="FillGuestCheckoutShippingAddressWithCountryAndStateActionGroup" stepKey="fillShippingFormDataWithStMoritzCity">
             <argument name="customer" value="CustomerEntityOne"/>
             <argument name="customerAddress" value="CustomerAddressSimple"/>
@@ -56,7 +54,7 @@
             <argument name="product" value="$$createProduct$$"/>
         </actionGroup>
         <actionGroup ref="StorefrontOpenCheckoutPageActionGroup" stepKey="goToCheckoutToPlaceOrderWithStPetersburgAddress"/>
-        <!--Fill Shipping Address-->
+        <!-- Fill Shipping Address -->
         <actionGroup ref="FillGuestCheckoutShippingAddressWithCountryAndStateActionGroup" stepKey="fillShippingFormDataWithStPetersburgCity">
             <argument name="customer" value="CustomerEntityOne"/>
             <argument name="customerAddress" value="CustomerAddressSimple"/>
@@ -76,7 +74,7 @@
             <argument name="product" value="$$createProduct$$"/>
         </actionGroup>
         <actionGroup ref="StorefrontOpenCheckoutPageActionGroup" stepKey="goToCheckoutToPlaceOrderWithBrightonAndHoveAddress"/>
-        <!--Fill Shipping Address-->
+        <!-- Fill Shipping Address -->
         <actionGroup ref="FillGuestCheckoutShippingAddressWithCountryAndStateActionGroup" stepKey="fillShippingFormDataWithBrightonAndHoveCity">
             <argument name="customer" value="CustomerEntityOne"/>
             <argument name="customerAddress" value="CustomerAddressSimple"/>
@@ -96,7 +94,7 @@
             <argument name="product" value="$$createProduct$$"/>
         </actionGroup>
         <actionGroup ref="StorefrontOpenCheckoutPageActionGroup" stepKey="goToCheckoutToPlaceOrderWithStDavidAddress"/>
-        <!--Fill Shipping Address-->
+        <!-- Fill Shipping Address -->
         <actionGroup ref="FillGuestCheckoutShippingAddressWithCountryAndStateActionGroup" stepKey="fillShippingFormDataWithStDavidCity">
             <argument name="customer" value="CustomerEntityOne"/>
             <argument name="customerAddress" value="CustomerAddressSimple"/>
@@ -116,7 +114,7 @@
             <argument name="product" value="$$createProduct$$"/>
         </actionGroup>
         <actionGroup ref="StorefrontOpenCheckoutPageActionGroup" stepKey="goToCheckoutToPlaceOrderWith29PalmsAddress"/>
-        <!--Fill Shipping Address-->
+        <!-- Fill Shipping Address -->
         <actionGroup ref="FillGuestCheckoutShippingAddressWithCountryAndStateActionGroup" stepKey="fillShippingFormDataWith29PalmsCity">
             <argument name="customer" value="CustomerEntityOne"/>
             <argument name="customerAddress" value="CustomerAddressSimple"/>
@@ -136,7 +134,7 @@
             <argument name="product" value="$$createProduct$$"/>
         </actionGroup>
         <actionGroup ref="StorefrontOpenCheckoutPageActionGroup" stepKey="goToCheckoutToPlaceOrderWithNorthAmericaPartAddress"/>
-        <!--Fill Shipping Address-->
+        <!-- Fill Shipping Address -->
         <actionGroup ref="FillGuestCheckoutShippingAddressWithCountryAndStateActionGroup" stepKey="fillShippingFormDataWithNorthAmericaPartCity">
             <argument name="customer" value="CustomerEntityOne"/>
             <argument name="customerAddress" value="CustomerAddressSimple"/>
