@@ -64,8 +64,13 @@ class FixedProductTaxTest extends TestCase
     {
         $this->extensionAttributesMock = $this->createPartialMockWithReflection(
             ContextExtensionInterface::class,
-            ['setStore', 'getStore']
+            ['setStore', 'getStore', 'getIsCustomer', 'setIsCustomer', 'getCustomerGroupId', 'setCustomerGroupId']
         );
+        
+        $this->extensionAttributesMock->method('getIsCustomer')->willReturn(null);
+        $this->extensionAttributesMock->method('setIsCustomer')->willReturnSelf();
+        $this->extensionAttributesMock->method('getCustomerGroupId')->willReturn(null);
+        $this->extensionAttributesMock->method('setCustomerGroupId')->willReturnSelf();
         
         $store = null;
         $this->extensionAttributesMock->method('setStore')->willReturnCallback(

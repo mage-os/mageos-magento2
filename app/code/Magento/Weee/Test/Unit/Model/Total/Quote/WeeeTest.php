@@ -253,8 +253,40 @@ class WeeeTest extends TestCase
         
         $extensionAttributes = $this->createPartialMockWithReflection(
             \Magento\Catalog\Api\Data\ProductExtensionInterface::class,
-            ['getStockItem']
+            [
+                'getStockItem', 'setStockItem',
+                'getWebsiteIds', 'setWebsiteIds',
+                'getCategoryLinks', 'setCategoryLinks',
+                'getConfigurableProductOptions', 'setConfigurableProductOptions',
+                'getConfigurableProductLinks', 'setConfigurableProductLinks',
+                'getBundleProductOptions', 'setBundleProductOptions',
+                'getDownloadableProductLinks', 'setDownloadableProductLinks',
+                'getDownloadableProductSamples', 'setDownloadableProductSamples',
+                'getGiftcardAmounts', 'setGiftcardAmounts',
+                'getDiscounts', 'setDiscounts'
+            ]
         );
+        
+        $extensionAttributes->method('getWebsiteIds')->willReturn(null);
+        $extensionAttributes->method('setWebsiteIds')->willReturnSelf();
+        $extensionAttributes->method('getCategoryLinks')->willReturn(null);
+        $extensionAttributes->method('setCategoryLinks')->willReturnSelf();
+        $extensionAttributes->method('getConfigurableProductOptions')->willReturn(null);
+        $extensionAttributes->method('setConfigurableProductOptions')->willReturnSelf();
+        $extensionAttributes->method('getConfigurableProductLinks')->willReturn(null);
+        $extensionAttributes->method('setConfigurableProductLinks')->willReturnSelf();
+        $extensionAttributes->method('getBundleProductOptions')->willReturn(null);
+        $extensionAttributes->method('setBundleProductOptions')->willReturnSelf();
+        $extensionAttributes->method('getDownloadableProductLinks')->willReturn(null);
+        $extensionAttributes->method('setDownloadableProductLinks')->willReturnSelf();
+        $extensionAttributes->method('getDownloadableProductSamples')->willReturn(null);
+        $extensionAttributes->method('setDownloadableProductSamples')->willReturnSelf();
+        $extensionAttributes->method('getGiftcardAmounts')->willReturn(null);
+        $extensionAttributes->method('setGiftcardAmounts')->willReturnSelf();
+        $extensionAttributes->method('getDiscounts')->willReturn(null);
+        $extensionAttributes->method('setDiscounts')->willReturnSelf();
+        $extensionAttributes->method('setStockItem')->willReturnSelf();
+        
         $extensionAttributes->method('getStockItem')->willReturn($stockItem);
         
         $productMock->method('getExtensionAttributes')->willReturn($extensionAttributes);

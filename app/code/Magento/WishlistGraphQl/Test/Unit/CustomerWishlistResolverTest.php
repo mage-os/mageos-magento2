@@ -65,8 +65,14 @@ class CustomerWishlistResolverTest extends TestCase
 
         $this->extensionAttributesMock = $this->createPartialMockWithReflection(
             ContextExtensionInterface::class,
-            ['setIsCustomer', 'getIsCustomer']
+            ['setIsCustomer', 'getIsCustomer', 'getStore', 'setStore', 'getCustomerGroupId', 'setCustomerGroupId']
         );
+        
+        $this->extensionAttributesMock->method('getStore')->willReturn(null);
+        $this->extensionAttributesMock->method('setStore')->willReturnSelf();
+        $this->extensionAttributesMock->method('getCustomerGroupId')->willReturn(null);
+        $this->extensionAttributesMock->method('setCustomerGroupId')->willReturnSelf();
+        
         $this->extensionAttributesMock->method('setIsCustomer')
             ->willReturnCallback(function ($value) use (&$isCustomer) {
                 $isCustomer = $value;

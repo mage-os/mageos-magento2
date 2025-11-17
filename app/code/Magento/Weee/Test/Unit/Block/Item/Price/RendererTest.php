@@ -111,6 +111,7 @@ class RendererTest extends TestCase
             'setBaseWeeeTaxAppliedRowAmnt', 'getBaseWeeeTaxAppliedRowAmnt',
             'setRowTotalInclTax', 'getRowTotalInclTax',
             'setBaseRowTotalInclTax', 'getBaseRowTotalInclTax',
+            'setPrice', 'getPrice',
             'getData', 'setData'
         ];
         
@@ -193,6 +194,10 @@ class RendererTest extends TestCase
             $data['base_row_total_incl_tax'] = $val;
             return $itemMock;
         });
+        $itemMock->method('setPrice')->willReturnCallback(function ($val) use (&$data, $itemMock) {
+            $data['price'] = $val;
+            return $itemMock;
+        });
         
         // Configure all getters to retrieve data
         $itemMock->method('getWeeeTaxAppliedAmount')->willReturnCallback(function () use (&$data) {
@@ -230,6 +235,10 @@ class RendererTest extends TestCase
         });
         $itemMock->method('getBaseRowTotalInclTax')->willReturnCallback(function () use (&$data) {
             return $data['base_row_total_incl_tax'] ?? null;
+        });
+        $itemMock->method('getPrice')->willReturnCallback(function () use (&$data) {
+            // getPrice should return calculation_price if set, otherwise price
+            return $data['calculation_price'] ?? $data['price'] ?? null;
         });
         
         return $itemMock;

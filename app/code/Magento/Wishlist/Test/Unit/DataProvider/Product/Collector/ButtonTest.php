@@ -64,7 +64,7 @@ class ButtonTest extends TestCase
         /** @var ProductRenderExtensionInterface $productRendererExtensionMock */
         $productRendererExtensionMock = $this->createPartialMockWithReflection(
             ProductRenderExtensionInterface::class,
-            ['getWishlistButton', 'setWishlistButton']
+            ['getWishlistButton', 'setWishlistButton', 'getReviewHtml', 'setReviewHtml']
         );
         $buttonInterfaceMock = $this->createMock(ButtonInterface::class);
 
@@ -81,6 +81,9 @@ class ButtonTest extends TestCase
         $buttonInterfaceMock->expects($this->once())
             ->method('setUrl')
             ->with('http://www.example.com/');
+
+        $productRendererExtensionMock->method('getReviewHtml')->willReturn(null);
+        $productRendererExtensionMock->method('setReviewHtml')->willReturnSelf();
 
         $storedButton = null;
         $productRendererExtensionMock->method('setWishlistButton')
@@ -108,7 +111,7 @@ class ButtonTest extends TestCase
         /** @var ProductRenderExtensionInterface $productRendererExtensionMock */
         $productRendererExtensionMock = $this->createPartialMockWithReflection(
             ProductRenderExtensionInterface::class,
-            ['setWishlistButton', 'getWishlistButton']
+            ['setWishlistButton', 'getWishlistButton', 'getReviewHtml', 'setReviewHtml']
         );
 
         $productRendererMock->expects($this->once())
@@ -127,6 +130,9 @@ class ButtonTest extends TestCase
         $buttonInterfaceMock->expects($this->once())
             ->method('setUrl')
             ->with('http://www.example.com/');
+
+        $productRendererExtensionMock->method('getReviewHtml')->willReturn(null);
+        $productRendererExtensionMock->method('setReviewHtml')->willReturnSelf();
 
         $storedButton = null;
         $productRendererExtensionMock->method('setWishlistButton')

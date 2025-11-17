@@ -36,6 +36,8 @@ parameters:
         - '#Constant TESTS_MODULES_PATH not found.#'
         - '#Constant TESTS_INSTALLATION_DB_CONFIG_FILE not found.#'
         - '#Constant T_[A-Z_]+ not found.#'
+
+
 services:
     -
         class: Magento\PhpStan\Reflection\Php\DataObjectClassReflectionExtension

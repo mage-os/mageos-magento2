@@ -71,8 +71,14 @@ class WishlistItemsTest extends TestCase
         $storeValue = null;
         $extensionAttributes = $this->createPartialMockWithReflection(
             ContextExtensionInterface::class,
-            ['setStore', 'getStore']
+            ['setStore', 'getStore', 'getCustomerGroupId', 'setCustomerGroupId', 'getIsCustomer', 'setIsCustomer']
         );
+        
+        $extensionAttributes->method('getCustomerGroupId')->willReturn(null);
+        $extensionAttributes->method('setCustomerGroupId')->willReturnSelf();
+        $extensionAttributes->method('getIsCustomer')->willReturn(null);
+        $extensionAttributes->method('setIsCustomer')->willReturnSelf();
+        
         $extensionAttributes->method('setStore')
             ->willReturnCallback(function ($value) use (&$storeValue, &$extensionAttributes) {
                 $storeValue = $value;

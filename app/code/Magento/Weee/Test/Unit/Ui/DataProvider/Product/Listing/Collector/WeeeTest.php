@@ -69,8 +69,18 @@ class WeeeTest extends TestCase
 
         $this->extensionAttributes = $this->createPartialMockWithReflection(
             PriceInfoExtensionInterface::class,
-            ['setWeeeAttributes', 'getWeeeAttributes', 'setWeeeAdjustment', 'getWeeeAdjustment']
+            [
+                'setWeeeAttributes', 'getWeeeAttributes',
+                'setWeeeAdjustment', 'getWeeeAdjustment',
+                'getMsrp', 'setMsrp',
+                'getTaxAdjustments', 'setTaxAdjustments'
+            ]
         );
+        
+        $this->extensionAttributes->method('getMsrp')->willReturn(null);
+        $this->extensionAttributes->method('setMsrp')->willReturnSelf();
+        $this->extensionAttributes->method('getTaxAdjustments')->willReturn(null);
+        $this->extensionAttributes->method('setTaxAdjustments')->willReturnSelf();
 
         $this->priceInfoExtensionFactory = $this->createPartialMock(
             PriceInfoExtensionInterfaceFactory::class,
