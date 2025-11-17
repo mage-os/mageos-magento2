@@ -11,6 +11,7 @@ use Magento\ConfigurableProduct\Block\Product\View\Type\Configurable as Configur
 use Magento\Framework\Json\DecoderInterface;
 use Magento\Framework\Json\EncoderInterface;
 use Magento\Weee\Helper\Data as WeeeHelper;
+use Magento\Catalog\Model\Product;
 
 /**
  * Plugin to add FPT data to configurable product JSON config
@@ -20,24 +21,14 @@ use Magento\Weee\Helper\Data as WeeeHelper;
  */
 class Configurable
 {
-    /**
-     * @param WeeeHelper $weeeHelper
-     * @param EncoderInterface $jsonEncoder
-     * @param DecoderInterface $jsonDecoder
-     */
     public function __construct(
         private readonly WeeeHelper $weeeHelper,
         private readonly EncoderInterface $jsonEncoder,
         private readonly DecoderInterface $jsonDecoder
-    ) {
-    }
+    ) {}
 
     /**
-     * Add FPT data to option prices
-     *
-     * @param ConfigurableBlock $subject
-     * @param string $result
-     * @return string
+     * Add FPT/WEEE data to option prices
      */
     public function afterGetJsonConfig(
         ConfigurableBlock $subject,
@@ -56,7 +47,7 @@ class Configurable
                 continue;
             }
 
-            $this->addWeeeDataToProduct($config, $productId, $product);
+            $this->injectWeeeData($config, $productId, $product);
         }
 
         return $this->jsonEncoder->encode($config);
@@ -64,115 +55,104 @@ class Configurable
 
     /**
      * Check if WEEE should be processed
-     *
-     * @param array|null $config
-     * @return bool
      */
     private function shouldProcessWeee(?array $config): bool
     {
-        return $config
-            && isset($config['optionPrices'])
-            && $this->weeeHelper->isEnabled();
+        return !empty($config['optionPrices']) && $this->weeeHelper->isEnabled();
     }
 
     /**
-     * Add WEEE data to product option price
-     *
-     * @param array $config
-     * @param string $productId
-     * @param \Magento\Catalog\Model\Product $product
-     * @return void
+     * Inject processed WEEE data into config
      */
-    private function addWeeeDataToProduct(array &$config, string $productId, $product): void
+    private function injectWeeeData(array &$config, string $productId, Product $product): void
     {
-        $weeeAttributes = $this->weeeHelper->getProductWeeeAttributesForDisplay($product);
+        $attributes = $this->weeeHelper->getProductWeeeAttributesForDisplay($product);
 
-        if (empty($weeeAttributes)) {
+        if (empty($attributes)) {
             return;
         }
 
-        $weeeData = $this->processWeeeAttributes($weeeAttributes);
-        $this->addFormattedWeeeData($config, $productId, $weeeData);
+        $weeeData = $this->processWeeeAttributes($attributes);
+
+        $this->appendFormattedWeee(
+            $config['optionPrices'][$productId]['finalPrice'],
+            $config['priceFormat'],
+            $weeeData
+        );
     }
 
     /**
-     * Process WEEE attributes and calculate total
-     *
-     * @param array $weeeAttributes
-     * @return array
+     * Convert raw attribute objects into array data
      */
     private function processWeeeAttributes(array $weeeAttributes): array
     {
-        $processedAttributes = [];
-        $weeeTotal = 0;
+        $processed = [];
+        $total = 0.0;
 
         foreach ($weeeAttributes as $attribute) {
-            $name = $attribute->getData('name');
-            $name = $name ? (string)$name : 'FPT';
             $amount = (float)$attribute->getAmount();
+            $name = (string)($attribute->getData('name') ?: 'FPT');
 
-            $processedAttributes[] = [
+            $processed[] = [
                 'name' => $name,
                 'amount' => $amount,
                 'amount_excl_tax' => (float)$attribute->getAmountExclTax(),
                 'tax_amount' => (float)$attribute->getTaxAmount(),
             ];
 
-            $weeeTotal += $amount;
+            $total += $amount;
         }
 
-        return [
-            'attributes' => $processedAttributes,
-            'total' => $weeeTotal
-        ];
+        return ['attributes' => $processed, 'total' => $total];
     }
 
     /**
-     * Add formatted WEEE data to config
-     *
-     * @param array $config
-     * @param string $productId
-     * @param array $weeeData
-     * @return void
+     * Add formatted WEEE data to price array
      */
-    private function addFormattedWeeeData(array &$config, string $productId, array $weeeData): void
-    {
-        $finalPriceAmount = $config['optionPrices'][$productId]['finalPrice']['amount'];
-        $basePriceAmount = $finalPriceAmount - $weeeData['total'];
+    private function appendFormattedWeee(
+        array &$finalPrice,
+        array $priceFormat,
+        array $weeeData
+    ): void {
+        $finalAmount = (float)$finalPrice['amount'];
+        $baseAmount = $finalAmount - $weeeData['total'];
 
-        $formattedWeeeAttributes = [];
-        foreach ($weeeData['attributes'] as $weeeAttr) {
-            $formattedWeeeAttributes[] = [
-                'name' => $weeeAttr['name'],
-                'amount' => $weeeAttr['amount'],
-                'formatted' => $this->formatPrice($weeeAttr['amount'], $config['priceFormat'])
-            ];
-        }
+        // Format each attribute
+        $formattedAttrs = array_map(
+            fn($attr) => [
+                'name' => $attr['name'],
+                'amount' => $attr['amount'],
+                'formatted' => $this->formatPrice($attr['amount'], $priceFormat)
+            ],
+            $weeeData['attributes']
+        );
 
-        $config['optionPrices'][$productId]['finalPrice']['weeeAmount'] = $weeeData['total'];
-        $config['optionPrices'][$productId]['finalPrice']['weeeAttributes'] = $formattedWeeeAttributes;
-        $config['optionPrices'][$productId]['finalPrice']['amountWithoutWeee'] = $basePriceAmount;
-        $config['optionPrices'][$productId]['finalPrice']['formattedWithoutWeee'] =
-            $this->formatPrice($basePriceAmount, $config['priceFormat']);
-        $config['optionPrices'][$productId]['finalPrice']['formattedWithWeee'] =
-            $this->formatPrice($finalPriceAmount, $config['priceFormat']);
+        $finalPrice = array_merge(
+            $finalPrice,
+            [
+                'weeeAmount'           => $weeeData['total'],
+                'weeeAttributes'       => $formattedAttrs,
+                'amountWithoutWeee'    => $baseAmount,
+                'formattedWithoutWeee' => $this->formatPrice($baseAmount, $priceFormat),
+                'formattedWithWeee'    => $this->formatPrice($finalAmount, $priceFormat),
+            ]
+        );
     }
 
     /**
      * Format price using the store's price format
-     *
-     * @param float $amount
-     * @param array $priceFormat
-     * @return string
      */
     private function formatPrice(float $amount, array $priceFormat): string
     {
-        $pattern = $priceFormat['pattern'] ?? '%s';
-        $precision = $priceFormat['precision'] ?? 2;
-        $decimalSymbol = $priceFormat['decimalSymbol'] ?? '.';
-        $groupSymbol = $priceFormat['groupSymbol'] ?? ',';
+        $pattern        = $priceFormat['pattern']        ?? '%s';
+        $precision      = $priceFormat['precision']      ?? 2;
+        $decimalSymbol  = $priceFormat['decimalSymbol']  ?? '.';
+        $groupSymbol    = $priceFormat['groupSymbol']    ?? ',';
 
-        $formatted = number_format($amount, $precision, $decimalSymbol, $groupSymbol);
-        return str_replace('%s', $formatted, $pattern);
+        return str_replace(
+            '%s',
+            number_format($amount, $precision, $decimalSymbol, $groupSymbol),
+            $pattern
+        );
     }
 }

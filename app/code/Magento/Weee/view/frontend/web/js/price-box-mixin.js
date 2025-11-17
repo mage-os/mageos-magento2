@@ -4,9 +4,10 @@
  */
 define([
     'jquery',
+    'underscore',
     'mage/template',
     'Magento_Catalog/js/price-utils'
-], function ($, mageTemplate, priceUtils) {
+], function ($, _, mageTemplate, priceUtils) {
     'use strict';
 
     return function (priceBox) {
@@ -24,7 +25,7 @@ define([
             /**
              * Override reloadPrice to add WEEE breakdown
              */
-            reloadPrice: function reDrawPrices() {
+            reloadPrice: function reDrawPrices () {
                 var priceFormat = (this.options.priceConfig && this.options.priceConfig.priceFormat) || {},
                     priceTemplate = mageTemplate(this.options.priceTemplate);
 
@@ -48,7 +49,7 @@ define([
             /**
              * Add WEEE breakdown to price display
              */
-            _addWeeeBreakdown: function() {
+            _addWeeeBreakdown: function () {
                 var productId = this._getSelectedProductId(),
                     weeeData,
                     priceContainer,
@@ -82,7 +83,7 @@ define([
                 );
 
                 // Build WEEE HTML using template
-                _.each(weeeData.weeeAttributes, function(weee) {
+                _.each(weeeData.weeeAttributes, function (weee) {
                     weeeHtml += weeeTemplate({
                         data: {
                             label: weee.name,
@@ -105,7 +106,7 @@ define([
             /**
              * Get selected product ID from configurable/swatch widget
              */
-            _getSelectedProductId: function() {
+            _getSelectedProductId: function () {
                 var swatchWidget = this._getSwatchWidget(),
                     configurableWidget;
 
@@ -126,11 +127,11 @@ define([
             /**
              * Get WEEE data from jsonConfig
              */
-            _getWeeeData: function(productId) {
+            _getWeeeData: function (productId) {
                 var swatchWidget = this._getSwatchWidget(),
                     configurableWidget = this._getConfigurableWidget(),
-                    jsonConfig = (swatchWidget && swatchWidget.options.jsonConfig) ||
-                        (configurableWidget && configurableWidget.options.spConfig),
+                    jsonConfig = swatchWidget && swatchWidget.options.jsonConfig ||
+                        configurableWidget && configurableWidget.options.spConfig,
                     optionPrices;
 
                 if (!jsonConfig) {
@@ -148,7 +149,7 @@ define([
             /**
              * Find the swatch widget relative to this price-box
              */
-            _getSwatchWidget: function() {
+            _getSwatchWidget: function () {
                 var $productItem = this.element.closest('.product-item, .product-item-info'),
                     $swatchOptions,
                     widget;
@@ -161,6 +162,7 @@ define([
                     if ($swatchOptions.length) {
                         widget = $swatchOptions.data('mage-SwatchRenderer') ||
                             $swatchOptions.data('mageSwatchRenderer');
+
                         if (widget) {
                             return widget;
                         }
@@ -168,14 +170,15 @@ define([
 
                     // Try product detail page selector
                     $swatchOptions = $productItem.find('[data-role="swatch-options"]');
+
                     if ($swatchOptions.length) {
-                        widget = $swatchOptions.data('mage-SwatchRenderer');
-                        return widget;
+                        return $swatchOptions.data('mage-SwatchRenderer');
                     }
                 }
 
                 // On product detail page, use global selector
                 $swatchOptions = $('[data-role="swatch-options"]');
+
                 if ($swatchOptions.length) {
                     return $swatchOptions.data('mage-SwatchRenderer');
                 }
@@ -186,7 +189,7 @@ define([
             /**
              * Find the configurable widget relative to this price-box
              */
-            _getConfigurableWidget: function() {
+            _getConfigurableWidget: function () {
                 var $productItem = this.element.closest('.product-item, .product-item-info'),
                     $form;
 
