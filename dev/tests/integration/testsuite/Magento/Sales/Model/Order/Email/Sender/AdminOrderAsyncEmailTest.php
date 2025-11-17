@@ -78,16 +78,33 @@ class AdminOrderAsyncEmailTest extends TestCase
         $orderSender = $objectManager->get(OrderSender::class);
 
         $result = $orderSender->send($order);
-        $this->assertFalse($result, 'OrderSender::send must defer sending when async mode is active.');
-        $this->assertCount(0, $this->sentEmails, 'Email must not be sent immediately in async mode.');
-        $this->assertNull($order->getEmailSent(), 'EmailSent flag should remain null until cron processes the queue.');
-        $this->assertTrue((bool)$order->getSendEmail(), 'SendEmail flag should be recorded for cron processing.');
+        $this->assertFalse(
+            $result,
+            'OrderSender::send must defer sending when async mode is active.'
+        );
+        $this->assertCount(
+            0,
+            $this->sentEmails,
+            'Email must not be sent immediately in async mode.'
+        );
+        $this->assertNull(
+            $order->getEmailSent(),
+            'EmailSent flag should remain null until cron processes the queue.'
+        );
+        $this->assertTrue(
+            (bool)$order->getSendEmail(),
+            'SendEmail flag should be recorded for cron processing.'
+        );
 
         $cron = $objectManager->get('SalesOrderSendEmailsCron');
         $cron->execute();
         $cron->execute();
 
-        $this->assertCount(1, $this->sentEmails, 'Exactly one order confirmation email should be sent by the cron.');
+        $this->assertCount(
+            1,
+            $this->sentEmails,
+            'Exactly one order confirmation email should be sent by the cron.'
+        );
         $email = $this->sentEmails[0];
         $this->assertInstanceOf(EmailMessageInterface::class, $email);
         $this->assertStringContainsString(
