@@ -128,22 +128,18 @@ define([
              */
             _getWeeeData: function(productId) {
                 var swatchWidget = this._getSwatchWidget(),
-                    configurableWidget,
+                    configurableWidget = this._getConfigurableWidget(),
+                    jsonConfig = (swatchWidget && swatchWidget.options.jsonConfig) ||
+                        (configurableWidget && configurableWidget.options.spConfig),
                     optionPrices;
 
-                if (swatchWidget && swatchWidget.options.jsonConfig) {
-                    optionPrices = swatchWidget.options.jsonConfig.optionPrices;
-                    if (optionPrices && optionPrices[productId] && optionPrices[productId].finalPrice) {
-                        return optionPrices[productId].finalPrice;
-                    }
+                if (!jsonConfig) {
+                    return null;
                 }
 
-                configurableWidget = this._getConfigurableWidget();
-                if (configurableWidget && configurableWidget.options.spConfig) {
-                    optionPrices = configurableWidget.options.spConfig.optionPrices;
-                    if (optionPrices && optionPrices[productId] && optionPrices[productId].finalPrice) {
-                        return optionPrices[productId].finalPrice;
-                    }
+                optionPrices = jsonConfig.optionPrices;
+                if (optionPrices && optionPrices[productId] && optionPrices[productId].finalPrice) {
+                    return optionPrices[productId].finalPrice;
                 }
 
                 return null;

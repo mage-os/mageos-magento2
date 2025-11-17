@@ -33,24 +33,6 @@ class Configurable
     }
 
     /**
-     * Format price using the store's price format
-     *
-     * @param float $amount
-     * @param array $priceFormat
-     * @return string
-     */
-    private function formatPrice(float $amount, array $priceFormat): string
-    {
-        $pattern = $priceFormat['pattern'] ?? '%s';
-        $precision = $priceFormat['precision'] ?? 2;
-        $decimalSymbol = $priceFormat['decimalSymbol'] ?? '.';
-        $groupSymbol = $priceFormat['groupSymbol'] ?? ',';
-
-        $formatted = number_format($amount, $precision, $decimalSymbol, $groupSymbol);
-        return str_replace('%s', $formatted, $pattern);
-    }
-
-    /**
      * Add FPT data to option prices
      *
      * @param ConfigurableBlock $subject
@@ -104,7 +86,6 @@ class Configurable
     private function addWeeeDataToProduct(array &$config, string $productId, $product): void
     {
         $weeeAttributes = $this->weeeHelper->getProductWeeeAttributesForDisplay($product);
-        $config['optionPrices'][$productId]['weeeAttributes'] = [];
 
         if (empty($weeeAttributes)) {
             return;
@@ -156,8 +137,8 @@ class Configurable
      */
     private function addFormattedWeeeData(array &$config, string $productId, array $weeeData): void
     {
-        $config['optionPrices'][$productId]['weeeAttributes'] = $weeeData['attributes'];
-        $basePriceAmount = $config['optionPrices'][$productId]['finalPrice']['amount'] - $weeeData['total'];
+        $finalPriceAmount = $config['optionPrices'][$productId]['finalPrice']['amount'];
+        $basePriceAmount = $finalPriceAmount - $weeeData['total'];
 
         $formattedWeeeAttributes = [];
         foreach ($weeeData['attributes'] as $weeeAttr) {
@@ -174,9 +155,24 @@ class Configurable
         $config['optionPrices'][$productId]['finalPrice']['formattedWithoutWeee'] =
             $this->formatPrice($basePriceAmount, $config['priceFormat']);
         $config['optionPrices'][$productId]['finalPrice']['formattedWithWeee'] =
-            $this->formatPrice(
-                $config['optionPrices'][$productId]['finalPrice']['amount'],
-                $config['priceFormat']
-            );
+            $this->formatPrice($finalPriceAmount, $config['priceFormat']);
+    }
+
+    /**
+     * Format price using the store's price format
+     *
+     * @param float $amount
+     * @param array $priceFormat
+     * @return string
+     */
+    private function formatPrice(float $amount, array $priceFormat): string
+    {
+        $pattern = $priceFormat['pattern'] ?? '%s';
+        $precision = $priceFormat['precision'] ?? 2;
+        $decimalSymbol = $priceFormat['decimalSymbol'] ?? '.';
+        $groupSymbol = $priceFormat['groupSymbol'] ?? ',';
+
+        $formatted = number_format($amount, $precision, $decimalSymbol, $groupSymbol);
+        return str_replace('%s', $formatted, $pattern);
     }
 }
