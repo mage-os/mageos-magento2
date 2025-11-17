@@ -13,7 +13,7 @@ use Elasticsearch\ClientBuilder;
 use Exception;
 use Magento\AdvancedSearch\Model\Client\ClientInterface as ElasticsearchClient;
 use Magento\AdvancedSearch\Model\Client\ClientOptionsInterface;
-use Magento\Elasticsearch7\Model\Client\Elasticsearch;
+use Magento\Elasticsearch8\Model\Client\Elasticsearch;
 use Magento\Catalog\Api\ProductAttributeRepositoryInterface;
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
 use Magento\Elasticsearch\Model\Adapter\BatchDataMapperInterface;
