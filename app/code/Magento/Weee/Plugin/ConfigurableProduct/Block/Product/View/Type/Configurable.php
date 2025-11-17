@@ -21,11 +21,17 @@ use Magento\Catalog\Model\Product;
  */
 class Configurable
 {
+    /**
+     * @param WeeeHelper $weeeHelper
+     * @param EncoderInterface $jsonEncoder
+     * @param DecoderInterface $jsonDecoder
+     */
     public function __construct(
         private readonly WeeeHelper $weeeHelper,
         private readonly EncoderInterface $jsonEncoder,
         private readonly DecoderInterface $jsonDecoder
-    ) {}
+    ) {
+    }
 
     /**
      * Add FPT/WEEE data to option prices
@@ -55,6 +61,9 @@ class Configurable
 
     /**
      * Check if WEEE should be processed
+     *
+     * @param array|null $config
+     * @return bool
      */
     private function shouldProcessWeee(?array $config): bool
     {
@@ -63,6 +72,11 @@ class Configurable
 
     /**
      * Inject processed WEEE data into config
+     *
+     * @param array &$config
+     * @param string $productId
+     * @param Product $product
+     * @return void
      */
     private function injectWeeeData(array &$config, string $productId, Product $product): void
     {
@@ -83,6 +97,9 @@ class Configurable
 
     /**
      * Convert raw attribute objects into array data
+     *
+     * @param array $weeeAttributes
+     * @return array
      */
     private function processWeeeAttributes(array $weeeAttributes): array
     {
@@ -108,6 +125,11 @@ class Configurable
 
     /**
      * Add formatted WEEE data to price array
+     *
+     * @param array &$finalPrice
+     * @param array $priceFormat
+     * @param array $weeeData
+     * @return void
      */
     private function appendFormattedWeee(
         array &$finalPrice,
@@ -141,6 +163,10 @@ class Configurable
 
     /**
      * Format price using the store's price format
+     *
+     * @param float $amount
+     * @param array $priceFormat
+     * @return string
      */
     private function formatPrice(float $amount, array $priceFormat): string
     {

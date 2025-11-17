@@ -333,6 +333,7 @@ class ConfigurableTest extends TestCase
      * Test afterGetJsonConfig with multiple WEEE attributes
      *
      * @return void
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function testAfterGetJsonConfigWithMultipleWeeeAttributes(): void
     {

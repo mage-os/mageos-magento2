@@ -25,8 +25,8 @@ define([
             /**
              * Override reloadPrice to add WEEE breakdown
              */
-            reloadPrice: function reDrawPrices () {
-                var priceFormat = (this.options.priceConfig && this.options.priceConfig.priceFormat) || {},
+            reloadPrice: function reDrawPrices() {
+                var priceFormat = this.options.priceConfig && this.options.priceConfig.priceFormat || {},
                     priceTemplate = mageTemplate(this.options.priceTemplate);
 
                 // First, render prices normally
@@ -162,10 +162,10 @@ define([
                     if ($swatchOptions.length) {
                         widget = $swatchOptions.data('mage-SwatchRenderer') ||
                             $swatchOptions.data('mageSwatchRenderer');
+                    }
 
-                        if (widget) {
-                            return widget;
-                        }
+                    if (widget) {
+                        return widget;
                     }
 
                     // Try product detail page selector
