@@ -16,6 +16,9 @@ use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
 use Magento\Framework\Stdlib\DateTime;
 use Magento\Framework\Locale\ResolverInterface;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class ValidateDobOnSave
 {
     /**
