@@ -86,26 +86,26 @@ define([
         it('Prefers pickerDateTimeFormat for date-only display format', function () {
             // simulate UI XML providing pickerDateTimeFormat while showsTime is false
             model.options.showsTime = false;
-            model.options.pickerDateTimeFormat = 'y-MM-dd';
+            model.options.pickerDateTimeFormat = 'MM/dd/y';
 
             // Re-init to adopt option and set options.dateFormat accordingly
             model.initConfig();
 
-            expect(model.options.dateFormat).toBe('y-MM-dd');
+            expect(model.options.dateFormat).toBe('MM/dd/y');
         });
 
         it('Displays value using pickerDateTimeFormat when date-only', function () {
             model.options.showsTime = false;
             // Ensure consistent IO formats for this test case
-            model.outputDateFormat = 'y-MM-dd';
-            model.inputDateFormat = 'y-MM-dd';
-            model.pickerDateTimeFormat = 'y-MM-dd';
+            model.outputDateFormat = 'MM/dd/y';
+            model.inputDateFormat = 'MM/dd/y';
+            model.pickerDateTimeFormat = 'MM/dd/y';
 
             // Make sure formats are prepared
             model.prepareDateTimeFormats();
 
-            model.value('2025-11-21');
-            expect(model.getPreview()).toBe('2025-11-21');
+            model.value('21-11-2025');
+            expect(model.getPreview()).toBe('21-11-2025');
         });
     });
 });
