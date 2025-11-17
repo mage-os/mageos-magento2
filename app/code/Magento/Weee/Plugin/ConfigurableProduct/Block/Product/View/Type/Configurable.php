@@ -35,6 +35,10 @@ class Configurable
 
     /**
      * Add FPT/WEEE data to option prices
+     *
+     * @param ConfigurableBlock $subject
+     * @param string $result
+     * @return string
      */
     public function afterGetJsonConfig(
         ConfigurableBlock $subject,
@@ -73,7 +77,7 @@ class Configurable
     /**
      * Inject processed WEEE data into config
      *
-     * @param array &$config
+     * @param array $config
      * @param string $productId
      * @param Product $product
      * @return void
@@ -126,7 +130,7 @@ class Configurable
     /**
      * Add formatted WEEE data to price array
      *
-     * @param array &$finalPrice
+     * @param array $finalPrice
      * @param array $priceFormat
      * @param array $weeeData
      * @return void
