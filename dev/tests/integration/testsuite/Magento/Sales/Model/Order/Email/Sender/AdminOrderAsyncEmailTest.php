@@ -77,7 +77,7 @@ class AdminOrderAsyncEmailTest extends TestCase
         DataFixture(SetPaymentMethodFixture::class, ['cart_id' => '$cart.id$', 'method' => 'checkmo']),
         DataFixture(PlaceOrderFixture::class, ['cart_id' => '$cart.id$'], 'order'),
     ]
-    public function testAsyncOrderEmailDispatchedByCron(): void
+    public function testAsynchronousOrderEmailDispatchedByCron(): void
     {
         Bootstrap::getInstance()->loadArea(Area::AREA_ADMINHTML);
 
