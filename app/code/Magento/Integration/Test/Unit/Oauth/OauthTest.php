@@ -22,6 +22,7 @@ use Magento\Integration\Model\Oauth\NonceFactory;
 use Magento\Integration\Model\Oauth\Token;
 use Magento\Integration\Model\Oauth\Token\Provider;
 use Magento\Integration\Model\Oauth\TokenFactory;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Magento\Integration\Model\ResourceModel\Oauth\Token as TokenResourceModel;
@@ -163,18 +164,14 @@ class OauthTest extends TestCase
             ->getMock();
         $this->_dateMock->method('timestamp')
             ->willReturn(self::TIMESTAMP_STUB);
-        $this->_loggerMock = $this->getMockBuilder(LoggerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->_loggerMock = $this->createMock(LoggerInterface::class);
 
         $nonceGenerator = new Generator(
             $this->_oauthHelperMock,
             $this->_nonceFactory,
             $this->_dateMock
         );
-        $this->tokenResourceModelMock = $this->getMockBuilder(TokenResourceModel::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->tokenResourceModelMock = $this->createMock(TokenResourceModel::class);
 
         $tokenProvider = new Provider(
             $this->_consumerFactory,
@@ -319,10 +316,9 @@ class OauthTest extends TestCase
 
     /**
      * \Magento\Framework\Oauth\OauthInterface::ERR_TIMESTAMP_REFUSED
-     *
-     * @dataProvider dataProviderForGetRequestTokenNonceTimestampRefusedTest
      */
-    public function testGetRequestTokenOauthTimestampRefused($timestamp)
+    #[DataProvider('dataProviderForGetRequestTokenNonceTimestampRefusedTest')]
+    public function testGetRequestTokenOauthTimestampRefused($timestamp): void
     {
         $this->expectException('Magento\Framework\Oauth\Exception');
         $this->_setupConsumer();
@@ -352,26 +348,19 @@ class OauthTest extends TestCase
      */
     protected function _setupNonce($isUsed = false, $timestamp = 0)
     {
-        $nonceMock = $this->getMockBuilder(
-            Nonce::class
-        )->disableOriginalConstructor()
-            ->onlyMethods(
-                [
-                    'loadByCompositeKey',
-                    'save',
-                    '__wakeup',
-                ]
-            )
-            ->addMethods(
-                [
-                    'getNonce',
-                    'setNonce',
-                    'setConsumerId',
-                    'setTimestamp',
-                    'getTimeStamp'
-                ]
-            )
-            ->getMock();
+        $nonceMock = $this->createPartialMockWithReflection(
+            Nonce::class,
+            [
+                'loadByCompositeKey',
+                'save',
+                '__wakeup',
+                'getNonce',
+                'setNonce',
+                'setConsumerId',
+                'setTimestamp',
+                'getTimeStamp'
+            ]
+        );
 
         $nonceMock->expects($this->any())->method('getNonce')->willReturn($isUsed);
         $nonceMock->expects($this->any())->method('loadByCompositeKey')->willReturnSelf();
@@ -632,10 +621,9 @@ class OauthTest extends TestCase
 
     /**
      * \Magento\Framework\Oauth\OauthInterface::ERR_VERIFIER_INVALID
-     *
-     * @dataProvider dataProviderForGetAccessTokenVerifierInvalidTest
      */
-    public function testGetAccessTokenVerifierInvalid($verifier, $verifierFromToken)
+    #[DataProvider('dataProviderForGetAccessTokenVerifierInvalidTest')]
+    public function testGetAccessTokenVerifierInvalid($verifier, $verifierFromToken): void
     {
         $this->expectException('Magento\Framework\Oauth\Exception');
         $this->_setupConsumer();
@@ -827,9 +815,10 @@ class OauthTest extends TestCase
     }
 
     /**
-     * @dataProvider dataProviderMissingParamForBuildAuthorizationHeaderTest
+     * Test missing parameters for buildAuthorizationHeader
      */
-    public function testMissingParamForBuildAuthorizationHeader($expectedMessage, $request)
+    #[DataProvider('dataProviderMissingParamForBuildAuthorizationHeaderTest')]
+    public function testMissingParamForBuildAuthorizationHeader($expectedMessage, $request): void
     {
         $this->expectException(OauthInputException::class);
         $this->expectExceptionMessage($expectedMessage);
