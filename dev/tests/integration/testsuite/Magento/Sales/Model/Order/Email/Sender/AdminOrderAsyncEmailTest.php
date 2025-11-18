@@ -32,10 +32,17 @@ use PHPUnit\Framework\TestCase;
  */
 class AdminOrderAsyncEmailTest extends TestCase
 {
+    /**
+     * @var TransportBuilderMock
+     */
     private TransportBuilderMock $transportBuilder;
+
     /** @var EmailMessageInterface[] */
     private array $sentEmails = [];
 
+    /**
+     * @inheritDoc
+     */
     protected function setUp(): void
     {
         $objectManager = Bootstrap::getObjectManager();
@@ -123,6 +130,9 @@ class AdminOrderAsyncEmailTest extends TestCase
         );
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function tearDown(): void
     {
         $this->transportBuilder->clean();
