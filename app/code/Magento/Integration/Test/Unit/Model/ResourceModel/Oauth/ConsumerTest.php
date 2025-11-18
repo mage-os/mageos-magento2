@@ -7,13 +7,16 @@ declare(strict_types=1);
 
 namespace Magento\Integration\Test\Unit\Model\ResourceModel\Oauth;
 
+use Magento\Framework\App\ObjectManager as AppObjectManager;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Adapter\Pdo\Mysql;
 use Magento\Framework\DB\Select;
 use Magento\Framework\Model\ResourceModel\Db\Context;
+use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\Stdlib\DateTime;
 use Magento\Integration\Model\Oauth\Consumer;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -22,6 +25,8 @@ use PHPUnit\Framework\TestCase;
  */
 class ConsumerTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var AdapterInterface|MockObject
      */
@@ -44,11 +49,10 @@ class ConsumerTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->consumerMock = $this->getMockBuilder(Consumer::class)
-            ->addMethods(['setUpdatedAt'])
-            ->onlyMethods(['getId'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->consumerMock = $this->createPartialMockWithReflection(
+            Consumer::class,
+            ['setUpdatedAt', 'getId']
+        );
 
         $this->connectionMock = $this->createMock(Mysql::class);
 
@@ -57,13 +61,27 @@ class ConsumerTest extends TestCase
 
         $contextMock = $this->createMock(Context::class);
         $contextMock->expects($this->once())->method('getResources')->willReturn($this->resourceMock);
+
+        // Mock ObjectManager to prevent "ObjectManager isn't initialized" error
+        $objectManagerMock = $this->createMock(ObjectManagerInterface::class);
+        AppObjectManager::setInstance($objectManagerMock);
+
         $this->consumerResource = new \Magento\Integration\Model\ResourceModel\Oauth\Consumer(
             $contextMock,
             new DateTime()
         );
     }
 
-    public function testAfterDelete()
+    protected function tearDown(): void
+    {
+        // Reset ObjectManager instance
+        $reflection = new \ReflectionClass(AppObjectManager::class);
+        $property = $reflection->getProperty('_instance');
+        $property->setAccessible(true);
+        $property->setValue(null, null);
+    }
+
+    public function testAfterDelete(): void
     {
         $this->connectionMock->expects($this->exactly(2))->method('delete');
         $this->assertInstanceOf(
@@ -72,7 +90,7 @@ class ConsumerTest extends TestCase
         );
     }
 
-    public function testGetTimeInSecondsSinceCreation()
+    public function testGetTimeInSecondsSinceCreation(): void
     {
         $selectMock = $this->createMock(Select::class);
         $selectMock->expects($this->any())->method('from')->willReturn($selectMock);

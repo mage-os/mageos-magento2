@@ -21,6 +21,7 @@ use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\Registry;
 use Magento\Framework\Simplexml\Element;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\Translate;
 use Magento\Framework\TranslateInterface;
@@ -47,6 +48,8 @@ use Psr\Log\LoggerInterface;
  */
 abstract class IntegrationTestCase extends TestCase
 {
+    use MockCreationTrait;
+
     /** @var \Magento\Integration\Controller\Adminhtml\Integration */
     protected $_controller;
 
@@ -153,21 +156,17 @@ abstract class IntegrationTestCase extends TestCase
     {
         /** @var ObjectManager  $objectManagerHelper */
         $this->_objectManagerHelper = new ObjectManager($this);
-        $this->_objectManagerMock = $this->getMockForAbstractClass(ObjectManagerInterface::class);
+        $this->_objectManagerMock = $this->createMock(ObjectManagerInterface::class);
         // Initialize mocks which are used in several test cases
         $this->_configMock = $this->getMockBuilder(
             ScopeConfigInterface::class
         )->disableOriginalConstructor()
             ->getMock();
-        $this->_eventManagerMock = $this->getMockBuilder(ManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['dispatch'])
-            ->getMockForAbstractClass();
-        $this->_backendSessionMock = $this->getMockBuilder(Session::class)
-            ->addMethods(['getIntegrationData'])
-            ->onlyMethods(['__call'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->_eventManagerMock = $this->createPartialMock(ManagerInterface::class, ['dispatch']);
+        $this->_backendSessionMock = $this->createPartialMockWithReflection(
+            Session::class,
+            ['getIntegrationData', '__call']
+        );
 
         $this->_userMock = $this->getMockBuilder(User::class)
             ->disableOriginalConstructor()
@@ -244,9 +243,11 @@ abstract class IntegrationTestCase extends TestCase
         // Mock Layout passed into constructor
         $this->_viewMock = $this->getMockBuilder(ViewInterface::class)
             ->getMock();
-        $this->_layoutMock = $this->getMockBuilder(LayoutInterface::class)
-            ->addMethods(['getNode'])
-            ->getMockForAbstractClass();
+        // Use concrete Layout class since we need getNode() method which isn't in interface
+        $this->_layoutMock = $this->createPartialMockWithReflection(
+            \Magento\Framework\View\Layout::class,
+            ['getUpdate', 'getNode', 'getMessagesBlock', 'getBlock']
+        );
         $this->_layoutMergeMock = $this->getMockBuilder(
             Merge::class
         )->disableOriginalConstructor()
@@ -266,7 +267,7 @@ abstract class IntegrationTestCase extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $menuMock = $this->getMockBuilder(\Magento\Backend\Model\Menu::class)
-            ->setConstructorArgs([$this->getMockForAbstractClass(LoggerInterface::class)])
+            ->setConstructorArgs([$this->createMock(LoggerInterface::class)])
             ->getMock();
         $loggerMock = $this->getMockBuilder(LoggerInterface::class)
             ->getMock();
@@ -408,12 +409,10 @@ abstract class IntegrationTestCase extends TestCase
      */
     protected function _getIntegrationModelMock()
     {
-        $integrationModelMock = $this->getMockBuilder(\Magento\Integration\Model\Integration::class)->addMethods(
-            ['setStatus']
-        )
-            ->onlyMethods(['save', '__wakeup', 'getData'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $integrationModelMock = $this->createPartialMockWithReflection(
+            \Magento\Integration\Model\Integration::class,
+            ['setStatus', 'save', '__wakeup', 'getData']
+        );
 
         $integrationModelMock->expects($this->any())->method('setStatus')->willReturnSelf();
         $integrationModelMock->expects(

@@ -25,6 +25,7 @@ use Magento\Integration\Model\Oauth\TokenFactory;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Magento\Integration\Model\ResourceModel\Oauth\Token as TokenResourceModel;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 
 /**
@@ -32,6 +33,8 @@ use PHPUnit\Framework\MockObject\MockObject;
  */
 class OauthTest extends TestCase
 {
+    use MockCreationTrait;
+
     private const TIMESTAMP_STUB = 1657789046;
 
     /** @var ConsumerFactory */
@@ -131,31 +134,25 @@ class OauthTest extends TestCase
             TokenFactory::class
         )->disableOriginalConstructor()
             ->onlyMethods(['create'])->getMock();
-        $this->_tokenMock = $this->getMockBuilder(Token::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(
-                [
-                    'getId',
-                    'load',
-                    'createRequestToken',
-                    'createVerifierToken',
-                    'getVerifier',
-                    'convertToAccess',
-                    'getResource',
-                    'loadByConsumerIdAndUserType',
-                    '__wakeup',
-                ]
-            )
-            ->addMethods(
-                [
-                    'getType',
-                    'getToken',
-                    'getSecret',
-                    'getConsumerId',
-                    'getRevoked'
-                ]
-            )
-            ->getMock();
+        $this->_tokenMock = $this->createPartialMockWithReflection(
+            Token::class,
+            [
+                'getId',
+                'load',
+                'createRequestToken',
+                'createVerifierToken',
+                'getVerifier',
+                'convertToAccess',
+                'getResource',
+                'loadByConsumerIdAndUserType',
+                '__wakeup',
+                'getType',
+                'getToken',
+                'getSecret',
+                'getConsumerId',
+                'getRevoked'
+            ]
+        );
         $this->_tokenFactory->expects($this->any())->method('create')->willReturn($this->_tokenMock);
         $this->_oauthHelperMock = $this->getMockBuilder(Oauth::class)
             ->setConstructorArgs([new Random()])

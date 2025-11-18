@@ -18,6 +18,7 @@ use Magento\Integration\Model\Oauth\Token\Provider;
 use Magento\Integration\Model\Oauth\TokenFactory;
 use Magento\Integration\Model\OauthService;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -27,6 +28,8 @@ use Psr\Log\LoggerInterface;
  */
 class OauthServiceTest extends TestCase
 {
+    use MockCreationTrait;
+
     public const VALUE_CONSUMER_ID = 1;
 
     public const VALUE_CONSUMER_KEY = 'asdfghjklaqwerfdtyuiomnbgfdhbsoi';
