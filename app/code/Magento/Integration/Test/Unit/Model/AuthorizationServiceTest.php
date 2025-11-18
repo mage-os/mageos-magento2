@@ -169,7 +169,7 @@ class AuthorizationServiceTest extends TestCase
         //Return invalid role
         $this->roleMock->expects($this->any())
             ->method('getId')
-            ->will($this->onConsecutiveCalls(null, $calculatedRoleId));
+            ->willReturnOnConsecutiveCalls(null, $calculatedRoleId);
         // Verify if the method is called with the newly created role
         $this->rulesMock->expects($this->any())
             ->method('setRoleId')

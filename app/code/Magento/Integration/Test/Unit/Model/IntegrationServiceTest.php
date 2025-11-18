@@ -223,9 +223,7 @@ class IntegrationServiceTest extends TestCase
             $this->any()
         )->method(
             'load'
-        )->will(
-            $this->onConsecutiveCalls($this->_integrationMock, $this->_emptyIntegrationMock)
-        );
+        )->willReturnOnConsecutiveCalls($this->_integrationMock, $this->_emptyIntegrationMock);
         $this->_integrationMock->expects($this->once())->method('save')->willReturnSelf();
         $this->_setValidIntegrationData();
         $integrationData = [
@@ -258,9 +256,7 @@ class IntegrationServiceTest extends TestCase
             $this->any()
         )->method(
             'load'
-        )->will(
-            $this->onConsecutiveCalls($this->_integrationMock, $this->_getAnotherIntegrationMock())
-        );
+        )->willReturnOnConsecutiveCalls($this->_integrationMock, $this->_getAnotherIntegrationMock());
         $this->_integrationMock->expects($this->never())->method('save')->willReturnSelf();
         $this->_setValidIntegrationData();
         $integrationData = [

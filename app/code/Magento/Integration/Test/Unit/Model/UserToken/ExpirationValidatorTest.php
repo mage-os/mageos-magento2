@@ -13,6 +13,7 @@ use Magento\Framework\Exception\AuthorizationException;
 use Magento\Integration\Api\Data\UserToken;
 use Magento\Integration\Api\Data\UserTokenDataInterface;
 use Magento\Integration\Model\UserToken\ExpirationValidator;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Magento\Framework\Stdlib\DateTime\DateTime as DtUtil;
@@ -117,8 +118,8 @@ class ExpirationValidatorTest extends TestCase
      * @param bool $isValid
      * @param int $currentTimestamp
      * @throws AuthorizationException
-     * @dataProvider getUserTokens
      */
+    #[DataProvider('getUserTokens')]
     public function testValidate(\Closure $userToken, bool $isValid, int $currentTimestamp): void
     {
         $userToken = $userToken($this);

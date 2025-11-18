@@ -77,13 +77,10 @@ class OauthServiceTest extends TestCase
             Provider::class
         )->disableOriginalConstructor()
             ->getMock();
-        $this->_tokenMock = $this->getMockBuilder(
-            Token::class
-        )->disableOriginalConstructor()
-            ->onlyMethods(['createVerifierToken', '__wakeup', 'delete'])
-            ->addMethods(
-                ['getType']
-            )->getMock();
+        $this->_tokenMock = $this->createPartialMockWithReflection(
+            Token::class,
+            ['createVerifierToken', '__wakeup', 'delete', 'getType']
+        );
 
         $this->_tokenFactoryMock = $this->createPartialMock(
             TokenFactory::class,
@@ -114,12 +111,12 @@ class OauthServiceTest extends TestCase
         );
 
         $this->_service = new OauthService(
-            $this->getMockForAbstractClass(StoreManagerInterface::class),
+            $this->createMock(StoreManagerInterface::class),
             $this->_consumerFactory,
             $this->_tokenFactoryMock,
             $this->createMock(Data::class),
             $this->createMock(LaminasClient::class),
-            $this->getMockForAbstractClass(LoggerInterface::class),
+            $this->createMock(LoggerInterface::class),
             $this->createMock(Oauth::class),
             $this->_tokenProviderMock
         );
