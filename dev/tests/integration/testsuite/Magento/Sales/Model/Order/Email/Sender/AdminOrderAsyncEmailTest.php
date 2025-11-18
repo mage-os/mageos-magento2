@@ -26,6 +26,10 @@ use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestFramework\Mail\Template\TransportBuilderMock;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Test order creation from admin scope with async email notification.
+ *
+ */
 class AdminOrderAsyncEmailTest extends TestCase
 {
     private TransportBuilderMock $transportBuilder;
