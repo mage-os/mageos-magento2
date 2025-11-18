@@ -45,7 +45,7 @@ We encourage experts from the Community to help us with GitHub routines such as 
 
 ### Leaders
 
-Adobe highly appreciates contributions that help us to improve the code, clarify the documentation, and increase test coverage. Browse our contributors on the [GitHub contributors graph](https://github.com/magento/magento2/graphs/contributors).
+Adobe highly appreciates contributions that help us to improve the code, clarify the documentation, and increase test coverage. Check out our Community leaders, superstars, and superheroes on the [leaderboard](https://github.com/magento/magento2/graphs/contributors).
 
 [![](https://raw.githubusercontent.com/wiki/magento/magento2/images/contributors.png)](https://github.com/magento/magento2/graphs/contributors)
 
