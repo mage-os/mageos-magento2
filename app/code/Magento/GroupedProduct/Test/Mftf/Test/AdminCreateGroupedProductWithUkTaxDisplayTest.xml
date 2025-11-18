@@ -13,7 +13,7 @@
             <features value="GroupedProduct"/>
             <features value="Tax"/>
             <stories value="Admin configures UK tax for grouped products"/>
-            <title value="Grouped product honors UK 20% tax and mixed price display"/>
+            <title value="Create Grouped product with UK 20% tax"/>
             <description value="Creates grouped product, configures UK tax, enables inclusive/exclusive price display, verifies storefront visibility."/>
             <severity value="AVERAGE"/>
             <testCaseId value="AC-6363"/>
