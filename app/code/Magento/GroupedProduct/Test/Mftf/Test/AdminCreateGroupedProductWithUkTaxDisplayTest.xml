@@ -121,7 +121,7 @@
         <actionGroup ref="StorefrontGoToCategoryPageActionGroup" stepKey="openCategory">
             <argument name="categoryName" value="$$createCategory.name$$"/>
         </actionGroup>
-        <waitForText selector="{{StorefrontCategoryProductSection.ProductTitleByNumber('1')}}" userInput="{{GroupedProduct.name}}" stepKey="seeGroupedProductInCategory"/>
+        <waitForText selector="{{StorefrontCategoryProductSection.ProductTitleByName(GroupedProduct.name)}}" userInput="{{GroupedProduct.name}}" stepKey="seeGroupedProductInCategory"/>
         <actionGroup ref="StorefrontOpenProductPageActionGroup" stepKey="openGroupedProductPdp">
             <argument name="productUrl" value="{{GroupedProduct.urlKey}}"/>
         </actionGroup>
