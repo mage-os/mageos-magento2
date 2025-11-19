@@ -221,16 +221,16 @@ class LoadBlockTest extends AbstractBackendController
             $backendSession->hasUpdateResult(),
             'Session should contain compressed updateResult'
         );
-        
+
         $sessionData = $backendSession->getUpdateResult();
         $this->assertIsArray($sessionData, 'Session data should be array for compressed format');
         $this->assertTrue($sessionData['compressed'], 'Data should be marked as compressed');
         $this->assertArrayHasKey('data', $sessionData, 'Compressed data should exist');
-        
+
         // Verify compression actually reduces size
         $decompressed = gzdecode($sessionData['data']);
         $this->assertNotEmpty($decompressed, 'Decompressed data should not be empty');
-        
+
         $originalSize = strlen($decompressed);
         $compressedSize = strlen($sessionData['data']);
         $this->assertLessThan(
@@ -368,7 +368,8 @@ class LoadBlockTest extends AbstractBackendController
 
         // Programmatically add one required text custom option to the custom product
         /** @var \Magento\Catalog\Api\Data\ProductCustomOptionInterfaceFactory $customOptionFactory */
-        $customOptionFactory = $this->_objectManager->get(\Magento\Catalog\Api\Data\ProductCustomOptionInterfaceFactory::class);
+        $customOptionFactory = $this->_objectManager
+            ->get(\Magento\Catalog\Api\Data\ProductCustomOptionInterfaceFactory::class);
         $requiredTextOption = $customOptionFactory->create(
             [
                 'data' => [

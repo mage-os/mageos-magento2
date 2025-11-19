@@ -168,6 +168,7 @@ abstract class Create extends \Magento\Backend\App\Action
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
+    // phpcs:disable Generic.Metrics.NestingLevel
     protected function _processActionData($action = null)
     {
         $eventData = [
@@ -266,29 +267,40 @@ abstract class Create extends \Magento\Backend\App\Action
                     if (isset($config['options']) && is_array($config['options'])) {
                         $opts = $config['options'];
                         unset($opts['files_prefix']);
-                        $opts = array_filter($opts, function ($v) {
-                            if (is_array($v)) {
-                                return !empty($v);
+                        $opts = array_filter(
+                            $opts,
+                            function ($v) {
+                                if (is_array($v)) {
+                                    return !empty($v);
+                                }
+
+                                return $v !== '' && $v !== null;
                             }
-                            return $v !== '' && $v !== null;
-                        });
+                        );
                         $hasOptionsInConfig = !empty($opts);
                     }
                     if ($this->_getQuote()->hasProductId((int)$productId) && !$hasOptionsInConfig) {
                         try {
                             /** @var \Magento\Catalog\Model\Product $product */
-                            $product = $this->_objectManager->create(\Magento\Catalog\Model\Product::class)->load($productId);
+                            $product = $this
+                                ->_objectManager
+                                ->create(\Magento\Catalog\Model\Product::class)
+                                ->load($productId);
                             if ($product->getId() && $product->getHasOptions()) {
                                 $hasRequired = false;
                                 foreach ($product->getOptions() as $option) {
-                                    if ($option->getIsRequire()) { $hasRequired = true; break; }
+                                    if ($option->getIsRequire()) {
+                                        $hasRequired = true;
+                                        break;
+                                    }
                                 }
                                 if ($hasRequired) {
                                     continue;
                                 }
                             }
+                        //phpcs:ignore Magento2.CodeAnalysis.EmptyBlock
                         } catch (\Throwable $e) {
-                            // If any unexpected error occurs, fall back to adding
+                            // Intentionally swallow any exception during pre-check to allow normal add flow.
                         }
                     }
                     $filtered[$productId] = $config;
