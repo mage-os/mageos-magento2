@@ -35,12 +35,12 @@
         <!-- Select California state -->
         <waitForElementVisible selector="{{AdminTaxRateFormSection.state}}" stepKey="waitForStateDropdownVisible"/>
         <selectOption selector="{{AdminTaxRateFormSection.state}}" userInput="{{US_Address_CA.state}}" stepKey="selectCaliforniaState"/>
-        <waitForPageLoad stepKey="waitAfterSelectingCalifornia"/>
+        <waitForAjaxLoad stepKey="waitAfterSelectingCalifornia"/>
         <!-- Verify California is selected -->
         <seeOptionIsSelected selector="{{AdminTaxRateFormSection.state}}" userInput="{{US_Address_CA.state}}" stepKey="verifyCaliforniaIsSelected"/>
         <!-- Step 5: Switch Country to United Kingdom -->
         <selectOption selector="{{AdminTaxRateFormSection.country}}" userInput="{{UK_Address.country}}" stepKey="selectUnitedKingdom"/>
-        <waitForPageLoad stepKey="waitAfterSelectingUK"/>
+        <waitForAjaxLoad stepKey="waitAfterSelectingUK"/>
         <!-- Step 6 & 7: Verify state field shows asterisk (*) for countries without required states -->
         <!-- Verify state is NOT showing California anymore -->
         <dontSeeOptionIsSelected selector="{{AdminTaxRateFormSection.state}}" userInput="{{US_Address_CA.state}}" stepKey="verifyCaliforniaNotSelected"/>
