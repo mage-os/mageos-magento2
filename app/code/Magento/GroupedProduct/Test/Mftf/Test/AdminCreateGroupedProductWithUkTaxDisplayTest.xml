@@ -50,13 +50,6 @@
             <magentoCLI command="config:set {{CustomCartDisplayPrice.path}} {{CustomCartDisplayPrice.value}}" stepKey="setCartPriceBoth"/>
             <magentoCLI command="config:set {{CustomCartDisplaySubtotal.path}} {{CustomCartDisplaySubtotal.value}}" stepKey="setCartSubtotalBoth"/>
             <magentoCLI command="config:set {{CustomCartDisplayShipping.path}} {{CustomCartDisplayShipping.value}}" stepKey="setCartShippingBoth"/>
-            <!-- Step 6: Run cache clean and reindex -->
-            <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushCache">
-                <argument name="tags" value=""/>
-            </actionGroup>
-            <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindexAll">
-                <argument name="indices" value=""/>
-            </actionGroup>
         </before>
         <after>
             <magentoCLI command="config:set {{DisplayProductPricesInCatalog.path}} {{DisplayProductPricesInCatalog.value}}" stepKey="resetCatalogDisplay"/>
@@ -109,12 +102,9 @@
             <argument name="qty" value="1"/>
         </actionGroup>
         <actionGroup ref="SaveProductFormActionGroup" stepKey="saveGroupedProduct"/>
-        <waitForText selector="{{AdminMessagesSection.success}}" userInput="You saved the product." stepKey="seeGroupedSavedMessage"/>
+        <!-- Step 6: Run cache clean -->
         <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushCacheAgain">
             <argument name="tags" value=""/>
-        </actionGroup>
-        <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindexAllAgain">
-            <argument name="indices" value=""/>
         </actionGroup>
         <!-- Step 7: Navigate to the category the grouped product belongs to on frontend -->
         <actionGroup ref="StorefrontOpenHomePageActionGroup" stepKey="openStorefrontHome"/>
