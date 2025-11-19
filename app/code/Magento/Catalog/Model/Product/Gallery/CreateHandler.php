@@ -332,12 +332,7 @@ class CreateHandler implements ExtensionInterface
                     : null;
                 $data['disabled'] = isset($image['disabled']) ? (int)$image['disabled'] : 0;
                 $data['store_id'] = (int)$product->getStoreId();
-                if ($data['store_id'] !== Store::DEFAULT_STORE_ID) {
-                    $data = [
-                        ...$data,
-                        ...($this->prepareUseDefault($image, $isNew))
-                    ];
-                }
+                $data = $this->prepareUseDefault($image, $data['store_id'], $isNew) + $data;
 
                 $data[$this->metadata->getLinkField()] = (int)$product->getData($this->metadata->getLinkField());
 
@@ -358,11 +353,15 @@ class CreateHandler implements ExtensionInterface
      * Sets default values for fields marked to use default
      *
      * @param array $image
+     * @param int $storeId
      * @param bool $isNew
      * @return array
      */
-    private function prepareUseDefault(array $image, bool $isNew): array
+    private function prepareUseDefault(array $image, int $storeId, bool $isNew = false): array
     {
+        if ($storeId === Store::DEFAULT_STORE_ID) {
+            return [];
+        }
         $result = [];
         $fields = [
             'label' => null,
@@ -696,10 +695,14 @@ class CreateHandler implements ExtensionInterface
         }
 
         if (in_array($attrData, array_keys($newImages))) {
+            $newImages[$attrData] = $this->prepareUseDefault($newImages[$attrData], $storeId, true)
+                + $newImages[$attrData];
             $product->setData($mediaAttrCode . '_label', $newImages[$attrData]['label']);
         }
 
         if (in_array($attrData, array_keys($existImages)) && isset($existImages[$attrData]['label'])) {
+            $existImages[$attrData] = $this->prepareUseDefault($existImages[$attrData], $storeId)
+                + $existImages[$attrData];
             $product->setData($mediaAttrCode . '_label', $existImages[$attrData]['label']);
             if ($existImages[$attrData]['label'] == null) {
                 $resetLabel = true;
