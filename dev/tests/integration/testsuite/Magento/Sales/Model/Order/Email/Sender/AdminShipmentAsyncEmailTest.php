@@ -35,7 +35,7 @@ use Magento\TestFramework\Mail\Template\TransportBuilderMock;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Test shipment creation with async email notification.
+ * Test shipment creation with offline payment method and async email notification.
  */
 class AdminShipmentAsyncEmailTest extends TestCase
 {
@@ -49,6 +49,9 @@ class AdminShipmentAsyncEmailTest extends TestCase
      */
     private array $sentEmails = [];
 
+    /**
+     * @return void
+     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -159,6 +162,9 @@ class AdminShipmentAsyncEmailTest extends TestCase
         $this->assertEquals('async-shipment@example.com', $email->getTo()[0]->getEmail());
     }
 
+    /**
+     * @return void
+     */
     protected function tearDown(): void
     {
         $this->transportBuilder->clean();
