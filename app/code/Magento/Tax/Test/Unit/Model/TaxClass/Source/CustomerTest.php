@@ -57,7 +57,7 @@ class CustomerTest extends TestCase
     {
         $this->objectManager = new ObjectManager($this);
 
-        $this->taxClassRepositoryMock = $this->getMockForAbstractClass(
+        $this->taxClassRepositoryMock = $this->createMock(
             TaxClassRepositoryInterface::class,
             ['getList'],
             '',
@@ -96,7 +96,7 @@ class CustomerTest extends TestCase
     {
         $filterMock = $this->createMock(Filter::class);
         $searchCriteriaMock = $this->createMock(SearchCriteria::class);
-        $searchResultsMock = $this->getMockForAbstractClass(
+        $searchResultsMock = $this->createMock(
             TaxClassSearchResultsInterface::class,
             [],
             '',
@@ -105,7 +105,7 @@ class CustomerTest extends TestCase
             true,
             ['getItems']
         );
-        $taxClassMock = $this->getMockForAbstractClass(
+        $taxClassMock = $this->createMock(
             TaxClassInterface::class,
             ['getClassId', 'getClassName'],
             '',
@@ -188,7 +188,7 @@ class CustomerTest extends TestCase
     {
         $filterMock = $this->createMock(Filter::class);
         $searchCriteriaMock = $this->createMock(SearchCriteria::class);
-        $searchResultsMock = $this->getMockForAbstractClass(
+        $searchResultsMock = $this->createMock(
             TaxClassSearchResultsInterface::class,
             [],
             '',
@@ -197,7 +197,7 @@ class CustomerTest extends TestCase
             true,
             ['getItems']
         );
-        $taxClassMock = $this->getMockForAbstractClass(
+        $taxClassMock = $this->createMock(
             TaxClassInterface::class,
             ['getClassId', 'getClassName'],
             '',

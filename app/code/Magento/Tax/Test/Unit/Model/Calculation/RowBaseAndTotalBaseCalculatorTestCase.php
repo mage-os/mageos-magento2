@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\Tax\Test\Unit\Model\Calculation;
 
 use Magento\Framework\DataObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Tax\Api\Data\AppliedTaxInterface;
 use Magento\Tax\Api\Data\AppliedTaxInterfaceFactory;
@@ -31,6 +32,7 @@ use PHPUnit\Framework\TestCase;
  */
 class RowBaseAndTotalBaseCalculatorTestCase extends TestCase
 {
+    use MockCreationTrait;
     const STORE_ID = 2300;
     const QUANTITY = 1;
     const UNIT_PRICE = 500;
@@ -123,14 +125,11 @@ class RowBaseAndTotalBaseCalculatorTestCase extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->mockItem = $this->getMockBuilder(QuoteDetailsItemInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getExtensionAttributes', 'getUnitPrice'])
-            ->getMockForAbstractClass();
-        $this->quoteDetailsItemExtension = $this->getMockBuilder(QuoteDetailsItemExtensionInterface::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getPriceForTaxCalculation'])
-            ->getMockForAbstractClass();
+        $this->mockItem = $this->createMock(QuoteDetailsItemInterface::class);
+        $this->quoteDetailsItemExtension = $this->createPartialMockWithReflection(
+            QuoteDetailsItemExtensionInterface::class,
+            ['getPriceForTaxCalculation']
+        );
         $this->mockItem->expects($this->any())->method('getExtensionAttributes')
             ->willReturn($this->quoteDetailsItemExtension);
 

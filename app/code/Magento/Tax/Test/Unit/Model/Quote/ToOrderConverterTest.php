@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Tax\Test\Unit\Model\Quote;
 
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Quote\Model\Quote\Address;
 use Magento\Quote\Model\Quote\Address\ToOrder;
@@ -14,6 +15,7 @@ use Magento\Sales\Api\Data\OrderExtensionFactory;
 use Magento\Sales\Api\Data\OrderExtensionInterface;
 use Magento\Sales\Model\Order;
 use Magento\Tax\Model\Quote\ToOrderConverter;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -22,6 +24,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ToOrderConverterTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var OrderExtensionFactory|MockObject
      */
@@ -55,11 +58,10 @@ class ToOrderConverterTest extends TestCase
             ->onlyMethods(['create'])
             ->getMock();
 
-        $this->quoteAddressMock = $this->getMockBuilder(Address::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getItemsAppliedTaxes'])
-            ->onlyMethods(['getAppliedTaxes'])
-            ->getMock();
+        $this->quoteAddressMock = $this->createPartialMockWithReflection(
+            Address::class,
+            ['getItemsAppliedTaxes', 'getAppliedTaxes']
+        );
         $this->subjectMock = $this->getMockBuilder(ToOrder::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -78,14 +80,14 @@ class ToOrderConverterTest extends TestCase
      */
     protected function setupOrderExtensionAttributeMock()
     {
-        $orderExtensionAttributeMock = $this->getMockBuilder(OrderExtensionInterface::class)
-            ->addMethods(
-                [
-                    'setAppliedTaxes',
-                    'setConvertingFromQuote',
-                    'setItemAppliedTaxes'
-                ]
-            )->getMockForAbstractClass();
+        $orderExtensionAttributeMock = $this->createPartialMockWithReflection(
+            OrderExtensionInterface::class,
+            [
+                'setAppliedTaxes',
+                'setConvertingFromQuote',
+                'setItemAppliedTaxes'
+            ]
+        );
 
         return $orderExtensionAttributeMock;
     }
@@ -95,14 +97,14 @@ class ToOrderConverterTest extends TestCase
      * @param array $expectedAppliedTaxes
      * @param array $itemsAppliedTaxes
      * @param array $itemAppliedTaxesExpected
-     * @dataProvider afterConvertDataProvider
      */
+    #[DataProvider('afterConvertDataProvider')]
     public function testAfterConvert(
-        $appliedTaxes,
-        $expectedAppliedTaxes,
-        $itemsAppliedTaxes,
-        $itemAppliedTaxesExpected
-    ) {
+        array $appliedTaxes,
+        array $expectedAppliedTaxes,
+        array $itemsAppliedTaxes,
+        array $itemAppliedTaxesExpected
+    ): void {
         $this->model->beforeConvert($this->subjectMock, $this->quoteAddressMock);
 
         $this->quoteAddressMock->expects($this->once())
@@ -143,14 +145,14 @@ class ToOrderConverterTest extends TestCase
      * @param array $expectedAppliedTaxes
      * @param array $itemsAppliedTaxes
      * @param array $itemAppliedTaxesExpected
-     * @dataProvider afterConvertDataProvider
      */
+    #[DataProvider('afterConvertDataProvider')]
     public function testAfterConvertNullExtensionAttribute(
-        $appliedTaxes,
-        $expectedAppliedTaxes,
-        $itemsAppliedTaxes,
-        $itemAppliedTaxesExpected
-    ) {
+        array $appliedTaxes,
+        array $expectedAppliedTaxes,
+        array $itemsAppliedTaxes,
+        array $itemAppliedTaxesExpected
+    ): void {
         $this->model->beforeConvert($this->subjectMock, $this->quoteAddressMock);
 
         $this->quoteAddressMock->expects($this->once())

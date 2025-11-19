@@ -31,7 +31,7 @@ class ConfigTest extends TestCase
     {
         // Need a mocked object with only dummy methods.  It is just needed for construction.
         // The setter/getter methods do not use this object (for this set of tests).
-        $scopeConfigMock = $this->getMockForAbstractClass(ScopeConfigInterface::class);
+        $scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
 
         /** @var Config */
         $model = new Config($scopeConfigMock);
@@ -67,7 +67,7 @@ class ConfigTest extends TestCase
      */
     public function testGetCalculationSequence($applyTaxAfterDiscount, $discountTaxIncl, $expectedValue): void
     {
-        $scopeConfigMock = $this->getMockForAbstractClass(ScopeConfigInterface::class);
+        $scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
         $scopeConfigMock
             ->method('getValue')
             ->willReturnOnConsecutiveCalls($applyTaxAfterDiscount, $discountTaxIncl);
@@ -103,7 +103,7 @@ class ConfigTest extends TestCase
      */
     public function testScopeConfigMethods($method, $path, $configValue, $expectedValue): void
     {
-        $scopeConfigMock = $this->getMockForAbstractClass(ScopeConfigInterface::class);
+        $scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
         $scopeConfigMock->expects($this->once())
             ->method('getValue')
             ->with($path, ScopeInterface::SCOPE_STORE, null)
@@ -389,7 +389,7 @@ class ConfigTest extends TestCase
      */
     public function testNeedPriceConversion(): void
     {
-        $scopeConfigMock = $this->getMockForAbstractClass(ScopeConfigInterface::class);
+        $scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
         $scopeConfigMock
             ->method('getValue')
             ->willReturnMap(
