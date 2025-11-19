@@ -76,4 +76,3 @@
         <element name="conditions" type="button" selector="//label[@class='label admin__field-label']//span[text()='Conditions']"/>
     </section>
 </sections>
-
