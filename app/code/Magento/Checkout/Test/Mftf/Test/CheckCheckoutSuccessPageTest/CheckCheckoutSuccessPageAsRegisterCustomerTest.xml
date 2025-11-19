@@ -140,5 +140,6 @@
         <waitForPageLoad stepKey="waitForPrintOrderPageLoad"/>
         <seeElement selector="{{StorefrontCustomerOrderViewSection.orderTitle}}" stepKey="seeOrderTitleOnPrint"/>
         <switchToWindow stepKey="switchToWindow2"/>
+        <switchToPreviousTab stepKey="switchToPreviousTab"/>
     </test>
 </tests>
