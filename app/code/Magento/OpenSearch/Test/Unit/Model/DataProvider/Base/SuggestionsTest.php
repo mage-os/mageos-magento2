@@ -113,9 +113,7 @@ class SuggestionsTest extends TestCase
             ->onlyMethods(['getConnection'])
             ->getMock();
 
-        $this->scopeConfig = $this->getMockBuilder(ScopeConfigInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->scopeConfig = $this->createMock(ScopeConfigInterface::class);
 
         $this->searchIndexNameResolver = $this
             ->getMockBuilder(SearchIndexNameResolver::class)
@@ -123,25 +121,17 @@ class SuggestionsTest extends TestCase
             ->onlyMethods(['getIndexName'])
             ->getMock();
 
-        $this->storeManager = $this->getMockBuilder(StoreManager::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->storeManager = $this->createMock(StoreManager::class);
 
-        $this->fieldProvider = $this->getMockBuilder(FieldProviderInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->fieldProvider = $this->createMock(FieldProviderInterface::class);
 
-        $this->logger = $this->getMockBuilder(LoggerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->client = $this->getMockBuilder(SearchClient::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->query = $this->getMockBuilder(QueryInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->query = $this->createMock(QueryInterface::class);
 
         $this->productAttributeCollectionFactory = $this->getMockBuilder(CollectionFactory::class)
             ->disableOriginalConstructor()
@@ -226,9 +216,7 @@ class SuggestionsTest extends TestCase
             ->method('isElasticsearchEnabled')
             ->willReturn(true);
 
-        $store = $this->getMockBuilder(StoreInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $store = $this->createMock(StoreInterface::class);
 
         $store->expects($this->once())
             ->method('getId')
