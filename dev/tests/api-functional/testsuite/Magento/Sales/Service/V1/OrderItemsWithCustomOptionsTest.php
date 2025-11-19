@@ -287,13 +287,44 @@ class OrderItemsWithCustomOptionsTest extends WebapiAbstract
 
             $customOptions = $item['product_option']['extension_attributes']['custom_options'];
             self::assertIsArray($customOptions);
-            self::assertGreaterThanOrEqual(9, count($customOptions));
+            self::assertCount(9, $customOptions, sprintf(
+                'Expected exactly 9 custom options for item "%s", but found %d',
+                $item['sku'],
+                count($customOptions)
+            ));
 
-            foreach ($customOptions as $option) {
-                self::assertArrayHasKey('option_id', $option);
-                self::assertArrayHasKey('option_value', $option);
-                self::assertNotEmpty($option['option_id']);
-                self::assertNotEmpty($option['option_value']);
+            foreach ($customOptions as $index => $option) {
+                self::assertArrayHasKey(
+                    'option_id',
+                    $option,
+                    sprintf('Custom option at index %d for item "%s" is missing option_id', $index, $item['sku'])
+                );
+                self::assertArrayHasKey(
+                    'option_value',
+                    $option,
+                    sprintf('Custom option at index %d for item "%s" is missing option_value', $index, $item['sku'])
+                );
+                self::assertNotEmpty(
+                    $option['option_id'],
+                    sprintf('Custom option at index %d for item "%s" has empty option_id', $index, $item['sku'])
+                );
+                $optionValue = $option['option_value'];
+                if (is_array($optionValue)) {
+                    self::assertNotEmpty(
+                        $optionValue,
+                        sprintf('Custom option at index %d for item "%s" has empty option_value', $index, $item['sku'])
+                    );
+                } else {
+                    self::assertNotEmpty(
+                        $optionValue,
+                        sprintf('Custom option at index %d for item "%s" has empty option_value', $index, $item['sku'])
+                    );
+                }
+                $this->validateCustomOptionValue(
+                    $optionValue,
+                    $index,
+                    $item['sku']
+                );
             }
         }
     }
@@ -329,14 +360,14 @@ class OrderItemsWithCustomOptionsTest extends WebapiAbstract
         $objectManager = Bootstrap::getObjectManager();
         $productId = $this->productResource->getIdBySku($sku);
         $product = $objectManager->create(Product::class)->load($productId);
-        
+
         $customOptionCollection = $objectManager->get(Option::class)
             ->getProductOptionCollection($product);
-        
+
         $customOptions = [];
         foreach ($customOptionCollection as $option) {
             $optionType = $option->getType();
-            
+
             $optionData = match ($optionType) {
                 'field' => 'Test field value',
                 'area' => 'Test textarea value',
@@ -515,6 +546,63 @@ class OrderItemsWithCustomOptionsTest extends WebapiAbstract
         ];
 
         return $this->_webApiCall($serviceInfo);
+    }
+
+    /**
+     * Validate custom option value format
+     *
+     * This method validates that the option value matches one of the expected patterns:
+     * - Text string (field/area options)
+     * - Numeric ID (drop_down/radio options)
+     * - Comma-separated numeric IDs (checkbox/multiple options)
+     * - Date/datetime/time format (YYYY-MM-DD HH:MM:SS or array structure)
+     *
+     * @param string|array $optionValue The option value to validate
+     * @param int $index The index of the option in the array
+     * @param string $sku The product SKU for error messages
+     * @return void
+     */
+    private function validateCustomOptionValue(string|array $optionValue, int $index, string $sku): void
+    {
+        // Handle array option values (date/time options)
+        if (is_array($optionValue)) {
+            self::assertNotEmpty(
+                $optionValue,
+                sprintf(
+                    'Custom option at index %d for item "%s" has empty array option_value',
+                    $index,
+                    $sku
+                )
+            );
+            return;
+        }
+
+        // Define expected patterns for string option types
+        $patterns = [
+            '/^Test (field|textarea) value$/',           // Text field or textarea
+            '/^\d+$/',                                    // Single numeric ID (drop_down, radio)
+            '/^\d+(,\d+)*$/',                             // Comma-separated numeric IDs (checkbox, multiple)
+            '/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/',  // Date/datetime/time format
+        ];
+
+        $isValid = false;
+        foreach ($patterns as $pattern) {
+            if (preg_match($pattern, $optionValue)) {
+                $isValid = true;
+                break;
+            }
+        }
+
+        self::assertTrue(
+            $isValid,
+            sprintf(
+                'Custom option at index %d for item "%s" has invalid option_value format: "%s". ' .
+                'Expected one of: text string, numeric ID, comma-separated IDs, or date format (YYYY-MM-DD HH:MM:SS)',
+                $index,
+                $sku,
+                $optionValue
+            )
+        );
     }
 
     /**
