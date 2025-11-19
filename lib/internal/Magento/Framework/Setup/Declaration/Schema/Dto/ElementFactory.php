@@ -84,7 +84,7 @@ class ElementFactory
      */
     private function removeEmptyComments(array $elementStructuralData):array
     {
-        if (isset($elementStructuralData['comment']) && $elementStructuralData['comment'] === "") {
+        if (isset($elementStructuralData['comment']) && trim($elementStructuralData['comment']) === "") {
             unset($elementStructuralData['comment']);
         }
 
