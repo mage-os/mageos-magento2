@@ -24,9 +24,9 @@
             <actionGroup ref="AddTextSwatchToProductActionGroup" stepKey="createTextSwatchAttribute">
                 <argument name="attributeName" value="{{textSwatchAttribute.default_label}}"/>
                 <argument name="attributeCode" value="{{textSwatchAttribute.attribute_code}}"/>
-                <argument name="option1" value="textSwatchOption1"/>
-                <argument name="option2" value="textSwatchOption2"/>
-                <argument name="option3" value="textSwatchOption3"/>
+                <argument name="option1" value="{{textSwatchOption1.admin_label}}"/>
+                <argument name="option2" value="{{textSwatchOption2.admin_label}}"/>
+                <argument name="option3" value="{{textSwatchOption3.admin_label}}"/>
             </actionGroup>
             <waitForElementVisible selector="{{AdminProductMessagesSection.successMessage}}" stepKey="waitForAttributeSuccessMessage"/>
             <!-- Precondition7,8: Create new attribute set based on Default -->
@@ -78,15 +78,15 @@
         <waitForElementVisible selector="{{AdminProductAttributesSection.attributeDropdownByCode(textSwatchAttribute.attribute_code)}}" stepKey="waitForTextSwatchAttribute"/>
         <actionGroup ref="AdminSelectTextSwatchAttributeOptionActionGroup" stepKey="selectFirstOption">
             <argument name="attributeCode" value="{{textSwatchAttribute.attribute_code}}"/>
-            <argument name="optionValue" value="textSwatchOption1"/>
+            <argument name="optionValue" value="{{textSwatchOption1.admin_label}}"/>
         </actionGroup>
         <!-- Step 7: Select second option - this should deselect the first option automatically -->
         <actionGroup ref="AdminSelectTextSwatchAttributeOptionActionGroup" stepKey="selectSecondOption">
             <argument name="attributeCode" value="{{textSwatchAttribute.attribute_code}}"/>
-            <argument name="optionValue" value="textSwatchOption2"/>
+            <argument name="optionValue" value="{{textSwatchOption2.admin_label}}"/>
         </actionGroup>
         <!-- Verify second option is selected -->
-        <seeOptionIsSelected selector="{{AdminProductAttributesSection.attributeDropdownByCode(textSwatchAttribute.attribute_code)}}" userInput="textSwatchOption2" stepKey="verifySecondOptionSelected"/>
+        <seeOptionIsSelected selector="{{AdminProductAttributesSection.attributeDropdownByCode(textSwatchAttribute.attribute_code)}}" userInput="{{textSwatchOption2.admin_label}}" stepKey="verifySecondOptionSelected"/>
         <!-- Step 8: Save product -->
         <actionGroup ref="SaveProductFormActionGroup" stepKey="saveProduct"/>
         <!-- Step 9: Edit product and verify second option is still selected -->
@@ -98,18 +98,18 @@
             <argument name="product" value="SimpleProduct"/>
         </actionGroup>
         <waitForElementVisible selector="{{AdminProductAttributesSection.attributeDropdownByCode(textSwatchAttribute.attribute_code)}}" stepKey="waitForSwatchAttributeAfterEdit"/>
-        <seeOptionIsSelected selector="{{AdminProductAttributesSection.attributeDropdownByCode(textSwatchAttribute.attribute_code)}}" userInput="textSwatchOption2" stepKey="verifySecondOptionStillSelected"/>
+        <seeOptionIsSelected selector="{{AdminProductAttributesSection.attributeDropdownByCode(textSwatchAttribute.attribute_code)}}" userInput="{{textSwatchOption2.admin_label}}" stepKey="verifySecondOptionStillSelected"/>
         <!-- Change option to third option - previous option should be deselected -->
         <actionGroup ref="AdminSelectTextSwatchAttributeOptionActionGroup" stepKey="selectThirdOption">
             <argument name="attributeCode" value="{{textSwatchAttribute.attribute_code}}"/>
-            <argument name="optionValue" value="textSwatchOption3"/>
+            <argument name="optionValue" value="{{textSwatchOption3.admin_label}}"/>
         </actionGroup>
         <!-- Verify third option is selected -->
-        <seeOptionIsSelected selector="{{AdminProductAttributesSection.attributeDropdownByCode(textSwatchAttribute.attribute_code)}}" userInput="textSwatchOption3" stepKey="verifyThirdOptionSelected"/>
+        <seeOptionIsSelected selector="{{AdminProductAttributesSection.attributeDropdownByCode(textSwatchAttribute.attribute_code)}}" userInput="{{textSwatchOption3.admin_label}}" stepKey="verifyThirdOptionSelected"/>
         <!-- Step 10: Save product again -->
         <actionGroup ref="SaveProductFormActionGroup" stepKey="saveProductAgain"/>
         <!-- Verify third option persisted after save -->
         <waitForElementVisible selector="{{AdminProductAttributesSection.attributeDropdownByCode(textSwatchAttribute.attribute_code)}}" stepKey="waitForSwatchAttributeAfterSecondSave"/>
-        <seeOptionIsSelected selector="{{AdminProductAttributesSection.attributeDropdownByCode(textSwatchAttribute.attribute_code)}}" userInput="textSwatchOption3" stepKey="verifyThirdOptionPersisted"/>
+        <seeOptionIsSelected selector="{{AdminProductAttributesSection.attributeDropdownByCode(textSwatchAttribute.attribute_code)}}" userInput="{{textSwatchOption3.admin_label}}" stepKey="verifyThirdOptionPersisted"/>
     </test>
 </tests>

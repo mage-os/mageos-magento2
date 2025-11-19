@@ -15,6 +15,7 @@
             <argument name="attributeCode" type="string"/>
             <argument name="optionValue" type="string"/>
         </arguments>
+        <waitForElementClickable selector="{{AdminProductAttributesSection.attributeDropdownByCode(attributeCode)}}" stepKey="waitForAttributeDropdown"/>
         <selectOption selector="{{AdminProductAttributesSection.attributeDropdownByCode(attributeCode)}}" userInput="{{optionValue}}" stepKey="selectAttributeOption"/>
         <waitForPageLoad stepKey="waitAfterSelection"/>
     </actionGroup>
