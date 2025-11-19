@@ -36,6 +36,8 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Test shipment creation with offline payment method and async email notification.
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class AdminShipmentAsyncEmailTest extends TestCase
 {
