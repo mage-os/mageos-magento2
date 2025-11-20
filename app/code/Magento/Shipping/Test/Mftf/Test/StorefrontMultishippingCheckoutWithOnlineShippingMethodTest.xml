@@ -111,7 +111,7 @@
             </actionGroup>
             <waitForElementVisible selector="{{AdminShipmentAddressInformationSection.orderInformationAddress('Berlin')}}" stepKey="waitForOrderInformationForBerlin"/>
             <!-- Verify shipping method section exists without checking specific method name -->
-            <seeElement selector=".box-order-shipping-method" stepKey="seeShippingMethodForFirstOrder"/>
+            <waitForElementVisible selector="{{StorefrontOrderDetailsSection.shippingMethodBlock}}" stepKey="waitForShippingMethodForFirstOrder"/>
             <actionGroup ref="StorefrontOpenMyOrdersPageActionGroup" stepKey="goToMyOrdersForSecondOrder"/>
             <actionGroup ref="StorefrontOpenOrderLinkOnMyOrdersPageActionGroup" stepKey="openSecondOrder">
                 <argument name="orderID" value="{$secondOrderID}"/>
@@ -121,7 +121,7 @@
             </actionGroup>
             <waitForElementVisible selector="{{AdminShipmentAddressInformationSection.orderInformationAddress('London')}}" stepKey="waitForOrderInformationForLondon"/>
             <!-- Verify shipping method section exists without checking specific method name -->
-            <seeElement selector=".box-order-shipping-method" stepKey="seeShippingMethodForSecondOrder"/>
+            <waitForElementVisible selector="{{StorefrontOrderDetailsSection.shippingMethodBlock}}" stepKey="waitForShippingMethodForSecondOrder"/>
             <actionGroup ref="StorefrontOpenMyOrdersPageActionGroup" stepKey="goToMyOrdersForThirdOrder"/>
             <actionGroup ref="StorefrontOpenOrderLinkOnMyOrdersPageActionGroup" stepKey="openThirdOrder">
                 <argument name="orderID" value="{$thirdOrderID}"/>
@@ -131,7 +131,7 @@
             </actionGroup>
             <waitForElementVisible selector="{{AdminShipmentAddressInformationSection.orderInformationAddress('New York')}}" stepKey="waitForOrderInformationForNY"/>
             <!-- Verify shipping method section exists without checking specific method name -->
-            <seeElement selector=".box-order-shipping-method" stepKey="seeShippingMethodForThirdOrder"/>
+            <waitForElementVisible selector="{{StorefrontOrderDetailsSection.shippingMethodBlock}}" stepKey="waitForShippingMethodForThirdOrder"/>
             <actionGroup ref="StorefrontOpenMyOrdersPageActionGroup" stepKey="goToMyOrdersForFourthOrder"/>
             <actionGroup ref="StorefrontOpenOrderLinkOnMyOrdersPageActionGroup" stepKey="openFourthOrder">
                 <argument name="orderID" value="{$fourthOrderID}"/>
@@ -141,7 +141,7 @@
             </actionGroup>
             <waitForElementVisible selector="{{AdminShipmentAddressInformationSection.orderInformationAddress('Culver City')}}" stepKey="waitForOrderInformationForCulverCity"/>
             <!-- Verify shipping method section exists without checking specific method name -->
-            <seeElement selector=".box-order-shipping-method" stepKey="seeShippingMethodForFourthOrder"/>
+            <waitForElementVisible selector="{{StorefrontOrderDetailsSection.shippingMethodBlock}}" stepKey="waitForShippingMethodForFourthOrder"/>
             <!-- Go to Admin and check order information -->
             <actionGroup ref="FilterOrderGridByIdActionGroup" stepKey="filterFirstOrderGrid">
                 <argument name="orderId" value="{$grabOrderIdForFirstOrder}"/>
@@ -149,28 +149,28 @@
             <actionGroup ref="AdminOrderGridClickFirstRowActionGroup" stepKey="clickFirstOrderRow"/>
             <waitForElementVisible selector="{{AdminShipmentAddressInformationSection.adminOrderShippingAddress('Berlin')}}" stepKey="waitForAdminOrderInformationForBerlin"/>
             <!-- Verify shipping method section exists without checking specific method name -->
-            <seeElement selector=".order-shipping-method" stepKey="seeAdminShippingMethodForFirstOrder"/>
+            <waitForElementVisible selector="{{AdminOrderShippingInformationSection.shippingMethodBlock}}" stepKey="waitForAdminShippingMethodForFirstOrder"/>
             <actionGroup ref="FilterOrderGridByIdActionGroup" stepKey="filterSecondOrderGrid">
                 <argument name="orderId" value="{$grabOrderIdForSecondOrder}"/>
             </actionGroup>
             <actionGroup ref="AdminOrderGridClickFirstRowActionGroup" stepKey="clickSecondOrderRow"/>
             <waitForElementVisible selector="{{AdminShipmentAddressInformationSection.adminOrderShippingAddress('London')}}" stepKey="waitForAdminOrderInformationForLondon"/>
             <!-- Verify shipping method section exists without checking specific method name -->
-            <seeElement selector=".order-shipping-method" stepKey="seeAdminShippingMethodForSecondOrder"/>
+            <waitForElementVisible selector="{{AdminOrderShippingInformationSection.shippingMethodBlock}}" stepKey="waitForAdminShippingMethodForSecondOrder"/>
             <actionGroup ref="FilterOrderGridByIdActionGroup" stepKey="filterThirdOrderGrid">
                 <argument name="orderId" value="{$grabOrderIdForThirdOrder}"/>
             </actionGroup>
             <actionGroup ref="AdminOrderGridClickFirstRowActionGroup" stepKey="clickThirdOrderRow"/>
             <waitForElementVisible selector="{{AdminShipmentAddressInformationSection.adminOrderShippingAddress('New York')}}" stepKey="waitForAdminOrderInformationForNY"/>
             <!-- Verify shipping method section exists without checking specific method name -->
-            <seeElement selector=".order-shipping-method" stepKey="seeAdminShippingMethodForThirdOrder"/>
+            <waitForElementVisible selector="{{AdminOrderShippingInformationSection.shippingMethodBlock}}" stepKey="waitForAdminShippingMethodForThirdOrder"/>
             <actionGroup ref="FilterOrderGridByIdActionGroup" stepKey="filterFourthOrderGrid">
                 <argument name="orderId" value="{$grabOrderIdForFourthOrder}"/>
             </actionGroup>
             <actionGroup ref="AdminOrderGridClickFirstRowActionGroup" stepKey="clickFourthOrderRow"/>
             <waitForElementVisible selector="{{AdminShipmentAddressInformationSection.adminOrderShippingAddress('Culver City')}}" stepKey="waitForAdminOrderInformationForCulver"/>
             <!-- Verify shipping method section exists without checking specific method name -->
-            <seeElement selector=".order-shipping-method" stepKey="seeAdminShippingMethodForFourthOrder"/>
+            <waitForElementVisible selector="{{AdminOrderShippingInformationSection.shippingMethodBlock}}" stepKey="waitForAdminShippingMethodForFourthOrder"/>
             <actionGroup ref="AdminOrdersGridClearFiltersActionGroup" stepKey="clearOrderFilters"/>
         <after>
             <actionGroup ref="AdminDisableUSPSActionGroup" stepKey="disableUSPS"/>

@@ -13,13 +13,13 @@
             <description>Before placing order verifying the shipping method is selected for each address.</description>
         </annotations>
         <!-- Verify shipping method is present for Berlin address -->
-        <waitForElementVisible selector="//form[contains(@id, 'review-order-form')]//address[contains(., 'Berlin')]/ancestor::div[contains(@class, 'block-content')]//div[contains(@class, 'box-shipping-method')]" stepKey="waitForBerlinReviewOrderInformation"/>
+        <waitForElementVisible selector="{{StorefrontMultishippingCheckoutOverviewReviewSection.shippingMethodForCity('Berlin')}}" stepKey="waitForBerlinReviewOrderInformation"/>
         <!-- Verify shipping method is present for London address -->
-        <waitForElementVisible selector="//form[contains(@id, 'review-order-form')]//address[contains(., 'London')]/ancestor::div[contains(@class, 'block-content')]//div[contains(@class, 'box-shipping-method')]" stepKey="waitForLondonReviewOrderInformation"/>
+        <waitForElementVisible selector="{{StorefrontMultishippingCheckoutOverviewReviewSection.shippingMethodForCity('London')}}" stepKey="waitForLondonReviewOrderInformation"/>
         <!-- Verify shipping method is present for New York address -->
-        <waitForElementVisible selector="//form[contains(@id, 'review-order-form')]//address[contains(., 'New York')]/ancestor::div[contains(@class, 'block-content')]//div[contains(@class, 'box-shipping-method')]" stepKey="waitForNewYorkReviewOrderInformation"/>
+        <waitForElementVisible selector="{{StorefrontMultishippingCheckoutOverviewReviewSection.shippingMethodForCity('New York')}}" stepKey="waitForNewYorkReviewOrderInformation"/>
         <!-- Verify shipping method is present for Culver City address -->
-        <waitForElementVisible selector="//form[contains(@id, 'review-order-form')]//address[contains(., 'Culver City')]/ancestor::div[contains(@class, 'block-content')]//div[contains(@class, 'box-shipping-method')]" stepKey="waitForCulverCityReviewOrderInformation"/>
+        <waitForElementVisible selector="{{StorefrontMultishippingCheckoutOverviewReviewSection.shippingMethodForCity('Culver City')}}" stepKey="waitForCulverCityReviewOrderInformation"/>
         <waitForElementClickable selector="{{AdminShipmentAddressInformationSection.placeOrder}}" stepKey="waitForPlaceOrder"/>
     </actionGroup>
 </actionGroups>
