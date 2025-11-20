@@ -14,6 +14,7 @@ use Magento\Store\Model\ScopeInterface;
 use Magento\Tax\Helper\Data;
 use Magento\Tax\Model\Config;
 use Magento\Tax\Model\TaxConfigProvider;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -65,29 +66,18 @@ class TaxConfigProviderTest extends TestCase
         );
     }
 
-    /**
-     * @dataProvider getConfigDataProvider
-     * @param array $expectedResult
-     * @param int $cartShippingBoth
-     * @param int $cartShippingExclTax
-     * @param int $cartBothPrices
-     * @param int $cartPriceExclTax
-     * @param int $cartSubTotalBoth
-     * @param int $cartSubTotalExclTax
-     * @param string|null $calculationType
-     * @param bool $isQuoteVirtual
-     */
+    #[DataProvider('getConfigDataProvider')]
     public function testGetConfig(
-        $expectedResult,
-        $cartShippingBoth,
-        $cartShippingExclTax,
-        $cartBothPrices,
-        $cartPriceExclTax,
-        $cartSubTotalBoth,
-        $cartSubTotalExclTax,
-        $isQuoteVirtual,
-        $config
-    ) {
+        array $expectedResult,
+        int $cartShippingBoth,
+        int $cartShippingExclTax,
+        int $cartBothPrices,
+        int $cartPriceExclTax,
+        int $cartSubTotalBoth,
+        int $cartSubTotalExclTax,
+        bool $isQuoteVirtual,
+        array $config
+    ): void {
         $this->taxConfigMock->expects($this->any())->method('displayCartShippingBoth')
             ->willReturn($cartShippingBoth);
         $this->taxConfigMock->expects($this->any())->method('displayCartShippingExclTax')

@@ -128,7 +128,7 @@ class RowBaseAndTotalBaseCalculatorTestCase extends TestCase
         $this->mockItem = $this->createMock(QuoteDetailsItemInterface::class);
         $this->quoteDetailsItemExtension = $this->createPartialMockWithReflection(
             QuoteDetailsItemExtensionInterface::class,
-            ['getPriceForTaxCalculation']
+            ['getDiscountAmount', 'getCode', 'getType', 'getUnitPrice', 'getIsTaxIncluded']
         );
         $this->mockItem->expects($this->any())->method('getExtensionAttributes')
             ->willReturn($this->quoteDetailsItemExtension);

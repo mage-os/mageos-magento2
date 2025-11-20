@@ -12,6 +12,7 @@ use Magento\Framework\Api\Filter;
 use Magento\Framework\Api\FilterBuilder;
 use Magento\Framework\Api\SearchCriteria;
 use Magento\Framework\Api\SearchCriteriaBuilder;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Tax\Api\Data\TaxClassInterface;
 use Magento\Tax\Api\Data\TaxClassSearchResultsInterface;
@@ -19,6 +20,7 @@ use Magento\Tax\Api\TaxClassManagementInterface;
 use Magento\Tax\Api\TaxClassRepositoryInterface;
 use Magento\Tax\Model\ClassModel;
 use Magento\Tax\Model\TaxClass\Source\Product;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -27,6 +29,8 @@ use PHPUnit\Framework\TestCase;
  */
 class ProductTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var TaxClassRepositoryInterface|MockObject
      */
@@ -56,15 +60,7 @@ class ProductTest extends TestCase
     {
         $this->objectManager = new ObjectManager($this);
 
-        $this->taxClassRepositoryMock = $this->createMock(
-            TaxClassRepositoryInterface::class,
-            ['getList'],
-            '',
-            false,
-            true,
-            true,
-            []
-        );
+        $this->taxClassRepositoryMock = $this->createMock(TaxClassRepositoryInterface::class);
         $this->searchCriteriaBuilderMock = $this->createPartialMock(
             SearchCriteriaBuilder::class,
             ['addFilters', 'create']
@@ -84,7 +80,7 @@ class ProductTest extends TestCase
         );
     }
 
-    public function testGetFlatColumns()
+    public function testGetFlatColumns(): void
     {
         $abstractAttrMock = $this->createPartialMock(
             AbstractAttribute::class,
@@ -111,11 +107,9 @@ class ProductTest extends TestCase
 
     /**
      * Run test getAllOptions method for names integrity
-     *
-     * @param array $value
-     * @dataProvider dataProviderGetAllOptionsNameIntegrity
      */
-    public function testGetAllOptionsNameIntegrity(array $value)
+    #[DataProvider('dataProviderGetAllOptionsNameIntegrity')]
+    public function testGetAllOptionsNameIntegrity(array $value): void
     {
         $filterMock = $this->createMock(Filter::class);
         $searchCriteriaMock = $this->createMock(SearchCriteria::class);

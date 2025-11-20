@@ -13,19 +13,14 @@ use Magento\Tax\Model\ClassModel;
 use Magento\Tax\Model\TaxClass\Factory;
 use Magento\Tax\Model\TaxClass\Type\Customer;
 use Magento\Tax\Model\TaxClass\Type\Product;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class FactoryTest extends TestCase
 {
-    /**
-     * @dataProvider createDataProvider
-     *
-     * @param string $classType
-     * @param string $className
-     * @param \Closure $classTypeMock
-     */
-    public function testCreate($classType, $className, $classTypeMock)
+    #[DataProvider('createDataProvider')]
+    public function testCreate(string $classType, string $className, \Closure $classTypeMock): void
     {
         $classTypeMock = $classTypeMock($this);
         $classMock = $this->createPartialMock(
@@ -54,7 +49,7 @@ class FactoryTest extends TestCase
     /**
      * @return array
      */
-    public static function createDataProvider()
+    public static function createDataProvider(): array
     {
         $customerClassMock = static fn (self $testCase) =>
             $testCase->createMock(Customer::class);
@@ -74,7 +69,7 @@ class FactoryTest extends TestCase
         ];
     }
 
-    public function testCreateWithWrongClassType()
+    public function testCreateWithWrongClassType(): void
     {
         $wrongClassType = 'TYPE';
         $classMock = $this->createPartialMock(
