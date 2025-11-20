@@ -38,7 +38,6 @@
         <actionGroup ref="AdminCreateCartPriceRuleWithProductSubselectionActionGroup" stepKey="createRule">
             <argument name="ruleName" value="TestSalesRule"/>
             <argument name="condition1" value="Products subselection"/>
-            <argument name="condition2" value="Category"/>
             <argument name="ruleToChange1" value="is"/>
             <argument name="rule1" value="equals or greater than"/>
             <argument name="ruleToChange2" value="..."/>
