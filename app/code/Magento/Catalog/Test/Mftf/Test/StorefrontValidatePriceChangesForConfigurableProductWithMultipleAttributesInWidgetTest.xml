@@ -9,14 +9,14 @@
        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
     <test name="StorefrontValidatePriceChangesForConfigurableProductWithMultipleAttributesInWidgetTest">
         <annotations>
-            <features value="Widget"/>
-            <stories value="Catalog Products List Widget"/>
-            <title value="Validate price changes for configurable product with dropdown and text swatch attributes displayed in widget"/>
-            <description value="Create dropdown and text swatch attributes, create two configurable products with different attribute combinations, add widget, and validate price changes on storefront"/>
+            <features value="Catalog"/>
+            <stories value="Product Price Display"/>
+            <title value="Validate price changes for configurable product with dropdown and text swatch attributes on storefront"/>
+            <description value="Create dropdown and text swatch attributes, create two configurable products with different attribute combinations, and validate price changes on storefront product page"/>
+            <testCaseId value="AC-8423"/>
             <severity value="MAJOR"/>
-            <group value="Widget"/>
+            <group value="Catalog"/>
             <group value="ConfigurableProduct"/>
-            <group value="Swatches"/>
         </annotations>
         <before>
             <!-- Step-1: Login to admin -->
