@@ -271,61 +271,105 @@ class OrderItemsWithCustomOptionsTest extends WebapiAbstract
         self::assertEquals('eq', $filters[0]['condition_type']);
 
         foreach ($orderItems['items'] as $item) {
-            self::assertArrayHasKey('item_id', $item);
-            self::assertArrayHasKey('order_id', $item);
-            self::assertArrayHasKey('product_id', $item);
-            self::assertArrayHasKey('sku', $item);
-            self::assertArrayHasKey('name', $item);
-            self::assertArrayHasKey('price', $item);
-            self::assertArrayHasKey('qty_ordered', $item);
-            self::assertArrayHasKey('product_type', $item);
-            self::assertArrayHasKey('created_at', $item);
-            self::assertArrayHasKey('updated_at', $item);
-            self::assertArrayHasKey('product_option', $item);
-            self::assertArrayHasKey('extension_attributes', $item['product_option']);
-            self::assertArrayHasKey('custom_options', $item['product_option']['extension_attributes']);
+            $this->assertOrderItemStructure($item);
+            $this->assertOrderItemCustomOptions($item);
+        }
+    }
 
-            $customOptions = $item['product_option']['extension_attributes']['custom_options'];
-            self::assertIsArray($customOptions);
-            self::assertCount(9, $customOptions, sprintf(
-                'Expected exactly 9 custom options for item "%s", but found %d',
-                $item['sku'],
-                count($customOptions)
-            ));
+    /**
+     * Assert order item has the required structure and fields
+     *
+     * @param array $item Order item data
+     * @return void
+     */
+    private function assertOrderItemStructure(array $item): void
+    {
+        self::assertArrayHasKey('item_id', $item);
+        self::assertArrayHasKey('order_id', $item);
+        self::assertArrayHasKey('product_id', $item);
+        self::assertArrayHasKey('sku', $item);
+        self::assertArrayHasKey('name', $item);
+        self::assertArrayHasKey('price', $item);
+        self::assertArrayHasKey('qty_ordered', $item);
+        self::assertArrayHasKey('product_type', $item);
+        self::assertArrayHasKey('created_at', $item);
+        self::assertArrayHasKey('updated_at', $item);
+        self::assertArrayHasKey('product_option', $item);
+        self::assertArrayHasKey('extension_attributes', $item['product_option']);
+        self::assertArrayHasKey('custom_options', $item['product_option']['extension_attributes']);
+    }
 
-            foreach ($customOptions as $index => $option) {
-                self::assertArrayHasKey(
-                    'option_id',
-                    $option,
-                    sprintf('Custom option at index %d for item "%s" is missing option_id', $index, $item['sku'])
-                );
-                self::assertArrayHasKey(
-                    'option_value',
-                    $option,
-                    sprintf('Custom option at index %d for item "%s" is missing option_value', $index, $item['sku'])
-                );
-                self::assertNotEmpty(
-                    $option['option_id'],
-                    sprintf('Custom option at index %d for item "%s" has empty option_id', $index, $item['sku'])
-                );
-                $optionValue = $option['option_value'];
-                if (is_array($optionValue)) {
-                    self::assertNotEmpty(
-                        $optionValue,
-                        sprintf('Custom option at index %d for item "%s" has empty option_value', $index, $item['sku'])
-                    );
-                } else {
-                    self::assertNotEmpty(
-                        $optionValue,
-                        sprintf('Custom option at index %d for item "%s" has empty option_value', $index, $item['sku'])
-                    );
-                }
-                $this->validateCustomOptionValue(
-                    $optionValue,
-                    $index,
-                    $item['sku']
-                );
-            }
+    /**
+     * Assert order item custom options are valid
+     *
+     * @param array $item Order item data containing custom options
+     * @return void
+     */
+    private function assertOrderItemCustomOptions(array $item): void
+    {
+        $customOptions = $item['product_option']['extension_attributes']['custom_options'];
+        self::assertIsArray($customOptions);
+        self::assertCount(9, $customOptions, sprintf(
+            'Expected exactly 9 custom options for item "%s", but found %d',
+            $item['sku'],
+            count($customOptions)
+        ));
+
+        foreach ($customOptions as $index => $option) {
+            $this->assertCustomOptionStructure($option, $index, $item['sku']);
+            $this->validateCustomOptionValue(
+                $option['option_value'],
+                $index,
+                $item['sku']
+            );
+        }
+    }
+
+    /**
+     * Assert custom option has required structure and valid data
+     *
+     * @param array $option Custom option data
+     * @param int $index Option index in the array
+     * @param string $sku Product SKU for error messages
+     * @return void
+     */
+    private function assertCustomOptionStructure(array $option, int $index, string $sku): void
+    {
+        self::assertArrayHasKey(
+            'option_id',
+            $option,
+            sprintf('Custom option at index %d for item "%s" is missing option_id', $index, $sku)
+        );
+        self::assertArrayHasKey(
+            'option_value',
+            $option,
+            sprintf('Custom option at index %d for item "%s" is missing option_value', $index, $sku)
+        );
+        self::assertNotEmpty(
+            $option['option_id'],
+            sprintf('Custom option at index %d for item "%s" has empty option_id', $index, $sku)
+        );
+        self::assertIsString(
+            $option['option_id'],
+            sprintf('Custom option at index %d for item "%s" has non-string option_id', $index, $sku)
+        );
+        self::assertMatchesRegularExpression(
+            '/^\d+$/',
+            $option['option_id'],
+            sprintf('Custom option at index %d for item "%s" has non-numeric option_id', $index, $sku)
+        );
+
+        $optionValue = $option['option_value'];
+        if (is_array($optionValue)) {
+            self::assertNotEmpty(
+                $optionValue,
+                sprintf('Custom option at index %d for item "%s" has empty option_value', $index, $sku)
+            );
+        } else {
+            self::assertNotEmpty(
+                $optionValue,
+                sprintf('Custom option at index %d for item "%s" has empty option_value', $index, $sku)
+            );
         }
     }
 
