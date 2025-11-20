@@ -162,7 +162,8 @@ class Generic implements CacheInterface, ResetAfterRequestInterface
             $this->cacheAdapter->save(
                 $this->serializer->serialize([$newpath => $this->cacheData[$newpath]]),
                 $this->prefix . $newpath,
-                [self::CACHE_TAG]
+                [self::CACHE_TAG],
+                $this->cacheTTL
             );
             $this->purgeQueue();
         }
