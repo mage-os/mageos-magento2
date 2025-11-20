@@ -171,6 +171,8 @@ class Dob extends AbstractWidget
     /**
      * Apply output filter to value
      *
+     * Normalizes date to display format with standard numerals to avoid localized numerals (e.g., Arabic)
+     *
      * @param string $value
      * @return string
      */
@@ -181,7 +183,7 @@ class Dob extends AbstractWidget
             $value = date('Y-m-d', $this->getTime());
             $value = $filter->outputFilter($value);
         }
-        return $value;
+        return $this->normalizedDobOutput($value);
     }
 
     /**
@@ -455,5 +457,37 @@ class Dob extends AbstractWidget
             'MM',
             $format
         );
+    }
+
+    /**
+     * Normalize the dob for a proper output on the frontend
+     *
+     * @param bool|string $value
+     * @return bool|string
+     */
+    private function normalizedDobOutput(bool|string $value): bool|string
+    {
+        if ($value === false) {
+            return false;
+        }
+        $locale = $this->localeResolver->getLocale();
+        $dateFormat = $this->getDateFormat();
+        $formatter = new \IntlDateFormatter(
+            $locale,
+            \IntlDateFormatter::SHORT,
+            \IntlDateFormatter::NONE
+        );
+        $formatter->setPattern($dateFormat);
+        $timestamp = $formatter->parse($value);
+        if ($timestamp !== false) {
+            $formatterEn = new \IntlDateFormatter(
+                'en',
+                \IntlDateFormatter::SHORT,
+                \IntlDateFormatter::NONE
+            );
+            $formatterEn->setPattern($dateFormat);
+            $value = $formatterEn->format($timestamp);
+        }
+        return $value;
     }
 }
