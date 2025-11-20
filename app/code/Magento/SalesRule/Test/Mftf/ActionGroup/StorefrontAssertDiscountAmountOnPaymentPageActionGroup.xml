@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+ * Copyright 2025 Adobe
+ * All Rights Reserved.
+ */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+  <actionGroup name="StorefrontAssertDiscountAmountOnPaymentPageActionGroup">
+    <arguments>
+      <argument name="discountPrice" type="string"/>
+    </arguments>
+
+    <waitForElement selector="{{CheckoutPaymentSection.placeOrder}}"  stepKey="waitForPlaceOrderButton"/>
+    <grabTextFrom selector="{{CheckoutPaymentSection.discountPrice}}" stepKey="grabDiscountPrice"/>
+    <assertEquals stepKey="checkRewardPoints">
+      <expectedResult type="string">{{discountPrice}}</expectedResult>
+      <actualResult type="string">{$grabDiscountPrice}</actualResult>
+    </assertEquals>
+
+  </actionGroup>
+</actionGroups>
