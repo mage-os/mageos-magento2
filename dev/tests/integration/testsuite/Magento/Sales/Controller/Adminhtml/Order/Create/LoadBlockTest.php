@@ -408,9 +408,13 @@ class LoadBlockTest extends AbstractBackendController
             ['qty' => 10, 'options' => $options]
         );
 
-        // Emulate grid submit where the first (already configured) product comes with only files_prefix
-        $params = $this->hydrateParams();
+        // Emulate grid submit where the first (already configured) product comes with only files_prefix.
+        // Avoid rendering the sidebar (to prevent wishlist creation) and do not set a customer in session.
+        $params = $this->hydrateParams([
+            'block' => 'items,shipping_method,billing_method,totals,giftmessage'
+        ]);
         $post = $this->hydratePost([
+            'customer_id' => 0,
             'item' => [
                 (int)$customProduct->getId() => [
                     'options' => ['files_prefix' => 'item_' . (int)$customProduct->getId() . '_'],
