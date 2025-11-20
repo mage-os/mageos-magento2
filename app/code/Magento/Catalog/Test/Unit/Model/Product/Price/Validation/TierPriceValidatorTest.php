@@ -14,6 +14,7 @@ use Magento\Catalog\Model\Product\Price\Validation\Result;
 use Magento\Catalog\Model\Product\Price\Validation\TierPriceValidator;
 use Magento\Catalog\Model\Product\Type;
 use Magento\Catalog\Model\ProductIdLocatorInterface;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Select;
@@ -21,6 +22,7 @@ use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Api\Data\WebsiteInterface;
 use Magento\Store\Api\WebsiteRepositoryInterface;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -77,6 +79,11 @@ class TierPriceValidatorTest extends TestCase
     private $adapterInterface;
 
     /**
+     * @var ScopeConfigInterface|MockObject
+     */
+    private $scopeConfigMock;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp(): void
@@ -107,7 +114,9 @@ class TierPriceValidatorTest extends TestCase
         $this->adapterInterface = $this->getMockBuilder(AdapterInterface::class)
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
-
+        $this->scopeConfigMock = $this->getMockBuilder(ScopeConfigInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $objectManagerHelper = new ObjectManager($this);
         $this->tierPriceValidator = $objectManagerHelper->getObject(
             TierPriceValidator::class,
@@ -117,7 +126,8 @@ class TierPriceValidatorTest extends TestCase
                 'validationResult' => $this->validationResult,
                 'invalidSkuProcessor' => $this->invalidSkuProcessor,
                 'productRepository' => $this->productRepository,
-                'resourceConnection' => $this->resourceConnectionMock
+                'resourceConnection' => $this->resourceConnectionMock,
+                'scopeConfig' => $this->scopeConfigMock
             ]
         );
     }
@@ -126,6 +136,7 @@ class TierPriceValidatorTest extends TestCase
      * Prepare CustomerGroupRepository mock.
      *
      * @return void
+     * @throws Exception
      */
     private function prepareCustomerGroupRepositoryMock()
     {
@@ -231,10 +242,12 @@ class TierPriceValidatorTest extends TestCase
      * Test for retrieveValidationResult().
      *
      * @param array $returned
-     * @dataProvider retrieveValidationResultDataProvider
+     * @param bool $isSetFlag
      * @return void
+     * @throws Exception
+     * @dataProvider retrieveValidationResultDataProvider
      */
-    public function testRetrieveValidationResult(array $returned)
+    public function testRetrieveValidationResult(array $returned, bool $isSetFlag)
     {
         $sku = 'ASDF234234';
         $prices = [$this->tierPrice];
@@ -244,6 +257,7 @@ class TierPriceValidatorTest extends TestCase
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
         $this->websiteRepository->expects($this->atLeastOnce())->method('getById')->willReturn($website);
+        $this->scopeConfigMock->expects($this->atLeastOnce())->method('isSetFlag')->willReturn($isSetFlag);
         $this->prepareCustomerGroupRepositoryMock();
 
         $this->assertEquals(
@@ -265,13 +279,15 @@ class TierPriceValidatorTest extends TestCase
                 [
                     'tierPrice_getCustomerGroup' => $customerGroupName,
                     'tierPrice_getPriceType' => TierPriceInterface::PRICE_TYPE_DISCOUNT
-                ]
+                ],
+                'isSetFlag' => true
             ],
             [
                 [
                     'tierPrice_getCustomerGroup' => $customerGroupName,
                     'tierPrice_getPriceType' => TierPriceInterface::PRICE_TYPE_FIXED
-                ]
+                ],
+                'isSetFlag' => true
             ]
         ];
     }
@@ -280,6 +296,7 @@ class TierPriceValidatorTest extends TestCase
      * Test for retrieveValidationResult() with Exception.
      *
      * @return void
+     * @throws Exception
      */
     public function testRetrieveValidationResultWithException()
     {
@@ -294,6 +311,7 @@ class TierPriceValidatorTest extends TestCase
         $this->prepareRetrieveValidationResultMethod($sku, $returned);
         $exception = new NoSuchEntityException();
         $this->websiteRepository->expects($this->atLeastOnce())->method('getById')->willThrowException($exception);
+        $this->scopeConfigMock->expects($this->any())->method('isSetFlag')->willReturn(false);
         $this->prepareCustomerGroupRepositoryMock();
 
         $this->assertEquals(

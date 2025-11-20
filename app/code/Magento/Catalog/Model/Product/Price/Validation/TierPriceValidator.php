@@ -354,16 +354,19 @@ class TierPriceValidator implements ResetAfterRequestInterface
     {
         try {
             $this->websiteRepository->getById($price->getWebsiteId());
-            $isWebsiteScope = $this->scopeConfig
+
+            $isWebsiteScope = $this->checkIfBaseWebsiteIsDefault() ? $this->scopeConfig->isSetFlag(
+                Data::XML_PATH_PRICE_SCOPE,
+                ScopeInterface::SCOPE_STORE,
+                ScopeConfigInterface::SCOPE_TYPE_DEFAULT
+            ): $this->scopeConfig
                 ->isSetFlag(
-                    Data::XML_PATH_PRICE_SCOPE,
-                    ScopeInterface::SCOPE_STORE,
-                    ScopeConfigInterface::SCOPE_TYPE_DEFAULT
+                    Data::XML_PATH_PRICE_SCOPE
                 );
             if (!$isWebsiteScope && (int) $this->allWebsitesValue !== $price->getWebsiteId()) {
                 throw NoSuchEntityException::singleField('website_id', $price->getWebsiteId());
             }
-        } catch (\Magento\Framework\Exception\NoSuchEntityException $e) {
+        } catch (NoSuchEntityException $e) {
             $validationResult->addFailedItem(
                 $key,
                 __(
@@ -383,6 +386,22 @@ class TierPriceValidator implements ResetAfterRequestInterface
                     'qty' => $price->getQuantity()
                 ]
             );
+        }
+    }
+
+     /**
+      * Check if base website is default.
+      *
+      * @return bool
+      */
+    private function checkIfBaseWebsiteIsDefault(): bool
+    {
+        try {
+            $websiteDetails = $this->websiteRepository->get('base');
+            return $websiteDetails &&
+                $websiteDetails->getCode() === 'base' && (int) $websiteDetails->getIsDefault() === 1;
+        } catch (NoSuchEntityException $e) {
+            return false;
         }
     }
 
