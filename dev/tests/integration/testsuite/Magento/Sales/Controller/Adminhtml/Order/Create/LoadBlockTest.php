@@ -351,8 +351,6 @@ class LoadBlockTest extends AbstractBackendController
      * (with required options) is NOT re-added due to presence of options[files_prefix] only.
      *
      * Uses new DataFixture-based products to avoid URL rewrite collisions.
-     *
-     * @magentoDbIsolation disabled
      */
     public function testGridAddSkipsConfiguredProductWithoutOptions(): void
     {
