@@ -10,14 +10,12 @@
   <actionGroup name="StorefrontAssertDiscountAmountOnPaymentPageActionGroup">
     <arguments>
       <argument name="discountPrice" type="string"/>
-    </arguments>
-
+    </arguments>s
     <waitForElement selector="{{CheckoutPaymentSection.placeOrder}}"  stepKey="waitForPlaceOrderButton"/>
     <grabTextFrom selector="{{CheckoutPaymentSection.discountPrice}}" stepKey="grabDiscountPrice"/>
     <assertEquals stepKey="checkRewardPoints">
       <expectedResult type="string">{{discountPrice}}</expectedResult>
       <actualResult type="string">{$grabDiscountPrice}</actualResult>
     </assertEquals>
-
   </actionGroup>
 </actionGroups>
