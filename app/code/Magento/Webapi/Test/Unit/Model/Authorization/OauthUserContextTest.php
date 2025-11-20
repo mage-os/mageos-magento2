@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\Webapi\Test\Unit\Model\Authorization;
 
 use Magento\Authorization\Model\UserContextInterface;
+use Magento\Framework\Oauth\Helper\Request as OauthHelperRequest;
 use Magento\Framework\Oauth\Oauth;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
@@ -40,7 +41,7 @@ class OauthUserContextTest extends TestCase
     protected $request;
 
     /**
-     * @var \Magento\Framework\Oauth\Helper\Request
+     * @var OauthHelperRequest
      */
     protected $oauthRequestHelper;
 
@@ -78,7 +79,7 @@ class OauthUserContextTest extends TestCase
         );
 
         $this->oauthRequestHelper = $this->createPartialMock(
-            \Magento\Framework\Oauth\Helper\Request::class,
+            OauthHelperRequest::class,
             ['prepareRequest', 'getRequestUrl']
         );
 
