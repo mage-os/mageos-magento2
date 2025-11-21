@@ -28,6 +28,7 @@ use PHPUnit\Framework\TestCase;
  * Test for Tax Rule Edit Form
  *
  * Class FormTest
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class FormTest extends TestCase
 {

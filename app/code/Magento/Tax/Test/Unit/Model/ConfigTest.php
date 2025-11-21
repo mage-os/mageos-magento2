@@ -55,8 +55,11 @@ class ConfigTest extends TestCase
      * Tests the getCalculationSequence method
      */
     #[DataProvider('dataProviderGetCalculationSequence')]
-    public function testGetCalculationSequence(bool $applyTaxAfterDiscount, bool $discountTaxIncl, string $expectedValue): void
-    {
+    public function testGetCalculationSequence(
+        bool $applyTaxAfterDiscount,
+        bool $discountTaxIncl,
+        string $expectedValue
+    ): void {
         $scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
         $scopeConfigMock
             ->method('getValue')

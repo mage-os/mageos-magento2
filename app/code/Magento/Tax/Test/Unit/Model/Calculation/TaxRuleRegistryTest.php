@@ -36,7 +36,7 @@ class TaxRuleRegistryTest extends TestCase
      */
     private $taxRuleModelMock;
 
-    const TAX_RULE_ID = 1;
+    private const TAX_RULE_ID = 1;
 
     protected function setUp(): void
     {

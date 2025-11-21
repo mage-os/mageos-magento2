@@ -157,8 +157,11 @@ class TaxRuleRepositoryTest extends TestCase
     }
 
     #[DataProvider('saveExceptionsDataProvider')]
-    public function testSaveWithExceptions(\Exception $exceptionObject, string $exceptionName, string $exceptionMessage): void
-    {
+    public function testSaveWithExceptions(
+        \Exception $exceptionObject,
+        string $exceptionName,
+        string $exceptionMessage
+    ): void {
         $rule = $this->createMock(\Magento\Tax\Model\Calculation\Rule::class);
         $rule->expects($this->once())->method('getId')->willReturn(10);
 

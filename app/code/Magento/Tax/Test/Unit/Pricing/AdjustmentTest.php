@@ -71,8 +71,11 @@ class AdjustmentTest extends TestCase
     }
 
     #[DataProvider('isIncludedInDisplayPriceDataProvider')]
-    public function testIsIncludedInDisplayPrice(bool $displayPriceIncludingTax, bool $displayBothPrices, bool $expectedResult): void
-    {
+    public function testIsIncludedInDisplayPrice(
+        bool $displayPriceIncludingTax,
+        bool $displayBothPrices,
+        bool $expectedResult
+    ): void {
         $this->taxHelper->expects($this->once())
             ->method('displayPriceIncludingTax')
             ->willReturn($displayPriceIncludingTax);

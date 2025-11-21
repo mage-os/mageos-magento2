@@ -528,7 +528,10 @@ class CommonTaxCollectorTest extends TestCase
 
     public function testMapItemExtraTaxablesBuildsItems(): void
     {
-        $item = $this->createPartialMockWithReflection(AbstractItem::class, ['getQuote', 'getAddress', 'getOptionByCode', 'getAssociatedTaxables', 'getTaxCalculationItemId']);
+        $item = $this->createPartialMockWithReflection(
+            AbstractItem::class,
+            ['getQuote', 'getAddress', 'getOptionByCode', 'getAssociatedTaxables', 'getTaxCalculationItemId']
+        );
         $item->method('getQuote')->willReturn(null);
         $item->method('getAddress')->willReturn(null);
         $item->method('getOptionByCode')->willReturn(null);
@@ -591,7 +594,10 @@ class CommonTaxCollectorTest extends TestCase
 
         $parentItem = $this->createPartialMockWithReflection(
             AbstractItem::class,
-            ['getQuote', 'getAddress', 'getOptionByCode', 'getParentItem', 'isChildrenCalculated', 'getChildren', 'getHasChildren']
+            [
+                'getQuote', 'getAddress', 'getOptionByCode', 'getParentItem',
+                'isChildrenCalculated', 'getChildren', 'getHasChildren'
+            ]
         );
         $parentItem->method('getQuote')->willReturn(null);
         $parentItem->method('getAddress')->willReturn(null);
@@ -699,7 +705,10 @@ class CommonTaxCollectorTest extends TestCase
             ->onlyMethods(['getQuote'])
             ->disableOriginalConstructor()
             ->getMock();
-        $quote = $this->createPartialMockWithReflection(\stdClass::class, ['getCustomerTaxClassId', 'getCustomerId', 'getStore', 'getBillingAddress']);
+        $quote = $this->createPartialMockWithReflection(
+            \stdClass::class,
+            ['getCustomerTaxClassId', 'getCustomerId', 'getStore', 'getBillingAddress']
+        );
         $quote->method('getCustomerTaxClassId')->willReturn(7);
         $quote->method('getCustomerId')->willReturn(77);
         $quote->method('getStore')->willReturn($store);
@@ -777,7 +786,13 @@ class CommonTaxCollectorTest extends TestCase
         $shippingAssignment->method('getItems')->willReturn([$addressItem]);
         $shippingAssignment->method('getShipping')->willReturn($shipping);
 
-        $total = $this->createPartialMockWithReflection(\Magento\Quote\Model\Quote\Address\Total::class, ['setTotalAmount', 'setBaseTotalAmount', 'setSubtotalInclTax', 'setBaseSubtotalTotalInclTax', 'setBaseSubtotalInclTax']);
+        $total = $this->createPartialMockWithReflection(
+            \Magento\Quote\Model\Quote\Address\Total::class,
+            [
+                'setTotalAmount', 'setBaseTotalAmount', 'setSubtotalInclTax',
+                'setBaseSubtotalTotalInclTax', 'setBaseSubtotalInclTax'
+            ]
+        );
         $total->method('setTotalAmount')->willReturnSelf();
         $total->method('setBaseTotalAmount')->willReturnSelf();
         $total->expects($this->once())->method('setSubtotalInclTax')->with(110.0);
@@ -832,7 +847,10 @@ class CommonTaxCollectorTest extends TestCase
 
         $addressItem = $this->createPartialMockWithReflection(
             SafeArrayObject::class,
-            ['getTaxCalculationItemId', 'isDeleted', 'getHasChildren', 'isChildrenCalculated', 'getId', 'setAppliedTaxes']
+            [
+                'getTaxCalculationItemId', 'isDeleted', 'getHasChildren',
+                'isChildrenCalculated', 'getId', 'setAppliedTaxes'
+            ]
         );
         $addressItem->method('getTaxCalculationItemId')->willReturn('code-1');
         $addressItem->method('getId')->willReturn(123);
@@ -879,7 +897,10 @@ class CommonTaxCollectorTest extends TestCase
             ]
         ];
 
-        $total = $this->createPartialMockWithReflection(\Magento\Quote\Model\Quote\Address\Total::class, ['addTotalAmount', 'addBaseTotalAmount', 'setAppliedTaxes', 'setItemsAppliedTaxes', 'getAppliedTaxes']);
+        $total = $this->createPartialMockWithReflection(
+            \Magento\Quote\Model\Quote\Address\Total::class,
+            ['addTotalAmount', 'addBaseTotalAmount', 'setAppliedTaxes', 'setItemsAppliedTaxes', 'getAppliedTaxes']
+        );
         $total->method('getAppliedTaxes')->willReturn([]);
         $total->method('setAppliedTaxes')->willReturnSelf();
         $total->expects($this->atLeastOnce())->method('setItemsAppliedTaxes')->with($this->callback(function ($arr) {
@@ -906,7 +927,10 @@ class CommonTaxCollectorTest extends TestCase
     {
         $store = $this->createMock(Store::class);
 
-        $productAddressItem = $this->createPartialMockWithReflection(\stdClass::class, ['getTaxCalculationItemId', 'getId']);
+        $productAddressItem = $this->createPartialMockWithReflection(
+            \stdClass::class,
+            ['getTaxCalculationItemId', 'getId']
+        );
         $productAddressItem->method('getTaxCalculationItemId')->willReturn('product-code-1');
         $productAddressItem->method('getId')->willReturn(123);
 
@@ -956,7 +980,10 @@ class CommonTaxCollectorTest extends TestCase
             ]
         ];
 
-        $total = $this->createPartialMockWithReflection(\Magento\Quote\Model\Quote\Address\Total::class, ['addTotalAmount', 'addBaseTotalAmount', 'setAppliedTaxes', 'setItemsAppliedTaxes', 'getAppliedTaxes']);
+        $total = $this->createPartialMockWithReflection(
+            \Magento\Quote\Model\Quote\Address\Total::class,
+            ['addTotalAmount', 'addBaseTotalAmount', 'setAppliedTaxes', 'setItemsAppliedTaxes', 'getAppliedTaxes']
+        );
         $total->method('getAppliedTaxes')->willReturn([]);
         $total->method('setAppliedTaxes')->willReturnSelf();
         $total->expects($this->atLeastOnce())->method('setItemsAppliedTaxes')->with($this->callback(function ($map) {
@@ -1026,7 +1053,10 @@ class CommonTaxCollectorTest extends TestCase
             ]
         ];
 
-        $total = $this->createPartialMockWithReflection(\Magento\Quote\Model\Quote\Address\Total::class, ['addTotalAmount', 'addBaseTotalAmount', 'setAppliedTaxes', 'setItemsAppliedTaxes', 'getAppliedTaxes']);
+        $total = $this->createPartialMockWithReflection(
+            \Magento\Quote\Model\Quote\Address\Total::class,
+            ['addTotalAmount', 'addBaseTotalAmount', 'setAppliedTaxes', 'setItemsAppliedTaxes', 'getAppliedTaxes']
+        );
         $total->method('getAppliedTaxes')->willReturn([]);
         $total->method('setAppliedTaxes')->willReturnSelf();
         $total->expects($this->atLeastOnce())->method('setItemsAppliedTaxes')->with($this->callback(function ($map) {
@@ -1097,7 +1127,10 @@ class CommonTaxCollectorTest extends TestCase
 
     public function testSaveAppliedTaxesAggregatesAmounts(): void
     {
-        $total = $this->createPartialMockWithReflection(\Magento\Quote\Model\Quote\Address\Total::class, ['getAppliedTaxes', 'setAppliedTaxes']);
+        $total = $this->createPartialMockWithReflection(
+            \Magento\Quote\Model\Quote\Address\Total::class,
+            ['getAppliedTaxes', 'setAppliedTaxes']
+        );
         $total->method('getAppliedTaxes')->willReturn([]);
         $total->expects($this->once())->method('setAppliedTaxes')->with($this->callback(function ($arr) {
             return isset($arr['id1']) && isset($arr['id1']['amount']) && isset($arr['id1']['base_amount']);
@@ -1188,7 +1221,10 @@ class CommonTaxCollectorTest extends TestCase
 
         $parentItem = $this->createPartialMockWithReflection(
             AbstractItem::class,
-            ['getQuote', 'getAddress', 'getOptionByCode', 'isChildrenCalculated', 'getChildren', 'getParentItem', 'getHasChildren']
+            [
+                'getQuote', 'getAddress', 'getOptionByCode', 'isChildrenCalculated',
+                'getChildren', 'getParentItem', 'getHasChildren'
+            ]
         );
         $parentItem->method('getHasChildren')->willReturn(true);
         $parentItem->method('isChildrenCalculated')->willReturn(true);
@@ -1238,6 +1274,7 @@ class CommonTaxCollectorTest extends TestCase
 
     /**
      * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function testConstructorFallsBackToOmForOptionalDependencies(): void
     {
@@ -1317,7 +1354,10 @@ class CommonTaxCollectorTest extends TestCase
                 ->method('getDefaultBillingAddress')
                 ->with(15)->willReturn(null);
 
-            $quote = $this->createPartialMockWithReflection(\stdClass::class, ['isVirtual', 'getCustomerId', 'getBillingAddress']);
+            $quote = $this->createPartialMockWithReflection(
+                \stdClass::class,
+                ['isVirtual', 'getCustomerId', 'getBillingAddress']
+            );
             $quote->method('isVirtual')->willReturn(true);
             $quote->method('getCustomerId')->willReturn(15);
             $quote->method('getBillingAddress')->willReturn($billingAddressFromQuote);
@@ -1340,7 +1380,10 @@ class CommonTaxCollectorTest extends TestCase
 
     public function testMapItemExtraTaxablesReturnsEmptyWhenNoTaxables(): void
     {
-        $item = $this->createPartialMockWithReflection(AbstractItem::class, ['getQuote', 'getAddress', 'getOptionByCode', 'getAssociatedTaxables', 'getTaxCalculationItemId']);
+        $item = $this->createPartialMockWithReflection(
+            AbstractItem::class,
+            ['getQuote', 'getAddress', 'getOptionByCode', 'getAssociatedTaxables', 'getTaxCalculationItemId']
+        );
         $item->method('getAssociatedTaxables')->willReturn(null);
         $item->method('getTaxCalculationItemId')->willReturn('any');
 
@@ -1351,7 +1394,10 @@ class CommonTaxCollectorTest extends TestCase
 
     public function testMapItemExtraTaxablesUsesBaseUnitPriceWhenUseBaseCurrency(): void
     {
-        $item = $this->createPartialMockWithReflection(AbstractItem::class, ['getQuote', 'getAddress', 'getOptionByCode', 'getAssociatedTaxables', 'getTaxCalculationItemId']);
+        $item = $this->createPartialMockWithReflection(
+            AbstractItem::class,
+            ['getQuote', 'getAddress', 'getOptionByCode', 'getAssociatedTaxables', 'getTaxCalculationItemId']
+        );
         $item->method('getTaxCalculationItemId')->willReturn('calc-3');
         $item->method('getAssociatedTaxables')->willReturn([
             [
@@ -1432,7 +1478,10 @@ class CommonTaxCollectorTest extends TestCase
     {
         $store = $this->createMock(Store::class);
 
-        $addressItem = $this->createPartialMockWithReflection(\stdClass::class, ['getTaxCalculationItemId', 'isDeleted', 'getHasChildren', 'isChildrenCalculated']);
+        $addressItem = $this->createPartialMockWithReflection(
+            \stdClass::class,
+            ['getTaxCalculationItemId', 'isDeleted', 'getHasChildren', 'isChildrenCalculated']
+        );
         $addressItem->method('getTaxCalculationItemId')->willReturn('code-skip');
         $addressItem->method('isDeleted')->willReturn(false);
         $addressItem->method('getHasChildren')->willReturn(true);
@@ -1440,7 +1489,10 @@ class CommonTaxCollectorTest extends TestCase
 
         $address = $this->createPartialMockWithReflection(
             \stdClass::class,
-            ['getQuote', 'setBaseTaxAmount', 'setBaseSubtotalTotalInclTax', 'setSubtotalInclTax', 'setSubtotal', 'setBaseSubtotal']
+            [
+                'getQuote', 'setBaseTaxAmount', 'setBaseSubtotalTotalInclTax',
+                'setSubtotalInclTax', 'setSubtotal', 'setBaseSubtotal'
+            ]
         );
         $quote = $this->createPartialMockWithReflection(\stdClass::class, ['getStore']);
         $quote->method('getStore')->willReturn($store);
@@ -1460,7 +1512,10 @@ class CommonTaxCollectorTest extends TestCase
 
         $total = $this->createPartialMockWithReflection(
             \Magento\Quote\Model\Quote\Address\Total::class,
-            ['setTotalAmount', 'setBaseTotalAmount', 'setSubtotalInclTax', 'setBaseSubtotalTotalInclTax', 'setBaseSubtotalInclTax']
+            [
+                'setTotalAmount', 'setBaseTotalAmount', 'setSubtotalInclTax',
+                'setBaseSubtotalTotalInclTax', 'setBaseSubtotalInclTax'
+            ]
         );
         $total->method('setTotalAmount')->willReturnSelf();
         $total->method('setBaseTotalAmount')->willReturnSelf();
