@@ -8,10 +8,12 @@ declare(strict_types=1);
 namespace Magento\Sales\Controller\Adminhtml\Order;
 
 use Magento\Backend\App\Action;
+use Magento\Catalog\Model\Product;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\View\Result\PageFactory;
 use Magento\Backend\Model\View\Result\ForwardFactory;
 use Magento\Sales\Model\Order\Create\ValidateCoupon;
+use Magento\Catalog\Api\ProductRepositoryInterface;
 
 /**
  * Adminhtml sales orders creation process controller
@@ -55,6 +57,11 @@ abstract class Create extends \Magento\Backend\App\Action
     private $validateCoupon;
 
     /**
+     * @var ProductRepositoryInterface
+     */
+    private ProductRepositoryInterface $productRepository;
+
+    /**
      * @param Action\Context $context
      * @param \Magento\Catalog\Helper\Product $productHelper
      * @param \Magento\Framework\Escaper $escaper
@@ -68,6 +75,7 @@ abstract class Create extends \Magento\Backend\App\Action
         \Magento\Framework\Escaper $escaper,
         PageFactory $resultPageFactory,
         ForwardFactory $resultForwardFactory,
+        ?ProductRepositoryInterface $productRepository = null,
         ?ValidateCoupon $validateCoupon = null
     ) {
         parent::__construct($context);
@@ -75,6 +83,8 @@ abstract class Create extends \Magento\Backend\App\Action
         $this->escaper = $escaper;
         $this->resultPageFactory = $resultPageFactory;
         $this->resultForwardFactory = $resultForwardFactory;
+        $this->productRepository = $productRepository ?: ObjectManager::getInstance()
+            ->get(ProductRepositoryInterface::class);
         $this->validateCoupon = $validateCoupon ?: ObjectManager::getInstance()->get(ValidateCoupon::class);
     }
 
@@ -281,11 +291,8 @@ abstract class Create extends \Magento\Backend\App\Action
                     }
                     if ($this->_getQuote()->hasProductId((int)$productId) && !$hasOptionsInConfig) {
                         try {
-                            /** @var \Magento\Catalog\Model\Product $product */
-                            $product = $this
-                                ->_objectManager
-                                ->create(\Magento\Catalog\Model\Product::class)
-                                ->load($productId);
+                            /** @var Product $product */
+                            $product = $this->productRepository->getById($productId);
                             if ($product->getId() && $product->getHasOptions()) {
                                 $hasRequired = false;
                                 foreach ($product->getOptions() as $option) {
