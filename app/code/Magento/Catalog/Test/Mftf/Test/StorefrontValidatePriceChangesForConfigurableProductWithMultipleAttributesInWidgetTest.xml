@@ -16,79 +16,55 @@
             <testCaseId value="AC-8423"/>
             <severity value="MAJOR"/>
             <group value="Catalog"/>
-            <group value="ConfigurableProduct"/>
         </annotations>
         <before>
             <!-- Step-1: Login to admin -->
             <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
             <!-- Create category for products -->
             <createData entity="_defaultCategory" stepKey="createCategory"/>
-            <!-- Step-2: Create a dropdown product attribute with three options -->
-            <actionGroup ref="AdminNavigateToNewProductAttributePageActionGroup" stepKey="goToNewProductAttributePage"/>
-            <actionGroup ref="AdminFillProductAttributePropertiesActionGroup" stepKey="fillAttributeProperties">
-                <argument name="attributeName" value="{{DropdownSizeAttributeData.frontend_label}}"/>
-                <argument name="attributeType" value="{{DropdownSizeAttributeData.attribute_type}}"/>
-            </actionGroup>
-            <click selector="{{AttributePropertiesSection.AdvancedProperties}}" stepKey="clickAdvancedProperties"/>
-            <fillField selector="{{AttributePropertiesSection.AttributeCode}}" userInput="{{DropdownSizeAttributeData.attribute_code}}" stepKey="fillAttributeCode"/>
-            <selectOption selector="{{AttributePropertiesSection.Scope}}" userInput="{{DropdownSizeAttributeData.scope}}" stepKey="selectGlobalScope"/>
-            <click selector="{{AttributePropertiesSection.dropdownAddOptions}}" stepKey="clickAddOption1"/>
-            <fillField selector="{{AttributePropertiesSection.dropdownNthOptionAdmin('1')}}" userInput="{{AttributeOptionSmall.value}}" stepKey="fillOption1Admin"/>
-            <click selector="{{AttributePropertiesSection.dropdownAddOptions}}" stepKey="clickAddOption2"/>
-            <fillField selector="{{AttributePropertiesSection.dropdownNthOptionAdmin('2')}}" userInput="{{AttributeOptionMedium.value}}" stepKey="fillOption2Admin"/>
-            <click selector="{{AttributePropertiesSection.dropdownAddOptions}}" stepKey="clickAddOption3"/>
-            <fillField selector="{{AttributePropertiesSection.dropdownNthOptionAdmin('3')}}" userInput="{{AttributeOptionLarge.value}}" stepKey="fillOption3Admin"/>
-            <actionGroup ref="AdminProductAttributeSaveActionGroup" stepKey="saveDropdownAttribute"/>
-            <!-- Step-3: Create a text swatch product attribute with three options -->
-            <actionGroup ref="AdminNavigateToNewProductAttributePageActionGroup" stepKey="goToNewProductAttributePageForSwatch"/>
-            <actionGroup ref="AdminFillProductAttributePropertiesActionGroup" stepKey="fillSwatchAttributeProperties">
-                <argument name="attributeName" value="{{TextSwatchColorAttributeData.frontend_label}}"/>
-                <argument name="attributeType" value="{{TextSwatchColorAttributeData.attribute_type}}"/>
-            </actionGroup>
-            <click selector="{{AttributePropertiesSection.AdvancedProperties}}" stepKey="clickAdvancedPropertiesForSwatch"/>
-            <fillField selector="{{AttributePropertiesSection.AttributeCode}}" userInput="{{TextSwatchColorAttributeData.attribute_code}}" stepKey="fillSwatchAttributeCode"/>
-            <selectOption selector="{{AttributePropertiesSection.Scope}}" userInput="{{TextSwatchColorAttributeData.scope}}" stepKey="selectGlobalScopeForSwatch"/>
-            <click selector="{{AdminManageSwatchSection.addSwatchText}}" stepKey="clickAddSwatchOption1"/>
-            <fillField selector="{{AdminManageSwatchSection.swatchTextByIndex('0')}}" userInput="{{AttributeOptionBlack.value}}" stepKey="fillSwatchOption1"/>
-            <fillField selector="{{AdminManageSwatchSection.swatchAdminDescriptionByIndex('0')}}" userInput="{{AttributeOptionBlack.value}}" stepKey="fillSwatchOption1Description"/>
-            <click selector="{{AdminManageSwatchSection.addSwatchText}}" stepKey="clickAddSwatchOption2"/>
-            <fillField selector="{{AdminManageSwatchSection.swatchTextByIndex('1')}}" userInput="{{AttributeOptionWhite.value}}" stepKey="fillSwatchOption2"/>
-            <fillField selector="{{AdminManageSwatchSection.swatchAdminDescriptionByIndex('1')}}" userInput="{{AttributeOptionWhite.value}}" stepKey="fillSwatchOption2Description"/>
-            <click selector="{{AdminManageSwatchSection.addSwatchText}}" stepKey="clickAddSwatchOption3"/>
-            <fillField selector="{{AdminManageSwatchSection.swatchTextByIndex('2')}}" userInput="{{AttributeOptionBlue.value}}" stepKey="fillSwatchOption3"/>
-            <fillField selector="{{AdminManageSwatchSection.swatchAdminDescriptionByIndex('2')}}" userInput="{{AttributeOptionBlue.value}}" stepKey="fillSwatchOption3Description"/>
-            <actionGroup ref="AdminProductAttributeSaveActionGroup" stepKey="saveTextSwatchAttribute"/>
-            <!-- Create configurable products via API -->
+            <!-- Step-2: Create a dropdown product attribute with two options -->
+            <createData entity="DropdownSizeAttributeData" stepKey="createDropdownAttribute"/>
+            <createData entity="DropdownSizeOptionSmall" stepKey="createAttributeOptionSmall">
+                <requiredEntity createDataKey="createDropdownAttribute"/>
+            </createData>
+            <createData entity="DropdownSizeOptionLarge" stepKey="createAttributeOptionLarge">
+                <requiredEntity createDataKey="createDropdownAttribute"/>
+            </createData>
+            <!-- Step-3: Create a text swatch product attribute with two options -->
+            <createData entity="TextSwatchColorAttributeData" stepKey="createTextSwatchAttribute"/>
+            <createData entity="TextSwatchOptionBlack" stepKey="createAttributeOptionBlack">
+                <requiredEntity createDataKey="createTextSwatchAttribute"/>
+            </createData>
+            <createData entity="TextSwatchOptionWhite" stepKey="createAttributeOptionWhite">
+                <requiredEntity createDataKey="createTextSwatchAttribute"/>
+            </createData>
+            <!-- Create configurable products -->
             <createData entity="ApiConfigurableProduct" stepKey="createConfigProduct1">
                 <requiredEntity createDataKey="createCategory"/>
-                <field key="name">Conf 1</field>
-                <field key="sku">conf-1</field>
-                <field key="price">100</field>
+                <field key="name">{{ConfigurableProduct1.name}}</field>
+                <field key="sku">{{ConfigurableProduct1.sku}}</field>
+                <field key="price">{{ConfigurableProduct1.price}}</field>
             </createData>
             <createData entity="ApiConfigurableProduct" stepKey="createConfigProduct2">
                 <requiredEntity createDataKey="createCategory"/>
-                <field key="name">Conf 2</field>
-                <field key="sku">conf-2</field>
-                <field key="price">200</field>
+                <field key="name">{{ConfigurableProduct2.name}}</field>
+                <field key="sku">{{ConfigurableProduct2.sku}}</field>
+                <field key="price">{{ConfigurableProduct2.price}}</field>
             </createData>
         </before>
         <after>
             <!-- Delete category -->
             <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
-            <!-- Delete created products -->
-            <actionGroup ref="DeleteAllProductsUsingProductGridActionGroup" stepKey="deleteAllProducts"/>
+            <!-- Delete configurable product & its variants via API using ProductApiHelper -->
+            <helper class="Magento\Catalog\Test\Mftf\Helper\ProductApiHelper" method="deleteAllProductsApi" stepKey="deleteAllProductsViaApi"/>
             <!-- Delete widget -->
             <actionGroup ref="AdminDeleteWidgetActionGroup" stepKey="deleteWidget">
                 <argument name="widget" value="SampleCatalogProductsListWidget"/>
             </actionGroup>
             <!-- Delete dropdown attribute -->
-            <actionGroup ref="DeleteProductAttributeByCodeActionGroup" stepKey="deleteDropdownAttribute">
-                <argument name="attribute_code" value="{{DropdownSizeAttributeData.attribute_code}}"/>
-            </actionGroup>
+            <deleteData createDataKey="createDropdownAttribute" stepKey="deleteDropdownAttribute"/>
             <!-- Delete text swatch attribute -->
-            <actionGroup ref="DeleteProductAttributeByCodeActionGroup" stepKey="deleteSwatchAttribute">
-                <argument name="attribute_code" value="{{TextSwatchColorAttributeData.attribute_code}}"/>
-            </actionGroup>
+            <deleteData createDataKey="createTextSwatchAttribute" stepKey="deleteSwatchAttribute"/>
             <!-- Logout -->
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
         </after>
@@ -99,7 +75,7 @@
         <waitForPageLoad stepKey="waitForConfigProduct1PageLoad"/>
         <!-- Create configurations for Conf 1 with my_size attribute -->
         <actionGroup ref="GenerateConfigurationsByAttributeCodeActionGroup" stepKey="createConfigurationsForConf1">
-            <argument name="attributeCode" value="{{DropdownSizeAttributeData.attribute_code}}"/>
+            <argument name="attributeCode" value="$createDropdownAttribute.attribute_code$"/>
         </actionGroup>
         <!-- Set custom prices for Small and Large variants -->
         <actionGroup ref="ChangeConfigurableProductChildProductPriceActionGroup" stepKey="changePriceForSmall">
@@ -121,8 +97,8 @@
         <click selector="{{AdminProductFormConfigurationsSection.createConfigurations}}" stepKey="clickCreateConfigurationsForConf2"/>
         <waitForElementVisible selector="{{AdminCreateProductConfigurationsPanel.createNewAttribute}}" stepKey="waitForConfigurationModalOpen"/>
         <!-- Select both my_size and color_swatch attributes -->
-        <click selector="{{AdminCreateProductConfigurationsPanel.attributeCheckbox(DropdownSizeAttributeData.attribute_code)}}" stepKey="selectSizeAttribute"/>
-        <click selector="{{AdminCreateProductConfigurationsPanel.attributeCheckbox(TextSwatchColorAttributeData.attribute_code)}}" stepKey="selectColorAttribute"/>
+        <click selector="{{AdminCreateProductConfigurationsPanel.attributeCheckbox($createDropdownAttribute.attribute_code$)}}" stepKey="selectSizeAttribute"/>
+        <click selector="{{AdminCreateProductConfigurationsPanel.attributeCheckbox($createTextSwatchAttribute.attribute_code$)}}" stepKey="selectColorAttribute"/>
         <click selector="{{AdminCreateProductConfigurationsPanel.next}}" stepKey="clickOnNextButton1ForConf2"/>
         <!-- Select only Small and Large for my_size, and Black and White for color_swatch -->
         <waitForElementVisible selector="{{AdminCreateProductConfigurationsPanel.attributeCheckboxByName(AttributeOptionSmall.value)}}" stepKey="waitForOptionsForConf2"/>
@@ -164,10 +140,10 @@
         <actionGroup ref="AdminSaveAndContinueWidgetActionGroup" stepKey="saveWidget"/>
         <!-- Step-7: Open Conf 1 product page on storefront and validate price changes -->
         <actionGroup ref="StorefrontOpenProductPageActionGroup" stepKey="openConf1ProductPage">
-            <argument name="productUrl" value="conf-1"/>
+            <argument name="productUrl" value="{{ConfigurableProduct1.sku}}"/>
         </actionGroup>
         <waitForElementVisible selector="{{StorefrontProductInfoMainSection.productName}}" stepKey="waitForProductName"/>
-        <waitForText selector="{{StorefrontProductInfoMainSection.productName}}" userInput="Conf 1" stepKey="verifyProductName"/>
+        <waitForText selector="{{StorefrontProductInfoMainSection.productName}}" userInput="{{ConfigurableProduct1.name}}" stepKey="verifyProductName"/>
         <!-- Verify default price before selection -->
         <waitForElementVisible selector="{{StorefrontProductInfoMainSection.productPrice}}" stepKey="waitForDefaultPrice"/>
         <!-- Select Small option and verify price -->

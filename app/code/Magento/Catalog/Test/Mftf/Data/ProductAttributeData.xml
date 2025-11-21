@@ -493,28 +493,70 @@
         <data key="option3">3</data>
     </entity>
     <!-- Dropdown Size Attribute -->
-    <entity name="DropdownSizeAttributeData" type="attribute">
-        <data key="frontend_label">my size</data>
+    <entity name="DropdownSizeAttributeData" type="ProductAttribute">
         <data key="attribute_code">my_size</data>
         <data key="attribute_type">Dropdown</data>
-        <data key="scope">Global</data>
+        <data key="frontend_input">select</data>
+        <data key="scope">global</data>
+        <data key="is_required">false</data>
+        <data key="is_unique">false</data>
+        <data key="is_searchable">true</data>
+        <data key="is_visible">true</data>
+        <data key="is_visible_in_advanced_search">true</data>
+        <data key="is_visible_on_front">true</data>
+        <data key="is_filterable">true</data>
+        <data key="is_filterable_in_search">true</data>
+        <data key="used_in_product_listing">true</data>
+        <data key="is_used_for_promo_rules">true</data>
+        <data key="is_comparable">true</data>
+        <data key="is_used_in_grid">true</data>
+        <data key="is_visible_in_grid">true</data>
+        <data key="is_filterable_in_grid">true</data>
+        <data key="used_for_sort_by">true</data>
+        <requiredEntity type="FrontendLabel">DropdownSizeFrontendLabel</requiredEntity>
     </entity>
     <!-- Text Swatch Color Attribute -->
-    <entity name="TextSwatchColorAttributeData" type="attribute">
-        <data key="frontend_label">color1</data>
+    <entity name="TextSwatchColorAttributeData" type="ProductAttribute">
         <data key="attribute_code">color_swatch</data>
         <data key="attribute_type">swatch_text</data>
-        <data key="scope">Global</data>
+        <data key="frontend_input">swatch_text</data>
+        <data key="scope">global</data>
+        <data key="is_required">false</data>
+        <data key="is_unique">false</data>
+        <data key="is_searchable">true</data>
+        <data key="is_visible">true</data>
+        <data key="is_visible_in_advanced_search">true</data>
+        <data key="is_visible_on_front">true</data>
+        <data key="is_filterable">true</data>
+        <data key="is_filterable_in_search">true</data>
+        <data key="used_in_product_listing">true</data>
+        <data key="is_used_for_promo_rules">true</data>
+        <data key="is_comparable">true</data>
+        <data key="is_used_in_grid">true</data>
+        <data key="is_visible_in_grid">true</data>
+        <data key="is_filterable_in_grid">true</data>
+        <data key="used_for_sort_by">true</data>
+        <requiredEntity type="FrontendLabel">TextSwatchColorFrontendLabel</requiredEntity>
     </entity>
     <!-- Size Options -->
     <entity name="AttributeOptionSmall" type="option">
         <data key="value">Small</data>
     </entity>
-    <entity name="AttributeOptionMedium" type="option">
-        <data key="value">Medium</data>
-    </entity>
     <entity name="AttributeOptionLarge" type="option">
         <data key="value">Large</data>
+    </entity>
+    <!-- Size Product Attribute Options for API -->
+    <entity name="DropdownSizeOptionSmall" type="ProductAttributeOption">
+        <var key="attribute_code" entityKey="attribute_code" entityType="ProductAttribute"/>
+        <data key="label">Small</data>
+        <data key="is_default">false</data>
+        <data key="sort_order">0</data>
+    </entity>
+    <entity name="DropdownSizeOptionLarge" type="ProductAttributeOption">
+        <var key="attribute_code" entityKey="attribute_code" entityType="ProductAttribute"/>
+        <data key="label">Large</data>
+        <data key="is_default">false</data>
+        <data key="sort_order">1</data>
     </entity>
     <!-- Color Options -->
     <entity name="AttributeOptionBlack" type="option">
@@ -523,8 +565,18 @@
     <entity name="AttributeOptionWhite" type="option">
         <data key="value">White</data>
     </entity>
-    <entity name="AttributeOptionBlue" type="option">
-        <data key="value">Blue</data>
+    <!-- Color Product Attribute Options for API -->
+    <entity name="TextSwatchOptionBlack" type="ProductAttributeOption">
+        <var key="attribute_code" entityKey="attribute_code" entityType="ProductAttribute"/>
+        <data key="label">Black</data>
+        <data key="is_default">false</data>
+        <data key="sort_order">0</data>
+    </entity>
+    <entity name="TextSwatchOptionWhite" type="ProductAttributeOption">
+        <var key="attribute_code" entityKey="attribute_code" entityType="ProductAttribute"/>
+        <data key="label">White</data>
+        <data key="is_default">false</data>
+        <data key="sort_order">1</data>
     </entity>
     <!-- Attribute Display Values for product configuration -->
     <entity name="SizeAttributeDisplay" type="display">
@@ -534,6 +586,16 @@
         <data key="large_black">my size: Large, color1: Black</data>
         <data key="small_white">my size: Small, color1: White</data>
         <data key="large_white">my size: Large, color1: White</data>
+    </entity>
+    <entity name="ConfigurableProduct1" type="product">
+        <data key="name">Conf 1</data>
+        <data key="sku">conf-1</data>
+        <data key="price">100</data>
+    </entity>
+    <entity name="ConfigurableProduct2" type="product">
+        <data key="name">Conf 2</data>
+        <data key="sku">conf-2</data>
+        <data key="price">200</data>
     </entity>
 </entities>
 

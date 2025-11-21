@@ -24,4 +24,12 @@
         <data key="store_id">0</data>
         <data key="label">attributeExportImport</data>
     </entity>
+    <entity name="DropdownSizeFrontendLabel" type="FrontendLabel">
+        <data key="store_id">0</data>
+        <data key="label">my size</data>
+    </entity>
+    <entity name="TextSwatchColorFrontendLabel" type="FrontendLabel">
+        <data key="store_id">0</data>
+        <data key="label">color1</data>
+    </entity>
 </entities>
