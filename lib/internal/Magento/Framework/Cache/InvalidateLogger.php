@@ -1,7 +1,5 @@
 <?php
 /**
- * Cache configuration model. Provides cache configuration data to the application
- *
  * Copyright 2015 Adobe
  * All Rights Reserved.
  */
@@ -43,7 +41,18 @@ class InvalidateLogger
      */
     public function execute($invalidateInfo)
     {
-        $this->logger->debug('cache_invalidate: ', $this->makeParams($invalidateInfo));
+        $context = $this->makeParams($invalidateInfo);
+        if (isset($invalidateInfo['tags'], $invalidateInfo['mode'])) {
+            if ($invalidateInfo['mode'] === 'all'
+                && is_array($invalidateInfo['tags'])
+                && empty($invalidateInfo['tags'])
+            ) {
+                // If we are sending a purge request to all cache storage capture the trace
+                // This is not a usual flow, and likely a bug is causing a performance issue
+                $context['trace'] = (string)(new \Exception('full purge of cache storage triggered'));
+            }
+        }
+        $this->logger->debug('cache_invalidate: ', $context);
     }
 
     /**
