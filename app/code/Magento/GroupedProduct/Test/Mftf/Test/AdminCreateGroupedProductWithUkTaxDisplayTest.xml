@@ -11,13 +11,12 @@
     <test name="AdminCreateGroupedProductWithUkTaxDisplayTest">
         <annotations>
             <features value="GroupedProduct"/>
-            <features value="Tax"/>
             <stories value="Admin configures UK tax for grouped products"/>
             <title value="Create Grouped product with UK 20% tax"/>
             <description value="Creates grouped product, configures UK tax, enables inclusive/exclusive price display, verifies storefront visibility."/>
             <severity value="AVERAGE"/>
             <testCaseId value="AC-6363"/>
-            <group value="grouped_product"/>
+            <group value="GroupedProduct"/>
             <group value="tax"/>
         </annotations>
         <before>
@@ -56,7 +55,7 @@
             <magentoCLI command="config:set {{DefaultDisplayShippingPricesInCatalog.path}} {{DefaultDisplayShippingPricesInCatalog.value}}" stepKey="resetCatalogShipping"/>
             <magentoCLI command="config:set {{DefaultCartDisplayPrice.path}} {{DefaultCartDisplayPrice.value}}" stepKey="resetCartPrice"/>
             <magentoCLI command="config:set {{DefaultCartDisplaySubtotal.path}} {{DefaultCartDisplaySubtotal.value}}" stepKey="resetCartSubtotal"/>
-            <magentoCLI command="config:set {{DefaultCartDisplayShipping.path}} {{DefaultCartDisplayShipping.value}}" stepKey="resetCartShipping"/>
+            <magentoCLI command="config:set {{DisplayShippingAmountConfigData.path}} {{DisplayShippingAmountConfigData.value}}" stepKey="resetCartShipping"/>
             <actionGroup ref="AdminTaxRuleGridOpenPageActionGroup" stepKey="openTaxRuleGrid"/>
             <actionGroup ref="deleteEntitySecondaryGrid" stepKey="deleteUkTaxRule">
                 <argument name="name" value="{{SimpleTaxRule.code}}"/>
@@ -102,10 +101,6 @@
             <argument name="qty" value="1"/>
         </actionGroup>
         <actionGroup ref="SaveProductFormActionGroup" stepKey="saveGroupedProduct"/>
-        <!-- Step 6: Run cache clean -->
-        <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushCacheAgain">
-            <argument name="tags" value=""/>
-        </actionGroup>
         <!-- Step 7: Navigate to the category the grouped product belongs to on frontend -->
         <actionGroup ref="StorefrontOpenHomePageActionGroup" stepKey="openStorefrontHome"/>
         <actionGroup ref="StorefrontGoToCategoryPageActionGroup" stepKey="openCategory">

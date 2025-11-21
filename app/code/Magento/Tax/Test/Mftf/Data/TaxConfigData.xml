@@ -145,8 +145,4 @@
         <data key="path">tax/cart_display/subtotal</data>
         <data key="value">1</data>
     </entity>
-    <entity name="DefaultCartDisplayShipping">
-        <data key="path">tax/cart_display/shipping</data>
-        <data key="value">1</data>
-    </entity>
 </entities>
