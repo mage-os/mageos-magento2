@@ -79,7 +79,7 @@ class GenericTest extends TestCase
         $this->serializerMock
             ->expects($this->once())
             ->method('serialize')
-            ->with($this->callback(function (array $data) use ($path, $objectMetadata) {
+            ->with($this->callback(function (array $data) use ($path) {
                 return isset($data[$path])
                     && $data[$path]['type'] === 'file'
                     && $data[$path]['size'] === 123
