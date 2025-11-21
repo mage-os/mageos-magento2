@@ -23,6 +23,10 @@ use Magento\Integration\Model\IntegrationService;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
+
 class WebapiTest extends TestCase
 {
     /**
@@ -145,8 +149,12 @@ class WebapiTest extends TestCase
      * @param bool $expectedValue
      */
     #[DataProvider('isEverythingAllowedProvider')]
-    public function testIsEverythingAllowed(int|string $rootResourceId, array $integrationData, array $selectedResources, bool $expectedValue): void
-    {
+    public function testIsEverythingAllowed(
+        int|string $rootResourceId,
+        array $integrationData,
+        array $selectedResources,
+        bool $expectedValue
+    ): void {
         $this->webapiBlock = $this->getWebapiBlock($integrationData, $selectedResources);
         $this->rootResource->expects($this->once())
             ->method('getId')
@@ -205,8 +213,11 @@ class WebapiTest extends TestCase
      * @param bool $expectedValue
      */
     #[DataProvider('isEverythingAllowedWithSavedFromDataProvider')]
-    public function testIsEverythingAllowedWithSavedFromData(int|string $rootResourceId, array $savedData, bool $expectedValue): void
-    {
+    public function testIsEverythingAllowedWithSavedFromData(
+        int|string $rootResourceId,
+        array $savedData,
+        bool $expectedValue
+    ): void {
         $this->registry->expects($this->once())
             ->method('registry')->with(IntegrationController::REGISTRY_KEY_CURRENT_RESOURCE)
             ->willReturn($savedData);

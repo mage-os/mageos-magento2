@@ -41,7 +41,8 @@ class ExpirationValidatorTest extends TestCase
         $this->model = new ExpirationValidator($this->datetimeUtilMock);
     }
 
-    protected function getMockForPastToken() {
+    protected function getMockForPastToken()
+    {
         $pastToken = $this->createMock(UserToken::class);
         $pastData = $this->createMock(UserTokenDataInterface::class);
         $pastData->method('getExpires')
@@ -51,7 +52,8 @@ class ExpirationValidatorTest extends TestCase
         return $pastToken;
     }
 
-    protected function getMockForIntegrationToken() {
+    protected function getMockForIntegrationToken()
+    {
         $pastData = $this->createMock(UserTokenDataInterface::class);
         $pastData->method('getExpires')
             ->willReturn(\DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2021-04-07 12:00:00'));
@@ -70,7 +72,8 @@ class ExpirationValidatorTest extends TestCase
         return $integrationToken;
     }
 
-    protected function getMockForExactToken() {
+    protected function getMockForExactToken()
+    {
         $exactToken = $this->createMock(UserToken::class);
         $exactData = $this->createMock(UserTokenDataInterface::class);
         $exactData->method('getExpires')
@@ -80,7 +83,8 @@ class ExpirationValidatorTest extends TestCase
         return $exactToken;
     }
 
-    protected function getMockForFutureToken() {
+    protected function getMockForFutureToken()
+    {
         $futureToken = $this->createMock(UserToken::class);
         $futureData = $this->createMock(UserTokenDataInterface::class);
         $futureData->method('getExpires')

@@ -147,7 +147,7 @@ abstract class IntegrationTestCase extends TestCase
     protected $resultFactory;
 
     /** Sample integration ID */
-    const INTEGRATION_ID = 1;
+    protected const INTEGRATION_ID = 1;
 
     /**
      * Setup object manager and initialize mocks

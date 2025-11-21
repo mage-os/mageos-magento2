@@ -80,14 +80,8 @@ class ToOrderConverterTest extends TestCase
      */
     protected function setupOrderExtensionAttributeMock()
     {
-        $orderExtensionAttributeMock = $this->createPartialMockWithReflection(
-            OrderExtensionInterface::class,
-            [
-                'setAppliedTaxes',
-                'setConvertingFromQuote',
-                'setItemAppliedTaxes'
-            ]
-        );
+        // Use createMock() to mock ALL interface methods automatically - PHPUnit 12 compatible
+        $orderExtensionAttributeMock = $this->createMock(OrderExtensionInterface::class);
 
         return $orderExtensionAttributeMock;
     }

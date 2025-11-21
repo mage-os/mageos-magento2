@@ -126,10 +126,8 @@ class RowBaseAndTotalBaseCalculatorTestCase extends TestCase
             ->getMock();
 
         $this->mockItem = $this->createMock(QuoteDetailsItemInterface::class);
-        $this->quoteDetailsItemExtension = $this->createPartialMockWithReflection(
-            QuoteDetailsItemExtensionInterface::class,
-            ['getDiscountAmount', 'getCode', 'getType', 'getUnitPrice', 'getIsTaxIncluded']
-        );
+        // Use createMock() to mock ALL interface methods automatically - PHPUnit 12 compatible
+        $this->quoteDetailsItemExtension = $this->createMock(QuoteDetailsItemExtensionInterface::class);
         $this->mockItem->expects($this->any())->method('getExtensionAttributes')
             ->willReturn($this->quoteDetailsItemExtension);
 

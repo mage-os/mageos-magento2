@@ -5,7 +5,8 @@
  * All Rights Reserved.
  */
 -->
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Integration:etc/integration/integration.xsd">
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Integration:etc/integration/integration.xsd">
     <integration name="TestIntegration1">
         <email>test-integration1@magento.com</email>
         <endpoint_url>http://endpoint.com</endpoint_url>

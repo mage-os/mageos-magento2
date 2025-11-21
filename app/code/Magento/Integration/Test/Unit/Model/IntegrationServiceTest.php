@@ -19,13 +19,13 @@ class IntegrationServiceTest extends TestCase
 {
     use MockCreationTrait;
 
-    const VALUE_INTEGRATION_ID = 1;
-    const VALUE_INTEGRATION_NAME = 'Integration Name';
-    const VALUE_INTEGRATION_ANOTHER_NAME = 'Another Integration Name';
-    const VALUE_INTEGRATION_EMAIL = 'test@magento.com';
-    const VALUE_INTEGRATION_SETUP_BACKEND = 0;
-    const VALUE_INTEGRATION_ENDPOINT = 'http://magento.ll/endpoint';
-    const VALUE_INTEGRATION_CONSUMER_ID = 1;
+    private const VALUE_INTEGRATION_ID = 1;
+    private const VALUE_INTEGRATION_NAME = 'Integration Name';
+    private const VALUE_INTEGRATION_ANOTHER_NAME = 'Another Integration Name';
+    private const VALUE_INTEGRATION_EMAIL = 'test@magento.com';
+    private const VALUE_INTEGRATION_SETUP_BACKEND = 0;
+    private const VALUE_INTEGRATION_ENDPOINT = 'http://magento.ll/endpoint';
+    private const VALUE_INTEGRATION_CONSUMER_ID = 1;
 
     /**
      * @var MockObject
@@ -63,7 +63,10 @@ class IntegrationServiceTest extends TestCase
             ->getMock();
         $this->_integrationMock = $this->createPartialMockWithReflection(
             Integration::class,
-            ['getData', 'getId', 'load', 'save', 'delete', '__wakeup', 'getName', 'getEmail', 'getEndpoint', 'loadByName']
+            [
+                'getData', 'getId', 'load', 'save', 'delete', '__wakeup',
+                'getName', 'getEmail', 'getEndpoint', 'loadByName'
+            ]
         );
         $this->_integrationData = [
             Integration::ID => self::VALUE_INTEGRATION_ID,
@@ -103,7 +106,10 @@ class IntegrationServiceTest extends TestCase
         );
         $this->_emptyIntegrationMock = $this->createPartialMockWithReflection(
             Integration::class,
-            ['getData', 'getId', 'load', 'save', 'delete', '__wakeup', 'getName', 'getEmail', 'getEndpoint', 'loadByName']
+            [
+                'getData', 'getId', 'load', 'save', 'delete', '__wakeup',
+                'getName', 'getEmail', 'getEndpoint', 'loadByName'
+            ]
         );
         $this->_emptyIntegrationMock->expects($this->any())->method('getId')->willReturn(null);
     }
@@ -498,7 +504,10 @@ class IntegrationServiceTest extends TestCase
     ) {
         $integrationMock = $this->createPartialMockWithReflection(
             Integration::class,
-            ['getData', 'getId', 'load', 'save', 'delete', '__wakeup', 'getName', 'getEmail', 'getEndpoint', 'loadByName']
+            [
+                'getData', 'getId', 'load', 'save', 'delete', '__wakeup',
+                'getName', 'getEmail', 'getEndpoint', 'loadByName'
+            ]
         );
         $integrationMock->expects($this->any())->method('getId')->willReturn($integrationId);
         $integrationMock->expects($this->any())->method('getName')->willReturn($name);

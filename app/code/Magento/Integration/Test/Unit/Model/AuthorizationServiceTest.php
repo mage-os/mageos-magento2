@@ -33,12 +33,12 @@ class AuthorizationServiceTest extends TestCase
     /**
      * Sample role Id
      */
-    const ROLE_ID = 1;
+    private const ROLE_ID = 1;
 
     /**
      * Sample integration id
      */
-    const INTEGRATION_ID = 22;
+    private const INTEGRATION_ID = 22;
 
     /**
      * @var MockObject|Role
