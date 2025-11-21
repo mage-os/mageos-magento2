@@ -11,14 +11,14 @@ use Magento\Catalog\Test\Fixture\Product as ProductFixture;
 use Magento\Checkout\Test\Fixture\PlaceOrder as PlaceOrderFixture;
 use Magento\Checkout\Test\Fixture\SetBillingAddress as SetBillingAddressFixture;
 use Magento\Checkout\Test\Fixture\SetDeliveryMethod as SetDeliveryMethodFixture;
-use Magento\Checkout\Test\Fixture\SetGuestEmail as SetGuestEmailFixture;
 use Magento\Checkout\Test\Fixture\SetPaymentMethod as SetPaymentMethodFixture;
 use Magento\Checkout\Test\Fixture\SetShippingAddress as SetShippingAddressFixture;
+use Magento\Customer\Test\Fixture\Customer as CustomerFixture;
 use Magento\Framework\App\Area;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Mail\EmailMessageInterface;
 use Magento\Quote\Test\Fixture\AddProductToCart as AddProductToCartFixture;
-use Magento\Quote\Test\Fixture\GuestCart as GuestCartFixture;
+use Magento\Quote\Test\Fixture\CustomerCart as CustomerCartFixture;
 use Magento\TestFramework\Fixture\Config;
 use Magento\TestFramework\Fixture\DataFixture;
 use Magento\TestFramework\Fixture\DataFixtureStorageManager;
@@ -32,6 +32,11 @@ use PHPUnit\Framework\TestCase;
  */
 class AdminOrderAsyncEmailTest extends TestCase
 {
+    /**
+     * Customer email address for async order notification testing
+     */
+    private const CUSTOMER_EMAIL = 'async-customer@example.com';
+
     /**
      * @var TransportBuilderMock
      */
@@ -57,6 +62,7 @@ class AdminOrderAsyncEmailTest extends TestCase
 
     /**
      * Verifies that an order email is dispatched only after the async cron job runs.
+     * Uses a registered customer with accessible email as per test preconditions.
      *
      * @return void
      * @throws LocalizedException
@@ -67,12 +73,12 @@ class AdminOrderAsyncEmailTest extends TestCase
         Config('sales_email/general/async_sending', '1'),
         Config('sales_email/order/enabled', '1'),
         Config('sales_email/general/sending_limit', '10'),
+        DataFixture(CustomerFixture::class, ['email' => 'async-customer@example.com'], as: 'customer'),
         DataFixture(ProductFixture::class, as: 'product'),
-        DataFixture(GuestCartFixture::class, as: 'cart'),
+        DataFixture(CustomerCartFixture::class, ['customer_id' => '$customer.id$'], as: 'cart'),
         DataFixture(AddProductToCartFixture::class, ['cart_id' => '$cart.id$', 'product_id' => '$product.id$']),
         DataFixture(SetBillingAddressFixture::class, ['cart_id' => '$cart.id$']),
         DataFixture(SetShippingAddressFixture::class, ['cart_id' => '$cart.id$']),
-        DataFixture(SetGuestEmailFixture::class, ['cart_id' => '$cart.id$', 'email' => 'async-customer@example.com']),
         DataFixture(SetDeliveryMethodFixture::class, ['cart_id' => '$cart.id$']),
         DataFixture(SetPaymentMethodFixture::class, ['cart_id' => '$cart.id$', 'method' => 'checkmo']),
         DataFixture(PlaceOrderFixture::class, ['cart_id' => '$cart.id$'], 'order'),
@@ -124,7 +130,7 @@ class AdminOrderAsyncEmailTest extends TestCase
             'Order confirmation subject should contain the word "Order".'
         );
         $this->assertEquals(
-            'async-customer@example.com',
+            self::CUSTOMER_EMAIL,
             $email->getTo()[0]->getEmail(),
             'Email should be addressed to the customer used during checkout.'
         );
