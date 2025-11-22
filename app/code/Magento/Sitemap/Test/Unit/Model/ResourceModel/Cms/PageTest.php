@@ -70,22 +70,14 @@ class PageTest extends TestCase
     protected function setUp(): void
     {
         $objectManager = new ObjectManager($this);
-        $this->resource = $this->getMockBuilder(ResourceConnection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->resource = $this->createMock(ResourceConnection::class);
         $this->context = $objectManager->getObject(
             Context::class,
             ['resource' => $this->resource]
         );
-        $this->metadataPool = $this->getMockBuilder(MetadataPool::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->entityManager = $this->getMockBuilder(EntityManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->getUtilityPageIdentifiers = $this->getMockBuilder(GetUtilityPageIdentifiers::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->metadataPool = $this->createMock(MetadataPool::class);
+        $this->entityManager = $this->createMock(EntityManager::class);
+        $this->getUtilityPageIdentifiers = $this->createMock(GetUtilityPageIdentifiers::class);
         $this->model = $objectManager->getObject(
             Page::class,
             [
@@ -120,10 +112,7 @@ class PageTest extends TestCase
         $expectedPage->setUrl($url);
         $expectedPage->setUpdatedAt($updatedAt);
 
-        $query = $this->getMockBuilder(\Zend_Db_Statement_Interface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['fetch'])
-            ->getMockForAbstractClass();
+        $query = $this->createMock(\Zend_Db_Statement_Interface::class);
         $query->expects($this->exactly(2))
             ->method('fetch')
             ->willReturnOnConsecutiveCalls(
@@ -135,9 +124,7 @@ class PageTest extends TestCase
                 false
             );
 
-        $select = $this->getMockBuilder(Select::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $select = $this->createMock(Select::class);
         $select->expects($this->once())
             ->method('from')
             ->with(
@@ -163,10 +150,7 @@ class PageTest extends TestCase
                 }
             });
 
-        $connection = $this->getMockBuilder(AdapterInterface::class)
-            ->onlyMethods(['select'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $connection = $this->createMock(AdapterInterface::class);
         $connection->expects($this->once())
             ->method('select')
             ->willReturn($select);
@@ -175,10 +159,7 @@ class PageTest extends TestCase
             ->with($this->identicalTo($select))
             ->willReturn($query);
 
-        $entityMetadata = $this->getMockBuilder(EntityMetadataInterface::class)
-            ->onlyMethods(['getLinkField', 'getEntityConnection'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $entityMetadata = $this->createMock(EntityMetadataInterface::class);
         $entityMetadata->expects($this->once())
             ->method('getLinkField')
             ->willReturn($linkField);
