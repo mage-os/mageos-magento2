@@ -43,7 +43,10 @@ class ActionsTest extends TestCase
 
     public function testRender()
     {
-        $rule = $this->createPartialMock(AbstractModel::class, ['getActions', '__sleep', '__wakeup', 'getConditionsInstance', 'getActionsInstance']);
+        $rule = $this->createPartialMock(
+            AbstractModel::class,
+            ['getActions', '__sleep', '__wakeup', 'getConditionsInstance', 'getActionsInstance']
+        );
         $actions = $this->createPartialMock(Collection::class, ['asHtmlRecursive']);
 
         $this->_element->expects($this->any())

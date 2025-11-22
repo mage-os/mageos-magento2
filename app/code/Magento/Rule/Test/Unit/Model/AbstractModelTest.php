@@ -133,7 +133,10 @@ class AbstractModelTest extends TestCase
     {
         $conditionsArray = ['conditions' => 'serialized'];
         $serializedConditions = json_encode($conditionsArray);
-        $conditions = $this->createPartialMockWithReflection(Combine::class, ['loadArray', 'setRule', 'setId', 'setPrefix']);
+        $conditions = $this->createPartialMockWithReflection(
+            Combine::class,
+            ['loadArray', 'setRule', 'setId', 'setPrefix']
+        );
 
         $conditions->expects($this->once())->method('setRule')->willReturnSelf();
         $conditions->expects($this->once())->method('setId')->willReturnSelf();
@@ -152,7 +155,10 @@ class AbstractModelTest extends TestCase
     {
         $actionsArray = ['actions' => 'some_actions'];
         $actionsSerialized = json_encode($actionsArray);
-        $actions = $this->createPartialMockWithReflection(Collection::class, ['loadArray', 'setRule', 'setId', 'setPrefix']);
+        $actions = $this->createPartialMockWithReflection(
+            Collection::class,
+            ['loadArray', 'setRule', 'setId', 'setPrefix']
+        );
 
         $actions->expects($this->once())->method('setRule')->willReturnSelf();
         $actions->expects($this->once())->method('setId')->willReturnSelf();

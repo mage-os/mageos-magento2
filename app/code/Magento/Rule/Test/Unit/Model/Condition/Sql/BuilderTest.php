@@ -53,7 +53,10 @@ class BuilderTest extends TestCase
      */
     public function testAttachConditionToCollection(): void
     {
-        $collection = $this->createPartialMockWithReflection(AbstractCollection::class, ['getResource', 'getSelect', 'getStoreId', 'getDefaultStoreId']);
+        $collection = $this->createPartialMockWithReflection(
+            AbstractCollection::class,
+            ['getResource', 'getSelect', 'getStoreId', 'getDefaultStoreId']
+        );
         $combine = $this->createPartialMock(Combine::class, ['getConditions']);
         $resource = $this->createPartialMock(Mysql::class, ['getConnection']);
         $select = $this->createPartialMock(Select::class, ['where']);
@@ -87,7 +90,10 @@ class BuilderTest extends TestCase
      */
     public function testAttachConditionAsHtmlToCollection(): void
     {
-        $abstractCondition = $this->createPartialMockWithReflection(AbstractCondition::class, ['getOperatorForValidate', 'getMappedSqlField', 'getAttribute', 'getBindArgumentValue']);
+        $abstractCondition = $this->createPartialMockWithReflection(
+            AbstractCondition::class,
+            ['getOperatorForValidate', 'getMappedSqlField', 'getAttribute', 'getBindArgumentValue']
+        );
 
         $abstractCondition->expects($this->once())->method('getMappedSqlField')->willReturn('argument');
         $abstractCondition->expects($this->once())->method('getOperatorForValidate')->willReturn('&gt;');
@@ -104,7 +110,10 @@ class BuilderTest extends TestCase
                 'getSelect'
             ]
         );
-        $combine = $this->createPartialMockWithReflection(Combine::class, ['getConditions', 'getValue', 'getAggregator']);
+        $combine = $this->createPartialMockWithReflection(
+            Combine::class,
+            ['getConditions', 'getValue', 'getAggregator']
+        );
 
         $resource = $this->createPartialMock(Mysql::class, ['getConnection']);
         $select = $this->createPartialMock(Select::class, ['where']);

@@ -140,15 +140,7 @@ class PageTest extends TestCase
             )->willReturnSelf();
         $select->expects($this->exactly(3))
             ->method('where')
-            ->willReturnCallback(function ($arg1, $arg2 = null) use ($pageIdentifiers, $storeId, $select) {
-                if ($arg1 == 'main_table.is_active = 1') {
-                    return $select;
-                } elseif ($arg1 == 'main_table.identifier NOT IN (?)' && $arg2 == array_values($pageIdentifiers)) {
-                    return $select;
-                } elseif ($arg1 == 'store_table.store_id IN(?)' && $arg2 == [0, $storeId]) {
-                    return $select;
-                }
-            });
+            ->willReturnCallback($this->getWhereCallbackForSelect($pageIdentifiers, $storeId, $select));
 
         $connection = $this->createMock(AdapterInterface::class);
         $connection->expects($this->once())
@@ -189,5 +181,26 @@ class PageTest extends TestCase
         $result = $this->model->getCollection($storeId);
         $resultPage = array_shift($result);
         $this->assertEquals($expectedPage, $resultPage);
+    }
+
+    /**
+     * Get callback for select where method.
+     *
+     * @param array<string, string> $pageIdentifiers
+     * @param int $storeId
+     * @param MockObject $select
+     * @return callable
+     */
+    private function getWhereCallbackForSelect(array $pageIdentifiers, int $storeId, MockObject $select): callable
+    {
+        return function ($arg1, $arg2 = null) use ($pageIdentifiers, $storeId, $select) {
+            if ($arg1 == 'main_table.is_active = 1') {
+                return $select;
+            } elseif ($arg1 == 'main_table.identifier NOT IN (?)' && $arg2 == array_values($pageIdentifiers)) {
+                return $select;
+            } elseif ($arg1 == 'store_table.store_id IN(?)' && $arg2 == [0, $storeId]) {
+                return $select;
+            }
+        };
     }
 }

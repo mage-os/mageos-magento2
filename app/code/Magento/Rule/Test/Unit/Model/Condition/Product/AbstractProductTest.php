@@ -335,7 +335,10 @@ class AbstractProductTest extends TestCase
             ->with($expectedAttrObjSourceAllOptionsParam, true)
             ->willReturn($attrObjectSourceAllOptionsValue);
 
-        $attributeObjectMock = $this->createPartialMockWithReflection(Attribute::class, ['usesSource', 'getFrontendInput', 'getSource', 'getAllOptions']);
+        $attributeObjectMock = $this->createPartialMockWithReflection(
+            Attribute::class,
+            ['usesSource', 'getFrontendInput', 'getSource', 'getAllOptions']
+        );
         $attributeObjectMock->method('usesSource')->willReturn(true);
         $attributeObjectMock
             ->expects((null === $attributeObjectFrontendInput) ? $this->never() : $this->once())
@@ -360,7 +363,10 @@ class AbstractProductTest extends TestCase
         $configProperty->setAccessible(true);
         $configProperty->setValue($this->_condition, $configValueMock);
 
-        $attrSetCollectionValueMock = $this->createPartialMock(Collection::class, ['setEntityTypeFilter', 'load', 'toOptionArray']);
+        $attrSetCollectionValueMock = $this->createPartialMock(
+            Collection::class,
+            ['setEntityTypeFilter', 'load', 'toOptionArray']
+        );
 
         $attrSetCollectionValueMock->method('setEntityTypeFilter')->willReturnSelf();
         $attrSetCollectionValueMock->method('load')->willReturnSelf();

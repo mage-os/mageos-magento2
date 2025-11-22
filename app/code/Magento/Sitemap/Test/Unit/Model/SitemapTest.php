@@ -463,7 +463,7 @@ class SitemapTest extends TestCase
 
         $this->store->expects($this->atLeastOnce())
             ->method('getBaseUrl')
-            ->with($this->isString(), false)
+            ->with($this->callback('is_string'), false)
             ->willReturn('http://store.com/');
 
         return $model;

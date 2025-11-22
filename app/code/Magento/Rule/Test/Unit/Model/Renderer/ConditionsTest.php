@@ -43,7 +43,10 @@ class ConditionsTest extends TestCase
 
     public function testRender()
     {
-        $rule = $this->createPartialMock(AbstractModel::class, ['getConditions', '__sleep', '__wakeup', 'getConditionsInstance', 'getActionsInstance']);
+        $rule = $this->createPartialMock(
+            AbstractModel::class,
+            ['getConditions', '__sleep', '__wakeup', 'getConditionsInstance', 'getActionsInstance']
+        );
         $conditions = $this->createPartialMock(Combine::class, ['asHtmlRecursive']);
 
         $this->_element->expects($this->any())
