@@ -93,7 +93,7 @@ class MsrpPriceCalculatorTest extends TestCase
 
     /**
      * Create Product Mock
-     * 
+     *
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      * @param string $typeId
      * @param float $msrp

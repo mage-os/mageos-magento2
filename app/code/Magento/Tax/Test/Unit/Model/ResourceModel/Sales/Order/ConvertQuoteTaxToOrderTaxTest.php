@@ -97,8 +97,38 @@ class ConvertQuoteTaxToOrderTaxTest extends TestCase
      */
     protected function setupExtensionAttributeMock(): MockObject
     {
-        // Use createMock() to mock ALL interface methods automatically - PHPUnit 12 compatible
-        $orderExtensionAttributeMock = $this->createMock(OrderExtensionInterface::class);
+        // Use createPartialMockWithReflection for extension interface with custom methods - PHPUnit 12 compatible
+        $orderExtensionAttributeMock = $this->createPartialMockWithReflection(
+            OrderExtensionInterface::class,
+            [
+                'getConvertingFromQuote',
+                'setConvertingFromQuote',
+                'getAppliedTaxes',
+                'setAppliedTaxes',
+                'getItemAppliedTaxes',
+                'setItemAppliedTaxes',
+                'getShippingAssignments',
+                'setShippingAssignments',
+                'getPaymentAdditionalInfo',
+                'setPaymentAdditionalInfo',
+                'getGiftCards',
+                'setGiftCards',
+                'getBaseGiftCardsAmount',
+                'setBaseGiftCardsAmount',
+                'getGiftCardsAmount',
+                'setGiftCardsAmount',
+                'getTaxes',
+                'setTaxes',
+                'getAdditionalItemizedTaxes',
+                'setAdditionalItemizedTaxes',
+                'getCustomerBalanceAmount',
+                'setCustomerBalanceAmount',
+                'getBaseCustomerBalanceAmount',
+                'setBaseCustomerBalanceAmount',
+                'getGiftMessage',
+                'setGiftMessage'
+            ]
+        );
 
         return $orderExtensionAttributeMock;
     }

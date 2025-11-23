@@ -121,10 +121,7 @@ class SubtotalTest extends TestCase
         );
 
         $customerAddressMock = $this->createMock(
-            AddressInterface::class,
-            [],
-            '',
-            false
+            AddressInterface::class
         );
         $customerAddressFactoryMock = $this->createPartialMock(
             AddressInterfaceFactory::class,
@@ -133,10 +130,7 @@ class SubtotalTest extends TestCase
         $customerAddressFactoryMock->expects($this->any())->method('create')->willReturn($customerAddressMock);
 
         $customerAddressRegionMock = $this->createMock(
-            RegionInterface::class,
-            [],
-            '',
-            false
+            RegionInterface::class
         );
         $customerAddressRegionMock->expects($this->any())->method('setRegionId')->willReturnSelf();
         $customerAddressRegionFactoryMock = $this->createPartialMock(

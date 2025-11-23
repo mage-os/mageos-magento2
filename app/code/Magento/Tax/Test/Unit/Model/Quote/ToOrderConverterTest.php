@@ -80,8 +80,38 @@ class ToOrderConverterTest extends TestCase
      */
     protected function setupOrderExtensionAttributeMock()
     {
-        // Use createMock() to mock ALL interface methods automatically - PHPUnit 12 compatible
-        $orderExtensionAttributeMock = $this->createMock(OrderExtensionInterface::class);
+        // Use createPartialMockWithReflection for extension interface with custom methods - PHPUnit 12 compatible
+        $orderExtensionAttributeMock = $this->createPartialMockWithReflection(
+            OrderExtensionInterface::class,
+            [
+                'setAppliedTaxes',
+                'getAppliedTaxes',
+                'setConvertingFromQuote',
+                'getConvertingFromQuote',
+                'setItemAppliedTaxes',
+                'getItemAppliedTaxes',
+                'getShippingAssignments',
+                'setShippingAssignments',
+                'getPaymentAdditionalInfo',
+                'setPaymentAdditionalInfo',
+                'getGiftCards',
+                'setGiftCards',
+                'getBaseGiftCardsAmount',
+                'setBaseGiftCardsAmount',
+                'getGiftCardsAmount',
+                'setGiftCardsAmount',
+                'getTaxes',
+                'setTaxes',
+                'getAdditionalItemizedTaxes',
+                'setAdditionalItemizedTaxes',
+                'getCustomerBalanceAmount',
+                'setCustomerBalanceAmount',
+                'getBaseCustomerBalanceAmount',
+                'setBaseCustomerBalanceAmount',
+                'getGiftMessage',
+                'setGiftMessage'
+            ]
+        );
 
         return $orderExtensionAttributeMock;
     }

@@ -114,15 +114,39 @@ class MsrpPriceTest extends TestCase
         $productRenderInfoDto->expects($this->once())
             ->method('getPriceInfo')
             ->willReturn($productPriceInfo);
-        // PriceInfoExtensionInterface is a generated interface - use getMockBuilder
-        $extensionAttributes = $this->getMockBuilder(PriceInfoExtensionInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        // PriceInfoExtensionInterface is a generated interface - use createPartialMockWithReflection
+        $extensionAttributes = $this->createPartialMockWithReflection(
+            PriceInfoExtensionInterface::class,
+            [
+                'setMsrp',
+                'getMsrp',
+                'getTaxAdjustments',
+                'setTaxAdjustments',
+                'getWeeeAttributes',
+                'setWeeeAttributes',
+                'getWeeeAdjustment',
+                'setWeeeAdjustment'
+            ]
+        );
 
-        // MsrpPriceInfoInterface is a generated interface - use getMockBuilder
-        $msrpPriceInfo = $this->getMockBuilder(MsrpPriceInfoInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        // MsrpPriceInfoInterface is a generated interface - use createPartialMockWithReflection
+        $msrpPriceInfo = $this->createPartialMockWithReflection(
+            MsrpPriceInfoInterface::class,
+            [
+                'setIsApplicable',
+                'getIsApplicable',
+                'setExplanationMessage',
+                'getExplanationMessage',
+                'setMsrpMessage',
+                'getMsrpMessage',
+                'setIsShownPriceOnGesture',
+                'getIsShownPriceOnGesture',
+                'setMsrpPrice',
+                'getMsrpPrice',
+                'getExtensionAttributes',
+                'setExtensionAttributes'
+            ]
+        );
         $amountInterface = $this->createMock(AmountInterface::class);
         $amountInterface->expects($this->once())
             ->method('getValue')

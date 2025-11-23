@@ -114,21 +114,10 @@ class ProductTest extends TestCase
         $filterMock = $this->createMock(Filter::class);
         $searchCriteriaMock = $this->createMock(SearchCriteria::class);
         $searchResultsMock = $this->createMock(
-            TaxClassSearchResultsInterface::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['getItems']
+            TaxClassSearchResultsInterface::class
         );
         $taxClassMock = $this->createMock(
-            TaxClassInterface::class,
-            ['getClassId', 'getClassName'],
-            '',
-            false,
-            true,
-            true
+            TaxClassInterface::class
         );
 
         $this->filterBuilderMock->expects($this->once())

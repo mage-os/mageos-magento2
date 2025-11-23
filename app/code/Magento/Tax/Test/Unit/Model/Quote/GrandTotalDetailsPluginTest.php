@@ -228,8 +228,11 @@ class GrandTotalDetailsPluginTest extends TestCase
             'tax' => $taxTotalMock,
         ];
 
-        // Use createMock() to mock ALL interface methods automatically - PHPUnit 12 compatible
-        $extensionAttributeMock = $this->createMock(TotalSegmentExtensionInterface::class);
+        // Use createPartialMockWithReflection for extension interface with custom methods - PHPUnit 12 compatible
+        $extensionAttributeMock = $this->createPartialMockWithReflection(
+            TotalSegmentExtensionInterface::class,
+            ['setTaxGrandtotalDetails', 'getTaxGrandtotalDetails']
+        );
         $extensionAttributeMock->expects($this->once())
             ->method('setTaxGrandtotalDetails')
             ->with([$taxDetailsMock])

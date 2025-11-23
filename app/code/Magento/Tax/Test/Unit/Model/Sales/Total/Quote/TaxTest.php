@@ -474,7 +474,7 @@ class TaxTest extends TestCase
             AddressInterfaceFactory::class,
             ['create', 'getRegionBuilder']
         );
-        $region = $this->createMock(RegionInterface::class, [], '', false);
+        $region = $this->createMock(RegionInterface::class);
         $regionFactory->method('setRegionId')
             ->willReturn($regionFactory);
         $regionFactory->method('create')
