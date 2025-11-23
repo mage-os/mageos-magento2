@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2015 Adobe
+ * Copyright 2014 Adobe
  * All Rights Reserved.
  */
 declare(strict_types=1);
@@ -51,6 +51,7 @@ class CalendarTest extends TestCase
             ['lv_LV'],
             ['sv_SE'],
             ['de_AT'],
+            ['ar_SA'],
         ];
     }
 

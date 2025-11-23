@@ -74,7 +74,11 @@ class Calendar extends \Magento\Framework\View\Element\Template
             [
                 'wide' => $this->encoder->encode(array_values(iterator_to_array($daysData['format']['wide']))),
                 'abbreviated' => $this->encoder->encode(
-                    array_values(iterator_to_array($daysData['format']['abbreviated']))
+                    array_values(
+                        iterator_to_array(
+                            $daysData['format']['abbreviated'] ?? $daysData['format']['wide']
+                        )
+                    )
                 ),
             ]
         );
