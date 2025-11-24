@@ -11,15 +11,15 @@
     <test name="AdminVerifySalesRuleProductSubselectionWithQuantityConditionTest">
         <annotations>
             <features value="SalesRule"/>
-            <stories value="Cart Price Rule with Product Subselection"/>
+            <stories value="Cart price rule with product subselection"/>
             <title value="Verify cart price rule with product subselection quantity condition applies discount"/>
             <description value="Verify that cart price rule with product subselection condition Qty >= 1 successfully applies discount at checkout"/>
-            <severity value="CRITICAL"/>
+            <severity value="MINOR"/>
             <testCaseId value="AC-15273"/>
             <group value="salesRule"/>
         </annotations>
         <before>
-            <!-- Admin Login -->
+            <!-- Admin login -->
             <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
             <createData entity="_defaultProduct" stepKey="createSimpleProduct"/>
         </before>
@@ -31,17 +31,12 @@
             <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="clearFilters"/>
             <!-- Delete created product -->
             <deleteData createDataKey="createSimpleProduct" stepKey="deleteSimpleProduct"/>
-            <!-- Admin Logout -->
-            <amOnPage url="{{AdminLogoutPage.url}}" stepKey="amOnLogoutPage"/>
+            <!-- Admin logout -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
         </after>
         <!-- Step 1-2: Create cart price rule with product subselection (Qty >= 1) -->
         <actionGroup ref="AdminCreateCartPriceRuleWithProductSubselectionActionGroup" stepKey="createRule">
             <argument name="ruleName" value="TestSalesRule"/>
-            <argument name="condition1" value="Products subselection"/>
-            <argument name="ruleToChange1" value="is"/>
-            <argument name="rule1" value="equals or greater than"/>
-            <argument name="ruleToChange2" value="..."/>
-            <argument name="rule2" value="1"/>
         </actionGroup>
         <!-- Step 3: Run cron job -->
         <actionGroup ref="CliIndexerReindexActionGroup" stepKey="runCronReindex">
@@ -63,7 +58,7 @@
         <actionGroup ref="AssertStorefrontCartDiscountActionGroup" stepKey="seeDiscountTotal">
             <argument name="discount" value="61.50"/>
         </actionGroup>
-        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckoutFromMinicart"/>
+        <actionGroup ref="StorefrontClickProceedToCheckoutActionGroup" stepKey="clickProceedToCheckout"/>
         <actionGroup ref="GuestCheckoutFillingShippingSectionActionGroup" stepKey="guestCheckoutFillingShippingSection">
             <argument name="customerVar" value="CustomerEntityOne" />
             <argument name="customerAddressVar" value="CustomerAddressSimple" />
