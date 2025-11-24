@@ -18,6 +18,7 @@
             <group value="ConfigurableProduct"/>
         </annotations>
         <before>
+            <magentoCLI command="setup:static-content:deploy zh_Hans_CN" stepKey="deployStaticContentWithChineseLocale"/>
             <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
             <actionGroup ref="SetAdminAccountActionGroup" stepKey="changeAdminLocaleToChina">
                 <argument name="InterfaceLocaleByValue" value="zh_Hans_CN"/>
