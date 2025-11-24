@@ -113,9 +113,9 @@ class RestTest extends TestCase
      */
     protected $requestProcessorPool;
 
-    const SERVICE_METHOD = 'testMethod';
+    private const SERVICE_METHOD = 'testMethod';
 
-    const SERVICE_ID = Rest::class;
+    private const SERVICE_ID = Rest::class;
 
     protected function setUp(): void
     {

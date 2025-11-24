@@ -76,6 +76,9 @@ class SoapTest extends TestCase
      */
     protected $_appStateMock;
 
+    /**
+     * @var MockObject|Config
+     */
     protected $_appconfig;
 
     /**
