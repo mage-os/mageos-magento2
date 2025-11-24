@@ -169,13 +169,13 @@
         <waitForPageLoad stepKey="waitForCategoryPage"/>
         <seeElement selector="{{StorefrontCategoryMainSection.productLink}}" stepKey="seeProductInCategory"/>
         <!-- Step 4: Click A swatch on category page -->
-        <scrollTo selector="{{StorefrontCategoryPageProductInfoSection.swatchOptionByLabel('A')}}" stepKey="scrollToSwatchA"/>
-        <click selector="{{StorefrontCategoryPageProductInfoSection.swatchOptionByLabel('A')}}" stepKey="clickSwatchA"/>
-        <waitForPageLoad stepKey="waitAfterClickA"/>
+        <actionGroup ref="StorefrontSelectSwatchOptionOnCategoryPageWithHoverActionGroup" stepKey="selectSwatchA">
+            <argument name="optionLabel" value="A"/>
+        </actionGroup>
         <!-- Step 5: Click 2 swatch on category page -->
-        <scrollTo selector="{{StorefrontCategoryPageProductInfoSection.swatchOptionByLabel('2')}}" stepKey="scrollToSwatch2"/>
-        <click selector="{{StorefrontCategoryPageProductInfoSection.swatchOptionByLabel('2')}}" stepKey="clickSwatch2"/>
-        <waitForPageLoad stepKey="waitAfterClick2"/>
+        <actionGroup ref="StorefrontSelectSwatchOptionOnCategoryPageWithHoverActionGroup" stepKey="selectSwatch2">
+            <argument name="optionLabel" value="2"/>
+        </actionGroup>
         <!-- Step 5 Expected Result: Swatch Z is crossed on category page -->
         <grabAttributeFrom selector="{{StorefrontCategoryPageProductInfoSection.swatchOptionByLabel('Z')}}" userInput="disabled" stepKey="grabZDisabled_A2"/>
         <assertEquals stepKey="assertZDisabled_A2">
@@ -183,9 +183,9 @@
             <actualResult type="string">{$grabZDisabled_A2}</actualResult>
         </assertEquals>
         <!-- Step 6: Click X swatch on category page -->
-        <scrollTo selector="{{StorefrontCategoryPageProductInfoSection.swatchOptionByLabel('X')}}" stepKey="scrollToSwatchX"/>
-        <click selector="{{StorefrontCategoryPageProductInfoSection.swatchOptionByLabel('X')}}" stepKey="clickSwatchX"/>
-        <waitForPageLoad stepKey="waitAfterClickX"/>
+        <actionGroup ref="StorefrontSelectSwatchOptionOnCategoryPageWithHoverActionGroup" stepKey="selectSwatchX">
+            <argument name="optionLabel" value="X"/>
+        </actionGroup>
         <!-- Step 6 Expected Result: Swatches B, 3, Z are crossed on category page -->
         <grabAttributeFrom selector="{{StorefrontCategoryPageProductInfoSection.swatchOptionByLabel('B')}}" userInput="disabled" stepKey="grabBDisabled_A2X"/>
         <assertEquals stepKey="assertBDisabled_A2X">
@@ -203,11 +203,9 @@
             <actualResult type="string">{$grabZDisabled_A2X}</actualResult>
         </assertEquals>
         <!-- Step 7: Click on the 1 on category page -->
-        <scrollTo selector="{{StorefrontCategoryPageProductInfoSection.swatchOptionByLabel('1')}}" stepKey="scrollToSwatch1"/>
-        <moveMouseOver selector="{{StorefrontCategoryPageProductInfoSection.swatchOptionByLabel('1')}}" stepKey="hoverOverSwatch1"/>
-        <waitForElementClickable selector="{{StorefrontCategoryPageProductInfoSection.swatchOptionByLabel('1')}}" stepKey="waitForSwatch1Clickable"/>
-        <click selector="{{StorefrontCategoryPageProductInfoSection.swatchOptionByLabel('1')}}" stepKey="clickSwatch1"/>
-        <waitForPageLoad stepKey="waitAfterClick1"/>
+        <actionGroup ref="StorefrontSelectSwatchOptionOnCategoryPageWithHoverActionGroup" stepKey="selectSwatch1">
+            <argument name="optionLabel" value="1"/>
+        </actionGroup>
         <!-- Step 7 Expected Result: Swatch B is crossed on category page -->
         <grabAttributeFrom selector="{{StorefrontCategoryPageProductInfoSection.swatchOptionByLabel('B')}}" userInput="disabled" stepKey="grabBDisabled_A1X"/>
         <assertEquals stepKey="assertBDisabled_A1X">
@@ -218,13 +216,13 @@
         <click selector="{{StorefrontCategoryMainSection.productLink}}" stepKey="openProductPage"/>
         <waitForPageLoad stepKey="waitForPDP"/>
         <!-- Repeat Step 4: Click A swatch -->
-        <scrollTo selector="{{StorefrontProductInfoMainSection.swatchOptionByLabel('A')}}" stepKey="scrollToSwatchA_PDP"/>
-        <click selector="{{StorefrontProductInfoMainSection.swatchOptionByLabel('A')}}" stepKey="clickSwatchA_PDP"/>
-        <waitForPageLoad stepKey="waitAfterClickA_PDP"/>
+        <actionGroup ref="StorefrontSelectSwatchOptionOnProductPageWithScrollAndHoverActionGroup" stepKey="selectSwatchA_PDP">
+            <argument name="optionName" value="A"/>
+        </actionGroup>
         <!-- Repeat Step 5: Click 2 swatch -->
-        <scrollTo selector="{{StorefrontProductInfoMainSection.swatchOptionByLabel('2')}}" stepKey="scrollToSwatch2_PDP"/>
-        <click selector="{{StorefrontProductInfoMainSection.swatchOptionByLabel('2')}}" stepKey="clickSwatch2_PDP"/>
-        <waitForPageLoad stepKey="waitAfterClick2_PDP"/>
+        <actionGroup ref="StorefrontSelectSwatchOptionOnProductPageWithScrollAndHoverActionGroup" stepKey="selectSwatch2_PDP">
+            <argument name="optionName" value="2"/>
+        </actionGroup>
         <!-- Step 5 Expected Result on PDP: Swatch Z is crossed -->
         <grabAttributeFrom selector="{{StorefrontProductInfoMainSection.swatchOptionByLabel('Z')}}" userInput="disabled" stepKey="grabZDisabled_A2_PDP"/>
         <assertEquals stepKey="assertZDisabled_A2_PDP">
@@ -232,9 +230,9 @@
             <actualResult type="string">{$grabZDisabled_A2_PDP}</actualResult>
         </assertEquals>
         <!-- Repeat Step 6: Click X swatch -->
-        <scrollTo selector="{{StorefrontProductInfoMainSection.swatchOptionByLabel('X')}}" stepKey="scrollToSwatchX_PDP"/>
-        <click selector="{{StorefrontProductInfoMainSection.swatchOptionByLabel('X')}}" stepKey="clickSwatchX_PDP"/>
-        <waitForPageLoad stepKey="waitAfterClickX_PDP"/>
+        <actionGroup ref="StorefrontSelectSwatchOptionOnProductPageWithScrollAndHoverActionGroup" stepKey="selectSwatchX_PDP">
+            <argument name="optionName" value="X"/>
+        </actionGroup>
         <!-- Step 6 Expected Result on PDP: Swatches B, 3, Z are crossed -->
         <grabAttributeFrom selector="{{StorefrontProductInfoMainSection.swatchOptionByLabel('B')}}" userInput="disabled" stepKey="grabBDisabled_A2X_PDP"/>
         <assertEquals stepKey="assertBDisabled_A2X_PDP">
@@ -252,11 +250,9 @@
             <actualResult type="string">{$grabZDisabled_A2X_PDP}</actualResult>
         </assertEquals>
         <!-- Repeat Step 7: Click on the 1 -->
-        <scrollTo selector="{{StorefrontProductInfoMainSection.swatchOptionByLabel('1')}}" stepKey="scrollToSwatch1_PDP"/>
-        <moveMouseOver selector="{{StorefrontProductInfoMainSection.swatchOptionByLabel('1')}}" stepKey="hoverOverSwatch1_PDP"/>
-        <waitForElementClickable selector="{{StorefrontProductInfoMainSection.swatchOptionByLabel('1')}}" stepKey="waitForSwatch1Clickable_PDP"/>
-        <click selector="{{StorefrontProductInfoMainSection.swatchOptionByLabel('1')}}" stepKey="clickSwatch1_PDP"/>
-        <waitForPageLoad stepKey="waitAfterClick1_PDP"/>
+        <actionGroup ref="StorefrontSelectSwatchOptionOnProductPageWithScrollAndHoverActionGroup" stepKey="selectSwatch1_PDP">
+            <argument name="optionName" value="1"/>
+        </actionGroup>
         <!-- Step 7 Expected Result on PDP: Swatch B is crossed -->
         <grabAttributeFrom selector="{{StorefrontProductInfoMainSection.swatchOptionByLabel('B')}}" userInput="disabled" stepKey="grabBDisabled_A1X_PDP"/>
         <assertEquals stepKey="assertBDisabled_A1X_PDP">
