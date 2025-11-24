@@ -7,10 +7,13 @@ declare(strict_types=1);
 
 namespace Magento\Reports\Test\Unit\Block\Adminhtml\Grid;
 
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Reports\Block\Adminhtml\Grid\Shopcart;
 use Magento\Store\Api\Data\StoreInterface;
+use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -19,6 +22,8 @@ use PHPUnit\Framework\TestCase;
  */
 class ShopcartTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Shopcart|MockObject
      */
@@ -32,16 +37,9 @@ class ShopcartTest extends TestCase
     protected function setUp(): void
     {
         $objectManager = new ObjectManager($this);
+        $objectManager->prepareObjectManager();
 
-        $this->storeManagerMock = $this->getMockForAbstractClass(
-            StoreManagerInterface::class,
-            [],
-            '',
-            true,
-            true,
-            true,
-            ['getStore']
-        );
+        $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
 
         $this->model = $objectManager->getObject(
             Shopcart::class,
@@ -51,18 +49,12 @@ class ShopcartTest extends TestCase
 
     /**
      * @param $storeIds
-     *
-     * @dataProvider getCurrentCurrencyCodeDataProvider
      */
+    #[DataProvider('getCurrentCurrencyCodeDataProvider')]
     public function testGetCurrentCurrencyCode($storeIds)
     {
-        $storeMock = $this->getMockForAbstractClass(
-            StoreInterface::class,
-            [],
-            '',
-            true,
-            true,
-            true,
+        $storeMock = $this->createPartialMock(
+            Store::class,
             ['getBaseCurrencyCode']
         );
 

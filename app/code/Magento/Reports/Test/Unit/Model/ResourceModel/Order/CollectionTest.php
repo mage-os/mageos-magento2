@@ -25,6 +25,7 @@ use Magento\Sales\Model\ResourceModel\Report\OrderFactory;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\Matcher\InvokedCount;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -231,10 +232,18 @@ class CollectionTest extends TestCase
      * @param InvokedCount $getIfNullSqlResult
      *
      * @return void
-     * @dataProvider useAggregatedDataDataProvider
      */
+    #[DataProvider('useAggregatedDataDataProvider')]
     public function testPrepareSummary($useAggregatedData, $mainTable, $isFilter, $getIfNullSqlResult): void
     {
+        // Convert string matcher to actual matcher
+        if ($getIfNullSqlResult === 'never') {
+            $getIfNullSqlResult = $this->never();
+        } elseif (str_starts_with($getIfNullSqlResult, 'exactly_')) {
+            $count = (int)str_replace('exactly_', '', $getIfNullSqlResult);
+            $getIfNullSqlResult = $this->exactly($count);
+        }
+        
         $range = '';
         $customStart = 1;
         $customEnd = 10;
@@ -285,8 +294,8 @@ class CollectionTest extends TestCase
      * @param array $expectedInterval
      *
      * @return void
-     * @dataProvider firstPartDateRangeDataProvider
      */
+    #[DataProvider('firstPartDateRangeDataProvider')]
     public function testGetDateRangeFirstPart($range, $customStart, $customEnd, $expectedInterval): void
     {
         $result = $this->collection->getDateRange($range, $customStart, $customEnd);
@@ -301,9 +310,9 @@ class CollectionTest extends TestCase
      * @param string $customEnd
      * @param string $config
      * @param int $expectedYear
-     * @dataProvider secondPartDateRangeDataProvider
      * @return void
      */
+    #[DataProvider('secondPartDateRangeDataProvider')]
     public function testGetDateRangeSecondPart($range, $customStart, $customEnd, $config, $expectedYear): void
     {
         $this->scopeConfigMock
@@ -349,10 +358,18 @@ class CollectionTest extends TestCase
      * @param InvokedCount $getIfNullSqlResult
      *
      * @return void
-     * @dataProvider totalsDataProvider
      */
+    #[DataProvider('totalsDataProvider')]
     public function testCalculateTotals($isFilter, $useAggregatedData, $mainTable, $getIfNullSqlResult): void
     {
+        // Convert string matcher to actual matcher
+        if ($getIfNullSqlResult === 'never') {
+            $getIfNullSqlResult = $this->never();
+        } elseif (str_starts_with($getIfNullSqlResult, 'exactly_')) {
+            $count = (int)str_replace('exactly_', '', $getIfNullSqlResult);
+            $getIfNullSqlResult = $this->exactly($count);
+        }
+        
         $this->scopeConfigMock
             ->expects($this->once())
             ->method('getValue')
@@ -380,8 +397,8 @@ class CollectionTest extends TestCase
      * @param string $mainTable
      *
      * @return void
-     * @dataProvider salesDataProvider
      */
+    #[DataProvider('salesDataProvider')]
     public function testCalculateSales($isFilter, $useAggregatedData, $mainTable): void
     {
         $this->scopeConfigMock
@@ -432,8 +449,8 @@ class CollectionTest extends TestCase
      * @param array $parameters
      *
      * @return void
-     * @dataProvider storesDataProvider
      */
+    #[DataProvider('storesDataProvider')]
     public function testSetStoreIds($storeIds, $parameters): void
     {
         $this->connectionMock
@@ -456,9 +473,9 @@ class CollectionTest extends TestCase
     public static function useAggregatedDataDataProvider(): array
     {
         return [
-            [1, 'sales_order_aggregated_created', 0, self::never()],
-            [0, 'sales_order', 0, self::exactly(7)],
-            [0, 'sales_order', 1, self::exactly(6)]
+            [1, 'sales_order_aggregated_created', 0, 'never'],
+            [0, 'sales_order', 0, 'exactly_7'],
+            [0, 'sales_order', 1, 'exactly_6']
         ];
     }
 
@@ -496,10 +513,10 @@ class CollectionTest extends TestCase
     public static function totalsDataProvider(): array
     {
         return [
-            [1, 1, 'sales_order_aggregated_created', self::never()],
-            [0, 1, 'sales_order_aggregated_created', self::never()],
-            [1, 0, 'sales_order', self::exactly(10)],
-            [0, 0, 'sales_order', self::exactly(11)]
+            [1, 1, 'sales_order_aggregated_created', 'never'],
+            [0, 1, 'sales_order_aggregated_created', 'never'],
+            [1, 0, 'sales_order', 'exactly_10'],
+            [0, 0, 'sales_order', 'exactly_11']
         ];
     }
 

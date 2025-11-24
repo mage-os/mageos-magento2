@@ -34,6 +34,7 @@ use Magento\Framework\Module\Manager as Manager;
 use Magento\Framework\Stdlib\DateTime;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\Validator\UniversalFactory;
 use Magento\Quote\Model\ResourceModel\Quote\Collection;
 use Magento\Reports\Model\Event\TypeFactory;
@@ -51,6 +52,8 @@ use Psr\Log\LoggerInterface;
  */
 class CollectionTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var ProductCollection
      */
@@ -89,29 +92,30 @@ class CollectionTest extends TestCase
     protected function setUp(): void
     {
         $this->objectManager = new ObjectManager($this);
+        $this->objectManager->prepareObjectManager();
         $context = $this->createPartialMock(Context::class, ['getResource', 'getEavConfig']);
         $entityFactoryMock = $this->createMock(EntityFactory::class);
-        $loggerMock = $this->getMockForAbstractClass(LoggerInterface::class);
-        $fetchStrategyMock = $this->getMockForAbstractClass(FetchStrategyInterface::class);
-        $eventManagerMock = $this->getMockForAbstractClass(ManagerInterface::class);
+        $loggerMock = $this->createMock(LoggerInterface::class);
+        $fetchStrategyMock = $this->createMock(FetchStrategyInterface::class);
+        $eventManagerMock = $this->createMock(ManagerInterface::class);
         $eavConfigMock = $this->createMock(Config::class);
         $this->resourceMock = $this->createPartialMock(ResourceConnection::class, ['getTableName', 'getConnection']);
         $eavEntityFactoryMock = $this->createMock(EavEntityFactory::class);
         $resourceHelperMock = $this->createMock(Helper::class);
         $universalFactoryMock = $this->createMock(UniversalFactory::class);
-        $storeManagerMock = $this->createPartialMockForAbstractClass(
-            StoreManagerInterface::class,
+        $storeManagerMock = $this->createPartialMockWithReflection(
+            \Magento\Store\Model\StoreManager::class,
             ['getStore', 'getId']
         );
         $moduleManagerMock = $this->createMock(Manager::class);
         $productFlatStateMock = $this->createMock(State::class);
-        $scopeConfigMock = $this->getMockForAbstractClass(ScopeConfigInterface::class);
+        $scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
         $optionFactoryMock = $this->createMock(OptionFactory::class);
         $catalogUrlMock = $this->createMock(Url::class);
-        $localeDateMock = $this->getMockForAbstractClass(TimezoneInterface::class);
+        $localeDateMock = $this->createMock(TimezoneInterface::class);
         $customerSessionMock = $this->createMock(Session::class);
         $dateTimeMock = $this->createMock(DateTime::class);
-        $groupManagementMock = $this->getMockForAbstractClass(GroupManagementInterface::class);
+        $groupManagementMock = $this->createMock(GroupManagementInterface::class);
         $eavConfig = $this->createPartialMock(Config::class, ['getEntityType']);
         $entityType = $this->createMock(Type::class);
 
@@ -119,10 +123,10 @@ class CollectionTest extends TestCase
         $context->expects($this->atLeastOnce())->method('getResource')->willReturn($this->resourceMock);
         $context->expects($this->atLeastOnce())->method('getEavConfig')->willReturn($eavConfig);
 
-        $defaultAttributes = $this->getMockBuilder(DefaultAttributes::class)
-            ->addMethods(['_getDefaultAttributes'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $defaultAttributes = $this->createPartialMockWithReflection(
+            DefaultAttributes::class,
+            ['_getDefaultAttributes']
+        );
         $productMock = $this->objectManager->getObject(
             ResourceProduct::class,
             ['context' => $context, 'defaultAttributes' => $defaultAttributes]
@@ -131,7 +135,7 @@ class CollectionTest extends TestCase
         $this->eventTypeFactoryMock = $this->createMock(TypeFactory::class);
         $productTypeMock = $this->createMock(ProductType::class);
         $quoteResourceMock = $this->createMock(Collection::class);
-        $this->connectionMock = $this->createPartialMockForAbstractClass(AdapterInterface::class, ['select']);
+        $this->connectionMock = $this->createMock(AdapterInterface::class);
         $this->selectMock = $this->createPartialMock(
             Select::class,
             [
@@ -198,45 +202,22 @@ class CollectionTest extends TestCase
      */
     public function testAddViewsCount()
     {
-        $context = $this->createPartialMock(
-            \Magento\Framework\Model\ResourceModel\Db\Context::class,
-            ['getResources']
-        );
-        $context->expects($this->atLeastOnce())
-            ->method('getResources')
-            ->willReturn($this->resourceMock);
-        $abstractResourceMock = $this->getMockForAbstractClass(
-            AbstractDb::class,
-            ['context' => $context],
-            '',
-            true,
-            true,
-            true,
-            [
-                'getTableName',
-                'getConnection',
-                'getMainTable',
-            ]
-        );
-
-        $abstractResourceMock->expects($this->atLeastOnce())
-            ->method('getConnection')
-            ->willReturn($this->connectionMock);
-        $abstractResourceMock->expects($this->atLeastOnce())
-            ->method('getMainTable')
-            ->willReturn('catalog_product');
-
         /** @var \Magento\Reports\Model\ResourceModel\Event\Type\Collection $eventTypesCollection */
-        $eventTypesCollection = $this->objectManager->getObject(
+        $eventTypesCollection = $this->createPartialMock(
             \Magento\Reports\Model\ResourceModel\Event\Type\Collection::class,
-            ['resource' => $abstractResourceMock]
+            ['addItem', 'getIterator', 'getItems']
         );
-        $eventTypeMock = $this->getMockBuilder(\Magento\Reports\Model\Event\Type::class)->addMethods(['getEventName'])
-            ->onlyMethods(['getId', 'getCollection'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $eventTypeMock = $this->createPartialMockWithReflection(
+            \Magento\Reports\Model\Event\Type::class,
+            ['getEventName', 'getId', 'getCollection']
+        );
 
-        $eventTypesCollection->addItem($eventTypeMock);
+        $eventTypesCollection->expects($this->any())
+            ->method('getItems')
+            ->willReturn([$eventTypeMock]);
+        $eventTypesCollection->expects($this->any())
+            ->method('getIterator')
+            ->willReturn(new \ArrayIterator([$eventTypeMock]));
 
         $this->eventTypeFactoryMock->expects($this->once())
             ->method('create')
@@ -286,24 +267,4 @@ class CollectionTest extends TestCase
         $this->collection->addViewsCount();
     }
 
-    /**
-     * Get mock for abstract class with methods.
-     *
-     * @param string $className
-     * @param array $methods
-     *
-     * @return MockObject
-     */
-    private function createPartialMockForAbstractClass($className, $methods)
-    {
-        return $this->getMockForAbstractClass(
-            $className,
-            [],
-            '',
-            true,
-            true,
-            true,
-            $methods
-        );
-    }
 }
