@@ -161,4 +161,3 @@
         <actionGroup ref="ClickPlaceOrderActionGroup" stepKey="placeOrder"/>
     </test>
 </tests>
-
