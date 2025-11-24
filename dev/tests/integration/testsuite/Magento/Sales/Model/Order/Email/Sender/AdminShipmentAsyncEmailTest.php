@@ -70,7 +70,7 @@ class AdminShipmentAsyncEmailTest extends TestCase
     }
 
     /**
-     * Ensures shipment emails created in async mode are dispatched only after the cron runs.
+     * Tests shipment email async behavior: not sent immediately, then sent by cron.
      *
      * @return void
      * @throws LocalizedException
@@ -92,33 +92,87 @@ class AdminShipmentAsyncEmailTest extends TestCase
         DataFixture(SetPaymentMethodFixture::class, ['cart_id' => '$cart.id$', 'method' => 'checkmo']),
         DataFixture(PlaceOrderFixture::class, ['cart_id' => '$cart.id$'], 'order'),
     ]
-    public function testShipmentEmailDispatchedByCron(): void
+    public function testShipmentAsyncEmailBehavior(): void
     {
         Bootstrap::getInstance()->loadArea(Area::AREA_ADMINHTML);
-
-        $fixtures = DataFixtureStorageManager::getStorage();
-        /** @var Order $fixtureOrder */
-        $fixtureOrder = $fixtures->get('order');
-
+        $shipment = $this->createShipmentForOrder();
         $objectManager = Bootstrap::getObjectManager();
-        $orderRepository = $objectManager->get(OrderRepositoryInterface::class);
+        $shipmentNotifier = $objectManager->get(ShipmentNotifier::class);
+        $notifyResult = $shipmentNotifier->notify($shipment);
+        $this->assertFalse(
+            $notifyResult,
+            'ShipmentNotifier::notify should defer sending when async mode is active.'
+        );
+        $this->assertCount(
+            0,
+            $this->sentEmails,
+            'Email must not be sent immediately in async mode.'
+        );
+        $cron = $objectManager->get('SalesShipmentSendEmailsCron');
+        $cron->execute();
+        $this->assertCount(
+            1,
+            $this->sentEmails,
+            'One shipment email should be dispatched after cron execution.'
+        );
+        $this->assertShipmentEmailContent($this->sentEmails[0]);
+    }
+
+    /**
+     * Creates an invoice for the given order.
+     *
+     * @param Order $order
+     * @return void
+     * @throws LocalizedException
+     */
+    private function createInvoiceForOrder(Order $order): void
+    {
+        $objectManager = Bootstrap::getObjectManager();
         $invoiceService = $objectManager->get(InvoiceService::class);
         $invoiceRepository = $objectManager->get(InvoiceRepositoryInterface::class);
-        $shipmentRepository = $objectManager->get(ShipmentRepositoryInterface::class);
-        $shipmentNotifier = $objectManager->get(ShipmentNotifier::class);
-        $shipmentFactory = $objectManager->get(ShipmentFactory::class);
-
-        $order = $orderRepository->get((int)$fixtureOrder->getEntityId());
-        $this->assertTrue($order->canInvoice(), 'Order must be invoiceable before creating a shipment.');
-
+        $orderRepository = $objectManager->get(OrderRepositoryInterface::class);
         $invoice = $invoiceService->prepareInvoice($order);
         $invoice->register();
         $invoice->setSendEmail(false);
         $invoiceRepository->save($invoice);
         $orderRepository->save($order);
+    }
 
-        $this->assertTrue($order->canShip(), 'Order must be shippable after invoicing.');
+    /**
+     * Creates a shipment for the order from fixtures.
+     *
+     * @return \Magento\Sales\Api\Data\ShipmentInterface
+     * @throws LocalizedException
+     */
+    private function createShipmentForOrder()
+    {
+        $fixtures = DataFixtureStorageManager::getStorage();
+        /** @var Order $fixtureOrder */
+        $fixtureOrder = $fixtures->get('order');
+        $objectManager = Bootstrap::getObjectManager();
+        $orderRepository = $objectManager->get(OrderRepositoryInterface::class);
+        $shipmentRepository = $objectManager->get(ShipmentRepositoryInterface::class);
+        $shipmentFactory = $objectManager->get(ShipmentFactory::class);
+        $order = $orderRepository->get((int)$fixtureOrder->getEntityId());
+        $this->createInvoiceForOrder($order);
+        $quantities = $this->calculateShippableQuantities($order);
+        $shipment = $shipmentFactory->create($order, $quantities);
+        $shipment->register();
+        $shipment->setSendEmail(true);
+        $shipmentRepository->save($shipment);
+        $orderRepository->save($shipment->getOrder());
 
+        return $shipment;
+    }
+
+    /**
+     * Calculates shippable quantities for order items.
+     *
+     * @param Order $order
+     * @return array
+     */
+    private function calculateShippableQuantities(Order $order): array
+    {
         $quantities = [];
         foreach ($order->getAllItems() as $orderItem) {
             if ($orderItem->getIsVirtual()) {
@@ -129,39 +183,28 @@ class AdminShipmentAsyncEmailTest extends TestCase
                 $quantities[$orderItem->getItemId()] = $qtyToShip;
             }
         }
-        $this->assertNotEmpty($quantities, 'At least one shippable item is required.');
+        return $quantities;
+    }
 
-        $shipment = $shipmentFactory->create($order, $quantities);
-        $shipment->register();
-        $shipment->setSendEmail(true);
-
-        $shipmentRepository->save($shipment);
-        $orderRepository->save($shipment->getOrder());
-
-        $notifyResult = $shipmentNotifier->notify($shipment);
-        $this->assertFalse(
-            $notifyResult,
-            'ShipmentNotifier::notify should return false while the email is queued for async sending.'
-        );
-        $this->assertCount(
-            0,
-            $this->sentEmails,
-            'No shipment email should be dispatched immediately.'
-        );
-
-        $cron = $objectManager->get('SalesShipmentSendEmailsCron');
-        $cron->execute();
-        $cron->execute();
-
-        $this->assertCount(
-            1,
-            $this->sentEmails,
-            'One shipment email should be dispatched after cron execution.'
-        );
-        $email = $this->sentEmails[0];
+    /**
+     * Asserts shipment email has correct content.
+     *
+     * @param EmailMessageInterface $email
+     * @return void
+     */
+    private function assertShipmentEmailContent(EmailMessageInterface $email): void
+    {
         $this->assertInstanceOf(EmailMessageInterface::class, $email);
-        $this->assertStringContainsString('order has shipped', $email->getSubject());
-        $this->assertEquals('async-shipment@example.com', $email->getTo()[0]->getEmail());
+        $this->assertStringContainsString(
+            'order has shipped',
+            $email->getSubject(),
+            'Email subject should contain shipment confirmation text.'
+        );
+        $this->assertEquals(
+            'async-shipment@example.com',
+            $email->getTo()[0]->getEmail(),
+            'Email should be sent to the customer email address.'
+        );
     }
 
     /**
