@@ -1,4 +1,8 @@
 <?php
+/**
+ * Copyright 2025 Adobe
+ * All Rights Reserved.
+ */
 declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Block\Adminhtml\Product\Edit;
@@ -16,13 +20,39 @@ use Magento\Framework\UrlInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Unit test for AttributeSet block.
+ */
 class AttributeSetTest extends TestCase
 {
+    /**
+     * @var AttributeSet
+     */
     private AttributeSet $block;
+
+    /**
+     * @var Registry|MockObject
+     */
     private Registry|MockObject $registry;
+
+    /**
+     * @var Product|MockObject
+     */
     private Product|MockObject $product;
+
+    /**
+     * @var UrlInterface|MockObject
+     */
     private UrlInterface|MockObject $urlBuilder;
+
+    /**
+     * @var Escaper|MockObject
+     */
     private Escaper|MockObject $escaper;
+
+    /**
+     * @var JsonHelper|MockObject
+     */
     private JsonHelper|MockObject $jsonHelper;
 
     protected function setUp(): void
@@ -176,4 +206,3 @@ class AttributeSetTest extends TestCase
         $this->assertIsInt($options['minLength']);
     }
 }
-

@@ -29,15 +29,44 @@ use ReflectionClass;
 
 /**
  * Unit test for NewCategory block.
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class NewCategoryTest extends TestCase
 {
+    /**
+     * @var NewCategory
+     */
     private NewCategory $block;
+
+    /**
+     * @var FormFactory|MockObject
+     */
     private FormFactory|MockObject $formFactory;
+
+    /**
+     * @var Registry|MockObject
+     */
     private Registry|MockObject $registry;
+
+    /**
+     * @var EncoderInterface|MockObject
+     */
     private EncoderInterface|MockObject $jsonEncoder;
+
+    /**
+     * @var CategoryFactory|MockObject
+     */
     private CategoryFactory|MockObject $categoryFactory;
+
+    /**
+     * @var SecureHtmlRenderer|MockObject
+     */
     private SecureHtmlRenderer|MockObject $secureRenderer;
+
+    /**
+     * @var UrlInterface|MockObject
+     */
     private UrlInterface|MockObject $urlBuilder;
 
     protected function setUp(): void

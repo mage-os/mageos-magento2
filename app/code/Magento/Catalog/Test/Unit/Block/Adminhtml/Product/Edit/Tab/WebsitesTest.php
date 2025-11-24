@@ -1,4 +1,8 @@
 <?php
+/**
+ * Copyright 2025 Adobe
+ * All Rights Reserved.
+ */
 declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Block\Adminhtml\Product\Edit\Tab;
@@ -25,15 +29,51 @@ use Magento\Store\Model\WebsiteFactory;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Unit test for Websites tab block.
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class WebsitesTest extends TestCase
 {
+    /**
+     * @var Websites
+     */
     private Websites $block;
+
+    /**
+     * @var Registry|MockObject
+     */
     private Registry|MockObject $registry;
+
+    /**
+     * @var Product|MockObject
+     */
     private Product|MockObject $product;
+
+    /**
+     * @var StoreManagerInterface|MockObject
+     */
     private StoreManagerInterface|MockObject $storeManager;
+
+    /**
+     * @var WebsiteFactory|MockObject
+     */
     private WebsiteFactory|MockObject $websiteFactory;
+
+    /**
+     * @var GroupFactory|MockObject
+     */
     private GroupFactory|MockObject $groupFactory;
+
+    /**
+     * @var StoreFactory|MockObject
+     */
     private StoreFactory|MockObject $storeFactory;
+
+    /**
+     * @var Escaper|MockObject
+     */
     private Escaper|MockObject $escaper;
 
     protected function setUp(): void

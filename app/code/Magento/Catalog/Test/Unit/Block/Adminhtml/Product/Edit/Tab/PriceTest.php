@@ -26,12 +26,36 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
+/**
+ * Unit test for Price tab block.
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class PriceTest extends TestCase
 {
+    /**
+     * @var Price
+     */
     private Price $block;
+
+    /**
+     * @var FormFactory|MockObject
+     */
     private FormFactory|MockObject $formFactory;
+
+    /**
+     * @var Registry|MockObject
+     */
     private Registry|MockObject $registry;
+
+    /**
+     * @var LayoutInterface|MockObject
+     */
     private LayoutInterface|MockObject $layout;
+
+    /**
+     * @var Product|MockObject
+     */
     private Product|MockObject $product;
 
     protected function setUp(): void
