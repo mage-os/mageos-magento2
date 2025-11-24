@@ -16,13 +16,17 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
+
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class ShowTest extends TestCase
-{
+{ use MockCreationTrait;
     /**
      * @var ReportUrlProvider|MockObject
      */
@@ -64,7 +68,7 @@ class ShowTest extends TestCase
 
         $this->redirectMock = $this->createMock(Redirect::class);
 
-        $this->messageManagerMock = $this->getMockForAbstractClass(ManagerInterface::class);
+        $this->messageManagerMock = $this->createMock(ManagerInterface::class);
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
 
@@ -104,10 +108,9 @@ class ShowTest extends TestCase
     }
 
     /**
-     * @dataProvider executeWithExceptionDataProvider
-     *
      * @param \Exception $exception
      */
+    #[DataProvider('executeWithExceptionDataProvider')]
     public function testExecuteWithException(\Exception $exception)
     {
         $this->resultFactoryMock

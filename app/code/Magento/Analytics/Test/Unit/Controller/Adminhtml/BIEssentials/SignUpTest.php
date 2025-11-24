@@ -14,9 +14,11 @@ use Magento\Framework\Controller\Result\Redirect;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+
 
 class SignUpTest extends TestCase
-{
+{ use MockCreationTrait;
     /**
      * @var ObjectManagerHelper
      */
@@ -47,7 +49,7 @@ class SignUpTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->configMock = $this->getMockForAbstractClass(ScopeConfigInterface::class);
+        $this->configMock = $this->createMock(ScopeConfigInterface::class);
         $this->resultRedirectFactoryMock = $this->createMock(RedirectFactory::class);
         $this->redirectMock = $this->createMock(Redirect::class);
 

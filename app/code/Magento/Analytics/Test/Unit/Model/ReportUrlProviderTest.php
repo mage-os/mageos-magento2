@@ -16,13 +16,17 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\FlagManager;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
+
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class ReportUrlProviderTest extends TestCase
-{
+{ use MockCreationTrait;
     /**
      * @var ScopeConfigInterface|MockObject
      */
@@ -53,7 +57,7 @@ class ReportUrlProviderTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->configMock = $this->getMockForAbstractClass(ScopeConfigInterface::class);
+        $this->configMock = $this->createMock(ScopeConfigInterface::class);
 
         $this->analyticsTokenMock = $this->createMock(AnalyticsToken::class);
 
@@ -79,9 +83,7 @@ class ReportUrlProviderTest extends TestCase
      * @param string|null $otp If null OTP was not received.
      * @param string $configPath
      * @return void
-     *
-     * @dataProvider getUrlDataProvider
-     */
+     *#[DataProvider('getUrlDataProvider')]
     public function testGetUrl(bool $isTokenExist, ?string $otp, string $configPath): void
     {
         $reportUrl = 'https://example.com/report';

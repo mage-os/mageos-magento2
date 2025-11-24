@@ -14,9 +14,11 @@ use Magento\Framework\App\Config\Storage\WriterInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+
 
 class AnalyticsTokenTest extends TestCase
-{
+{ use MockCreationTrait;
     /**
      * @var ReinitableConfigInterface|MockObject
      */
@@ -52,11 +54,11 @@ class AnalyticsTokenTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->reinitableConfigMock = $this->getMockForAbstractClass(ReinitableConfigInterface::class);
+        $this->reinitableConfigMock = $this->createMock(ReinitableConfigInterface::class);
 
-        $this->configMock = $this->getMockForAbstractClass(ScopeConfigInterface::class);
+        $this->configMock = $this->createMock(ScopeConfigInterface::class);
 
-        $this->configWriterMock = $this->getMockForAbstractClass(WriterInterface::class);
+        $this->configWriterMock = $this->createMock(WriterInterface::class);
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
 

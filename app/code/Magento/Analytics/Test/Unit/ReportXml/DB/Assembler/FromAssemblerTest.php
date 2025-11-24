@@ -14,6 +14,8 @@ use Magento\Analytics\ReportXml\DB\SelectBuilder;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
+
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -81,7 +83,10 @@ class FromAssemblerTest extends TestCase
     }
 
     /**
-     * @dataProvider assembleDataProvider
+     *
+     */
+    #[DataProvider('assembleDataProvider')]
+    /**
      * @param array $queryConfig
      * @param string $tableName
      * @return void

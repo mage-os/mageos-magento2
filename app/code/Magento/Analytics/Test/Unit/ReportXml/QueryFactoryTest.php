@@ -21,7 +21,11 @@ use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
+
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+
 
 /**
  * A unit test for testing of the query factory.
@@ -29,7 +33,7 @@ use PHPUnit\Framework\TestCase;
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class QueryFactoryTest extends TestCase
-{
+{ use MockCreationTrait;
     private const STUB_QUERY_NAME = 'test_query';
     private const STUB_CONNECTION = 'default';
 
@@ -99,11 +103,11 @@ class QueryFactoryTest extends TestCase
 
         $this->selectMock = $this->createMock(Select::class);
 
-        $this->assemblerMock = $this->getMockForAbstractClass(AssemblerInterface::class);
+        $this->assemblerMock = $this->createMock(AssemblerInterface::class);
 
-        $this->queryCacheMock = $this->getMockForAbstractClass(CacheInterface::class);
+        $this->queryCacheMock = $this->createMock(CacheInterface::class);
 
-        $this->objectManagerMock = $this->getMockForAbstractClass(ObjectManagerInterface::class);
+        $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
 
         $this->selectHydratorMock = $this->createMock(SelectHydrator::class);
 
@@ -130,8 +134,8 @@ class QueryFactoryTest extends TestCase
      * Test create() if query cached
      *
      * @return void
-     * @dataProvider queryDataProvider
      */
+    #[DataProvider('queryDataProvider')]
     public function testCreateIfQueryCached(array $queryDataMock, string $jsonEncodeData): void
     {
         $queryConfigMock = $queryDataMock['config'];
@@ -166,8 +170,8 @@ class QueryFactoryTest extends TestCase
      * Test create() if query not cached
      *
      * @return void
-     * @dataProvider queryDataProvider
      */
+    #[DataProvider('queryDataProvider')]
     public function testCreateIfQueryNotCached(array $queryDataMock, string $jsonEncodeData): void
     {
         $queryConfigMock = $queryDataMock['config'];

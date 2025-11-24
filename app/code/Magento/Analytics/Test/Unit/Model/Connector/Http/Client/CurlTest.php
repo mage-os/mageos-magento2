@@ -17,7 +17,11 @@ use Magento\Framework\HTTP\Adapter\CurlFactory;
 use Magento\Framework\HTTP\ResponseFactory;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
+
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+
 use Psr\Log\LoggerInterface;
 
 /**
@@ -25,7 +29,9 @@ use Psr\Log\LoggerInterface;
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class CurlTest extends TestCase
-{
+{ 
+    use MockCreationTrait;
+    
     /**
      * @var Curl
      */
@@ -58,7 +64,7 @@ class CurlTest extends TestCase
     {
         $this->curlAdapterMock = $this->createMock(\Magento\Framework\HTTP\Adapter\Curl::class);
 
-        $this->loggerMock = $this->getMockForAbstractClass(LoggerInterface::class);
+        $this->loggerMock = $this->createMock(LoggerInterface::class);
         $curlFactoryMock = $this->getMockBuilder(CurlFactory::class)
             ->onlyMethods(['create'])
             ->disableOriginalConstructor()
@@ -106,8 +112,8 @@ class CurlTest extends TestCase
      * @param array $data
      * @return void
      * @throws RuntimeException
-     * @dataProvider getTestData
      */
+    #[DataProvider('getTestData')]
     public function testRequestSuccess(array $data)
     {
         $responseString = 'This is response.';
@@ -145,8 +151,8 @@ class CurlTest extends TestCase
      * @param array $data
      * @return void
      * @throws RuntimeException
-     * @dataProvider getTestData
      */
+    #[DataProvider('getTestData')]
     public function testRequestError(array $data)
     {
         $response = new Response();

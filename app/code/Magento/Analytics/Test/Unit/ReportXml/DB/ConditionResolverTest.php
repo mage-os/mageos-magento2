@@ -14,9 +14,11 @@ use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Sql\Expression;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+
 
 class ConditionResolverTest extends TestCase
-{
+{ use MockCreationTrait;
     /**
      * @var ResourceConnection|MockObject
      */
@@ -46,7 +48,7 @@ class ConditionResolverTest extends TestCase
 
         $this->selectBuilderMock = $this->createMock(SelectBuilder::class);
 
-        $this->connectionMock = $this->getMockForAbstractClass(AdapterInterface::class);
+        $this->connectionMock = $this->createMock(AdapterInterface::class);
 
         $this->conditionResolver = new ConditionResolver($this->resourceConnectionMock);
     }

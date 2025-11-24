@@ -13,10 +13,12 @@ use Magento\Framework\App\Config\Value;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+
 use Psr\Log\LoggerInterface;
 
 class CollectionTimeTest extends TestCase
-{
+{ use MockCreationTrait;
     /**
      * @var WriterInterface|MockObject
      */
@@ -42,9 +44,9 @@ class CollectionTimeTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->configWriterMock = $this->getMockForAbstractClass(WriterInterface::class);
+        $this->configWriterMock = $this->createMock(WriterInterface::class);
 
-        $this->loggerMock = $this->getMockForAbstractClass(LoggerInterface::class);
+        $this->loggerMock = $this->createMock(LoggerInterface::class);
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
 

@@ -16,13 +16,15 @@ use Magento\Analytics\Model\Connector\OTPRequest;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+
 use Psr\Log\LoggerInterface;
 
 /**
  * A unit test for testing of the representation of a 'OTP' request.
  */
 class OTPRequestTest extends TestCase
-{
+{ use MockCreationTrait;
     /**
      * @var OTPRequest
      */
@@ -58,11 +60,11 @@ class OTPRequestTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->loggerMock = $this->getMockForAbstractClass(LoggerInterface::class);
+        $this->loggerMock = $this->createMock(LoggerInterface::class);
 
-        $this->configMock = $this->getMockForAbstractClass(ScopeConfigInterface::class);
+        $this->configMock = $this->createMock(ScopeConfigInterface::class);
 
-        $this->httpClientMock = $this->getMockForAbstractClass(ClientInterface::class);
+        $this->httpClientMock = $this->createMock(ClientInterface::class);
 
         $this->analyticsTokenMock = $this->createMock(AnalyticsToken::class);
 

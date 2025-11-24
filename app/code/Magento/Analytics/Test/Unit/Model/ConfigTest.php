@@ -12,12 +12,14 @@ use Magento\Framework\Config\DataInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class ConfigTest extends TestCase
-{
+{ use MockCreationTrait;
     /**
      * @var DataInterface|MockObject
      */
@@ -38,7 +40,7 @@ class ConfigTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->dataInterfaceMock = $this->getMockForAbstractClass(DataInterface::class);
+        $this->dataInterfaceMock = $this->createMock(DataInterface::class);
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
 

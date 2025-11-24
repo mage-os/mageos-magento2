@@ -20,13 +20,15 @@ use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+
 use Psr\Log\LoggerInterface;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class NotifyDataChangedCommandTest extends TestCase
-{
+{ use MockCreationTrait;
     /**
      * @var NotifyDataChangedCommand
      */
@@ -56,13 +58,13 @@ class NotifyDataChangedCommandTest extends TestCase
     {
         $this->analyticsTokenMock =  $this->createMock(AnalyticsToken::class);
 
-        $this->httpClientMock =  $this->getMockForAbstractClass(ClientInterface::class);
+        $this->httpClientMock =  $this->createMock(ClientInterface::class);
 
-        $this->configMock =  $this->getMockForAbstractClass(ScopeConfigInterface::class);
+        $this->configMock =  $this->createMock(ScopeConfigInterface::class);
 
-        $this->loggerMock =  $this->getMockForAbstractClass(LoggerInterface::class);
+        $this->loggerMock =  $this->createMock(LoggerInterface::class);
         $successHandler = $this->getMockBuilder(ResponseHandlerInterface::class)
-            ->getMockForAbstractClass();
+            ->getMock();
         $successHandler->method('handleResponse')
             ->willReturn(true);
         $serializerMock = $this->createMock(Json::class);

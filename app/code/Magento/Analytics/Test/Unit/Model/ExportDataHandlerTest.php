@@ -18,10 +18,14 @@ use Magento\Framework\Filesystem\Directory\WriteInterface;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
+
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+
 
 class ExportDataHandlerTest extends TestCase
-{
+{ use MockCreationTrait;
     /**
      * @var Filesystem|MockObject
      */
@@ -86,13 +90,13 @@ class ExportDataHandlerTest extends TestCase
 
         $this->archiveMock = $this->createMock(Archive::class);
 
-        $this->reportWriterMock = $this->getMockForAbstractClass(ReportWriterInterface::class);
+        $this->reportWriterMock = $this->createMock(ReportWriterInterface::class);
 
         $this->cryptographerMock = $this->createMock(Cryptographer::class);
 
         $this->fileRecorderMock = $this->createMock(FileRecorder::class);
 
-        $this->directoryMock = $this->getMockForAbstractClass(WriteInterface::class);
+        $this->directoryMock = $this->createMock(WriteInterface::class);
 
         $this->encodedContextMock = $this->createMock(EncodedContext::class);
 
@@ -124,8 +128,8 @@ class ExportDataHandlerTest extends TestCase
 
     /**
      * @param bool $isArchiveSourceDirectory
-     * @dataProvider prepareExportDataDataProvider
      */
+    #[DataProvider('prepareExportDataDataProvider')]
     public function testPrepareExportData($isArchiveSourceDirectory)
     {
         $tmpFilesDirectoryPath = $this->subdirectoryPath . 'tmp/' . $this->getInstanceIdentifier() . '/';

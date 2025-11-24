@@ -18,12 +18,14 @@ use Magento\Framework\DB\Statement\Pdo\Mysql;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+
 
 /**
  * A unit test for testing of the reports provider.
  */
 class ReportProviderTest extends TestCase
-{
+{ use MockCreationTrait;
     /**
      * @var ReportProvider
      */
@@ -93,7 +95,7 @@ class ReportProviderTest extends TestCase
             ->method('getIterator')
             ->willReturn($this->iteratorMock);
 
-        $this->connectionMock = $this->getMockForAbstractClass(AdapterInterface::class);
+        $this->connectionMock = $this->createMock(AdapterInterface::class);
 
         $this->queryFactoryMock = $this->createMock(QueryFactory::class);
 

@@ -15,9 +15,11 @@ use Magento\Framework\FlagManager;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+
 
 class SubscriptionHandlerTest extends TestCase
-{
+{ use MockCreationTrait;
     /**
      * @var FlagManager|MockObject
      */
@@ -52,7 +54,7 @@ class SubscriptionHandlerTest extends TestCase
     {
         $this->flagManagerMock = $this->createMock(FlagManager::class);
 
-        $this->configWriterMock = $this->getMockForAbstractClass(WriterInterface::class);
+        $this->configWriterMock = $this->createMock(WriterInterface::class);
 
         $this->tokenMock = $this->createMock(AnalyticsToken::class);
 

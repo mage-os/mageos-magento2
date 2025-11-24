@@ -16,10 +16,14 @@ use Magento\Framework\App\Config\Storage\WriterInterface;
 use Magento\Framework\Exception\NotFoundException;
 use Magento\Framework\FlagManager;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
+
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+
 
 class UpdateTest extends TestCase
-{
+{ use MockCreationTrait;
     /**
      * @var Connector|MockObject
      */
@@ -56,9 +60,9 @@ class UpdateTest extends TestCase
     protected function setUp(): void
     {
         $this->connectorMock =  $this->createMock(Connector::class);
-        $this->configWriterMock =  $this->getMockForAbstractClass(WriterInterface::class);
+        $this->configWriterMock =  $this->createMock(WriterInterface::class);
         $this->flagManagerMock =  $this->createMock(FlagManager::class);
-        $this->reinitableConfigMock = $this->getMockForAbstractClass(ReinitableConfigInterface::class);
+        $this->reinitableConfigMock = $this->createMock(ReinitableConfigInterface::class);
         $this->analyticsTokenMock = $this->createMock(AnalyticsToken::class);
 
         $this->update = new Update(
@@ -117,7 +121,10 @@ class UpdateTest extends TestCase
     /**
      * @param $counterData
      * @return void
-     * @dataProvider executeWithEmptyReverseCounterDataProvider
+     *
+     */
+    #[DataProvider('executeWithEmptyReverseCounterDataProvider')]
+    /**
      * @throws NotFoundException
      */
     public function testExecuteWithEmptyReverseCounter($counterData)
@@ -157,7 +164,10 @@ class UpdateTest extends TestCase
      * @param bool $finalConditionsIsExpected
      * @param bool $functionResult
      * @return void
-     * @dataProvider executeRegularScenarioDataProvider
+     *
+     */
+    #[DataProvider('executeRegularScenarioDataProvider')]
+    /**
      * @throws NotFoundException
      */
     public function testExecuteRegularScenario(

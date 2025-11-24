@@ -12,9 +12,11 @@ use Magento\Analytics\Model\Connector\SignUpCommand;
 use Magento\Framework\ObjectManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+
 
 class ConnectorTest extends TestCase
-{
+{ use MockCreationTrait;
     /**
      * @var ObjectManagerInterface|MockObject
      */
@@ -37,7 +39,7 @@ class ConnectorTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->objectManagerMock = $this->getMockForAbstractClass(ObjectManagerInterface::class);
+        $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
         $this->signUpCommandMock = $this->createMock(SignUpCommand::class);
         $this->commands = ['signUp' => SignUpCommand::class];
         $this->connector = new Connector($this->commands, $this->objectManagerMock);

@@ -14,9 +14,11 @@ use Magento\Store\Api\Data\WebsiteInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+
 
 class StoreConfigurationProviderTest extends TestCase
-{
+{ use MockCreationTrait;
     /**
      * @var ScopeConfigInterface|MockObject
      */
@@ -52,13 +54,13 @@ class StoreConfigurationProviderTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->scopeConfigMock = $this->getMockForAbstractClass(ScopeConfigInterface::class);
+        $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
 
-        $this->storeManagerMock =  $this->getMockForAbstractClass(StoreManagerInterface::class);
+        $this->storeManagerMock =  $this->createMock(StoreManagerInterface::class);
 
-        $this->websiteMock =  $this->getMockForAbstractClass(WebsiteInterface::class);
+        $this->websiteMock =  $this->createMock(WebsiteInterface::class);
 
-        $this->storeMock =  $this->getMockForAbstractClass(StoreInterface::class);
+        $this->storeMock =  $this->createMock(StoreInterface::class);
 
         $this->configPaths = [
             'web/unsecure/base_url',

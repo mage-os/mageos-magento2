@@ -13,12 +13,14 @@ use Magento\Framework\Config\ReaderInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class ReaderTest extends TestCase
-{
+{ use MockCreationTrait;
     /**
      * @var Mapper|MockObject
      */
@@ -51,9 +53,9 @@ class ReaderTest extends TestCase
     {
         $this->mapperMock = $this->createMock(Mapper::class);
 
-        $this->readerXmlMock = $this->getMockForAbstractClass(ReaderInterface::class);
+        $this->readerXmlMock = $this->createMock(ReaderInterface::class);
 
-        $this->readerDbMock = $this->getMockForAbstractClass(ReaderInterface::class);
+        $this->readerDbMock = $this->createMock(ReaderInterface::class);
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
 

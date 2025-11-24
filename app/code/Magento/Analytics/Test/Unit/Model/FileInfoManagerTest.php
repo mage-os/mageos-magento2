@@ -13,6 +13,8 @@ use Magento\Analytics\Model\FileInfoManager;
 use Magento\Framework\FlagManager;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
+
 use PHPUnit\Framework\TestCase;
 
 class FileInfoManagerTest extends TestCase
@@ -118,8 +120,8 @@ class FileInfoManagerTest extends TestCase
     /**
      * @param string|null $path
      * @param string|null $initializationVector
-     * @dataProvider saveWithLocalizedExceptionDataProvider
      */
+    #[DataProvider('saveWithLocalizedExceptionDataProvider')]
     public function testSaveWithLocalizedException($path, $initializationVector)
     {
         $this->expectException('Magento\Framework\Exception\LocalizedException');
@@ -149,7 +151,10 @@ class FileInfoManagerTest extends TestCase
     }
 
     /**
-     * @dataProvider loadDataProvider
+     *
+     */
+    #[DataProvider('loadDataProvider')]
+    /**
      * @param array|null $parameters
      */
     public function testLoad($parameters)

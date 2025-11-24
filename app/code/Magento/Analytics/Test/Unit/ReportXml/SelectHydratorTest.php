@@ -14,10 +14,14 @@ use Magento\Framework\DB\Select;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
+
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+
 
 class SelectHydratorTest extends TestCase
-{
+{ use MockCreationTrait;
     /**
      * @var SelectHydrator
      */
@@ -59,11 +63,11 @@ class SelectHydratorTest extends TestCase
     {
         $this->resourceConnectionMock = $this->createMock(ResourceConnection::class);
 
-        $this->connectionMock = $this->getMockForAbstractClass(AdapterInterface::class);
+        $this->connectionMock = $this->createMock(AdapterInterface::class);
 
         $this->selectMock = $this->createMock(Select::class);
 
-        $this->objectManagerMock = $this->getMockForAbstractClass(ObjectManagerInterface::class);
+        $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
 
@@ -114,8 +118,8 @@ class SelectHydratorTest extends TestCase
      * @param array $partValues
      *
      * @return void
-     * @dataProvider recreateWithoutExpressionDataProvider
      */
+    #[DataProvider('recreateWithoutExpressionDataProvider')]
     public function testRecreateWithoutExpression(array $selectParts, array $parts, array $partValues): void
     {
         $this->resourceConnectionMock->expects($this->once())
@@ -182,8 +186,8 @@ class SelectHydratorTest extends TestCase
      * @param MockObject[] $expressionMocks
      *
      * @return void
-     * @dataProvider recreateWithExpressionDataProvider
      */
+    #[DataProvider('recreateWithExpressionDataProvider')]
     public function testRecreateWithExpression(
         array $selectParts,
         array $expectedParts,
@@ -192,7 +196,7 @@ class SelectHydratorTest extends TestCase
         $this->objectManagerMock
             ->expects($this->exactly(count($expressionMocks)))
             ->method('create')
-            ->with($this->isType('string'), $this->isType('array'))
+            ->with($this->isString(), $this->isArray())
             ->willReturnOnConsecutiveCalls(...$expressionMocks);
         $this->resourceConnectionMock
             ->expects($this->once())

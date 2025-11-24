@@ -15,9 +15,11 @@ use Magento\Analytics\Model\Connector\Http\ResponseResolver;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+
 
 class ResponseResolverTest extends TestCase
-{
+{ use MockCreationTrait;
     /**
      * @var ObjectManagerHelper
      */
@@ -49,11 +51,11 @@ class ResponseResolverTest extends TestCase
     protected function setUp(): void
     {
         $this->objectManagerHelper = new ObjectManagerHelper($this);
-        $this->converterMock = $this->getMockForAbstractClass(ConverterInterface::class);
+        $this->converterMock = $this->createMock(ConverterInterface::class);
         $this->successResponseHandlerMock = $this->getMockBuilder(ResponseHandlerInterface::class)
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->notFoundResponseHandlerMock = $this->getMockBuilder(ResponseHandlerInterface::class)
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->responseResolver = $this->objectManagerHelper->getObject(
             ResponseResolver::class,
             [
