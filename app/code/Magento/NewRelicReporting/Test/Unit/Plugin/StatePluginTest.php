@@ -14,6 +14,10 @@ use Magento\NewRelicReporting\Model\Config as NewRelicConfig;
 use Magento\NewRelicReporting\Model\NewRelicWrapper;
 use Magento\NewRelicReporting\Plugin\StatePlugin;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+
+use PHPUnit\Framework\Attributes\DataProvider;
+
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
@@ -21,7 +25,7 @@ use Psr\Log\LoggerInterface;
  * Test coverage for \Magento\NewRelicReporting\Plugin\StatePlugin
  */
 class StatePluginTest extends TestCase
-{
+{ use MockCreationTrait;
     /**
      * @var string
      */
@@ -62,7 +66,7 @@ class StatePluginTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->newRelicWrapperMock = $this->createMock(NewRelicWrapper::class);
-        $this->loggerMock = $this->getMockForAbstractClass(LoggerInterface::class);
+        $this->loggerMock = $this->createMock(LoggerInterface::class);
         $this->stateMock = $this->createMock(State::class);
 
         $this->statePlugin = $objectManager->getObject(
@@ -96,9 +100,7 @@ class StatePluginTest extends TestCase
      * @param bool $isSeparateApps
      * @param string $newRelicAppName
      * @param bool $enabled
-     *
-     * @dataProvider newRelicConfigDataProvider
-     */
+     *    #[DataProvider(\'newRelicConfigDataProvider\')]
     public function testSuccessfullySettingAreaCode(bool $isSeparateApps, string $newRelicAppName, bool $enabled): void
     {
         $this->configMock->expects($this->any())->method('isSeparateApps')->willReturn($isSeparateApps);

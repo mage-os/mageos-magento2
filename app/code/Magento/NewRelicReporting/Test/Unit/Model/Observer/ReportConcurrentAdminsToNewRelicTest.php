@@ -14,10 +14,12 @@ use Magento\NewRelicReporting\Model\NewRelicWrapper;
 use Magento\NewRelicReporting\Model\Observer\ReportConcurrentAdminsToNewRelic;
 use Magento\User\Model\User;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+
 use PHPUnit\Framework\TestCase;
 
 class ReportConcurrentAdminsToNewRelicTest extends TestCase
-{
+{ use MockCreationTrait;
     /**
      * @var ReportConcurrentAdminsToNewRelic
      */
@@ -49,11 +51,7 @@ class ReportConcurrentAdminsToNewRelicTest extends TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['isNewRelicEnabled'])
             ->getMock();
-        $this->backendAuthSession = $this->getMockBuilder(Session::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getUser'])
-            ->onlyMethods(['isLoggedIn'])
-            ->getMock();
+        $this->backendAuthSession = $this->createPartialMockWithReflection(Session::class, ['getUser', 'isLoggedIn']);
         $this->newRelicWrapper = $this->getMockBuilder(NewRelicWrapper::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['addCustomParameter'])

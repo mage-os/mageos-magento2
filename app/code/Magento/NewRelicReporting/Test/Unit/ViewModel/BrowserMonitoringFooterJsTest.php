@@ -11,6 +11,8 @@ use Magento\NewRelicReporting\Model\NewRelicWrapper;
 use Magento\NewRelicReporting\ViewModel\BrowserMonitoringFooterJs;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
+
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -67,9 +69,7 @@ class BrowserMonitoringFooterJsTest extends TestCase
      * @param bool $isEnabled
      * @param string|null $footerContent
      * @param string|null $expected
-     * @return void
-     * @dataProvider getContentDataProvider
-     */
+     * @return void    #[DataProvider(\'getContentDataProvider\')]
     public function testGetContent(bool $isEnabled, ?string $footerContent, ?string $expected): void
     {
         $this->newRelicWrapperMock->method('isAutoInstrumentEnabled')->willReturn($isEnabled);

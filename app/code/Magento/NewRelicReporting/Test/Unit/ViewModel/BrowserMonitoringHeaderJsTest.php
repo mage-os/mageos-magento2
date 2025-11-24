@@ -11,6 +11,8 @@ use Magento\NewRelicReporting\Model\NewRelicWrapper;
 use Magento\NewRelicReporting\ViewModel\BrowserMonitoringHeaderJs;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
+
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -67,9 +69,7 @@ class BrowserMonitoringHeaderJsTest extends TestCase
      * @param bool $isEnabled
      * @param string|null $headerContent
      * @param string|null $expected
-     * @return void
-     * @dataProvider getContentDataProvider
-     */
+     * @return void    #[DataProvider(\'getContentDataProvider\')]
     public function testGetContent(bool $isEnabled, ?string $headerContent, ?string $expected): void
     {
         $this->newRelicWrapperMock->method('isAutoInstrumentEnabled')->willReturn($isEnabled);
