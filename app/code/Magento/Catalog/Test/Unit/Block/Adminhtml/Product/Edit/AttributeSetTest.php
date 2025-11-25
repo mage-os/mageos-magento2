@@ -155,9 +155,11 @@ class AttributeSetTest extends TestCase
         $this->product->method('getAttributeSetId')->willReturn(1);
 
         // @codingStandardsIgnoreStart
-        // URL with special characters
+        // phpcs:disable Magento2.Templates.InlineJs
+        // URL with special characters (test data for XSS prevention)
         $rawUrl = 'http://example.com/admin/catalog?test=1&special=<script>';
         $escapedUrl = 'http://example.com/admin/catalog?test=1&amp;special=&lt;script&gt;';
+        // phpcs:enable Magento2.Templates.InlineJs
         // @codingStandardsIgnoreEnd
 
         $this->urlBuilder->method('getUrl')->willReturn($rawUrl);
@@ -172,9 +174,11 @@ class AttributeSetTest extends TestCase
     public function testGetSelectorOptionsEscapesAttributeSetId(): void
     {
         // @codingStandardsIgnoreStart
-        // Attribute set ID that needs escaping
+        // phpcs:disable Magento2.Templates.InlineJs
+        // Attribute set ID that needs escaping (test data for XSS prevention)
         $attributeSetId = '<script>alert("xss")</script>';
         $escapedAttributeSetId = '&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;';
+        // phpcs:enable Magento2.Templates.InlineJs
         // @codingStandardsIgnoreEnd
 
         $this->product->method('getAttributeSetId')->willReturn($attributeSetId);

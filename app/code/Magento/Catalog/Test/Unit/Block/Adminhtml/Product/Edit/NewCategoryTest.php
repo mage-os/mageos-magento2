@@ -295,6 +295,7 @@ class NewCategoryTest extends TestCase
             ->willReturn($encodedOptions);
 
         // @codingStandardsIgnoreStart
+        // phpcs:disable Magento2.Templates.InlineJs
         $expectedScript = <<<HTML
 require(["jquery","mage/mage"],function($) {  // waiting for dependencies at first
     $(function(){ // waiting for page to load to have '#category_ids-template' available
@@ -302,6 +303,7 @@ require(["jquery","mage/mage"],function($) {  // waiting for dependencies at fir
     });
 });
 HTML;
+        // phpcs:enable Magento2.Templates.InlineJs
         // @codingStandardsIgnoreEnd
 
         $this->secureRenderer->expects($this->once())
