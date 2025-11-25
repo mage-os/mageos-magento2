@@ -25,7 +25,7 @@ class MessageValidator extends AbstractValidator
         '/<\?(php|=)?/i',
         '/\b(system|exec|passthru|shell_exec|eval|assert)\s*\(/i',
     
-        // Template injection (Magento, Mustache, Twig, etc.)
+        // Template injection
         '/\{\{.*?\}\}/s',
         '/\{%.*?%\}/s',
     
@@ -34,10 +34,10 @@ class MessageValidator extends AbstractValidator
         '/on\w+\s*=/i',
         
         // Magento template object access patterns (method chaining with dots and parentheses)
-        '/this\s*\.\s*\w+\s*\(/i',              // this.methodName(
-        '/getTemplateFilter/i',                 // Direct template filter access
-        '/\.\s*filter\s*\(/i',                  // .filter( (method call syntax)
-        '/addAfterFilterCallback/i'             // Callback manipulation
+        '/this\s*\.\s*\w+\s*\(/i',
+        '/getTemplateFilter/i',
+        '/\.\s*filter\s*\(/i',
+        '/addAfterFilterCallback/i'
     ];
 
     /**
