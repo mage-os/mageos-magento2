@@ -12,7 +12,7 @@
         <annotations>
             <features value="Swatches"/>
             <stories value="Swatches are displayed when using search"/>
-            <title value="Verify Swatches are displayed when using search"/>
+            <title value="Swatches displayed in search results"/>
             <description value="This test case verifies whether the swatches are displayed when using search"/>
             <severity value="MAJOR"/>
             <testCaseId value="AC-4126"/>
@@ -107,4 +107,3 @@
         <waitForElementVisible selector="{{StorefrontCategoryPageProductInfoSection.visualSwatchOption($$configProduct.id$$, $$getSwatchOption1.label$$)}}" stepKey="seeListing1SwatchBasic"/>
     </test>
 </tests>
-
