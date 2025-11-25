@@ -10,6 +10,9 @@ namespace Magento\Sales\Plugin\Webapi;
 use Magento\Framework\Webapi\ServiceOutputProcessor;
 use Magento\Sales\Api\OrderRepositoryInterface;
 
+/**
+ * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+ */
 class OrderResponseNullKeysPlugin
 {
     /**
@@ -21,6 +24,8 @@ class OrderResponseNullKeysPlugin
      * @param string $serviceClassName
      * @param string $serviceMethodName
      * @return array|mixed
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function afterProcess(
         ServiceOutputProcessor $subject,
@@ -37,7 +42,11 @@ class OrderResponseNullKeysPlugin
             return $this->ensureOrderKeys($result);
         }
 
-        if ($serviceMethodName === 'getList' && is_array($result) && isset($result['items']) && is_array($result['items'])) {
+        if ($serviceMethodName === 'getList' &&
+            is_array($result) &&
+            isset($result['items'])
+            && is_array($result['items'])
+        ) {
             foreach ($result['items'] as $i => $item) {
                 if (is_array($item)) {
                     $result['items'][$i] = $this->ensureOrderKeys($item);
@@ -48,6 +57,12 @@ class OrderResponseNullKeysPlugin
         return $result;
     }
 
+    /**
+     * If state and status key missing then set as null
+     *
+     * @param array $order
+     * @return array
+     */
     private function ensureOrderKeys(array $order): array
     {
         if (!array_key_exists('state', $order)) {
