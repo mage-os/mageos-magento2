@@ -46,11 +46,17 @@ class IndexTest extends TestCase
         $contextMock = $this->createMock(Context::class);
 
         /** @var MockObject|PageConfig $pageConfigMock */
-        $this->pageConfigMock = $this->createMock(PageConfig::class);
+        $this->pageConfigMock = $this->getMockBuilder(PageConfig::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         /** @var MockObject|PageFactory $resultPageFactory */
-        $this->resultPageFactory = $this->createMock(PageFactory::class);
+        $this->resultPageFactory = $this->getMockBuilder(PageFactory::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $this->config = $this->createMock(Config::class);
+        $this->config = self::getMockBuilder(Config::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->indexAction = new Index(
             $contextMock,
@@ -80,7 +86,9 @@ class IndexTest extends TestCase
         $this->expectException(NotFoundException::class);
         $this->expectExceptionMessage('Page not found.');
 
-        $request = $this->createMock(Http::class);
+        $request = self::getMockBuilder(Http::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->config->method('isEnabled')
             ->willReturn(false);
@@ -93,7 +101,9 @@ class IndexTest extends TestCase
      */
     public function testDispatchIsSuccessfulWhenEnabled(): void
     {
-        $request = $this->createMock(Http::class);
+        $request = self::getMockBuilder(Http::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         // Assert that execute is called
         $request->expects($this->once())
             ->method('getFullActionName');

@@ -10,7 +10,6 @@ namespace Magento\SwaggerWebapiAsync\Test\Unit\Model\SchemaType;
 
 use Magento\Swagger\Api\Data\SchemaTypeInterface;
 use Magento\SwaggerWebapiAsync\Model\SchemaType\Async;
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -42,8 +41,9 @@ class AsyncTest extends TestCase
      *
      * @param null|string $store
      * @param $expected
+     *
+     * @dataProvider getSchemaUrlPathProvider
      */
-    #[DataProvider('getSchemaUrlPathProvider')]
     public function testGetSchemaUrlPath($expected, $store = null)
     {
         $this->assertEquals($expected, $this->async->getSchemaUrlPath($store));

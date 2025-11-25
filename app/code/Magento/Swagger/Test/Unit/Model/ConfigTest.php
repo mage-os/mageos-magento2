@@ -10,7 +10,6 @@ namespace Magento\Swagger\Test\Unit\Model;
 
 use Magento\Framework\App\State;
 use Magento\Swagger\Model\Config;
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -23,7 +22,9 @@ class ConfigTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->state = $this->createMock(State::class);
+        $this->state = self::getMockBuilder(State::class)
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 
     public function testDisabledInProductionByDefault()
@@ -39,8 +40,8 @@ class ConfigTest extends TestCase
      * @param string $mode
      * @param bool $configuredValue
      * @param bool $expectedResult
+     * @dataProvider useCaseProvider
      */
-    #[DataProvider('useCaseProvider')]
     public function testUseCases(string $mode, bool $configuredValue, bool $expectedResult)
     {
         $this->state->method('getMode')

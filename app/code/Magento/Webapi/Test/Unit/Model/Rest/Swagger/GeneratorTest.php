@@ -22,7 +22,6 @@ use Magento\Webapi\Model\Rest\Swagger\Generator;
 use Magento\Webapi\Model\Rest\SwaggerFactory;
 use Magento\Webapi\Model\ServiceMetadata;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -74,45 +73,62 @@ class GeneratorTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->serviceMetadataMock = $this->createMock(ServiceMetadata::class);
+        $this->serviceMetadataMock = $this->getMockBuilder(
+            ServiceMetadata::class
+        )->disableOriginalConstructor()
+            ->getMock();
 
         $this->objectManager = new ObjectManager($this);
 
         $swagger = $this->objectManager->getObject(Swagger::class);
-        $this->swaggerFactoryMock = $this->createPartialMock(
-            SwaggerFactory::class,
+        $this->swaggerFactoryMock = $this->getMockBuilder(
+            SwaggerFactory::class
+        )->onlyMethods(
             ['create']
-        );
+        )->disableOriginalConstructor()
+            ->getMock();
         $this->swaggerFactoryMock->expects($this->any())->method('create')->willReturn($swagger);
 
-        $this->cacheMock = $this->createMock(Webapi::class);
+        $this->cacheMock = $this->getMockBuilder(Webapi::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->cacheMock->expects($this->any())->method('load')->willReturn(false);
         $this->cacheMock->expects($this->any())->method('save')->willReturn(true);
 
-        $this->typeProcessorMock = $this->createMock(TypeProcessor::class);
+        $this->typeProcessorMock = $this->getMockBuilder(TypeProcessor::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->typeProcessorMock->expects($this->any())
             ->method('getOperationName')
             ->willReturn(self::OPERATION_NAME);
 
-        $this->customAttributeTypeLocatorMock = $this->createPartialMock(
-            ServiceTypeListInterface::class,
-            ['getDataTypes']
-        );
+        $this->customAttributeTypeLocatorMock = $this->getMockBuilder(
+            ServiceTypeListInterface::class
+        )->disableOriginalConstructor()
+            ->onlyMethods(['getDataTypes'])
+            ->getMockForAbstractClass();
         $this->customAttributeTypeLocatorMock->expects($this->any())
             ->method('getDataTypes')
             ->willReturn(['customAttributeClass']);
 
-        $storeMock = $this->createMock(Store::class);
+        $storeMock = $this->getMockBuilder(
+            Store::class
+        )->disableOriginalConstructor()
+            ->getMock();
 
         $storeMock->expects($this->any())
             ->method('getCode')
             ->willReturn('store_code');
 
         /** @var Authorization|MockObject $authorizationMock */
-        $authorizationMock = $this->createMock(Authorization::class);
+        $authorizationMock = $this->getMockBuilder(Authorization::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $authorizationMock->expects($this->any())->method('isAllowed')->willReturn(true);
 
-        $this->serializer = $this->createMock(Json::class);
+        $this->serializer = $this->getMockBuilder(Json::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->serializer->expects($this->any())
             ->method('serialize')
             ->willReturnCallback(
@@ -148,8 +164,8 @@ class GeneratorTest extends TestCase
      * @param string[] $serviceMetadata
      * @param string[] $typeData
      * @param string $schema
+     * @dataProvider generateDataProvider
      */
-    #[DataProvider('generateDataProvider')]
     public function testGenerate($serviceMetadata, $typeData, $schema)
     {
         $service = 'testModule5AllSoapAndRestV2';
@@ -403,8 +419,8 @@ class GeneratorTest extends TestCase
     /**
      * @param string $typeName
      * @param array $result
+     * @dataProvider getObjectSchemaDataProvider
      */
-    #[DataProvider('getObjectSchemaDataProvider')]
     public function testGetObjectSchema($typeName, $description, $result)
     {
         $property = new \ReflectionProperty($this->generator, 'definitions');
@@ -458,8 +474,8 @@ class GeneratorTest extends TestCase
     /**
      * @param array $typeData
      * @param array $expected
+     * @dataProvider generateDefinitionDataProvider
      */
-    #[DataProvider('generateDefinitionDataProvider')]
     public function testGenerateDefinition($typeData, $expected)
     {
         $getTypeData = function ($type) use ($typeData) {

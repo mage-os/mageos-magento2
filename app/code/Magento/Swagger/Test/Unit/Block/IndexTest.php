@@ -44,9 +44,12 @@ class IndexTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->requestMock = $this->createMock(RequestInterface::class);
-        $this->schemaTypeMock = $this->createMock(SchemaTypeInterface::class);
-        $this->urlBuilder = $this->createMock(UrlInterface::class);
+        $this->requestMock = $this->getMockBuilder(RequestInterface::class)
+            ->getMock();
+        $this->schemaTypeMock = $this->getMockBuilder(SchemaTypeInterface::class)
+            ->getMock();
+        $this->urlBuilder = $this->getMockBuilder(UrlInterface::class)
+            ->getMock();
 
         $this->index = (new ObjectManager($this))->getObject(
             Index::class,

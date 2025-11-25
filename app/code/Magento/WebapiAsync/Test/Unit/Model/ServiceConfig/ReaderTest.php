@@ -30,7 +30,8 @@ class ReaderTest extends TestCase
     protected function setUp(): void
     {
         $objectManager = new ObjectManager($this);
-        $this->fileResolver = $this->createMock(FileResolverInterface::class);
+        $this->fileResolver = $this
+            ->getMockForAbstractClass(FileResolverInterface::class);
 
         $this->reader = $objectManager->getObject(
             Reader::class,

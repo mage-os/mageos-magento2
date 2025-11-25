@@ -16,7 +16,6 @@ use Magento\Framework\Webapi\Exception;
 use Magento\Webapi\Model\Soap\Fault;
 use Magento\Webapi\Model\Soap\Server;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -56,7 +55,7 @@ class FaultTest extends TestCase
             ]
         ];
         $objectManager->prepareObjectManager($objects);
-        $this->_requestMock = $this->createMock(RequestInterface::class);
+        $this->_requestMock = $this->getMockForAbstractClass(RequestInterface::class);
         /** Initialize SUT. */
         $details = ['param1' => 'value1', 'param2' => 2];
         $code = 111;
@@ -154,8 +153,9 @@ XML;
 
     /**
      * Test getSoapFaultMessage method.
+     *
+     * @dataProvider dataProviderForGetSoapFaultMessageTest
      */
-    #[DataProvider('dataProviderForGetSoapFaultMessageTest')]
     public function testGetSoapFaultMessage(
         $faultReason,
         $faultCode,

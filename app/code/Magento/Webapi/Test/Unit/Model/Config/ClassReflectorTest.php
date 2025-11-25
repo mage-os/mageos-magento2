@@ -10,7 +10,6 @@ namespace Magento\Webapi\Test\Unit\Model\Config;
 use Laminas\Code\Reflection\ClassReflection;
 use Laminas\Code\Reflection\MethodReflection;
 use Magento\Framework\Reflection\TypeProcessor;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Webapi\Model\Config\ClassReflector;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -20,8 +19,6 @@ use PHPUnit\Framework\TestCase;
  */
 class ClassReflectorTest extends TestCase
 {
-    use MockCreationTrait;
-
     /** @var TypeProcessor|MockObject */
     protected $_typeProcessor;
 
@@ -33,10 +30,10 @@ class ClassReflectorTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->_typeProcessor = $this->createPartialMockWithReflection(
-            TypeProcessor::class,
-            ['process']
-        );
+        $this->_typeProcessor = $this->getMockBuilder(TypeProcessor::class)
+            ->addMethods(['process'])
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->_typeProcessor->expects(
             $this->any()
         )->method(

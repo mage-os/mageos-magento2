@@ -8,9 +8,7 @@ declare(strict_types=1);
 namespace Magento\Webapi\Test\Unit\Model\Authorization;
 
 use Magento\Authorization\Model\UserContextInterface;
-use Magento\Framework\Oauth\Helper\Request as OauthHelperRequest;
 use Magento\Framework\Oauth\Oauth;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\Webapi\Request;
 use Magento\Integration\Api\IntegrationServiceInterface;
@@ -23,8 +21,6 @@ use PHPUnit\Framework\TestCase;
  */
 class OauthUserContextTest extends TestCase
 {
-    use MockCreationTrait;
-
     /**
      * @var ObjectManager
      */
@@ -41,7 +37,7 @@ class OauthUserContextTest extends TestCase
     protected $request;
 
     /**
-     * @var OauthHelperRequest
+     * @var \Magento\Framework\Oauth\Helper\Request
      */
     protected $oauthRequestHelper;
 
@@ -59,34 +55,36 @@ class OauthUserContextTest extends TestCase
     {
         $this->objectManager = new ObjectManager($this);
 
-        $this->request = $this->createPartialMockWithReflection(
-            Request::class,
-            ['getConsumerId']
-        );
+        $this->request = $this->getMockBuilder(Request::class)
+            ->disableOriginalConstructor()
+            ->addMethods(['getConsumerId'])
+            ->getMock();
 
-        $this->integrationService = $this->createPartialMock(
-            IntegrationServiceInterface::class,
-            [
-                'findByName',
-                'update',
-                'create',
-                'get',
-                'findByConsumerId',
-                'findActiveIntegrationByConsumerId',
-                'delete',
-                'getSelectedResources'
-            ]
-        );
+        $this->integrationService = $this->getMockBuilder(IntegrationServiceInterface::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(
+                [
+                    'findByName',
+                    'update',
+                    'create',
+                    'get',
+                    'findByConsumerId',
+                    'findActiveIntegrationByConsumerId',
+                    'delete',
+                    'getSelectedResources'
+                ]
+            )
+            ->getMockForAbstractClass();
 
-        $this->oauthRequestHelper = $this->createPartialMock(
-            OauthHelperRequest::class,
-            ['prepareRequest', 'getRequestUrl']
-        );
+        $this->oauthRequestHelper = $this->getMockBuilder(\Magento\Framework\Oauth\Helper\Request::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['prepareRequest', 'getRequestUrl'])
+            ->getMock();
 
-        $this->oauthService = $this->createPartialMock(
-            Oauth::class,
-            ['validateAccessTokenRequest']
-        );
+        $this->oauthService = $this->getMockBuilder(Oauth::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['validateAccessTokenRequest'])
+            ->getMock();
 
         $this->oauthUserContext = $this->objectManager->getObject(
             OauthUserContext::class,
@@ -138,10 +136,10 @@ class OauthUserContextTest extends TestCase
      */
     public function setupUserId($integrationId, $oauthRequest)
     {
-        $integration = $this->createPartialMock(
-            Integration::class,
-            ['getId', '__wakeup']
-        );
+        $integration = $this->getMockBuilder(Integration::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getId', '__wakeup'])
+            ->getMock();
 
         $this->integrationService->expects($this->any())
             ->method('findActiveIntegrationByConsumerId')

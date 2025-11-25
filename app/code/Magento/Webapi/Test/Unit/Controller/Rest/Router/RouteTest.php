@@ -7,11 +7,10 @@ declare(strict_types=1);
 
 namespace Magento\Webapi\Test\Unit\Controller\Rest\Router;
 
-use Magento\Framework\App\Request\Http as HttpRequest;
 use Magento\Framework\App\RequestInterface as Request;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Webapi\Controller\Rest\Router\Route;
-use PHPUnit\Framework\Attributes\DataProvider;
+
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -31,10 +30,9 @@ class RouteTest extends TestCase
     {
         $this->objectManager = new ObjectManager($this);
 
-        $this->request = $this->createPartialMock(
-            HttpRequest::class,
-            ['getPathInfo']
-        );
+        $this->request = $this->getMockBuilder(\Magento\Framework\App\RequestInterface::class)
+            ->addMethods(['getPathInfo'])
+            ->getMockForAbstractClass();
     }
 
     /**
@@ -64,8 +62,8 @@ class RouteTest extends TestCase
      * @param string $path
      * @param array|bool $params
      * @return void
+     * @dataProvider dataProviderRoutes
      */
-    #[DataProvider('dataProviderRoutes')]
     public function testRoute($route, $path, $params)
     {
         /** @var Route $model */

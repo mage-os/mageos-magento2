@@ -26,7 +26,8 @@ class ParamOverriderCustomerIdTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->userContext = $this->createMock(UserContextInterface::class);
+        $this->userContext = $this->getMockBuilder(UserContextInterface::class)
+            ->getMockForAbstractClass();
         $this->model = (new ObjectManager($this))->getObject(
             ParamOverriderCustomerId::class,
             [

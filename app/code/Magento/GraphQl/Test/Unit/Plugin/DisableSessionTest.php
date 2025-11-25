@@ -13,7 +13,6 @@ use Magento\Framework\Session\SessionStartChecker;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\GraphQl\Model\Config\DisableSession;
 use Magento\GraphQl\Plugin\DisableSession as DisableSessionPlugin;
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -64,8 +63,8 @@ class DisableSessionTest extends TestCase
      * @param bool $methodResult
      * @param bool $expectedResult
      * @return void
+     * @dataProvider testAfterCheckDataProvider
      */
-    #[DataProvider('afterCheckDataProvider')]
     public function testAfterCheck(string $area, bool $config, bool $methodResult, bool $expectedResult)
     {
         $this->disableSessionConfigMock->expects($this->any())->method('isDisabled')->willReturn($config);
@@ -78,7 +77,7 @@ class DisableSessionTest extends TestCase
      *
      * @return array[]
      */
-    public static function afterCheckDataProvider()
+    public static function testAfterCheckDataProvider()
     {
         return [
             ['area' => 'graphql', 'config' => true, 'methodResult' =>  false, 'expectedResult' => false],
@@ -99,8 +98,8 @@ class DisableSessionTest extends TestCase
      * @param bool $methodResult
      * @param bool $expectedResult
      * @return void
+     * @dataProvider testAfterCheckDataProviderNoAreaCode
      */
-    #[DataProvider('afterCheckDataProviderNoAreaCode')]
     public function testAfterCheckNoArea(bool $config, bool $methodResult, bool $expectedResult)
     {
         $this->disableSessionConfigMock->expects($this->any())->method('isDisabled')->willReturn($config);
@@ -115,7 +114,7 @@ class DisableSessionTest extends TestCase
      *
      * @return array[]
      */
-    public static function afterCheckDataProviderNoAreaCode()
+    public static function testAfterCheckDataProviderNoAreaCode()
     {
         return [
             ['config' => true, 'methodResult' =>  true, 'expectedResult' => true],
