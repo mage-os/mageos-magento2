@@ -93,12 +93,6 @@
     <type name="Magento\ConfigurableProduct\Pricing\Price\FinalPriceResolver">
         <plugin name="configurableProductPriceAdjustment" type="Magento\Weee\Plugin\ConfigurableProduct\Pricing\FinalPriceResolver"/>
     </type>
-    <type name="Magento\ConfigurableProduct\Block\Product\View\Type\Configurable">
-        <plugin name="addWeeeToConfigurableJsonConfig" type="Magento\Weee\Plugin\ConfigurableProduct\Block\Product\View\Type\Configurable"/>
-    </type>
-    <type name="Magento\Swatches\Block\Product\Renderer\Listing\Configurable">
-        <plugin name="addWeeeToSwatchListingJsonConfig" type="Magento\Weee\Plugin\ConfigurableProduct\Block\Product\View\Type\Configurable"/>
-    </type>
     <type name="Magento\Catalog\Model\ResourceModel\Product\Indexer\LinkedProductSelectBuilderByIndexPrice">
         <plugin name="weeeAttributeProductSort" type="Magento\Weee\Plugin\Catalog\ResourceModel\Product\WeeeAttributeProductSort"/>
     </type>
