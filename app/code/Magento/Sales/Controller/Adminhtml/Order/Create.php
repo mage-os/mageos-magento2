@@ -15,7 +15,7 @@ use Magento\Framework\Escaper;
 use Magento\Framework\View\Result\PageFactory;
 use Magento\Backend\Model\View\Result\ForwardFactory;
 use Magento\Sales\Model\Order\Create\ValidateCoupon;
- use Magento\Catalog\Api\ProductRepositoryInterface;
+use Magento\Catalog\Api\ProductRepositoryInterface;
 
 /**
  * Adminhtml sales orders creation process controller
@@ -61,7 +61,7 @@ abstract class Create extends \Magento\Backend\App\Action
     /**
      * @var ProductRepositoryInterface
      */
-    private ?ProductRepositoryInterface $productRepository = null;
+    private ProductRepositoryInterface $productRepository;
 
     /**
      * @param Context $context
@@ -86,7 +86,8 @@ abstract class Create extends \Magento\Backend\App\Action
         $this->escaper = $escaper;
         $this->resultPageFactory = $resultPageFactory;
         $this->resultForwardFactory = $resultForwardFactory;
-        $this->productRepository = $productRepository;
+        $this->productRepository = $productRepository ?: ObjectManager::getInstance()
+            ->get(ProductRepositoryInterface::class);
         $this->validateCoupon = $validateCoupon ?: ObjectManager::getInstance()->get(ValidateCoupon::class);
     }
 
@@ -294,13 +295,7 @@ abstract class Create extends \Magento\Backend\App\Action
                     if ($this->_getQuote()->hasProductId((int)$productId) && !$hasOptionsInConfig) {
                         try {
                             /** @var Product $product */
-                            $product = ($this->productRepository ?: ObjectManager::getInstance()
-                                ->get(ProductRepositoryInterface::class))
-                                ->getById(
-                                    (int)$productId,
-                                    false,
-                                    (int)$this->_getOrderCreateModel()->getQuote()->getStoreId()
-                                );
+                            $product = $this->productRepository->getById($productId);
                             if ($product->getId() && $product->getHasOptions()) {
                                 $hasRequired = false;
                                 foreach ($product->getOptions() as $option) {
