@@ -131,7 +131,7 @@
         <waitForElementVisible selector="{{AdminProductFormConfigurationsSection.currentVariations}}" stepKey="waitForConfigurationsContainer"/>
         <seeNumberOfElements selector="{{AdminProductFormConfigurationsSection.currentVariationsAllRows}}" userInput="15" stepKey="verifyNumberOfVariationsAfterReopen"/>
         <!-- Verify image is assigned to variations -->
-        <seeElement selector="{{AdminProductFormConfigurationsSection.variationImageSource(MagentoLogo.filename)}}" stepKey="verifyImageAssignedToVariations"/>
+        <waitForElementVisible selector="{{AdminProductFormConfigurationsSection.variationImageSource(MagentoLogo.filename)}}" stepKey="verifyImageAssignedToVariations"/>
         <!-- Step 6: Open product on storefront -->
         <actionGroup ref="StorefrontOpenProductPageActionGroup" stepKey="openProductOnStorefront">
             <argument name="productUrl" value="{{BaseConfigurableProduct.urlKey}}"/>
@@ -145,8 +145,7 @@
         <selectOption selector="{{StorefrontProductInfoMainSection.productOptionSelect($createSizeAttribute.default_frontend_label$)}}" userInput="$createSizeOptionXL.option[store_labels][1][label]$" stepKey="selectSizeXL"/>
         <waitForPageLoad stepKey="waitAfterOptionSelection"/>
         <!-- Verify image is displayed after selecting options -->
-        <waitForElementVisible selector="{{StorefrontProductInfoMainSection.productImage}}" stepKey="waitForProductImage"/>
-        <seeElement selector="{{StorefrontProductInfoMainSection.productImageSrc(MagentoLogo.filename)}}" stepKey="verifyProductImageOnStorefront"/>
+        <waitForElementVisible selector="{{StorefrontProductInfoMainSection.productImageSrc(MagentoLogo.filename)}}" stepKey="verifyProductImageOnStorefront"/>
         <!-- Verify price for Red XL combination -->
         <waitForText selector="{{StorefrontProductInfoMainSection.productPrice}}" userInput="50.00" stepKey="verifyProductPrice"/>
         <actionGroup ref="StorefrontAddProductToCartActionGroup" stepKey="addProductToCart">
