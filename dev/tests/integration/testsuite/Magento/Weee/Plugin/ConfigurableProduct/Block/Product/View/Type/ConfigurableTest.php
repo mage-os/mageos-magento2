@@ -27,6 +27,7 @@ use PHPUnit\Framework\TestCase;
  *
  * @appIsolation enabled
  * @dbIsolation enabled
+ * @magentoAppArea frontend
  */
 class ConfigurableTest extends TestCase
 {
