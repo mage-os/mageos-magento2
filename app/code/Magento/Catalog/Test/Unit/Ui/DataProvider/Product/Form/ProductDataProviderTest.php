@@ -11,14 +11,15 @@ use Magento\Catalog\Model\ResourceModel\Product\Collection;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
 use Magento\Catalog\Ui\DataProvider\Product\Form\ProductDataProvider;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Ui\DataProvider\Modifier\ModifierInterface;
 use Magento\Ui\DataProvider\Modifier\Pool;
-use Magento\Ui\Test\Unit\Helper\ModifierInterfaceTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class ProductDataProviderTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var ObjectManager
      */
@@ -49,18 +50,30 @@ class ProductDataProviderTest extends TestCase
      */
     protected $model;
 
+    /**
+     * @var array
+     */
+    protected $modifierData = [];
+
     protected function setUp(): void
     {
         $this->objectManager = new ObjectManager($this);
-        $this->collectionMock = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->collectionMock = $this->createMock(Collection::class);
         $this->collectionFactoryMock = $this->createMock(CollectionFactory::class);
         $this->collectionFactoryMock->method('create')->willReturn($this->collectionMock);
-        $this->poolMock = $this->getMockBuilder(Pool::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->modifierMockOne = new ModifierInterfaceTestHelper();
+        $this->poolMock = $this->createMock(Pool::class);
+        
+        $this->modifierMockOne = $this->createMock(ModifierInterface::class);
+        $this->modifierMockOne->method('modifyMeta')->willReturnCallback(
+            function ($meta) {
+                return $this->modifierData['meta'] ?? $meta;
+            }
+        );
+        $this->modifierMockOne->method('modifyData')->willReturnCallback(
+            function ($data) {
+                return $this->modifierData['data'] ?? $data;
+            }
+        );
 
         $this->model = $this->objectManager->getObject(ProductDataProvider::class, [
             'name' => 'testName',
@@ -78,7 +91,7 @@ class ProductDataProviderTest extends TestCase
         $this->poolMock->expects($this->once())
             ->method('getModifiersInstances')
             ->willReturn([$this->modifierMockOne]);
-        $this->modifierMockOne->setMeta($expectedMeta);
+        $this->modifierData['meta'] = $expectedMeta;
 
         $this->assertSame($expectedMeta, $this->model->getMeta());
     }
@@ -90,7 +103,7 @@ class ProductDataProviderTest extends TestCase
         $this->poolMock->expects($this->once())
             ->method('getModifiersInstances')
             ->willReturn([$this->modifierMockOne]);
-        $this->modifierMockOne->setData($expectedMeta);
+        $this->modifierData['data'] = $expectedMeta;
 
         $this->assertSame($expectedMeta, $this->model->getData());
     }

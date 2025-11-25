@@ -11,15 +11,13 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Plugin\Model\Attribute\Backend\AttributeValidation;
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
 use Magento\Eav\Model\Entity\Attribute\Backend\AbstractBackend;
-use Magento\Eav\Test\Unit\Helper\AbstractBackendTestHelper;
 use Magento\Framework\DataObject;
 use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Framework\Test\Unit\Helper\DataObjectTestHelper;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Api\Data\StoreInterface;
+use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
-use Magento\Store\Test\Unit\Helper\StoreManagerTestHelper;
-use Magento\Store\Test\Unit\Helper\StoreTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -28,6 +26,7 @@ use PHPUnit\Framework\TestCase;
  */
 class AttributeValidationTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var AttributeValidation
      */
@@ -80,15 +79,60 @@ class AttributeValidationTest extends TestCase
     {
         $objectManager = new ObjectManager($this);
 
-        $this->attributeMock = new AbstractBackendTestHelper();
-        $this->subjectMock = new AbstractBackendTestHelper();
-        $this->subjectMock->setAttributeReturn($this->attributeMock);
+        $this->attributeMock = $this->createPartialMockWithReflection(
+            AbstractAttribute::class,
+            ['setAttributeCode', 'getAttributeCode']
+        );
+        $attributeCode = '';
+        $this->attributeMock->method('setAttributeCode')->willReturnCallback(function ($value) use (&$attributeCode) {
+            $attributeCode = $value;
+        });
+        $this->attributeMock->method('getAttributeCode')->willReturnCallback(function () use (&$attributeCode) {
+            return $attributeCode;
+        });
+        
+        $this->subjectMock = $this->createPartialMockWithReflection(
+            AbstractBackend::class,
+            ['setAttribute', 'getAttribute']
+        );
+        $this->subjectMock->method('setAttribute')->willReturnSelf();
+        $this->subjectMock->method('getAttribute')->willReturn($this->attributeMock);
 
-        $this->storeMock = new StoreTestHelper();
-        $this->storeManagerMock = new StoreManagerTestHelper();
-        $this->storeManagerMock->setStoreReturn($this->storeMock);
+        $this->storeMock = $this->createPartialMockWithReflection(
+            Store::class,
+            ['setId', 'getId']
+        );
+        $storeId = null;
+        $this->storeMock->method('setId')->willReturnCallback(function ($value) use (&$storeId) {
+            $storeId = $value;
+        });
+        $this->storeMock->method('getId')->willReturnCallback(function () use (&$storeId) {
+            return $storeId;
+        });
+        
+        $this->storeManagerMock = $this->createPartialMockWithReflection(
+            StoreManagerInterface::class,
+            [
+                'setStore', 'getStore', 'setIsSingleStoreModeAllowed', 'hasSingleStore',
+                'isSingleStoreMode', 'getStores', 'getWebsite', 'getWebsites',
+                'reinitStores', 'getDefaultStoreView', 'getGroup', 'getGroups', 'setCurrentStore'
+            ]
+        );
+        $this->storeManagerMock->method('setStore')->willReturnSelf();
+        $this->storeManagerMock->method('getStore')->willReturn($this->storeMock);
+        $this->storeManagerMock->method('setIsSingleStoreModeAllowed')->willReturnSelf();
+        $this->storeManagerMock->method('hasSingleStore')->willReturn(false);
+        $this->storeManagerMock->method('isSingleStoreMode')->willReturn(false);
+        $this->storeManagerMock->method('getStores')->willReturn([]);
+        $this->storeManagerMock->method('getWebsite')->willReturn(null);
+        $this->storeManagerMock->method('getWebsites')->willReturn([]);
+        $this->storeManagerMock->method('reinitStores')->willReturn(null);
+        $this->storeManagerMock->method('getDefaultStoreView')->willReturn(null);
+        $this->storeManagerMock->method('getGroup')->willReturn(null);
+        $this->storeManagerMock->method('getGroups')->willReturn([]);
+        $this->storeManagerMock->method('setCurrentStore')->willReturnSelf();
 
-        $this->entityMock = new DataObjectTestHelper();
+        $this->entityMock = $this->createMock(DataObject::class);
 
         $this->allowedEntityTypes = [$this->entityMock];
 
@@ -119,16 +163,17 @@ class AttributeValidationTest extends TestCase
         $this->isProceedMockCalled = false;
         $attributeCode = 'code';
 
-        $this->storeMock->setIdReturn($storeId);
+        $this->storeMock->setId($storeId);
 
         if ($defaultStoreUsed) {
-            $this->attributeMock->setAttributeCodeReturn($attributeCode);
-            $this->entityMock->setGetDataCallback(function ($arg1) use ($attributeCode) {
+            $this->attributeMock->setAttributeCode($attributeCode);
+            $this->entityMock->method('getData')->willReturnCallback(function ($arg1) use ($attributeCode) {
                 if (empty($arg1)) {
                     return [$attributeCode => null];
                 } elseif ($arg1 == $attributeCode) {
                     return null;
                 }
+                return null;
             });
         }
 

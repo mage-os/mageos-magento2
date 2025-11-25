@@ -118,12 +118,8 @@ class CollectionTest extends TestCase
         $this->entityFactoryMock2 = $this->createMock(\Magento\Eav\Model\EntityFactory::class);
         $this->helperMock = $this->createMock(Helper::class);
         $entity = $this->createMock(AbstractEntity::class);
-        $select = $this->getMockBuilder(Select::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $connection = $this->getMockBuilder(Mysql::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $select = $this->createMock(Select::class);
+        $connection = $this->createMock(Mysql::class);
         $connection->method('select')->willReturn($select);
         $entity->method('getConnection')->willReturn($connection);
         $entity->method('getDefaultAttributes')->willReturn([]);
@@ -146,19 +142,14 @@ class CollectionTest extends TestCase
         $this->timezoneInterfaceMock = $this->createMock(TimezoneInterface::class);
         $this->sessionMock = $this->createMock(Session::class);
         $this->dateTimeMock = $this->createMock(DateTime::class);
-        $productLimitationFactoryMock = $this->getMockBuilder(
-            ProductLimitationFactory::class
-        )->disableOriginalConstructor()
-            ->onlyMethods(['create'])->getMock();
+        $productLimitationFactoryMock = $this->createPartialMock(ProductLimitationFactory::class, ['create']);
 
         $productLimitationFactoryMock->method('create')
             ->willReturn($this->createMock(ProductLimitation::class));
 
         $metadataMock = $this->createMock(EntityMetadataInterface::class);
         $metadataMock->method('getLinkField')->willReturn('entity_id');
-        $metadataPoolMock = $this->getMockBuilder(MetadataPool::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $metadataPoolMock = $this->createMock(MetadataPool::class);
         $metadataPoolMock->method('getMetadata')->willReturn($metadataMock);
 
         $this->collection = $this->objectManager->getObject(

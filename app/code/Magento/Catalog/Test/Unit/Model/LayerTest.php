@@ -22,9 +22,9 @@ use Magento\Catalog\Model\ResourceModel\Product\Collection;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Registry;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
-use Magento\Store\Test\Unit\Helper\StoreTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -34,6 +34,7 @@ use PHPUnit\Framework\TestCase;
  */
 class LayerTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var Layer
      */
@@ -118,61 +119,43 @@ class LayerTest extends TestCase
     {
         $helper = new ObjectManager($this);
 
-        $this->category = $this->getMockBuilder(Category::class)
-            ->onlyMethods(['getId'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->category = $this->createPartialMock(Category::class, ['getId']);
 
-        $this->registry = $this->getMockBuilder(Registry::class)
-            ->onlyMethods(['registry'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->registry = $this->createPartialMock(Registry::class, ['registry']);
 
-        $this->store = new StoreTestHelper();
+        $this->store = $this->createPartialMockWithReflection(Store::class, ['setRootCategoryId', 'getRootCategoryId']);
+        $rootCategoryId = null;
+        $this->store->method('setRootCategoryId')->willReturnCallback(function ($id) use (&$rootCategoryId) {
+            $rootCategoryId = $id;
+        });
+        $this->store->method('getRootCategoryId')->willReturnCallback(function () use (&$rootCategoryId) {
+            return $rootCategoryId;
+        });
 
         $this->storeManager = $this->createMock(StoreManagerInterface::class);
         $this->storeManager->method('getStore')->willReturn($this->store);
 
-        $this->stateKeyGenerator = $this->getMockBuilder(StateKey::class)
-            ->onlyMethods(['toString'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->stateKeyGenerator = $this->createPartialMock(StateKey::class, ['toString']);
 
-        $this->collectionFilter = $this->getMockBuilder(CollectionFilter::class)
-            ->onlyMethods(['filter'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->collectionFilter = $this->createPartialMock(CollectionFilter::class, ['filter']);
 
         $this->collectionProvider = $this->createMock(ItemCollectionProviderInterface::class);
 
-        $this->filter = $this->getMockBuilder(Item::class)
-            ->onlyMethods(['getFilter', 'getValueString'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->filter = $this->createPartialMock(Item::class, ['getFilter', 'getValueString']);
 
-        $this->abstractFilter = $this->getMockBuilder(AbstractFilter::class)
-            ->onlyMethods(['getRequestVar'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->abstractFilter = $this->createPartialMock(AbstractFilter::class, ['getRequestVar']);
 
         $this->context = $this->createMock(ContextInterface::class);
         $this->context->method('getStateKey')->willReturn($this->stateKeyGenerator);
         $this->context->method('getCollectionFilter')->willReturn($this->collectionFilter);
         $this->context->method('getCollectionProvider')->willReturn($this->collectionProvider);
 
-        $this->state = $this->getMockBuilder(State::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->state = $this->createMock(State::class);
 
-        $this->stateFactory = $this->getMockBuilder(StateFactory::class)
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->stateFactory = $this->createPartialMock(StateFactory::class, ['create']);
         $this->stateFactory->method('create')->willReturn($this->state);
 
-        $this->collection = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->collection = $this->createMock(Collection::class);
 
         $this->categoryRepository = $this->createMock(CategoryRepositoryInterface::class);
         $this->currentCategory = $this->createPartialMock(

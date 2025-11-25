@@ -98,19 +98,11 @@ class ImageTest extends TestCase
             ['moveFileFromTmp', 'getBasePath']
         );
 
-        $this->storeManagerInterfaceMock = $this->getMockBuilder(
-            StoreManagerInterface::class
-        )->disableOriginalConstructor()
-            ->getMock();
+        $this->storeManagerInterfaceMock = $this->createMock(StoreManagerInterface::class);
 
-        $this->storeMock = $this->getMockBuilder(
-            Store::class
-        )->disableOriginalConstructor()
-            ->getMock();
+        $this->storeMock = $this->createMock(Store::class);
 
-        $this->filesystem = $this->getMockBuilder(Filesystem::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->filesystem = $this->createMock(Filesystem::class);
     }
 
     /**

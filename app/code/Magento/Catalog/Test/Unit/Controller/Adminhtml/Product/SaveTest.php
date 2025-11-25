@@ -66,32 +66,23 @@ class SaveTest extends ProductTestCase
             Builder::class,
             ['build']
         );
-        $this->product = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['addData', 'getSku', 'getTypeId', 'getStoreId', '__sleep'])->getMock();
+        $this->product = $this->createPartialMock(
+            Product::class,
+            ['addData', 'getSku', 'getTypeId', 'getStoreId', '__sleep']
+        );
         $this->product->method('getTypeId')->willReturn('simple');
         $this->product->method('getStoreId')->willReturn('1');
         $this->productBuilder->method('build')->willReturn($this->product);
 
         $this->messageManagerMock = $this->createMock(ManagerInterface::class);
 
-        $this->resultPage = $this->getMockBuilder(Page::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->resultPage = $this->createMock(Page::class);
 
-        $resultPageFactory = $this->getMockBuilder(PageFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
+        $resultPageFactory = $this->createPartialMock(PageFactory::class, ['create']);
         $resultPageFactory->method('create')->willReturn($this->resultPage);
 
-        $this->resultForward = $this->getMockBuilder(Forward::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $resultForwardFactory = $this->getMockBuilder(ForwardFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
+        $this->resultForward = $this->createMock(Forward::class);
+        $resultForwardFactory = $this->createPartialMock(ForwardFactory::class, ['create']);
         $resultForwardFactory->method('create')->willReturn($this->resultForward);
         $this->resultPage->method('getLayout')->willReturn($this->layout);
         $this->resultRedirectFactory = $this->createPartialMock(

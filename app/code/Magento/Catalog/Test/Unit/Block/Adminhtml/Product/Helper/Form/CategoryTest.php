@@ -29,9 +29,7 @@ class CategoryTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->authorization = $this->getMockBuilder(AuthorizationInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->authorization = $this->createMock(AuthorizationInterface::class);
         $this->objectManager = new ObjectManager($this);
         $objects = [
             [

@@ -28,9 +28,7 @@ class PresentationTest extends TestCase
     protected function setUp(): void
     {
         $this->presentation = new Presentation();
-        $this->attributeMock = $this->getMockBuilder(Attribute::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->attributeMock = $this->createMock(Attribute::class);
     }
 
     /**

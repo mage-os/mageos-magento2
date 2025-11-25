@@ -89,10 +89,7 @@ class FlatTest extends TestCase
     {
         $this->objectManager = new ObjectManager($this);
 
-        $this->selectMock = $this->getMockBuilder(Select::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['where', 'from'])
-            ->getMock();
+        $this->selectMock = $this->createPartialMock(Select::class, ['where', 'from']);
         $this->selectMock->expects($this->once())
             ->method('where')
             ->willReturn($this->selectMock);
@@ -107,22 +104,13 @@ class FlatTest extends TestCase
             ->method('fetchOne')
             ->with($this->selectMock)
             ->willReturn(self::PARENT_PATH);
-        $this->resourceMock = $this->getMockBuilder(ResourceConnection::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getConnection', 'getTableName'])
-            ->getMock();
+        $this->resourceMock = $this->createPartialMock(ResourceConnection::class, ['getConnection', 'getTableName']);
         $this->resourceMock->method('getConnection')->willReturn($this->connectionMock);
         $this->resourceMock->method('getTableName')->willReturn(self::TABLE_NAME);
-        $this->contextMock = $this->getMockBuilder(Context::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getResources'])
-            ->getMock();
+        $this->contextMock = $this->createPartialMock(Context::class, ['getResources']);
         $this->contextMock->method('getResources')->willReturn($this->resourceMock);
 
-        $this->storeMock = $this->getMockBuilder(Store::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getId'])
-            ->getMock();
+        $this->storeMock = $this->createPartialMock(Store::class, ['getId']);
         $this->storeMock->method('getId')->willReturn(self::STORE_ID);
         $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
         $this->storeManagerMock->method('getStore')->willReturn($this->storeMock);
@@ -130,14 +118,10 @@ class FlatTest extends TestCase
 
     public function testGetCategories()
     {
-        $this->categoryCollectionFactoryMock = $this->getMockBuilder(CollectionFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
-        $this->categoryCollectionMock = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(
-                [
+        $this->categoryCollectionFactoryMock = $this->createPartialMock(CollectionFactory::class, ['create']);
+        $this->categoryCollectionMock = $this->createPartialMock(
+            Collection::class,
+            [
                     'addNameToResult',
                     'addUrlRewriteToResult',
                     'addParentPathFilter',
@@ -147,8 +131,7 @@ class FlatTest extends TestCase
                     'addSortedField',
                     'load'
                 ]
-            )
-            ->getMock();
+        );
         $this->categoryCollectionMock->expects($this->once())
             ->method('addNameToResult')
             ->willReturn($this->categoryCollectionMock);

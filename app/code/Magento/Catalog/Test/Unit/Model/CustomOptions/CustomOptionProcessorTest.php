@@ -75,24 +75,10 @@ class CustomOptionProcessorTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->objectFactory = $this->getMockBuilder(Factory::class)
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->productOptionFactory = $this->getMockBuilder(ProductOptionFactory::class)
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->extensionFactory = $this->getMockBuilder(ProductOptionExtensionFactory::class)
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->customOptionFactory = $this->getMockBuilder(
-            CustomOptionFactory::class
-        )
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->objectFactory = $this->createPartialMock(Factory::class, ['create']);
+        $this->productOptionFactory = $this->createPartialMock(ProductOptionFactory::class, ['create']);
+        $this->extensionFactory = $this->createPartialMock(ProductOptionExtensionFactory::class, ['create']);
+        $this->customOptionFactory = $this->createPartialMock(CustomOptionFactory::class, ['create']);
         $this->cartItem = $this->createPartialMock(
             \Magento\Quote\Model\Quote\Item::class,
             ['getOptionByCode', 'getProductOption', 'setProductOption']
@@ -100,13 +86,9 @@ class CustomOptionProcessorTest extends TestCase
         $this->extensibleAttribute = $this->createMock(
             ProductOptionExtensionInterface::class
         );
-        $this->productOption = $this->getMockBuilder(ProductOption::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->productOption = $this->createMock(ProductOption::class);
         $this->customOption = $this->createMock(CustomOptionInterface::class);
-        $this->buyRequest = $this->getMockBuilder(DataObject::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->buyRequest = $this->createMock(DataObject::class);
         $this->serializer = $this->createMock(Json::class);
 
         $this->processor = new CustomOptionProcessor(
@@ -145,9 +127,7 @@ class CustomOptionProcessorTest extends TestCase
     public function testProcessCustomOptions()
     {
         $optionId = 23;
-        $quoteItemOption = $this->getMockBuilder(Option::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $quoteItemOption = $this->createMock(Option::class);
         $this->cartItem->expects($this->atLeastOnce())
             ->method('getOptionByCode')
             ->with('info_buyRequest')

@@ -16,11 +16,13 @@ use Magento\Catalog\Model\ResourceModel\Product\Indexer\Eav\SourceFactory;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class AbstractActionTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var AbstractAction|MockObject
      */
@@ -55,14 +57,15 @@ class AbstractActionTest extends TestCase
             ['create']
         );
         $this->scopeConfig = $this->createMock(ScopeConfigInterface::class);
-        $this->_model = $this->getMockBuilder(AbstractAction::class)
-            ->setConstructorArgs([
+        $this->_model = $this->createPartialMockWithReflectionAndArgs(
+            AbstractAction::class,
+            ['execute'],
+            [
                 $this->_eavDecimalFactoryMock,
                 $this->_eavSourceFactoryMock,
                 $this->scopeConfig
-            ])
-            ->onlyMethods(['execute'])
-            ->getMock();
+            ]
+        );
     }
 
     /**
@@ -124,13 +127,9 @@ class AbstractActionTest extends TestCase
      */
     public function testReindexWithoutArgumentsExecutesReindexAll()
     {
-        $eavSource = $this->getMockBuilder(Source::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $eavSource = $this->createMock(Source::class);
 
-        $eavDecimal = $this->getMockBuilder(Decimal::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $eavDecimal = $this->createMock(Decimal::class);
 
         $eavDecimal->expects($this->once())
             ->method('reindexAll');
@@ -169,13 +168,9 @@ class AbstractActionTest extends TestCase
 
         $connectionMock = $this->createMock(AdapterInterface::class);
 
-        $eavSource = $this->getMockBuilder(Source::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $eavSource = $this->createMock(Source::class);
 
-        $eavDecimal = $this->getMockBuilder(Decimal::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $eavDecimal = $this->createMock(Decimal::class);
 
         $eavSource->expects($this->once())
             ->method('getRelationsByChild')

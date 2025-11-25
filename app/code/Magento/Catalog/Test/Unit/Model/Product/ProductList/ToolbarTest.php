@@ -32,9 +32,7 @@ class ToolbarTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->requestMock = $this->getMockBuilder(Http::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->requestMock = $this->createMock(Http::class);
         $this->toolbarModel = (new ObjectManager($this))->getObject(
             Toolbar::class,
             [

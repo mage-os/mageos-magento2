@@ -37,13 +37,13 @@ use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\Locale\Currency as CurrencyLocale;
 use Magento\Framework\Phrase;
 use Magento\Framework\Stdlib\ArrayManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Ui\DataProvider\EavValidationRules;
 use Magento\Ui\DataProvider\Mapper\FormElement as FormElementMapper;
 use Magento\Ui\DataProvider\Mapper\MetaProperties as MetaPropertiesMapper;
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 
 /**
@@ -54,6 +54,8 @@ use PHPUnit\Framework\MockObject\MockObject;
 #[CoversClass(\Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\Eav::class)]
 class EavTest extends AbstractModifierTestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Config|MockObject
      */
@@ -239,6 +241,7 @@ class EavTest extends AbstractModifierTestCase
         );
         $this->attributeCollectionMock = $this->createMock(AttributeCollection::class);
         $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
+        $this->storeManagerMock->method('isSingleStoreMode')->willReturn(true);
         $this->formElementMapperMock = $this->createMock(FormElementMapper::class);
         $this->metaPropertiesMapperMock = $this->createMock(MetaPropertiesMapper::class);
         $this->searchCriteriaBuilderMock = $this->createMock(SearchCriteriaBuilder::class);
@@ -250,14 +253,20 @@ class EavTest extends AbstractModifierTestCase
         $this->sortOrderBuilderMock = $this->createMock(SortOrderBuilder::class);
         $this->searchResultsMock = $this->createMock(SearchResultsInterface::class);
         // Use parent Attribute class - all setters work via magic methods (DataObject)
-        $this->eavAttributeMock = $this->createPartialMock(Attribute::class, []);
-        $this->productAttributeMock = $this->createPartialMock(Attribute::class, []);
+        $this->eavAttributeMock = $this->createPartialMock(
+            Attribute::class,
+            ['load', 'getApplyTo', 'getFrontendInput', 'getAttributeCode']
+        );
+        $this->productAttributeMock = $this->createPartialMock(Attribute::class, ['load']);
         $this->arrayManagerMock = $this->createMock(ArrayManager::class);
         $this->eavAttributeFactoryMock = $this->createPartialMock(
             EavAttributeFactory::class,
             ['create']
         );
         $this->eventManagerMock = $this->createMock(ManagerInterface::class);
+        $this->scopeOverriddenValueMock = $this->createMock(
+            \Magento\Catalog\Model\Attribute\ScopeOverriddenValue::class
+        );
 
         $this->eavAttributeFactoryMock->expects($this->any())
             ->method('create')
@@ -288,6 +297,7 @@ class EavTest extends AbstractModifierTestCase
             \Magento\Store\Model\Store::class,
             ['load', 'getConfig', 'getBaseCurrencyCode', 'getId']
         );
+        $this->storeMock->method('load')->willReturnSelf();
         $this->eavAttributeMock->expects($this->any())
             ->method('load')
             ->willReturnSelf();

@@ -20,11 +20,12 @@ use Magento\CatalogUrlRewrite\Model\CategoryUrlPathGenerator;
 use Magento\Framework\Api\AttributeValue;
 use Magento\Framework\Api\AttributeValueFactory;
 use Magento\Framework\Api\MetadataObjectInterface;
-use Magento\Framework\Filter\Test\Unit\Helper\FilterManagerTestHelper;
+use Magento\Framework\Filter\FilterManager;
 use Magento\Framework\Indexer\IndexerInterface;
 use Magento\Framework\Indexer\IndexerRegistry;
 use Magento\Framework\Model\ResourceModel\AbstractResource;
 use Magento\Framework\Registry;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\UrlInterface;
 use Magento\Store\Model\ResourceModel\Store\CollectionFactory;
@@ -41,6 +42,8 @@ use PHPUnit\Framework\TestCase;
  */
 class CategoryTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Category
      */
@@ -170,7 +173,23 @@ class CategoryTest extends TestCase
             ['create']
         );
         $this->catalogConfig = $this->createMock(Config::class);
-        $this->filterManager = new FilterManagerTestHelper();
+        $this->filterManager = $this->createPartialMockWithReflection(
+            FilterManager::class,
+            ['translitUrl', 'setTranslitUrlResult']
+        );
+        // Use a variable to store the translit URL result
+        $translitUrlResult = 'test';
+        $this->filterManager->method('translitUrl')->willReturnCallback(
+            function () use (&$translitUrlResult) {
+                return $translitUrlResult;
+            }
+        );
+        $this->filterManager->method('setTranslitUrlResult')->willReturnCallback(
+            function ($value) use (&$translitUrlResult) {
+                $translitUrlResult = $value;
+                return $this->filterManager;
+            }
+        );
         $this->flatState = $this->createMock(State::class);
         $this->flatIndexer = $this->createMock(IndexerInterface::class);
         $this->productIndexer = $this->createMock(IndexerInterface::class);
@@ -184,9 +203,7 @@ class CategoryTest extends TestCase
         $this->metadataServiceMock = $this->createMock(
             CategoryAttributeRepositoryInterface::class
         );
-        $this->attributeValueFactory = $this->getMockBuilder(AttributeValueFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->attributeValueFactory = $this->createMock(AttributeValueFactory::class);
 
         $this->category = $this->getCategoryModel();
     }

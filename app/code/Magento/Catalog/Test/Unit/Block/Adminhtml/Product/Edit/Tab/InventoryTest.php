@@ -12,18 +12,16 @@ use Magento\Backend\Block\Template\Context;
 use Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Inventory;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Type\AbstractType;
-use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use Magento\CatalogInventory\Api\Data\StockItemInterface;
 use Magento\CatalogInventory\Api\StockConfigurationInterface;
 use Magento\CatalogInventory\Api\StockRegistryInterface;
 use Magento\CatalogInventory\Model\Source\Backorders;
 use Magento\CatalogInventory\Model\Source\Stock;
-use Magento\CatalogInventory\Test\Unit\Helper\StockItemTestHelper;
-use Magento\CatalogInventory\Test\Unit\Helper\StockItemWithFieldTestHelper;
 use Magento\Directory\Helper\Data as DirectoryHelper;
 use Magento\Framework\Json\Helper\Data as JsonHelper;
 use Magento\Framework\Module\Manager;
 use Magento\Framework\Registry;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
@@ -35,6 +33,7 @@ use PHPUnit\Framework\TestCase;
  */
 class InventoryTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var Manager|MockObject
      */
@@ -262,7 +261,32 @@ class InventoryTest extends TestCase
                 ->willReturn('default-result');
         }
 
-        $stockItemMock = new StockItemTestHelper($methods, $stockId);
+        // Create stock item mock with all required interface methods
+        $allMethods = [
+            'getItemId', 'setItemId', 'getProductId', 'setProductId', 'getStockId', 'setStockId',
+            'getQty', 'setQty', 'getIsInStock', 'setIsInStock', 'getIsQtyDecimal', 'setIsQtyDecimal',
+            'getShowDefaultNotificationMessage', 'getUseConfigMinQty', 'setUseConfigMinQty',
+            'getMinQty', 'setMinQty', 'getUseConfigMinSaleQty', 'setUseConfigMinSaleQty',
+            'getMinSaleQty', 'setMinSaleQty', 'getUseConfigMaxSaleQty', 'setUseConfigMaxSaleQty',
+            'getMaxSaleQty', 'setMaxSaleQty', 'getUseConfigBackorders', 'setUseConfigBackorders',
+            'getBackorders', 'setBackorders', 'getUseConfigNotifyStockQty', 'setUseConfigNotifyStockQty',
+            'getNotifyStockQty', 'setNotifyStockQty', 'getUseConfigQtyIncrements', 'setUseConfigQtyIncrements',
+            'getQtyIncrements', 'setQtyIncrements', 'getUseConfigEnableQtyInc', 'setUseConfigEnableQtyInc',
+            'getEnableQtyIncrements', 'setEnableQtyIncrements', 'getUseConfigManageStock', 'setUseConfigManageStock',
+            'getManageStock', 'setManageStock', 'getLowStockDate', 'setLowStockDate',
+            'getIsDecimalDivided', 'setIsDecimalDivided', 'getStockStatusChangedAuto', 'setStockStatusChangedAuto',
+            'getExtensionAttributes', 'setExtensionAttributes'
+        ];
+        $stockItemMock = $this->createPartialMockWithReflection(
+            StockItemInterface::class,
+            array_unique(array_merge($allMethods, $methods))
+        );
+        $stockItemMock->method('getStockId')->willReturn($stockId);
+        $stockItemMock->method('getItemId')->willReturn($stockId); // Need this for getFieldValue logic
+        foreach ($methods as $method) {
+            $stockItemMock->method($method)->willReturn('call-method');
+        }
+        
         $productMock = $this->createMock(Product::class);
         $storeMock = $this->createMock(Store::class);
         $productMock->expects($this->once())
@@ -310,11 +334,32 @@ class InventoryTest extends TestCase
                 ->willReturn('default-result');
         }
 
-        if (in_array('getUseConfigField', $methods)) {
-            $stockItemMock = new StockItemWithFieldTestHelper($methods, $stockId);
-        } else {
-            $stockItemMock = new StockItemTestHelper($methods, $stockId);
+        // Create stock item mock with all required interface methods
+        $allMethods = [
+            'getItemId', 'setItemId', 'getProductId', 'setProductId', 'getStockId', 'setStockId',
+            'getQty', 'setQty', 'getIsInStock', 'setIsInStock', 'getIsQtyDecimal', 'setIsQtyDecimal',
+            'getShowDefaultNotificationMessage', 'getUseConfigMinQty', 'setUseConfigMinQty',
+            'getMinQty', 'setMinQty', 'getUseConfigMinSaleQty', 'setUseConfigMinSaleQty',
+            'getMinSaleQty', 'setMinSaleQty', 'getUseConfigMaxSaleQty', 'setUseConfigMaxSaleQty',
+            'getMaxSaleQty', 'setMaxSaleQty', 'getUseConfigBackorders', 'setUseConfigBackorders',
+            'getBackorders', 'setBackorders', 'getUseConfigNotifyStockQty', 'setUseConfigNotifyStockQty',
+            'getNotifyStockQty', 'setNotifyStockQty', 'getUseConfigQtyIncrements', 'setUseConfigQtyIncrements',
+            'getQtyIncrements', 'setQtyIncrements', 'getUseConfigEnableQtyInc', 'setUseConfigEnableQtyInc',
+            'getEnableQtyIncrements', 'setEnableQtyIncrements', 'getUseConfigManageStock', 'setUseConfigManageStock',
+            'getManageStock', 'setManageStock', 'getLowStockDate', 'setLowStockDate',
+            'getIsDecimalDivided', 'setIsDecimalDivided', 'getStockStatusChangedAuto', 'setStockStatusChangedAuto',
+            'getExtensionAttributes', 'setExtensionAttributes'
+        ];
+        $stockItemMock = $this->createPartialMockWithReflection(
+            StockItemInterface::class,
+            array_unique(array_merge($allMethods, $methods))
+        );
+        $stockItemMock->method('getStockId')->willReturn($stockId);
+        $stockItemMock->method('getItemId')->willReturn($stockId); // Need this for getFieldValue logic
+        foreach ($methods as $method) {
+            $stockItemMock->method($method)->willReturn('call-method');
         }
+        
         $productMock = $this->createMock(Product::class);
         $storeMock = $this->createMock(Store::class);
         $productMock->expects($this->once())
@@ -334,13 +379,9 @@ class InventoryTest extends TestCase
             ->method('getStockItem')
             ->with($productId, $websiteId)
             ->willReturn($stockItemMock);
-        // $stockItemMock->expects($this->once())
-        //     ->method('getItemId')
-        //     ->willReturn($stockId);
-
-        // The logic for when to call getDefaultConfigValue depends on the test scenario
-        // This will be handled by the anonymous class methods returning appropriate values
-     
+        $stockItemMock->expects($this->once())
+            ->method('getItemId')
+            ->willReturn($stockId);
 
         $resultField = $this->inventory->getConfigFieldValue($fieldName);
         $this->assertEquals($result, $resultField);
@@ -369,8 +410,12 @@ class InventoryTest extends TestCase
      */
     public function testIsReadonly()
     {
-        $productMock = new ProductTestHelper();
-        $productMock->setInventoryReadonly('return-value');
+        $productMock = $this->createPartialMockWithReflection(
+            Product::class,
+            ['getInventoryReadonly']
+        );
+        $productMock->method('getInventoryReadonly')->willReturn('return-value');
+        
         $this->coreRegistryMock->expects($this->once())
             ->method('registry')
             ->with('product')

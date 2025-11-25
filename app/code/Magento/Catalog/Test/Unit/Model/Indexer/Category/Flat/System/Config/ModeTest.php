@@ -12,7 +12,7 @@ use Magento\Catalog\Model\Indexer\Category\Flat\System\Config\Mode;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Indexer\IndexerInterface;
 use Magento\Framework\Indexer\IndexerRegistry;
-use Magento\Framework\Indexer\Test\Unit\Helper\IndexerRegistryTestHelper;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Indexer\Model\Indexer\State;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -20,6 +20,7 @@ use PHPUnit\Framework\TestCase;
 
 class ModeTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var Mode
      */
@@ -52,7 +53,18 @@ class ModeTest extends TestCase
             State::class,
             ['loadByIndexer', 'setStatus', 'save']
         );
-        $this->indexerRegistry = new IndexerRegistryTestHelper();
+        $this->indexerRegistry = $this->createPartialMockWithReflection(
+            IndexerRegistry::class,
+            ['get', 'setGetResult']
+        );
+        $getResult = null;
+        $this->indexerRegistry->method('setGetResult')->willReturnCallback(function ($value) use (&$getResult) {
+            $getResult = $value;
+            return $this->indexerRegistry;
+        });
+        $this->indexerRegistry->method('get')->willReturnCallback(function () use (&$getResult) {
+            return $getResult;
+        });
 
         $this->flatIndexer = $this->createMock(IndexerInterface::class);
 

@@ -14,12 +14,11 @@ use Magento\Catalog\Model\Product\Gallery\Processor;
 use Magento\Catalog\Model\Product\Media\Config;
 use Magento\Catalog\Model\ResourceModel\Product\Gallery;
 use Magento\Eav\Model\Entity\Attribute;
-use Magento\Framework\Data\Test\Unit\Helper\DataObjectTestHelper;
 use Magento\Framework\DataObject;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Directory\Write;
 use Magento\Framework\Model\ResourceModel\AbstractResource;
-use Magento\Framework\Model\ResourceModel\Test\Unit\Helper\AbstractResourceTestHelper;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\MediaStorage\Helper\File\Storage\Database;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -31,6 +30,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ProcessorTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var Processor
      */
@@ -89,7 +89,23 @@ class ProcessorTest extends TestCase
             Gallery::GALLERY_TABLE
         );
 
-        $this->dataObject = new DataObjectTestHelper();
+        $this->dataObject = $this->createPartialMockWithReflection(
+            DataObject::class,
+            ['getData', 'setData', 'setMainTable']
+        );
+        $dataStore = [];
+        $this->dataObject->method('getData')->willReturnCallback(function ($key = null) use (&$dataStore) {
+            return $key === null ? $dataStore : ($dataStore[$key] ?? null);
+        });
+        $this->dataObject->method('setData')->willReturnCallback(function ($key, $value = null) use (&$dataStore) {
+            if (is_array($key)) {
+                $dataStore = $key;
+            } else {
+                $dataStore[$key] = $value;
+            }
+            return $this->dataObject;
+        });
+        $this->dataObject->method('setMainTable')->willReturnSelf();
 
         $this->model = $this->objectHelper->getObject(
             Processor::class,
@@ -147,7 +163,23 @@ class ProcessorTest extends TestCase
             Attribute::class,
             ['getAttributeCode', 'getIsRequired', 'isValueEmpty', 'getIsUnique', 'getEntity']
         );
-        $attributeEntity = new AbstractResourceTestHelper();
+        $attributeEntity = $this->createPartialMockWithReflection(
+            AbstractResource::class,
+            ['setCheckAttributeUniqueValueResult', 'checkAttributeUniqueValue', '_construct', 'getConnection']
+        );
+        $checkResult = true;
+        $attributeEntity->method('setCheckAttributeUniqueValueResult')->willReturnCallback(
+            function ($value) use (&$checkResult) {
+                $checkResult = $value;
+            }
+        );
+        $attributeEntity->method('checkAttributeUniqueValue')->willReturnCallback(
+            function () use (&$checkResult) {
+                return $checkResult;
+            }
+        );
+        $attributeEntity->method('_construct')->willReturn(null);
+        $attributeEntity->method('getConnection')->willReturn(null);
 
         $attribute->method('getAttributeCode')->willReturn($attributeCode);
         $attribute->method('getIsRequired')->willReturn(true);
@@ -184,9 +216,7 @@ class ProcessorTest extends TestCase
     #[DataProvider('clearMediaAttributeDataProvider')]
     public function testClearMediaAttribute($setDataExpectsCalls, $setDataArgument, $mediaAttribute)
     {
-        $productMock = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $productMock = $this->createMock(Product::class);
 
         $productMock->expects($this->exactly($setDataExpectsCalls))
             ->method('setData')

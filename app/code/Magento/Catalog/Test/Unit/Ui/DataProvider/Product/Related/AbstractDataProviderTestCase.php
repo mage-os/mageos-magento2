@@ -79,13 +79,8 @@ abstract class AbstractDataProviderTestCase extends TestCase
         $this->productRepositoryMock = $this->createMock(ProductRepositoryInterface::class);
         $this->productLinkRepositoryMock = $this->createMock(ProductLinkRepositoryInterface::class);
         $this->productMock = $this->createMock(ProductInterface::class);
-        $this->collectionMock = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->collectionFactoryMock = $this->getMockBuilder(CollectionFactory::class)
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->collectionMock = $this->createMock(Collection::class);
+        $this->collectionFactoryMock = $this->createPartialMock(CollectionFactory::class, ['create']);
 
         $this->productRepositoryMock->method('getById')->willReturn($this->productMock);
         $this->collectionFactoryMock->expects($this->once())

@@ -9,12 +9,13 @@ namespace Magento\Catalog\Test\Unit\Model\Product\Initialization\Helper;
 
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Initialization\Helper\ProductLinks;
-use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\TestCase;
 
 class ProductLinksTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var ProductLinks
      */
@@ -40,7 +41,13 @@ class ProductLinksTest extends TestCase
      */
     private function getMockedProduct()
     {
-        $mock = new ProductTestHelper();
+        $mock = $this->createPartialMockWithReflection(
+            Product::class,
+            ['setRelatedLinkData', 'setUpSellLinkData', 'setCrossSellLinkData']
+        );
+        $mock->method('setRelatedLinkData')->willReturnSelf();
+        $mock->method('setUpSellLinkData')->willReturnSelf();
+        $mock->method('setCrossSellLinkData')->willReturnSelf();
 
         return $mock;
     }

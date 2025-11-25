@@ -55,27 +55,12 @@ class ProductsRenderInfoSectionTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->storeManagerMock = $this->getMockBuilder(StoreManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->searchCriteriaBuilderMock = $this
-            ->getMockBuilder(SearchCriteriaBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->filterBuilderMock = $this->getMockBuilder(FilterBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->productRenderRepositoryMock = $this
-            ->getMockBuilder(ProductRenderList::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->synchronizerMock = $this
-            ->getMockBuilder(Synchronizer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->hydratorMock = $this->getMockBuilder(Hydrator::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->storeManagerMock = $this->createMock(StoreManager::class);
+        $this->searchCriteriaBuilderMock = $this->createMock(SearchCriteriaBuilder::class);
+        $this->filterBuilderMock = $this->createMock(FilterBuilder::class);
+        $this->productRenderRepositoryMock = $this->createMock(ProductRenderList::class);
+        $this->synchronizerMock = $this->createMock(Synchronizer::class);
+        $this->hydratorMock = $this->createMock(Hydrator::class);
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->model = $this->objectManagerHelper->getObject(
@@ -108,9 +93,7 @@ class ProductsRenderInfoSectionTest extends TestCase
         $productRender = $this->createMock(ProductRenderInterface::class);
         $searchResult = $this->createMock(ProductRenderSearchResultsInterface::class);
 
-        $store = $this->getMockBuilder(Store::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $store = $this->createPartialMock(Store::class, ['getId', 'getCurrentCurrencyCode']);
         $store->expects($this->once())
             ->method('getId')
             ->willReturn(3);

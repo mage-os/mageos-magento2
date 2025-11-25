@@ -22,8 +22,9 @@ use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\Catalog\Model\Product\Filter\DateTime as DateTimeFilter;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Eav\Model\Entity\Attribute\Exception as EavAttributeException;
-use Magento\Eav\Test\Unit\Helper\AbstractAttributeTestHelper;
-use Magento\Eav\Test\Unit\Helper\BackendValidatorTestHelper;
+use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
+use Magento\Eav\Model\Entity\Attribute\Backend\AbstractBackend;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -31,6 +32,7 @@ use PHPUnit\Framework\TestCase;
  */
 class SaveTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
@@ -77,10 +79,7 @@ class SaveTest extends TestCase
         $productFactory = $this->createMock(ProductFactory::class);
         $dateTimeFilter = $this->createMock(DateTimeFilter::class);
 
-        $product = $this->getMockBuilder(\Magento\Catalog\Model\Product::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['setData', 'getSpecialToDate'])
-            ->getMock();
+        $product = $this->createPartialMock(\Magento\Catalog\Model\Product::class, ['setData', 'getSpecialToDate']);
         $product->method('setData')->with([
             'special_from_date' => '2025-09-10 00:00:00',
             'special_to_date' => '2025-09-01 00:00:00',
@@ -90,19 +89,12 @@ class SaveTest extends TestCase
         $productFactory->method('create')->willReturn($product);
 
         // Attribute for special_from_date
-        $fromAttrBackend = new BackendValidatorTestHelper();
-        $fromAttrBackend->setShouldThrowException(true);
-
-        $fromAttribute = new AbstractAttributeTestHelper();
-        $fromAttribute->setMaxValue('2025-09-01 00:00:00');
-        $fromAttribute->setBackend($fromAttrBackend);
+        $fromAttrBackend = $this->createBackendMock(true);
+        $fromAttribute = $this->createAttributeMock('2025-09-01 00:00:00', $fromAttrBackend);
 
         // Attribute for special_to_date
-        $toAttrBackend = new BackendValidatorTestHelper();
-        $toAttrBackend->setShouldThrowException(false);
-
-        $toAttribute = new AbstractAttributeTestHelper();
-        $toAttribute->setBackend($toAttrBackend);
+        $toAttrBackend = $this->createBackendMock(false);
+        $toAttribute = $this->createAttributeMock(null, $toAttrBackend);
 
         // eavConfig should return attributes for 'special_from_date' and 'special_to_date'
         $eavConfig->method('getAttribute')
@@ -151,10 +143,7 @@ class SaveTest extends TestCase
         $productFactory = $this->createMock(ProductFactory::class);
         $dateTimeFilter = $this->createMock(DateTimeFilter::class);
 
-        $product = $this->getMockBuilder(\Magento\Catalog\Model\Product::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['setData', 'getSpecialToDate'])
-            ->getMock();
+        $product = $this->createPartialMock(\Magento\Catalog\Model\Product::class, ['setData', 'getSpecialToDate']);
         $product->method('setData')->with([
             'special_from_date' => '2025-09-01 00:00:00',
             'special_to_date' => '2025-09-10 00:00:00',
@@ -162,15 +151,9 @@ class SaveTest extends TestCase
         $product->method('getSpecialToDate')->willReturn('2025-09-10 00:00:00');
         $productFactory->method('create')->willReturn($product);
 
-        $okBackend = new BackendValidatorTestHelper();
-        $okBackend->setShouldThrowException(false);
-
-        $fromAttribute = new AbstractAttributeTestHelper();
-        $fromAttribute->setMaxValue('2025-09-10 00:00:00');
-        $fromAttribute->setBackend($okBackend);
-
-        $toAttribute = new AbstractAttributeTestHelper();
-        $toAttribute->setBackend($okBackend);
+        $okBackend = $this->createBackendMock(false);
+        $fromAttribute = $this->createAttributeMock('2025-09-10 00:00:00', $okBackend);
+        $toAttribute = $this->createAttributeMock(null, $okBackend);
 
         $eavConfig->method('getAttribute')
         ->willReturnCallback(function ($entity, $code) use ($fromAttribute, $toAttribute) {
@@ -202,5 +185,43 @@ class SaveTest extends TestCase
         ]);
 
         $this->addToAssertionCount(1);
+    }
+
+    /**
+     * Create a backend mock with validate behavior
+     */
+    private function createBackendMock(bool $shouldThrowException)
+    {
+        $backend = $this->createPartialMockWithReflection(
+            AbstractBackend::class,
+            ['validate']
+        );
+        
+        if ($shouldThrowException) {
+            $backend->method('validate')->willThrowException(
+                new EavAttributeException(__('Make sure the To Date is later than or the same as the From Date.'))
+            );
+        } else {
+            $backend->method('validate')->willReturn(true);
+        }
+        
+        return $backend;
+    }
+
+    /**
+     * Create an attribute mock with maxValue and backend
+     */
+    private function createAttributeMock(?string $maxValue, $backend)
+    {
+        $attribute = $this->createPartialMockWithReflection(
+            AbstractAttribute::class,
+            ['setMaxValue', 'getMaxValue', 'getBackend']
+        );
+        
+        $attribute->method('setMaxValue')->willReturnSelf();
+        $attribute->method('getMaxValue')->willReturn($maxValue);
+        $attribute->method('getBackend')->willReturn($backend);
+        
+        return $attribute;
     }
 }

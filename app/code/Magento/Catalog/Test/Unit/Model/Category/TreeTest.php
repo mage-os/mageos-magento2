@@ -14,8 +14,8 @@ use Magento\Catalog\Model\ResourceModel\Category\Collection;
 use Magento\Catalog\Model\ResourceModel\Category\Tree;
 use Magento\Catalog\Model\ResourceModel\Category\TreeFactory;
 use Magento\Framework\Data\Tree\Node;
-use Magento\Framework\Data\Tree\Test\Unit\Helper\NodeTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -26,6 +26,7 @@ use PHPUnit\Framework\TestCase;
  */
 class TreeTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var MockObject|Tree
      */
@@ -70,20 +71,11 @@ class TreeTest extends TestCase
     {
         $this->objectManager = new ObjectManager($this);
 
-        $this->categoryTreeMock = $this->getMockBuilder(
-            Tree::class
-        )->disableOriginalConstructor()
-            ->getMock();
+        $this->categoryTreeMock = $this->createMock(Tree::class);
 
-        $this->categoryCollection = $this->getMockBuilder(
-            Collection::class
-        )->disableOriginalConstructor()
-            ->getMock();
+        $this->categoryCollection = $this->createMock(Collection::class);
 
-        $this->storeManagerMock = $this->getMockBuilder(
-            StoreManagerInterface::class
-        )->disableOriginalConstructor()
-            ->getMock();
+        $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
 
         $this->treeResourceFactoryMock = $this->createMock(
             TreeFactory::class
@@ -110,25 +102,17 @@ class TreeTest extends TestCase
 
     public function testGetNode()
     {
-        $category = $this->getMockBuilder(
-            Category::class
-        )->disableOriginalConstructor()
-            ->getMock();
+        $category = $this->createMock(Category::class);
         $category->expects($this->exactly(2))->method('getId')->willReturn(1);
 
-        $node = $this->getMockBuilder(
-            Node::class
-        )->disableOriginalConstructor()
-            ->getMock();
+        $node = $this->createMock(Node::class);
 
         $node->expects($this->once())->method('loadChildren');
         $this->categoryTreeMock->expects($this->once())->method('loadNode')
             ->with(1)
             ->willReturn($node);
 
-        $store = $this->getMockBuilder(Store::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $store = $this->createMock(Store::class);
         $store->expects($this->once())->method('getId')->willReturn(1);
         $this->storeManagerMock->expects($this->once())->method('getStore')->willReturn($store);
 
@@ -144,9 +128,7 @@ class TreeTest extends TestCase
 
     public function testGetRootNode()
     {
-        $store = $this->getMockBuilder(Store::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $store = $this->createMock(Store::class);
         $store->expects($this->once())->method('getRootCategoryId')->willReturn(2);
         $store->expects($this->once())->method('getId')->willReturn(1);
         $this->storeManagerMock->method('getStore')->willReturn($store);
@@ -156,10 +138,7 @@ class TreeTest extends TestCase
         $this->categoryCollection->expects($this->once())->method('setLoadProductCount')->willReturnSelf();
         $this->categoryCollection->expects($this->once())->method('setStoreId')->willReturnSelf();
 
-        $node = $this->getMockBuilder(
-            Tree::class
-        )->disableOriginalConstructor()
-            ->getMock();
+        $node = $this->createMock(Tree::class);
         $node->expects($this->once())->method('addCollectionData')
             ->with($this->categoryCollection);
         $node->expects($this->once())->method('getNodeById')->with(2);
@@ -197,16 +176,20 @@ class TreeTest extends TestCase
         $this->treeFactoryMock->expects($this->exactly(2))
             ->method('create')
             ->willReturnOnConsecutiveCalls($treeNodeMock1, $treeNodeMock2);
-        $node = new NodeTestHelper();
-        $node->setHasChildren(true);
-        $node->setChildren([$node]);
-        $node->setId($currentLevel);
-        $node->setParentId($currentLevel - 1);
-        $node->setName('Name' . $currentLevel);
-        $node->setPosition($currentLevel);
-        $node->setLevel($currentLevel);
-        $node->setIsActive(true);
-        $node->setProductCount(4);
+        $node = $this->createPartialMockWithReflection(
+            Node::class,
+            ['getId', 'getParentId', 'getName', 'getPosition', 'getLevel',
+             'getIsActive', 'getProductCount', 'hasChildren', 'getChildren']
+        );
+        $node->method('getId')->willReturn($currentLevel);
+        $node->method('getParentId')->willReturn($currentLevel - 1);
+        $node->method('getName')->willReturn('Name' . $currentLevel);
+        $node->method('getPosition')->willReturn($currentLevel);
+        $node->method('getLevel')->willReturn($currentLevel);
+        $node->method('getIsActive')->willReturn(true);
+        $node->method('getProductCount')->willReturn(4);
+        $node->method('hasChildren')->willReturn(true);
+        $node->method('getChildren')->willReturn([$node]);
         $this->tree->getTree($node, $depth, $currentLevel);
     }
 
@@ -224,15 +207,19 @@ class TreeTest extends TestCase
         $treeNodeMock->expects($this->once())->method('setProductCount')->with(4)->willReturnSelf();
         $treeNodeMock->expects($this->once())->method('setChildrenData')->willReturnSelf();
 
-        $node = new NodeTestHelper();
-        $node->setHasChildren(false);
-        $node->setId($currentLevel);
-        $node->setParentId($currentLevel - 1);
-        $node->setName('Name' . $currentLevel);
-        $node->setPosition($currentLevel);
-        $node->setLevel($currentLevel);
-        $node->setIsActive(true);
-        $node->setProductCount(4);
+        $node = $this->createPartialMockWithReflection(
+            Node::class,
+            ['getId', 'getParentId', 'getName', 'getPosition', 'getLevel',
+             'getIsActive', 'getProductCount', 'hasChildren']
+        );
+        $node->method('getId')->willReturn($currentLevel);
+        $node->method('getParentId')->willReturn($currentLevel - 1);
+        $node->method('getName')->willReturn('Name' . $currentLevel);
+        $node->method('getPosition')->willReturn($currentLevel);
+        $node->method('getLevel')->willReturn($currentLevel);
+        $node->method('getIsActive')->willReturn(true);
+        $node->method('getProductCount')->willReturn(4);
+        $node->method('hasChildren')->willReturn(false);
         $this->tree->getTree($node);
     }
 }

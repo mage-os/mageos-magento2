@@ -13,7 +13,6 @@ use Magento\Catalog\Model\Product\Compare\ItemFactory;
 use Magento\Catalog\Model\Product\Compare\ListCompare;
 use Magento\Catalog\Model\ResourceModel\Product\Compare\Item;
 use Magento\Catalog\Model\ResourceModel\Product\Compare\Item\CollectionFactory;
-use Magento\Catalog\Test\Unit\Helper\SessionTestHelper;
 use Magento\Customer\Model\Session;
 use Magento\Customer\Model\Visitor;
 use Magento\Framework\App\Action\Context;
@@ -21,6 +20,7 @@ use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\Result\RedirectFactory;
 use Magento\Framework\Data\Form\FormKey\Validator;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\Url\DecoderInterface;
 use Magento\Framework\View\Result\PageFactory;
 use Magento\Store\Model\StoreManagerInterface;
@@ -34,6 +34,7 @@ use PHPUnit\Framework\TestCase;
  */
 class IndexTest extends TestCase
 {
+    use MockCreationTrait;
     /** @var Index */
     protected $index;
 
@@ -109,11 +110,13 @@ class IndexTest extends TestCase
         $this->sessionMock = $this->createMock(Session::class);
         $this->visitorMock = $this->createMock(Visitor::class);
         $this->listCompareMock = $this->createMock(ListCompare::class);
-        $this->catalogSession = new SessionTestHelper();
+        $this->catalogSession = $this->createPartialMockWithReflection(
+            \Magento\Catalog\Model\Session::class,
+            ['setBeforeCompareUrl', 'getBeforeCompareUrl']
+        );
+        $this->catalogSession->method('setBeforeCompareUrl')->willReturnSelf();
         $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
-        $this->formKeyValidatorMock = $this->getMockBuilder(Validator::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->formKeyValidatorMock = $this->createMock(Validator::class);
         $this->pageFactoryMock = $this->createMock(PageFactory::class);
         $this->productRepositoryMock = $this->createMock(ProductRepositoryInterface::class);
         $this->decoderMock = $this->createMock(DecoderInterface::class);

@@ -14,8 +14,8 @@ use Magento\Catalog\Pricing\Price\FinalPrice;
 use Magento\Catalog\Pricing\Price\MinimalPriceCalculatorInterface;
 use Magento\Catalog\Pricing\Price\RegularPrice;
 use Magento\Catalog\Pricing\Render\FinalPriceBox;
-use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use Magento\Framework\App\Cache\StateInterface;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\DeploymentConfig;
 use Magento\Framework\App\State;
@@ -37,7 +37,6 @@ use Magento\Framework\View\LayoutInterface;
 use Magento\Msrp\Pricing\Price\MsrpPrice;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
-use Magento\Store\Test\Unit\Helper\StoreManagerTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -47,6 +46,8 @@ use Psr\Log\LoggerInterface;
  */
 class FinalPriceBoxTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var FinalPriceBox
      */
@@ -120,7 +121,38 @@ class FinalPriceBoxTest extends TestCase
     {
         $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
         \Magento\Framework\App\ObjectManager::setInstance($this->objectManagerMock);
-        $this->product = new ProductTestHelper();
+        
+        $productData = ['priceInfo' => null, 'canShowPrice' => true];
+        
+        $this->product = $this->createPartialMockWithReflection(
+            Product::class,
+            ['setPriceInfo', 'getPriceInfo', 'setCanShowPrice', 'getCanShowPrice']
+        );
+        
+        $this->product->method('setPriceInfo')->willReturnCallback(
+            function ($priceInfo) use (&$productData) {
+                $productData['priceInfo'] = $priceInfo;
+            }
+        );
+        
+        $this->product->method('getPriceInfo')->willReturnCallback(
+            function () use (&$productData) {
+                return $productData['priceInfo'];
+            }
+        );
+        
+        $this->product->method('setCanShowPrice')->willReturnCallback(
+            function ($canShow) use (&$productData) {
+                $productData['canShowPrice'] = $canShow;
+            }
+        );
+        
+        $this->product->method('getCanShowPrice')->willReturnCallback(
+            function () use (&$productData) {
+                return $productData['canShowPrice'];
+            }
+        );
+        
         $this->priceInfo = $this->createMock(PriceInfoInterface::class);
         $this->product->setPriceInfo($this->priceInfo);
 
@@ -130,24 +162,52 @@ class FinalPriceBoxTest extends TestCase
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->layout->method('getBlock')->willReturn($this->priceBox);
 
-        $cacheState = $this->getMockBuilder(StateInterface::class)
-            ->getMock();
+        $cacheState = $this->createMock(StateInterface::class);
 
-        $appState = $this->getMockBuilder(State::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $appState = $this->createMock(State::class);
 
-        $resolver = $this->getMockBuilder(Resolver::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $resolver = $this->createMock(Resolver::class);
 
-        $urlBuilder = $this->getMockBuilder(UrlInterface::class)
-            ->getMock();
+        $urlBuilder = $this->createMock(UrlInterface::class);
 
-        $store = $this->getMockBuilder(StoreInterface::class)
-            ->getMock();
-        /** @var StoreManagerInterface $storeManager */
-        $storeManager = new StoreManagerTestHelper();
+        $store = $this->createMock(StoreInterface::class);
+        
+        $storeManagerData = ['store' => null];
+        
+        $storeManager = $this->createPartialMockWithReflection(
+            StoreManagerInterface::class,
+            [
+                'setStore', 'getStore', 'isSingleStoreMode', 'getWebsites',
+                'setIsSingleStoreModeAllowed', 'hasSingleStore', 'getStores',
+                'getWebsite', 'getDefaultStoreView', 'getGroup', 'getGroups',
+                'setCurrentStore', 'reinitStores'
+            ]
+        );
+        
+        $storeManager->method('setStore')->willReturnCallback(
+            function ($storeValue) use (&$storeManagerData) {
+                $storeManagerData['store'] = $storeValue;
+            }
+        );
+        
+        $storeManager->method('getStore')->willReturnCallback(
+            function () use (&$storeManagerData) {
+                return $storeManagerData['store'];
+            }
+        );
+        
+        $storeManager->method('setIsSingleStoreModeAllowed')->willReturn(null);
+        $storeManager->method('hasSingleStore')->willReturn(false);
+        $storeManager->method('isSingleStoreMode')->willReturn(false);
+        $storeManager->method('getStores')->willReturn([]);
+        $storeManager->method('getWebsite')->willReturn(null);
+        $storeManager->method('getWebsites')->willReturn([]);
+        $storeManager->method('getDefaultStoreView')->willReturn(null);
+        $storeManager->method('getGroup')->willReturn(null);
+        $storeManager->method('getGroups')->willReturn([]);
+        $storeManager->method('setCurrentStore')->willReturn(null);
+        $storeManager->method('reinitStores')->willReturn(null);
+        
         $storeManager->setStore($store);
 
         $scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
@@ -162,17 +222,13 @@ class FinalPriceBoxTest extends TestCase
         $context->method('getResolver')->willReturn($resolver);
         $context->method('getUrlBuilder')->willReturn($urlBuilder);
 
-        $this->rendererPool = $this->getMockBuilder(RendererPool::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->rendererPool = $this->createMock(RendererPool::class);
 
         $this->price = $this->createMock(PriceInterface::class);
         $this->price->method('getPriceCode')->willReturn(FinalPrice::PRICE_CODE);
 
         $objectManager = new ObjectManager($this);
-        $this->salableResolverMock = $this->getMockBuilder(SalableResolverInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->salableResolverMock = $this->createMock(SalableResolverInterface::class);
 
         $this->deploymentConfig = $this->createPartialMock(
             DeploymentConfig::class,
@@ -256,9 +312,7 @@ class FinalPriceBoxTest extends TestCase
             ->with($this->product)
             ->willReturn(true);
 
-        $priceBoxRender = $this->getMockBuilder(PriceBox::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $priceBoxRender = $this->createMock(PriceBox::class);
         $priceBoxRender->expects($this->once())
             ->method('toHtml')
             ->willReturn('test');

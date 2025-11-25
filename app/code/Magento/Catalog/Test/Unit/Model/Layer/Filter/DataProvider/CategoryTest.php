@@ -47,27 +47,12 @@ class CategoryTest extends TestCase
     protected function setUp(): void
     {
         /** @var Registry $var */
-        $this->coreRegistry = $var = $this->getMockBuilder(Registry::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['register'])
-            ->getMock();
-        $this->category = $this->getMockBuilder(Category::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getId', 'setStoreId', 'load', 'getPathIds'])
-            ->getMock();
-        $this->categoryFactory = $this->getMockBuilder(CategoryFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
+        $this->coreRegistry = $var = $this->createPartialMock(Registry::class, ['register']);
+        $this->category = $this->createPartialMock(Category::class, ['getId', 'setStoreId', 'load', 'getPathIds']);
+        $this->categoryFactory = $this->createPartialMock(CategoryFactory::class, ['create']);
         $this->categoryFactory->method('create')->willReturn($this->category);
-        $this->store = $this->getMockBuilder(Store::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getId'])
-            ->getMock();
-        $this->layer = $this->getMockBuilder(Layer::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getCurrentStore', 'getCurrentCategory'])
-            ->getMock();
+        $this->store = $this->createPartialMock(Store::class, ['getId']);
+        $this->layer = $this->createPartialMock(Layer::class, ['getCurrentStore', 'getCurrentCategory']);
         $this->layer->method('getCurrentStore')->willReturn($this->store);
         $objectManagerHelper = new ObjectManagerHelper($this);
         $this->target = $objectManagerHelper->getObject(

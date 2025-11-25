@@ -53,20 +53,14 @@ class ImageTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->imageFactory = $this->getMockBuilder(ImageFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->imageFactory = $this->createMock(ImageFactory::class);
 
-        $this->imageInterfaceFactory = $this->getMockBuilder(
-            ImageInterfaceFactory::class
-        )
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->imageInterfaceFactory = $this->createPartialMock(
+            ImageInterfaceFactory::class,
+            ['create']
+        );
 
-        $this->state = $this->getMockBuilder(State::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->state = $this->createMock(State::class);
         $this->storeManager = $this->createMock(StoreManagerInterface::class);
         $this->design = $this->createMock(DesignInterface::class);
         $this->designLoader = $this->createMock(DesignLoader::class);
@@ -83,9 +77,7 @@ class ImageTest extends TestCase
 
     public function testGet()
     {
-        $product = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $product = $this->createMock(Product::class);
         $image = $this->createMock(ImageInterface::class);
 
         $imageCode = 'widget_recently_viewed';
@@ -94,9 +86,7 @@ class ImageTest extends TestCase
         $productRenderInfoDto->expects($this->once())
             ->method('getStoreId')
             ->willReturn('1');
-        $imageHelper = $this->getMockBuilder(ImageHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $imageHelper = $this->createMock(ImageHelper::class);
         $this->imageInterfaceFactory
             ->method('create')->willReturn($image);
 
@@ -151,9 +141,7 @@ class ImageTest extends TestCase
     {
         $productMock = $this->createMock(ProductInterface::class);
         $imageMock = $this->createMock(ImageInterface::class);
-        $imageHelperMock = $this->getMockBuilder(ImageHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $imageHelperMock = $this->createMock(ImageHelper::class);
         $this->imageFactory->expects($this->once())
             ->method('create')
             ->willReturn($imageHelperMock);

@@ -45,22 +45,14 @@ class UrlTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->abstractProductMock = $this->getMockBuilder(AbstractProduct::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->catalogProductHelperMock = $this->getMockBuilder(Compare::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->postHelperMock = $this->getMockBuilder(PostHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->abstractProductMock = $this->createMock(AbstractProduct::class);
+        $this->catalogProductHelperMock = $this->createMock(Compare::class);
+        $this->postHelperMock = $this->createMock(PostHelper::class);
 
-        $this->buttonFactoryMock = $this->getMockBuilder(
-            ButtonInterfaceFactory::class
-        )
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->buttonFactoryMock = $this->createPartialMock(
+            ButtonInterfaceFactory::class,
+            ['create']
+        );
 
         $this->buttonMock = $this->createMock(ButtonInterface::class);
 
@@ -78,9 +70,7 @@ class UrlTest extends TestCase
 
     public function testCollectWithNullButtons()
     {
-        $product = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $product = $this->createMock(Product::class);
       
         $productRenderInfoDto = $this->createMock(ProductRenderInterface::class);
 
@@ -146,9 +136,7 @@ class UrlTest extends TestCase
 
     public function testCollectWithExistingAddToCompareButton()
     {
-        $product = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $product = $this->createMock(Product::class);
         $productRenderInfoDto = $this->createMock(ProductRenderInterface::class);
 
         $existingCompareButton = $this->createMock(ButtonInterface::class);
@@ -220,9 +208,7 @@ class UrlTest extends TestCase
 
     public function testCollectWithExistingButtons()
     {
-        $product = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $product = $this->createMock(Product::class);
         $productRenderInfoDto = $this->createMock(ProductRenderInterface::class);
 
         $existingCartButton = $this->createMock(ButtonInterface::class);

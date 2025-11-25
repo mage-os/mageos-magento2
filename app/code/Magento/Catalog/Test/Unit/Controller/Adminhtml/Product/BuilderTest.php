@@ -92,10 +92,7 @@ class BuilderTest extends TestCase
         $this->wysiwygConfigMock = $this->createPartialMock(WysiwygConfig::class, []);
         $this->requestMock = $this->createMock(Http::class);
         $this->productMock = $this->createMock(Product::class);
-        $this->storeFactoryMock = $this->getMockBuilder(StoreFactory::class)
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->storeFactoryMock = $this->createPartialMock(StoreFactory::class, ['create']);
         $this->storeMock = $this->createMock(\Magento\Store\Model\Store::class);
         $this->storeMock->method('load')->willReturnSelf();
 

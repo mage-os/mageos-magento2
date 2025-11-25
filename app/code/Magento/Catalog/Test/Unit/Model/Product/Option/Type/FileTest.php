@@ -20,7 +20,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\MediaStorage\Helper\File\Storage\Database;
 use Magento\Quote\Model\Quote\Item\Option;
 use Magento\Quote\Model\Quote\Item\OptionFactory;
-use Magento\Quote\Test\Unit\Helper\ItemOptionTestHelper;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -31,6 +31,7 @@ use PHPUnit\Framework\TestCase;
  */
 class FileTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var ObjectManager
      */
@@ -75,35 +76,22 @@ class FileTest extends TestCase
     {
         $this->objectManager = new ObjectManager($this);
 
-        $this->filesystemMock = $this->getMockBuilder(Filesystem::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->filesystemMock = $this->createMock(Filesystem::class);
 
-        $this->mediaDirectory = $this->getMockBuilder(WriteInterface::class)
-            ->getMock();
+        $this->mediaDirectory = $this->createMock(WriteInterface::class);
 
         $this->filesystemMock->expects($this->any())
             ->method('getDirectoryWrite')
             ->with(DirectoryList::MEDIA, DriverPool::FILE)
             ->willReturn($this->mediaDirectory);
 
-        $this->serializer = $this->getMockBuilder(Json::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['serialize', 'unserialize'])
-            ->getMock();
+        $this->serializer = $this->createPartialMock(Json::class, ['serialize', 'unserialize']);
 
-        $this->urlBuilder = $this->getMockBuilder(UrlBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->urlBuilder = $this->createMock(UrlBuilder::class);
 
-        $this->escaper = $this->getMockBuilder(Escaper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->escaper = $this->createMock(Escaper::class);
 
-        $this->itemOptionFactoryMock = $this->getMockBuilder(OptionFactory::class)
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->itemOptionFactoryMock = $this->createPartialMock(OptionFactory::class, ['create']);
 
         $this->coreFileStorageDatabase = $this->createPartialMock(
             Database::class,
@@ -306,7 +294,18 @@ class FileTest extends TestCase
             ->with($resultValue)
             ->willReturn(json_encode($resultValue));
 
-        $option = new ItemOptionTestHelper();
+        $option = $this->createPartialMockWithReflection(
+            OptionInterface::class,
+            ['setValue', 'getValue']
+        );
+        $value = null;
+        $option->method('setValue')->willReturnCallback(function ($v) use (&$value, $option) {
+            $value = $v;
+            return $option;
+        });
+        $option->method('getValue')->willReturnCallback(function () use (&$value) {
+            return $value;
+        });
         $option->setValue(json_encode($resultValue));
 
         $fileObject->setConfigurationItemOption($option);
@@ -323,7 +322,19 @@ class FileTest extends TestCase
     public function testGetEditableOptionValue()
     {
         /** @var OptionInterface $configurationItemOption */
-        $configurationItemOption = new ItemOptionTestHelper();
+        $configurationItemOption = $this->createPartialMockWithReflection(
+            OptionInterface::class,
+            ['setId', 'getId', 'getValue']
+        );
+        $id = null;
+        $configurationItemOption->method('setId')->willReturnCallback(function ($value) use (&$id, $configurationItemOption) {
+            $id = $value;
+            return $configurationItemOption;
+        });
+        $configurationItemOption->method('getId')->willReturnCallback(function () use (&$id) {
+            return $id;
+        });
+        $configurationItemOption->method('getValue')->willReturn(null);
         $configurationItemOption->setId(2);
         $fileObject = $this->getFileObject()->setData('configuration_item_option', $configurationItemOption);
         $optionTitle = 'Option Title';
@@ -358,10 +369,7 @@ class FileTest extends TestCase
         $userInput = 'Option [2]';
         $fileObject = $this->getFileObject();
 
-        $itemMock = $this->getMockBuilder(Option::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['load', 'getValue'])
-            ->getMock();
+        $itemMock = $this->createPartialMock(Option::class, ['load', 'getValue']);
 
         $itemMock->expects($this->any())
             ->method('load')->willReturnSelf();
@@ -380,10 +388,7 @@ class FileTest extends TestCase
         $userInput = 'Option [xx]';
         $fileObject = $this->getFileObject();
 
-        $itemMock = $this->getMockBuilder(Option::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['load', 'getValue'])
-            ->getMock();
+        $itemMock = $this->createPartialMock(Option::class, ['load', 'getValue']);
 
         $itemMock->expects($this->any())
             ->method('load')->willReturnSelf();
@@ -402,10 +407,7 @@ class FileTest extends TestCase
         $userInput = 'Option [2]';
         $fileObject = $this->getFileObject();
 
-        $itemMock = $this->getMockBuilder(Option::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['load', 'getValue'])
-            ->getMock();
+        $itemMock = $this->createPartialMock(Option::class, ['load', 'getValue']);
 
         $itemMock->expects($this->any())
             ->method('load')->willReturnSelf();

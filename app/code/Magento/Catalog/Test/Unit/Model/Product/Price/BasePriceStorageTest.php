@@ -19,14 +19,15 @@ use Magento\Catalog\Model\Product\Price\PricePersistenceFactory;
 use Magento\Catalog\Model\Product\Price\Validation\InvalidSkuProcessor;
 use Magento\Catalog\Model\Product\Price\Validation\Result;
 use Magento\Catalog\Model\ProductIdLocatorInterface;
-use Magento\Eav\Test\Unit\Helper\AbstractAttributeTestHelper;
+use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Api\Data\WebsiteInterface;
 use Magento\Store\Api\StoreRepositoryInterface;
-use Magento\Store\Test\Unit\Helper\StoreTestHelper;
-use Magento\Store\Test\Unit\Helper\WebsiteTestHelper;
+use Magento\Store\Model\Store;
+use Magento\Store\Model\Website;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -35,6 +36,8 @@ use PHPUnit\Framework\TestCase;
  */
 class BasePriceStorageTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var PricePersistenceFactory|MockObject
      */
@@ -92,35 +95,21 @@ class BasePriceStorageTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->pricePersistenceFactory = $this->getMockBuilder(
-            PricePersistenceFactory::class
-        )
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
-        $this->pricePersistence = $this->getMockBuilder(PricePersistence::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->basePriceInterfaceFactory = $this->getMockBuilder(
-            BasePriceInterfaceFactory::class
-        )
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
+        $this->pricePersistenceFactory = $this->createPartialMock(
+            PricePersistenceFactory::class,
+            ['create']
+        );
+        $this->pricePersistence = $this->createMock(PricePersistence::class);
+        $this->basePriceInterfaceFactory = $this->createPartialMock(
+            BasePriceInterfaceFactory::class,
+            ['create']
+        );
         $this->basePriceInterface = $this->createMock(BasePriceInterface::class);
         $this->productIdLocator = $this->createMock(ProductIdLocatorInterface::class);
         $this->storeRepository = $this->createMock(StoreRepositoryInterface::class);
-        $this->invalidSkuProcessor = $this
-            ->getMockBuilder(InvalidSkuProcessor::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->validationResult = $this->getMockBuilder(Result::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->productAttributeRepository = $this
-            ->getMockBuilder(ProductAttributeRepositoryInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->invalidSkuProcessor = $this->createMock(InvalidSkuProcessor::class);
+        $this->validationResult = $this->createMock(Result::class);
+        $this->productAttributeRepository = $this->createMock(ProductAttributeRepositoryInterface::class);
 
         $objectManager = new ObjectManager($this);
         $this->model = $objectManager->getObject(
@@ -218,10 +207,34 @@ class BasePriceStorageTest extends TestCase
     public function testUpdate(bool $isScopeWebsite, bool $isScopeGlobal, array $formattedPrices)
     {
         /** @var WebsiteInterface $website */
-        $website = new WebsiteTestHelper();
+        $website = $this->createPartialMockWithReflection(Website::class, ['setStoreIds', 'getStoreIds']);
+        $storeIds = null;
+        $website->method('setStoreIds')->willReturnCallback(
+            function ($ids) use (&$storeIds, $website) {
+                $storeIds = $ids;
+                return $website;
+            }
+        );
+        $website->method('getStoreIds')->willReturnCallback(
+            function () use (&$storeIds) {
+                return $storeIds;
+            }
+        );
         $website->setStoreIds([1 => 1, 2 => 2]);
         /** @var StoreInterface $store */
-        $store = new StoreTestHelper();
+        $store = $this->createPartialMockWithReflection(Store::class, ['setWebsite', 'getWebsite']);
+        $websiteObj = null;
+        $store->method('setWebsite')->willReturnCallback(
+            function ($web) use (&$websiteObj, $store) {
+                $websiteObj = $web;
+                return $store;
+            }
+        );
+        $store->method('getWebsite')->willReturnCallback(
+            function () use (&$websiteObj) {
+                return $websiteObj;
+            }
+        );
         $store->setWebsite($website);
         $sku = 'sku_1';
         $idsBySku = [
@@ -253,7 +266,14 @@ class BasePriceStorageTest extends TestCase
         $this->pricePersistence->expects($this->any())->method('update')->with($formattedPrices);
         $this->validationResult->method('getFailedItems')->willReturn([]);
         /** @var ProductAttributeInterface $attribute */
-        $attribute = new AbstractAttributeTestHelper();
+        $attribute = $this->createPartialMockWithReflection(
+            AbstractAttribute::class,
+            ['setIsScopeWebsite', 'isScopeWebsite', 'setIsScopeGlobal', 'isScopeGlobal', '_construct']
+        );
+        $attribute->method('setIsScopeWebsite')->willReturnSelf();
+        $attribute->method('isScopeWebsite')->willReturn($isScopeWebsite);
+        $attribute->method('setIsScopeGlobal')->willReturnSelf();
+        $attribute->method('isScopeGlobal')->willReturn($isScopeGlobal);
         $attribute->setIsScopeWebsite($isScopeWebsite);
         $attribute->setIsScopeGlobal($isScopeGlobal);
         $this->productAttributeRepository

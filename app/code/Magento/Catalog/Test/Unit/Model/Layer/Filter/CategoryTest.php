@@ -83,42 +83,23 @@ class CategoryTest extends TestCase
     {
         $this->request = $this->createMock(RequestInterface::class);
 
-        $dataProviderFactory = $this->getMockBuilder(CategoryFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])->getMock();
+        $dataProviderFactory = $this->createPartialMock(CategoryFactory::class, ['create']);
 
-        $this->dataProvider = $this->getMockBuilder(CategoryDataProvider::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['setCategoryId', 'getCategory'])
-            ->getMock();
+        $this->dataProvider = $this->createPartialMock(CategoryDataProvider::class, ['setCategoryId', 'getCategory']);
 
         $dataProviderFactory->expects($this->once())
             ->method('create')
             ->willReturn($this->dataProvider);
 
-        $this->category = $this->getMockBuilder(Category::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(
-                [
-                    'getId',
-                    'getChildrenCategories',
-                    'getIsActive'
-                ]
-            )->getMock();
+        $this->category = $this->createPartialMock(Category::class, ['getId', 'getChildrenCategories', 'getIsActive']);
 
         $this->dataProvider
             ->method('getCategory')
             ->willReturn($this->category);
 
-        $this->layer = $this->getMockBuilder(Layer::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getState', 'getProductCollection'])
-            ->getMock();
+        $this->layer = $this->createPartialMock(Layer::class, ['getState', 'getProductCollection']);
 
-        $this->state = $this->getMockBuilder(State::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['addFilter'])
-            ->getMock();
+        $this->state = $this->createPartialMock(State::class, ['addFilter']);
         $this->layer->method('getState')->willReturn($this->state);
 
         $this->collection = $this->createPartialMock(
@@ -128,24 +109,16 @@ class CategoryTest extends TestCase
 
         $this->layer->method('getProductCollection')->willReturn($this->collection);
 
-        $this->itemDataBuilder = $this->getMockBuilder(DataBuilder::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['addItemData', 'build'])
-            ->getMock();
+        $this->itemDataBuilder = $this->createPartialMock(DataBuilder::class, ['addItemData', 'build']);
 
-        $this->filterItemFactory = $this->getMockBuilder(ItemFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])->getMock();
+        $this->filterItemFactory = $this->createPartialMock(ItemFactory::class, ['create']);
 
         $filterItem = $this->createMock(Item::class);
         $filterItem->expects($this->any())
             ->method($this->anything())->willReturnSelf();
         $this->filterItemFactory->method('create')->willReturn($filterItem);
 
-        $escaper = $this->getMockBuilder(Escaper::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['escapeHtml'])
-            ->getMock();
+        $escaper = $this->createPartialMock(Escaper::class, ['escapeHtml']);
         $escaper->expects($this->any())
             ->method('escapeHtml')
             ->willReturnArgument(0);
@@ -257,17 +230,7 @@ class CategoryTest extends TestCase
     {
         $this->category->method('getIsActive')->willReturn(true);
 
-        $category1 = $this->getMockBuilder(Category::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(
-                [
-                    'getId',
-                    'getName',
-                    'getIsActive',
-                    'getProductCount'
-                ]
-            )
-            ->getMock();
+        $category1 = $this->createPartialMock(Category::class, ['getId', 'getName', 'getIsActive', 'getProductCount']);
         $category1->expects($this->atLeastOnce())
             ->method('getId')
             ->willReturn(120);
@@ -279,17 +242,7 @@ class CategoryTest extends TestCase
             ->willReturn(true);
         $category1->method('getProductCount')->willReturn(10);
 
-        $category2 = $this->getMockBuilder(Category::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(
-                [
-                    'getId',
-                    'getName',
-                    'getIsActive',
-                    'getProductCount'
-                ]
-            )
-            ->getMock();
+        $category2 = $this->createPartialMock(Category::class, ['getId', 'getName', 'getIsActive', 'getProductCount']);
         $category2->expects($this->atLeastOnce())
             ->method('getId')
             ->willReturn(5641);

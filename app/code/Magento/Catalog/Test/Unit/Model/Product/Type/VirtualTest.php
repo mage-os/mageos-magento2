@@ -30,9 +30,7 @@ class VirtualTest extends TestCase
         $eventManager = $this->createMock(ManagerInterface::class);
         $coreRegistryMock = $this->createMock(Registry::class);
         $fileStorageDbMock = $this->createMock(Database::class);
-        $filesystem = $this->getMockBuilder(Filesystem::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $filesystem = $this->createMock(Filesystem::class);
         $logger = $this->createMock(LoggerInterface::class);
         $productFactoryMock = $this->createMock(ProductFactory::class);
         $this->_model = $objectHelper->getObject(

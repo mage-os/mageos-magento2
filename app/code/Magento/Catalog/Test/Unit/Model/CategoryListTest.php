@@ -63,18 +63,11 @@ class CategoryListTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->categoryCollectionFactory = $this->getMockBuilder(CollectionFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
+        $this->categoryCollectionFactory = $this->createPartialMock(CollectionFactory::class, ['create']);
         $this->extensionAttributesJoinProcessor = $this->createMock(JoinProcessorInterface::class);
-        $this->categorySearchResultsFactory = $this->getMockBuilder(CategorySearchResultsInterfaceFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
+        $this->categorySearchResultsFactory = $this->createPartialMock(CategorySearchResultsInterfaceFactory::class, ['create']);
         $this->categoryRepository = $this->createMock(CategoryRepositoryInterface::class);
-        $this->collectionProcessorMock = $this->getMockBuilder(CollectionProcessorInterface::class)
-            ->getMock();
+        $this->collectionProcessorMock = $this->createMock(CollectionProcessorInterface::class);
 
         $this->model = (new ObjectManager($this))->getObject(
             CategoryList::class,
@@ -94,19 +87,13 @@ class CategoryListTest extends TestCase
         $categoryIdFirst = 1;
         $categoryIdSecond = 2;
 
-        $categoryFirst = $this->getMockBuilder(Category::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $categorySecond = $this->getMockBuilder(Category::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $categoryFirst = $this->createMock(Category::class);
+        $categorySecond = $this->createMock(Category::class);
 
         /** @var SearchCriteriaInterface|MockObject $searchCriteria */
         $searchCriteria = $this->createMock(SearchCriteriaInterface::class);
 
-        $collection = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $collection = $this->createMock(Collection::class);
         $collection->expects($this->once())->method('getSize')->willReturn($totalCount);
         $collection->expects($this->once())->method('getData')->willReturn(
             [['entity_id' => $categoryIdFirst], ['entity_id' => $categoryIdSecond]]

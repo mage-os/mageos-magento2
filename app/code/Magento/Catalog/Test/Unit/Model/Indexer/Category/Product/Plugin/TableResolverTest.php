@@ -29,23 +29,16 @@ class TableResolverTest extends TestCase
     {
         $storeManagerMock = $this->createMock(StoreManagerInterface::class);
 
-        $storeMock = $this->getMockBuilder(Store::class)
-            ->onlyMethods(['getId'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $storeMock = $this->createPartialMock(Store::class, ['getId']);
         $storeMock->method('getId')
             ->willReturn($storeId);
 
         $storeManagerMock->method('getStore')->willReturn($storeMock);
 
-        $tableResolverMock = $this->getMockBuilder(IndexScopeResolver::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $tableResolverMock = $this->createMock(IndexScopeResolver::class);
         $tableResolverMock->method('resolve')->willReturn('catalog_category_product_index_store1');
 
-        $subjectMock = $this->getMockBuilder(ResourceConnection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $subjectMock = $this->createMock(ResourceConnection::class);
 
         $model = new TableResolver($storeManagerMock, $tableResolverMock);
 

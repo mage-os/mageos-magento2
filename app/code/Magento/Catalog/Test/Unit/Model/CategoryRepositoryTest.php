@@ -84,11 +84,10 @@ class CategoryRepositoryTest extends TestCase
         $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
         $this->storeMock = $this->createMock(StoreInterface::class);
         $this->storeManagerMock->method('getStore')->willReturn($this->storeMock);
-        $this->extensibleDataObjectConverterMock = $this
-            ->getMockBuilder(ExtensibleDataObjectConverter::class)
-            ->onlyMethods(['toNestedArray'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->extensibleDataObjectConverterMock = $this->createPartialMock(
+            ExtensibleDataObjectConverter::class,
+            ['toNestedArray']
+        );
 
         $metadataMock = $this->createMock(EntityMetadata::class);
         $metadataMock->method('getLinkField')->willReturn('entity_id');
@@ -99,11 +98,10 @@ class CategoryRepositoryTest extends TestCase
             ->with(CategoryInterface::class)
             ->willReturn($metadataMock);
 
-        $this->populateWithValuesMock = $this
-            ->getMockBuilder(PopulateWithValues::class)
-            ->onlyMethods(['execute'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->populateWithValuesMock = $this->createPartialMock(
+            PopulateWithValues::class,
+            ['execute']
+        );
 
         $objectHelper = new ObjectManager($this);
         $objects = [

@@ -40,9 +40,7 @@ class AddToCompareAvailabilityTest extends TestCase
     {
         $objectManager = new ObjectManager($this);
 
-        $this->stockConfigurationMock =
-            $this->getMockBuilder(StockConfigurationInterface::class)
-                ->getMock();
+        $this->stockConfigurationMock = $this->createMock(StockConfigurationInterface::class);
 
         $this->viewModel = $objectManager->getObject(
             AddToCompareAvailability::class,
@@ -65,9 +63,7 @@ class AddToCompareAvailabilityTest extends TestCase
     #[DataProvider('isAvailableForCompareDataProvider')]
     public function testIsAvailableForCompare($status, $isSalable, $isInStock, $isShowOutOfStock, $expectedBool): void
     {
-        $productMock = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $productMock = $this->createMock(Product::class);
 
         $productMock->expects($this->once())
             ->method('getStatus')

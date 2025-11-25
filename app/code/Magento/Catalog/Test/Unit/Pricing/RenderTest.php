@@ -13,7 +13,8 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Event\Test\Unit\ManagerStub;
 use Magento\Framework\Registry;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Magento\Framework\Pricing\Test\Unit\Helper\RenderTestHelper;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+use Magento\Framework\Pricing\Render as PricingRender;
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Framework\View\Layout;
 use Magento\Framework\View\LayoutInterface;
@@ -22,6 +23,7 @@ use PHPUnit\Framework\TestCase;
 
 class RenderTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var Render
      */
@@ -46,7 +48,7 @@ class RenderTest extends TestCase
     {
         $this->registry = $this->createPartialMock(Registry::class, ['registry']);
 
-        $this->pricingRenderBlock = $this->createMock(\Magento\Framework\Pricing\Render::class);
+        $this->pricingRenderBlock = $this->createMock(PricingRender::class);
 
         $this->layout = $this->createMock(Layout::class);
 
@@ -108,18 +110,35 @@ class RenderTest extends TestCase
         $this->registry->expects($this->never())
             ->method('registry');
 
-        $block = new RenderTestHelper();
+        $parentBlock = $this->createPartialMockWithReflection(
+            Render::class,
+            ['getProductItem']
+        );
+        $parentBlock->method('getProductItem')->willReturn($product);
 
         $arguments = $this->object->getData();
         $arguments['render_block'] = $this->object;
-        $block->setProductItem($product);
-        $block->setRenderResult($expectedValue);
 
         $this->layout->expects($this->once())
             ->method('getParentName')
             ->willReturn('parent_name');
 
-        $this->layout->method('getBlock')->willReturn($block);
+        $this->layout->method('getBlock')->willReturnCallback(function ($name) use ($parentBlock) {
+            if ($name === 'test_price_render') {
+                return $this->pricingRenderBlock;
+            }
+            if ($name === 'parent_name') {
+                return $parentBlock;
+            }
+            return null;
+        });
+
+        $this->pricingRenderBlock->expects($this->once())
+            ->method('render')
+            ->with('test_price_type_code', $product, $this->callback(function ($args) {
+                return isset($args['render_block']);
+            }))
+            ->willReturn($expectedValue);
 
         $this->assertEquals($expectedValue, $this->object->toHtml());
     }

@@ -11,13 +11,14 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Indexer\Product\Eav\Plugin\StoreView;
 use Magento\Catalog\Model\Indexer\Product\Eav\Processor;
 use Magento\Framework\Model\AbstractModel;
-use Magento\Framework\Model\Test\Unit\Helper\AbstractModelTestHelper;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Store\Model\ResourceModel\Store;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class StoreViewTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var Processor|MockObject
      */
@@ -38,17 +39,8 @@ class StoreViewTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->eavProcessorMock = $this->getMockBuilder(Processor::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->subjectMock = $this->getMockBuilder(Store::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        /** @var AbstractModel $this->objectMock */
-        $this->objectMock = new AbstractModelTestHelper();
-
+        $this->eavProcessorMock = $this->createMock(Processor::class);
+        $this->subjectMock = $this->createMock(Store::class);
         $this->storeViewPlugin = new StoreView($this->eavProcessorMock);
     }
 
@@ -63,13 +55,18 @@ class StoreViewTest extends TestCase
         $this->eavProcessorMock->expects($this->$matcher())
             ->method('markIndexerAsInvalid');
 
-        $this->objectMock->setId($data['object_id']);
-        $this->objectMock->setDataHasChangedForResult($data['has_group_id_changed']);
-        $this->objectMock->setIsActive($data['is_active']);
+        $objectMock = $this->createPartialMockWithReflection(
+            AbstractModel::class,
+            ['isObjectNew', 'dataHasChangedFor', 'getIsActive']
+        );
+        $objectMock->method('isObjectNew')->willReturn(empty($data['object_id']));
+        $objectMock->method('dataHasChangedFor')->with('group_id')
+            ->willReturn($data['has_group_id_changed']);
+        $objectMock->method('getIsActive')->willReturn($data['is_active']);
 
         $this->assertSame(
             $this->subjectMock,
-            $this->storeViewPlugin->afterSave($this->subjectMock, $this->subjectMock, $this->objectMock)
+            $this->storeViewPlugin->afterSave($this->subjectMock, $this->subjectMock, $objectMock)
         );
     }
 

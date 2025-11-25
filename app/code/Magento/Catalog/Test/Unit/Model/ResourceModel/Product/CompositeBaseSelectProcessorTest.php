@@ -38,9 +38,7 @@ class CompositeBaseSelectProcessorTest extends TestCase
 
     public function testProcess()
     {
-        $select = $this->getMockBuilder(Select::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $select = $this->createMock(Select::class);
 
         $processorFirst = $this->createMock(BaseSelectProcessorInterface::class);
         $processorFirst->expects($this->once())->method('process')->with($select)->willReturn($select);

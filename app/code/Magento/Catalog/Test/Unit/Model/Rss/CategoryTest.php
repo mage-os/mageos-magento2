@@ -47,10 +47,10 @@ class CategoryTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->categoryLayer = $this->getMockBuilder(\Magento\Catalog\Model\Layer\Category::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['setCurrentCategory', 'prepareProductCollection', 'getProductCollection', 'getCurrentCategory'])
-            ->getMock();
+        $this->categoryLayer = $this->createPartialMock(
+            \Magento\Catalog\Model\Layer\Category::class,
+            ['setCurrentCategory', 'prepareProductCollection', 'getProductCollection', 'getCurrentCategory']
+        );
         $this->collectionFactory = $this->createPartialMock(
             CollectionFactory::class,
             ['create']
@@ -63,10 +63,7 @@ class CategoryTest extends TestCase
         );
 
         /** @var MockObject|Resolver $layerResolver */
-        $layerResolver = $this->getMockBuilder(Resolver::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['get', 'create'])
-            ->getMock();
+        $layerResolver = $this->createPartialMock(Resolver::class, ['get', 'create']);
         $layerResolver->expects($this->any())
             ->method($this->anything())
             ->willReturn($this->categoryLayer);

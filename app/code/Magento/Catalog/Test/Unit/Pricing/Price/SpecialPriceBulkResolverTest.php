@@ -13,11 +13,11 @@ use Magento\Catalog\Pricing\Price\SpecialPriceBulkResolver;
 use Magento\Eav\Model\Entity\Collection\AbstractCollection;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
-use Magento\Framework\DB\Test\Unit\Helper\SelectTestHelper;
+use Magento\Framework\DB\Select;
 use Magento\Framework\EntityManager\EntityMetadataInterface;
 use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Framework\Session\SessionManagerInterface;
-use Magento\Framework\Session\Test\Unit\Helper\SessionManagerTestHelper;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -28,6 +28,7 @@ use PHPUnit\Framework\TestCase;
  */
 class SpecialPriceBulkResolverTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var ResourceConnection|MockObject
      */
@@ -61,7 +62,30 @@ class SpecialPriceBulkResolverTest extends TestCase
         $this->resource = $this->createMock(ResourceConnection::class);
         $this->metadataPool = $this->createMock(MetadataPool::class);
         $this->storeManager = $this->createMock(StoreManagerInterface::class);
-        $this->customerSession = new SessionManagerTestHelper();
+        $this->customerSession = $this->createPartialMockWithReflection(
+            SessionManagerInterface::class,
+            ['start', 'writeClose', 'isSessionExists', 'getSessionId', 'getName', 'setName',
+             'destroy', 'clearStorage', 'getCookieDomain', 'getCookiePath', 'getCookieLifetime',
+             'setSessionId', 'regenerateId', 'expireSessionCookie', 'getSessionIdForHost',
+             'isValidForHost', 'isValidForPath', 'getCustomerGroupId']
+        );
+        $this->customerSession->method('start')->willReturn(null);
+        $this->customerSession->method('writeClose')->willReturn(null);
+        $this->customerSession->method('isSessionExists')->willReturn(false);
+        $this->customerSession->method('getSessionId')->willReturn(null);
+        $this->customerSession->method('getName')->willReturn(null);
+        $this->customerSession->method('setName')->willReturnSelf();
+        $this->customerSession->method('destroy')->willReturn(null);
+        $this->customerSession->method('clearStorage')->willReturn(null);
+        $this->customerSession->method('getCookieDomain')->willReturn(null);
+        $this->customerSession->method('getCookiePath')->willReturn(null);
+        $this->customerSession->method('getCookieLifetime')->willReturn(null);
+        $this->customerSession->method('setSessionId')->willReturnSelf();
+        $this->customerSession->method('regenerateId')->willReturn(null);
+        $this->customerSession->method('expireSessionCookie')->willReturn(null);
+        $this->customerSession->method('getSessionIdForHost')->willReturn(null);
+        $this->customerSession->method('isValidForHost')->willReturn(false);
+        $this->customerSession->method('isValidForPath')->willReturn(false);
 
         $this->specialPriceBulkResolver = new SpecialPriceBulkResolver(
             $this->resource,
@@ -88,20 +112,16 @@ class SpecialPriceBulkResolverTest extends TestCase
     {
         $storeId = 2;
         $websiteId = 1;
-        $customerGroupId = 3;
         $product = $this->createMock(Product::class);
 
-        $this->customerSession->setCustomerGroupIdReturn(1);
+        $this->customerSession->expects($this->once())->method('getCustomerGroupId')->willReturn(1);
         
         // Mock store and website
         $store = $this->createMock(StoreInterface::class);
         $store->method('getWebsiteId')->willReturn($websiteId);
         $this->storeManager->method('getStore')->willReturn($store);
         
-        $collection = $this->getMockBuilder(AbstractCollection::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getAllIds', 'getIterator'])
-            ->getMock();
+        $collection = $this->createPartialMock(AbstractCollection::class, ['getAllIds', 'getIterator']);
         $collection->expects($this->once())->method('getAllIds')->willReturn([1]);
         $collection->method('getIterator')->willReturn(new \ArrayIterator([$product]));
 
@@ -111,18 +131,34 @@ class SpecialPriceBulkResolverTest extends TestCase
             ->method('getMetadata')
             ->with(ProductInterface::class)
             ->willReturn($metadata);
-        /** @var AdapterInterface $connection */
-        $connection = new SelectTestHelper();
-        // Set the expected values using setters
-        $connection->from(['e' => 'catalog_product_entity']);
-        $connection->where('e.entity_id IN (1)');
-        $connection->columns([
-            'link.product_id',
-            '(price.final_price < price.price) AS hasSpecialPrice',
-            'e.row_id AS identifier',
-            'e.entity_id'
-        ]);
-        $connection->setFetchAllResult([
+        
+        // Mock Select object with SQL query verification
+        $select = $this->createMock(Select::class);
+        $select->expects($this->once())
+            ->method('from')
+            ->with(['e' => 'catalog_product_entity'])
+            ->willReturnSelf();
+        $select->expects($this->exactly(3))
+            ->method('joinLeft')
+            ->willReturnSelf();
+        $select->expects($this->once())
+            ->method('where')
+            ->with('e.entity_id IN (1)')
+            ->willReturnSelf();
+        $select->expects($this->once())
+            ->method('columns')
+            ->with([
+                'link.product_id',
+                '(price.final_price < price.price) AS hasSpecialPrice',
+                'e.row_id AS identifier',
+                'e.entity_id'
+            ])
+            ->willReturnSelf();
+        
+        // Mock DB connection
+        $connection = $this->createMock(AdapterInterface::class);
+        $connection->method('select')->willReturn($select);
+        $connection->expects($this->once())->method('fetchAll')->with($select)->willReturn([
             [
                 'product_id' => 2,
                 'hasSpecialPrice' => 1,
@@ -130,6 +166,7 @@ class SpecialPriceBulkResolverTest extends TestCase
                 'entity_id' => 1
             ]
         ]);
+        
         $this->resource->expects($this->once())->method('getConnection')->willReturn($connection);
         $this->resource->expects($this->exactly(4))
             ->method('getTableName')

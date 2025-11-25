@@ -86,34 +86,17 @@ class ValidateTest extends AttributeTest
     protected function setUp(): void
     {
         parent::setUp();
-        $this->resultJsonFactoryMock = $this->getMockBuilder(ResultJsonFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->resultJson = $this->getMockBuilder(ResultJson::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->layoutFactoryMock = $this->getMockBuilder(LayoutFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->resultJsonFactoryMock = $this->createMock(ResultJsonFactory::class);
+        $this->resultJson = $this->createMock(ResultJson::class);
+        $this->layoutFactoryMock = $this->createMock(LayoutFactory::class);
         $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
-        $this->attributeMock = $this->getMockBuilder(Attribute::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->attributeSetMock = $this->getMockBuilder(AttributeSet::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->escaperMock = $this->getMockBuilder(Escaper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->layoutMock = $this->getMockBuilder(LayoutInterface::class)
-            ->getMock();
+        $this->attributeMock = $this->createMock(Attribute::class);
+        $this->attributeSetMock = $this->createMock(AttributeSet::class);
+        $this->escaperMock = $this->createMock(Escaper::class);
+        $this->layoutMock = $this->createMock(LayoutInterface::class);
         $this->formDataSerializerMock = $this->createMock(FormData::class);
-        $this->attributeCodeValidatorMock = $this->getMockBuilder(AttributeCodeValidator::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->urlMock = $this->getMockBuilder(\Magento\Catalog\Model\Product\Url::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->attributeCodeValidatorMock = $this->createMock(AttributeCodeValidator::class);
+        $this->urlMock = $this->createMock(\Magento\Catalog\Model\Product\Url::class);
 
         $this->contextMock->method('getObjectManager')->willReturn($this->objectManagerMock);
     }
@@ -279,7 +262,7 @@ class ValidateTest extends AttributeTest
 
         $this->requestMock->expects($this->any())
             ->method('getParam')
-            ->willReturnCallback(function($key, $defaultValue = null) use ($serializedOptions) {
+            ->willReturnCallback(function ($key, $defaultValue = null) use ($serializedOptions) {
                 if ($key === 'serialized_options') {
                     return $serializedOptions;
                 }

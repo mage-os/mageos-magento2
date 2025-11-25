@@ -49,9 +49,7 @@ class TypesListTest extends TestCase
                 'create',
             ]);
 
-        $this->dataObjectHelperMock = $this->getMockBuilder(DataObjectHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->dataObjectHelperMock = $this->createMock(DataObjectHelper::class);
         $this->model = new TypesList(
             $this->inputTypeFactoryMock,
             $this->attributeTypeFactoryMock,

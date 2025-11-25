@@ -11,10 +11,10 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Block\Rss\Product\NewProducts;
 use Magento\Catalog\Helper\Image;
 use Magento\Catalog\Model\Product;
-use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\Rss\UrlBuilderInterface;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Store\Model\Store;
@@ -28,6 +28,7 @@ use PHPUnit\Framework\TestCase;
  */
 class NewProductsTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var NewProducts
      */
@@ -85,9 +86,7 @@ class NewProductsTest extends TestCase
         $this->scopeConfig = $this->createMock(ScopeConfigInterface::class);
 
         $this->storeManager = $this->createMock(StoreManager::class);
-        $store = $this->getMockBuilder(Store::class)
-            ->onlyMethods(['getId', 'getFrontendName'])->disableOriginalConstructor()
-            ->getMock();
+        $store = $this->createPartialMock(Store::class, ['getId', 'getFrontendName']);
         $store->method('getId')->willReturn(1);
         $store->method('getFrontendName')->willReturn('Store 1');
         $this->storeManager->method('getStore')->willReturn($store);
@@ -129,11 +128,21 @@ class NewProductsTest extends TestCase
      */
     protected function getItemMock()
     {
-        $item = new ProductTestHelper();
-        
-        // Set up the expected behavior
-        $item->setAllowedInRss(true);
-        $item->setAllowedPriceInRss(true);
+        $item = $this->createPartialMockWithReflection(
+            Product::class,
+            ['setAllowedInRss', 'getAllowedInRss', 'setAllowedPriceInRss', 'getAllowedPriceInRss',
+             'setName', 'getName', 'setProductUrl', 'getProductUrl', 'setDescription', 'getDescription']
+        );
+        $item->method('setAllowedInRss')->willReturnSelf();
+        $item->method('getAllowedInRss')->willReturn(true);
+        $item->method('setAllowedPriceInRss')->willReturnSelf();
+        $item->method('getAllowedPriceInRss')->willReturn(true);
+        $item->method('setName')->willReturnSelf();
+        $item->method('getName')->willReturn('Product Name');
+        $item->method('setProductUrl')->willReturnSelf();
+        $item->method('getProductUrl')->willReturn('http://magento.com/product-name.html');
+        $item->method('setDescription')->willReturnSelf();
+        $item->method('getDescription')->willReturn('Product Description');
         
         return $item;
     }

@@ -13,7 +13,6 @@ use Magento\Backend\Model\Auth\Session;
 use Magento\Backend\Model\Auth\StorageInterface;
 use Magento\Backend\Model\View\Result\Redirect;
 use Magento\Backend\Model\View\Result\RedirectFactory;
-use Magento\Backend\Test\Unit\Helper\AuthStorageTestHelper;
 use Magento\Catalog\Api\CategoryRepositoryInterface;
 use Magento\Catalog\Controller\Adminhtml\Category\Delete;
 use Magento\Catalog\Model\Category;
@@ -21,6 +20,7 @@ use Magento\Cms\Model\Wysiwyg\Config;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Event\ManagerInterface;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -31,6 +31,7 @@ use PHPUnit\Framework\TestCase;
  */
 class DeleteTest extends TestCase
 {
+    use MockCreationTrait;
     /** @var Delete */
     protected $unit;
 
@@ -82,7 +83,15 @@ class DeleteTest extends TestCase
             ['getParam', 'getPost']
         );
         $auth = $this->createPartialMock(Auth::class, ['getAuthStorage']);
-        $this->authStorage = new AuthStorageTestHelper();
+        $this->authStorage = $this->createPartialMockWithReflection(
+            StorageInterface::class,
+            ['setDeletedPath', 'processLogin', 'processLogout', 'isLoggedIn', 'prolong']
+        );
+        $this->authStorage->method('setDeletedPath')->willReturnSelf();
+        $this->authStorage->method('processLogin')->willReturnSelf();
+        $this->authStorage->method('processLogout')->willReturnSelf();
+        $this->authStorage->method('isLoggedIn')->willReturn(true);
+        $this->authStorage->method('prolong')->willReturnSelf();
         $eventManager = $this->createMock(
             ManagerInterface::class,
             [],

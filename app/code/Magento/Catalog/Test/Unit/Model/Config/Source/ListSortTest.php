@@ -27,9 +27,7 @@ class ListSortTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->catalogConfig = $this->getMockBuilder(Config::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->catalogConfig = $this->createMock(Config::class);
 
         $helper = new ObjectManager($this);
         $this->model = $helper->getObject(

@@ -39,9 +39,7 @@ class UrlBuilderTest extends TestCase
      */
     private function getMockedFrontendUrlBuilder()
     {
-        $mockBuilder = $this->getMockBuilder(UrlInterface::class)
-            ->disableOriginalConstructor();
-        $mock = $mockBuilder->getMock();
+        $mock = $this->createMock(UrlInterface::class);
 
         $mock->method('getUrl')->willReturn('testResult');
 

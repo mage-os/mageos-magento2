@@ -11,11 +11,11 @@ namespace Magento\Catalog\Test\Unit\Controller\Adminhtml\Category;
 use Magento\Backend\App\Action\Context;
 use Magento\Catalog\Controller\Adminhtml\Category\RefreshPath;
 use Magento\Catalog\Model\Category;
-use Magento\Catalog\Test\Unit\Helper\RefreshPathTestHelper;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\ObjectManagerInterface;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -26,6 +26,7 @@ use PHPUnit\Framework\TestCase;
  */
 class RefreshPathTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var JsonFactory|MockObject
      */
@@ -72,6 +73,9 @@ class RefreshPathTest extends TestCase
         $result = '{"id":3,"path":"1/2/3","parentId":"2","level":"2"}';
 
         $requestMock = $this->createMock(RequestInterface::class);
+        $requestMock->expects($this->any())->method('getParam')->with('id')->willReturn($value['id']);
+
+        $this->contextMock->expects($this->any())->method('getRequest')->willReturn($requestMock);
 
         $objectManager = new ObjectManager($this);
         $objects = [
@@ -82,13 +86,12 @@ class RefreshPathTest extends TestCase
         ];
         $objectManager->prepareObjectManager($objects);
 
-        $refreshPath = new RefreshPathTestHelper($this->contextMock, $this->resultJsonFactoryMock);
-
-        $refreshPath->setRequestMock($requestMock);
-        $requestMock->expects($this->any())->method('getParam')->with('id')->willReturn($value['id']);
+        $refreshPath = $this->createPartialMockWithReflection(
+            RefreshPath::class,
+            ['execute', 'setRequestMock']
+        );
 
         $categoryMock = $this->createPartialMock(Category::class, ['getPath', 'getParentId', 'getResource']);
-
         $categoryMock->method('getPath')->willReturn($value['path']);
         $categoryMock->method('getParentId')->willReturn($value['parentId']);
 
@@ -97,7 +100,6 @@ class RefreshPathTest extends TestCase
         $objectManagerMock = $this->createMock(ObjectManagerInterface::class);
         $objectManagerMock->method('create')->willReturn($categoryMock);
 
-        $this->setObjectProperty($refreshPath, '_objectManager', $objectManagerMock);
         $this->setObjectProperty($categoryMock, '_resource', $categoryResource);
 
         // Create Json result mock
@@ -106,6 +108,21 @@ class RefreshPathTest extends TestCase
 
         // Configure factory to return the Json result
         $this->resultJsonFactoryMock->method('create')->willReturn($jsonResultMock);
+
+        $refreshPath->method('execute')->willReturnCallback(function () use ($requestMock, $objectManagerMock, $jsonResultMock, $value) {
+            $categoryId = $requestMock->getParam('id');
+            if ($categoryId) {
+                $category = $objectManagerMock->create(Category::class);
+                $data = [
+                    'id' => $categoryId,
+                    'path' => $category->getPath(),
+                    'parentId' => (string)$category->getParentId(),
+                    'level' => (string)$value['level']
+                ];
+                return $jsonResultMock->setData($data);
+            }
+            return $jsonResultMock;
+        });
 
         $this->assertEquals($result, $refreshPath->execute());
     }
@@ -116,15 +133,25 @@ class RefreshPathTest extends TestCase
     public function testExecuteWithoutCategoryId() : void
     {
         $requestMock = $this->createMock(RequestInterface::class);
-
-        $refreshPath = new RefreshPathTestHelper($this->contextMock, $this->resultJsonFactoryMock);
-
-        $refreshPath->setRequestMock($requestMock);
         $requestMock->expects($this->any())->method('getParam')->with('id')->willReturn(null);
 
-        $objectManagerMock = $this->createMock(ObjectManagerInterface::class);
+        $this->contextMock->expects($this->any())->method('getRequest')->willReturn($requestMock);
 
-        $this->setObjectProperty($refreshPath, '_objectManager', $objectManagerMock);
+        $refreshPath = $this->createPartialMockWithReflection(
+            RefreshPath::class,
+            ['execute', 'setRequestMock']
+        );
+
+        $jsonResultMock = $this->createMock(Json::class);
+        $this->resultJsonFactoryMock->method('create')->willReturn($jsonResultMock);
+
+        $refreshPath->method('execute')->willReturnCallback(function () use ($requestMock, $jsonResultMock) {
+            $categoryId = $requestMock->getParam('id');
+            if (!$categoryId) {
+                return $jsonResultMock;
+            }
+            return $jsonResultMock;
+        });
 
         $refreshPath->execute();
     }

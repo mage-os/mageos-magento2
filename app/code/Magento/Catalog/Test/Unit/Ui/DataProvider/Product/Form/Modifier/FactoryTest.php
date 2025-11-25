@@ -40,9 +40,7 @@ class FactoryTest extends TestCase
     {
         $this->objectManager = new ObjectManagerHelper($this);
         $this->dataProviderMock = $this->createMock(ModifierInterface::class);
-        $this->objectManagerMock = $this->getMockBuilder(ObjectManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->objectManagerMock = $this->createMock(ObjectManager::class);
 
         $this->model = $this->objectManager->getObject(
             ModifierFactory::class,

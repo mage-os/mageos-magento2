@@ -45,12 +45,7 @@ class GroupTest extends TestCase
     {
         $mockedCollection = $this->getMockedCollection();
 
-        $mockBuilder = $this->getMockBuilder(
-            CollectionFactory::class
-        );
-        $mock = $mockBuilder->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $mock = $this->createPartialMock(CollectionFactory::class, ['create']);
 
         $mock->method('create')->willReturn($mockedCollection);
 
@@ -62,9 +57,7 @@ class GroupTest extends TestCase
      */
     private function getMockedCollection()
     {
-        $mockBuilder = $this->getMockBuilder(Collection::class);
-        $mock = $mockBuilder->disableOriginalConstructor()
-            ->getMock();
+        $mock = $this->createMock(Collection::class);
 
         $item = new DataObject();
         $item->setIsUserDefine(false);

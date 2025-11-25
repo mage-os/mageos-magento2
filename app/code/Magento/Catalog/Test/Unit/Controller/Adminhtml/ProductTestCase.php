@@ -69,23 +69,16 @@ abstract class ProductTestCase extends TestCase
 
         $this->objectManagerMock->method('get')->willReturn($productActionMock);
 
-        $block = $this->getMockBuilder(AbstractBlock::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->layout = $this->getMockBuilder(Layout::class)
-            ->onlyMethods(['getBlock'])->disableOriginalConstructor()
-            ->getMock();
+        $block = $this->createMock(AbstractBlock::class);
+        $this->layout = $this->createPartialMock(Layout::class, ['getBlock']);
         $this->layout->method('getBlock')->willReturn($block);
 
-        $eventManager = $this->getMockBuilder(Manager::class)
-            ->onlyMethods(['dispatch'])->disableOriginalConstructor()
-            ->getMock();
+        $eventManager = $this->createPartialMock(Manager::class, ['dispatch']);
         $eventManager->expects($this->any())->method('dispatch')->willReturnSelf();
-        $requestInterfaceMock = $this->getMockBuilder(Http::class)
-            ->onlyMethods(
-                ['getParam', 'getPost', 'getFullActionName', 'getPostValue']
-            )->disableOriginalConstructor()
-            ->getMock();
+        $requestInterfaceMock = $this->createPartialMock(
+            Http::class,
+            ['getParam', 'getPost', 'getFullActionName', 'getPostValue']
+        );
 
         $responseInterfaceMock = $this->createMock(ResponseInterface::class);
 

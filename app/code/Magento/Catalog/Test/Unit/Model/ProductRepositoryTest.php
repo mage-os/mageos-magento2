@@ -10,8 +10,8 @@ namespace Magento\Catalog\Test\Unit\Model;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Catalog\Api\Data\ProductExtensionInterface;
-use Magento\Catalog\Test\Unit\Helper\ProductExtensionInterfaceTestHelper;
 use Magento\Catalog\Api\Data\ProductSearchResultsInterface;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Catalog\Api\Data\ProductSearchResultsInterfaceFactory;
 use Magento\Catalog\Api\ProductAttributeRepositoryInterface;
 use Magento\Catalog\Controller\Adminhtml\Product\Initialization\Helper;
@@ -59,6 +59,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ProductRepositoryTest extends TestCase
 {
+    use MockCreationTrait;
     private const STUB_STORE_ID = 1;
     private const STUB_STORE_ID_GLOBAL = 0;
     private const STUB_PRODUCT_ID = 100;
@@ -203,55 +204,51 @@ class ProductRepositoryTest extends TestCase
     {
         $this->productFactory = $this->createPartialMock(ProductFactory::class, ['create']);
 
-        $this->product = $this->getMockBuilder(Product::class)
-            ->onlyMethods(
-                [
-                    'getId',
-                    'getSku',
-                    'getWebsiteIds',
-                    'load',
-                    'setData',
-                    'getData',
-                    'getStoreId',
-                    'getMediaGalleryEntries',
-                    'getExtensionAttributes',
-                    'getCategoryIds',
-                    'getAttributes'
-                ]
-            )
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->product = $this->createPartialMock(
+            Product::class,
+            [
+                'getId',
+                'getSku',
+                'getWebsiteIds',
+                'load',
+                'setData',
+                'getData',
+                'getStoreId',
+                'getMediaGalleryEntries',
+                'getExtensionAttributes',
+                'getCategoryIds',
+                'getAttributes'
+            ]
+        );
         
-        $this->product->method('getData')->willReturnCallback(function($key = null, $index = null) {
+        $this->product->method('getData')->willReturnCallback(function ($key = null, $index = null) {
             if ($key === null || $key === '') {
                 return [];
             }
             return null;
         });
 
-        $this->initializedProduct = $this->getMockBuilder(Product::class)
-            ->onlyMethods(
-                [
-                    'getWebsiteIds',
-                    'load',
-                    'getOptions',
-                    'getSku',
-                    'getStoreId',
-                    'hasGalleryAttribute',
-                    'getMediaConfig',
-                    'getMediaAttributes',
-                    'getProductLinks',
-                    'setProductLinks',
-                    'validate',
-                    'save',
-                    'getMediaGalleryEntries',
-                    'getExtensionAttributes',
-                    'getCategoryIds',
-                    'getAttributes'
-                ]
-            )
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->initializedProduct = $this->createPartialMock(
+            Product::class,
+            [
+                'getWebsiteIds',
+                'load',
+                'getOptions',
+                'getSku',
+                'getStoreId',
+                'hasGalleryAttribute',
+                'getMediaConfig',
+                'getMediaAttributes',
+                'getProductLinks',
+                'setProductLinks',
+                'validate',
+                'save',
+                'getMediaGalleryEntries',
+                'getExtensionAttributes',
+                'getCategoryIds',
+                'getAttributes'
+            ]
+        );
         
         $this->initializedProduct->method('hasGalleryAttribute')->willReturn(true);
         $this->filterBuilder = $this->createMock(FilterBuilder::class);
@@ -265,15 +262,12 @@ class ProductRepositoryTest extends TestCase
         $this->resourceModel = $this->createMock(\Magento\Catalog\Model\ResourceModel\Product::class);
         $this->resourceModel->method('getLinkField')->willReturn('some_value');
         $this->objectManager = new ObjectManager($this);
-        $this->extensibleDataObjectConverter = $this->getMockBuilder(ExtensibleDataObjectConverter::class)
-            ->onlyMethods(['toNestedArray'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->fileSystem = $this->getMockBuilder(Filesystem::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->mimeTypeExtensionMap = $this->getMockBuilder(MimeTypeExtensionMap::class)
-            ->getMock();
+        $this->extensibleDataObjectConverter = $this->createPartialMock(
+            ExtensibleDataObjectConverter::class,
+            ['toNestedArray']
+        );
+        $this->fileSystem = $this->createMock(Filesystem::class);
+        $this->mimeTypeExtensionMap = $this->createMock(MimeTypeExtensionMap::class);
         $this->contentFactory = $this->createPartialMock(ImageContentInterfaceFactory::class, ['create']);
         $this->contentValidator = $this->createMock(ImageContentValidatorInterface::class);
         $this->linkTypeProvider = $this->createPartialMock(LinkTypeProvider::class, ['getLinkTypes']);
@@ -282,7 +276,56 @@ class ProductRepositoryTest extends TestCase
 
         $this->storeManager = $this->createMock(StoreManagerInterface::class);
         
-        $this->productExtension = new ProductExtensionInterfaceTestHelper();
+        $this->productExtension = $this->createPartialMockWithReflection(
+            ProductExtensionInterface::class,
+            [
+                'getWebsiteIds', 'setWebsiteIds', 'getCategoryLinks', 'setCategoryLinks',
+                'getStockItem', 'setStockItem', 'getDownloadableProductLinks', 'setDownloadableProductLinks',
+                'getDownloadableProductSamples', 'setDownloadableProductSamples',
+                'getConfigurableProductOptions', 'setConfigurableProductOptions',
+                'getConfigurableProductLinks', 'setConfigurableProductLinks',
+                'getBundleProductOptions', 'setBundleProductOptions',
+                'getGiftcardAmounts', 'setGiftcardAmounts', 'getDiscounts', 'setDiscounts',
+                '__toArray'
+            ]
+        );
+        $data = [];
+        $this->productExtension->method('getWebsiteIds')->willReturnCallback(function () use (&$data) {
+            return $data['website_ids'] ?? null;
+        });
+        $this->productExtension->method('setWebsiteIds')->willReturnCallback(function ($v) use (&$data) {
+            $data['website_ids'] = $v;
+            return $this->productExtension;
+        });
+        $this->productExtension->method('getCategoryLinks')->willReturnCallback(function () use (&$data) {
+            return $data['category_links'] ?? null;
+        });
+        $this->productExtension->method('setCategoryLinks')->willReturnCallback(function ($v) use (&$data) {
+            $data['category_links'] = $v;
+            return $this->productExtension;
+        });
+        $this->productExtension->method('getStockItem')->willReturnCallback(function () use (&$data) {
+            return $data['stock_item'] ?? null;
+        });
+        $this->productExtension->method('setStockItem')->willReturnCallback(function ($v) use (&$data) {
+            $data['stock_item'] = $v;
+            return $this->productExtension;
+        });
+        $this->productExtension->method('getDownloadableProductLinks')->willReturn(null);
+        $this->productExtension->method('setDownloadableProductLinks')->willReturnSelf();
+        $this->productExtension->method('getDownloadableProductSamples')->willReturn(null);
+        $this->productExtension->method('setDownloadableProductSamples')->willReturnSelf();
+        $this->productExtension->method('getConfigurableProductOptions')->willReturn(null);
+        $this->productExtension->method('setConfigurableProductOptions')->willReturnSelf();
+        $this->productExtension->method('getConfigurableProductLinks')->willReturn(null);
+        $this->productExtension->method('setConfigurableProductLinks')->willReturnSelf();
+        $this->productExtension->method('getBundleProductOptions')->willReturn(null);
+        $this->productExtension->method('setBundleProductOptions')->willReturnSelf();
+        $this->productExtension->method('getGiftcardAmounts')->willReturn(null);
+        $this->productExtension->method('setGiftcardAmounts')->willReturnSelf();
+        $this->productExtension->method('getDiscounts')->willReturn(null);
+        $this->productExtension->method('setDiscounts')->willReturnSelf();
+        $this->productExtension->method('__toArray')->willReturn([]);
         
         $this->product
             ->method('getExtensionAttributes')
@@ -304,11 +347,9 @@ class ProductRepositoryTest extends TestCase
 
         $this->processor = $this->createMock(Processor::class);
 
-        $this->collectionProcessor = $this->getMockBuilder(CollectionProcessorInterface::class)
-            ->getMock();
+        $this->collectionProcessor = $this->createMock(CollectionProcessorInterface::class);
 
-        $this->serializerMock = $this->getMockBuilder(Json::class)
-            ->getMock();
+        $this->serializerMock = $this->createMock(Json::class);
         $this->serializerMock->expects($this->any())
             ->method('unserialize')
             ->willReturnCallback(
@@ -640,9 +681,7 @@ class ProductRepositoryTest extends TestCase
         $productMocks = [];
 
         for ($i = 1; $i <= $productsCount; $i++) {
-            $productMock = $this->getMockBuilder(Product::class)->disableOriginalConstructor()
-                ->onlyMethods(['getId', 'getSku', 'load', 'setData'])
-                ->getMock();
+            $productMock = $this->createPartialMock(Product::class, ['getId', 'getSku', 'load', 'setData']);
             $productMock->expects($this->once())->method('load');
             $productMock->expects($this->atLeastOnce())->method('getId')->willReturn($i);
             $productMock->expects($this->atLeastOnce())->method('getSku')->willReturn($i . uniqid());
@@ -1022,9 +1061,7 @@ class ProductRepositoryTest extends TestCase
 
     protected function getMockForOptionOneClass()
     {
-        $existingOption = $this->getMockBuilder(Option::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $existingOption = $this->createMock(Option::class);
         $existingOption->setData(
             [
                 'option_id' => 10,
@@ -1032,9 +1069,7 @@ class ProductRepositoryTest extends TestCase
             ]
         );
         /** @var Value $existingOptionValue1 */
-        $existingOptionValue1 = $this->getMockBuilder(Value::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $existingOptionValue1 = $this->createMock(Value::class);
         $existingOptionValue1->setData(
             [
                 'option_type_id' => '8',
@@ -1042,9 +1077,7 @@ class ProductRepositoryTest extends TestCase
                 'price' => 5
             ]
         );
-        $existingOptionValue2 = $this->getMockBuilder(Value::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $existingOptionValue2 = $this->createMock(Value::class);
         $existingOptionValue2->setData(
             [
                 'option_type_id' => '9',
@@ -1064,9 +1097,7 @@ class ProductRepositoryTest extends TestCase
 
     protected function getMockForOptionTwoClass()
     {
-        $existingOption = $this->getMockBuilder(Option::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $existingOption = $this->createMock(Option::class);
         $existingOption->setData(
             [
                 'option_id' => 11,
@@ -1394,9 +1425,7 @@ class ProductRepositoryTest extends TestCase
         $this->processor->expects($this->once())->method('clearMediaAttribute')
             ->with($this->initializedProduct, ['image', 'small_image']);
 
-        $mediaConfigMock = $this->getMockBuilder(Config::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $mediaConfigMock = $this->createMock(Config::class);
         $mediaConfigMock->expects($this->once())
             ->method('getTmpMediaShortUrl')
             ->with($absolutePath)
@@ -1406,10 +1435,10 @@ class ProductRepositoryTest extends TestCase
             ->willReturn($mediaConfigMock);
 
         //verify new entries
-        $contentDataObject = $this->getMockBuilder(ImageContent::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([])
-            ->getMock();
+        $contentDataObject = $this->createMock(ImageContent::class);
+        $contentDataObject->method('setName')->willReturnSelf();
+        $contentDataObject->method('setBase64EncodedData')->willReturnSelf();
+        $contentDataObject->method('setType')->willReturnSelf();
         $this->contentFactory->expects($this->once())
             ->method('create')
             ->willReturn($contentDataObject);
@@ -1426,7 +1455,7 @@ class ProductRepositoryTest extends TestCase
         ];
         $this->processor->expects($this->once())->method('addImage')
             ->with($this->initializedProduct, $mediaTmpPath . $absolutePath, ['image', 'small_image'], true, false)
-            ->willReturnCallback(function($product) use ($imageFileUri, $newEntriesDataWithId) {
+            ->willReturnCallback(function ($product) use ($imageFileUri, $newEntriesDataWithId) {
                 $gallery = $product->getData('media_gallery') ?: ['images' => []];
                 $gallery['images'][123] = $newEntriesDataWithId['images'][123];
                 $product->setData('media_gallery', $gallery);

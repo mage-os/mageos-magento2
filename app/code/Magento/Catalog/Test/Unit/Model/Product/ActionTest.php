@@ -17,7 +17,7 @@ use Magento\Eav\Model\Config;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\Indexer\IndexerRegistry;
 use Magento\Framework\Model\ResourceModel\AbstractResource;
-use Magento\Framework\Model\ResourceModel\Test\Unit\Helper\AbstractResourceTestHelper;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Indexer\Model\Indexer;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -28,6 +28,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ActionTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var Action
      */
@@ -75,7 +76,13 @@ class ActionTest extends TestCase
             WebsiteFactory::class,
             ['create']
         );
-        $this->resource = new AbstractResourceTestHelper();
+        $this->resource = $this->createPartialMockWithReflection(
+            AbstractResource::class,
+            ['setUpdateAttributesResult', 'getIdFieldName', 'updateAttributes', '_construct', 'getConnection']
+        );
+        $this->resource->method('setUpdateAttributesResult')->willReturnSelf();
+        $this->resource->method('getIdFieldName')->willReturn('entity_id');
+        $this->resource->method('updateAttributes')->willReturnSelf();
         $this->productWebsite = $this->createPartialMock(
             Website::class,
             ['addProducts', 'removeProducts']
@@ -115,7 +122,6 @@ class ActionTest extends TestCase
         $productIdsUnique = [0 => 1, 1 => 2, 3 => 4];
         $attrData = [1];
         $storeId = 1;
-        $this->resource->setUpdateAttributesResult($this->resource);
 
         $this->categoryIndexer
             ->method('isScheduled')->willReturn(false);

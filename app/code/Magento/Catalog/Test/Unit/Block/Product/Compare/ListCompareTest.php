@@ -12,9 +12,9 @@ use Magento\Catalog\Block\Product\Compare\ListCompare;
 use Magento\Catalog\Block\Product\Context;
 use Magento\Catalog\Model\Product;
 use Magento\Eav\Model\Entity\Attribute\AttributeInterface;
-use Magento\Eav\Test\Unit\Helper\AbstractAttributeTestHelper;
 use Magento\Eav\Model\Entity\Attribute\Frontend\AbstractFrontend;
 use Magento\Framework\Pricing\Render;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Layout;
 use Magento\Framework\View\LayoutInterface;
@@ -23,6 +23,7 @@ use PHPUnit\Framework\TestCase;
 
 class ListCompareTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var ListCompare
      */
@@ -59,8 +60,21 @@ class ListCompareTest extends TestCase
     #[DataProvider('attributeDataProvider')]
     public function testProductAttributeValue($attributeData, $expectedResult)
     {
-        $attribute = new AbstractAttributeTestHelper();
+        $attribute = $this->createPartialMockWithReflection(AttributeInterface::class, [
+            'getAttributeCode', 'getSource', 'getSourceModel', 'getFrontendInput', 'getFrontend'
+        ]);
+        $attribute->method('getAttributeCode')->willReturn($attributeData['attribute_code']);
+        $attribute->method('getSource')->willReturn(null);
+        $attribute->method('getSourceModel')->willReturn($attributeData['source_model']);
+        $attribute->method('getFrontendInput')->willReturn($attributeData['frontend_input']);
+        
         $frontEndModel = $this->createPartialMock(AbstractFrontend::class, ['getValue']);
+        $frontEndModel->expects($this->any())
+            ->method('getValue')
+            ->with($this->anything())
+            ->willReturn($attributeData['attribute_value']);
+        $attribute->method('getFrontend')->willReturn($frontEndModel);
+        
         $productMock = $this->createPartialMock(Product::class, ['getId', 'getData', 'hasData']);
         $productMock->expects($this->any())
             ->method('hasData')
@@ -70,14 +84,7 @@ class ListCompareTest extends TestCase
             ->method('getData')
             ->with($attributeData['attribute_code'])
             ->willReturn($attributeData['attribute_value']);
-        $attribute->setAttributeCode($attributeData['attribute_code']);
-        $attribute->setSourceModel($attributeData['source_model']);
-        $attribute->setFrontendInput($attributeData['frontend_input']);
-        $frontEndModel->expects($this->any())
-            ->method('getValue')
-            ->with($productMock)
-            ->willReturn($attributeData['attribute_value']);
-        $attribute->setFrontend($frontEndModel);
+        
         $this->assertEquals(
             $expectedResult,
             $this->block->getProductAttributeValue($productMock, $attribute)

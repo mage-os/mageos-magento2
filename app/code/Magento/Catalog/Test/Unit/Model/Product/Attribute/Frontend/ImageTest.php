@@ -62,10 +62,7 @@ class ImageTest extends TestCase
      */
     private function getMockedProduct(string $productImage): Product
     {
-        $mockBuilder = $this->getMockBuilder(Product::class);
-        $mock = $mockBuilder->onlyMethods(['getData', 'getStore'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $mock = $this->createPartialMock(Product::class, ['getData', 'getStore']);
 
         $mock->method('getData')->willReturn($productImage);
 
@@ -93,10 +90,7 @@ class ImageTest extends TestCase
      */
     private function getMockedStore(): Store
     {
-        $mockBuilder = $this->getMockBuilder(Store::class);
-        $mock = $mockBuilder->onlyMethods(['getBaseUrl'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $mock = $this->createPartialMock(Store::class, ['getBaseUrl']);
 
         $mock->method('getBaseUrl')->willReturn('');
 
@@ -108,10 +102,7 @@ class ImageTest extends TestCase
      */
     private function getMockedAttribute(): AbstractAttribute
     {
-        $mockBuilder = $this->getMockBuilder(AbstractAttribute::class);
-        $mockBuilder->onlyMethods(['getAttributeCode']);
-        $mockBuilder->disableOriginalConstructor();
-        $mock = $mockBuilder->getMock();
+        $mock = $this->createPartialMock(AbstractAttribute::class, ['getAttributeCode']);
 
         $mock->expects($this->any())
             ->method('getAttributeCode');

@@ -69,13 +69,13 @@ class SynchronizeWebsiteAttributesOnStoreChangeTest extends TestCase
 
     protected function getMockForStoreClass()
     {
-        $store = $this->getMockBuilder(Store::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([
+        $store = $this->createPartialMock(
+            Store::class,
+            [
                 'hasDataChanges',
                 'getOrigData',
-            ])
-            ->getMock();
+            ]
+        );
 
         $store->expects($this->once())
             ->method('hasDataChanges')
@@ -159,15 +159,10 @@ class SynchronizeWebsiteAttributesOnStoreChangeTest extends TestCase
     protected function getMockForStoreNew($return)
     {
         $sameWebsiteId = 1;
-        $storeNew = $this->getMockBuilder(Store::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([
-                'hasDataChanges',
-                'getOrigData',
-                'getWebsiteId',
-                'isObjectNew',
-            ])
-            ->getMock();
+        $storeNew = $this->createPartialMock(
+            Store::class,
+            ['hasDataChanges', 'getOrigData', 'getWebsiteId', 'isObjectNew']
+        );
 
         $storeNew->expects($this->once())
             ->method('hasDataChanges')
@@ -202,15 +197,10 @@ class SynchronizeWebsiteAttributesOnStoreChangeTest extends TestCase
         $sameWebsiteId = 1;
         $newWebsiteId = 2;
 
-        $storeChangedWebsite = $this->getMockBuilder(Store::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([
-                'hasDataChanges',
-                'getOrigData',
-                'getWebsiteId',
-                'isObjectNew',
-            ])
-            ->getMock();
+        $storeChangedWebsite = $this->createPartialMock(
+            Store::class,
+            ['hasDataChanges', 'getOrigData', 'getWebsiteId', 'isObjectNew']
+        );
 
         $storeChangedWebsite->expects($this->once())
             ->method('hasDataChanges')

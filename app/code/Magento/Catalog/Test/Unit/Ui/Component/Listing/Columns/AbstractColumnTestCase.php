@@ -47,12 +47,8 @@ abstract class AbstractColumnTestCase extends TestCase
         $this->objectManager = new ObjectManager($this);
 
         $this->contextMock = $this->createMock(ContextInterface::class);
-        $this->uiComponentFactoryMock = $this->getMockBuilder(UiComponentFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->processorMock = $this->getMockBuilder(Processor::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->uiComponentFactoryMock = $this->createMock(UiComponentFactory::class);
+        $this->processorMock = $this->createMock(Processor::class);
 
         $this->contextMock->expects($this->never())
             ->method('getProcessor')

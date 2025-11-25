@@ -129,11 +129,7 @@ class ValueTest extends TestCase
     {
         $mockedCollection = $this->getMockedValueCollection();
 
-        $mockBuilder =
-            $this->getMockBuilder(CollectionFactory::class)
-                ->onlyMethods(['create'])
-                ->disableOriginalConstructor();
-        $mock = $mockBuilder->getMock();
+        $mock = $this->createPartialMock(CollectionFactory::class, ['create']);
 
         $mock->method('create')->willReturn($mockedCollection);
 
@@ -145,10 +141,10 @@ class ValueTest extends TestCase
      */
     private function getMockedValueCollection()
     {
-        $mockBuilder = $this->getMockBuilder(
-            Collection::class
-        )->onlyMethods(['addFieldToFilter', 'getValuesByOption', 'getValues'])->disableOriginalConstructor();
-        $mock = $mockBuilder->getMock();
+        $mock = $this->createPartialMock(
+            Collection::class,
+            ['addFieldToFilter', 'getValuesByOption', 'getValues']
+        );
 
         $mock->method('addFieldToFilter')->willReturn($mock);
 
@@ -166,9 +162,7 @@ class ValueTest extends TestCase
     {
         $mockedProduct = $this->getMockedProduct();
 
-        $mockBuilder = $this->getMockBuilder(Option::class)
-            ->disableOriginalConstructor();
-        $mock = $mockBuilder->getMock();
+        $mock = $this->createMock(Option::class);
 
         $mock->method('getProduct')->willReturn($mockedProduct);
 
@@ -180,10 +174,7 @@ class ValueTest extends TestCase
      */
     private function getMockedProduct()
     {
-        $mockBuilder = $this->getMockBuilder(Product::class)
-            ->onlyMethods(['getPriceInfo'])
-            ->disableOriginalConstructor();
-        $mock = $mockBuilder->getMock();
+        $mock = $this->createPartialMock(Product::class, ['getPriceInfo']);
 
         $priceInfoMock = $this->createMock(
             PriceInfoInterface::class,
@@ -211,22 +202,10 @@ class ValueTest extends TestCase
      */
     private function getMockedResource()
     {
-        $mockBuilder = $this->getMockBuilder(\Magento\Catalog\Model\ResourceModel\Product\Option\Value::class)
-            ->onlyMethods(
-                [
-                    'duplicate',
-                    'getIdFieldName',
-                    'deleteValues',
-                    'deleteValue',
-                    'beginTransaction',
-                    'delete',
-                    'commit',
-                    'save',
-                    'addCommitCallback',
-                ]
-            )
-            ->disableOriginalConstructor();
-        $mock = $mockBuilder->getMock();
+        $mock = $this->createPartialMock(
+            \Magento\Catalog\Model\ResourceModel\Product\Option\Value::class,
+            ['duplicate', 'getIdFieldName', 'deleteValues', 'deleteValue', 'beginTransaction', 'delete', 'commit', 'save', 'addCommitCallback']
+        );
 
         $mock->expects($this->any())
             ->method('duplicate');

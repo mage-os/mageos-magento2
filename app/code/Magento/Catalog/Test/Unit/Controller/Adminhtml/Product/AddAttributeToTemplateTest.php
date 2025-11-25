@@ -109,39 +109,28 @@ class AddAttributeToTemplateTest extends TestCase
     protected function setUp(): void
     {
         $this->objectManager = new ObjectManager($this);
-        $this->contextMock = $this->getMockBuilder(Context::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->productBuilderMock = $this->getMockBuilder(ProductBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->resultJsonFactoryMock = $this->getMockBuilder(JsonFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
+        $this->contextMock = $this->createMock(Context::class);
+        $this->productBuilderMock = $this->createMock(ProductBuilder::class);
+        $this->resultJsonFactoryMock = $this->createPartialMock(JsonFactory::class, ['create']);
         $this->requestMock = $this->createMock(RequestInterface::class);
         $this->contextMock->expects($this->once())
             ->method('getRequest')
             ->willReturn($this->requestMock);
         $this->attributeSetRepositoryMock = $this->createMock(AttributeSetRepositoryInterface::class);
         $this->attributeSetInterfaceMock = $this->createMock(AttributeSetInterface::class);
-        $this->searchCriteriaBuilderMock = $this->getMockBuilder(SearchCriteriaBuilder::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['addFilter', 'create', 'setPageSize', 'addSortOrder'])
-            ->getMock();
-        $this->searchCriteriaMock = $this->getMockBuilder(SearchCriteria::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->searchCriteriaBuilderMock = $this->createPartialMock(
+            SearchCriteriaBuilder::class,
+            ['addFilter', 'create', 'setPageSize', 'addSortOrder']
+        );
+        $this->searchCriteriaMock = $this->createMock(SearchCriteria::class);
         $this->attributeGroupRepositoryMock = $this->createMock(AttributeGroupRepositoryInterface::class);
         $this->attributeGroupSearchResultsMock = $this->createMock(AttributeGroupSearchResultsInterface::class);
-        $this->attributeGroupInterfaceFactoryMock = $this->getMockBuilder(AttributeGroupInterfaceFactory::class)
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->attributeGroupInterfaceFactoryMock = $this->createPartialMock(
+            AttributeGroupInterfaceFactory::class,
+            ['create']
+        );
         $this->attributeGroupInterfaceMock = $this->createMock(AttributeGroupInterface::class);
-        $this->jsonMock = $this->getMockBuilder(Json::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->jsonMock = $this->createMock(Json::class);
 
         $this->controller = $this->objectManager->getObject(
             AddAttributeToTemplate::class,

@@ -81,29 +81,14 @@ class CostStorageTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->pricePersistenceFactory = $this->getMockBuilder(
-            PricePersistenceFactory::class
-        )
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
-        $this->pricePersistence = $this->getMockBuilder(PricePersistence::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->costInterfaceFactory = $this->getMockBuilder(CostInterfaceFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
+        $this->pricePersistenceFactory = $this->createPartialMock(PricePersistenceFactory::class, ['create']);
+        $this->pricePersistence = $this->createMock(PricePersistence::class);
+        $this->costInterfaceFactory = $this->createPartialMock(CostInterfaceFactory::class, ['create']);
         $this->costInterface = $this->createMock(CostInterface::class);
         $this->productIdLocator = $this->createMock(ProductIdLocatorInterface::class);
         $this->storeRepository = $this->createMock(StoreRepositoryInterface::class);
-        $this->validationResult = $this->getMockBuilder(Result::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->invalidSkuProcessor = $this
-            ->getMockBuilder(InvalidSkuProcessor::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->validationResult = $this->createMock(Result::class);
+        $this->invalidSkuProcessor = $this->createMock(InvalidSkuProcessor::class);
 
         $objectManager = new ObjectManager($this);
         $this->model = $objectManager->getObject(

@@ -16,14 +16,14 @@ use Magento\Eav\Model\Entity\AbstractEntity;
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
 use Magento\Eav\Model\Entity\Attribute\Backend\AbstractBackend;
 use Magento\Eav\Model\Entity\Collection\AbstractCollection;
-use Magento\Eav\Test\Unit\Helper\AbstractAttributeTestHelper;
-use Magento\Eav\Test\Unit\Helper\CollectionTestHelper;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class StatusTest extends TestCase
 {
+    use MockCreationTrait;
     /** @var Status */
     protected $status;
 
@@ -47,15 +47,79 @@ class StatusTest extends TestCase
     protected function setUp(): void
     {
         $this->objectManagerHelper = new ObjectManagerHelper($this);
-        $this->collection = new CollectionTestHelper();
-        $this->attributeModel = new AbstractAttributeTestHelper();
-        $this->backendAttributeModel = $this->createPartialMock(
-            Sku::class,
-            [ 'getTable']
+        
+        $this->collection = $this->createPartialMockWithReflection(
+            AbstractCollection::class,
+            ['setStoreId', 'getStoreId', 'setCheckSql', 'getSelect', 'getConnection']
         );
-        $this->status = $this->objectManagerHelper->getObject(
-            Status::class
+        $collectionData = [];
+        $collection = $this->collection;
+        $this->collection->method('setStoreId')->willReturnCallback(function ($value) use (&$collectionData, $collection) {
+            $collectionData['store_id'] = $value;
+            return $collection;
+        });
+        $this->collection->method('getStoreId')->willReturnCallback(function () use (&$collectionData) {
+            return $collectionData['store_id'] ?? null;
+        });
+        $this->collection->method('setCheckSql')->willReturnCallback(function ($value) use (&$collectionData, $collection) {
+            $collectionData['check_sql'] = $value;
+            return $collection;
+        });
+        $select = $this->createMock(\Magento\Framework\DB\Select::class);
+        $select->method('joinLeft')->willReturnSelf();
+        $this->collection->method('getSelect')->willReturn($select);
+        $connection = $this->createMock(\Magento\Framework\DB\Adapter\AdapterInterface::class);
+        $connection->method('getCheckSql')->willReturnCallback(function ($condition, $true, $false) {
+            return "CASE WHEN $condition THEN $true ELSE $false END";
+        });
+        $this->collection->method('getConnection')->willReturn($connection);
+        
+        $this->attributeModel = $this->createPartialMockWithReflection(
+            AbstractAttribute::class,
+            ['setAttributeCode', 'getAttributeCode', 'setId', 'getId', 'setBackend', 'getBackend',
+             'setIsScopeGlobal', 'isScopeGlobal', 'setEntity', 'getEntity']
         );
+        $attrData = [];
+        $attribute = $this->attributeModel;
+        $this->attributeModel->method('setAttributeCode')->willReturnCallback(function ($value) use (&$attrData, $attribute) {
+            $attrData['attribute_code'] = $value;
+            return $attribute;
+        });
+        $this->attributeModel->method('getAttributeCode')->willReturnCallback(function () use (&$attrData) {
+            return $attrData['attribute_code'] ?? null;
+        });
+        $this->attributeModel->method('setId')->willReturnCallback(function ($value) use (&$attrData, $attribute) {
+            $attrData['id'] = $value;
+            return $attribute;
+        });
+        $this->attributeModel->method('getId')->willReturnCallback(function () use (&$attrData) {
+            return $attrData['id'] ?? null;
+        });
+        $this->attributeModel->method('setBackend')->willReturnCallback(function ($value) use (&$attrData, $attribute) {
+            $attrData['backend'] = $value;
+            return $attribute;
+        });
+        $this->attributeModel->method('getBackend')->willReturnCallback(function () use (&$attrData) {
+            return $attrData['backend'] ?? null;
+        });
+        $this->attributeModel->method('setIsScopeGlobal')->willReturnCallback(function ($value) use (&$attrData, $attribute) {
+            $attrData['is_scope_global'] = $value;
+            return $attribute;
+        });
+        $this->attributeModel->method('isScopeGlobal')->willReturnCallback(function () use (&$attrData) {
+            return $attrData['is_scope_global'] ?? false;
+        });
+        $this->attributeModel->method('setEntity')->willReturnCallback(function ($value) use (&$attrData, $attribute) {
+            $attrData['entity'] = $value;
+            return $attribute;
+        });
+        $this->attributeModel->method('getEntity')->willReturnCallback(function () use (&$attrData) {
+            return $attrData['entity'] ?? null;
+        });
+        
+        $this->backendAttributeModel = $this->createPartialMock(Sku::class, ['getTable']);
+        
+        $this->status = $this->objectManagerHelper->getObject(Status::class);
 
         $this->attributeModel->setAttributeCode('attribute_code');
         $this->attributeModel->setId('1');

@@ -129,23 +129,16 @@ class AdvancedTest extends TestCase
 
         $fieldSet = $this->createMock(Fieldset::class);
         $form = $this->createMock(Form::class);
-        $attributeModel = $this->getMockBuilder(Attribute::class)
-            ->onlyMethods(
-                [
-                    'getDefaultValue',
-                    'getId',
-                    'getEntityType',
-                    'getIsUserDefined',
-                    'getAttributeCode',
-                    'getFrontendInput'
-                ]
-            )
-            ->disableOriginalConstructor()
-            ->getMock();
+        $attributeModel = $this->createPartialMock(Attribute::class, [
+            'getDefaultValue',
+            'getId',
+            'getEntityType',
+            'getIsUserDefined',
+            'getAttributeCode',
+            'getFrontendInput'
+        ]);
         $entityType = $this->createMock(EntityType::class);
-        $formElement = $this->getMockBuilder(Text::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $formElement = $this->createMock(Text::class);
         $directoryReadInterface = $this->createMock(ReadInterface::class);
 
         $this->registry->expects($this->any())->method('registry')->with('entity_attribute')

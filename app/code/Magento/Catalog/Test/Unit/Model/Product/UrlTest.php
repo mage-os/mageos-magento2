@@ -14,9 +14,9 @@ use Magento\Catalog\Helper\Category;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Url;
 use Magento\Catalog\Model\Product\Url as ProductUrl;
-use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Framework\Filter\Test\Unit\Helper\FilterManagerTestHelper;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+use Magento\Framework\Filter\FilterManager;
 use Magento\Framework\Session\SidResolverInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\UrlFactory;
@@ -32,6 +32,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(\Magento\Catalog\Model\Product\Url::class)]
 class UrlTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var Url
      */
@@ -69,19 +70,25 @@ class UrlTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->filter = new FilterManagerTestHelper();
+        $filterData = [];
+        $this->filter = $this->createPartialMockWithReflection(
+            FilterManager::class,
+            ['translitUrl', 'setTranslitUrlResult']
+        );
+        $filter = $this->filter;
+        $this->filter->method('translitUrl')->willReturnCallback(function ($value) use (&$filterData) {
+            return $filterData['translitUrl'] ?? $value;
+        });
+        $this->filter->method('setTranslitUrlResult')->willReturnCallback(
+            function ($value) use (&$filterData, $filter) {
+                $filterData['translitUrl'] = $value;
+                return $filter;
+            }
+        );
 
-        $this->urlFinder = $this->getMockBuilder(
-            UrlFinderInterface::class
-        )->disableOriginalConstructor()
-            ->getMock();
+        $this->urlFinder = $this->createMock(UrlFinderInterface::class);
 
-        $this->url = $this->getMockBuilder(
-            \Magento\Framework\Url::class
-        )->disableOriginalConstructor()
-            ->onlyMethods(
-                ['setScope', 'getUrl']
-            )->getMock();
+        $this->url = $this->createPartialMock(\Magento\Framework\Url::class, ['setScope', 'getUrl']);
 
         $this->sidResolver = $this->createMock(SidResolverInterface::class);
 
@@ -90,9 +97,7 @@ class UrlTest extends TestCase
         $storeManager = $this->createMock(StoreManagerInterface::class);
         $storeManager->method('getStore')->willReturn($store);
 
-        $urlFactory = $this->getMockBuilder(UrlFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $urlFactory = $this->createMock(UrlFactory::class);
         $urlFactory->method('create')
             ->willReturn($this->url);
 
@@ -173,7 +178,47 @@ class UrlTest extends TestCase
         $productId,
         $productUrlKey
     ) {
-        $product = new ProductTestHelper();
+        $product = $this->createPartialMockWithReflection(
+            Product::class,
+            ['setStoreId', 'getStoreId', 'setCategoryId', 'getCategoryId', 'setRequestPath',
+             'getRequestPath', 'setId', 'getId', 'setUrlKey', 'getUrlKey']
+        );
+        $productData = [];
+        $product->method('setStoreId')->willReturnCallback(function ($v) use (&$productData, $product) {
+            $productData['store_id'] = $v;
+            return $product;
+        });
+        $product->method('getStoreId')->willReturnCallback(function () use (&$productData) {
+            return $productData['store_id'] ?? null;
+        });
+        $product->method('setCategoryId')->willReturnCallback(function ($v) use (&$productData, $product) {
+            $productData['category_id'] = $v;
+            return $product;
+        });
+        $product->method('getCategoryId')->willReturnCallback(function () use (&$productData) {
+            return $productData['category_id'] ?? null;
+        });
+        $product->method('setRequestPath')->willReturnCallback(function ($v) use (&$productData, $product) {
+            $productData['request_path'] = $v;
+            return $product;
+        });
+        $product->method('getRequestPath')->willReturnCallback(function () use (&$productData) {
+            return $productData['request_path'] ?? null;
+        });
+        $product->method('setId')->willReturnCallback(function ($v) use (&$productData, $product) {
+            $productData['id'] = $v;
+            return $product;
+        });
+        $product->method('getId')->willReturnCallback(function () use (&$productData) {
+            return $productData['id'] ?? null;
+        });
+        $product->method('setUrlKey')->willReturnCallback(function ($v) use (&$productData, $product) {
+            $productData['url_key'] = $v;
+            return $product;
+        });
+        $product->method('getUrlKey')->willReturnCallback(function () use (&$productData) {
+            return $productData['url_key'] ?? null;
+        });
         $product->setStoreId($storeId);
         $product->setCategoryId($categoryId);
         $product->setRequestPath($requestPathProduct);

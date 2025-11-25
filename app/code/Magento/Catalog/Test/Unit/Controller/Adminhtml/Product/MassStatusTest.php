@@ -65,55 +65,30 @@ class MassStatusTest extends ProductTestCase
 
     protected function setUp(): void
     {
-        $this->priceProcessorMock = $this->getMockBuilder(Processor::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->productBuilderMock = $this->getMockBuilder(Builder::class)
-            ->onlyMethods(['build'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->priceProcessorMock = $this->createMock(Processor::class);
+        $this->productBuilderMock = $this->createPartialMock(Builder::class, ['build']);
 
-        $productMock = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getTypeId', 'getStoreId', '__sleep'])
-            ->getMock();
+        $productMock = $this->createPartialMock(Product::class, ['getTypeId', 'getStoreId', '__sleep']);
         $productMock->method('getTypeId')->willReturn('simple');
         $productMock->method('getStoreId')->willReturn('1');
         $this->productBuilderMock->method('build')->willReturn($productMock);
 
-        $this->resultRedirectMock = $this->getMockBuilder(Redirect::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $resultFactory = $this->getMockBuilder(ResultFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
+        $this->resultRedirectMock = $this->createMock(Redirect::class);
+        $resultFactory = $this->createPartialMock(ResultFactory::class, ['create']);
         $resultFactory->expects($this->atLeastOnce())
             ->method('create')
             ->with(ResultFactory::TYPE_REDIRECT)
             ->willReturn($this->resultRedirectMock);
 
-        $this->productCollectionMock = $this->getMockBuilder(\Magento\Catalog\Model\ResourceModel\Product\Collection::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getAllIds', 'getResource'])
-            ->getMock();
-        $this->filterMock = $this->getMockBuilder(Filter::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getCollection'])
-            ->getMock();
-        $this->actionMock = $this->getMockBuilder(Action::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->attributeHelperMock = $this->getMockBuilder(AttributeHelper::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['setProductIds'])
-            ->getMock();
+        $this->productCollectionMock = $this->createPartialMock(
+            \Magento\Catalog\Model\ResourceModel\Product\Collection::class,
+            ['getAllIds', 'getResource']
+        );
+        $this->filterMock = $this->createPartialMock(Filter::class, ['getCollection']);
+        $this->actionMock = $this->createMock(Action::class);
+        $this->attributeHelperMock = $this->createPartialMock(AttributeHelper::class, ['setProductIds']);
 
-        $collectionFactoryMock =
-            $this->getMockBuilder(CollectionFactory::class)
-                ->disableOriginalConstructor()
-                ->onlyMethods(['create'])
-                ->getMock();
+        $collectionFactoryMock = $this->createPartialMock(CollectionFactory::class, ['create']);
         $collectionFactoryMock->method('create')->willReturn($this->productCollectionMock);
 
         $additionalParams = [

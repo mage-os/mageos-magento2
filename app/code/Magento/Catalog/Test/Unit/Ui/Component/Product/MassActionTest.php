@@ -73,9 +73,7 @@ class MassActionTest extends TestCase
     #[DataProvider('getPrepareDataProvider')]
     public function testPrepare($componentName, $componentData, $isAllowed = true, $expectActionConfig = true)
     {
-        $processor = $this->getMockBuilder(Processor::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $processor = $this->createMock(Processor::class);
         $this->contextMock->expects($this->atLeastOnce())->method('getProcessor')->willReturn($processor);
         /** @var \Magento\Ui\Component\MassAction $action */
         $action = $this->objectManager->getObject(

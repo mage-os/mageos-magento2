@@ -35,9 +35,7 @@ class FormattedPriceInfoBuilderTest extends TestCase
     protected function setUp(): void
     {
         $this->priceCurrencyMock = $this->createMock(PriceCurrencyInterface::class);
-        $this->formattedPriceInfoFactoryMock = $this->getMockBuilder(FormattedPriceInfoInterfaceFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->formattedPriceInfoFactoryMock = $this->createMock(FormattedPriceInfoInterfaceFactory::class);
 
         $this->formattedPriceInfoBuilderMock = new FormattedPriceInfoBuilder(
             $this->priceCurrencyMock,

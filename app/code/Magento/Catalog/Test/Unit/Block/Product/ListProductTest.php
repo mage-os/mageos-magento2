@@ -119,10 +119,7 @@ class ListProductTest extends TestCase
         $this->registryMock = $this->createMock(Registry::class);
         $this->layerMock = $this->createMock(Layer::class);
         /** @var MockObject|Resolver $layerResolver */
-        $layerResolver = $this->getMockBuilder(Resolver::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['get', 'create'])
-            ->getMock();
+        $layerResolver = $this->createPartialMock(Resolver::class, ['get', 'create']);
         $layerResolver->expects($this->any())
             ->method($this->anything())
             ->willReturn($this->layerMock);
@@ -135,15 +132,9 @@ class ListProductTest extends TestCase
         $this->layoutMock = $this->createMock(LayoutInterface::class);
         $this->toolbarMock = $this->createMock(Toolbar::class);
 
-        $this->urlHelperMock = $this->getMockBuilder(Data::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->context = $this->getMockBuilder(Context::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->renderer = $this->getMockBuilder(Render::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->urlHelperMock = $this->createMock(Data::class);
+        $this->context = $this->createMock(Context::class);
+        $this->renderer = $this->createMock(Render::class);
         $eventManager = $this->createMock(ManagerInterface::class);
 
         $this->context->expects($this->any())->method('getRegistry')->willReturn($this->registryMock);

@@ -56,9 +56,7 @@ class PlaceholderTest extends TestCase
     {
         $this->scopeConfig = $this->createMock(ScopeConfigInterface::class);
         $this->imageContext = $this->createMock(ContextInterface::class);
-        $this->repository = $this->getMockBuilder(Repository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->repository = $this->createMock(Repository::class);
         $this->filesystem = $this->createMock(Filesystem::class);
         $this->filesystem->method('getDirectoryWrite')->willReturn($this->createMock(WriteInterface::class));
         $this->mediaConfig = $this->createMock(ConfigInterface::class);

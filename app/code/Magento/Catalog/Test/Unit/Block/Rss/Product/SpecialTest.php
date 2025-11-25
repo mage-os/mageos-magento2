@@ -11,7 +11,6 @@ use Magento\Catalog\Helper\Image;
 use Magento\Catalog\Helper\Output;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Rss\Product\Special;
-use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Http\Context;
 use Magento\Framework\App\RequestInterface;
@@ -104,9 +103,7 @@ class SpecialTest extends TestCase
                 ['cid'] => null
             });
 
-        $this->httpContext = $this->getMockBuilder(Context::class)
-            ->onlyMethods(['getValue'])->disableOriginalConstructor()
-            ->getMock();
+        $this->httpContext = $this->createPartialMock(Context::class, ['getValue']);
         $this->httpContext->method('getValue')->willReturn(1);
 
         $this->imageHelper = $this->createMock(Image::class);
@@ -117,10 +114,7 @@ class SpecialTest extends TestCase
         $this->rssUrlBuilder = $this->createMock(UrlBuilderInterface::class);
 
         $this->storeManager = $this->createMock(StoreManagerInterface::class);
-        $store = $this->getMockBuilder(Store::class)
-            ->onlyMethods(['getId', 'getFrontendName'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $store = $this->createPartialMock(Store::class, ['getId', 'getFrontendName']);
         $store->method('getId')->willReturn(1);
         $store->method('getFrontendName')->willReturn('Store 1');
         $this->storeManager->method('getStore')->willReturn($store);

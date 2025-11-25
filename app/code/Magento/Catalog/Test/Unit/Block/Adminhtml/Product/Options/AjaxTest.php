@@ -12,12 +12,12 @@ use Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Options\Option;
 use Magento\Catalog\Block\Adminhtml\Product\Options\Ajax;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ProductFactory;
-use Magento\Catalog\Test\Unit\Helper\OptionBlockTestHelper;
 use Magento\Framework\App\Config;
 use Magento\Framework\App\Request\Http;
 use Magento\Framework\Event\Manager;
 use Magento\Framework\Json\EncoderInterface;
 use Magento\Framework\Registry;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Framework\View\LayoutInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -28,6 +28,7 @@ use PHPUnit\Framework\TestCase;
  */
 class AjaxTest extends TestCase
 {
+    use MockCreationTrait;
     /** @var Ajax */
     protected $block;
 
@@ -51,10 +52,7 @@ class AjaxTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->context = $this->getMockBuilder(Context::class)
-            ->onlyMethods(['getEventManager', 'getScopeConfig', 'getLayout', 'getRequest'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->context = $this->createPartialMock(Context::class, ['getEventManager', 'getScopeConfig', 'getLayout', 'getRequest']);
         $this->encoderInterface = $this->createMock(EncoderInterface::class);
         $this->productFactory = $this->createPartialMock(ProductFactory::class, ['create']);
         $this->registry = $this->createMock(Registry::class);
@@ -67,38 +65,38 @@ class AjaxTest extends TestCase
      */
     public function testToHtml()
     {
-        $eventManager = $this->getMockBuilder(Manager::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['dispatch'])
-            ->getMock();
+        $eventManager = $this->createPartialMock(Manager::class, ['dispatch']);
         $eventManager->expects($this->exactly(2))->method('dispatch')->willReturn(true);
 
-        $scopeConfig = $this->getMockBuilder(Config::class)
-            ->onlyMethods(['getValue'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $scopeConfig = $this->createPartialMock(Config::class, ['getValue']);
         $scopeConfig->expects($this->once())->method('getValue')->withAnyParameters()
             ->willReturn(false);
 
-        $product = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['setStoreId', 'load', 'getId', '__sleep'])
-            ->getMock();
+        $product = $this->createPartialMock(Product::class, ['setStoreId', 'load', 'getId', '__sleep']);
         $product->expects($this->once())->method('setStoreId')->willReturnSelf();
         $product->expects($this->once())->method('load')->willReturnSelf();
         $product->expects($this->once())->method('getId')->willReturn(1);
 
-        $optionsBlock = new OptionBlockTestHelper();
+        $mockProduct = $this->createPartialMock(Product::class, ['getOptions']);
+        $mockProduct->method('getOptions')->willReturn([]);
+        
+        $optionsBlock = $this->createPartialMockWithReflection(
+            Option::class,
+            ['setIgnoreCaching', 'setProduct', 'getChildHtml', 'getProduct', 'toHtml', 'getOptionValues']
+        );
+        $optionsBlock->method('setIgnoreCaching')->willReturnSelf();
+        $optionsBlock->method('setProduct')->willReturnSelf();
+        $optionsBlock->method('getChildHtml')->willReturn('');
+        $optionsBlock->method('getProduct')->willReturn($mockProduct);
+        $optionsBlock->method('toHtml')->willReturn('');
+        $optionsBlock->method('getOptionValues')->willReturn([]);
 
         $layout = $this->createMock(LayoutInterface::class);
         $layout->expects($this->once())->method('createBlock')
             ->with(Option::class)
             ->willReturn($optionsBlock);
 
-        $request = $this->getMockBuilder(Http::class)
-            ->onlyMethods(['getParam'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $request = $this->createPartialMock(Http::class, ['getParam']);
         $request->expects($this->once())->method('getParam')->with('store')
             ->willReturn(0);
 

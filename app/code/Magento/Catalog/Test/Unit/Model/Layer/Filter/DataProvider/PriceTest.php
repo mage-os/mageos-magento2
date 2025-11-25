@@ -12,9 +12,9 @@ use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\Layer;
 use Magento\Catalog\Model\Layer\Filter\DataProvider\Price;
 use Magento\Catalog\Model\ResourceModel\Product\Collection;
-use Magento\Catalog\Test\Unit\Helper\CategoryTestHelper;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Registry;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Store\Model\ScopeInterface;
 
@@ -26,6 +26,7 @@ use PHPUnit\Framework\TestCase;
  */
 class PriceTest extends TestCase
 {
+    use MockCreationTrait;
     /** @var  Collection|MockObject */
     private $productCollection;
 
@@ -48,24 +49,15 @@ class PriceTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->productCollection = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getMaxPrice'])
-            ->getMock();
-        $this->layer = $this->getMockBuilder(Layer::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getProductCollection'])
-            ->getMock();
+        $this->productCollection = $this->createPartialMock(Collection::class, ['getMaxPrice']);
+        $this->layer = $this->createPartialMock(Layer::class, ['getProductCollection']);
         $this->layer->method('getProductCollection')->willReturn($this->productCollection);
-        $this->coreRegistry = $this->getMockBuilder(Registry::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['registry'])
-            ->getMock();
+        $this->coreRegistry = $this->createPartialMock(Registry::class, ['registry']);
         $this->scopeConfig = $this->createMock(ScopeConfigInterface::class);
-        $this->resource = $this->getMockBuilder(\Magento\Catalog\Model\ResourceModel\Layer\Filter\Price::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getCount'])
-            ->getMock();
+        $this->resource = $this->createPartialMock(
+            \Magento\Catalog\Model\ResourceModel\Layer\Filter\Price::class,
+            ['getCount']
+        );
         $objectManagerHelper = new ObjectManagerHelper($this);
         $this->target = $objectManagerHelper->getObject(
             Price::class,
@@ -112,9 +104,12 @@ class PriceTest extends TestCase
     public function testGetPriceRangeWithRangeInFilter()
     {
         /** @var Category|MockObject $category */
-        $category = new CategoryTestHelper();
-        $priceRange = 10;
-        $category->setFilterPriceRange($priceRange);
+        $category = $this->createPartialMockWithReflection(
+            Category::class,
+            ['getFilterPriceRange']
+        );
+        $category->method('getFilterPriceRange')->willReturn(10);
+        
         $this->coreRegistry->expects($this->once())
             ->method('registry')
             ->with('current_category_filter')
@@ -125,9 +120,12 @@ class PriceTest extends TestCase
     public function testGetPriceRangeWithRangeCalculation()
     {
         /** @var Category|MockObject $category */
-        $category = new CategoryTestHelper();
-        $priceRange = 0;
-        $category->setFilterPriceRange($priceRange);
+        $category = $this->createPartialMockWithReflection(
+            Category::class,
+            ['getFilterPriceRange']
+        );
+        $category->method('getFilterPriceRange')->willReturn(0);
+        
         $this->coreRegistry->expects($this->once())
             ->method('registry')
             ->with('current_category_filter')

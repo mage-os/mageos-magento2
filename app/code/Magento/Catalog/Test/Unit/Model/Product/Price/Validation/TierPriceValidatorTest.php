@@ -86,18 +86,11 @@ class TierPriceValidatorTest extends TestCase
     {
         $this->productIdLocator = $this->createMock(ProductIdLocatorInterface::class);
         $this->websiteRepository = $this->createMock(WebsiteRepositoryInterface::class);
-        $this->validationResult = $this->getMockBuilder(Result::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->invalidSkuProcessor = $this
-            ->getMockBuilder(InvalidSkuProcessor::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->validationResult = $this->createMock(Result::class);
+        $this->invalidSkuProcessor = $this->createMock(InvalidSkuProcessor::class);
         $this->tierPrice = $this->createMock(TierPriceInterface::class);
         $this->productRepository = $this->createMock(ProductRepositoryInterface::class);
-        $this->resourceConnectionMock = $this->getMockBuilder(ResourceConnection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->resourceConnectionMock = $this->createMock(ResourceConnection::class);
 
         $this->adapterInterface = $this->createMock(AdapterInterface::class);
 
@@ -182,9 +175,7 @@ class TierPriceValidatorTest extends TestCase
         $this->productIdLocator->expects($this->atLeastOnce())->method('retrieveProductIdsBySkus')
             ->willReturn($idsBySku);
 
-        $product = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $product = $this->createMock(Product::class);
         $type = $this->createMock(AbstractType::class);
 
         $this->productRepository->expects($this->once())

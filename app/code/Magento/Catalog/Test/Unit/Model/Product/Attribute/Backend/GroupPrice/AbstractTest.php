@@ -50,9 +50,7 @@ class AbstractTest extends TestCase
         $localeFormatMock = $this->createMock(FormatInterface::class);
         $groupManagement = $this->createMock(GroupManagementInterface::class);
         $scopeOverriddenValue = $this->createMock(ScopeOverriddenValue::class);
-        $this->_model = $this->getMockBuilder(AbstractGroupPrice::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->_model = $this->createMock(AbstractGroupPrice::class);
         $resource = $this->createPartialMock(DataObject::class, []);
         $resource->setMainTable('table');
 

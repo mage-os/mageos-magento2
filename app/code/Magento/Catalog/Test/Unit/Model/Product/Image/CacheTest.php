@@ -67,27 +67,17 @@ class CacheTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->product = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->product = $this->createMock(Product::class);
 
         $this->viewConfig = $this->createMock(ConfigInterface::class);
 
-        $this->config = $this->getMockBuilder(View::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->config = $this->createMock(View::class);
 
-        $this->themeCollection = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->themeCollection = $this->createMock(Collection::class);
 
-        $this->imageHelper = $this->getMockBuilder(Image::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->imageHelper = $this->createMock(Image::class);
 
-        $this->mediaGalleryCollection = $this->getMockBuilder(\Magento\Framework\Data\Collection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->mediaGalleryCollection = $this->createMock(\Magento\Framework\Data\Collection::class);
 
         $this->objectManager = new ObjectManager($this);
         $this->model = $this->objectManager->getObject(
@@ -124,9 +114,7 @@ class CacheTest extends TestCase
             ->with('Magento_Catalog')
             ->willReturn($data);
 
-        $themeMock = $this->getMockBuilder(Theme::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $themeMock = $this->createMock(Theme::class);
         $themeMock->expects($this->exactly(3))
             ->method('getCode')
             ->willReturn('Magento\theme');

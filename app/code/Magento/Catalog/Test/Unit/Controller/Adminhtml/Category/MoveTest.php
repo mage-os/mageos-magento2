@@ -14,7 +14,6 @@ use Magento\Catalog\Controller\Adminhtml\Category\Move;
 use Magento\Catalog\Model\Category;
 use Magento\Cms\Model\Wysiwyg\Config;
 use Magento\Framework\App\RequestInterface;
-use Magento\Framework\App\Test\Unit\Helper\RequestTestHelper;
 use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\Exception\LocalizedException;
@@ -22,6 +21,7 @@ use Magento\Framework\Message\Collection;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\Registry;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Element\Messages;
 use Magento\Framework\View\LayoutFactory;
@@ -35,6 +35,7 @@ use Psr\Log\LoggerInterface;
  */
 class MoveTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var JsonFactory|MockObject
      */
@@ -97,14 +98,8 @@ class MoveTest extends TestCase
             ]
         ];
         $this->objectManager->prepareObjectManager($objects);
-        $this->resultJsonFactoryMock = $this->getMockBuilder(JsonFactory::class)
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->layoutFactoryMock = $this->getMockBuilder(LayoutFactory::class)
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->resultJsonFactoryMock = $this->createPartialMock(JsonFactory::class, ['create']);
+        $this->layoutFactoryMock = $this->createPartialMock(LayoutFactory::class, ['create']);
         $this->context = $this->createMock(Context::class);
         $this->loggerMock = $this->createMock(LoggerInterface::class);
         $this->fillContext();
@@ -120,7 +115,26 @@ class MoveTest extends TestCase
 
     private function fillContext()
     {
-        $this->request = new RequestTestHelper();
+        $this->request = $this->createPartialMockWithReflection(
+            RequestInterface::class,
+            [
+                'getParam', 'getPost',
+                'getModuleName', 'setModuleName', 'getActionName', 'setActionName',
+                'getCookie', 'getDistroBaseUrl', 'getRequestUri', 'getScheme',
+                'setParams', 'getParams', 'isSecure'
+            ]
+        );
+        $this->request->method('getModuleName')->willReturn('catalog');
+        $this->request->method('setModuleName')->willReturnSelf();
+        $this->request->method('getActionName')->willReturn('move');
+        $this->request->method('setActionName')->willReturnSelf();
+        $this->request->method('getCookie')->willReturn(null);
+        $this->request->method('getDistroBaseUrl')->willReturn('');
+        $this->request->method('getRequestUri')->willReturn('/');
+        $this->request->method('getScheme')->willReturn('http');
+        $this->request->method('setParams')->willReturnSelf();
+        $this->request->method('getParams')->willReturn([]);
+        $this->request->method('isSecure')->willReturn(false);
         $this->context->expects($this->once())->method('getRequest')->willReturn($this->request);
         $this->messageManager = $this->createMock(ManagerInterface::class);
         $this->context->expects($this->once())->method('getMessageManager')->willReturn($this->messageManager);
@@ -137,12 +151,8 @@ class MoveTest extends TestCase
 
     public function testExecuteWithGenericException()
     {
-        $messagesCollection = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $messageBlock = $this->getMockBuilder(Messages::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $messagesCollection = $this->createMock(Collection::class);
+        $messageBlock = $this->createMock(Messages::class);
         $layoutMock = $this->createMock(LayoutInterface::class);
         $this->layoutFactoryMock->expects($this->once())
             ->method('create')
@@ -150,22 +160,18 @@ class MoveTest extends TestCase
         $layoutMock->expects($this->once())
             ->method('getMessagesBlock')
             ->willReturn($messageBlock);
-        $wysiwygConfig = $this->getMockBuilder(Config::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $registry = $this->getMockBuilder(Registry::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $categoryMock = $this->getMockBuilder(Category::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->request->setGetPostCallback(function ($arg1, $arg2) {
-            if ($arg1 == 'pid' && $arg2 == false) {
-                return 2;
-            } elseif ($arg1 == 'aid' && $arg2 == false) {
-                return 1;
-            }
-        });
+        $wysiwygConfig = $this->createMock(Config::class);
+        $registry = $this->createMock(Registry::class);
+        $categoryMock = $this->createMock(Category::class);
+        // Configure request parameters using willReturnMap
+        $this->request->method('getParam')->willReturnMap([
+            ['pid', false, 2],
+            ['aid', false, 1],
+        ]);
+        $this->request->method('getPost')->willReturnMap([
+            ['pid', false, 2],
+            ['aid', false, 1],
+        ]);
         $this->objectManager->expects($this->once())
             ->method('create')
             ->with(Category::class)
@@ -186,9 +192,7 @@ class MoveTest extends TestCase
         $messageBlock->expects($this->once())
             ->method('setMessages')
             ->with($messagesCollection);
-        $resultJsonMock = $this->getMockBuilder(Json::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $resultJsonMock = $this->createMock(Json::class);
         $messageBlock->expects($this->once())
             ->method('getGroupedHtml')
             ->willReturn('<body></body>');
@@ -211,12 +215,8 @@ class MoveTest extends TestCase
     public function testExecuteWithLocalizedException()
     {
         $exceptionMessage = 'Sorry, but we can\'t find the new category you selected.';
-        $messagesCollection = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $messageBlock = $this->getMockBuilder(Messages::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $messagesCollection = $this->createMock(Collection::class);
+        $messageBlock = $this->createMock(Messages::class);
         $layoutMock = $this->createMock(LayoutInterface::class);
         $this->layoutFactoryMock->expects($this->once())
             ->method('create')
@@ -224,22 +224,18 @@ class MoveTest extends TestCase
         $layoutMock->expects($this->once())
             ->method('getMessagesBlock')
             ->willReturn($messageBlock);
-        $wysiwygConfig = $this->getMockBuilder(Config::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $registry = $this->getMockBuilder(Registry::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $categoryMock = $this->getMockBuilder(Category::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->request->setGetPostCallback(function ($arg1, $arg2) {
-            if ($arg1 == 'pid' && $arg2 == false) {
-                return 2;
-            } elseif ($arg1 == 'aid' && $arg2 == false) {
-                return 1;
-            }
-        });
+        $wysiwygConfig = $this->createMock(Config::class);
+        $registry = $this->createMock(Registry::class);
+        $categoryMock = $this->createMock(Category::class);
+        // Configure request parameters using willReturnMap
+        $this->request->method('getParam')->willReturnMap([
+            ['pid', false, 2],
+            ['aid', false, 1],
+        ]);
+        $this->request->method('getPost')->willReturnMap([
+            ['pid', false, 2],
+            ['aid', false, 1],
+        ]);
         $this->objectManager->expects($this->once())
             ->method('create')
             ->with(Category::class)
@@ -256,9 +252,7 @@ class MoveTest extends TestCase
         $messageBlock->expects($this->once())
             ->method('setMessages')
             ->with($messagesCollection);
-        $resultJsonMock = $this->getMockBuilder(Json::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $resultJsonMock = $this->createMock(Json::class);
         $messageBlock->expects($this->once())
             ->method('getGroupedHtml')
             ->willReturn('<body></body>');
@@ -283,12 +277,8 @@ class MoveTest extends TestCase
 
     public function testSuccessfulCategorySave()
     {
-        $messagesCollection = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $messageBlock = $this->getMockBuilder(Messages::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $messagesCollection = $this->createMock(Collection::class);
+        $messageBlock = $this->createMock(Messages::class);
         $layoutMock = $this->createMock(LayoutInterface::class);
         $this->layoutFactoryMock->expects($this->once())
             ->method('create')
@@ -296,22 +286,18 @@ class MoveTest extends TestCase
         $layoutMock->expects($this->once())
             ->method('getMessagesBlock')
             ->willReturn($messageBlock);
-        $wysiwygConfig = $this->getMockBuilder(Config::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $registry = $this->getMockBuilder(Registry::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $categoryMock = $this->getMockBuilder(Category::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->request->setGetPostCallback(function ($arg1, $arg2) {
-            if ($arg1 == 'pid' && $arg2 == false) {
-                return 2;
-            } elseif ($arg1 == 'aid' && $arg2 == false) {
-                return 1;
-            }
-        });
+        $wysiwygConfig = $this->createMock(Config::class);
+        $registry = $this->createMock(Registry::class);
+        $categoryMock = $this->createMock(Category::class);
+        // Configure request parameters using willReturnMap
+        $this->request->method('getParam')->willReturnMap([
+            ['pid', false, 2],
+            ['aid', false, 1],
+        ]);
+        $this->request->method('getPost')->willReturnMap([
+            ['pid', false, 2],
+            ['aid', false, 1],
+        ]);
         $this->objectManager->expects($this->once())
             ->method('create')
             ->with(Category::class)
@@ -326,9 +312,7 @@ class MoveTest extends TestCase
         $messageBlock->expects($this->once())
             ->method('setMessages')
             ->with($messagesCollection);
-        $resultJsonMock = $this->getMockBuilder(Json::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $resultJsonMock = $this->createMock(Json::class);
         $messageBlock->expects($this->once())
             ->method('getGroupedHtml')
             ->willReturn('<body></body>');

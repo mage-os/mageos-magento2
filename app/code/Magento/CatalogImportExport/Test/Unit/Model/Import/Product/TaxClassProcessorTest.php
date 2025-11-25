@@ -11,7 +11,6 @@ use Magento\Tax\Model\ResourceModel\TaxClass\CollectionFactory;
 use Magento\Tax\Model\ClassModelFactory;
 use Magento\CatalogImportExport\Model\Import\Product\TaxClassProcessor;
 use Magento\CatalogImportExport\Model\Import\Product\Type\AbstractType;
-use Magento\CatalogImportExport\Test\Unit\Helper\TaxClassCollectionTestHelper;
 
 use Magento\Tax\Model\ClassModel;
 use Magento\Tax\Model\ResourceModel\TaxClass\Collection;
@@ -48,8 +47,15 @@ class TaxClassProcessorTest extends TestCase
         $taxClass->method('getClassName')->willReturn(self::TEST_TAX_CLASS_NAME);
         $taxClass->method('getId')->willReturn(self::TEST_TAX_CLASS_ID);
 
-        // Create collection mock that supports iteration
-        $taxClassCollection = new TaxClassCollectionTestHelper($taxClass);
+        $taxClassCollection = $this->createPartialMock(
+            Collection::class,
+            ['getIterator', 'addFieldToFilter', 'getSize', 'getFirstItem']
+        );
+        $taxClassCollection->method('getIterator')
+            ->willReturn(new \ArrayIterator([$taxClass]));
+        $taxClassCollection->method('addFieldToFilter')->willReturnSelf();
+        $taxClassCollection->method('getSize')->willReturn(1);
+        $taxClassCollection->method('getFirstItem')->willReturn($taxClass);
 
         $taxClassCollectionFactory = $this->createPartialMock(
             CollectionFactory::class,

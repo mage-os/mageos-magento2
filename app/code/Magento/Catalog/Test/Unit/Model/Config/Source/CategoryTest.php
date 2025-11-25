@@ -10,13 +10,14 @@ namespace Magento\Catalog\Test\Unit\Model\Config\Source;
 use Magento\Catalog\Model\ResourceModel\Category;
 use Magento\Catalog\Model\ResourceModel\Category\Collection;
 use Magento\Catalog\Model\ResourceModel\Category\CollectionFactory;
-use Magento\Catalog\Test\Unit\Model\ResourceModel\Helper\CategoryTestHelper;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class CategoryTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var \Magento\Catalog\Model\Config\Source\Category
      */
@@ -34,22 +35,33 @@ class CategoryTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->categoryCollection = $this->getMockBuilder(
-            Collection::class
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->categoryCollection = $this->createMock(Collection::class);
 
-        $this->category = new CategoryTestHelper();
+        $this->category = $this->createPartialMockWithReflection(
+            Category::class,
+            ['setName', 'getName', 'setId', 'getId']
+        );
+        $categoryData = [];
+        $category = $this->category;
+        $this->category->method('getName')->willReturnCallback(function () use (&$categoryData) {
+            return $categoryData['name'] ?? null;
+        });
+        $this->category->method('setName')->willReturnCallback(function ($value) use (&$categoryData, $category) {
+            $categoryData['name'] = $value;
+            return $category;
+        });
+        $this->category->method('getId')->willReturnCallback(function () use (&$categoryData) {
+            return $categoryData['id'] ?? null;
+        });
+        $this->category->method('setId')->willReturnCallback(function ($value) use (&$categoryData, $category) {
+            $categoryData['id'] = $value;
+            return $category;
+        });
 
-        /**
-         * @var CollectionFactory|MockObject $categoryCollectionFactory
-         */
-        $categoryCollectionFactory =
-            $this->getMockBuilder(CollectionFactory::class)
-                ->onlyMethods(['create'])
-                ->disableOriginalConstructor()
-                ->getMock();
+        $categoryCollectionFactory = $this->createPartialMock(
+            CollectionFactory::class,
+            ['create']
+        );
         $categoryCollectionFactory->method('create')->willReturn(
             $this->categoryCollection
         );

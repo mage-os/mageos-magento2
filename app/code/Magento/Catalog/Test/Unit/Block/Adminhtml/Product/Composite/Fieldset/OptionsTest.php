@@ -14,11 +14,12 @@ use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Configuration\Item\OptionFactory;
 use Magento\Catalog\Model\ProductFactory;
 use Magento\Catalog\Model\ResourceModel\Product\Option;
-use Magento\Catalog\Test\Unit\Helper\FieldsetOptionsTestHelper;
 use Magento\CatalogInventory\Api\Data\StockItemInterfaceFactory;
 use Magento\Framework\Data\CollectionFactory;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Element\Template\Context;
+use Magento\Framework\View\Element\Text;
 use Magento\Framework\View\Layout;
 use PHPUnit\Framework\TestCase;
 
@@ -30,6 +31,7 @@ use PHPUnit\Framework\TestCase;
  */
 class OptionsTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var ObjectManager
      */
@@ -61,17 +63,15 @@ class OptionsTest extends TestCase
             Context::class,
             ['layout' => $layout]
         );
-        $optionFactoryMock = $this->getMockBuilder(ValueFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
-        $option = $this->getMockBuilder(\Magento\Catalog\Model\Product\Option::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getGroupByType'])
-            ->getMock();
+        $option = $this->createPartialMock(\Magento\Catalog\Model\Product\Option::class, ['getGroupByType']);
         $option->method('getGroupByType')->willReturn('date');
         
-        $dateBlock = new FieldsetOptionsTestHelper();
+        $dateBlock = $this->createPartialMockWithReflection(
+            Text::class,
+            ['setProduct', 'setOption']
+        );
+        $dateBlock->method('setProduct')->willReturnSelf();
+        $dateBlock->method('setOption')->willReturnSelf();
 
         $layout->method('getChildName')->willReturn('date');
         $layout->expects($this->any())->method('getBlock')->with('date')->willReturn($dateBlock);
@@ -114,10 +114,7 @@ class OptionsTest extends TestCase
             )
         );
 
-        $option = $this->getMockBuilder(\Magento\Catalog\Model\Product\Option::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getGroupByType', 'getType'])
-            ->getMock();
+        $option = $this->createPartialMock(\Magento\Catalog\Model\Product\Option::class, ['getGroupByType', 'getType']);
         $option->method('getGroupByType')->willReturn('date');
         $option->method('getType')->willReturn('date');
         $this->assertEquals('html', $this->_optionsBlock->getOptionHtml($option));

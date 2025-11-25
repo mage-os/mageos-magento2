@@ -15,10 +15,8 @@ use Magento\Catalog\Model\Product\Option\Type\Select;
 use Magento\Catalog\Model\Product\Option\Value;
 use Magento\Catalog\Pricing\Price\CustomOptionPrice;
 use Magento\Catalog\Pricing\Price\CustomOptionPriceCalculator;
-use Magento\Catalog\Test\Unit\Helper\DefaultTypeTestHelper;
-use Magento\Catalog\Test\Unit\Helper\PriceInterfaceTestHelper;
-use Magento\Catalog\Test\Unit\Helper\SelectTestHelper;
 use Magento\Framework\DataObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\Pricing\Adjustment\Calculator;
 use Magento\Framework\Pricing\Price\PriceInterface;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
@@ -33,6 +31,7 @@ use PHPUnit\Framework\TestCase;
  */
 class CustomOptionPriceTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var CustomOptionPrice
      */
@@ -83,10 +82,12 @@ class CustomOptionPriceTest extends TestCase
 
         $this->priceCurrencyMock = $this->createMock(PriceCurrencyInterface::class);
 
-        $customOptionPriceCalculator = $this->getMockBuilder(CustomOptionPriceCalculator::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([])
-            ->getMock();
+        $customOptionPriceCalculator = $this->createMock(CustomOptionPriceCalculator::class);
+        // Configure the calculator to return the price from the option value
+        $customOptionPriceCalculator->method('getOptionPriceByPriceCode')
+            ->willReturnCallback(function ($optionValue) {
+                return $optionValue->getData(Value::KEY_PRICE);
+            });
         $this->object = new CustomOptionPrice(
             $this->product,
             PriceInfoInterface::PRODUCT_QUANTITY_DEFAULT,
@@ -109,10 +110,10 @@ class CustomOptionPriceTest extends TestCase
             $optionValueMax = $this->getOptionValueMock($optionData['max_option_price']);
             $optionValueMin = $this->getOptionValueMock($optionData['min_option_price']);
 
-            $optionItemMock = $this->getMockBuilder(Option::class)
-                ->disableOriginalConstructor()
-                ->onlyMethods(['getValues', 'getIsRequire', 'getId', 'getType'])
-                ->getMock();
+            $optionItemMock = $this->createPartialMock(
+                Option::class,
+                ['getValues', 'getIsRequire', 'getId', 'getType']
+            );
             $optionItemMock->method('getId')->willReturn($optionData['id']);
             $optionItemMock->method('getType')->willReturn($optionData['type']);
             $optionItemMock->method('getIsRequire')->willReturn($optionData['is_require']);
@@ -133,19 +134,17 @@ class CustomOptionPriceTest extends TestCase
         $options = [];
 
         foreach ($optionsData as $optionData) {
-            $optionItemMock = $this->getMockBuilder(Option::class)
-                ->disableOriginalConstructor()
-                ->onlyMethods(
-                    [
-                        'getValues',
-                        'getIsRequire',
-                        'getId',
-                        'getType',
-                        'getPriceType',
-                        'getPrice'
-                    ]
-                )
-                ->getMock();
+            $optionItemMock = $this->createPartialMock(
+                Option::class,
+                [
+                    'getValues',
+                    'getIsRequire',
+                    'getId',
+                    'getType',
+                    'getPriceType',
+                    'getPrice'
+                ]
+            );
             $optionItemMock->method('getId')->willReturn($optionData['id']);
             $optionItemMock->method('getType')->willReturn($optionData['type']);
             $optionItemMock->method('getIsRequire')->willReturn($optionData['is_require']);
@@ -299,19 +298,19 @@ class CustomOptionPriceTest extends TestCase
 
     /**
      * @param int $price
+     * @param string $priceType
      *
      * @return MockObject
      */
-    protected function getOptionValueMock($price): MockObject
+    protected function getOptionValueMock($price, $priceType = 'fixed'): MockObject
     {
-        $optionValueMock = $this->getMockBuilder(Value::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getPriceType', 'getPrice', 'getId', 'getOption', 'getData'])
-            ->getMock();
-        $optionValueMock->method('getPriceType')->willReturn('percent');
+        $optionValueMock = $this->createPartialMock(
+            Value::class,
+            ['getPriceType', 'getPrice', 'getId', 'getOption', 'getData']
+        );
+        $optionValueMock->method('getPriceType')->willReturn($priceType);
         $optionValueMock->expects($this->any())
             ->method('getPrice')
-            ->with(true)
             ->willReturn($price);
 
         $optionValueMock->expects($this->any())
@@ -319,17 +318,26 @@ class CustomOptionPriceTest extends TestCase
             ->with(Value::KEY_PRICE)
             ->willReturn($price);
 
-        $optionMock = $this->getMockBuilder(Option::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getProduct'])
-            ->getMock();
+        $optionMock = $this->createPartialMock(Option::class, ['getProduct']);
 
         $optionValueMock->method('getOption')->willReturn($optionMock);
 
         $optionMock->method('getProduct')->willReturn($this->product);
 
-        $priceMock = new PriceInterfaceTestHelper();
-        $priceMock->setValueReturn($price);
+        $priceMock = $this->createPartialMockWithReflection(
+            PriceInterface::class,
+            ['getValue', 'setValue', 'getPriceCode', 'getAmount', 'getCustomAmount']
+        );
+        $priceValue = $price;
+        $priceMock->method('setValue')->willReturnCallback(function ($value) use (&$priceValue) {
+            $priceValue = $value;
+        });
+        $priceMock->method('getValue')->willReturnCallback(function () use (&$priceValue) {
+            return $priceValue;
+        });
+        $priceMock->method('getPriceCode')->willReturn('base_price');
+        $priceMock->method('getAmount')->willReturn($this->amount);
+        $priceMock->method('getCustomAmount')->willReturn($price);
 
         $this->priceInfo->method('getPrice')->willReturn($priceMock);
 
@@ -347,25 +355,41 @@ class CustomOptionPriceTest extends TestCase
         $optionId2 = 2;
         $optionValue = 10;
         $optionType = 'select';
-        $optionValueMock = new DefaultTypeTestHelper();
-        $optionMock = $this->getMockBuilder(Option::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getId', 'getType', 'groupFactory'])
-            ->getMock();
-        $groupMock = new SelectTestHelper();
-
-        // The anonymous class already implements these methods
+        $optionValueMock = $this->createPartialMockWithReflection(
+            DefaultType::class,
+            ['getValue', 'setValue']
+        );
+        $optionValueData = $optionValue;
+        $optionValueMock->method('setValue')->willReturnCallback(function ($value) use (&$optionValueData) {
+            $optionValueData = $value;
+        });
+        $optionValueMock->method('getValue')->willReturnCallback(function () use (&$optionValueData) {
+            return $optionValueData;
+        });
+        $optionMock = $this->createPartialMock(Option::class, ['getId', 'getType', 'groupFactory']);
         $optionMock
             ->method('getId')
             ->willReturn($optionId1);
-        $optionMock->expects($this->once())
+        $optionMock->expects($this->any())
             ->method('getType')
             ->willReturn($optionType);
-        $optionMock->expects($this->once())
+        
+        $groupMock = $this->createPartialMockWithReflection(
+            Select::class,
+            ['validateUserValue', 'prepareForCart', 'getValues', 'setOption', 'getOption', '_isSingleSelection', 'getOptionPrice']
+        );
+        $groupMock->method('validateUserValue')->willReturn($this->createMock(\Magento\Framework\DataObject::class));
+        $groupMock->method('prepareForCart')->willReturn(null);
+        $groupMock->method('getValues')->willReturn([]);
+        $groupMock->method('setOption')->willReturnSelf();
+        $groupMock->method('getOption')->willReturn($optionMock);
+        $groupMock->method('_isSingleSelection')->willReturn(true);
+        $groupMock->method('getOptionPrice')->willReturn($optionValue);
+        
+        $optionMock->expects($this->any())
             ->method('groupFactory')
             ->with($optionType)
             ->willReturn($groupMock);
-        $optionValueMock->setValueReturn($optionValue);
         $optionIds = new DataObject(['value' => '1,2']);
 
         $customOptions = ['option_ids' => $optionIds, 'option_1' => $optionValueMock, 'option_2' => null];
@@ -408,10 +432,7 @@ class CustomOptionPriceTest extends TestCase
         $optionValueMock->expects($this->once())
             ->method('getId')
             ->willReturn($id);
-        $optionItemMock = $this->getMockBuilder(Option::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getValues'])
-            ->getMock();
+        $optionItemMock = $this->createPartialMock(Option::class, ['getValues']);
         $optionItemMock->method('getValues')->willReturn([$optionValueMock]);
         $options = [$optionItemMock];
         $this->product->expects($this->once())

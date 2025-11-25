@@ -8,8 +8,6 @@ namespace Magento\CatalogImportExport\Test\Unit\Model\Import;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\CatalogImportExport\Model\Import\Uploader;
-use Magento\CatalogImportExport\Test\Unit\Helper\HttpDriverTestHelper;
-use Magento\CatalogImportExport\Test\Unit\Helper\HttpsDriverTestHelper;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Directory\TargetDirectory;
@@ -267,11 +265,7 @@ class UploaderTest extends TestCase
     public function testMoveFileUrlDrivePool($fileUrl, $expectedHost, $expectedDriverPool, $expectedScheme)
     {
         $driverPool = $this->createPartialMock(DriverPool::class, ['getDriver']);
-        $driverMock = match($expectedDriverPool) {
-            \Magento\Framework\Filesystem\Driver\Http::class => new HttpDriverTestHelper(),
-            \Magento\Framework\Filesystem\Driver\Https::class => new HttpsDriverTestHelper(),
-            default => throw new \InvalidArgumentException("Unsupported driver pool: $expectedDriverPool")
-        };
+        $driverMock = $this->createMock($expectedDriverPool);
         $driverPool->method('getDriver')->willReturn($driverMock);
 
         $readFactory = $this->createPartialMock(ReadFactory::class, ['create']);

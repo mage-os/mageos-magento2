@@ -66,10 +66,7 @@ class OptionsTest extends TestCase
             ['layout' => $layout]
         );
 
-        $optValFactoryMock = $this->getMockBuilder(ValueFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
+        $optValFactoryMock = $this->createPartialMock(ValueFactory::class, ['create']);
         $option = $this->_objectHelper->getObject(
             \Magento\Catalog\Model\Product\Option::class,
             ['resource' => $this->_optionResource, 'optionValueFactory' => $optValFactoryMock]

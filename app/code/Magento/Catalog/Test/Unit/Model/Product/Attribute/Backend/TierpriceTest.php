@@ -12,8 +12,8 @@ use Magento\Catalog\Model\ResourceModel\Product\Attribute\Backend\Tierprice;
 use Magento\Customer\Api\Data\GroupInterface;
 use Magento\Customer\Api\GroupManagementInterface;
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
-use Magento\Eav\Test\Unit\Helper\AbstractAttributeTestHelper;
 use Magento\Framework\Locale\FormatInterface;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -24,6 +24,8 @@ use PHPUnit\Framework\TestCase;
  */
 class TierpriceTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Tierprice|MockObject
      */
@@ -61,11 +63,35 @@ class TierpriceTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->productAttributeBackendTierprice = $this
-            ->getMockBuilder(Tierprice::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->attribute = new AbstractAttributeTestHelper();
+        $this->productAttributeBackendTierprice = $this->createMock(Tierprice::class);
+        $this->attribute = $this->createPartialMockWithReflection(
+            AbstractAttribute::class,
+            ['setName', 'getName', 'setIsScopeGlobal', 'isScopeGlobal', '_construct']
+        );
+        $name = null;
+        $isScopeGlobal = null;
+        $this->attribute->method('setName')->willReturnCallback(
+            function ($value) use (&$name) {
+                $name = $value;
+                return $this->attribute;
+            }
+        );
+        $this->attribute->method('getName')->willReturnCallback(
+            function () use (&$name) {
+                return $name;
+            }
+        );
+        $this->attribute->method('setIsScopeGlobal')->willReturnCallback(
+            function ($value) use (&$isScopeGlobal) {
+                $isScopeGlobal = $value;
+                return $this->attribute;
+            }
+        );
+        $this->attribute->method('isScopeGlobal')->willReturnCallback(
+            function () use (&$isScopeGlobal) {
+                return $isScopeGlobal;
+            }
+        );
         $this->localeFormat = $this->createMock(FormatInterface::class);
         $this->storeManager = $this->createMock(StoreManagerInterface::class);
         $this->groupManagement = $this->createMock(GroupManagementInterface::class);
@@ -105,9 +131,7 @@ class TierpriceTest extends TestCase
                 'price_qty' => 1,
             ]
         ];
-        $object = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $object = $this->createMock(Product::class);
         $this->attribute->setName($attributeName);
         $object->expects($this->atLeastOnce())->method('getData')->with($attributeName)->willReturn($tierPrices);
         $this->localeFormat->expects($this->atLeastOnce())
@@ -192,9 +216,7 @@ class TierpriceTest extends TestCase
                 'website_price' => 18,
             ],
         ];
-        $object = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $object = $this->createMock(Product::class);
         $allCustomersGroup = $this->createMock(GroupInterface::class);
         $this->groupManagement
             ->expects($this->exactly(2))

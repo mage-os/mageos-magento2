@@ -119,13 +119,9 @@ class FullTest extends TestCase
         $connectionMock = $this->createMock(AdapterInterface::class);
 
         $connectionMock->expects($this->atLeastOnce())->method('describeTable')->willReturn(['id' => []]);
-        $eavSource = $this->getMockBuilder(Source::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $eavSource = $this->createMock(Source::class);
 
-        $eavDecimal = $this->getMockBuilder(Decimal::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $eavDecimal = $this->createMock(Decimal::class);
 
         $eavSource->expects($this->once())->method('getRelationsByChild')->with($ids)->willReturn([]);
         $eavSource->expects($this->never())->method('getRelationsByParent')->with($ids)->willReturn([]);
@@ -164,9 +160,7 @@ class FullTest extends TestCase
         $this->batchQueryGenerator->method('generate')
             ->willReturn([$batchQuery]);
 
-        $selectMock = $this->getMockBuilder(Select::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $selectMock = $this->createMock(Select::class);
 
         $connectionMock->method('select')->willReturn($selectMock);
         $selectMock->expects($this->atLeastOnce())->method('distinct')->willReturnSelf();

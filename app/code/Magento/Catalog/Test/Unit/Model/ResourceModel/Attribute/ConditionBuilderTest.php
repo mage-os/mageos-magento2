@@ -48,10 +48,7 @@ class ConditionBuilderTest extends TestCase
      */
     protected function setUp(): void
     {
-        self::$storeManagerMock = $this->getMockBuilder(StoreManager::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getStore'])
-            ->getMock();
+        self::$storeManagerMock = $this->createPartialMock(StoreManager::class, ['getStore']);
         self::$model = new ConditionBuilder(self::$storeManagerMock);
     }
 
@@ -580,13 +577,10 @@ class ConditionBuilderTest extends TestCase
      */
     protected function getValidAttributeMock()
     {
-        $attribute = $this->getMockBuilder(CatalogEavAttribute::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([
-                'isScopeWebsite',
-                'getAttributeId',
-            ])
-            ->getMock();
+        $attribute = $this->createPartialMock(CatalogEavAttribute::class, [
+            'isScopeWebsite',
+            'getAttributeId',
+        ]);
         $attribute->expects($this->never())
             ->method('isScopeWebsite')
             ->willReturn(
@@ -604,12 +598,7 @@ class ConditionBuilderTest extends TestCase
      */
     protected function getValidStoreMock()
     {
-        $website = $this->getMockBuilder(Website::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([
-                'getStoreIds',
-            ])
-            ->getMock();
+        $website = $this->createPartialMock(Website::class, ['getStoreIds']);
         $website->method('getStoreIds')->willReturn(
             [
                     1,
@@ -618,12 +607,7 @@ class ConditionBuilderTest extends TestCase
                 ]
         );
 
-        $store = $this->getMockBuilder(Store::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([
-                'getWebsite',
-            ])
-            ->getMock();
+        $store = $this->createPartialMock(Store::class, ['getWebsite']);
         $store->method('getWebsite')->willReturn(
             $website
         );
@@ -649,16 +633,9 @@ class ConditionBuilderTest extends TestCase
     {
         $attribute = "";
         if ($atr == "Attribute") {
-            $attribute = $this->getMockBuilder(Attribute::class)
-                ->disableOriginalConstructor()
-                ->getMock();
+            $attribute = $this->createMock(Attribute::class);
         } elseif ($atr == "CatalogEavAttribute") {
-            $attribute = $this->getMockBuilder(CatalogEavAttribute::class)
-                ->disableOriginalConstructor()
-                ->onlyMethods([
-                    'isScopeWebsite',
-                ])
-                ->getMock();
+            $attribute = $this->createPartialMock(CatalogEavAttribute::class, ['isScopeWebsite']);
 
             $attribute->expects($this->never())
                 ->method('isScopeWebsite')
@@ -675,21 +652,13 @@ class ConditionBuilderTest extends TestCase
         if ($return == null) {
             return $this->createMock(EntityMetadataInterface::class);
         } elseif ($return == 'entity_id') {
-            $metadata = $this->getMockBuilder(EntityMetadata::class)
-                ->disableOriginalConstructor()
-                ->onlyMethods([
-                    'getLinkField',
-                ])
-                ->getMock();
+            $metadata = $this->createPartialMock(EntityMetadata::class, ['getLinkField']);
             $metadata->expects($this->once())
                 ->method('getLinkField')
                 ->willReturn('entity_id');
             return $metadata;
         } else {
-            $dbAdapater = $this->getMockBuilder(Mysql::class)
-                ->disableOriginalConstructor()
-                ->onlyMethods(['quoteIdentifier'])
-                ->getMock();
+            $dbAdapater = $this->createPartialMock(Mysql::class, ['quoteIdentifier']);
             $dbAdapater->expects($this->any())
                 ->method('quoteIdentifier')
                 ->willReturnCallback(
@@ -697,13 +666,10 @@ class ConditionBuilderTest extends TestCase
                         return sprintf('`%s`', $input);
                     }
                 );
-            $metadata = $this->getMockBuilder(EntityMetadata::class)
-                ->disableOriginalConstructor()
-                ->onlyMethods([
-                    'getLinkField',
-                    'getEntityConnection',
-                ])
-                ->getMock();
+            $metadata = $this->createPartialMock(EntityMetadata::class, [
+                'getLinkField',
+                'getEntityConnection',
+            ]);
             $metadata->method('getLinkField')->willReturn('entity_id');
             $metadata->method('getEntityConnection')->willReturn($dbAdapater);
             return $metadata;
@@ -728,21 +694,13 @@ class ConditionBuilderTest extends TestCase
 
     protected function getMockForStoreClass($return)
     {
-        $store = $this->getMockBuilder(Store::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([
-                'getWebsite',
-            ])
-            ->getMock();
+        $store = $this->createPartialMock(Store::class, ['getWebsite']);
         if (!$return) {
             $store->method('getWebsite')->willReturn(
                 false
             );
         } else {
-            $website = $this->getMockBuilder(Website::class)
-                ->disableOriginalConstructor()
-                ->onlyMethods(['getStoreIds', 'getCode'])
-                ->getMock();
+            $website = $this->createPartialMock(Website::class, ['getStoreIds', 'getCode']);
             $website->method('getStoreIds')->willReturn([]);
             $website->method('getCode')->willReturn(Website::ADMIN_CODE);
             $store->method('getWebsite')->willReturn(

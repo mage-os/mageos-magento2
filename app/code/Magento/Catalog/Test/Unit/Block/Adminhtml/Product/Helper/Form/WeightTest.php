@@ -12,9 +12,9 @@ use Magento\Framework\Data\Form;
 use Magento\Framework\Data\Form\Element\CollectionFactory;
 use Magento\Framework\Data\Form\Element\Factory;
 use Magento\Framework\Data\Form\Element\Radios;
-use Magento\Framework\Data\Form\Element\Test\Unit\Helper\RadiosTestHelper;
 use Magento\Framework\Locale\Format;
 use Magento\Framework\Math\Random;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Helper\SecureHtmlRenderer;
 use Magento\Framework\Escaper;
@@ -24,6 +24,7 @@ use PHPUnit\Framework\TestCase;
 
 class WeightTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var Weight
      */
@@ -70,7 +71,8 @@ class WeightTest extends TestCase
         $objectManagerMock = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
         \Magento\Framework\App\ObjectManager::setInstance($objectManagerMock);
 
-        $this->weightSwitcher = new RadiosTestHelper();
+        $this->weightSwitcher = $this->createPartialMock(Radios::class, ['__call']);
+        $this->weightSwitcher->method('__call')->willReturnSelf();
 
         $this->factory = $this->createMock(Factory::class);
         $this->factory->expects(

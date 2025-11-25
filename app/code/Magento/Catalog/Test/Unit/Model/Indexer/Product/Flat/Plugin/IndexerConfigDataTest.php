@@ -39,12 +39,8 @@ class IndexerConfigDataTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->indexerStateMock = $this->getMockBuilder(ProductFlatIndexerState::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->subjectMock = $this->getMockBuilder(ConfigData::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->indexerStateMock = $this->createMock(ProductFlatIndexerState::class);
+        $this->subjectMock = $this->createMock(ConfigData::class);
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->plugin = $this->objectManagerHelper->getObject(

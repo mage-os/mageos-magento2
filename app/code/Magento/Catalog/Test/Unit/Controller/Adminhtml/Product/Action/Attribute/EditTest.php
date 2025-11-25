@@ -59,32 +59,20 @@ class EditTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->attributeHelper = $this->getMockBuilder(Attribute::class)
-            ->onlyMethods(['getProductIds', 'setProductIds'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->attributeHelper = $this->createPartialMock(
+            Attribute::class,
+            ['getProductIds', 'setProductIds']
+        );
 
-        $this->resultRedirectFactory = $this->getMockBuilder(RedirectFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
+        $this->resultRedirectFactory = $this->createPartialMock(RedirectFactory::class, ['create']);
 
-        $this->filter = $this->getMockBuilder(Filter::class)
-            ->onlyMethods(['getCollection'])->disableOriginalConstructor()
-            ->getMock();
+        $this->filter = $this->createPartialMock(Filter::class, ['getCollection']);
 
-        $this->collectionFactory = $this->getMockBuilder(
-            CollectionFactory::class
-        )->onlyMethods(['create'])->disableOriginalConstructor()
-            ->getMock();
+        $this->collectionFactory = $this->createPartialMock(CollectionFactory::class, ['create']);
 
-        $this->resultPage = $this->getMockBuilder(Page::class)
-            ->onlyMethods(['getConfig'])->disableOriginalConstructor()
-            ->getMock();
+        $this->resultPage = $this->createPartialMock(Page::class, ['getConfig']);
 
-        $resultPageFactory = $this->getMockBuilder(PageFactory::class)
-            ->onlyMethods(['create'])->disableOriginalConstructor()
-            ->getMock();
+        $resultPageFactory = $this->createPartialMock(PageFactory::class, ['create']);
         $resultPageFactory->method('create')->willReturn($this->resultPage);
 
         $this->prepareContext();
@@ -103,16 +91,10 @@ class EditTest extends TestCase
 
     private function prepareContext()
     {
-        $this->request = $this->getMockBuilder(Http::class)
-            ->onlyMethods(['getParam', 'getParams', 'setParams'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->request = $this->createPartialMock(Http::class, ['getParam', 'getParams', 'setParams']);
 
         $objectManager = $this->createMock(ObjectManagerInterface::class);
-        $product = $this->getMockBuilder(Product::class)
-            ->onlyMethods(['isProductsHasSku'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $product = $this->createPartialMock(Product::class, ['isProductsHasSku']);
         $product->expects($this->any())->method('isProductsHasSku')
             ->with([1, 2, 3])
             ->willReturn(true);
@@ -120,14 +102,12 @@ class EditTest extends TestCase
             ->method('create')
             ->with(Product::class)
             ->willReturn($product);
-        $messageManager = $this->getMockBuilder(ManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $messageManager = $this->createMock(ManagerInterface::class);
         $messageManager->method('addErrorMessage')->willReturn(true);
-        $this->context = $this->getMockBuilder(Context::class)
-            ->onlyMethods(['getRequest', 'getObjectManager', 'getMessageManager', 'getResultRedirectFactory'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->context = $this->createPartialMock(
+            Context::class,
+            ['getRequest', 'getObjectManager', 'getMessageManager', 'getResultRedirectFactory']
+        );
         $this->context->method('getRequest')->willReturn($this->request);
         $this->context->method('getObjectManager')->willReturn($objectManager);
         $this->context->method('getMessageManager')->willReturn($messageManager);
@@ -148,22 +128,13 @@ class EditTest extends TestCase
         $this->attributeHelper->method('getProductIds')->willReturn([1, 2, 3]);
         $this->attributeHelper->expects($this->any())->method('setProductIds')->with([1, 2, 3]);
 
-        $collection = $this->getMockBuilder(Collection::class)
-            ->onlyMethods(['getAllIds'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $collection = $this->createPartialMock(Collection::class, ['getAllIds']);
         $collection->method('getAllIds')->willReturn([1, 2, 3]);
         $this->filter->expects($this->any())->method('getCollection')->with($collection)->willReturn($collection);
         $this->collectionFactory->method('create')->willReturn($collection);
 
-        $title = $this->getMockBuilder(Title::class)
-            ->onlyMethods(['prepend'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $config = $this->getMockBuilder(Config::class)
-            ->onlyMethods(['getTitle'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $title = $this->createPartialMock(Title::class, ['prepend']);
+        $config = $this->createPartialMock(Config::class, ['getTitle']);
         $config->method('getTitle')->willReturn($title);
         $this->resultPage->method('getConfig')->willReturn($config);
 
@@ -178,14 +149,8 @@ class EditTest extends TestCase
         $this->attributeHelper->method('getProductIds')->willReturn([1, 2, 3]);
         $this->attributeHelper->expects($this->any())->method('setProductIds')->with([1, 2, 3]);
 
-        $title = $this->getMockBuilder(Title::class)
-            ->onlyMethods(['prepend'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $config = $this->getMockBuilder(Config::class)
-            ->onlyMethods(['getTitle'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $title = $this->createPartialMock(Title::class, ['prepend']);
+        $config = $this->createPartialMock(Config::class, ['getTitle']);
         $config->method('getTitle')->willReturn($title);
         $this->resultPage->method('getConfig')->willReturn($config);
 
@@ -198,10 +163,7 @@ class EditTest extends TestCase
         $this->request->method('getParams')->willReturn([]);
         $this->attributeHelper->method('getProductIds')->willReturn(null);
 
-        $resultRedirect = $this->getMockBuilder(Redirect::class)
-            ->onlyMethods(['setPath'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $resultRedirect = $this->createPartialMock(Redirect::class, ['setPath']);
         $resultRedirect->expects($this->any())->method('setPath')
             ->with('catalog/product/', ['_current' => true])
             ->willReturnSelf();

@@ -47,9 +47,7 @@ class ContextTest extends TestCase
             false
         );
 
-        $this->imageBuilder = $this->getMockBuilder(ImageBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->imageBuilder = $this->createMock(ImageBuilder::class);
 
         $this->context = $objectManager->getObject(
             Context::class,

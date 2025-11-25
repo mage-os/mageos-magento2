@@ -12,8 +12,8 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Pricing\Price\FinalPrice;
 use Magento\Catalog\Pricing\Price\TierPrice;
-use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use Magento\Customer\Api\GroupManagementInterface;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Customer\Model\Group;
 use Magento\Customer\Model\Group\RetrieverInterface;
 use Magento\Customer\Model\GroupManagement;
@@ -37,6 +37,8 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(\Magento\Catalog\Pricing\Price\TierPrice::class)]
 class TierPriceTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * Test customer group
      *
@@ -100,11 +102,92 @@ class TierPriceTest extends TestCase
     protected function setUp(): void
     {
         $this->priceInfo = $this->createMock(Base::class);
-        $this->product = new ProductTestHelper();
+        
+        $productData = [
+            'priceInfo' => null,
+            'data' => [],
+            'hasCustomerGroupId' => false,
+            'customerGroupId' => null,
+            'resource' => null
+        ];
+        
+        $this->product = $this->createPartialMockWithReflection(
+            Product::class,
+            ['setPriceInfo', 'getPriceInfo', 'setData', 'getData', 'setHasCustomerGroupId',
+             'hasCustomerGroupId', 'setCustomerGroupId', 'getCustomerGroupId', 'setResource', 'getResource']
+        );
+        
+        $this->product->method('setPriceInfo')->willReturnCallback(
+            function ($priceInfo) use (&$productData) {
+                $productData['priceInfo'] = $priceInfo;
+            }
+        );
+        
+        $this->product->method('getPriceInfo')->willReturnCallback(
+            function () use (&$productData) {
+                return $productData['priceInfo'];
+            }
+        );
+        
+        $this->product->method('setData')->willReturnCallback(
+            function ($key, $value = null) use (&$productData) {
+                if (is_array($key)) {
+                    $productData['data'] = array_merge($productData['data'], $key);
+                } else {
+                    $productData['data'][$key] = $value;
+                }
+                return $this->product;
+            }
+        );
+        
+        $this->product->method('getData')->willReturnCallback(
+            function ($key = null) use (&$productData) {
+                if ($key === null) {
+                    return $productData['data'];
+                }
+                return $productData['data'][$key] ?? null;
+            }
+        );
+        
+        $this->product->method('setHasCustomerGroupId')->willReturnCallback(
+            function ($value) use (&$productData) {
+                $productData['hasCustomerGroupId'] = $value;
+            }
+        );
+        
+        $this->product->method('hasCustomerGroupId')->willReturnCallback(
+            function () use (&$productData) {
+                return $productData['hasCustomerGroupId'];
+            }
+        );
+        
+        $this->product->method('setCustomerGroupId')->willReturnCallback(
+            function ($value) use (&$productData) {
+                $productData['customerGroupId'] = $value;
+            }
+        );
+        
+        $this->product->method('getCustomerGroupId')->willReturnCallback(
+            function () use (&$productData) {
+                return $productData['customerGroupId'];
+            }
+        );
+        
+        $this->product->method('setResource')->willReturnCallback(
+            function ($resource) use (&$productData) {
+                $productData['resource'] = $resource;
+                return $this->product;
+            }
+        );
+        
+        $this->product->method('getResource')->willReturnCallback(
+            function () use (&$productData) {
+                return $productData['resource'];
+            }
+        );
+        
         $this->product->setPriceInfo($this->priceInfo);
-        $this->customerGroupRetriever = $this->getMockBuilder(RetrieverInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->customerGroupRetriever = $this->createMock(RetrieverInterface::class);
         $this->session = $this->createMock(Session::class);
         $this->session->method('getCustomerGroupId')->willReturn(self::$customerGroup);
         $this->customerGroupRetriever = $this->createMock(RetrieverInterface::class);

@@ -28,9 +28,7 @@ class ReadHandlerTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->websiteLinkMock = $this->getMockBuilder(Link::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->websiteLinkMock = $this->createMock(Link::class);
         /** @var ProductExtensionInterface $this->extensionAttributesMock */
         $this->extensionAttributesMock = $this->createStub(ProductExtensionInterface::class);
         $websiteIds = null;
@@ -51,9 +49,7 @@ class ReadHandlerTest extends TestCase
     public function testExecuteWithNonCachedExtensionAttributes()
     {
         $productId = 1;
-        $product = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $product = $this->createMock(Product::class);
         $product->expects($this->atLeastOnce())
             ->method('getId')
             ->willReturn($productId);
@@ -76,9 +72,7 @@ class ReadHandlerTest extends TestCase
 
     public function testExecuteWithCachedWebsiteIds()
     {
-        $product = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $product = $this->createMock(Product::class);
         $websiteIds = [1,2];
         $this->extensionAttributesMock->setWebsiteIds($websiteIds);
         $product->expects($this->never())

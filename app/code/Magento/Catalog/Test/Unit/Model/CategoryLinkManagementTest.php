@@ -45,9 +45,7 @@ class CategoryLinkManagementTest extends TestCase
         $this->categoryRepositoryMock = $this->createMock(CategoryRepository::class);
         $productResource = $this->createMock(Product::class);
         $categoryLinkRepository = $this->createMock(CategoryLinkRepositoryInterface::class);
-        $indexerRegistry = $this->getMockBuilder(IndexerRegistry::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $indexerRegistry = $this->createMock(IndexerRegistry::class);
         $this->productLinkFactoryMock = $this->createPartialMock(
             CategoryProductLinkInterfaceFactory::class,
             ['create']

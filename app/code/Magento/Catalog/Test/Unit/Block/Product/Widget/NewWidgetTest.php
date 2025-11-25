@@ -79,25 +79,15 @@ class NewWidgetTest extends TestCase
         $this->scopeConfig = $this->createMock(Config::class);
         $this->cacheState = $this->createPartialMock(State::class, ['isEnabled']);
         $this->localDate = $this->createMock(Timezone::class);
-        $this->catalogConfig = $this->getMockBuilder(\Magento\Catalog\Model\Config::class)
-            ->onlyMethods(['getProductAttributes'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->catalogConfig = $this->createPartialMock(\Magento\Catalog\Model\Config::class, ['getProductAttributes']);
         $this->layout = $this->createMock(Layout::class);
-        $this->requestMock = $this->getMockBuilder(RequestInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->requestMock = $this->createMock(RequestInterface::class);
 
-        $this->context = $this->getMockBuilder(ProductBlockContext::class)
-            ->onlyMethods(
-                [
-                    'getEventManager', 'getScopeConfig', 'getLayout',
-                    'getRequest', 'getCacheState', 'getCatalogConfig',
-                    'getLocaleDate'
-                ]
-            )
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->context = $this->createPartialMock(ProductBlockContext::class, [
+            'getEventManager', 'getScopeConfig', 'getLayout',
+            'getRequest', 'getCacheState', 'getCatalogConfig',
+            'getLocaleDate'
+        ]);
 
         $this->context->method('getLayout')->willReturn($this->layout);
         $this->context->method('getRequest')->willReturn($this->requestMock);
@@ -212,17 +202,12 @@ class NewWidgetTest extends TestCase
         $this->context->expects($this->once())->method('getCatalogConfig')->willReturn($this->catalogConfig);
         $this->context->expects($this->once())->method('getLocaleDate')->willReturn($this->localDate);
 
-        $this->productCollection = $this->getMockBuilder(Collection::class)
-            ->onlyMethods(
-                [
-                    'setVisibility', 'addMinimalPrice', 'addFinalPrice',
-                    'addTaxPercents', 'addAttributeToSelect', 'addUrlRewrite',
-                    'addStoreFilter', 'addAttributeToSort', 'setPageSize',
-                    'setCurPage', 'addAttributeToFilter'
-                ]
-            )
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->productCollection = $this->createPartialMock(Collection::class, [
+            'setVisibility', 'addMinimalPrice', 'addFinalPrice',
+            'addTaxPercents', 'addAttributeToSelect', 'addUrlRewrite',
+            'addStoreFilter', 'addAttributeToSort', 'setPageSize',
+            'setCurPage', 'addAttributeToFilter'
+        ]);
         $this->productCollection->expects($this->once())->method('setVisibility')
             ->willReturnSelf();
         $this->productCollection->expects($this->once())->method('addMinimalPrice')

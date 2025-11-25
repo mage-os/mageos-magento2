@@ -120,9 +120,7 @@ class ProcessorTest extends TestCase
             ->method('isFlatEnabled')
             ->willReturn($isFlatEnabled);
 
-        $indexerMock = $this->getMockBuilder(Indexer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $indexerMock = $this->createMock(Indexer::class);
 
         $this->indexerRegistryMock->expects($this->any())
             ->method('get')
@@ -155,9 +153,7 @@ class ProcessorTest extends TestCase
             ->method('isFlatEnabled')
             ->willReturn(true);
 
-        $indexerMock = $this->getMockBuilder(Indexer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $indexerMock = $this->createMock(Indexer::class);
 
         $this->indexerRegistryMock->expects($this->any())
             ->method('get')
@@ -188,9 +184,7 @@ class ProcessorTest extends TestCase
             ->method('isFlatEnabled')
             ->willReturn($isFlatEnabled);
 
-        $indexerMock = $this->getMockBuilder(Indexer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $indexerMock = $this->createMock(Indexer::class);
 
         $this->indexerRegistryMock->expects($this->any())
             ->method('get')
@@ -223,9 +217,7 @@ class ProcessorTest extends TestCase
             ->method('isFlatEnabled')
             ->willReturn(true);
 
-        $indexerMock = $this->getMockBuilder(Indexer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $indexerMock = $this->createMock(Indexer::class);
 
         $this->indexerRegistryMock->expects($this->any())
             ->method('get')

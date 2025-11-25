@@ -126,8 +126,7 @@ class BasePriceTest extends TestCase
     {
         $amount = 20.;
 
-        $priceMock = $this->getMockBuilder(PriceInterface::class)
-            ->getMock();
+        $priceMock = $this->createMock(PriceInterface::class);
 
         $this->priceInfoMock->expects($this->once())
             ->method('getPrices')

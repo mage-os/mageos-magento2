@@ -47,10 +47,7 @@ class ProductTest extends TestCase
 
     protected function getMockForCatalogProduct($method)
     {
-        $product = $this->getMockBuilder(
-            \Magento\Catalog\Model\Product::class
-        )->disableOriginalConstructor()
-            ->getMock();
+        $product = $this->createMock(\Magento\Catalog\Model\Product::class);
         if ($method!=null) {
             $product->expects(
                 $this->once()

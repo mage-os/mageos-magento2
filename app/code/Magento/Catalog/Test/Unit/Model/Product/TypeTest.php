@@ -232,11 +232,7 @@ class TypeTest extends TestCase
      */
     private function getMockedProduct(): Product
     {
-        $mockBuilder = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor();
-        $mock = $mockBuilder->getMock();
-
-        return $mock;
+        return $this->createMock(Product::class);
     }
 
     /**
@@ -246,10 +242,7 @@ class TypeTest extends TestCase
     {
         $mockedPriceInfoInterface = $this->getMockedPriceInfoInterface();
 
-        $mockBuilder = $this->getMockBuilder(Factory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create']);
-        $mock = $mockBuilder->getMock();
+        $mock = $this->createPartialMock(Factory::class, ['create']);
 
         $mock->method('create')->willReturn($mockedPriceInfoInterface);
 
@@ -261,11 +254,7 @@ class TypeTest extends TestCase
      */
     private function getMockedPriceInfoInterface(): PriceInfoInterface
     {
-        $mockBuilder = $this->getMockBuilder(PriceInfoInterface::class)
-            ->disableOriginalConstructor();
-        $mock = $mockBuilder->getMock();
-
-        return $mock;
+        return $this->createMock(PriceInfoInterface::class);
     }
 
     /**
@@ -273,10 +262,7 @@ class TypeTest extends TestCase
      */
     private function getMockedProductTypePool(): Pool
     {
-        $mockBuild = $this->getMockBuilder(Pool::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['get']);
-        $mock = $mockBuild->getMock();
+        $mock = $this->createPartialMock(Pool::class, ['get']);
 
         $mock->expects($this->any())
             ->method('get')
@@ -295,10 +281,7 @@ class TypeTest extends TestCase
      */
     private function getMockedProductTypeVirtual(): Virtual
     {
-        $mockBuilder = $this->getMockBuilder(Virtual::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['setConfig']);
-        $mock = $mockBuilder->getMock();
+        $mock = $this->createPartialMock(Virtual::class, ['setConfig']);
 
         $mock->expects($this->any())
             ->method('setConfig');
@@ -311,10 +294,7 @@ class TypeTest extends TestCase
      */
     private function getMockedProductTypeSimple(): Simple
     {
-        $mockBuilder = $this->getMockBuilder(Simple::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['setConfig']);
-        $mock = $mockBuilder->getMock();
+        $mock = $this->createPartialMock(Simple::class, ['setConfig']);
 
         $mock->expects($this->any())
             ->method('setConfig');
@@ -338,10 +318,7 @@ class TypeTest extends TestCase
      */
     private function getMockedTypePriceFactory(): PriceFactory
     {
-        $mockBuild = $this->getMockBuilder(PriceFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create']);
-        $mock = $mockBuild->getMock();
+        $mock = $this->createPartialMock(PriceFactory::class, ['create']);
 
         $mock->expects($this->any())
             ->method('create')
@@ -360,10 +337,6 @@ class TypeTest extends TestCase
      */
     private function getMockedProductTypePrice(): Price
     {
-        $mockBuild = $this->getMockBuilder(Price::class)
-            ->disableOriginalConstructor();
-        $mock = $mockBuild->getMock();
-
-        return $mock;
+        return $this->createMock(Price::class);
     }
 }

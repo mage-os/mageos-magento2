@@ -10,7 +10,6 @@ namespace Magento\Catalog\Test\Unit\Ui\DataProvider\Product\Form\Modifier;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Authorization\Model\Role;
 use Magento\Backend\Model\Auth\Session;
-use Magento\Backend\Test\Unit\Helper\SessionTestHelper;
 use Magento\Catalog\Model\ResourceModel\Category\Collection as CategoryCollection;
 use Magento\Catalog\Model\ResourceModel\Category\CollectionFactory as CategoryCollectionFactory;
 use Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\Categories;
@@ -21,7 +20,6 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\UrlInterface;
 use Magento\Store\Model\Store;
 use Magento\User\Model\User;
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 
 /**

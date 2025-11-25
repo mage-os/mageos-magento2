@@ -33,16 +33,8 @@ class FrontendActionsFlushTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->productFrontendActionMock = $this->getMockBuilder(
-            ProductFrontendAction::class
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->frontendStorageConfigurationPoolMock = $this->getMockBuilder(
-            FrontendStorageConfigurationPool::class
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->productFrontendActionMock = $this->createMock(ProductFrontendAction::class);
+        $this->frontendStorageConfigurationPoolMock = $this->createMock(FrontendStorageConfigurationPool::class);
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->model = $this->objectManagerHelper->getObject(

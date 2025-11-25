@@ -11,15 +11,16 @@ use Magento\Catalog\Block\Adminhtml\Product\Helper\Form\Gallery;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
 use Magento\Framework\App\Request\DataPersistorInterface;
-use Magento\Framework\App\Request\Test\Unit\Helper\DataPersistorTestHelper;
 use Magento\Framework\Data\Form;
 use Magento\Framework\Registry;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class GalleryTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var Registry|MockObject
      */
@@ -55,7 +56,7 @@ class GalleryTest extends TestCase
         $this->registryMock = $this->createMock(Registry::class);
         $this->productMock = $this->createPartialMock(Product::class, ['getData']);
         $this->formMock = $this->createMock(Form::class);
-        $this->dataPersistorMock = new DataPersistorTestHelper();
+        $this->dataPersistorMock = $this->createMock(DataPersistorInterface::class);
         $this->objectManager = new ObjectManager($this);
         $this->gallery = $this->objectManager->getObject(
             Gallery::class,
@@ -116,7 +117,10 @@ class GalleryTest extends TestCase
         ];
         $this->registryMock->expects($this->once())->method('registry')->willReturn($this->productMock);
         $this->productMock->expects($this->once())->method('getData')->willReturn(null);
-        $this->dataPersistorMock->setReturnData($product);
+        $this->dataPersistorMock->expects($this->once())
+            ->method('get')
+            ->with($this->identicalTo('catalog_product'))
+            ->willReturn($product);
 
         $this->assertSame($product['product']['media_gallery'], $this->gallery->getImages());
     }
@@ -141,7 +145,10 @@ class GalleryTest extends TestCase
                 'thumbnail' => 'testThumbnail'
             ]
         ];
-        $this->dataPersistorMock->setReturnData($product);
+        $this->dataPersistorMock->expects($this->once())
+            ->method('get')
+            ->with($this->identicalTo('catalog_product'))
+            ->willReturn($product);
         $this->assertSame($product['product']['small'], $this->gallery->getImageValue('small'));
     }
 

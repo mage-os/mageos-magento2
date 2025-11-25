@@ -14,7 +14,6 @@ use Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\AttributeSet;
 use Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\Collection;
 use Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\CollectionFactory;
 use Magento\Framework\UrlInterface;
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 
 /**
@@ -46,20 +45,14 @@ class AttributeSetTest extends AbstractModifierTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->attributeSetCollectionFactoryMock = $this->getMockBuilder(CollectionFactory::class)
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->attributeSetCollectionMock = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->attributeSetCollectionFactoryMock = $this->createPartialMock(CollectionFactory::class, ['create']);
+        $this->attributeSetCollectionMock = $this->createMock(Collection::class);
         $this->urlBuilderMock = $this->createMock(UrlInterface::class);
-        $this->productResourceMock = $this->getMockBuilder(ProductResource::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->productResourceMock = $this->createMock(ProductResource::class);
 
         $this->attributeSetCollectionFactoryMock->method('create')->willReturn($this->attributeSetCollectionMock);
         $this->productMock->method('getResource')->willReturn($this->productResourceMock);
+        $this->productMock->method('getAttributeSetId')->willReturn(4);
         $this->attributeSetCollectionMock->expects($this->any())
             ->method('setEntityTypeFilter')
             ->willReturnSelf();

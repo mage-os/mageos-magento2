@@ -203,52 +203,48 @@ class SaveTest extends TestCase
         /**
          * @var Category|MockObject $categoryMock
          */
-        $categoryMock = $this->getMockBuilder(Category::class)
-            ->onlyMethods(
-                [
-                    'setStoreId',
-                    'load',
-                    'getPath',
-                    'getResource',
-                    'setPath',
-                    'setParentId',
-                    'setData',
-                    'addData',
-                    'getDefaultAttributeSetId',
-                    'getId',
-                    'validate',
-                    'unsetData',
-                    'save',
-                    'toArray',
-                    'setAttributeSetId',
-                    'getProductsReadonly',
-                    'setPostedProducts'
-                ]
-            )
-            ->disableOriginalConstructor()
-            ->getMock();
+        $categoryMock = $this->createPartialMock(
+            Category::class,
+            [
+                'setStoreId',
+                'load',
+                'getPath',
+                'getResource',
+                'setPath',
+                'setParentId',
+                'setData',
+                'addData',
+                'getDefaultAttributeSetId',
+                'getId',
+                'validate',
+                'unsetData',
+                'save',
+                'toArray',
+                'setAttributeSetId',
+                'getProductsReadonly',
+                'setPostedProducts'
+            ]
+        );
         /**
          * @var Category|MockObject $parentCategoryMock
          */
-        $parentCategoryMock = $this->getMockBuilder(Category::class)
-            ->onlyMethods(
-                [
-                    'setStoreId',
-                    'load',
-                    'getPath',
-                    'setPath',
-                    'setParentId',
-                    'setData',
-                    'addData',
-                    'getDefaultAttributeSetId',
-                    'getId',
-                    'setAttributeSetId',
-                    'getProductsReadonly',
-                    'setPostedProducts'
-                ]
-            )
-            ->disableOriginalConstructor()
-            ->getMock();
+        $parentCategoryMock = $this->createPartialMock(
+            Category::class,
+            [
+                'setStoreId',
+                'load',
+                'getPath',
+                'setPath',
+                'setParentId',
+                'setData',
+                'addData',
+                'getDefaultAttributeSetId',
+                'getId',
+                'setAttributeSetId',
+                'getProductsReadonly',
+                'setPostedProducts'
+            ]
+        );
         /**
          * @var Session|MockObject $sessionMock
          */

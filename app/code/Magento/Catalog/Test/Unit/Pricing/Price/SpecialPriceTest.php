@@ -79,10 +79,7 @@ class SpecialPriceTest extends TestCase
 
         $saleableItemMock->method('getSpecialPrice')->willReturn($specialPrice);
 
-        $priceInfo = $this->getMockBuilder(
-            PriceInfoInterface::class
-        )->disableOriginalConstructor()
-            ->getMock();
+        $priceInfo = $this->createMock(PriceInfoInterface::class);
 
         $priceInfo->method('getAdjustments')->willReturn([]);
 
@@ -97,10 +94,7 @@ class SpecialPriceTest extends TestCase
      */
     protected function prepareLocaleDate($isValidInterval)
     {
-        $localeDate = $this->getMockBuilder(
-            TimezoneInterface::class
-        )->disableOriginalConstructor()
-            ->getMock();
+        $localeDate = $this->createMock(TimezoneInterface::class);
 
         $localeDate->method('isScopeDateInInterval')->willReturn($isValidInterval);
 

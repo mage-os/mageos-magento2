@@ -14,11 +14,13 @@ use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ResourceModel\AbstractResource;
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
 use Magento\Framework\DataObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\TestCase;
 
 class AbstractTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * Get attribute list
      *
@@ -82,13 +84,10 @@ class AbstractTest extends TestCase
         $attributes[$code] = $attribute;
 
         /** @var AbstractResource $model */
-        $arguments = $objectManager->getConstructArguments(
-            AbstractResource::class
+        $model = $this->createPartialMockWithReflection(
+            AbstractResource::class,
+            ['getAttributesByCode']
         );
-        $model = $this->getMockBuilder(AbstractResource::class)
-            ->onlyMethods(['getAttributesByCode'])
-            ->setConstructorArgs($arguments)
-            ->getMock();
 
         $model->expects($this->once())->method('getAttributesByCode')->willReturn($attributes);
 

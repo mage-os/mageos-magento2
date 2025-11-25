@@ -90,51 +90,30 @@ class AttributeTest extends TestCase
     protected function setUp(): void
     {
         /** @var ItemFactory $filterItemFactory */
-        $this->filterItemFactory = $this->getMockBuilder(ItemFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
+        $this->filterItemFactory = $this->createPartialMock(ItemFactory::class, ['create']);
 
         /** @var StoreManagerInterface $storeManager */
         $this->storeManager = $this->createStub(StoreManagerInterface::class);
         /** @var Layer $layer */
-        $this->layer = $this->getMockBuilder(Layer::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getState'])
-            ->getMock();
+        $this->layer = $this->createPartialMock(Layer::class, ['getState']);
         /** @var DataBuilder $itemDataBuilder */
-        $this->itemDataBuilder = $this->getMockBuilder(DataBuilder::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['addItemData', 'build'])
-            ->getMock();
+        $this->itemDataBuilder = $this->createPartialMock(DataBuilder::class, ['addItemData', 'build']);
 
-        $this->filterAttribute = $this->getMockBuilder(Attribute::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getCount', 'applyFilterToCollection'])
-            ->getMock();
+        $this->filterAttribute = $this->createPartialMock(Attribute::class, ['getCount', 'applyFilterToCollection']);
 
         $this->filterAttribute->expects($this->any())
             ->method('applyFilterToCollection')->willReturnSelf();
 
-        $this->filterAttributeFactory = $this->getMockBuilder(AttributeFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
+        $this->filterAttributeFactory = $this->createPartialMock(AttributeFactory::class, ['create']);
 
         $this->filterAttributeFactory->expects($this->once())
             ->method('create')
             ->willReturn($this->filterAttribute);
 
-        $this->state = $this->getMockBuilder(State::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['addFilter'])
-            ->getMock();
+        $this->state = $this->createPartialMock(State::class, ['addFilter']);
         $this->layer->method('getState')->willReturn($this->state);
 
-        $this->frontend = $this->getMockBuilder(AbstractFrontend::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getOption', 'getSelectOptions'])
-            ->getMock();
+        $this->frontend = $this->createPartialMock(AbstractFrontend::class, ['getOption', 'getSelectOptions']);
         $this->attribute = $this->createPartialMock(
             \Magento\Eav\Model\Entity\Attribute::class,
             ['getAttributeCode', 'getFrontend']
@@ -145,18 +124,12 @@ class AttributeTest extends TestCase
 
         $this->request = $this->createMock(RequestInterface::class);
 
-        $stripTagsFilter = $this->getMockBuilder(StripTags::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['filter'])
-            ->getMock();
+        $stripTagsFilter = $this->createPartialMock(StripTags::class, ['filter']);
         $stripTagsFilter->expects($this->any())
             ->method('filter')
             ->willReturnArgument(0);
 
-        $string = $this->getMockBuilder(StringUtils::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['strlen'])
-            ->getMock();
+        $string = $this->createPartialMock(StringUtils::class, ['strlen']);
         $string->expects($this->any())
             ->method('strlen')
             ->willReturnCallback(

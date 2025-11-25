@@ -24,9 +24,7 @@ class BuilderTest extends TestCase
     public function testAddColumn()
     {
         $this->connectionMock = $this->createMock(AdapterInterface::class);
-        $table = $this->getMockBuilder(Table::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $table = $this->createMock(Table::class);
         $table->expects($this->once())->method('addColumn')
             ->with('test', Table::TYPE_INTEGER)
             ->willReturnSelf();

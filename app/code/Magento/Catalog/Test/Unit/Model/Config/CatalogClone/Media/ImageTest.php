@@ -63,36 +63,18 @@ class ImageTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->eavConfig = $this->getMockBuilder(Config::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->eavConfig = $this->createMock(Config::class);
 
-        $this->attributeCollection = $this->getMockBuilder(
-            Collection::class
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->attributeCollection = $this->createMock(Collection::class);
 
-        $this->attributeCollectionFactory = $this->getMockBuilder(
-            CollectionFactory::class
-        )
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->attributeCollectionFactory = $this->createPartialMock(CollectionFactory::class, ['create']);
         $this->attributeCollectionFactory->method('create')->willReturn(
             $this->attributeCollection
         );
 
-        $this->attribute = $this->getMockBuilder(Attribute::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->attribute = $this->createMock(Attribute::class);
 
-        $this->escaperMock = $this->getMockBuilder(
-            Escaper::class
-        )
-            ->disableOriginalConstructor()
-            ->onlyMethods(['escapeHtml'])
-            ->getMock();
+        $this->escaperMock = $this->createPartialMock(Escaper::class, ['escapeHtml']);
 
         $helper = new ObjectManager($this);
         $this->model = $helper->getObject(
@@ -115,9 +97,7 @@ class ImageTest extends TestCase
     {
         $entityTypeId = 3;
         /** @var Type|MockObject $entityType */
-        $entityType = $this->getMockBuilder(Type::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $entityType = $this->createMock(Type::class);
         $entityType->expects($this->once())->method('getId')->willReturn($entityTypeId);
 
         /** @var AbstractFrontend|MockObject $frontend */

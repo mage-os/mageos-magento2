@@ -71,34 +71,22 @@ class NewActionTest extends ProductTestCase
             Builder::class,
             ['build']
         );
-        $this->product = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['addData', 'getTypeId', 'getStoreId', '__sleep'])->getMock();
+        $this->product = $this->createPartialMock(
+            Product::class,
+            ['addData', 'getTypeId', 'getStoreId', '__sleep']
+        );
         $this->product->method('getTypeId')->willReturn('simple');
         $this->product->method('getStoreId')->willReturn('1');
         $this->productBuilder->method('build')->willReturn($this->product);
 
-        $this->resultPage = $this->getMockBuilder(Page::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->resultPage = $this->createMock(Page::class);
 
-        $resultPageFactory = $this->getMockBuilder(PageFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
+        $resultPageFactory = $this->createPartialMock(PageFactory::class, ['create']);
 
-        $this->resultForward = $this->getMockBuilder(Forward::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->resultForwardFactory = $this->getMockBuilder(ForwardFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
+        $this->resultForward = $this->createMock(Forward::class);
+        $this->resultForwardFactory = $this->createPartialMock(ForwardFactory::class, ['create']);
 
-        $this->regexValidatorFactoryMock = $this->getMockBuilder(RegexFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
+        $this->regexValidatorFactoryMock = $this->createPartialMock(RegexFactory::class, ['create']);
         $this->regexValidatorMock = $this->createMock(Regex::class);
         $this->regexValidatorFactoryMock->method('create')
             ->willReturn($this->regexValidatorMock);

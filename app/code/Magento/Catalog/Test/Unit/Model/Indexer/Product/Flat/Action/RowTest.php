@@ -99,21 +99,15 @@ class RowTest extends TestCase
             FlatTableBuilder::class
         );
         $this->productIndexerHelper = $this->createMock(\Magento\Catalog\Helper\Product\Flat\Indexer::class);
-        $statusAttributeMock = $this->getMockBuilder(Attribute::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $statusAttributeMock = $this->createMock(Attribute::class);
         $this->productIndexerHelper->expects($this->any())->method('getAttribute')
             ->with('status')
             ->willReturn($statusAttributeMock);
-        $backendMock = $this->getMockBuilder(AbstractBackend::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $backendMock = $this->createMock(AbstractBackend::class);
         $backendMock->method('getTable')->willReturn($attributeTable);
         $statusAttributeMock->method('getBackend')->willReturn($backendMock);
         $statusAttributeMock->method('getId')->willReturn($statusId);
-        $selectMock = $this->getMockBuilder(Select::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $selectMock = $this->createMock(Select::class);
         $this->connection->method('select')->willReturn($selectMock);
         $selectMock->method('from')
             ->willReturnSelf();

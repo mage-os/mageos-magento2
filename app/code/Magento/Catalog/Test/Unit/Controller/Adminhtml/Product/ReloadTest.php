@@ -14,7 +14,7 @@ use Magento\Catalog\Controller\Adminhtml\Product\Reload;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Controller\ResultInterface;
-use Magento\Framework\View\Test\Unit\Helper\ResultInterfaceTestHelper;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Layout\ProcessorInterface;
 use Magento\Framework\View\LayoutInterface;
@@ -27,6 +27,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ReloadTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var Reload
      */
@@ -86,28 +87,29 @@ class ReloadTest extends TestCase
     {
         $this->objectManager = new ObjectManager($this);
 
-        $this->contextMock = $this->getMockBuilder(Context::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->resultFactoryMock = $this->getMockBuilder(ResultFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->layoutMock = $this->getMockBuilder(LayoutInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->requestMock = $this->getMockBuilder(RequestInterface::class)
-            ->getMock();
-        $this->productBuilderMock = $this->getMockBuilder(Builder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->resultMock = $this->createPartialMock(ResultInterfaceTestHelper::class, ['forward']);
-        $this->productMock = $this->getMockBuilder(ProductInterface::class)
-            ->getMock();
-        $this->uiComponentMock = $this->getMockBuilder(UiComponent::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->processorMock = $this->getMockBuilder(ProcessorInterface::class)
-            ->getMock();
+        $this->contextMock = $this->createMock(Context::class);
+        $this->resultFactoryMock = $this->createMock(ResultFactory::class);
+        $this->layoutMock = $this->createMock(LayoutInterface::class);
+        $this->requestMock = $this->createMock(RequestInterface::class);
+        $this->productBuilderMock = $this->createMock(Builder::class);
+        $this->resultMock = $this->createPartialMockWithReflection(
+            ResultInterface::class,
+            ['forward', 'setLayout', 'getLayout', 'setHttpResponseCode', 'setHeader', 'renderResult']
+        );
+        $layout = null;
+        $this->resultMock->method('setLayout')->willReturnCallback(function ($value) use (&$layout) {
+            $layout = $value;
+            return $this->resultMock;
+        });
+        $this->resultMock->method('getLayout')->willReturnCallback(function () use (&$layout) {
+            return $layout;
+        });
+        $this->resultMock->method('setHttpResponseCode')->willReturnSelf();
+        $this->resultMock->method('setHeader')->willReturnSelf();
+        $this->resultMock->method('renderResult')->willReturnSelf();
+        $this->productMock = $this->createMock(ProductInterface::class);
+        $this->uiComponentMock = $this->createMock(UiComponent::class);
+        $this->processorMock = $this->createMock(ProcessorInterface::class);
 
         $this->contextMock->method('getRequest')->willReturn($this->requestMock);
         $this->resultFactoryMock->method('create')->willReturn($this->resultMock);

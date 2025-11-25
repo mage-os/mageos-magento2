@@ -88,32 +88,36 @@ class PriceTest extends TestCase
         );
 
         $this->websiteMock = $this->createPartialMock(Website::class, ['getId']);
-        $storeMangerMock = $this->createMock(StoreManagerInterface::class,
+        $storeMangerMock = $this->createMock(
+            StoreManagerInterface::class,
             [],
             '',
             false,
             true,
             true,
-            ['getWebsite']);
+            ['getWebsite']
+        );
         $storeMangerMock->method('getWebsite')->willReturn($this->websiteMock);
 
-        $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class,
+        $this->scopeConfigMock = $this->createMock(
+            ScopeConfigInterface::class,
             [],
             '',
             false,
             true,
             true,
-            ['getValue']);
+            ['getValue']
+        );
 
         $group = $this->createMock(Group::class);
         $group->method('getId')->willReturn(GroupManagement::CUST_GROUP_ALL);
         $this->groupManagementMock =
             $this->createMock(GroupManagementInterface::class);
         $this->groupManagementMock->method('getAllCustomersGroup')->willReturn($group);
-        $this->tierPriceExtensionFactoryMock = $this->getMockBuilder(ProductTierPriceExtensionFactory::class)
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->tierPriceExtensionFactoryMock = $this->createPartialMock(
+            ProductTierPriceExtensionFactory::class,
+            ['create']
+        );
         $this->model = $this->objectManagerHelper->getObject(
             Price::class,
             [

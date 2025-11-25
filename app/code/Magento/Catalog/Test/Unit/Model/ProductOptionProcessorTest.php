@@ -15,19 +15,20 @@ use Magento\Catalog\Model\CustomOptions\CustomOption;
 use Magento\Catalog\Model\CustomOptions\CustomOptionFactory;
 use Magento\Catalog\Model\Product\Option\UrlBuilder;
 use Magento\Catalog\Model\ProductOptionProcessor;
-use Magento\Catalog\Test\Unit\Helper\ProductOptionExtensionInterfaceTestHelper;
-use Magento\Framework\Data\Test\Unit\Helper\DataObjectExtendedTestHelper;
 use Magento\Framework\DataObject;
 use Magento\Framework\DataObject\Factory as DataObjectFactory;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class ProductOptionProcessorTest extends TestCase
 {
+
+    use MockCreationTrait;
     /**
      * @var ProductOptionProcessor
      */
@@ -55,22 +56,42 @@ class ProductOptionProcessorTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->dataObject = new DataObjectExtendedTestHelper();
+        $this->dataObject = $this->createPartialMockWithReflection(
+            DataObject::class,
+            ['addData', 'getData', 'setData', 'setOptions']
+        );
+        $dataStore = [];
+        $this->dataObject->method('addData')->willReturnCallback(function ($data) use (&$dataStore) {
+            $dataStore = array_merge($dataStore, $data);
+            return $this->dataObject;
+        });
+        $this->dataObject->method('setData')->willReturnCallback(function ($key, $value = null) use (&$dataStore) {
+            if (is_array($key)) {
+                $dataStore = $key;
+            } else {
+                $dataStore[$key] = $value;
+            }
+            return $this->dataObject;
+        });
+        $this->dataObject->method('getData')->willReturnCallback(function ($key = null) use (&$dataStore) {
+            return $key === null ? $dataStore : ($dataStore[$key] ?? null);
+        });
+        $this->dataObject->method('setOptions')->willReturnCallback(function ($value) use (&$dataStore) {
+            $dataStore['options'] = $value;
+            return $this->dataObject;
+        });
 
-        $this->dataObjectFactory = $this->getMockBuilder(DataObjectFactory::class)
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->dataObjectFactory = $this->createPartialMock(DataObjectFactory::class, ['create']);
         $this->dataObjectFactory->method('create')->willReturn($this->dataObject);
 
-        $this->customOption = new DataObjectExtendedTestHelper();
+        $this->customOption = $this->createPartialMockWithReflection(
+            DataObject::class,
+            ['setOptionId', 'setOptionValue']
+        );
+        $this->customOption->method('setOptionId')->willReturnSelf();
+        $this->customOption->method('setOptionValue')->willReturnSelf();
 
-        $this->customOptionFactory = $this->getMockBuilder(
-            CustomOptionFactory::class
-        )
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->customOptionFactory = $this->createPartialMock(CustomOptionFactory::class, ['create']);
         $this->customOptionFactory->method('create')->willReturn($this->customOption);
 
         $this->processor = new ProductOptionProcessor(
@@ -78,10 +99,7 @@ class ProductOptionProcessorTest extends TestCase
             $this->customOptionFactory
         );
 
-        $urlBuilder = $this->getMockBuilder(UrlBuilder::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getUrl'])
-            ->getMock();
+        $urlBuilder = $this->createPartialMock(UrlBuilder::class, ['getUrl']);
         $urlBuilder->method('getUrl')->willReturn('http://built.url/string/');
 
         $reflection = new \ReflectionClass(get_class($this->processor));
@@ -104,9 +122,33 @@ class ProductOptionProcessorTest extends TestCase
         }
         $productOptionMock = $this->createMock(ProductOptionInterface::class);
 
-        // PHPUnit 12 compatible: Replace addMethods with anonymous class for interface
         /** @var ProductOptionExtensionInterface $productOptionExtensionMock */
-        $productOptionExtensionMock = new ProductOptionExtensionInterfaceTestHelper();
+        $productOptionExtensionMock = $this->createPartialMockWithReflection(
+            ProductOptionExtensionInterface::class,
+            [
+                'setCustomOptions', 'getCustomOptions',
+                'getBundleOptions', 'setBundleOptions',
+                'getDownloadableOption', 'setDownloadableOption',
+                'getConfigurableItemOptions', 'setConfigurableItemOptions'
+            ]
+        );
+        $customOptions = [];
+        $productOptionExtensionMock->method('setCustomOptions')->willReturnCallback(
+            function ($value) use (&$customOptions) {
+                $customOptions = $value;
+            }
+        );
+        $productOptionExtensionMock->method('getCustomOptions')->willReturnCallback(
+            function () use (&$customOptions) {
+                return $customOptions;
+            }
+        );
+        $productOptionExtensionMock->method('getBundleOptions')->willReturn(null);
+        $productOptionExtensionMock->method('setBundleOptions')->willReturnSelf();
+        $productOptionExtensionMock->method('getDownloadableOption')->willReturn(null);
+        $productOptionExtensionMock->method('setDownloadableOption')->willReturnSelf();
+        $productOptionExtensionMock->method('getConfigurableItemOptions')->willReturn(null);
+        $productOptionExtensionMock->method('setConfigurableItemOptions')->willReturnSelf();
 
         $productOptionMock->method('getExtensionAttributes')->willReturn($productOptionExtensionMock);
 

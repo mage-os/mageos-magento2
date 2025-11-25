@@ -12,8 +12,8 @@ use Magento\Catalog\Model\Product;
 use Magento\Catalog\Observer\SetSpecialPriceStartDate;
 use Magento\Framework\Event;
 use Magento\Framework\Event\Observer;
-use Magento\Framework\Event\Test\Unit\Helper\EventTestHelper;
 use Magento\Framework\Stdlib\DateTime\Timezone;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -23,6 +23,7 @@ use PHPUnit\Framework\TestCase;
  */
 class SetSpecialPriceStartDateTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * Testable Object
      *
@@ -70,12 +71,22 @@ class SetSpecialPriceStartDateTest extends TestCase
         $this->timezone = $this->createMock(Timezone::class);
         $this->dateObject = $this->createMock(\DateTime::class);
 
-        $this->eventMock = new EventTestHelper();
+        $this->eventMock = $this->createPartialMockWithReflection(
+            Event::class,
+            ['setProductMock', 'getProduct']
+        );
+        $eventProduct = null;
+        $this->eventMock->method('setProductMock')->willReturnCallback(function ($product) use (&$eventProduct) {
+            $eventProduct = $product;
+        });
+        $this->eventMock->method('getProduct')->willReturnCallback(function () use (&$eventProduct) {
+            return $eventProduct;
+        });
 
-        $this->productMock = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getSpecialPrice', 'getSpecialFromDate', 'setData'])
-            ->getMock();
+        $this->productMock = $this->createPartialMock(
+            Product::class,
+            ['getSpecialPrice', 'getSpecialFromDate', 'setData']
+        );
 
         $this->observer = $this->objectManager->getObject(
             SetSpecialPriceStartDate::class,

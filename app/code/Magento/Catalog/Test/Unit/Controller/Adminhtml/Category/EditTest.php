@@ -12,12 +12,8 @@ use Magento\Cms\Model\Wysiwyg\Config;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Backend\App\Action\Context;
 use Magento\Backend\Model\Session;
-use Magento\Backend\Test\Unit\Helper\ContextTestHelper;
-use Magento\Framework\App\Test\Unit\Helper\RequestTestHelper;
-use Magento\Framework\View\Test\Unit\Helper\ResultPageTestHelper;
-use Magento\Store\Test\Unit\Helper\StoreManagerTestHelper;
-use Magento\Store\Test\Unit\Helper\StoreTestHelper;
 use Magento\Backend\Model\View\Result\RedirectFactory;
+use Magento\Store\Model\Store;
 use Magento\Catalog\Controller\Adminhtml\Category\Edit;
 use Magento\Catalog\Model\Category;
 use Magento\Framework\App\RequestInterface;
@@ -25,6 +21,7 @@ use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\ObjectManagerInterface;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\LayoutFactory;
 use Magento\Framework\View\Page\Title;
@@ -41,6 +38,7 @@ use PHPUnit\Framework\TestCase;
  */
 class EditTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var RedirectFactory|MockObject
      */
@@ -163,14 +161,24 @@ class EditTest extends TestCase
             ]
         );
 
-        $this->contextMock = new ContextTestHelper();
-
         $this->resultRedirectFactoryMock = $this->createPartialMock(
             RedirectFactory::class,
             ['create']
         );
 
-        $this->resultPageMock = new ResultPageTestHelper();
+        $pageConfig = $this->createPartialMock(\Magento\Framework\View\Page\Config::class, ['getTitle']);
+        $pageTitle = $this->createPartialMock(\Magento\Framework\View\Page\Title::class, ['prepend', 'set']);
+        $pageTitle->method('prepend')->willReturnSelf();
+        $pageTitle->method('set')->willReturnSelf();
+        $pageConfig->method('getTitle')->willReturn($pageTitle);
+        
+        $this->resultPageMock = $this->createPartialMockWithReflection(
+            ResultPage::class,
+            ['setActiveMenu', 'getConfig', 'addBreadcrumb']
+        );
+        $this->resultPageMock->method('setActiveMenu')->willReturnSelf();
+        $this->resultPageMock->method('addBreadcrumb')->willReturnSelf();
+        $this->resultPageMock->method('getConfig')->willReturn($pageConfig);
 
         $this->resultPageFactoryMock = $this->createPartialMock(
             PageFactory::class,
@@ -182,32 +190,48 @@ class EditTest extends TestCase
             JsonFactory::class,
             ['create']
         );
-        $this->storeManagerInterfaceMock = new StoreManagerTestHelper();
-        $this->requestMock = new RequestTestHelper();
-        $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
-        $this->eventManagerMock = $this->createMock(
-            ManagerInterface::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['dispatch']
+        $this->storeManagerInterfaceMock = $this->createMock(StoreManagerInterface::class);
+        $this->requestMock = $this->createPartialMockWithReflection(
+            RequestInterface::class,
+            [
+                'getParam', 'setParam', 'getQuery',
+                'getModuleName', 'setModuleName', 'getActionName', 'setActionName',
+                'getCookie', 'getDistroBaseUrl', 'getRequestUri', 'getScheme',
+                'setParams', 'getParams', 'isSecure', 'getPost'
+            ]
         );
+        $this->requestMock->method('setParam')->willReturnSelf();
+        $this->requestMock->method('getModuleName')->willReturn('catalog');
+        $this->requestMock->method('setModuleName')->willReturnSelf();
+        $this->requestMock->method('getActionName')->willReturn('edit');
+        $this->requestMock->method('setActionName')->willReturnSelf();
+        $this->requestMock->method('getCookie')->willReturn(null);
+        $this->requestMock->method('getDistroBaseUrl')->willReturn('');
+        $this->requestMock->method('getRequestUri')->willReturn('/');
+        $this->requestMock->method('getScheme')->willReturn('http');
+        $this->requestMock->method('setParams')->willReturnSelf();
+        $this->requestMock->method('getParams')->willReturn([]);
+        $this->requestMock->method('isSecure')->willReturn(false);
+        $this->requestMock->method('getPost')->willReturn(null);
+        $this->requestMock->method('getQuery')->willReturn(null);
+        $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
+        $this->eventManagerMock = $this->createMock(ManagerInterface::class);
         $this->messageManagerMock = $this->createMock(\Magento\Framework\Message\ManagerInterface::class);
         $this->titleMock = $this->createMock(Title::class);
-        $this->sessionMock = $this->createPartialMock(Session::class, ['__call']);
+        $this->sessionMock = $this->createPartialMockWithReflection(Session::class, ['__call', 'getCategoryData']);
+        $this->sessionMock->method('getCategoryData')->willReturn(null);
 
-        $this->contextMock->setMocks(
-            $this->requestMock,
-            $this->objectManagerMock,
-            $this->eventManagerMock,
-            $this->responseMock,
-            $this->messageManagerMock,
-            $this->resultRedirectFactoryMock,
-            $this->sessionMock,
-            $this->titleMock
-        );
+        $this->contextMock = $this->createPartialMockWithReflection(Context::class, [
+            'getRequest', 'getObjectManager', 'getEventManager', 'getMessageManager',
+            'getResultRedirectFactory', 'getTitle', 'getSession'
+        ]);
+        $this->contextMock->method('getRequest')->willReturn($this->requestMock);
+        $this->contextMock->method('getObjectManager')->willReturn($this->objectManagerMock);
+        $this->contextMock->method('getEventManager')->willReturn($this->eventManagerMock);
+        $this->contextMock->method('getMessageManager')->willReturn($this->messageManagerMock);
+        $this->contextMock->method('getResultRedirectFactory')->willReturn($this->resultRedirectFactoryMock);
+        $this->contextMock->method('getTitle')->willReturn($this->titleMock);
+        $this->contextMock->method('getSession')->willReturn($this->sessionMock);
 
         $this->edit = $this->objectManager->getObject(
             Edit::class,
@@ -235,22 +259,22 @@ class EditTest extends TestCase
         $rootCategoryId = 2;
 
         // Configure the request mock
-        $this->requestMock->setParamReturn($categoryId);
+        $this->requestMock->method('getParam')->willReturn($categoryId);
 
         $this->mockInitCategoryCall();
 
-        $this->sessionMock->expects($this->once())
+        $this->sessionMock->expects($this->any())
             ->method('__call')
             ->willReturn([]);
 
         // Create a store object
-        $storeObject = new StoreTestHelper();
-        $storeObject->setCode('default');
-        $storeObject->setRootCategoryId(2);
+        $storeObject = $this->createPartialMock(Store::class, ['getCode', 'getRootCategoryId']);
+        $storeObject->method('getCode')->willReturn('default');
+        $storeObject->method('getRootCategoryId')->willReturn(2);
         
         // Configure the store manager mock
-        $this->storeManagerInterfaceMock->setStoreReturn($storeObject);
-        $this->storeManagerInterfaceMock->setDefaultStoreViewReturn($storeObject);
+        $this->storeManagerInterfaceMock->method('getStore')->willReturn($storeObject);
+        $this->storeManagerInterfaceMock->method('getDefaultStoreView')->willReturn($storeObject);
 
         if (!$categoryId) {
             $categoryId = $rootCategoryId;

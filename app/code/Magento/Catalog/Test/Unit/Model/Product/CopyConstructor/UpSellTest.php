@@ -11,15 +11,15 @@ use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\CopyConstructor\UpSell;
 use Magento\Catalog\Model\Product\Link;
 use Magento\Catalog\Model\ResourceModel\Product\Link\Collection;
-use Magento\Catalog\Test\Unit\Helper\LinkTestHelper;
-use Magento\Catalog\Test\Unit\Helper\ProductLinkTestHelper;
-use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class UpSellTest extends TestCase
 {
+
+    use MockCreationTrait;
     /**
      * @var UpSell
      */
@@ -51,9 +51,15 @@ class UpSellTest extends TestCase
 
         $this->_productMock = $this->createMock(Product::class);
 
-        $this->_duplicateMock = new ProductTestHelper();
+        $this->_duplicateMock = $this->createPartialMockWithReflection(
+            Product::class,
+            ['setUpSellLinkData']
+        );
 
-        $this->_linkMock = new LinkTestHelper();
+        $this->_linkMock = $this->createPartialMockWithReflection(
+            Link::class,
+            ['setAttributes', 'getAttributes']
+        );
 
         $this->_productMock->method('getLinkInstance')->willReturn(
             $this->_linkMock
@@ -67,11 +73,30 @@ class UpSellTest extends TestCase
 
         $attributes = ['attributeOne' => ['code' => 'one'], 'attributeTwo' => ['code' => 'two']];
 
+        $this->_linkMock->method('setAttributes')->willReturnSelf();
+
+
+        $this->_linkMock->method('getAttributes')->willReturn($attributes);
+
+
         $this->_linkMock->setAttributes($attributes);
 
-        $productLinkMock = new ProductLinkTestHelper();
+        $productLinkMock = $this->createPartialMockWithReflection(
+            Link::class,
+            ['setLinkedProductId', 'getLinkedProductId', 'setArrayData', 'toArray']
+        );
+
+
+        $productLinkMock->method('setLinkedProductId')->willReturnSelf();
+
+
+        $productLinkMock->method('getLinkedProductId')->willReturn('100500');
+
+
+        $productLinkMock->method('toArray')->willReturn(['some' => 'data']);
+
+
         $productLinkMock->setLinkedProductId('100500');
-        $productLinkMock->setArrayData(['some' => 'data']);
 
         $collectionMock = $helper->getCollectionMock(
             Collection::class,
@@ -84,6 +109,9 @@ class UpSellTest extends TestCase
         )->willReturn(
             $collectionMock
         );
+
+        $this->_duplicateMock->method('setUpSellLinkData')->willReturnSelf();
+
 
         $this->_duplicateMock->setUpSellLinkData($expectedData);
 

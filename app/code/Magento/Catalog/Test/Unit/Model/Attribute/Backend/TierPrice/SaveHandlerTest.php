@@ -12,14 +12,15 @@ use Magento\Framework\DataObject;
 use Magento\Catalog\Api\Data\ProductAttributeInterface;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductAttributeRepositoryInterface;
+use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
+use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Attribute\Backend\TierPrice\SaveHandler;
 use Magento\Catalog\Model\ResourceModel\Product\Attribute\Backend\Tierprice;
-use Magento\Catalog\Test\Unit\Helper\ProductAttributeTestHelper;
-use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use Magento\Customer\Api\Data\GroupInterface;
 use Magento\Customer\Api\GroupManagementInterface;
 use Magento\Framework\EntityManager\EntityMetadataInterface;
 use Magento\Framework\EntityManager\MetadataPool;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
@@ -32,6 +33,7 @@ use PHPUnit\Framework\TestCase;
  */
 class SaveHandlerTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var ObjectManager
      */
@@ -76,14 +78,8 @@ class SaveHandlerTest extends TestCase
         $this->storeManager = $this->createMock(StoreManagerInterface::class);
         $this->attributeRepository = $this->createMock(ProductAttributeRepositoryInterface::class);
         $this->groupManagement = $this->createMock(GroupManagementInterface::class);
-        $this->metadataPoll = $this->getMockBuilder(MetadataPool::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getMetadata'])
-            ->getMock();
-        $this->tierPriceResource = $this->getMockBuilder(Tierprice::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['savePriceData', 'loadPriceData'])
-            ->getMock();
+        $this->metadataPoll = $this->createPartialMock(MetadataPool::class, ['getMetadata']);
+        $this->tierPriceResource = $this->createPartialMock(Tierprice::class, ['savePriceData', 'loadPriceData']);
 
         $this->saveHandler = $this->objectManager->getObject(
             SaveHandler::class,
@@ -110,18 +106,39 @@ class SaveHandlerTest extends TestCase
         $productId = 10;
 
         /** @var ProductInterface $product */
-        $product = new ProductTestHelper();
+        $product = $this->createPartialMockWithReflection(
+            Product::class,
+            ['setData', 'getData', 'setStoreId', 'getStoreId']
+        );
+        $productData = ['tier_price' => $tierPrices, 'entity_id' => $productId, 'tier_price_changed' => 1];
+        $product->method('setData')->willReturnCallback(function ($key, $value) use (&$productData) {
+            $productData[$key] = $value;
+            return $productData;
+        });
+        $product->method('getData')->willReturnCallback(function ($key = null) use (&$productData) {
+            return $key === null ? $productData : ($productData[$key] ?? null);
+        });
+        $product->method('setStoreId')->willReturnSelf();
+        $product->method('getStoreId')->willReturn(0);
+        
         $product->setData('tier_price', $tierPrices);
         $product->setData('entity_id', $productId);
         $product->setStoreId(0);
         $product->setData('tier_price_changed', 1);
+        
         $store = $this->createMock(StoreInterface::class);
         $store->expects($this->atLeastOnce())->method('getWebsiteId')->willReturn(0);
         $this->storeManager->expects($this->atLeastOnce())->method('getStore')->willReturn($store);
+        
         /** @var ProductAttributeInterface $attribute */
-        $attribute = new ProductAttributeTestHelper();
-        $attribute->setName('tier_price');
-        $attribute->setIsScopeGlobal(true);
+        $attribute = $this->createPartialMockWithReflection(
+            AbstractAttribute::class,
+            ['getIsScopeGlobal', 'isScopeGlobal', 'getName', '_construct']
+        );
+        $attribute->method('getIsScopeGlobal')->willReturn(true);
+        $attribute->method('isScopeGlobal')->willReturn(true);
+        $attribute->method('getName')->willReturn('tier_price');
+        
         $this->attributeRepository->expects($this->atLeastOnce())->method('get')->with('tier_price')
             ->willReturn($attribute);
         $productMetadata = $this->createMock(EntityMetadataInterface::class);
@@ -145,13 +162,29 @@ class SaveHandlerTest extends TestCase
     {
         $this->expectException('Magento\Framework\Exception\InputException');
         $this->expectExceptionMessage('Tier prices data should be array, but actually other type is received');
+        
         /** @var ProductAttributeInterface $attribute */
-        $attribute = new ProductAttributeTestHelper();
-        $attribute->setName('tier_price');
+        $attribute = $this->createPartialMockWithReflection(
+            AbstractAttribute::class,
+            ['getName', '_construct']
+        );
+        $attribute->method('getName')->willReturn('tier_price');
+        
         $this->attributeRepository->expects($this->atLeastOnce())->method('get')->with('tier_price')
             ->willReturn($attribute);
+        
         /** @var ProductInterface $product */
-        $product = new ProductTestHelper();
+        $product = $this->createPartialMockWithReflection(
+            Product::class,
+            ['setData', 'getData']
+        );
+        $productData = ['tier_price' => 1];
+        $product->method('setData')->willReturnCallback(function ($key, $value) use (&$productData) {
+            $productData[$key] = $value;
+        });
+        $product->method('getData')->willReturnCallback(function ($key = null) use (&$productData) {
+            return $key === null ? $productData : ($productData[$key] ?? null);
+        });
         $product->setData('tier_price', 1);
 
         $this->saveHandler->execute($product);
@@ -174,18 +207,39 @@ class SaveHandlerTest extends TestCase
         $linkField = 'entity_id';
 
         /** @var ProductInterface $product */
-        $product = new ProductTestHelper();
+        $product = $this->createPartialMockWithReflection(
+            Product::class,
+            ['setData', 'getData', 'setStoreId', 'getStoreId']
+        );
+        $productData = ['tier_price' => $tierPrices, 'entity_id' => $productId, 'tier_price_changed' => 1];
+        $product->method('setData')->willReturnCallback(function ($key, $value) use (&$productData) {
+            $productData[$key] = $value;
+            return $productData;
+        });
+        $product->method('getData')->willReturnCallback(function ($key = null) use (&$productData) {
+            return $key === null ? $productData : ($productData[$key] ?? null);
+        });
+        $product->method('setStoreId')->willReturnSelf();
+        $product->method('getStoreId')->willReturn(0);
+        
         $product->setData('tier_price', $tierPrices);
         $product->setData('entity_id', $productId);
         $product->setStoreId(0);
         $product->setData('tier_price_changed', 1);
+        
         $store = $this->createMock(StoreInterface::class);
         $store->expects($this->atLeastOnce())->method('getWebsiteId')->willReturn(1);
         $this->storeManager->expects($this->atLeastOnce())->method('getStore')->willReturn($store);
+        
         /** @var ProductAttributeInterface $attribute */
-        $attribute = new ProductAttributeTestHelper();
-        $attribute->setName('tier_price');
-        $attribute->setIsScopeGlobal(false);
+        $attribute = $this->createPartialMockWithReflection(
+            AbstractAttribute::class,
+            ['getIsScopeGlobal', 'isScopeGlobal', 'getName', '_construct']
+        );
+        $attribute->method('getIsScopeGlobal')->willReturn(false);
+        $attribute->method('isScopeGlobal')->willReturn(false);
+        $attribute->method('getName')->willReturn('tier_price');
+        
         $this->attributeRepository->expects($this->atLeastOnce())->method('get')->with('tier_price')
             ->willReturn($attribute);
         $productMetadata = $this->createMock(EntityMetadataInterface::class);

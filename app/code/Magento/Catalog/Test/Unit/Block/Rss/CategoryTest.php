@@ -15,9 +15,9 @@ use Magento\Catalog\Model\CategoryFactory;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ResourceModel\Category\Collection;
 use Magento\Catalog\Model\ResourceModel\Category\Tree;
-use Magento\Catalog\Test\Unit\Helper\TreeTestHelper;
 use Magento\Customer\Model\Session;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\App\Http\Context;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\Rss\UrlBuilderInterface;
@@ -37,6 +37,7 @@ use PHPUnit\Framework\TestCase;
  */
 class CategoryTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var Category
      */
@@ -138,10 +139,7 @@ class CategoryTest extends TestCase
 
         $this->httpContext = $this->createMock(Context::class);
         $this->catalogHelper = $this->createMock(Data::class);
-        $this->categoryFactory = $this->getMockBuilder(CategoryFactory::class)
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->categoryFactory = $this->createPartialMock(CategoryFactory::class, ['create']);
         $this->rssModel = $this->createPartialMock(
             \Magento\Catalog\Model\Rss\Category::class,
             ['getProductCollection']
@@ -151,16 +149,13 @@ class CategoryTest extends TestCase
         $this->customerSession = $this->createPartialMock(Session::class, ['getId']);
         $this->customerSession->method('getId')->willReturn(1);
         $this->storeManager = $this->createMock(StoreManagerInterface::class);
-        $store = $this->getMockBuilder(Store::class)
-            ->onlyMethods(['getId'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $store = $this->createPartialMock(Store::class, ['getId', 'getRootCategoryId']);
         $store->method('getId')->willReturn(1);
+        $store->method('getRootCategoryId')->willReturn(1);
         $this->storeManager->method('getStore')->willReturn($store);
         $this->scopeConfig = $this->createMock(ScopeConfigInterface::class);
         $this->categoryRepository = $this->createMock(CategoryRepositoryInterface::class);
-        $this->viewConfig = $this->getMockBuilder(ConfigInterface::class)
-            ->getMock();
+        $this->viewConfig = $this->createMock(ConfigInterface::class);
         $objectManagerHelper = new ObjectManagerHelper($this);
         $this->block = $objectManagerHelper->getObject(
             Category::class,
@@ -186,19 +181,17 @@ class CategoryTest extends TestCase
      */
     public function testGetRssData(): void
     {
-        $category = $this->getMockBuilder(\Magento\Catalog\Model\Category::class)
-            ->onlyMethods(['__sleep', 'load', 'getId', 'getUrl', 'getName'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $category = $this->createPartialMock(
+            \Magento\Catalog\Model\Category::class,
+            ['__sleep', 'load', 'getId', 'getUrl', 'getName']
+        );
         $category->expects($this->once())->method('getName')->willReturn('Category Name');
         $category->expects($this->once())->method('getUrl')
             ->willReturn('http://magento.com/category-name.html');
 
         $this->categoryRepository->expects($this->once())->method('get')->willReturn($category);
 
-        $configViewMock = $this->getMockBuilder(View::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $configViewMock = $this->createMock(View::class);
 
         $this->viewConfig->expects($this->once())
             ->method('getViewConfig')
@@ -266,14 +259,14 @@ class CategoryTest extends TestCase
             ->with('rss/catalog/category', ScopeInterface::SCOPE_STORE)
             ->willReturn(true);
 
-        $category = $this->getMockBuilder(\Magento\Catalog\Model\Category::class)
-            ->onlyMethods(['__sleep', 'getTreeModel', 'getResourceCollection', 'getId', 'getName'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $category = $this->createPartialMock(
+            \Magento\Catalog\Model\Category::class,
+            ['__sleep', 'getTreeModel', 'getResourceCollection', 'getId', 'getName']
+        );
 
-        $collection = $this->getMockBuilder(Collection::class)
-            ->onlyMethods(
-                [
+        $collection = $this->createPartialMock(
+            Collection::class,
+            [
                     'addIdFilter',
                     'addAttributeToSelect',
                     'addAttributeToSort',
@@ -281,9 +274,7 @@ class CategoryTest extends TestCase
                     'addAttributeToFilter',
                     'getIterator'
                 ]
-            )
-            ->disableOriginalConstructor()
-            ->getMock();
+        );
         $collection->expects($this->once())->method('addIdFilter')->willReturnSelf();
         $collection->expects($this->exactly(3))->method('addAttributeToSelect')->willReturnSelf();
         $collection->expects($this->once())->method('addAttributeToSort')->willReturnSelf();
@@ -296,15 +287,14 @@ class CategoryTest extends TestCase
         $category->expects($this->once())->method('getResourceCollection')->willReturn($collection);
         $this->categoryFactory->expects($this->once())->method('create')->willReturn($category);
 
-        $node = new DataObject(['id' => 1]);
-        $nodes = $this->getMockBuilder(Node::class)
-            ->onlyMethods(['getChildren'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $nodes->expects($this->once())->method('getChildren')->willReturn([$node]);
+        $childNode = new DataObject(['id' => 1]);
+        
+        $treeNode = $this->createPartialMock(Node::class, ['loadChildren', 'getChildren']);
+        $treeNode->expects($this->once())->method('loadChildren')->willReturnSelf();
+        $treeNode->expects($this->once())->method('getChildren')->willReturn([$childNode]);
 
-        $tree = new TreeTestHelper();
-        $tree->setNodes($nodes);
+        $tree = $this->createPartialMock(Tree::class, ['loadNode']);
+        $tree->expects($this->once())->method('loadNode')->willReturn($treeNode);
 
         $category->expects($this->once())->method('getTreeModel')->willReturn($tree);
 

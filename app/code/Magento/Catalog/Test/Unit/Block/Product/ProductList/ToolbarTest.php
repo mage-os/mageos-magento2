@@ -12,8 +12,8 @@ use Magento\Catalog\Block\Product\ProductList\Toolbar;
 use Magento\Catalog\Helper\Product\ProductList;
 use Magento\Catalog\Model\Config;
 use Magento\Catalog\Model\Product\ProductList\ToolbarMemorizer;
-use Magento\Catalog\Test\Unit\Helper\PagerTestHelper;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\Url;
 use Magento\Framework\Url\EncoderInterface;
@@ -28,6 +28,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ToolbarTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var Toolbar
      */
@@ -98,7 +99,19 @@ class ToolbarTest extends TestCase
             ]
         );
         $this->layout = $this->createPartialMock(Layout::class, ['getChildName', 'getBlock']);
-        $this->pagerBlock = new PagerTestHelper();
+        $this->pagerBlock = $this->createPartialMockWithReflection(
+            Pager::class,
+            ['setShowPerPage', 'setShowAmounts', 'setLimit', 'setCollection',
+             'setAvailableLimit', 'setUseContainer', 'setFrameLength', 'toHtml']
+        );
+        $this->pagerBlock->method('setShowPerPage')->willReturnSelf();
+        $this->pagerBlock->method('setShowAmounts')->willReturnSelf();
+        $this->pagerBlock->method('setLimit')->willReturnSelf();
+        $this->pagerBlock->method('setCollection')->willReturnSelf();
+        $this->pagerBlock->method('setAvailableLimit')->willReturnSelf();
+        $this->pagerBlock->method('setUseContainer')->willReturnSelf();
+        $this->pagerBlock->method('setFrameLength')->willReturnSelf();
+        $this->pagerBlock->method('toHtml')->willReturn(true);
         $this->urlBuilder = $this->createPartialMock(Url::class, ['getUrl']);
         $this->scopeConfig = $this->createMock(ScopeConfigInterface::class);
 
@@ -283,10 +296,13 @@ class ToolbarTest extends TestCase
         $this->productListHelper->expects($this->exactly(2))
             ->method('getAvailableLimit')
             ->willReturn([10 => 10, 20 => 20]);
+        $this->productListHelper->method('getAvailableViewMode')->willReturn(['list' => 'List']);
+        $this->memorizer->expects($this->once())
+            ->method('getMode')
+            ->willReturn('list');
         $this->memorizer->expects($this->once())
             ->method('getLimit')
             ->willReturn($limit);
-        // The anonymous class methods already return $this for chaining and toHtml() returns true
 
         $this->assertTrue($this->block->getPagerHtml());
     }

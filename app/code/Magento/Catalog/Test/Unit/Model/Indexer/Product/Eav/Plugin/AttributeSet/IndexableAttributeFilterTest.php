@@ -21,10 +21,7 @@ class IndexableAttributeFilterTest extends TestCase
      */
     public function testFilter(): void
     {
-        $catalogResourceMock = $this->getMockBuilder(Attribute::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['load', 'isIndexable'])
-            ->getMock();
+        $catalogResourceMock = $this->createPartialMock(Attribute::class, ['load', 'isIndexable']);
         $catalogResourceMock->expects($this->any())
             ->method('load')
             ->willReturnSelf();
@@ -32,27 +29,18 @@ class IndexableAttributeFilterTest extends TestCase
             ->method('isIndexable')
             ->willReturnOnConsecutiveCalls(true, false);
 
-        $eavAttributeFactoryMock = $this->getMockBuilder(AttributeFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
+        $eavAttributeFactoryMock = $this->createPartialMock(AttributeFactory::class, ['create']);
         $eavAttributeFactoryMock->expects($this->once())
             ->method('create')
             ->willReturn($catalogResourceMock);
 
-        $attributeMock1 = $this->getMockBuilder(\Magento\Eav\Model\Entity\Attribute::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getId', 'getAttributeId', 'getAttributeCode', 'load'])
-            ->getMock();
+        $attributeMock1 = $this->createPartialMock(\Magento\Eav\Model\Entity\Attribute::class, ['getId', 'getAttributeId', 'getAttributeCode', 'load']);
         $attributeMock1->method('getAttributeCode')->willReturn('indexable_attribute');
         $attributeMock1->expects($this->any())
             ->method('load')
             ->willReturnSelf();
 
-        $attributeMock2 = $this->getMockBuilder(\Magento\Eav\Model\Entity\Attribute::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getId', 'getAttributeId', 'getAttributeCode', 'load'])
-            ->getMock();
+        $attributeMock2 = $this->createPartialMock(\Magento\Eav\Model\Entity\Attribute::class, ['getId', 'getAttributeId', 'getAttributeCode', 'load']);
         $attributeMock2->method('getAttributeCode')->willReturn('non_indexable_attribute');
         $attributeMock2->expects($this->any())
             ->method('load')

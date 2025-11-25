@@ -8,9 +8,10 @@ declare(strict_types=1);
 namespace Magento\Catalog\Test\Unit\Ui\DataProvider\Product\Form\Modifier;
 
 use Magento\Catalog\Api\Data\ProductInterface;
-use Magento\Catalog\Test\Unit\Helper\LocatorTestHelper;
-use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
+use Magento\Catalog\Model\Locator\LocatorInterface;
+use Magento\Catalog\Model\Product;
 use Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\Websites;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Store\Api\GroupRepositoryInterface;
 use Magento\Store\Api\StoreRepositoryInterface;
 use Magento\Store\Api\WebsiteRepositoryInterface;
@@ -19,7 +20,6 @@ use Magento\Store\Model\ResourceModel\Group\Collection;
 use Magento\Store\Model\Store as StoreView;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Store\Model\Website;
-use Magento\Store\Test\Unit\Helper\GroupCollectionTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 
 /**
@@ -27,6 +27,8 @@ use PHPUnit\Framework\MockObject\MockObject;
  */
 class WebsitesTest extends AbstractModifierTestCase
 {
+    use MockCreationTrait;
+
     public const PRODUCT_ID = 1;
     public const WEBSITE_ID = 1;
     public const GROUP_ID = 1;
@@ -107,16 +109,20 @@ class WebsitesTest extends AbstractModifierTestCase
         $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
         $this->storeManagerMock->method('isSingleStoreMode')->willReturn(false);
         
-        // PHPUnit 12 compatible: Replace addMethods with anonymous class
-        $this->groupMock = new GroupCollectionTestHelper();
+        $this->groupMock = $this->createPartialMockWithReflection(
+            Group::class,
+            ['setWebsiteId', 'getWebsiteId', 'setId', 'getId']
+        );
         
-        $this->groupMock->setWebsiteId(self::WEBSITE_ID);
-        $this->groupMock->setId(self::GROUP_ID);
+        $this->groupMock->method('setWebsiteId')->willReturnSelf();
+        $this->groupMock->method('getWebsiteId')->willReturn(self::WEBSITE_ID);
+        $this->groupMock->method('setId')->willReturnSelf();
+        $this->groupMock->method('getId')->willReturn(self::GROUP_ID);
         $this->groupRepositoryMock->method('getList')->willReturn([$this->groupMock]);
-        $this->storeViewMock = $this->getMockBuilder(StoreView::class)
-            ->onlyMethods(['getName', 'getId', 'getStoreGroupId'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->storeViewMock = $this->createPartialMock(
+            StoreView::class,
+            ['getName', 'getId', 'getStoreGroupId']
+        );
         $this->storeViewMock->method('getName')->willReturn(self::STORE_VIEW_NAME);
         $this->storeViewMock->method('getStoreGroupId')->willReturn(self::GROUP_ID);
         $this->storeViewMock->method('getId')->willReturn(self::STORE_VIEW_ID);
@@ -124,12 +130,61 @@ class WebsitesTest extends AbstractModifierTestCase
         $this->secondWebsiteMock->method('getId')->willReturn($this->assignedWebsites[0]);
         $this->websiteMock->method('getId')->willReturn(self::WEBSITE_ID);
         
-        // Override parent mocks with test helpers
-        /** @var \Magento\Catalog\Api\Data\ProductInterface $productMock */
-        $this->productMock = new ProductTestHelper();
+        $productData = ['id' => $this->productId];
         
-        /** @var \Magento\Catalog\Model\Locator\LocatorInterface $locatorMock */
-        $this->locatorMock = new LocatorTestHelper();
+        $this->productMock = $this->createPartialMockWithReflection(
+            Product::class,
+            ['setId', 'getId']
+        );
+        
+        $this->productMock->method('setId')->willReturnCallback(
+            function ($id) use (&$productData) {
+                $productData['id'] = $id;
+            }
+        );
+        
+        $this->productMock->method('getId')->willReturnCallback(
+            function () use (&$productData) {
+                return $productData['id'];
+            }
+        );
+        
+        $locatorData = [
+            'websiteIds' => $this->assignedWebsites,
+            'product' => null
+        ];
+        
+        $this->locatorMock = $this->createPartialMockWithReflection(
+            LocatorInterface::class,
+            ['setWebsiteIds', 'setProduct', 'getProduct', 'getStore', 'getWebsiteIds', 'getBaseCurrencyCode']
+        );
+        
+        $this->locatorMock->method('setWebsiteIds')->willReturnCallback(
+            function ($websiteIds) use (&$locatorData) {
+                $locatorData['websiteIds'] = $websiteIds;
+            }
+        );
+        
+        $this->locatorMock->method('setProduct')->willReturnCallback(
+            function ($product) use (&$locatorData) {
+                $locatorData['product'] = $product;
+            }
+        );
+        
+        $this->locatorMock->method('getProduct')->willReturnCallback(
+            function () use (&$locatorData) {
+                return $locatorData['product'] ?? $this->productMock;
+            }
+        );
+        
+        $this->locatorMock->method('getWebsiteIds')->willReturnCallback(
+            function () use (&$locatorData) {
+                return $locatorData['websiteIds'];
+            }
+        );
+        
+        $this->locatorMock->method('getStore')->willReturn($this->storeMock);
+        $this->locatorMock->method('getBaseCurrencyCode')->willReturn('USD');
     }
 
     /**

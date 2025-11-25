@@ -18,9 +18,10 @@ use Magento\Catalog\Model\ResourceModel\Product\Price\BasePrice;
 use Magento\Catalog\Model\ResourceModel\Product\Price\BasePriceFactory;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Select;
+use Magento\Framework\EntityManager\EntityMetadata;
 use Magento\Framework\EntityManager\MetadataPool;
-use Magento\Framework\EntityManager\Test\Unit\Helper\MetadataPoolTestHelper;
 use Magento\Framework\Stdlib\DateTime\DateTime;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -29,6 +30,8 @@ use PHPUnit\Framework\TestCase;
  */
 class PricePersistenceTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Attribute|MockObject
      */
@@ -76,17 +79,19 @@ class PricePersistenceTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->attributeResource = $this->getMockBuilder(Attribute::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->attributeResource = $this->createMock(Attribute::class);
         $this->attributeRepository = $this->createMock(ProductAttributeRepositoryInterface::class);
         $this->productIdLocator = $this->createMock(ProductIdLocatorInterface::class);
-        $this->metadataPool = new MetadataPoolTestHelper();
+        
+        $metadata = $this->createMock(EntityMetadata::class);
+        $metadata->method('getLinkField')->willReturn('row_id');
+        
+        $this->metadataPool = $this->createMock(MetadataPool::class);
+        $this->metadataPool->method('getMetadata')->willReturn($metadata);
+        
         $this->connection = $this->createMock(AdapterInterface::class);
         $this->productAttribute = $this->createMock(ProductAttributeInterface::class);
-        $this->basePriceFactory = $this->getMockBuilder(BasePriceFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->basePriceFactory = $this->createMock(BasePriceFactory::class);
 
         $dateTime = $this->createMock(DateTime::class);
 
@@ -118,9 +123,7 @@ class PricePersistenceTest extends TestCase
                 2 => Type::TYPE_VIRTUAL
             ]
         ];
-        $select = $this->getMockBuilder(Select::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $select = $this->createMock(Select::class);
         $this->productIdLocator
             ->expects($this->once())
             ->method('retrieveProductIdsBySkus')->with($skus)
@@ -145,7 +148,6 @@ class PricePersistenceTest extends TestCase
                     return $select;
                 }
             });
-        $this->metadataPool->setLinkField('row_id');
         $this->model->get($skus);
     }
 
@@ -249,7 +251,6 @@ class PricePersistenceTest extends TestCase
             )
             ->willReturnSelf();
         $this->connection->expects($this->once())->method('commit')->willReturnSelf();
-        $this->metadataPool->setLinkField('row_id');
         $this->model->delete($skus);
     }
 
@@ -297,7 +298,6 @@ class PricePersistenceTest extends TestCase
             ->willReturnSelf();
         $this->connection->expects($this->once())->method('commit')->willThrowException(new \Exception());
         $this->connection->expects($this->once())->method('rollBack')->willReturnSelf();
-        $this->metadataPool->setLinkField('row_id');
         $this->model->delete($skus);
     }
 

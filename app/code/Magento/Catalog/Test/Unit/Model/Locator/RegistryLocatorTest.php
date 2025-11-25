@@ -45,9 +45,7 @@ class RegistryLocatorTest extends TestCase
     protected function setUp(): void
     {
         $this->objectManager = new ObjectManager($this);
-        $this->registryMock = $this->getMockBuilder(Registry::class)
-            ->onlyMethods(['registry'])
-            ->getMock();
+        $this->registryMock = $this->createPartialMock(Registry::class, ['registry']);
         $this->productMock = $this->createMock(ProductInterface::class);
         $this->storeMock = $this->createMock(StoreInterface::class);
 

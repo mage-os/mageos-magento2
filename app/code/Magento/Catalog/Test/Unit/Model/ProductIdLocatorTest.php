@@ -8,12 +8,13 @@ declare(strict_types=1);
 namespace Magento\Catalog\Test\Unit\Model;
 
 use Magento\Catalog\Api\Data\ProductInterface;
+use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ProductIdLocator;
 use Magento\Catalog\Model\ResourceModel\Product\Collection;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
-use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use Magento\Framework\EntityManager\EntityMetadataInterface;
 use Magento\Framework\EntityManager\MetadataPool;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -22,6 +23,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ProductIdLocatorTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var int
      */
@@ -48,10 +50,7 @@ class ProductIdLocatorTest extends TestCase
     protected function setUp(): void
     {
         $metadataPool = $this->createMock(MetadataPool::class);
-        $collectionFactory = $this->getMockBuilder(CollectionFactory::class)
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $collectionFactory = $this->createPartialMock(CollectionFactory::class, ['create']);
         $this->idsLimit = 4;
 
         $this->linkField = 'entity_id';
@@ -73,10 +72,21 @@ class ProductIdLocatorTest extends TestCase
     {
         $skus = ['sku_1', 'sku_2'];
 
-        $product = new ProductTestHelper();
-        $product->setSku('sku_1');
+        $product = $this->createPartialMockWithReflection(
+            Product::class,
+            ['getSku', 'setData', 'getData', 'getTypeId']
+        );
+        $productData = [$this->linkField => 1];
+        $product->method('getSku')->willReturn('sku_1');
+        $product->method('setData')->willReturnCallback(function ($key, $value) use (&$productData) {
+            $productData[$key] = $value;
+        });
+        $product->method('getData')->willReturnCallback(function ($key) use (&$productData) {
+            return $productData[$key] ?? null;
+        });
+        $product->method('getTypeId')->willReturn('simple');
+        
         $product->setData($this->linkField, 1);
-        $product->setTypeId('simple');
 
         $this->collection->expects($this->once())
             ->method('addFieldToFilter')
@@ -110,10 +120,20 @@ class ProductIdLocatorTest extends TestCase
         $skus = ['111', '222', '333', '444', '555'];
         $products = [];
         foreach ($skus as $sku) {
-            $product = new ProductTestHelper();
-            $product->setSku($sku);
-            $product->setData($this->linkField, (int) $sku);
-            $product->setTypeId('simple');
+            $productData = [$this->linkField => (int) $sku];
+            $product = $this->createPartialMockWithReflection(
+                Product::class,
+                ['getSku', 'setData', 'getData', 'getTypeId']
+            );
+            $product->method('getSku')->willReturn($sku);
+            $product->method('getData')->willReturnCallback(function ($key = null) use ($productData) {
+                if ($key === null) {
+                    return $productData;
+                }
+                return $productData[$key] ?? null;
+            });
+            $product->method('getTypeId')->willReturn('simple');
+            
             $products[] = $product;
         }
 

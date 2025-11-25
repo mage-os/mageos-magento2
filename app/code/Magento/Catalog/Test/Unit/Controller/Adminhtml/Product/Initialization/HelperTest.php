@@ -126,35 +126,26 @@ class HelperTest extends TestCase
     protected function setUp(): void
     {
         $this->objectManager = new ObjectManager($this);
-        $this->productLinkFactoryMock = $this->getMockBuilder(ProductLinkInterfaceFactory::class)
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->productLinkFactoryMock = $this->createPartialMock(
+            ProductLinkInterfaceFactory::class,
+            ['create']
+        );
         $this->productRepositoryMock = $this->createMock(ProductRepository::class);
         $this->requestMock = $this->createMock(\Magento\Framework\App\Request\Http::class);
         $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
         $this->stockFilterMock = $this->createMock(StockDataFilter::class);
 
-        $this->productMock = $this->getMockBuilder(Product::class)
-            ->onlyMethods(
-                [
-                    'getId',
-                    'isLockedAttribute',
-                    'lockAttribute',
-                    'getAttributes',
-                    'unlockAttribute',
-                    'getSku',
-                ]
-            )
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->productMock = $this->createPartialMock(
+            Product::class,
+            ['getId', 'isLockedAttribute', 'lockAttribute', 'getAttributes', 'unlockAttribute', 'getSku']
+        );
         $productExtensionAttributes = $this->createMock(ProductExtensionInterface::class);
         $this->productMock->setExtensionAttributes($productExtensionAttributes);
 
-        $this->customOptionFactoryMock = $this->getMockBuilder(ProductCustomOptionInterfaceFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
+        $this->customOptionFactoryMock = $this->createPartialMock(
+            ProductCustomOptionInterfaceFactory::class,
+            ['create']
+        );
         $this->productLinksMock = $this->createMock(ProductLinks::class);
         $this->linkTypeProviderMock = $this->createMock(LinkTypeProvider::class);
 
@@ -163,10 +154,10 @@ class HelperTest extends TestCase
 
         $this->dateTimeFilterMock = $this->createMock(DateTime::class);
 
-        $categoryLinkFactoryMock = $this->getMockBuilder(CategoryLinkInterfaceFactory::class)
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $categoryLinkFactoryMock = $this->createPartialMock(
+            CategoryLinkInterfaceFactory::class,
+            ['create']
+        );
         $categoryLinkFactoryMock->method('create')
             ->willReturnCallback(function () {
                 return $this->createMock(CategoryLinkInterface::class);
@@ -288,10 +279,7 @@ class HelperTest extends TestCase
         $this->productMock->expects($this->once())->method('lockAttribute')->with('media');
         $this->productMock->method('getSku')->willReturn('sku');
 
-        $customOptionMock = $this->getMockBuilder(Option::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([])
-            ->getMock();
+        $customOptionMock = $this->createPartialMock(Option::class, []);
         $firstExpectedCustomOption = clone $customOptionMock;
         $firstExpectedCustomOption->setData($optionsData['option2']);
         $secondExpectedCustomOption = clone $customOptionMock;
@@ -310,8 +298,7 @@ class HelperTest extends TestCase
                     ],
                 ]
             );
-        $website = $this->getMockBuilder(WebsiteInterface::class)
-            ->getMock();
+        $website = $this->createMock(WebsiteInterface::class);
         $website->method('getId')->willReturn(1);
         $this->storeManagerMock->expects($this->once())->method('isSingleStoreMode')->willReturn($isSingleStore);
         $this->storeManagerMock->method('getWebsite')->willReturn($website);
@@ -325,10 +312,7 @@ class HelperTest extends TestCase
             ->method('create')
             ->willReturnCallback(
                 function () {
-                    return $this->getMockBuilder(ProductLink::class)
-                        ->onlyMethods([])
-                        ->disableOriginalConstructor()
-                        ->getMock();
+                    return $this->createPartialMock(ProductLink::class, []);
                 }
             );
 
@@ -781,9 +765,7 @@ class HelperTest extends TestCase
 
         foreach ($links as $linkType) {
             foreach ($linkType as $link) {
-                $mockLinkedProduct = $this->getMockBuilder(Product::class)
-                    ->disableOriginalConstructor()
-                    ->getMock();
+                $mockLinkedProduct = $this->createMock(Product::class);
 
                 $mockLinkedProduct->method('getId')->willReturn($link['id']);
 

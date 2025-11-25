@@ -37,9 +37,7 @@ class CatalogCategoryAndProductResolverOnSingleStoreModeTest extends TestCase
     protected function setUp(): void
     {
         $this->resourceConnectionMock = $this->createMock(ResourceConnection::class);
-        $this->metadataPoolMock = $this->getMockBuilder(MetadataPool::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->metadataPoolMock = $this->createMock(MetadataPool::class);
         $this->model = new Resolver(
             $this->resourceConnectionMock,
             $this->metadataPoolMock

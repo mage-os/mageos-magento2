@@ -77,31 +77,17 @@ class AbstractCategoryTest extends TestCase
 
         $this->contextMock = $this->createMock(Context::class);
 
-        $this->requestMock = $this->getMockBuilder(
-            RequestInterface::class
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->requestMock = $this->createMock(RequestInterface::class);
 
         $this->contextMock->method('getRequest')->willReturn($this->requestMock);
 
-        $this->urlBuilderMock = $this->getMockBuilder(
-            UrlInterface::class
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->urlBuilderMock = $this->createMock(UrlInterface::class);
 
-        $this->storeManagerMock = $this->getMockBuilder(
-            StoreManagerInterface::class
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
 
         $this->contextMock->method('getStoreManager')->willReturn($this->storeManagerMock);
 
-        $this->storeMock = $this->getMockBuilder(Store::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->storeMock = $this->createMock(Store::class);
 
         $this->contextMock->method('getUrlBuilder')->willReturn($this->urlBuilderMock);
 

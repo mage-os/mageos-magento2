@@ -67,16 +67,9 @@ class RepositoryTest extends TestCase
         $this->optionMock = $this->createMock(\Magento\Catalog\Model\Product\Option::class);
         $this->productMock = $this->createMock(Product::class);
         $optionFactory = $this->createPartialMock(OptionFactory::class, ['create']);
-        $this->optionCollectionFactory = $this->getMockBuilder(CollectionFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
-        $metadataPool = $this->getMockBuilder(MetadataPool::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $metadata = $this->getMockBuilder(EntityMetadata::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->optionCollectionFactory = $this->createPartialMock(CollectionFactory::class, ['create']);
+        $metadataPool = $this->createMock(MetadataPool::class);
+        $metadata = $this->createMock(EntityMetadata::class);
         $metadataPool->method('getMetadata')->willReturn($metadata);
 
         $this->optionRepository = new Repository(
@@ -267,9 +260,7 @@ class RepositoryTest extends TestCase
     {
         $productSku = 'simple_product';
         $optionId = 1;
-        $originalValue1 = $this->getMockBuilder(\Magento\Catalog\Model\Product\Option::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $originalValue1 = $this->createMock(\Magento\Catalog\Model\Product\Option::class);
         $originalValue2 = clone $originalValue1;
         $originalValue3 = clone $originalValue1;
 
@@ -297,9 +288,7 @@ class RepositoryTest extends TestCase
             ['option_type_id' => 4],
             ['option_type_id' => 5]
         ]);
-        $optionCollection = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $optionCollection = $this->createMock(Collection::class);
         $optionCollection->expects($this->once())->method('getProductOptions')->willReturn([$this->optionMock]);
         $this->optionCollectionFactory->expects($this->once())->method('create')->willReturn($optionCollection);
         $this->optionMock->expects($this->exactly(2))->method('getValues')->willReturn([
@@ -329,9 +318,7 @@ class RepositoryTest extends TestCase
             ['option_type_id' => 4],
             ['option_type_id' => 5]
         ]);
-        $optionCollection = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $optionCollection = $this->createMock(Collection::class);
         $optionCollection->expects($this->once())->method('getProductOptions')->willReturn([$this->optionMock]);
         $this->optionCollectionFactory->expects($this->once())->method('create')->willReturn($optionCollection);
         $this->optionMock->expects($this->exactly(2))->method('getValues')->willReturn(null);

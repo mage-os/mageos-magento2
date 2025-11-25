@@ -26,8 +26,9 @@ use Magento\Eav\Model\Validator\Attribute\Code as AttributeCodeValidator;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Controller\Result\Json as ResultJson;
 use Magento\Framework\Exception\NotFoundException;
-use Magento\Framework\Filter\Test\Unit\Helper\FilterManagerTestHelper;
+use Magento\Framework\Filter\FilterManager;
 use Magento\Framework\Serialize\Serializer\FormData;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\View\Element\Messages;
 use Magento\Framework\View\Layout;
 use Magento\Framework\View\LayoutFactory;
@@ -45,13 +46,14 @@ use Magento\Eav\Model\Entity\Attribute\Group as AttributeGroup;
  */
 class SaveTest extends AttributeTest
 {
+    use MockCreationTrait;
     /**
      * @var BuildFactory|MockObject
      */
     private $buildFactoryMock;
 
     /**
-     * @var FilterManagerTestHelper|MockObject
+     * @var FilterManager|MockObject
      */
     private $filterManagerMock;
 
@@ -134,7 +136,7 @@ class SaveTest extends AttributeTest
     protected function setUp(): void
     {
         parent::setUp();
-        $this->filterManagerMock = $this->createMock(FilterManagerTestHelper::class);
+        $this->filterManagerMock = $this->createPartialMockWithReflection(FilterManager::class, ['stripTags']);
         $this->productHelperMock = $this->createMock(ProductHelper::class);
         $this->attributeSetMock = $this->createMock(AttributeSetInterface::class);
         $this->builderMock = $this->createMock(Build::class);
@@ -144,22 +146,10 @@ class SaveTest extends AttributeTest
         $this->presentationMock = $this->createMock(Presentation::class);
         $this->sessionMock = $this->createMock(Session::class);
         $this->layoutFactoryMock = $this->createMock(LayoutFactory::class);
-        $this->buildFactoryMock = $this->getMockBuilder(BuildFactory::class)
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->attributeFactoryMock = $this->getMockBuilder(AttributeFactory::class)
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->validatorFactoryMock = $this->getMockBuilder(ValidatorFactory::class)
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->groupCollectionFactoryMock = $this->getMockBuilder(CollectionFactory::class)
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->buildFactoryMock = $this->createPartialMock(BuildFactory::class, ['create']);
+        $this->attributeFactoryMock = $this->createPartialMock(AttributeFactory::class, ['create']);
+        $this->validatorFactoryMock = $this->createPartialMock(ValidatorFactory::class, ['create']);
+        $this->groupCollectionFactoryMock = $this->createPartialMock(CollectionFactory::class, ['create']);
         $this->redirectMock = $this->createMock(ResultRedirect::class);
         $this->jsonResultMock = $this->createMock(ResultJson::class);
         $this->productAttributeMock = $this->createMock(Attribute::class);
@@ -257,7 +247,7 @@ class SaveTest extends AttributeTest
         } catch (\RuntimeException $e) {
             $hadOriginal = false;
         }
-        $objectManagerMock = $this->getMockForAbstractClass(ObjectManagerInterface::class);
+        $objectManagerMock = $this->createMock(ObjectManagerInterface::class);
         $objectManagerMock->method('get')->willReturnCallback(function ($type) {
             if ($type === FormData::class) {
                 return $this->formDataSerializerMock;
@@ -472,9 +462,7 @@ class SaveTest extends AttributeTest
         $layoutMock
             ->method('initMessages')
             ->with();
-        $messageBlockMock = $this->getMockBuilder(Messages::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $messageBlockMock = $this->createMock(Messages::class);
         $layoutMock
             ->expects($this->once())
             ->method('getMessagesBlock')
@@ -563,13 +551,9 @@ class SaveTest extends AttributeTest
             ->willReturn(null);
 
         // Prepare Action->_objectManager to control generateCode formatting
-        $urlMock = $this->getMockBuilder(\Magento\Catalog\Model\Product\Url::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['formatUrlKey'])
-            ->getMock();
+        $urlMock = $this->createPartialMock(\Magento\Catalog\Model\Product\Url::class, ['formatUrlKey']);
         $urlMock->method('formatUrlKey')->with('My Label')->willReturn('my label');
-        $omInterface = $this->getMockBuilder(\Magento\Framework\ObjectManagerInterface::class)
-            ->getMockForAbstractClass();
+        $omInterface = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
         $omInterface->method('create')->with(\Magento\Catalog\Model\Product\Url::class)->willReturn($urlMock);
 
         $model = $this->getModel();
@@ -611,18 +595,15 @@ class SaveTest extends AttributeTest
         $this->requestMock->expects($this->once())->method('getPostValue')->willReturn($data);
 
         // Attribute model with load() and required getters
-        $attributeWithLoad = $this->getMockBuilder(\Magento\Catalog\Model\ResourceModel\Eav\Attribute::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['load','getId','getAttributeCode','getEntityTypeId'])
-            ->getMock();
+        $attributeWithLoad = $this->createPartialMock(
+            \Magento\Catalog\Model\ResourceModel\Eav\Attribute::class,
+            ['load','getId','getAttributeCode','getEntityTypeId']
+        );
         $attributeWithLoad->method('load')->willReturnSelf();
         $attributeWithLoad->method('getId')->willReturn(1);
         $attributeWithLoad->method('getAttributeCode')->willReturn('test_attribute_code');
         $attributeWithLoad->method('getEntityTypeId')->willReturn(999);
-        $localAttributeFactory = $this->getMockBuilder(AttributeFactory::class)
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $localAttributeFactory = $this->createPartialMock(AttributeFactory::class, ['create']);
         $localAttributeFactory->method('create')->willReturn($attributeWithLoad);
 
         $this->inputTypeValidatorMock->method('isValid')->with('text')->willReturn(true);
@@ -977,9 +958,9 @@ class SaveTest extends AttributeTest
 
     private function createAttributeFactoryForGroupCollectionTest()
     {
-        $attributeModel = $this->getMockBuilder(\Magento\Catalog\Model\ResourceModel\Eav\Attribute::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([
+        $attributeModel = $this->createPartialMock(
+            \Magento\Catalog\Model\ResourceModel\Eav\Attribute::class,
+            [
                 'getDefaultValueByInput',
                 'getBackendType',
                 'getFrontendClass',
@@ -988,7 +969,8 @@ class SaveTest extends AttributeTest
                 'setEntityTypeId',
                 'setIsUserDefined',
                 'getId'
-            ])->getMock();
+            ]
+        );
         $attributeModel->method('getDefaultValueByInput')->with('text')->willReturn(null);
         $attributeModel->method('addData')->willReturnSelf();
         $attributeModel->method('save')->willReturnSelf();
@@ -996,10 +978,7 @@ class SaveTest extends AttributeTest
         $attributeModel->method('setIsUserDefined')->willReturnSelf();
         $attributeModel->method('getId')->willReturn(null);
 
-        $localAttributeFactory = $this->getMockBuilder(AttributeFactory::class)
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $localAttributeFactory = $this->createPartialMock(AttributeFactory::class, ['create']);
         $localAttributeFactory->method('create')->willReturn($attributeModel);
 
         return $localAttributeFactory;
@@ -1007,19 +986,17 @@ class SaveTest extends AttributeTest
 
     private function prepareGroupCollectionFactoryForGroupCreation()
     {
-        $collectionMock = $this->getMockBuilder(AttributeGroupCollection::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([
+        $collectionMock = $this->createPartialMock(
+            AttributeGroupCollection::class,
+            [
                 'setAttributeSetFilter',
                 'addFieldToFilter',
                 'setPageSize',
                 'load',
                 'getFirstItem'
-            ])->getMock();
-        $groupMock = $this->getMockBuilder(AttributeGroup::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getId','save'])
-            ->getMock();
+            ]
+        );
+        $groupMock = $this->createPartialMock(AttributeGroup::class, ['getId','save']);
         $groupMock->expects($this->exactly(2))->method('getId')->willReturnOnConsecutiveCalls(null, 5);
         $groupMock->expects($this->once())->method('save')->willReturnSelf();
 

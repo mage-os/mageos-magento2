@@ -41,9 +41,7 @@ class AttributesTest extends AbstractModifierTestCase
         parent::setUp();
         $this->objectManager = new ObjectManager($this);
         $this->urlBuilderMock = $this->createMock(UrlInterface::class);
-        $this->registryMock = $this->getMockBuilder(Registry::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->registryMock = $this->createMock(Registry::class);
         $this->authorizationMock = $this->createMock(AuthorizationInterface::class);
     }
 

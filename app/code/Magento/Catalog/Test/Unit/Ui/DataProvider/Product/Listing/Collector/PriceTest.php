@@ -40,18 +40,12 @@ class PriceTest extends TestCase
     protected function setUp(): void
     {
         $this->priceCurrencyMock = $this->createMock(PriceCurrencyInterface::class);
-        $this->priceInfoFactory = $this->getMockBuilder(
-            PriceInfoInterfaceFactory::class
-        )
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->priceInfoFactory = $this->createPartialMock(
+            PriceInfoInterfaceFactory::class,
+            ['create']
+        );
 
-        $this->priceMock = $this->getMockBuilder(
-            PriceInfoInterface::class
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->priceMock = $this->createMock(PriceInfoInterface::class);
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->model = $this->objectManagerHelper->getObject(
             Price::class,
@@ -64,16 +58,12 @@ class PriceTest extends TestCase
 
     public function testGet()
     {
-        $product = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $product = $this->createMock(Product::class);
         $productRenderInfoDto = $this->createMock(ProductRenderInterface::class);
         $productRenderInfoDto->expects($this->exactly(2))
             ->method('getPriceInfo')
             ->willReturn([]);
-        $priceInfo = $this->getMockBuilder(Base::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $priceInfo = $this->createMock(Base::class);
         $this->priceInfoFactory->expects($this->once())
             ->method('create')
             ->willReturn($this->priceMock);
@@ -89,9 +79,7 @@ class PriceTest extends TestCase
         $this->priceMock->expects($this->once())
             ->method('setRegularPrice')
             ->with(10);
-        $price = $this->getMockBuilder(FinalPrice::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $price = $this->createMock(FinalPrice::class);
         $priceInfo->expects($this->atLeastOnce())
             ->method('getPrice')
             ->willReturn($price);

@@ -11,11 +11,11 @@ use Magento\Catalog\Api\Data\ProductCustomOptionInterface as ProductOption;
 use Magento\Catalog\Model\Plugin\QuoteItemProductOption as QuoteItemProductOptionPlugin;
 use Magento\Catalog\Model\Product;
 use Magento\Framework\DataObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Quote\Model\Quote\Item\AbstractItem as AbstractQuoteItem;
 use Magento\Quote\Model\Quote\Item\Option as QuoteItemOption;
 use Magento\Quote\Model\Quote\Item\ToOrderItem as QuoteToOrderItem;
-use Magento\Quote\Test\Unit\Helper\AbstractItemTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -24,6 +24,7 @@ use PHPUnit\Framework\TestCase;
  */
 class QuoteItemProductOptionTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var QuoteItemProductOptionPlugin
      */
@@ -56,14 +57,34 @@ class QuoteItemProductOptionTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->subjectMock = $this->getMockBuilder(QuoteToOrderItem::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->quoteItemMock = new AbstractItemTestHelper();
+        $this->subjectMock = $this->createMock(QuoteToOrderItem::class);
+        
+        $this->quoteItemMock = $this->createPartialMockWithReflection(
+            AbstractQuoteItem::class,
+            ['setOptions', 'getOptions', 'setProduct', 'getProduct', 'getQuote', 'getAddress', 'getOptionByCode']
+        );
+        $itemData = [];
+        $quoteItem = $this->quoteItemMock;
+        $this->quoteItemMock->method('setOptions')->willReturnCallback(function ($value) use (&$itemData, $quoteItem) {
+            $itemData['options'] = $value;
+            return $quoteItem;
+        });
+        $this->quoteItemMock->method('getOptions')->willReturnCallback(function () use (&$itemData) {
+            return $itemData['options'] ?? null;
+        });
+        $this->quoteItemMock->method('setProduct')->willReturnCallback(function ($value) use (&$itemData, $quoteItem) {
+            $itemData['product'] = $value;
+            return $quoteItem;
+        });
+        $this->quoteItemMock->method('getProduct')->willReturnCallback(function () use (&$itemData) {
+            return $itemData['product'] ?? null;
+        });
+        $this->quoteItemMock->method('getQuote')->willReturn(null);
+        $this->quoteItemMock->method('getAddress')->willReturn(null);
+        $this->quoteItemMock->method('getOptionByCode')->willReturn(null);
+        
         $this->quoteItemOptionMock = $this->createPartialMock(QuoteItemOption::class, []);
-        $this->productMock = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->productMock = $this->createMock(Product::class);
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->plugin = $this->objectManagerHelper->getObject(QuoteItemProductOptionPlugin::class);
@@ -78,11 +99,32 @@ class QuoteItemProductOptionTest extends TestCase
 
     public function testBeforeItemToOrderItemWithOptions()
     {
-        // Create two option mocks with different codes
-        $optionMock1 = $this->createPartialMock(QuoteItemOption::class, []);
+        $optionMock1 = $this->createPartialMockWithReflection(
+            QuoteItemOption::class,
+            ['setCode', 'getCode']
+        );
+        $code1 = null;
+        $optionMock1->method('setCode')->willReturnCallback(function ($value) use (&$code1, $optionMock1) {
+            $code1 = $value;
+            return $optionMock1;
+        });
+        $optionMock1->method('getCode')->willReturnCallback(function () use (&$code1) {
+            return $code1;
+        });
         $optionMock1->setCode('someText_8');
         
-        $optionMock2 = $this->createPartialMock(QuoteItemOption::class, []);
+        $optionMock2 = $this->createPartialMockWithReflection(
+            QuoteItemOption::class,
+            ['setCode', 'getCode']
+        );
+        $code2 = null;
+        $optionMock2->method('setCode')->willReturnCallback(function ($value) use (&$code2, $optionMock2) {
+            $code2 = $value;
+            return $optionMock2;
+        });
+        $optionMock2->method('getCode')->willReturnCallback(function () use (&$code2) {
+            return $code2;
+        });
         $optionMock2->setCode('not_int_text');
         
         $this->quoteItemMock->setOptions([$optionMock1, $optionMock2]);

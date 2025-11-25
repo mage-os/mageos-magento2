@@ -33,9 +33,7 @@ class AdditionalInfoTest extends TestCase
         $productRenderInfo->expects($this->once())
             ->method('setId')
             ->with(1);
-        $productMock = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $productMock = $this->createMock(Product::class);
         $productMock->expects($this->once())
             ->method('isSalable')
             ->willReturn(true);

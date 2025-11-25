@@ -68,10 +68,7 @@ class NotifyStockTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->rssModel = $this->getMockBuilder(\Magento\Catalog\Model\Rss\Product\NotifyStock::class)
-            ->onlyMethods(['getProductsCollection'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->rssModel = $this->createPartialMock(\Magento\Catalog\Model\Rss\Product\NotifyStock::class, ['getProductsCollection']);
         $this->rssUrlBuilder = $this->createMock(UrlBuilderInterface::class);
         $this->urlBuilder = $this->createMock(UrlInterface::class);
         $this->objectManagerHelper = new ObjectManagerHelper($this);
@@ -89,10 +86,7 @@ class NotifyStockTest extends TestCase
     {
         $this->rssUrlBuilder->expects($this->once())->method('getUrl')
             ->willReturn('http://magento.com/rss/feeds/index/type/notifystock');
-        $item = $this->getMockBuilder(Product::class)
-            ->onlyMethods(['__sleep', 'getId', 'getQty', 'getName'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $item = $this->createPartialMock(Product::class, ['__sleep', 'getId', 'getQty', 'getName']);
         $item->expects($this->once())->method('getId')->willReturn(1);
         $item->expects($this->once())->method('getQty')->willReturn(1);
         $item->method('getName')->willReturn('Low Stock Product');

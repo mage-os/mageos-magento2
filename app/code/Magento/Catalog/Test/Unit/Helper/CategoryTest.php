@@ -73,21 +73,11 @@ class CategoryTest extends TestCase
     protected function setUp(): void
     {
         $this->mockContext();
-        $this->categoryFactory = $this->getMockBuilder(CategoryFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->storeManager = $this->getMockBuilder(StoreManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->collectionFactory = $this->getMockBuilder(CollectionFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->categoryRepository = $this->getMockBuilder(CategoryRepositoryInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->escaper = $this->getMockBuilder(Escaper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->categoryFactory = $this->createMock(CategoryFactory::class);
+        $this->storeManager = $this->createMock(StoreManagerInterface::class);
+        $this->collectionFactory = $this->createMock(CollectionFactory::class);
+        $this->categoryRepository = $this->createMock(CategoryRepositoryInterface::class);
+        $this->escaper = $this->createMock(Escaper::class);
         $this->categoryHelper = new Category(
             $this->context,
             $this->categoryFactory,
@@ -147,12 +137,8 @@ class CategoryTest extends TestCase
      */
     private function mockContext(): void
     {
-        $this->requestMock = $this->getMockBuilder(RequestInterface::class)
-            ->getMock();
-        $this->context = $this->getMockBuilder(Context::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getRequest'])
-            ->getMock();
+        $this->requestMock = $this->createMock(RequestInterface::class);
+        $this->context = $this->createPartialMock(Context::class, ['getRequest']);
         $this->context->method('getRequest')->willReturn($this->requestMock);
     }
 }

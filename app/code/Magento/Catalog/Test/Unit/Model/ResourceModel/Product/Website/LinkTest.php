@@ -42,9 +42,7 @@ class LinkTest extends TestCase
         $this->resource = $this->createMock(ResourceConnection::class);
         $this->connection =
             $this->createMock(AdapterInterface::class);
-        $this->dbSelect = $this->getMockBuilder(Select::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->dbSelect = $this->createMock(Select::class);
         $this->connection->method('select')->willReturn($this->dbSelect);
         $this->resource->method('getConnection')->willReturn($this->connection);
         $this->resource->expects($this->atLeastOnce())

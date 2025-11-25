@@ -14,7 +14,6 @@ use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\ResourceModel\Category\Collection;
 use Magento\CatalogImportExport\Model\Import\Product\CategoryProcessor;
 use Magento\CatalogImportExport\Model\Import\Product\Type\AbstractType;
-use Magento\CatalogImportExport\Test\Unit\Helper\CategoryCollectionTestHelper;
 use Magento\Framework\Exception\AlreadyExistsException;
 
 use Magento\Store\Model\Store;
@@ -70,8 +69,27 @@ class CategoryProcessorTest extends TestCase
         $this->parentCategory->method('getName')->willReturn('Parent');
         $this->parentCategory->method('getPath')->willReturn(self::PARENT_CATEGORY_ID);
 
-        // Create collection mock that supports iteration
-        $categoryCollection = new CategoryCollectionTestHelper($this->parentCategory, $this->childCategory);
+        $categoryCollection = $this->createPartialMock(
+            Collection::class,
+            ['getIterator', 'addAttributeToSelect', 'addFieldToFilter', 'addIdFilter', 'getSize', 'count', 'getItemById']
+        );
+        $categoryCollection->method('getIterator')
+            ->willReturn(new \ArrayIterator([$this->parentCategory, $this->childCategory]));
+        $categoryCollection->method('addAttributeToSelect')->willReturnSelf();
+        $categoryCollection->method('addFieldToFilter')->willReturnSelf();
+        $categoryCollection->method('addIdFilter')->willReturnSelf();
+        $categoryCollection->method('getSize')->willReturn(2);
+        $categoryCollection->method('count')->willReturn(2);
+        $parentCategory = $this->parentCategory;
+        $childCategory = $this->childCategory;
+        $categoryCollection->method('getItemById')->willReturnCallback(function($id) use ($parentCategory, $childCategory) {
+            if ($id == self::PARENT_CATEGORY_ID) {
+                return $parentCategory;
+            } elseif ($id == self::CHILD_CATEGORY_ID) {
+                return $childCategory;
+            }
+            return null;
+        });
 
         $categoryColFactory = $this->createPartialMock(
             CollectionFactory::class,

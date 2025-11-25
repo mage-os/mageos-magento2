@@ -91,9 +91,7 @@ class TreeTest extends TestCase
             Factory::class
         );
 
-        $this->metadataPoolMock = $this->getMockBuilder(MetadataPool::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->metadataPoolMock = $this->createMock(MetadataPool::class);
 
         $this->_model = $objectHelper->getObject(
             Tree::class,
@@ -192,9 +190,7 @@ class TreeTest extends TestCase
         $storeManager = $this->createMock(StoreManagerInterface::class);
         $storeManager->method('getStore')->willReturn($store);
 
-        $categoryMetadataMock = $this->getMockBuilder(EntityMetadata::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $categoryMetadataMock = $this->createMock(EntityMetadata::class);
         $categoryMetadataMock->method('getLinkField')->willReturn('id');
         $this->metadataPoolMock
             ->expects($this->any())

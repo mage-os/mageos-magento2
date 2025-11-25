@@ -14,8 +14,8 @@ use Magento\Catalog\Model\Product\Option;
 use Magento\Catalog\Model\Product\Option\Type\DefaultType;
 use Magento\Catalog\Pricing\Price\ConfiguredOptions;
 use Magento\Catalog\Pricing\Price\ConfiguredPrice;
-use Magento\Catalog\Test\Unit\Helper\DefaultTypeTestHelper;
 use Magento\Framework\Pricing\Adjustment\Calculator;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\Pricing\Price\PriceInterface;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Framework\Pricing\PriceInfo\Base;
@@ -27,6 +27,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ConfiguredPriceTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var float
      */
@@ -74,14 +75,10 @@ class ConfiguredPriceTest extends TestCase
         $this->priceInfo = $this->createMock(Base::class);
         $this->priceInfo->method('getPrice')->willReturn($basePrice);
 
-        $this->product = $this->getMockBuilder(Product::class)
-            ->onlyMethods(['getPriceInfo', 'getOptionById', 'getResource'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->product = $this->createPartialMock(Product::class, ['getPriceInfo', 'getOptionById', 'getResource']);
         $this->product->expects($this->once())->method('getPriceInfo')->willReturn($this->priceInfo);
 
-        $this->item = $this->getMockBuilder(ItemInterface::class)
-            ->getMock();
+        $this->item = $this->createMock(ItemInterface::class);
         $this->item->method('getProduct')->willReturn($this->product);
 
         $this->calculator = $this->createMock(Calculator::class);
@@ -115,10 +112,7 @@ class ConfiguredPriceTest extends TestCase
         $this->item->expects($this->atLeastOnce())->method('getOptionByCode')->willReturnCallback(function ($code) use ($optionsList) {
             return $optionsList[$code];
         });
-        $configuredOptions = $this->getMockBuilder(ConfiguredOptions::class)
-                                ->disableOriginalConstructor()
-                                ->onlyMethods([])
-                                ->getMock();
+        $configuredOptions = new ConfiguredOptions(); // Use real class instead of mock
         $this->model = new ConfiguredPrice(
             $this->product,
             1,
@@ -151,7 +145,18 @@ class ConfiguredPriceTest extends TestCase
      */
     protected function createOptionTypeStub(Option $option)
     {
-        $optionType = new DefaultTypeTestHelper();
+        $optionType = $this->createPartialMockWithReflection(
+            DefaultType::class,
+            ['getValue', 'setValue', 'setOption', 'getOption', 'setConfigurationItem',
+             'setConfigurationItemOption', 'getOptionPrice']
+        );
+        $optionType->method('getValue')->willReturn(10.0);
+        $optionType->method('setValue')->willReturnSelf();
+        $optionType->method('setOption')->willReturnSelf();
+        $optionType->method('getOption')->willReturn($option);
+        $optionType->method('setConfigurationItem')->willReturnSelf();
+        $optionType->method('setConfigurationItemOption')->willReturnSelf();
+        $optionType->method('getOptionPrice')->willReturn(10.0);
         return $optionType;
     }
 }

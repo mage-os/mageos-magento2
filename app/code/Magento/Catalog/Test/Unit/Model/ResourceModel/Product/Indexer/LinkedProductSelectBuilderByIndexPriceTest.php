@@ -76,15 +76,9 @@ class LinkedProductSelectBuilderByIndexPriceTest extends TestCase
     protected function setUp(): void
     {
         $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
-        $this->resourceMock = $this->getMockBuilder(ResourceConnection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->customerSessionMock = $this->getMockBuilder(Session::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->metadataPoolMock = $this->getMockBuilder(MetadataPool::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->resourceMock = $this->createMock(ResourceConnection::class);
+        $this->customerSessionMock = $this->createMock(Session::class);
+        $this->metadataPoolMock = $this->createMock(MetadataPool::class);
         $this->baseSelectProcessorMock =
             $this->createMock(BaseSelectProcessorInterface::class);
 
@@ -116,9 +110,7 @@ class LinkedProductSelectBuilderByIndexPriceTest extends TestCase
         $storeId = 1;
         $metadata = $this->createMock(EntityMetadataInterface::class);
         $connection = $this->createMock(AdapterInterface::class);
-        $select = $this->getMockBuilder(Select::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $select = $this->createMock(Select::class);
         $storeMock = $this->createMock(StoreInterface::class);
         $this->storeManagerMock->expects($this->once())->method('getStore')->willReturn($storeMock);
         $this->customerSessionMock->expects($this->once())->method('getCustomerGroupId')->willReturn(1);

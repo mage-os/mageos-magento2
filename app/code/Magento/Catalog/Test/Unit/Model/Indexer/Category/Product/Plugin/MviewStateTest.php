@@ -42,10 +42,7 @@ class MviewStateTest extends TestCase
 
         $state->method('getStatus')->willReturn($stateStatus);
 
-        $relatedViewState = $this->getMockBuilder(
-            StateInterface::class
-        )->disableOriginalConstructor()
-            ->getMock();
+        $relatedViewState = $this->createMock(StateInterface::class);
 
         $relatedViewState->expects(
             $this->once()
@@ -80,10 +77,7 @@ class MviewStateTest extends TestCase
         )->willReturnSelf(
         );
 
-        $relatedViewChangelog = $this->getMockBuilder(
-            ChangelogInterface::class
-        )->disableOriginalConstructor()
-            ->getMock();
+        $relatedViewChangelog = $this->createMock(ChangelogInterface::class);
 
         $relatedViewChangelog->expects(
             $this->once()
@@ -127,10 +121,7 @@ class MviewStateTest extends TestCase
 
         $state->method('getStatus')->willReturn($stateStatus);
 
-        $relatedViewState = $this->getMockBuilder(
-            StateInterface::class
-        )->disableOriginalConstructor()
-            ->getMock();
+        $relatedViewState = $this->createMock(StateInterface::class);
 
         $relatedViewState->expects(
             $this->once()
@@ -158,10 +149,7 @@ class MviewStateTest extends TestCase
         )->willReturnSelf(
         );
 
-        $relatedViewChangelog = $this->getMockBuilder(
-            ChangelogInterface::class
-        )->disableOriginalConstructor()
-            ->getMock();
+        $relatedViewChangelog = $this->createMock(ChangelogInterface::class);
 
         $model = new MviewState(
             $relatedViewState,
@@ -200,10 +188,7 @@ class MviewStateTest extends TestCase
 
         $state->method('getStatus')->willReturn($stateStatus);
 
-        $relatedViewState = $this->getMockBuilder(
-            StateInterface::class
-        )->disableOriginalConstructor()
-            ->getMock();
+        $relatedViewState = $this->createMock(StateInterface::class);
 
         $relatedViewState->expects(
             $this->once()
@@ -224,10 +209,7 @@ class MviewStateTest extends TestCase
 
         $relatedViewState->expects($this->never())->method('setStatus');
 
-        $relatedViewChangelog = $this->getMockBuilder(
-            ChangelogInterface::class
-        )->disableOriginalConstructor()
-            ->getMock();
+        $relatedViewChangelog = $this->createMock(ChangelogInterface::class);
 
         $model = new MviewState(
             $relatedViewState,
@@ -259,10 +241,7 @@ class MviewStateTest extends TestCase
 
         $state->method('getStatus')->willReturn($stateStatus);
 
-        $relatedViewState = $this->getMockBuilder(
-            StateInterface::class
-        )->disableOriginalConstructor()
-            ->getMock();
+        $relatedViewState = $this->createMock(StateInterface::class);
 
         $relatedViewState->expects(
             $this->once()
@@ -283,10 +262,7 @@ class MviewStateTest extends TestCase
 
         $relatedViewState->expects($this->never())->method('setStatus');
 
-        $relatedViewChangelog = $this->getMockBuilder(
-            ChangelogInterface::class
-        )->disableOriginalConstructor()
-            ->getMock();
+        $relatedViewChangelog = $this->createMock(ChangelogInterface::class);
 
         $model = new MviewState(
             $relatedViewState,

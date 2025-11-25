@@ -67,44 +67,26 @@ class AttributesTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->attribute = $this
-            ->getMockBuilder(AbstractAttribute::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->attribute = $this->createMock(AbstractAttribute::class);
         $this->attribute
             ->method('getIsVisibleOnFront')->willReturn(true);
         $this->attribute
             ->method('getAttributeCode')->willReturn('phrase');
-        $this->frontendAttribute = $this
-            ->getMockBuilder(AbstractFrontend::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->frontendAttribute = $this->createMock(AbstractFrontend::class);
         $this->attribute
             ->method('getFrontendInput')->willReturn('phrase');
         $this->attribute
             ->method('getFrontend')->willReturn($this->frontendAttribute);
-        $this->product = $this
-            ->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->product = $this->createMock(Product::class);
         $this->product
             ->method('getAttributes')->willReturn([$this->attribute]);
         $this->product
             ->method('hasData')->willReturn(true);
-        $this->context = $this
-            ->getMockBuilder(Context::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->registry = $this
-            ->getMockBuilder(Registry::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->context = $this->createMock(Context::class);
+        $this->registry = $this->createMock(Registry::class);
         $this->registry
             ->method('registry')->willReturn($this->product);
-        $this->priceCurrencyInterface = $this
-            ->getMockBuilder(PriceCurrencyInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->priceCurrencyInterface = $this->createMock(PriceCurrencyInterface::class);
         $this->attributesBlock = new AttributesBlock(
             $this->context,
             $this->registry,

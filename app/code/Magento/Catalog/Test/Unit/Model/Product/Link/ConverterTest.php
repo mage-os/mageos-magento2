@@ -8,16 +8,16 @@ declare(strict_types=1);
 namespace Magento\Catalog\Test\Unit\Model\Product\Link;
 
 use Magento\Catalog\Api\Data\ProductLinkInterface;
+use Magento\Catalog\Api\Data\ProductLinkExtensionInterface;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Link\Converter;
 use Magento\Catalog\Model\Product\Type\AbstractType;
-use Magento\Catalog\Test\Unit\Helper\ProductLinkInterfaceTestHelper;
-use Magento\Framework\Api\ExtensionAttributesInterface;
-use Magento\Framework\Api\Test\Unit\Helper\ExtensionAttributesTestHelper;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class ConverterTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var Converter
      */
@@ -33,22 +33,83 @@ class ConverterTest extends TestCase
         $linkedProductSku = 'linkedProductSample';
         $linkedProductId = '2016';
         $linkType = 'associated';
-        /** @var ProductLinkInterface $linkMock */
-        $linkMock = new ProductLinkInterfaceTestHelper();
-        $basicData = [$linkMock];
-        $linkedProductMock = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $associatedProducts = [$linkedProductSku => $linkedProductMock];
         $info = [100, 300, 500];
         $infoFinal = [100, 300, 500, 'id' => $linkedProductId, 'qty' => 33];
         $linksAsArray = [$linkType => [$infoFinal]];
 
+        $linkData = [];
+        $linkMock = $this->createPartialMockWithReflection(
+            ProductLinkInterface::class,
+            ['setData', 'getData', 'setLinkType', 'getLinkType', 'setLinkedProductSku',
+             'getLinkedProductSku', 'setExtensionAttributes', 'getExtensionAttributes',
+             'getSku', 'setSku', 'getPosition', 'setPosition', 'getLinkedProductType',
+             'setLinkedProductType']
+        );
+        $linkMock->method('setData')->willReturnCallback(function ($data) use (&$linkData, $linkMock) {
+            $linkData['data'] = $data;
+            return $linkMock;
+        });
+        $linkMock->method('getData')->willReturnCallback(function () use (&$linkData) {
+            return $linkData['data'] ?? [];
+        });
+        $linkMock->method('setLinkType')->willReturnCallback(function ($type) use (&$linkData, $linkMock) {
+            $linkData['link_type'] = $type;
+            return $linkMock;
+        });
+        $linkMock->method('getLinkType')->willReturnCallback(function () use (&$linkData) {
+            return $linkData['link_type'] ?? null;
+        });
+        $linkMock->method('setLinkedProductSku')->willReturnCallback(function ($sku) use (&$linkData, $linkMock) {
+            $linkData['linked_product_sku'] = $sku;
+            return $linkMock;
+        });
+        $linkMock->method('getLinkedProductSku')->willReturnCallback(function () use (&$linkData) {
+            return $linkData['linked_product_sku'] ?? null;
+        });
+        $linkMock->method('setExtensionAttributes')->willReturnCallback(function ($attr) use (&$linkData, $linkMock) {
+            $linkData['extension_attributes'] = $attr;
+            return $linkMock;
+        });
+        $linkMock->method('getExtensionAttributes')->willReturnCallback(function () use (&$linkData) {
+            return $linkData['extension_attributes'] ?? null;
+        });
+        $linkMock->method('getSku')->willReturn(null);
+        $linkMock->method('setSku')->willReturnSelf();
+        $linkMock->method('getPosition')->willReturn(0);
+        $linkMock->method('setPosition')->willReturnSelf();
+        $linkMock->method('getLinkedProductType')->willReturn(null);
+        $linkMock->method('setLinkedProductType')->willReturnSelf();
+
+        $attrData = [];
+        $attributeMock = $this->createPartialMockWithReflection(
+            ProductLinkExtensionInterface::class,
+            ['setArrayData', 'getArrayData', '__toArray', 'getQty', 'setQty']
+        );
+        $attributeMock->method('setArrayData')->willReturnCallback(function ($data) use (&$attrData, $attributeMock) {
+            $attrData = $data;
+            return $attributeMock;
+        });
+        $attributeMock->method('getArrayData')->willReturnCallback(function () use (&$attrData) {
+            return $attrData;
+        });
+        $attributeMock->method('__toArray')->willReturnCallback(function () use (&$attrData) {
+            return $attrData;
+        });
+        $attributeMock->method('getQty')->willReturnCallback(function () use (&$attrData) {
+            return $attrData['qty'] ?? null;
+        });
+        $attributeMock->method('setQty')->willReturnCallback(function ($qty) use (&$attrData, $attributeMock) {
+            $attrData['qty'] = $qty;
+            return $attributeMock;
+        });
+
+        $basicData = [$linkMock];
+        $linkedProductMock = $this->createMock(Product::class);
+        $associatedProducts = [$linkedProductSku => $linkedProductMock];
+
         $typeMock = $this->createMock(AbstractType::class);
 
-        $productMock = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $productMock = $this->createMock(Product::class);
         $productMock->expects($this->once())
             ->method('getProductLinks')
             ->willReturn($basicData);
@@ -68,8 +129,6 @@ class ConverterTest extends TestCase
         $linkedProductMock->expects($this->once())
             ->method('getId')
             ->willReturn($linkedProductId);
-        /** @var ExtensionAttributesInterface $attributeMock */
-        $attributeMock = new ExtensionAttributesTestHelper();
         $linkMock->setExtensionAttributes($attributeMock);
         $attributeMock->setArrayData(['qty' => 33]);
 

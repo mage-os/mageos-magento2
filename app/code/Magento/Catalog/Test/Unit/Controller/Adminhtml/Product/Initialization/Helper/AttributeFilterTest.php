@@ -55,10 +55,7 @@ class AttributeFilterTest extends TestCase
         mixed $attributeList
     ): void {
         /** @var MockObject | Product $productMockMap */
-        $productMockMap = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getData', 'getAttributes'])
-            ->getMock();
+        $productMockMap = $this->createPartialMock(Product::class, ['getData', 'getAttributes']);
 
         if (!empty($initialProductData)) {
             $productMockMap->expects($this->any())->method('getData')->willReturnMap($initialProductData);
@@ -349,9 +346,7 @@ class AttributeFilterTest extends TestCase
         foreach ($useDefaults as $attributecode => $isDefault) {
             if ($isDefault === '1') {
                 /** @var Attribute | MockObject $attribute */
-                $attribute = $this->getMockBuilder(Attribute::class)
-                    ->disableOriginalConstructor()
-                    ->getMock();
+                $attribute = $this->createMock(Attribute::class);
                 $attribute->method('getBackendType')->willReturn('varchar');
 
                 $returnArray[$attributecode] = $attribute;

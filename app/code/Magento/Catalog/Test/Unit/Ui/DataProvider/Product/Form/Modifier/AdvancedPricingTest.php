@@ -83,21 +83,11 @@ class AdvancedPricingTest extends AbstractModifierTestCase
         $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
         $this->groupRepositoryMock = $this->createMock(GroupRepositoryInterface::class);
         $this->groupManagementMock = $this->createMock(GroupManagementInterface::class);
-        $this->searchCriteriaBuilderMock = $this->getMockBuilder(SearchCriteriaBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->moduleManagerMock = $this->getMockBuilder(ModuleManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->directoryHelperMock = $this->getMockBuilder(DirectoryHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->productResourceMock = $this->getMockBuilder(ProductResource::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->attributeMock = $this->getMockBuilder(Attribute::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->searchCriteriaBuilderMock = $this->createMock(SearchCriteriaBuilder::class);
+        $this->moduleManagerMock = $this->createMock(ModuleManager::class);
+        $this->directoryHelperMock = $this->createMock(DirectoryHelper::class);
+        $this->productResourceMock = $this->createMock(ProductResource::class);
+        $this->attributeMock = $this->createMock(Attribute::class);
         $this->customerGroupMock = $this->createMock(CustomerGroupInterface::class);
 
         $this->groupManagementMock->method('getAllCustomersGroup')->willReturn($this->customerGroupMock);

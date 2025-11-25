@@ -87,36 +87,16 @@ class ProductViewCounterTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->contextMock = $this->getMockBuilder(Context::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->productRepositoryMock = $this->getMockBuilder(ProductRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->productRenderCollectorCompositeMock = $this->getMockBuilder(ProductRenderCollectorComposite::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->productRenderFactoryMock = $this->getMockBuilder(ProductRenderFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->hydratorMock = $this->getMockBuilder(Hydrator::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->serializeMock = $this->getMockBuilder(SerializerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->urlMock = $this->getMockBuilder(Url::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->registryMock = $this->getMockBuilder(Registry::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->storeManagerMock = $this->getMockBuilder(StoreManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->scopeConfigMock = $this->getMockBuilder(ScopeConfigInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->contextMock = $this->createMock(Context::class);
+        $this->productRepositoryMock = $this->createMock(ProductRepository::class);
+        $this->productRenderCollectorCompositeMock = $this->createMock(ProductRenderCollectorComposite::class);
+        $this->productRenderFactoryMock = $this->createMock(ProductRenderFactory::class);
+        $this->hydratorMock = $this->createMock(Hydrator::class);
+        $this->serializeMock = $this->createMock(SerializerInterface::class);
+        $this->urlMock = $this->createMock(Url::class);
+        $this->registryMock = $this->createMock(Registry::class);
+        $this->storeManagerMock = $this->createMock(StoreManager::class);
+        $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
 
         $this->productViewCounter = new ProductViewCounter(
             $this->contextMock,
@@ -134,13 +114,9 @@ class ProductViewCounterTest extends TestCase
 
     public function testGetCurrentProductDataWithEmptyProduct()
     {
-        $productMock = $this->getMockBuilder(ProductInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $productMock = $this->createMock(ProductInterface::class);
 
-        $storeMock = $this->getMockBuilder(Store::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $storeMock = $this->createMock(Store::class);
 
         $this->registryMock->expects($this->once())
             ->method('registry')
@@ -168,12 +144,8 @@ class ProductViewCounterTest extends TestCase
         $productMock = $this->createPartialMock(Product::class, ['getId', 'isAvailable']);
         $productMock->method('getId')->willReturn(123);
         $productMock->method('isAvailable')->willReturn(true);
-        $productRendererMock = $this->getMockBuilder(ProductRenderInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $storeMock = $this->getMockBuilder(Store::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $productRendererMock = $this->createMock(ProductRenderInterface::class);
+        $storeMock = $this->createMock(Store::class);
         $this->registryMock->expects($this->once())
             ->method('registry')
             ->with('product')

@@ -36,10 +36,10 @@ class ResultTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->priceUpdateResultFactory = $this->getMockBuilder(PriceUpdateResultInterfaceFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
+        $this->priceUpdateResultFactory = $this->createPartialMock(
+            PriceUpdateResultInterfaceFactory::class,
+            ['create']
+        );
 
         $this->objectManager = new ObjectManagerHelper($this);
         $this->model = $this->objectManager->getObject(

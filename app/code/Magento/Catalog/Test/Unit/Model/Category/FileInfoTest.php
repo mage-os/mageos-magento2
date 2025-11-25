@@ -72,15 +72,11 @@ class FileInfoTest extends TestCase
 
         $this->pubDirectory = $pubDirectory = $this->createMock(ReadInterface::class);
 
-        $this->store = $this->getMockBuilder(Store::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->store = $this->createMock(Store::class);
         $this->storeManager = $this->createMock(StoreManagerInterface::class);
         $this->storeManager->method('getStore')->willReturn($this->store);
 
-        $this->filesystem = $this->getMockBuilder(Filesystem::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->filesystem = $this->createMock(Filesystem::class);
 
         $this->filesystem->method('getDirectoryWrite')
             ->with(DirectoryList::MEDIA)
@@ -96,9 +92,7 @@ class FileInfoTest extends TestCase
                 }
             );
 
-        $this->mime = $this->getMockBuilder(Mime::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->mime = $this->createMock(Mime::class);
 
         $this->baseDirectory->method('getAbsolutePath')
             ->willReturn('/a/b/c/');

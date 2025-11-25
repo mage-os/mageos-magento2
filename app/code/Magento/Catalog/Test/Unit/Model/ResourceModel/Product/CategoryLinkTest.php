@@ -49,12 +49,8 @@ class CategoryLinkTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->resourceMock = $this->getMockBuilder(ResourceConnection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->metadataPoolMock = $this->getMockBuilder(MetadataPool::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->resourceMock = $this->createMock(ResourceConnection::class);
+        $this->metadataPoolMock = $this->createMock(MetadataPool::class);
 
         $this->model = new CategoryLink(
             $this->metadataPoolMock,
@@ -64,9 +60,7 @@ class CategoryLinkTest extends TestCase
 
     private function prepareAdapter()
     {
-        $this->dbSelectMock = $this->getMockBuilder(Select::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->dbSelectMock = $this->createMock(Select::class);
         $this->connectionMock = $this->createMock(AdapterInterface::class);
         $this->connectionMock->method('select')->willReturn($this->dbSelectMock);
         $this->resourceMock->method('getConnection')->willReturn($this->connectionMock);

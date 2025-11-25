@@ -41,10 +41,7 @@ class StockTest extends TestCase
     protected function setUp(): void
     {
         $this->objectHelper = new ObjectManager($this);
-        $this->stockRegistry = $this->getMockBuilder(StockRegistry::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getStockItem'])
-            ->getMock();
+        $this->stockRegistry = $this->createPartialMock(StockRegistry::class, ['getStockItem']);
 
         $this->stockItemMock = $this->createPartialMock(
             Item::class,

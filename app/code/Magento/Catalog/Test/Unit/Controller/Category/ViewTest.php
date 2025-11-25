@@ -19,13 +19,13 @@ use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\App\Response\RedirectInterface;
-use Magento\Framework\App\Test\Unit\Helper\ResponseTestHelper;
 use Magento\Framework\App\ViewInterface;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\DataObject;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\View\Layout;
 use Magento\Framework\View\Layout\ProcessorInterface;
 use Magento\Framework\View\Page\Config;
@@ -42,6 +42,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ViewTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var RequestInterface|MockObject
      */
@@ -143,7 +144,9 @@ class ViewTest extends TestCase
     protected function setUp(): void
     {
         $this->request = $this->createMock(RequestInterface::class);
-        $this->response = new ResponseTestHelper();
+        $this->response = $this->createPartialMockWithReflection(ResponseInterface::class, ['setRedirect', 'sendResponse']);
+        $this->response->method('setRedirect')->willReturnSelf();
+        $this->response->method('sendResponse')->willReturn(null);
 
         $this->categoryHelper = $this->createMock(Category::class);
         $this->objectManager = $this->createMock(ObjectManagerInterface::class);
@@ -153,23 +156,13 @@ class ViewTest extends TestCase
         $this->layout = $this->createMock(Layout::class);
         $this->layout->method('getUpdate')->willReturn($this->update);
 
-        $this->pageConfig = $this->getMockBuilder(Config::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->pageConfig = $this->createMock(Config::class);
         $this->pageConfig->expects($this->any())->method('addBodyClass')->willReturnSelf();
 
-        $this->page = $this->getMockBuilder(Page::class)
-            ->onlyMethods(
-                [
-                    'getConfig',
-                    'initLayout',
-                    'addPageLayoutHandles',
-                    'getLayout',
-                    'addUpdate'
-                ]
-            )
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->page = $this->createPartialMock(
+            Page::class,
+            ['getConfig', 'initLayout', 'addPageLayoutHandles', 'getLayout', 'addUpdate']
+        );
         $this->page->method('getConfig')->willReturn($this->pageConfig);
         $this->page->expects($this->any())->method('addPageLayoutHandles')->willReturnSelf();
         $this->page->method('getLayout')->willReturn($this->layout);
@@ -200,10 +193,7 @@ class ViewTest extends TestCase
 
         $this->catalogDesign = $this->createMock(Design::class);
 
-        $resultPageFactory = $this->getMockBuilder(PageFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
+        $resultPageFactory = $this->createPartialMock(PageFactory::class, ['create']);
         $resultPageFactory->expects($this->atLeastOnce())
             ->method('create')
             ->willReturn($this->page);

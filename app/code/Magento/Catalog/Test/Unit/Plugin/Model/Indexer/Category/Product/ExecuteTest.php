@@ -9,15 +9,15 @@ namespace Magento\Catalog\Test\Unit\Plugin\Model\Indexer\Category\Product;
 
 use Magento\Catalog\Model\Indexer\Category\Product\AbstractAction;
 use Magento\Catalog\Plugin\Model\Indexer\Category\Product\Execute;
-use Magento\Framework\App\Cache\Test\Unit\Helper\TypeListTestHelper;
 use Magento\Framework\App\Cache\TypeListInterface;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\PageCache\Model\Config;
-use Magento\PageCache\Test\Unit\Helper\ConfigTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class ExecuteTest extends TestCase
 {
+    use MockCreationTrait;
     /** @var Execute */
     protected $execute;
 
@@ -29,62 +29,34 @@ class ExecuteTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->config = new ConfigTestHelper();
-        $this->typeList = new TypeListTestHelper();
-
+        $this->config = $this->createPartialMock(Config::class, ['isEnabled']);
+        $this->typeList = $this->createMock(TypeListInterface::class);
         $this->execute = new Execute($this->config, $this->typeList);
     }
 
     public function testAfterExecute()
     {
-        $subject = $this->getMockBuilder(AbstractAction::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $subject = $this->createMock(AbstractAction::class);
+        $result = $this->createMock(AbstractAction::class);
 
-        $result = $this->getMockBuilder(AbstractAction::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->config->expects($this->once())->method('isEnabled')->willReturn(false);
+        $this->typeList->expects($this->never())->method('invalidate');
 
-        $this->config->setIsEnabledReturn(false);
-        // Reset the invalidate tracking
-        $this->typeList->setInvalidateCalled(false);
-        $this->typeList->setInvalidateArgument(null);
-
-        $result = $this->execute->afterExecute($subject, $result);
+        $actualResult = $this->execute->afterExecute($subject, $result);
         
-        // Assert that invalidate was not called
-        $this->assertFalse($this->typeList->getInvalidateCalled());
-        
-        $this->assertEquals(
-            $result,
-            $result
-        );
+        $this->assertEquals($result, $actualResult);
     }
 
     public function testAfterExecuteInvalidate()
     {
-        $subject = $this->getMockBuilder(AbstractAction::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $subject = $this->createMock(AbstractAction::class);
+        $result = $this->createMock(AbstractAction::class);
 
-        $result = $this->getMockBuilder(AbstractAction::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->config->expects($this->once())->method('isEnabled')->willReturn(true);
+        $this->typeList->expects($this->once())->method('invalidate')->with('full_page');
 
-        $this->config->setIsEnabledReturn(true);
-        // Reset the invalidate tracking
-        $this->typeList->setInvalidateCalled(false);
-        $this->typeList->setInvalidateArgument(null);
-
-        $result = $this->execute->afterExecute($subject, $result);
+        $actualResult = $this->execute->afterExecute($subject, $result);
         
-        // Assert that invalidate was called with 'full_page'
-        $this->assertTrue($this->typeList->getInvalidateCalled());
-        $this->assertEquals('full_page', $this->typeList->getInvalidateArgument());
-        
-        $this->assertEquals(
-            $result,
-            $result
-        );
+        $this->assertEquals($result, $actualResult);
     }
 }

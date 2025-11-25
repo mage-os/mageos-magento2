@@ -19,11 +19,6 @@ use Magento\Catalog\Model\ResourceModel\Product\Option\Value\Collection;
 use Magento\CatalogImportExport\Model\Import\Product;
 use Magento\CatalogImportExport\Model\Import\Product\Option;
 use Magento\CatalogImportExport\Model\Import\Product\SkuStorage;
-use Magento\CatalogImportExport\Test\Unit\Helper\CollectionIteratorTestHelper;
-use Magento\CatalogImportExport\Test\Unit\Helper\DataSourceModelTestHelper;
-use Magento\CatalogImportExport\Test\Unit\Helper\OptionCollectionTestHelper;
-use Magento\CatalogImportExport\Test\Unit\Helper\ProductModelTestHelper;
-use Magento\CatalogImportExport\Test\Unit\Helper\ResourceHelperTestHelper;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\Data\Collection\AbstractDb;
@@ -41,6 +36,7 @@ use Magento\ImportExport\Test\Unit\Model\Import\AbstractImportTestCase;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * Test class for import product options module
@@ -51,6 +47,8 @@ use Psr\Log\LoggerInterface;
 #[CoversClass(\Magento\CatalogImportExport\Model\Import\Product\Option::class)]
 class OptionTest extends AbstractImportTestCase
 {
+    use MockCreationTrait;
+
     /**
      * Path to csv file to import
      */
@@ -429,7 +427,8 @@ class OptionTest extends AbstractImportTestCase
             }
         }
 
-        $resourceHelper = new ResourceHelperTestHelper();
+        $resourceHelper = $this->createMock(Helper::class);
+        $resourceHelper->method('getNextAutoincrement')->willReturn(2);
 
         $data = [
             'connection' => $connection,
@@ -457,10 +456,13 @@ class OptionTest extends AbstractImportTestCase
     {
         $csvData = $this->_loadCsvFile();
 
-        $dataSourceModel = new DataSourceModelTestHelper();
-
+        $dataSourceModel = $this->createMock(\Magento\ImportExport\Model\ResourceModel\Import\Data::class);
+        
         if ($addExpectations) {
-            $dataSourceModel->setNextUniqueBunchData($csvData['data']);
+            $dataSourceModel->method('getNextUniqueBunch')
+                ->willReturnOnConsecutiveCalls($csvData['data'], [], [], []);
+        } else {
+            $dataSourceModel->method('getNextUniqueBunch')->willReturn([]);
         }
 
         $products = [];
@@ -492,8 +494,7 @@ class OptionTest extends AbstractImportTestCase
         $reflectionProperty->setAccessible(true);
         $reflectionProperty->setValue($this->productEntity, $this->metadataPoolMock);
 
-        $productModelMock = new ProductModelTestHelper();
-        $productModelMock->setProductEntitiesInfo($products);
+        $productModelMock = new \Magento\Framework\DataObject(['product_entities_info' => $products]);
 
         $this->skuStorageMock->method('get')->willReturnCallback(function ($sku) use ($products) {
             $skuLowered = strtolower($sku);
@@ -507,36 +508,54 @@ class OptionTest extends AbstractImportTestCase
             return isset($products[$skuLowered]);
         });
 
-        $fetchStrategy = $this->createMock(FetchStrategyInterface::class
-        );
-        $logger = $this->createMock(LoggerInterface::class);
-        $entityFactory = $this->createMock(EntityFactory::class);
-
-        $optionCollection = new OptionCollectionTestHelper($entityFactory, $logger, $fetchStrategy);
-
         $select = $this->createPartialMock(Select::class, ['join', 'where']);
         $select->expects($this->any())->method('join')->willReturnSelf();
         $select->expects($this->any())->method('where')->willReturnSelf();
 
-        $optionCollection->setNewEmptyItem($this->getNewOptionMock());
-        $optionCollection->setSelect($select);
+        $optionCollection = $this->createPartialMockWithReflection(
+            \Magento\Catalog\Model\ResourceModel\Product\Option\Collection::class,
+            ['getSelect', 'addProductToFilter', 'reset', 'getIterator', 'setNewEmptyItem']
+        );
+        $optionCollection->method('getSelect')->willReturn($select);
+        $optionCollection->method('addProductToFilter')->willReturnSelf();
+        $optionCollection->method('reset')->willReturnSelf();
+        $optionCollection->method('setNewEmptyItem')->willReturnSelf();
 
         $optionsData = array_values($products);
         if ($doubleOptions) {
             foreach ($products as $product) {
                 $elementIndex++;
                 $product['id'] = $elementIndex;
-                // For ambiguity test, second option should have different type and different product_id
                 $product['type'] = 'date_time';
-                $product['product_id'] = $elementIndex;  // Different product_id
+                $product['product_id'] = $elementIndex;
                 $optionsData[] = $product;
             }
         }
 
-        $fetchStrategy->method('fetchAll')->willReturn($optionsData);
+        $optionItems = [];
+        foreach ($optionsData as $data) {
+            $option = $this->createPartialMockWithReflection(
+                \Magento\Catalog\Model\Product\Option::class,
+                ['getId', 'getProductId', 'getType', 'getTitle']
+            );
+            if (isset($data['id'])) {
+                $option->method('getId')->willReturn($data['id']);
+            }
+            if (isset($data['product_id'])) {
+                $option->method('getProductId')->willReturn($data['product_id']);
+            }
+            if (isset($data['type'])) {
+                $option->method('getType')->willReturn($data['type']);
+            }
+            if (isset($data['title'])) {
+                $option->method('getTitle')->willReturn($data['title']);
+            }
+            $optionItems[] = $option;
+        }
+        $optionCollection->method('getIterator')->willReturn(new \ArrayIterator($optionItems));
 
-        $collectionIterator = new CollectionIteratorTestHelper();
-        $collectionIterator->setIterateCallback([$this, 'iterate']);
+        $collectionIterator = $this->createMock(\Magento\ImportExport\Model\ResourceModel\CollectionByPagesIterator::class);
+        $collectionIterator->method('iterate')->willReturnCallback([$this, 'iterate']);
 
         $data = [
             'data_source_model' => $dataSourceModel,
@@ -1163,17 +1182,20 @@ class OptionTest extends AbstractImportTestCase
      */
     public function testParseRequiredData(): void
     {
-        $modelData = new DataSourceModelTestHelper();
-        $modelData->setNextUniqueBunchData([
-                    [
-                        'sku' => 'simple3',
-                        '_custom_option_type' => 'field',
-                        '_custom_option_title' => 'Title'
-                    ]
-        ]);
+        $modelData = $this->createMock(\Magento\ImportExport\Model\ResourceModel\Import\Data::class);
+        $modelData->method('getNextUniqueBunch')->willReturnOnConsecutiveCalls(
+            [
+                [
+                    'sku' => 'simple3',
+                    '_custom_option_type' => 'field',
+                    '_custom_option_title' => 'Title'
+                ]
+            ],
+            [], // Second call returns empty to stop iteration
+            []  // Additional calls return empty
+        );
 
-        $productModel = new ProductModelTestHelper();
-        $productModel->setProductEntitiesInfo([]);
+        $productModel = new \Magento\Framework\DataObject(['product_entities_info' => []]);
 
         /** @var Product $productEntityMock */
         $productEntityMock = $this->createMock(Product::class);

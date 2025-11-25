@@ -19,9 +19,9 @@ use Magento\Eav\Model\Entity\Attribute\Group;
 use Magento\Eav\Model\Entity\Attribute\Set;
 use Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\Collection;
 use Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\CollectionFactory;
-use Magento\Eav\Test\Unit\Helper\AbstractAttributeTestHelper;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\DataObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
@@ -33,6 +33,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(\Magento\Catalog\Model\Config::class)]
 class ConfigTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @return object
      */
@@ -194,7 +195,25 @@ class ConfigTest extends TestCase
         $storeLabel = 'label';
         $attributeCode = 'code';
 
-        $attribute = new AbstractAttributeTestHelper();
+        $attribute = $this->createPartialMockWithReflection(
+            AbstractAttribute::class,
+            ['setStoreLabel', 'getStoreLabel', 'setAttributeCode', 'getAttributeCode', '_construct']
+        );
+        $attrState = [];
+        $attribute->method('setStoreLabel')->willReturnCallback(function ($value) use (&$attrState, $attribute) {
+            $attrState['store_label'] = $value;
+            return $attribute;
+        });
+        $attribute->method('getStoreLabel')->willReturnCallback(function () use (&$attrState) {
+            return $attrState['store_label'] ?? null;
+        });
+        $attribute->method('setAttributeCode')->willReturnCallback(function ($value) use (&$attrState, $attribute) {
+            $attrState['attribute_code'] = $value;
+            return $attribute;
+        });
+        $attribute->method('getAttributeCode')->willReturnCallback(function () use (&$attrState) {
+            return $attrState['attribute_code'] ?? null;
+        });
         $attribute->setStoreLabel($storeLabel);
         $attribute->setAttributeCode($attributeCode);
 

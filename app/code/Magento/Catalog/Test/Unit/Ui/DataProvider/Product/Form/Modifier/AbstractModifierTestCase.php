@@ -12,15 +12,13 @@ use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Locator\LocatorInterface;
 use Magento\Framework\Stdlib\ArrayManager;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Magento\Store\Test\Unit\Helper\StoreTestHelper;
+use Magento\Store\Model\Store;
 use Magento\Ui\DataProvider\Modifier\ModifierInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Abstract test case for product form modifiers
- *
- * Uses test helpers instead of inline anonymous classes following PHPUnit 12 migration rules.
  *
  * @SuppressWarnings(PHPMD.NumberOfChildren)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -46,7 +44,7 @@ abstract class AbstractModifierTestCase extends TestCase
     protected $productMock;
 
     /**
-     * @var StoreTestHelper
+     * @var Store|MockObject
      */
     protected $storeMock;
 
@@ -70,7 +68,8 @@ abstract class AbstractModifierTestCase extends TestCase
         $this->productMock = $this->createPartialMock(Product::class, ['getCustomAttributesCodes', 'getStoreId', 'getResource', 'isLockedAttribute', 'getTypeId', 'getAttributeSetId', 'getOptions', 'getStore']);
         $this->productMock->method('getCustomAttributesCodes')->willReturn([]);
 
-        $this->storeMock = $this->createPartialMock(\Magento\Store\Model\Store::class, ['load', 'getConfig', 'getId']);
+        $this->storeMock = $this->createPartialMock(Store::class, ['load', 'getConfig', 'getId']);
+        $this->storeMock->method('getId')->willReturn(1);
 
         $this->arrayManagerMock = $this->createMock(ArrayManager::class);
 

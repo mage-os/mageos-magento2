@@ -23,7 +23,7 @@ use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\View\Layout;
 use Magento\Framework\Session\Storage;
-use Magento\Framework\Session\Test\Unit\Helper\StorageTestHelper;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -32,6 +32,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ShowUpdateResultTest extends TestCase
 {
+    use MockCreationTrait;
     /** @var Context|MockObject */
     protected $context;
 
@@ -51,9 +52,13 @@ class ShowUpdateResultTest extends TestCase
      */
     protected function getSession()
     {
-        $storage = new StorageTestHelper();
+        $storage = $this->createMock(Storage::class);
 
-        $session = $this->createPartialMock(Session::class, []);
+        $session = $this->createPartialMockWithReflection(Session::class, [
+            'hasCompositeProductResult',
+            'getCompositeProductResult',
+            'unsCompositeProductResult'
+        ]);
 
         // Use reflection to set the storage property
         $reflection = new \ReflectionClass($session);
@@ -75,11 +80,7 @@ class ShowUpdateResultTest extends TestCase
         $objectManagerMock = $this->createMock(ObjectManagerInterface::class);
         $objectManagerMock->method('get')->willReturn($productActionMock);
 
-        $eventManager = $this->getMockBuilder(Manager::class)
-            ->onlyMethods(['dispatch'])
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $eventManager = $this->createPartialMock(Manager::class, ['dispatch']);
         $eventManager->expects($this->any())
             ->method('dispatch')
             ->willReturnSelf();
@@ -114,12 +115,25 @@ class ShowUpdateResultTest extends TestCase
     {
         $productCompositeHelper = $this->createMock(Composite::class);
         $layoutResult = $this->createMock(\Magento\Framework\View\Result\Layout::class);
+        $compositeProductResult = new DataObject();
+        
         $productCompositeHelper->expects($this->once())
             ->method('renderUpdateResult')
+            ->with($compositeProductResult)
             ->willReturn($layoutResult);
 
         $productBuilder = $this->createMock(Builder::class);
         $context = $this->getContext();
+        
+        // Configure the session to return composite product result
+        $this->session->expects($this->once())
+            ->method('hasCompositeProductResult')
+            ->willReturn(true);
+        $this->session->expects($this->exactly(2))
+            ->method('getCompositeProductResult')
+            ->willReturn($compositeProductResult);
+        $this->session->expects($this->once())
+            ->method('unsCompositeProductResult');
 
         /** @var ShowUpdateResult $controller */
         $controller = new ShowUpdateResult($context, $productBuilder, $productCompositeHelper);

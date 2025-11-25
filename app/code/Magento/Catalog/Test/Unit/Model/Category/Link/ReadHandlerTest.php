@@ -44,16 +44,12 @@ class ReadHandlerTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->categoryLinkFactory = $this->getMockBuilder(CategoryLinkInterfaceFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
-        $this->productCategoryLink = $this->getMockBuilder(CategoryLink::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->dataObjectHelper = $this->getMockBuilder(DataObjectHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->categoryLinkFactory = $this->createPartialMock(
+            CategoryLinkInterfaceFactory::class,
+            ['create']
+        );
+        $this->productCategoryLink = $this->createMock(CategoryLink::class);
+        $this->dataObjectHelper = $this->createMock(DataObjectHelper::class);
 
         $this->readHandler = new ReadHandler(
             $this->categoryLinkFactory,
@@ -90,10 +86,7 @@ class ReadHandlerTest extends TestCase
             ->method('create')
             ->willReturnOnConsecutiveCalls(...$categoryLinkFactoryWillReturnArgs);
 
-        $product = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getExtensionAttributes', 'setExtensionAttributes'])
-            ->getMock();
+        $product = $this->createPartialMock(Product::class, ['getExtensionAttributes', 'setExtensionAttributes']);
 
         /** @var ProductExtensionInterface $extensionAttributes */
         $extensionAttributes = $this->createStub(ProductExtensionInterface::class);
@@ -122,10 +115,7 @@ class ReadHandlerTest extends TestCase
      */
     public function testExecuteNullExtensionAttributes(): void
     {
-        $product = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getExtensionAttributes', 'setExtensionAttributes'])
-            ->getMock();
+        $product = $this->createPartialMock(Product::class, ['getExtensionAttributes', 'setExtensionAttributes']);
 
         /** @var ProductExtensionInterface $extensionAttributes */
         $extensionAttributes = $this->createStub(ProductExtensionInterface::class);
