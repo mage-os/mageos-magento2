@@ -7,7 +7,6 @@ declare(strict_types=1);
 
 namespace Magento\AsynchronousOperations\Test\Unit\Model\ResourceModel\Operation;
 
-use Magento\AsynchronousOperations\Api\Data\OperationInterface;
 use Magento\AsynchronousOperations\Api\Data\OperationListInterface;
 use Magento\AsynchronousOperations\Model\Operation;
 use Magento\AsynchronousOperations\Model\ResourceModel\Operation\Create;
@@ -16,7 +15,6 @@ use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\EntityManager\EntityMetadataInterface;
 use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Framework\EntityManager\TypeResolver;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -26,8 +24,6 @@ use PHPUnit\Framework\TestCase;
  */
 class CreateTest extends TestCase
 {
-    use MockCreationTrait;
-
     /**
      * @var MetadataPool|MockObject
      */
