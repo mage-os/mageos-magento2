@@ -294,6 +294,7 @@ class NewCategoryTest extends TestCase
             ])
             ->willReturn($encodedOptions);
 
+        // @codingStandardsIgnoreStart
         $expectedScript = <<<HTML
 require(["jquery","mage/mage"],function($) {  // waiting for dependencies at first
     $(function(){ // waiting for page to load to have '#category_ids-template' available
@@ -301,6 +302,7 @@ require(["jquery","mage/mage"],function($) {  // waiting for dependencies at fir
     });
 });
 HTML;
+        // @codingStandardsIgnoreEnd
 
         $this->secureRenderer->expects($this->once())
             ->method('renderTag')

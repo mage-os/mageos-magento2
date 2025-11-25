@@ -154,9 +154,11 @@ class AttributeSetTest extends TestCase
     {
         $this->product->method('getAttributeSetId')->willReturn(1);
 
+        // @codingStandardsIgnoreStart
         // URL with special characters
         $rawUrl = 'http://example.com/admin/catalog?test=1&special=<script>';
         $escapedUrl = 'http://example.com/admin/catalog?test=1&amp;special=&lt;script&gt;';
+        // @codingStandardsIgnoreEnd
 
         $this->urlBuilder->method('getUrl')->willReturn($rawUrl);
         $this->escaper->method('escapeUrl')->with($rawUrl)->willReturn($escapedUrl);
@@ -169,9 +171,11 @@ class AttributeSetTest extends TestCase
 
     public function testGetSelectorOptionsEscapesAttributeSetId(): void
     {
+        // @codingStandardsIgnoreStart
         // Attribute set ID that needs escaping
         $attributeSetId = '<script>alert("xss")</script>';
         $escapedAttributeSetId = '&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;';
+        // @codingStandardsIgnoreEnd
 
         $this->product->method('getAttributeSetId')->willReturn($attributeSetId);
         $this->urlBuilder->method('getUrl')->willReturn('http://example.com/admin/url');
