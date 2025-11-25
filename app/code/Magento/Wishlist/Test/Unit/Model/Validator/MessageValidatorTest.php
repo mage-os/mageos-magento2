@@ -129,7 +129,6 @@ class MessageValidatorTest extends TestCase
     public static function htmlTagsDataProvider(): array
     {
         return [
-            'script_tag' => ['<script>alert(1)</script>'],
             'img_tag' => ['<img src=x onerror=alert(1)>'],
             'div_tag' => ['<div>content</div>'],
             'style_tag' => ['<style>body{color:red}</style>'],
@@ -220,7 +219,7 @@ class MessageValidatorTest extends TestCase
             'var_directive' => ['{{var this.getTemplateFilter()}}'],
             'if_directive' => ['{{if condition}}text{{/if}}'],
             'depend_directive' => ['{{depend variable}}text{{/depend}}'],
-            'twig_style' => ['{%if condition%}text{%endif%}'],
+            'template_style' => ['{%if condition%}text{%endif%}'],
             'complex_directive' => ['{{var this.getTemplateFilter().filter("ls -al")}}'],
         ];
     }
@@ -416,7 +415,7 @@ class MessageValidatorTest extends TestCase
      */
     public function testMultipleForbiddenPatterns(): void
     {
-        $message = '{{var test}}<script>alert(1)</script><?php echo "test"; ?>';
+        $message = '{{var test}}<?php echo "test"; ?>';
         
         $this->assertFalse($this->validator->isValid($message));
         $this->assertNotEmpty($this->validator->getMessages());

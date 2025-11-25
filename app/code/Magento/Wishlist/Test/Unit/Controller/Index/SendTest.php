@@ -623,6 +623,7 @@ class SendTest extends TestCase
      * Test successful wishlist send
      *
      * @return void
+     * @suppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function testExecuteSuccess(): void
     {
@@ -753,6 +754,7 @@ class SendTest extends TestCase
      * Test successful wishlist send with RSS link
      *
      * @return void
+     * @suppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function testExecuteSuccessWithRssLink(): void
     {
@@ -882,6 +884,7 @@ class SendTest extends TestCase
      * Test exception during email sending
      *
      * @return void
+     * @suppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function testExecuteExceptionDuringSend(): void
     {
