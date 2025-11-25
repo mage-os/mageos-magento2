@@ -114,6 +114,7 @@ class Send extends \Magento\Wishlist\Controller\AbstractIndex implements Action\
      * @param CaptchaHelper|null $captchaHelper
      * @param CaptchaStringResolver|null $captchaStringResolver
      * @param Escaper|null $escaper
+     * @param \Magento\Wishlist\Model\Validator\MessageValidator|null $messageValidator
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(

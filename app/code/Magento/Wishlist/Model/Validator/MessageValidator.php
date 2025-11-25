@@ -31,7 +31,13 @@ class MessageValidator extends AbstractValidator
     
         // JS protocol / event handlers
         '/javascript:/i',
-        '/on\w+\s*=/i'
+        '/on\w+\s*=/i',
+        
+        // Magento template object access patterns (method chaining with dots and parentheses)
+        '/this\s*\.\s*\w+\s*\(/i',              // this.methodName(
+        '/getTemplateFilter/i',                 // Direct template filter access
+        '/\.\s*filter\s*\(/i',                  // .filter( (method call syntax)
+        '/addAfterFilterCallback/i'             // Callback manipulation
     ];
 
     /**
@@ -50,7 +56,7 @@ class MessageValidator extends AbstractValidator
         $decoded = urldecode($value);
 
         // Remove newlines/carriage returns that might be used for obfuscation
-        $normalized = preg_replace('/[\r\n\t]+/', ' ', $decoded);     
+        $normalized = preg_replace('/[\r\n\t]+/', ' ', $decoded);
 
         // Check for suspicious patterns in both decoded and normalized versions
         foreach (self::FORBIDDEN_PATTERNS as $pattern) {
