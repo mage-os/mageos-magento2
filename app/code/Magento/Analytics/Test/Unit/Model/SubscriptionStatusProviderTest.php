@@ -16,7 +16,6 @@ use Magento\Framework\FlagManager;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\DataProvider;
-
 use PHPUnit\Framework\TestCase;
 
 class SubscriptionStatusProviderTest extends TestCase

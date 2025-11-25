@@ -19,13 +19,10 @@ use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\DataProvider;
-
 use PHPUnit\Framework\TestCase;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
-
 
 class ExportDataHandlerTest extends TestCase
-{ use MockCreationTrait;
+{
     /**
      * @var Filesystem|MockObject
      */

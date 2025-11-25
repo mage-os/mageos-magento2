@@ -162,7 +162,8 @@ class ReportWriterTest extends TestCase
     /**
      * @param array $configData
      * @return void
-     *#[DataProvider('writeErrorFileDataProvider')]
+     */
+    #[DataProvider('writeErrorFileDataProvider')]
     public function testWriteErrorFile(array $configData): void
     {
         $errors = ['orders', 'SQL Error: test'];

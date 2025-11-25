@@ -22,10 +22,7 @@ use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\DataProvider;
-
 use PHPUnit\Framework\TestCase;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
-
 
 /**
  * A unit test for testing of the query factory.
@@ -33,7 +30,7 @@ use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class QueryFactoryTest extends TestCase
-{ use MockCreationTrait;
+{
     private const STUB_QUERY_NAME = 'test_query';
     private const STUB_CONNECTION = 'default';
 

@@ -15,13 +15,14 @@ use Magento\Integration\Api\OauthServiceInterface;
 use Magento\Integration\Model\Integration;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\DataProvider;
-
 use PHPUnit\Framework\TestCase;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 
 class IntegrationManagerTest extends TestCase
-{ use MockCreationTrait;
+{ 
+    use MockCreationTrait;
+
     /**
      * @var IntegrationServiceInterface|MockObject
      */

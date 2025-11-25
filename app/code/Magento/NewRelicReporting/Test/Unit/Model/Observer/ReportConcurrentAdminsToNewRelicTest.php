@@ -14,12 +14,10 @@ use Magento\NewRelicReporting\Model\NewRelicWrapper;
 use Magento\NewRelicReporting\Model\Observer\ReportConcurrentAdminsToNewRelic;
 use Magento\User\Model\User;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
-
 use PHPUnit\Framework\TestCase;
 
 class ReportConcurrentAdminsToNewRelicTest extends TestCase
-{ use MockCreationTrait;
+{
     /**
      * @var ReportConcurrentAdminsToNewRelic
      */

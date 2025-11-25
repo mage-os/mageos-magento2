@@ -14,11 +14,9 @@ use Magento\Framework\App\Config\Storage\WriterInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
-
 
 class AnalyticsTokenTest extends TestCase
-{ use MockCreationTrait;
+{
     /**
      * @var ReinitableConfigInterface|MockObject
      */

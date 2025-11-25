@@ -31,6 +31,8 @@ use Psr\Log\LoggerInterface;
  */
 class ViewedTest extends AbstractControllerTestCase
 {
+    use MockCreationTrait;
+    
     /**
      * @var \Magento\Reports\Controller\Adminhtml\Report\Product\Viewed
      */

@@ -12,7 +12,6 @@ use Magento\Framework\Encryption\EncryptorInterface;
 use Magento\NewRelicReporting\Model\Config;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\DataProvider;
-
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
 
@@ -787,7 +786,8 @@ class ConfigTest extends TestCase
 
     /**
      * Test all string casting methods with various input types
-     *    #[DataProvider(\'stringCastingProvider\')]
+     */
+    #[DataProvider('stringCastingProvider')]    
     public function testStringCastingMethods($method, $configPath, $inputValue, $expectedOutput)
     {
         $this->scopeConfigMock->expects($this->once())
@@ -846,7 +846,8 @@ class ConfigTest extends TestCase
 
     /**
      * Test integer casting for getNewRelicAppId with various input types
-     *    #[DataProvider(\'integerCastingProvider\')]
+     */
+    #[DataProvider('integerCastingProvider')]
     public function testGetNewRelicAppIdCasting($inputValue, $expectedOutput)
     {
         $this->scopeConfigMock->expects($this->once())
@@ -877,7 +878,8 @@ class ConfigTest extends TestCase
 
     /**
      * Test boolean casting for isSeparateApps with various input types
-     *    #[DataProvider(\'booleanCastingProvider\')]
+     */
+    #[DataProvider('booleanCastingProvider')]
     public function testIsSeparateAppsCasting($inputValue, $expectedOutput)
     {
         $this->scopeConfigMock->expects($this->once())

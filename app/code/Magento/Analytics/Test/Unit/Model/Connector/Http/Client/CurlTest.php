@@ -18,10 +18,7 @@ use Magento\Framework\HTTP\ResponseFactory;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\DataProvider;
-
 use PHPUnit\Framework\TestCase;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
-
 use Psr\Log\LoggerInterface;
 
 /**
@@ -30,8 +27,6 @@ use Psr\Log\LoggerInterface;
  */
 class CurlTest extends TestCase
 { 
-    use MockCreationTrait;
-    
     /**
      * @var Curl
      */

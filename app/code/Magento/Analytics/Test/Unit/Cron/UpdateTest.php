@@ -17,13 +17,9 @@ use Magento\Framework\Exception\NotFoundException;
 use Magento\Framework\FlagManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\DataProvider;
-
 use PHPUnit\Framework\TestCase;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
-
-
 class UpdateTest extends TestCase
-{ use MockCreationTrait;
+{
     /**
      * @var Connector|MockObject
      */

@@ -127,7 +127,8 @@ class LinkProviderTest extends TestCase
     /**
      * @param string|null $fileInfoPath
      * @param string|null $fileInitializationVector
-     *#[DataProvider('fileNotReadyDataProvider')]
+     */
+    #[DataProvider('fileNotReadyDataProvider')]
     public function testFileNotReady($fileInfoPath, $fileInitializationVector)
     {
         $this->expectException('Magento\Framework\Exception\NoSuchEntityException');

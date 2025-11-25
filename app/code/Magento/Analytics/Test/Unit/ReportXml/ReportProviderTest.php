@@ -18,14 +18,12 @@ use Magento\Framework\DB\Statement\Pdo\Mysql;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
-
 
 /**
  * A unit test for testing of the reports provider.
  */
 class ReportProviderTest extends TestCase
-{ use MockCreationTrait;
+{
     /**
      * @var ReportProvider
      */

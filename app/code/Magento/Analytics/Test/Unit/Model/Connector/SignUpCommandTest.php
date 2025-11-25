@@ -19,12 +19,10 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Integration\Model\Oauth\Token as IntegrationToken;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
-
 use Psr\Log\LoggerInterface;
 
 class SignUpCommandTest extends TestCase
-{ use MockCreationTrait;
+{
     /**
      * @var SignUpCommand
      */

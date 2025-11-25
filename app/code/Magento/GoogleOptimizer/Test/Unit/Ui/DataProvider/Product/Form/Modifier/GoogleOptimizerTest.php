@@ -12,6 +12,7 @@ use Magento\Catalog\Model\Product;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\GoogleOptimizer\Helper\Code;
+use Magento\GoogleOptimizer\Model\Code as ModelCode;
 use Magento\GoogleOptimizer\Helper\Data;
 use Magento\GoogleOptimizer\Ui\DataProvider\Product\Form\Modifier\GoogleOptimizer;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -129,7 +130,7 @@ class GoogleOptimizerTest extends TestCase
 
         /** @var \Magento\GoogleOptimizer\Model\Code|MockObject $codeModelMock */
         $codeModelMock = $this->createPartialMockWithReflection(
-            \Magento\GoogleOptimizer\Model\Code::class,
+            ModelCode::class,
             ['getExperimentScript', 'getCodeId']
         );
         $codeModelMock->expects($this->exactly($expectedCalls))

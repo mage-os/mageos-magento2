@@ -15,11 +15,12 @@ use Magento\NewRelicReporting\Model\Observer\ReportOrderPlacedToNewRelic;
 use Magento\Sales\Model\Order;
 use PHPUnit\Framework\MockObject\MockObject;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
-
 use PHPUnit\Framework\TestCase;
 
 class ReportOrderPlacedToNewRelicTest extends TestCase
-{ use MockCreationTrait;
+{ 
+    use MockCreationTrait;
+    
     /**
      * @var ReportOrderPlacedToNewRelic
      */

@@ -17,11 +17,12 @@ use Magento\NewRelicReporting\Model\System;
 use Magento\NewRelicReporting\Model\SystemFactory;
 use PHPUnit\Framework\MockObject\MockObject;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
-
 use PHPUnit\Framework\TestCase;
 
 class ReportProductSavedTest extends TestCase
-{ use MockCreationTrait;
+{ 
+    use MockCreationTrait;
+    
     /**
      * @var ReportProductSaved
      */

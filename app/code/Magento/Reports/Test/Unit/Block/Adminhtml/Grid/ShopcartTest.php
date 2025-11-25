@@ -7,10 +7,8 @@ declare(strict_types=1);
 
 namespace Magento\Reports\Test\Unit\Block\Adminhtml\Grid;
 
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Reports\Block\Adminhtml\Grid\Shopcart;
-use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -22,8 +20,6 @@ use PHPUnit\Framework\TestCase;
  */
 class ShopcartTest extends TestCase
 {
-    use MockCreationTrait;
-
     /**
      * @var Shopcart|MockObject
      */

@@ -13,11 +13,9 @@ use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Select;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
-
 
 class SelectBuilderTest extends TestCase
-{ use MockCreationTrait;
+{
     /**
      * @var SelectBuilder
      */

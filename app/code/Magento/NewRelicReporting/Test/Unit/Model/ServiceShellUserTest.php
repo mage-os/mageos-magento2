@@ -34,7 +34,8 @@ class ServiceShellUserTest extends TestCase
 
     /**
      * Test get method with various inputs and expected outputs
-     *    #[DataProvider(\'valuesProvider\')]
+     */
+    #[DataProvider('valuesProvider')]
     public function testGetReturnsExpectedValue($input, $expected): void
     {
         $this->assertEquals($expected, $this->serviceShellUser->get($input));

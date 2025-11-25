@@ -11,7 +11,6 @@ use Magento\Framework\Event\Observer;
 use Magento\NewRelicReporting\Model\NewRelicWrapper;
 use Magento\NewRelicReporting\Observer\DisableBrowserMonitoringAutomaticInjection;
 use PHPUnit\Framework\Attributes\DataProvider;
-
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -151,7 +150,8 @@ class DisableBrowserMonitoringAutomaticInjectionTest extends TestCase
 
     /**
      * Test the complete flow with different scenarios
-     *    #[DataProvider(\'executeScenarioProvider\')]
+     */
+    #[DataProvider('executeScenarioProvider')]
     public function testExecuteScenarios(bool $isAutoInstrumentEnabled, int $disableAutoRumCallCount): void
     {
         $this->newRelicWrapperMock->expects($this->once())

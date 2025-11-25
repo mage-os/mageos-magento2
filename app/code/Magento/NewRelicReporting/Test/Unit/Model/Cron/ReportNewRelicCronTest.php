@@ -17,7 +17,6 @@ use Magento\NewRelicReporting\Model\CronEventFactory;
 use Magento\NewRelicReporting\Model\Module\Collect;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\DataProvider;
-
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionException;

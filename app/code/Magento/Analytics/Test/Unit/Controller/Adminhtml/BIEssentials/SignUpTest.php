@@ -14,11 +14,9 @@ use Magento\Framework\Controller\Result\Redirect;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
-
 
 class SignUpTest extends TestCase
-{ use MockCreationTrait;
+{
     /**
      * @var ObjectManagerHelper
      */

@@ -10,6 +10,7 @@ namespace Magento\Reports\Test\Unit\Observer;
 use Magento\Catalog\Model\Product;
 use Magento\Customer\Model\Session;
 use Magento\Customer\Model\Visitor;
+use Magento\Framework\Event as FrameworkEvent;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
@@ -187,7 +188,7 @@ class CustomerLoginObserverTest extends TestCase
     {
         $eventObserverMock = $this->createMock(Observer::class);
         $eventMock = $this->createPartialMockWithReflection(
-            \Magento\Framework\Event::class,
+            FrameworkEvent::class,
             ['getProduct']
         );
         $productMock = $this->createMock(Product::class);

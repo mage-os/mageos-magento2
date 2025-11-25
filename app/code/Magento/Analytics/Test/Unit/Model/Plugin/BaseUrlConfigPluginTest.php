@@ -16,13 +16,13 @@ use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\Store;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\DataProvider;
-
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class BaseUrlConfigPluginTest extends TestCase
 {
     use MockCreationTrait;
+    
     /**
      * @var SubscriptionUpdateHandler|MockObject
      */

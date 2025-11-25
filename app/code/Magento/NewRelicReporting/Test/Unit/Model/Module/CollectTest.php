@@ -18,15 +18,15 @@ use Magento\NewRelicReporting\Model\ResourceModel\Module\CollectionFactory;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
-
 use PHPUnit\Framework\Attributes\DataProvider;
-
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionException;
 
 class CollectTest extends TestCase
-{ use MockCreationTrait;
+{ 
+    use MockCreationTrait;
+    
     /**
      * @var Collect
      */
@@ -451,7 +451,8 @@ class CollectTest extends TestCase
      * @param string $moduleName
      * @param bool $isOutputEnabled
      * @param string $expectedState
-     * @return void     * @throws ReflectionException
+     * @return void
+     * @throws ReflectionException
      */
     #[DataProvider('getStateDataProvider')]
     public function testGetStateWithDataProvider(string $moduleName, bool $isOutputEnabled, string $expectedState)

@@ -11,11 +11,9 @@ use Magento\Analytics\ReportXml\IteratorFactory;
 use Magento\Framework\ObjectManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
-
 
 class IteratorFactoryTest extends TestCase
-{ use MockCreationTrait;
+{
     /**
      * @var ObjectManagerInterface|MockObject
      */

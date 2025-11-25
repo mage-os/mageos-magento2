@@ -18,11 +18,12 @@ use Magento\NewRelicReporting\Model\ResourceModel\Counts\Collection;
 use Magento\NewRelicReporting\Model\ResourceModel\Counts\CollectionFactory;
 use PHPUnit\Framework\MockObject\MockObject;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
-
 use PHPUnit\Framework\TestCase;
 
 class ReportCountsTest extends TestCase
-{ use MockCreationTrait;
+{ 
+    use MockCreationTrait;
+    
     /**
      * @var ReportCounts
      */

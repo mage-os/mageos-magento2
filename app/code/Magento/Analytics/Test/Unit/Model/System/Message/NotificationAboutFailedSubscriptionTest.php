@@ -13,7 +13,6 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHe
 use Magento\Framework\UrlInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\DataProvider;
-
 use PHPUnit\Framework\TestCase;
 
 class NotificationAboutFailedSubscriptionTest extends TestCase
@@ -68,12 +67,9 @@ class NotificationAboutFailedSubscriptionTest extends TestCase
 
     /**
      *
-     */
-    #[DataProvider('notDisplayedNotificationStatuses')]
-    /**
-     *
      * @param $status
      */
+    #[DataProvider('notDisplayedNotificationStatuses')]
     public function testIsDisplayedWhenMessageShouldNotBeDisplayed($status)
     {
         $this->subscriptionStatusMock->expects($this->once())

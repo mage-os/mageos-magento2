@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\GoogleOptimizer\Test\Unit\Helper;
 
 use Magento\Framework\App\Helper\Context;
+use Magento\Framework\Data\Form as DataForm;
 use Magento\Framework\Data\Form\Element\Fieldset;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
@@ -46,7 +47,7 @@ class FormTest extends TestCase
     protected function setUp(): void
     {
         $this->_formMock = $this->createPartialMockWithReflection(
-            \Magento\Framework\Data\Form::class,
+            DataForm::class,
             ['setFieldNameSuffix', 'addFieldset']
         );
         $this->_fieldsetMock = $this->createMock(Fieldset::class);

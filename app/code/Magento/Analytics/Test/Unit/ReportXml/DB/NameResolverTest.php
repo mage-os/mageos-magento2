@@ -11,7 +11,6 @@ use Magento\Analytics\ReportXml\DB\NameResolver;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\DataProvider;
-
 use PHPUnit\Framework\TestCase;
 
 class NameResolverTest extends TestCase
@@ -58,7 +57,8 @@ class NameResolverTest extends TestCase
     /**
      * @param array $elementConfig
      * @param string|null $elementAlias
-     *#[DataProvider('getAliasDataProvider')]
+     */
+    #[DataProvider('getAliasDataProvider')]
     public function testGetAlias($elementConfig, $elementAlias)
     {
         $elementName = 'elementName';

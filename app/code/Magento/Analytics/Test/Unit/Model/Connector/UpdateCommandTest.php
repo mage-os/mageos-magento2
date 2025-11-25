@@ -18,12 +18,10 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\FlagManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
-
 use Psr\Log\LoggerInterface;
 
 class UpdateCommandTest extends TestCase
-{ use MockCreationTrait;
+{
     /**
      * @var UpdateCommand
      */

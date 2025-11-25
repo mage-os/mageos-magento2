@@ -151,12 +151,9 @@ class FileInfoManagerTest extends TestCase
     }
 
     /**
-     *
-     */
-    #[DataProvider('loadDataProvider')]
-    /**
      * @param array|null $parameters
      */
+    #[DataProvider('loadDataProvider')]
     public function testLoad($parameters)
     {
         $this->flagManagerMock

@@ -16,11 +16,12 @@ use Magento\NewRelicReporting\Model\Observer\ReportSystemCacheFlushToNewRelic;
 use Magento\User\Model\User;
 use PHPUnit\Framework\MockObject\MockObject;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
-
 use PHPUnit\Framework\TestCase;
 
 class ReportSystemCacheFlushToNewRelicTest extends TestCase
-{ use MockCreationTrait;
+{ 
+    use MockCreationTrait;
+    
     /**
      * @var ReportSystemCacheFlushToNewRelic
      */

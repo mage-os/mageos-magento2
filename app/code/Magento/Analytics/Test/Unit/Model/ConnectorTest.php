@@ -12,11 +12,9 @@ use Magento\Analytics\Model\Connector\SignUpCommand;
 use Magento\Framework\ObjectManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
-
 
 class ConnectorTest extends TestCase
-{ use MockCreationTrait;
+{
     /**
      * @var ObjectManagerInterface|MockObject
      */

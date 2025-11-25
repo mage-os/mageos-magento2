@@ -37,9 +37,11 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\Validator\UniversalFactory;
 use Magento\Quote\Model\ResourceModel\Quote\Collection;
+use Magento\Reports\Model\Event\Type as EventType;
 use Magento\Reports\Model\Event\TypeFactory;
+use Magento\Reports\Model\ResourceModel\Event\Type\Collection as EventTypeCollection;
 use Magento\Reports\Model\ResourceModel\Product\Collection as ProductCollection;
-use Magento\Store\Model\StoreManagerInterface;
+use Magento\Store\Model\StoreManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -104,7 +106,7 @@ class CollectionTest extends TestCase
         $resourceHelperMock = $this->createMock(Helper::class);
         $universalFactoryMock = $this->createMock(UniversalFactory::class);
         $storeManagerMock = $this->createPartialMockWithReflection(
-            \Magento\Store\Model\StoreManager::class,
+            StoreManager::class,
             ['getStore', 'getId']
         );
         $moduleManagerMock = $this->createMock(Manager::class);
@@ -202,13 +204,13 @@ class CollectionTest extends TestCase
      */
     public function testAddViewsCount()
     {
-        /** @var \Magento\Reports\Model\ResourceModel\Event\Type\Collection $eventTypesCollection */
+        /** @var EventTypeCollection $eventTypesCollection */
         $eventTypesCollection = $this->createPartialMock(
-            \Magento\Reports\Model\ResourceModel\Event\Type\Collection::class,
+            EventTypeCollection::class,
             ['addItem', 'getIterator', 'getItems']
         );
         $eventTypeMock = $this->createPartialMockWithReflection(
-            \Magento\Reports\Model\Event\Type::class,
+            EventType::class,
             ['getEventName', 'getId', 'getCollection']
         );
 
