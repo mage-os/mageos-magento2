@@ -20,24 +20,12 @@ use PHPUnit\Framework\TestCase;
  */
 class CacheableQueryHandlerTest extends TestCase
 {
-    /**
-     * @var CacheableQueryHandler
-     */
     private $cacheableQueryHandler;
 
-    /**
-     * @var CacheableQuery
-     */
     private $cacheableQueryMock;
 
-    /**
-     * @var Http
-     */
     private $requestMock;
 
-    /**
-     * @var IdentityPool
-     */
     private $identityPoolMock;
 
     protected function setup(): void
