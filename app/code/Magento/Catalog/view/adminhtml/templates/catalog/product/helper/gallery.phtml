@@ -214,7 +214,7 @@ $message = 'Restricted admin is allowed to perform actions with images or videos
                     <?php foreach ($block->getMediaAttributes() as $attribute):?>
                         <?php
                         $attributeCodeEscaped = $escaper->escapeHtmlAttr($attribute->getAttributeCode());
-                        $roleSelectorIdEscaped = $attributeCodeEscaped . '-type-selector';
+                        $roleSelectorIdEscaped = $attributeCodeEscaped . '-type-selector-<%- data.file_id %>';
                         ?>
                         <div class="admin__field field field-image-role">
                             <div class="admin__field-label">
