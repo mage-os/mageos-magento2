@@ -8,10 +8,8 @@ declare(strict_types=1);
 namespace Magento\Sales\Controller\Adminhtml\Order;
 
 use Magento\Backend\App\Action;
-use Magento\Backend\App\Action\Context;
 use Magento\Catalog\Model\Product;
 use Magento\Framework\App\ObjectManager;
-use Magento\Framework\Escaper;
 use Magento\Framework\View\Result\PageFactory;
 use Magento\Backend\Model\View\Result\ForwardFactory;
 use Magento\Sales\Model\Order\Create\ValidateCoupon;
@@ -64,12 +62,11 @@ abstract class Create extends \Magento\Backend\App\Action
     private ProductRepositoryInterface $productRepository;
 
     /**
-     * @param Context $context
+     * @param Action\Context $context
      * @param \Magento\Catalog\Helper\Product $productHelper
-     * @param Escaper $escaper
+     * @param \Magento\Framework\Escaper $escaper
      * @param PageFactory $resultPageFactory
      * @param ForwardFactory $resultForwardFactory
-     * @param ProductRepositoryInterface|null $productRepository
      * @param ValidateCoupon|null $validateCoupon
      */
     public function __construct(
