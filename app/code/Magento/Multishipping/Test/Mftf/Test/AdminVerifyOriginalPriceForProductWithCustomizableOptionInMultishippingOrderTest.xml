@@ -117,4 +117,3 @@
         <waitForText selector="{{AdminOrderItemsOrderedSection.productNameOptions}}" userInput="Test Value" stepKey="verifyCustomOptionValue"/>
     </test>
 </tests>
-
