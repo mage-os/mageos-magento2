@@ -18,6 +18,7 @@ use Magento\Framework\FlagManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+
 class UpdateTest extends TestCase
 {
     /**

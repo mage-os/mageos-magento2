@@ -268,5 +268,4 @@ class CollectionTest extends TestCase
 
         $this->collection->addViewsCount();
     }
-
 }

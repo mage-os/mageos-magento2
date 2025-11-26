@@ -159,7 +159,13 @@ class DateTest extends TestCase
 
         $this->dateTimeFormatter->expects($this->once())
             ->method('formatObject')
-            ->with($this->isInstanceOf('DateTime'), $this->isString(), $locale)
+            ->with(
+                $this->isInstanceOf('DateTime'),
+                $this->callback(function ($value) {
+                    return is_string($value);
+                }),
+                $locale
+            )
             ->willReturn($result);
 
         $this->assertEquals($result, $this->date->render($objectMock));
@@ -224,7 +230,13 @@ class DateTest extends TestCase
 
         $this->dateTimeFormatter->expects($this->once())
             ->method('formatObject')
-            ->with($this->isInstanceOf('DateTime'), $this->isString(), $locale)
+            ->with(
+                $this->isInstanceOf('DateTime'),
+                $this->callback(function ($value) {
+                    return is_string($value);
+                }),
+                $locale
+            )
             ->willReturn($result);
 
         $this->assertEquals($result, $this->date->render($objectMock));

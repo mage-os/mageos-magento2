@@ -14,6 +14,7 @@ use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Sql\Expression;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+
 class ConditionResolverTest extends TestCase
 {
     /**

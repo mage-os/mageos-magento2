@@ -18,9 +18,9 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
-
 class IntegrationManagerTest extends TestCase
-{ 
+{
+
     use MockCreationTrait;
 
     /**

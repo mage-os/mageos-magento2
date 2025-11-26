@@ -68,7 +68,7 @@ class BrowserMonitoringFooterJsTest extends TestCase
      * @param bool $isEnabled
      * @param string|null $footerContent
      * @param string|null $expected
-     * @return void    
+     * @return void
      */
     #[DataProvider('getContentDataProvider')]
     public function testGetContent(bool $isEnabled, ?string $footerContent, ?string $expected): void

@@ -24,11 +24,11 @@ use PHPUnit\Framework\TestCase;
  */
 class EventSaverTest extends TestCase
 {
-    const STUB_CUSTOMER_ID = 1;
-    const STUB_VISITOR_ID = 2;
-    const STUB_EVENT_TYPE_ID = 1;
-    const STUB_OBJECT_ID = 1;
-    const STUB_STORE_ID = 1;
+    private const STUB_CUSTOMER_ID = 1;
+    private const STUB_VISITOR_ID = 2;
+    private const STUB_EVENT_TYPE_ID = 1;
+    private const STUB_OBJECT_ID = 1;
+    private const STUB_STORE_ID = 1;
 
     /**
      * @var Session|MockObject

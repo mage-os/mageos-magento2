@@ -18,7 +18,8 @@ use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class ReportOrderPlacedToNewRelicTest extends TestCase
-{ 
+{
+
     use MockCreationTrait;
     
     /**

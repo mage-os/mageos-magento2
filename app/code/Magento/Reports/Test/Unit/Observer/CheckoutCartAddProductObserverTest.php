@@ -27,8 +27,8 @@ class CheckoutCartAddProductObserverTest extends TestCase
 {
     use MockCreationTrait;
 
-    const STUB_QUOTE_PARENT_ITEM_ID = 1;
-    const STUB_QUOTE_ITEM_ID = 2;
+    private const STUB_QUOTE_PARENT_ITEM_ID = 1;
+    private const STUB_QUOTE_ITEM_ID = 2;
 
     /**
      * @var MockObject|EventSaver

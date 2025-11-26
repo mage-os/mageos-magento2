@@ -24,7 +24,8 @@ use ReflectionClass;
 use ReflectionException;
 
 class CollectTest extends TestCase
-{ 
+{
+
     use MockCreationTrait;
     
     /**
@@ -178,7 +179,8 @@ class CollectTest extends TestCase
 
     /**
      * Tests modules data returns array and saving in DB
-     *     * @return void
+     *
+     * @return void
      */
     #[DataProvider('itemDataProvider')]
     public function testGetModuleDataRefresh($data)
@@ -189,7 +191,10 @@ class CollectTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
         /** @var Module|MockObject $itemMock */
-        $itemMock = $this->createPartialMockWithReflection(Module::class, ['getName', 'getState', 'getData', 'setData', 'save']);
+        $itemMock = $this->createPartialMockWithReflection(
+            Module::class,
+            ['getName', 'getState', 'getData', 'setData', 'save']
+        );
         $modulesMockArray = [
             'Module_Name1' => [
                 'name' => 'Module_Name1',
@@ -261,7 +266,8 @@ class CollectTest extends TestCase
 
     /**
      * Tests modules data returns array and saving in DB
-     *     * @return void
+     *
+     * @return void
      */
     #[DataProvider('itemDataProvider')]
     public function testGetModuleDataRefreshOrStatement($data)
@@ -272,7 +278,10 @@ class CollectTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
         /** @var Module|MockObject $itemMock */
-        $itemMock = $this->createPartialMockWithReflection(Module::class, ['getName', 'getState', 'getData', 'setData', 'save']);
+        $itemMock = $this->createPartialMockWithReflection(
+            Module::class,
+            ['getName', 'getState', 'getData', 'setData', 'save']
+        );
         $modulesMockArray = [
             'Module_Name1' => [
                 'name' => 'Module_Name1',

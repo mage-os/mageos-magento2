@@ -99,9 +99,15 @@ class ReportValidatorTest extends TestCase
         
         // Configure query mock based on stub type
         if ($stubType === 'returnValue') {
-            $this->connectionMock->expects($this->once())->method('query')->with($this->selectMock)->willReturn($stubValue);
+            $this->connectionMock->expects($this->once())
+                ->method('query')
+                ->with($this->selectMock)
+                ->willReturn($stubValue);
         } elseif ($stubType === 'throwException') {
-            $this->connectionMock->expects($this->once())->method('query')->with($this->selectMock)->willThrowException($stubValue);
+            $this->connectionMock->expects($this->once())
+                ->method('query')
+                ->with($this->selectMock)
+                ->willThrowException($stubValue);
         }
         
         $this->assertEquals($result, $this->reportValidator->validate($reportName));

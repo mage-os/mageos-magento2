@@ -173,7 +173,11 @@ class GtagConfigTest extends TestCase
         )->willReturn(
             $isActive
         );
-        self::$scopeConfigMock->method('getValue')->with($this->isString())->willReturnCallback(
+        self::$scopeConfigMock->method('getValue')->with(
+            $this->callback(function ($value) {
+                return is_string($value);
+            })
+        )->willReturnCallback(
             function () use ($returnConfigValue) {
                 return $returnConfigValue;
             }

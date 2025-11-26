@@ -20,7 +20,8 @@ use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class ReportProductDeletedTest extends TestCase
-{ 
+{
+
     use MockCreationTrait;
     
     /**

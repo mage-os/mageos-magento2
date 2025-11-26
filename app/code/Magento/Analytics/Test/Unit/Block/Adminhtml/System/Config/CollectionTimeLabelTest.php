@@ -20,12 +20,12 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
-
 /**
  * Test class for \Magento\Analytics\Block\Adminhtml\System\Config\CollectionTimeLabel
  */
 class CollectionTimeLabelTest extends TestCase
-{ use MockCreationTrait;
+{
+    use MockCreationTrait;
     /**
      * @var CollectionTimeLabel
      */

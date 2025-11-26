@@ -21,7 +21,8 @@ use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class ReportCountsTest extends TestCase
-{ 
+{
+
     use MockCreationTrait;
     
     /**

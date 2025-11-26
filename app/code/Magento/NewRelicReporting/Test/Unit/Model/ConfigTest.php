@@ -787,7 +787,7 @@ class ConfigTest extends TestCase
     /**
      * Test all string casting methods with various input types
      */
-    #[DataProvider('stringCastingProvider')]    
+    #[DataProvider('stringCastingProvider')]
     public function testStringCastingMethods($method, $configPath, $inputValue, $expectedOutput)
     {
         $this->scopeConfigMock->expects($this->once())

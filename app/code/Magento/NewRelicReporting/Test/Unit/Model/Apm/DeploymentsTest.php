@@ -548,7 +548,8 @@ class DeploymentsTest extends TestCase
 
     /**
      * Tests status code boundary conditions (200-210 range)
-     *     * @param int $statusCode
+     *
+     * @param int $statusCode
      * @param bool $expectedSuccess
      * @return void
      */

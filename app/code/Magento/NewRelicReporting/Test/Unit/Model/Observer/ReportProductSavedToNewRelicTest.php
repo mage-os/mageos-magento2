@@ -19,7 +19,8 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class ReportProductSavedToNewRelicTest extends TestCase
-{ 
+{
+
     use MockCreationTrait;
 
     /**
@@ -110,7 +111,7 @@ class ReportProductSavedToNewRelicTest extends TestCase
 
     /**
      * Test case when module is enabled in config and product updating
-     * 
+     *
      * @param bool $isNewObject
      * @return void
      */

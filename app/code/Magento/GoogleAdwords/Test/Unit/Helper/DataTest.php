@@ -78,7 +78,11 @@ class DataTest extends TestCase
         )->willReturn(
             $isActive
         );
-        $this->_scopeConfigMock->method('getValue')->with($this->isType('string'))->willReturnCallback(
+        $this->_scopeConfigMock->method('getValue')->with(
+            $this->callback(function ($value) {
+                return is_string($value);
+            })
+        )->willReturnCallback(
             function () use ($returnConfigValue) {
                 return $returnConfigValue;
             }

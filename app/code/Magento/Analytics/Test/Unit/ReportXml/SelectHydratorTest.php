@@ -193,7 +193,14 @@ class SelectHydratorTest extends TestCase
         $this->objectManagerMock
             ->expects($this->exactly(count($expressionMocks)))
             ->method('create')
-            ->with($this->isString(), $this->isArray())
+            ->with(
+                $this->callback(function ($value) {
+                    return is_string($value);
+                }),
+                $this->callback(function ($value) {
+                    return is_array($value);
+                })
+            )
             ->willReturnOnConsecutiveCalls(...$expressionMocks);
         $this->resourceConnectionMock
             ->expects($this->once())

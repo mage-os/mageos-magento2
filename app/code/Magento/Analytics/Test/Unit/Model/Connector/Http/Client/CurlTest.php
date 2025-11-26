@@ -26,7 +26,8 @@ use Psr\Log\LoggerInterface;
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class CurlTest extends TestCase
-{ 
+{
+
     /**
      * @var Curl
      */
