@@ -157,8 +157,8 @@ class AttributeSetTest extends TestCase
         // @codingStandardsIgnoreStart
         // phpcs:disable Magento2.Templates.InlineJs
         // URL with special characters (test data for XSS prevention)
-        $rawUrl = 'http://example.com/admin/catalog?test=1&special=<script>';
-        $escapedUrl = 'http://example.com/admin/catalog?test=1&amp;special=&lt;script&gt;';
+        $rawUrl = 'http://example.com/admin/catalog?test=1&special=<script type="text/x-magento-init">';
+        $escapedUrl = 'http://example.com/admin/catalog?test=1&amp;special=&lt;script type=&quot;text/x-magento-init&quot;&gt;';
         // phpcs:enable Magento2.Templates.InlineJs
         // @codingStandardsIgnoreEnd
 

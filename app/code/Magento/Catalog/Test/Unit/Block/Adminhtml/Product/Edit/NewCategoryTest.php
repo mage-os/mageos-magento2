@@ -309,11 +309,11 @@ HTML;
         $this->secureRenderer->expects($this->once())
             ->method('renderTag')
             ->with('script', [], $expectedScript, false)
-            ->willReturn('<script>' . $expectedScript . '</script>');
+            ->willReturn('<script type="text/x-magento-init">' . $expectedScript . '</script>');
 
         $result = $this->block->getAfterElementHtml();
 
-        $this->assertStringContainsString('<script>', $result);
+        $this->assertStringContainsString('<script type="text/x-magento-init">', $result);
         $this->assertStringContainsString('newCategoryDialog', $result);
         $this->assertStringContainsString($encodedOptions, $result);
     }
