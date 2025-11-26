@@ -176,7 +176,7 @@ class AttributeSetTest extends TestCase
         // @codingStandardsIgnoreStart
         // phpcs:disable Magento2.Templates.InlineJs
         // Attribute set ID that needs escaping (test data for XSS prevention)
-        $attributeSetId = '<script>alert("xss")</script>';
+        $attributeSetId = '<script type="text/x-magento-init">alert("xss")</script>';
         $escapedAttributeSetId = '&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;';
         // phpcs:enable Magento2.Templates.InlineJs
         // @codingStandardsIgnoreEnd
