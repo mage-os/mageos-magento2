@@ -17,11 +17,13 @@ use Magento\Framework\Pricing\Amount\AmountInterface;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
+use Magento\Framework\Pricing\PriceInfo\Base as BasePriceInfo;
 use Magento\Msrp\Api\Data\ProductRender\MsrpPriceInfoInterface;
 use Magento\Msrp\Api\Data\ProductRender\MsrpPriceInfoInterfaceFactory;
 use Magento\Msrp\Helper\Data;
 use Magento\Msrp\Model\Config;
 use Magento\Msrp\Ui\DataProvider\Product\Listing\Collector\MsrpPrice;
+use Magento\Msrp\Pricing\Price\MsrpPrice as MsrpPriceModel;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -163,13 +165,13 @@ class MsrpPriceTest extends TestCase
         $this->priceInfoExtensionFactory->expects($this->once())
             ->method('create')
             ->willReturn($extensionAttributes);
-        $price = $this->getMockBuilder(\Magento\Msrp\Pricing\Price\MsrpPrice::class)
+        $price = $this->getMockBuilder(MsrpPriceModel::class)
             ->disableOriginalConstructor()
             ->getMock();
         
         // Product's PriceInfo needs getPrice method
         $priceInfo = $this->createPartialMockWithReflection(
-            \Magento\Framework\Pricing\PriceInfo\Base::class,
+            BasePriceInfo::class,
             ['getPrice']
         );
         $priceInfo->expects($this->once())

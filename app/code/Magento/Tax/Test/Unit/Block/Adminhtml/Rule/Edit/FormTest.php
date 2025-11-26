@@ -133,15 +133,6 @@ class FormTest extends TestCase
         ]);
     }
 
-    protected function tearDown(): void
-    {
-        // Reset ObjectManager instance
-        $reflection = new \ReflectionClass(AppObjectManager::class);
-        $instanceProperty = $reflection->getProperty('_instance');
-        $instanceProperty->setAccessible(true);
-        $instanceProperty->setValue(null, null);
-    }
-
     /**
      * Check tax lazy loading URL.
      *

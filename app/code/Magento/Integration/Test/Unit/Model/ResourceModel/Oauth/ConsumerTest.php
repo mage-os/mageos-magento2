@@ -72,15 +72,6 @@ class ConsumerTest extends TestCase
         );
     }
 
-    protected function tearDown(): void
-    {
-        // Reset ObjectManager instance
-        $reflection = new \ReflectionClass(AppObjectManager::class);
-        $property = $reflection->getProperty('_instance');
-        $property->setAccessible(true);
-        $property->setValue(null, null);
-    }
-
     public function testAfterDelete(): void
     {
         $this->connectionMock->expects($this->exactly(2))->method('delete');

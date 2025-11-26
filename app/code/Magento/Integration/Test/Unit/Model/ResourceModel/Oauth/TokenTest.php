@@ -16,6 +16,7 @@ use Magento\Framework\Model\ResourceModel\Db\Context;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Integration\Model\ResourceModel\Oauth\Token;
+use Magento\Integration\Model\Oauth\Token as TokenModel;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -63,19 +64,10 @@ class TokenTest extends TestCase
         );
     }
 
-    protected function tearDown(): void
-    {
-        // Reset ObjectManager instance
-        $reflection = new \ReflectionClass(AppObjectManager::class);
-        $property = $reflection->getProperty('_instance');
-        $property->setAccessible(true);
-        $property->setValue(null, null);
-    }
-
     public function testCleanOldAuthorizedTokensExcept(): void
     {
         $tokenMock = $this->createPartialMockWithReflection(
-            \Magento\Integration\Model\Oauth\Token::class,
+            TokenModel::class,
             ['getAuthorized', 'getConsumerId', 'getCustomerId', 'getAdminId', 'getId']
         );
         $tokenMock->expects($this->any())->method('getId')->willReturn(1);

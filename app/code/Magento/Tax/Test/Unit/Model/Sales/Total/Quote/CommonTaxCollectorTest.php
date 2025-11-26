@@ -30,7 +30,7 @@ use Magento\Tax\Api\Data\TaxDetailsInterface;
 use Magento\Tax\Api\Data\TaxDetailsItemInterface;
 use Magento\Tax\Api\TaxCalculationInterface;
 use Magento\Tax\Helper\Data as TaxHelper;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+use \Magento\Quote\Model\Quote\Address\Total as QuoteAddressTotal;
 use Magento\Tax\Model\Config;
 use Magento\Tax\Model\Sales\Total\Quote\CommonTaxCollector;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -637,7 +637,7 @@ class CommonTaxCollectorTest extends TestCase
         $shippingAssignment = $this->createMock(ShippingAssignmentInterface::class);
         $shippingAssignment->method('getShipping')->willReturn($shipping);
 
-        $total = $this->createPartialMockWithReflection(\Magento\Quote\Model\Quote\Address\Total::class, [
+        $total = $this->createPartialMockWithReflection(QuoteAddressTotal::class, [
                 'getShippingTaxCalculationAmount', 'setShippingTaxCalculationAmount', 'getShippingAmount',
                 'setBaseShippingTaxCalculationAmount', 'getBaseShippingAmount', 'getShippingDiscountAmount',
                 'getBaseShippingDiscountAmount'
@@ -787,7 +787,7 @@ class CommonTaxCollectorTest extends TestCase
         $shippingAssignment->method('getShipping')->willReturn($shipping);
 
         $total = $this->createPartialMockWithReflection(
-            \Magento\Quote\Model\Quote\Address\Total::class,
+            QuoteAddressTotal::class,
             [
                 'setTotalAmount', 'setBaseTotalAmount', 'setSubtotalInclTax',
                 'setBaseSubtotalTotalInclTax', 'setBaseSubtotalInclTax'
@@ -869,13 +869,13 @@ class CommonTaxCollectorTest extends TestCase
         $shippingAssignment->method('getItems')->willReturn([$addressItem]);
         $shippingAssignment->method('getShipping')->willReturn($shipping);
 
-        $applied = $this->createMock(\Magento\Tax\Api\Data\AppliedTaxInterface::class);
+        $applied = $this->createMock(AppliedTaxInterface::class);
         $applied->method('getAmount')->willReturn(1.0);
         $applied->method('getPercent')->willReturn(10.0);
         $applied->method('getTaxRateKey')->willReturn('rate1');
         $applied->method('getRates')->willReturn([]);
 
-        $baseApplied = $this->createMock(\Magento\Tax\Api\Data\AppliedTaxInterface::class);
+        $baseApplied = $this->createMock(AppliedTaxInterface::class);
         $baseApplied->method('getAmount')->willReturn(0.8);
         $baseApplied->method('getPercent')->willReturn(10.0);
         $baseApplied->method('getTaxRateKey')->willReturn('rate1');
@@ -898,7 +898,7 @@ class CommonTaxCollectorTest extends TestCase
         ];
 
         $total = $this->createPartialMockWithReflection(
-            \Magento\Quote\Model\Quote\Address\Total::class,
+            QuoteAddressTotal::class,
             ['addTotalAmount', 'addBaseTotalAmount', 'setAppliedTaxes', 'setItemsAppliedTaxes', 'getAppliedTaxes']
         );
         $total->method('getAppliedTaxes')->willReturn([]);
@@ -981,7 +981,7 @@ class CommonTaxCollectorTest extends TestCase
         ];
 
         $total = $this->createPartialMockWithReflection(
-            \Magento\Quote\Model\Quote\Address\Total::class,
+            QuoteAddressTotal::class,
             ['addTotalAmount', 'addBaseTotalAmount', 'setAppliedTaxes', 'setItemsAppliedTaxes', 'getAppliedTaxes']
         );
         $total->method('getAppliedTaxes')->willReturn([]);
@@ -1054,7 +1054,7 @@ class CommonTaxCollectorTest extends TestCase
         ];
 
         $total = $this->createPartialMockWithReflection(
-            \Magento\Quote\Model\Quote\Address\Total::class,
+            QuoteAddressTotal::class,
             ['addTotalAmount', 'addBaseTotalAmount', 'setAppliedTaxes', 'setItemsAppliedTaxes', 'getAppliedTaxes']
         );
         $total->method('getAppliedTaxes')->willReturn([]);
@@ -1094,7 +1094,7 @@ class CommonTaxCollectorTest extends TestCase
         $shippingAssignment->method('getShipping')->willReturn($shipping);
 
         $total = $this->createPartialMockWithReflection(
-            \Magento\Quote\Model\Quote\Address\Total::class,
+            QuoteAddressTotal::class,
             [
                 'setTotalAmount', 'setBaseTotalAmount', 'addTotalAmount', 'addBaseTotalAmount',
                 'setShippingInclTax', 'setBaseShippingInclTax', 'setShippingTaxAmount',
@@ -1128,7 +1128,7 @@ class CommonTaxCollectorTest extends TestCase
     public function testSaveAppliedTaxesAggregatesAmounts(): void
     {
         $total = $this->createPartialMockWithReflection(
-            \Magento\Quote\Model\Quote\Address\Total::class,
+           QuoteAddressTotal::class,
             ['getAppliedTaxes', 'setAppliedTaxes']
         );
         $total->method('getAppliedTaxes')->willReturn([]);
@@ -1511,7 +1511,7 @@ class CommonTaxCollectorTest extends TestCase
         $shippingAssignment->method('getShipping')->willReturn($shipping);
 
         $total = $this->createPartialMockWithReflection(
-            \Magento\Quote\Model\Quote\Address\Total::class,
+            QuoteAddressTotal::class,
             [
                 'setTotalAmount', 'setBaseTotalAmount', 'setSubtotalInclTax',
                 'setBaseSubtotalTotalInclTax', 'setBaseSubtotalInclTax'

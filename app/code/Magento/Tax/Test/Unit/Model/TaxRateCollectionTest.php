@@ -12,7 +12,6 @@ use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Api\SearchCriteriaInterface;
 use Magento\Framework\Api\SortOrderBuilder;
 use Magento\Framework\Data\Collection\EntityFactory;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Tax\Api\Data\TaxRateSearchResultsInterface;
 use Magento\Tax\Api\TaxRateRepositoryInterface;
 use Magento\Tax\Model\Calculation\Rate;
@@ -23,8 +22,6 @@ use PHPUnit\Framework\TestCase;
 
 class TaxRateCollectionTest extends TestCase
 {
-    use MockCreationTrait;
-
     /**
      * @var TaxRateCollection
      */

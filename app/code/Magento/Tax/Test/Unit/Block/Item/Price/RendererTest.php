@@ -15,6 +15,7 @@ use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Invoice\Item as InvoiceItem;
 use Magento\Sales\Model\Order\Item;
 use Magento\Store\Model\Store;
+use Magento\Quote\Model\Quote\Item as QuoteItem;
 use Magento\Tax\Block\Item\Price\Renderer;
 use Magento\Tax\Helper\Data;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -253,7 +254,7 @@ class RendererTest extends TestCase
             ->with($price, true)
             ->willReturn($formattedPrice);
 
-        $itemMock = $this->getMockBuilder(\Magento\Quote\Model\Quote\Item::class)
+        $itemMock = $this->getMockBuilder(QuoteItem::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getStore', '__wakeup'])
             ->getMock();
@@ -340,7 +341,7 @@ class RendererTest extends TestCase
         $storeId = 'default';
 
         $itemMock = $this->createPartialMockWithReflection(
-            \Magento\Quote\Model\Quote\Item::class,
+            QuoteItem::class,
             ['getStoreId', '__wakeup']
         );
 
@@ -356,8 +357,8 @@ class RendererTest extends TestCase
     {
         $price = 10;
 
-        /** @var \Magento\Quote\Model\Quote\Item|MockObject $quoteItemMock */
-        $quoteItemMock = $this->getMockBuilder(\Magento\Quote\Model\Quote\Item::class)
+        /** @var QuoteItem|MockObject $quoteItemMock */
+        $quoteItemMock = $this->getMockBuilder(QuoteItem::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getPrice', '__wakeup'])
             ->getMock();

@@ -17,6 +17,7 @@ use Magento\Framework\Registry;
 use Magento\Framework\Stdlib\DateTime\DateTime;
 use Magento\Framework\Url\Validator as UrlValidator;
 use Magento\Integration\Helper\Oauth\Data;
+use Magento\Integration\Model\ResourceModel\Oauth\Consumer as ConsumerResourceModel;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Integration\Model\Oauth\Consumer;
 use Magento\Integration\Model\Oauth\Consumer\Validator\KeyLength;
@@ -108,7 +109,7 @@ class ConsumerTest extends TestCase
             ->willReturn(Data::CONSUMER_EXPIRATION_PERIOD_DEFAULT);
 
         $this->resourceMock = $this->createPartialMockWithReflection(
-            \Magento\Integration\Model\ResourceModel\Oauth\Consumer::class,
+            ConsumerResourceModel::class,
             ['selectByCompositeKey', 'deleteOldEntries', 'getIdFieldName']
         );
         $this->resourceCollectionMock = $this->createMock(AbstractDb::class);

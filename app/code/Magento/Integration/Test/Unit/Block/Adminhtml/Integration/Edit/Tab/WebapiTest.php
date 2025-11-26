@@ -284,13 +284,4 @@ class WebapiTest extends TestCase
             ]
         );
     }
-
-    protected function tearDown(): void
-    {
-        // Reset ObjectManager instance using reflection to avoid type issues
-        $reflection = new \ReflectionClass(AppObjectManager::class);
-        $property = $reflection->getProperty('_instance');
-        $property->setAccessible(true);
-        $property->setValue(null, null); // For static properties: setValue(object, value)
-    }
 }

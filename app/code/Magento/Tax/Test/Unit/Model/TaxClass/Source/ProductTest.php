@@ -12,7 +12,6 @@ use Magento\Framework\Api\Filter;
 use Magento\Framework\Api\FilterBuilder;
 use Magento\Framework\Api\SearchCriteria;
 use Magento\Framework\Api\SearchCriteriaBuilder;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Tax\Api\Data\TaxClassInterface;
 use Magento\Tax\Api\Data\TaxClassSearchResultsInterface;
@@ -29,8 +28,6 @@ use PHPUnit\Framework\TestCase;
  */
 class ProductTest extends TestCase
 {
-    use MockCreationTrait;
-
     /**
      * @var TaxClassRepositoryInterface|MockObject
      */

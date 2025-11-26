@@ -30,6 +30,7 @@ use Magento\Framework\View\Model\Layout\Merge;
 use Magento\Framework\View\Page\Config;
 use Magento\Framework\View\Page\Title;
 use Magento\Framework\View\Result\Page;
+use Magento\Framework\View\Layout as LayoutModel;
 use Magento\Integration\Api\IntegrationServiceInterface;
 use Magento\Integration\Api\OauthServiceInterface;
 use Magento\Integration\Block\Adminhtml\Integration\Edit\Tab\Info;
@@ -245,7 +246,7 @@ abstract class IntegrationTestCase extends TestCase
             ->getMock();
         // Use concrete Layout class since we need getNode() method which isn't in interface
         $this->_layoutMock = $this->createPartialMockWithReflection(
-            \Magento\Framework\View\Layout::class,
+            LayoutModel::class,
             ['getUpdate', 'getNode', 'getMessagesBlock', 'getBlock']
         );
         $this->_layoutMergeMock = $this->getMockBuilder(
@@ -405,12 +406,12 @@ abstract class IntegrationTestCase extends TestCase
     /**
      * Return integration model mock with sample data.
      *
-     * @return \Magento\Integration\Model\Integration|MockObject
+     * @return IntegrationModel|MockObject
      */
     protected function _getIntegrationModelMock()
     {
         $integrationModelMock = $this->createPartialMockWithReflection(
-            \Magento\Integration\Model\Integration::class,
+            IntegrationModel::class,
             ['setStatus', 'save', '__wakeup', 'getData']
         );
 
