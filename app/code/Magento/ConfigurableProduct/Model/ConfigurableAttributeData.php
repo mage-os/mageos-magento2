@@ -38,6 +38,7 @@ class ConfigurableAttributeData
                     'label' => $productAttribute->getStoreLabel($product->getStoreId()),
                     'options' => $attributeOptionsData,
                     'position' => $attribute->getPosition(),
+                    'required'=> $productAttribute->getIsRequired() ? "1" : "0",
                 ];
                 $defaultValues[$attributeId] = $this->getAttributeConfigValue($attributeId, $product);
             }
