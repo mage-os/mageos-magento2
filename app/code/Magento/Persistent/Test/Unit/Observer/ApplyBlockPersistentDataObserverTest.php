@@ -9,6 +9,7 @@ namespace Magento\Persistent\Test\Unit\Observer;
 
 use Magento\Framework\Event;
 use Magento\Framework\Event\Observer;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\View\Element\AbstractBlock;
 use Magento\Persistent\Helper\Data;
 use Magento\Persistent\Helper\Session;
@@ -20,6 +21,8 @@ use PHPUnit\Framework\TestCase;
 
 class ApplyBlockPersistentDataObserverTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var ApplyBlockPersistentDataObserver
      */
@@ -73,11 +76,11 @@ class ApplyBlockPersistentDataObserverTest extends TestCase
         $this->configMock =
             $this->createPartialMock(ConfigFactory::class, ['create']);
         $this->observerMock = $this->createMock(Observer::class);
-        $this->eventMock = $this->getMockBuilder(Event::class)
-            ->addMethods(['getConfigFilePath'])
-            ->onlyMethods(['getBlock'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        // Use createPartialMockWithReflection for methods not in the class - PHPUnit 12 compatible
+        $this->eventMock = $this->createPartialMockWithReflection(
+            Event::class,
+            ['getConfigFilePath', 'getBlock']
+        );
         $this->blockMock = $this->createMock(AbstractBlock::class);
         $this->persistentConfigMock = $this->createMock(Config::class);
         $this->model = new ApplyBlockPersistentDataObserver(

@@ -10,6 +10,7 @@ namespace Magento\Persistent\Test\Unit\Model;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Persistent\Model\Factory;
+use Magento\Persistent\Model\Session;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -29,7 +30,8 @@ class FactoryTest extends TestCase
     {
         $helper = new ObjectManager($this);
 
-        $this->_objectManagerMock = $this->getMockForAbstractClass(ObjectManagerInterface::class);
+        // Use createMock() for interfaces - PHPUnit 12 compatible
+        $this->_objectManagerMock = $this->createMock(ObjectManagerInterface::class);
         $this->_factory = $helper->getObject(
             Factory::class,
             ['objectManager' => $this->_objectManagerMock]
@@ -38,11 +40,10 @@ class FactoryTest extends TestCase
 
     public function testCreate()
     {
-        $className = 'SomeModel';
+        $className = Session::class;
 
-        $classMock = $this->getMockBuilder('SomeModel')
-            ->disableOriginalConstructor()
-            ->getMock();
+        // Use an actual class that exists for PHPUnit 12 compatibility
+        $classMock = $this->createMock(Session::class);
         $this->_objectManagerMock->expects(
             $this->once()
         )->method(
@@ -59,10 +60,11 @@ class FactoryTest extends TestCase
 
     public function testCreateWithArguments()
     {
-        $className = 'SomeModel';
+        $className = Session::class;
         $data = ['param1', 'param2'];
 
-        $classMock = $this->createMock('SomeModel');
+        // Use an actual class that exists for PHPUnit 12 compatibility
+        $classMock = $this->createMock(Session::class);
         $this->_objectManagerMock->expects(
             $this->once()
         )->method(

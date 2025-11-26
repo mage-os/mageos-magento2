@@ -15,6 +15,7 @@ use Magento\Persistent\Model\QuoteManager;
 use Magento\Persistent\Observer\SetQuotePersistentDataObserver;
 use Magento\Quote\Model\Quote;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -22,6 +23,9 @@ use PHPUnit\Framework\TestCase;
  */
 class SetQuotePersistentDataObserverTest extends TestCase
 {
+
+    use MockCreationTrait;
+
     /**
      * @var SetQuotePersistentDataObserver
      */
@@ -64,17 +68,18 @@ class SetQuotePersistentDataObserverTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->quoteMock = $this->getMockBuilder(Quote::class)
-            ->addMethods(['setIsPersistent'])
-            ->onlyMethods(['setIsActive'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        // Use createPartialMockWithReflection - PHPUnit 12 compatible
+        $this->quoteMock = $this->createPartialMockWithReflection(
+            Quote::class,
+            ['setIsPersistent', 'setIsActive']
+        );
         $this->helperMock = $this->createMock(Data::class);
         $this->sessionHelperMock = $this->createMock(Session::class);
-        $this->eventManagerMock = $this->getMockBuilder(Event::class)
-            ->addMethods(['getQuote'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        // Use createPartialMockWithReflection - PHPUnit 12 compatible
+        $this->eventManagerMock = $this->createPartialMockWithReflection(
+            Event::class,
+            ['getQuote']
+        );
         $this->customerSessionMock = $this->createMock(\Magento\Customer\Model\Session::class);
         $this->observerMock = $this->createMock(Observer::class);
         $this->quoteManagerMock = $this->createMock(QuoteManager::class);

@@ -94,7 +94,8 @@ class GuestPaymentInformationManagementPluginTest extends TestCase
         /**
          * @var PaymentInterface|MockObject $paymentInterfaceMock
          */
-        $paymentInterfaceMock = $this->getMockForAbstractClass(PaymentInterface::class);
+        // Use createMock() for interfaces - PHPUnit 12 compatible
+        $paymentInterfaceMock = $this->createMock(PaymentInterface::class);
 
         $this->persistentHelperMock->expects($this->once())->method('isShoppingCartPersist')->willReturn(true);
         $this->persistentSessionMock->expects($this->once())->method('isPersistent')->willReturn(true);
@@ -126,7 +127,8 @@ class GuestPaymentInformationManagementPluginTest extends TestCase
         /**
          * @var PaymentInterface|MockObject $paymentInterfaceMock
          */
-        $paymentInterfaceMock = $this->getMockForAbstractClass(PaymentInterface::class);
+        // Use createMock() for interfaces - PHPUnit 12 compatible
+        $paymentInterfaceMock = $this->createMock(PaymentInterface::class);
 
         $this->persistentHelperMock->expects($this->once())->method('isShoppingCartPersist')->willReturn(false);
         $this->persistentSessionMock->expects($this->once())->method('isPersistent')->willReturn(true);
@@ -150,7 +152,8 @@ class GuestPaymentInformationManagementPluginTest extends TestCase
         /**
          * @var PaymentInterface|MockObject $paymentInterfaceMock
          */
-        $paymentInterfaceMock = $this->getMockForAbstractClass(PaymentInterface::class);
+        // Use createMock() for interfaces - PHPUnit 12 compatible
+        $paymentInterfaceMock = $this->createMock(PaymentInterface::class);
 
         $this->persistentSessionMock->expects($this->once())->method('isPersistent')->willReturn(false);
         $this->cartRepositoryMock->expects($this->never())->method('save');
@@ -172,7 +175,8 @@ class GuestPaymentInformationManagementPluginTest extends TestCase
         /**
          * @var PaymentInterface|MockObject $paymentInterfaceMock
          */
-        $paymentInterfaceMock = $this->getMockForAbstractClass(PaymentInterface::class);
+        // Use createMock() for interfaces - PHPUnit 12 compatible
+        $paymentInterfaceMock = $this->createMock(PaymentInterface::class);
 
         $this->persistentSessionMock->expects($this->once())->method('isPersistent')->willReturn(true);
         $this->customerSessionMock->expects($this->once())->method('isLoggedIn')->willReturn(true);
@@ -195,7 +199,8 @@ class GuestPaymentInformationManagementPluginTest extends TestCase
         /**
          * @var PaymentInterface|MockObject $paymentInterfaceMock
          */
-        $paymentInterfaceMock = $this->getMockForAbstractClass(PaymentInterface::class);
+        // Use createMock() for interfaces - PHPUnit 12 compatible
+        $paymentInterfaceMock = $this->createMock(PaymentInterface::class);
 
         $this->persistentHelperMock->expects($this->once())->method('isShoppingCartPersist')->willReturn(true);
         $this->persistentSessionMock->expects($this->once())->method('isPersistent')->willReturn(true);

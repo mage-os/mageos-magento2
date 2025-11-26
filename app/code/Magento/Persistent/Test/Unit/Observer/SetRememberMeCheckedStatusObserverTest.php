@@ -14,10 +14,14 @@ use Magento\Persistent\Helper\Data;
 use Magento\Persistent\Helper\Session;
 use Magento\Persistent\Observer\SetRememberMeCheckedStatusObserver;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class SetRememberMeCheckedStatusObserverTest extends TestCase
 {
+
+    use MockCreationTrait;
+
     /**
      * @var SetRememberMeCheckedStatusObserver
      */
@@ -58,15 +62,17 @@ class SetRememberMeCheckedStatusObserverTest extends TestCase
         $this->requestMock = $this->createMock(Http::class);
         $this->helperMock = $this->createMock(Data::class);
         $this->sessionHelperMock = $this->createMock(Session::class);
-        $this->checkoutSessionMock = $this->getMockBuilder(\Magento\Checkout\Model\Session::class)
-            ->addMethods(['setRememberMeChecked'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        // Use createPartialMockWithReflection - PHPUnit 12 compatible
+        $this->checkoutSessionMock = $this->createPartialMockWithReflection(
+            \Magento\Checkout\Model\Session::class,
+            ['setRememberMeChecked']
+        );
         $this->observerMock = $this->createMock(Observer::class);
-        $this->eventManagerMock = $this->getMockBuilder(Event::class)
-            ->addMethods(['getRequest'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        // Use createPartialMockWithReflection - PHPUnit 12 compatible
+        $this->eventManagerMock = $this->createPartialMockWithReflection(
+            Event::class,
+            ['getRequest']
+        );
         $this->model = new SetRememberMeCheckedStatusObserver(
             $this->helperMock,
             $this->sessionHelperMock,

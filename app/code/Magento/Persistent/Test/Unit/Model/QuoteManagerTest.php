@@ -12,6 +12,7 @@ use Magento\Customer\Api\Data\CustomerInterface;
 use Magento\Customer\Api\Data\CustomerInterfaceFactory;
 use Magento\Customer\Model\GroupManagement;
 use Magento\Eav\Model\Entity\Collection\AbstractCollection;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Persistent\Helper\Data;
 use Magento\Persistent\Model\QuoteManager;
 use Magento\Quote\Api\CartRepositoryInterface;
@@ -30,6 +31,8 @@ use PHPUnit\Framework\TestCase;
  */
 class QuoteManagerTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var QuoteManager
      */
@@ -91,26 +94,30 @@ class QuoteManagerTest extends TestCase
     protected function setUp(): void
     {
         $this->persistentSessionMock = $this->createMock(\Magento\Persistent\Helper\Session::class);
-        $this->sessionMock =
-            $this->getMockBuilder(\Magento\Persistent\Model\Session::class)->addMethods([
+        // Use createPartialMockWithReflection for methods not in the class - PHPUnit 12 compatible
+        $this->sessionMock = $this->createPartialMockWithReflection(
+            \Magento\Persistent\Model\Session::class,
+            [
                 'setLoadInactive',
                 'setCustomerData',
                 'clearQuote',
                 'clearStorage',
-                'getQuote'
-            ])
-                ->onlyMethods(['removePersistentCookie'])
-                ->disableOriginalConstructor()
-                ->getMock();
+                'getQuote',
+                'removePersistentCookie'
+            ]
+        );
         $this->persistentDataMock = $this->createMock(Data::class);
         $this->checkoutSessionMock = $this->createMock(Session::class);
 
         $this->abstractCollectionMock =
             $this->createMock(AbstractCollection::class);
 
-        $this->quoteRepositoryMock = $this->getMockForAbstractClass(CartRepositoryInterface::class);
-        $this->quoteMock = $this->getMockBuilder(Quote::class)
-            ->addMethods([
+        // Use createMock() for interfaces - PHPUnit 12 compatible
+        $this->quoteRepositoryMock = $this->createMock(CartRepositoryInterface::class);
+        // Use createPartialMockWithReflection for methods not in the class - PHPUnit 12 compatible
+        $this->quoteMock = $this->createPartialMockWithReflection(
+            Quote::class,
+            [
                 'getIsPersistent',
                 'setCustomerId',
                 'setCustomerEmail',
@@ -118,9 +125,7 @@ class QuoteManagerTest extends TestCase
                 'setCustomerLastname',
                 'setCustomerGroupId',
                 'setIsPersistent',
-                'getCustomerId'
-            ])
-            ->onlyMethods([
+                'getCustomerId',
                 'getId',
                 'getPaymentsCollection',
                 'getAddressesCollection',
@@ -137,9 +142,8 @@ class QuoteManagerTest extends TestCase
                 '__wakeup',
                 'setCustomer',
                 'getCustomer'
-            ])
-            ->disableOriginalConstructor()
-            ->getMock();
+            ]
+        );
 
         $this->cartExtensionFactory = $this->createPartialMock(CartExtensionFactory::class, ['create']);
         $this->shippingAssignmentProcessor = $this->createPartialMock(ShippingAssignmentProcessor::class, ['create']);
@@ -403,13 +407,10 @@ class QuoteManagerTest extends TestCase
      */
     private function getExtensionAttributesMock(): MockObject
     {
-        $extensionMockBuilder = $this->getMockBuilder(CartExtensionInterface::class);
-        try {
-            $extensionMockBuilder->addMethods(['setShippingAssignments']);
-        } catch (RuntimeException $e) {
-            // do nothing as CartExtensionInterface already generated and has 'setShippingAssignments' method.
-        }
-
-        return $extensionMockBuilder->getMockForAbstractClass();
+        // Use createPartialMockWithReflection for extension interface methods - PHPUnit 12 compatible
+        return $this->createPartialMockWithReflection(
+            CartExtensionInterface::class,
+            ['setShippingAssignments', 'getShippingAssignments']
+        );
     }
 }

@@ -16,13 +16,17 @@ use Magento\Framework\Stdlib\Cookie\CookieMetadataFactory;
 use Magento\Framework\Stdlib\Cookie\PublicCookieMetadata;
 use Magento\Framework\Stdlib\Cookie\SensitiveCookieMetadata;
 use Magento\Framework\Stdlib\CookieManagerInterface;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Persistent\Model\Session;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class SessionTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Session
      */
@@ -46,21 +50,19 @@ class SessionTest extends TestCase
     protected function setUp(): void
     {
         $helper = new ObjectManager($this);
-        $this->configMock = $this->getMockForAbstractClass(ConfigInterface::class);
-        $this->cookieManagerMock = $this->getMockForAbstractClass(CookieManagerInterface::class);
+        // Use createMock() for interfaces - PHPUnit 12 compatible
+        $this->configMock = $this->createMock(ConfigInterface::class);
+        $this->cookieManagerMock = $this->createMock(CookieManagerInterface::class);
         $this->cookieMetadataFactoryMock = $this->getMockBuilder(
             CookieMetadataFactory::class
         )->disableOriginalConstructor()
             ->getMock();
 
-        $resourceMock = $this->getMockForAbstractClass(
+        // Use createPartialMock for abstract classes with specific methods - PHPUnit 12 compatible
+        // Include _construct abstract method to avoid "contains 1 abstract method" error
+        $resourceMock = $this->createPartialMock(
             AbstractDb::class,
-            [],
-            '',
-            false,
-            false,
-            true,
-            ['__wakeup', 'getIdFieldName', 'getConnection', 'beginTransaction', 'delete', 'commit', 'rollBack']
+            ['__wakeup', 'getIdFieldName', 'getConnection', 'beginTransaction', 'delete', 'commit', 'rollBack', '_construct']
         );
 
         $actionValidatorMock = $this->createMock(RemoveAction::class);
@@ -165,8 +167,8 @@ class SessionTest extends TestCase
      * @param int $cookieDuration
      * @param string $cookieValue
      * @param string $cookiePath
-     * @dataProvider renewPersistentCookieDataProvider
      */
+    #[DataProvider('renewPersistentCookieDataProvider')]
     public function testRenewPersistentCookie(
         $numGetCookieCalls,
         $numCalls,

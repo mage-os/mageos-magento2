@@ -18,10 +18,14 @@ use Magento\Persistent\Observer\RemoveGuestPersistenceOnEmptyCartObserver;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\Data\CartInterface;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class RemoveGuestPersistenceOnEmptyCartObserverTest extends TestCase
 {
+
+    use MockCreationTrait;
+
     /**
      * @var RemoveGuestPersistenceOnEmptyCartObserver
      */
@@ -115,14 +119,15 @@ class RemoveGuestPersistenceOnEmptyCartObserverTest extends TestCase
         $this->persistentHelperMock->expects($this->once())->method('isPersistent')->willReturn(true);
         $this->customerSessionMock->expects($this->once())->method('isLoggedIn')->willReturn(false);
         $this->persistentDataMock->expects($this->once())->method('isShoppingCartPersist')->willReturn(true);
-        $sessionMock = $this->getMockBuilder(PersistentSession::class)
-            ->addMethods(['getCustomerId'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        // Use createPartialMockWithReflection - PHPUnit 12 compatible
+        $sessionMock = $this->createPartialMockWithReflection(
+            PersistentSession::class,
+            ['getCustomerId']
+        );
         $this->persistentHelperMock->expects($this->once())->method('getSession')->willReturn($sessionMock);
         $sessionMock->expects($this->once())->method('getCustomerId')->willReturn($customerId);
         /** @var CartInterface|MockObject $quoteMock */
-        $quoteMock = $this->getMockForAbstractClass(
+        $quoteMock = $this->createMock(
             CartInterface::class,
             [],
             '',
@@ -157,10 +162,11 @@ class RemoveGuestPersistenceOnEmptyCartObserverTest extends TestCase
         $this->persistentHelperMock->expects($this->once())->method('isPersistent')->willReturn(true);
         $this->customerSessionMock->expects($this->once())->method('isLoggedIn')->willReturn(false);
         $this->persistentDataMock->expects($this->once())->method('isShoppingCartPersist')->willReturn(true);
-        $sessionMock = $this->getMockBuilder(PersistentSession::class)
-            ->addMethods(['getCustomerId'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        // Use createPartialMockWithReflection - PHPUnit 12 compatible
+        $sessionMock = $this->createPartialMockWithReflection(
+            PersistentSession::class,
+            ['getCustomerId']
+        );
         $this->persistentHelperMock->expects($this->once())->method('getSession')->willReturn($sessionMock);
         $sessionMock->expects($this->once())->method('getCustomerId')->willReturn($customerId);
         $this->cartRepositoryMock->expects($this->once())

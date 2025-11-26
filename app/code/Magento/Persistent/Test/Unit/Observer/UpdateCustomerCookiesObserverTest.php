@@ -16,6 +16,7 @@ use Magento\Persistent\Helper\Session;
 use Magento\Persistent\Model\Session as PersistentSessionModel;
 use Magento\Persistent\Observer\UpdateCustomerCookiesObserver;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -23,6 +24,9 @@ use PHPUnit\Framework\TestCase;
  */
 class UpdateCustomerCookiesObserverTest extends TestCase
 {
+
+    use MockCreationTrait;
+
     /**
      * @var UpdateCustomerCookiesObserver
      */
@@ -61,23 +65,24 @@ class UpdateCustomerCookiesObserverTest extends TestCase
     protected function setUp(): void
     {
         $this->sessionHelperMock = $this->createMock(Session::class);
-        $this->customerRepository = $this->getMockForAbstractClass(
+        $this->customerRepository = $this->createMock(
             CustomerRepositoryInterface::class,
             [],
             '',
             false
         );
         $this->observerMock = $this->createMock(Observer::class);
-        $this->eventManagerMock = $this->getMockBuilder(Event::class)
-            ->addMethods(['getCustomerCookies'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->sessionMock = $this->getMockBuilder(PersistentSessionModel::class)
-            ->addMethods(['getGroupId', 'getCustomerId'])
-            ->onlyMethods(['getId'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->customerMock = $this->getMockForAbstractClass(
+        // Use createPartialMockWithReflection - PHPUnit 12 compatible
+        $this->eventManagerMock = $this->createPartialMockWithReflection(
+            Event::class,
+            ['getCustomerCookies']
+        );
+        // Use createPartialMockWithReflection - PHPUnit 12 compatible
+        $this->sessionMock = $this->createPartialMockWithReflection(
+            PersistentSessionModel::class,
+            ['getGroupId', 'getCustomerId', 'getId']
+        );
+        $this->customerMock = $this->createMock(
             CustomerInterface::class,
             [],
             '',
@@ -100,10 +105,11 @@ class UpdateCustomerCookiesObserverTest extends TestCase
     {
         $customerId = 1;
         $customerGroupId = 2;
-        $cookieMock = $this->getMockBuilder(DataObject::class)
-            ->addMethods(['setCustomerId', 'setCustomerGroupId'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        // Use createPartialMockWithReflection - PHPUnit 12 compatible
+        $cookieMock = $this->createPartialMockWithReflection(
+            DataObject::class,
+            ['setCustomerId', 'setCustomerGroupId']
+        );
         $this->sessionHelperMock->expects($this->once())->method('isPersistent')->willReturn(true);
         $this->observerMock
             ->expects($this->once())

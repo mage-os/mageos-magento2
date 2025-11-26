@@ -11,6 +11,7 @@ namespace Magento\Persistent\Test\Unit\CustomerData;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Customer\Api\Data\CustomerInterface;
 use Magento\Customer\Helper\View;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Persistent\CustomerData\Persistent;
 use Magento\Persistent\Helper\Session;
@@ -20,6 +21,8 @@ use PHPUnit\Framework\TestCase;
 
 class PersistentTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * Stub customer id
      */
@@ -57,7 +60,8 @@ class PersistentTest extends TestCase
     {
         $this->persistentSessionHelperMock = $this->createMock(Session::class);
         $this->customerViewHelperMock = $this->createMock(View::class);
-        $this->customerRepositoryMock = $this->getMockForAbstractClass(CustomerRepositoryInterface::class);
+        // Use createMock() for interfaces - PHPUnit 12 compatible
+        $this->customerRepositoryMock = $this->createMock(CustomerRepositoryInterface::class);
 
         $objectManager = new ObjectManagerHelper($this);
 
@@ -88,10 +92,11 @@ class PersistentTest extends TestCase
     {
         $this->persistentSessionHelperMock->method('isPersistent')->willReturn(true);
 
-        $persistentSessionMock = $this->getMockBuilder(PersistentSession::class)
-            ->addMethods(['getCustomerId'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        // Use createPartialMockWithReflection for methods not in the class - PHPUnit 12 compatible
+        $persistentSessionMock = $this->createPartialMockWithReflection(
+            PersistentSession::class,
+            ['getCustomerId']
+        );
         $persistentSessionMock->method('getCustomerId')->willReturn(null);
         $this->persistentSessionHelperMock->method('getSession')->willReturn($persistentSessionMock);
 
@@ -105,14 +110,16 @@ class PersistentTest extends TestCase
     {
         $this->persistentSessionHelperMock->method('isPersistent')->willReturn(true);
 
-        $persistentSessionMock = $this->getMockBuilder(PersistentSession::class)
-            ->addMethods(['getCustomerId'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        // Use createPartialMockWithReflection for methods not in the class - PHPUnit 12 compatible
+        $persistentSessionMock = $this->createPartialMockWithReflection(
+            PersistentSession::class,
+            ['getCustomerId']
+        );
         $persistentSessionMock->method('getCustomerId')->willReturn(self::STUB_CUSTOMER_ID);
         $this->persistentSessionHelperMock->method('getSession')->willReturn($persistentSessionMock);
 
-        $customerMock = $this->getMockForAbstractClass(CustomerInterface::class);
+        // Use createMock() for interfaces - PHPUnit 12 compatible
+        $customerMock = $this->createMock(CustomerInterface::class);
         $this->customerRepositoryMock->method('getById')->with(self::STUB_CUSTOMER_ID)->willReturn($customerMock);
         $this->customerViewHelperMock->method('getCustomerName')->with($customerMock)
             ->willReturn(self::STUB_CUSTOMER_NAME);

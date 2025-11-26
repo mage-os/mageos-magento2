@@ -9,12 +9,14 @@ declare(strict_types=1);
 namespace Magento\PageCache\Test\Unit\Block;
 
 use Magento\Framework\App\RequestInterface;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\UrlInterface;
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Framework\View\Layout\ProcessorInterface;
 use Magento\Framework\View\LayoutInterface;
 use Magento\PageCache\Block\Javascript;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -23,6 +25,8 @@ use PHPUnit\Framework\TestCase;
  */
 class JavascriptTest extends TestCase
 {
+    use MockCreationTrait;
+
     const COOKIE_NAME = 'private_content_version';
 
     /**
@@ -60,36 +64,22 @@ class JavascriptTest extends TestCase
         $this->contextMock = $this->getMockBuilder(Context::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->requestMock = $this->getMockBuilder(RequestInterface::class)
-            ->onlyMethods(
-                [
-                    'getModuleName',
-                    'getActionName',
-                    'getParam',
-                    'setParams',
-                    'getParams',
-                    'setModuleName',
-                    'isSecure',
-                    'setActionName',
-                    'getCookie'
-                ]
-            )->addMethods(
-                [
-                    'getControllerName',
-                    'getRequestUri',
-                    'setRequestUri',
-                    'getRouteName'
-                ]
-            )->getMockForAbstractClass();
-        $this->layoutMock = $this->getMockBuilder(LayoutInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $this->layoutUpdateMock = $this->getMockBuilder(ProcessorInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $this->urlBuilderMock = $this->getMockBuilder(UrlInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        // Use createPartialMockWithReflection - include ALL interface methods + custom - PHPUnit 12 compatible
+        $this->requestMock = $this->createPartialMockWithReflection(
+            RequestInterface::class,
+            [
+                // All RequestInterface methods
+                'getModuleName', 'setModuleName', 'getActionName', 'setActionName',
+                'getParam', 'setParams', 'getParams', 'getCookie', 'isSecure',
+                // Custom methods
+                'getControllerName', 'getRequestUri', 'setRequestUri', 'getRouteName'
+            ]
+        );
+        // Use createMock() for interfaces - PHPUnit 12 compatible
+        $this->layoutMock = $this->createMock(LayoutInterface::class);
+        $this->layoutUpdateMock = $this->createMock(ProcessorInterface::class);
+        // Use createMock() for interfaces - PHPUnit 12 compatible
+        $this->urlBuilderMock = $this->createMock(UrlInterface::class);
         $this->contextMock->expects($this->any())
             ->method('getRequest')
             ->willReturn($this->requestMock);
@@ -116,8 +106,8 @@ class JavascriptTest extends TestCase
      * @param bool $isSecure
      * @param string $url
      * @param string $expectedResult
-     * @dataProvider getScriptOptionsDataProvider
      */
+    #[DataProvider('getScriptOptionsDataProvider')]
     public function testGetScriptOptions($isSecure, $url, $expectedResult)
     {
         $handles = [
@@ -176,8 +166,8 @@ class JavascriptTest extends TestCase
      * @param string $action
      * @param string $uri
      * @param string $expectedResult
-     * @dataProvider getScriptOptionsPrivateContentDataProvider
      */
+    #[DataProvider('getScriptOptionsPrivateContentDataProvider')]
     public function testGetScriptOptionsPrivateContent($url, $route, $controller, $action, $uri, $expectedResult)
     {
         $handles = [

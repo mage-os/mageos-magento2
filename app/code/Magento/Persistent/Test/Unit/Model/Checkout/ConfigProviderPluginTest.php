@@ -8,17 +8,21 @@ declare(strict_types=1);
 namespace Magento\Persistent\Test\Unit\Model\Checkout;
 
 use Magento\Checkout\Model\DefaultConfigProvider;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Persistent\Helper\Data;
 use Magento\Persistent\Helper\Session;
 use Magento\Persistent\Model\Checkout\ConfigProviderPlugin;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\QuoteIdMask;
 use Magento\Quote\Model\QuoteIdMaskFactory;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class ConfigProviderPluginTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var MockObject
      */
@@ -79,9 +83,8 @@ class ConfigProviderPluginTest extends TestCase
      * @param bool $persistenceEnabled
      * @param bool $isPersistent
      * @param bool $isLoggedIn
-     *
-     * @dataProvider configDataProvider
      */
+    #[DataProvider('configDataProvider')]
     public function testAfterGetConfigNegative($persistenceEnabled, $isPersistent, $isLoggedIn)
     {
         $result = [40, 30, 50];
@@ -116,11 +119,11 @@ class ConfigProviderPluginTest extends TestCase
         $this->persistentSessionMock->expects($this->once())->method('isPersistent')->willReturn(true);
         $this->customerSessionMock->expects($this->once())->method('isLoggedIn')->willReturn(false);
 
-        $quoteMaskMock = $this->getMockBuilder(QuoteIdMask::class)
-            ->addMethods(['getMaskedId'])
-            ->onlyMethods(['load'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        // Use createPartialMockWithReflection for methods not in the class - PHPUnit 12 compatible
+        $quoteMaskMock = $this->createPartialMockWithReflection(
+            QuoteIdMask::class,
+            ['getMaskedId', 'load']
+        );
         $this->maskFactoryMock->expects($this->once())->method('create')->willReturn($quoteMaskMock);
         $quoteMock = $this->createMock(Quote::class);
 

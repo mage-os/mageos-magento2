@@ -14,10 +14,14 @@ use Magento\Persistent\Helper\Data;
 use Magento\Persistent\Helper\Session;
 use Magento\Persistent\Observer\SynchronizePersistentInfoObserver;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class SynchronizePersistentInfoObserverTest extends TestCase
 {
+
+    use MockCreationTrait;
+
     /**
      * @var SynchronizePersistentInfoObserver
      */
@@ -65,10 +69,11 @@ class SynchronizePersistentInfoObserverTest extends TestCase
         $this->sessionHelperMock = $this->createMock(Session::class);
         $this->customerSessionMock = $this->createMock(\Magento\Customer\Model\Session::class);
         $this->observerMock = $this->createMock(Observer::class);
-        $this->eventManagerMock = $this->getMockBuilder(Event::class)
-            ->addMethods(['getRequest'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        // Use createPartialMockWithReflection - PHPUnit 12 compatible
+        $this->eventManagerMock = $this->createPartialMockWithReflection(
+            Event::class,
+            ['getRequest']
+        );
         $this->sessionMock = $this->createMock(\Magento\Persistent\Model\Session::class);
         $this->model = new SynchronizePersistentInfoObserver(
             $this->helperMock,

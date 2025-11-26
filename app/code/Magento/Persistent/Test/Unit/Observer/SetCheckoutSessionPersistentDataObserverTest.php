@@ -17,10 +17,14 @@ use Magento\Persistent\Helper\Session;
 use Magento\Persistent\Model\SessionFactory;
 use Magento\Persistent\Observer\SetCheckoutSessionPersistentDataObserver;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class SetCheckoutSessionPersistentDataObserverTest extends TestCase
 {
+
+    use MockCreationTrait;
+
     /**
      * @var SetCheckoutSessionPersistentDataObserver
      */
@@ -82,10 +86,11 @@ class SetCheckoutSessionPersistentDataObserverTest extends TestCase
         $this->customerSessionMock = $this->createMock(\Magento\Customer\Model\Session::class);
         $this->observerMock = $this->createMock(Observer::class);
         $this->eventMock = $this->createPartialMock(Event::class, ['getData']);
-        $this->persistentSessionMock = $this->getMockBuilder(\Magento\Persistent\Model\Session::class)
-            ->addMethods(['getCustomerId'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        // Use createPartialMockWithReflection - PHPUnit 12 compatible
+        $this->persistentSessionMock = $this->createPartialMockWithReflection(
+            \Magento\Persistent\Model\Session::class,
+            ['getCustomerId']
+        );
         $this->customerRepositoryMock = $this->createMock(
             CustomerRepositoryInterface::class
         );

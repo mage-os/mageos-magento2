@@ -46,9 +46,8 @@ class IdentifierStoreReaderTest extends TestCase
 
         $this->configMock = $this->getMockBuilder(Config::class)
             ->onlyMethods(['getType', 'isEnabled'])
-            //->addMethods(['getType', 'isEnabled'])
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->model = new IdentifierStoreReader(
             $this->designExceptionsMock,
