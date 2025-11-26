@@ -21,6 +21,7 @@ use Magento\Framework\Backup\Factory;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -30,6 +31,8 @@ use PHPUnit\Framework\TestCase;
  */
 class CreateTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var ObjectManager
      */
@@ -114,11 +117,10 @@ class CreateTest extends TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['create'])
             ->getMock();
-        $this->backupModelMock = $this->getMockBuilder(Backup::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['setBackupExtension', 'setBackupsDir', 'create'])
-            ->onlyMethods(['setTime', 'setName'])
-            ->getMock();
+        $this->backupModelMock = $this->createPartialMockWithReflection(
+            Backup::class,
+            ['setBackupExtension', 'setBackupsDir', 'create', 'setTime', 'setName']
+        );
         $this->dataBackendHelperMock = $this->getMockBuilder(Data::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getUrl'])
