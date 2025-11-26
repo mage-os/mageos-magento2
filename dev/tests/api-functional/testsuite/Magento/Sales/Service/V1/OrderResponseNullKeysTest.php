@@ -56,11 +56,20 @@ class OrderResponseNullKeysTest extends WebapiAbstract
         ], as: 'product'),
 
         DataFixture(GuestCartFixture::class, as: 'cart'),
-        DataFixture(SetGuestEmailFixture::class, ['cart_id' => '$cart.id$', 'email' => 'guest@example.com']),
-        DataFixture(AddProductToCartFixture::class, ['cart_id' => '$cart.id$', 'product_id' => '$product.id$', 'qty' => 1]),
+        DataFixture(
+            SetGuestEmailFixture::class,
+            ['cart_id' => '$cart.id$', 'email' => 'guest@example.com']
+        ),
+        DataFixture(
+            AddProductToCartFixture::class,
+            ['cart_id' => '$cart.id$', 'product_id' => '$product.id$', 'qty' => 1]
+        ),
         DataFixture(SetBillingAddressFixture::class, ['cart_id' => '$cart.id$']),
         DataFixture(SetShippingAddressFixture::class, ['cart_id' => '$cart.id$']),
-        DataFixture(SetDeliveryMethodFixture::class, ['cart_id' => '$cart.id$', 'carrier_code' => 'flatrate', 'method_code' => 'flatrate']),
+        DataFixture(
+            SetDeliveryMethodFixture::class,
+            ['cart_id' => '$cart.id$', 'carrier_code' => 'flatrate', 'method_code' => 'flatrate']
+        ),
         DataFixture(SetPaymentMethodFixture::class, ['cart_id' => '$cart.id$', 'method' => 'checkmo']),
         DataFixture(PlaceOrderFixture::class, ['cart_id' => '$cart.id$'], as: 'order')
     ]
