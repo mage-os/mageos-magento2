@@ -32,6 +32,7 @@ use Magento\Framework\Locale\Format;
 use Magento\Framework\Locale\FormatInterface;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Store\Api\Data\WebsiteInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -45,6 +46,7 @@ use PHPUnit\Framework\TestCase;
  */
 class HelperTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var ObjectManager
      */
@@ -139,7 +141,10 @@ class HelperTest extends TestCase
             Product::class,
             ['getId', 'isLockedAttribute', 'lockAttribute', 'getAttributes', 'unlockAttribute', 'getSku']
         );
-        $productExtensionAttributes = $this->createMock(ProductExtensionInterface::class);
+        $productExtensionAttributes = $this->createPartialMockWithReflection(
+            ProductExtensionInterface::class,
+            ['getCategoryLinks', 'setCategoryLinks']
+        );
         $this->productMock->setExtensionAttributes($productExtensionAttributes);
 
         $this->customOptionFactoryMock = $this->createPartialMock(

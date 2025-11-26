@@ -12,11 +12,13 @@ use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Website\ReadHandler;
 use Magento\Catalog\Model\ResourceModel\Product as ResourceModel;
 use Magento\Catalog\Model\ResourceModel\Product\Website\Link;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class ReadHandlerTest extends TestCase
 {
+    use MockCreationTrait;
     /** @var ResourceModel\Website\Link|MockObject */
     private $websiteLinkMock;
 
@@ -29,8 +31,10 @@ class ReadHandlerTest extends TestCase
     protected function setUp(): void
     {
         $this->websiteLinkMock = $this->createMock(Link::class);
-        /** @var ProductExtensionInterface $this->extensionAttributesMock */
-        $this->extensionAttributesMock = $this->createStub(ProductExtensionInterface::class);
+        $this->extensionAttributesMock = $this->createPartialMockWithReflection(
+            ProductExtensionInterface::class,
+            ['setWebsiteIds', 'getWebsiteIds']
+        );
         $websiteIds = null;
         $this->extensionAttributesMock->method('setWebsiteIds')->willReturnCallback(
             function ($value) use (&$websiteIds) {

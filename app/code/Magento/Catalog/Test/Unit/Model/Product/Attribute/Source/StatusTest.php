@@ -77,7 +77,8 @@ class StatusTest extends TestCase
     public function testAddValueSortToCollectionGlobal()
     {
         $this->attributeModel->expects($this->any())->method('isScopeGlobal')->willReturn(true);
-        $this->collection->expects($this->once())->method('order')->with('attribute_code_t.value asc')->willReturnSelf();
+        $this->collection->expects($this->once())->method('order')
+            ->with('attribute_code_t.value asc')->willReturnSelf();
         
         $this->attributeModel->expects($this->once())->method('getEntity')->willReturn($this->entity);
         $this->entity->expects($this->once())->method('getLinkField')->willReturn('entity_id');

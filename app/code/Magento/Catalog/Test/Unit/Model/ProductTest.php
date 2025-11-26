@@ -279,14 +279,10 @@ class ProductTest extends TestCase
             Manager::class,
             ['isEnabled']
         );
-        $this->extensionAttributes = $this->createStub(ProductExtensionInterface::class);
-
-        // $this->extensionAttributes = $this->getMockBuilder(\Magento\Catalog\Model\Product::class)
-        // ->onlyMethods(['getWebsiteIds', 'setWebsiteIds'])
-        //     ->disableOriginalConstructor()
-        //     ->getMock();;
-
-        // $this->extensionAttributes = $this->createMock(TestExtensionAttributes::class);
+        $this->extensionAttributes = $this->createPartialMockWithReflection(
+            ProductExtensionInterface::class,
+            ['getStockItem']
+        );
 
         $this->stockItemFactoryMock = $this->createPartialMock(
             StockItemInterfaceFactory::class,
@@ -385,7 +381,10 @@ class ProductTest extends TestCase
         $this->mediaConfig = $this->createMock(\Magento\Catalog\Model\Product\Media\Config::class);
         $this->eavConfig = $this->createMock(Config::class);
 
-        $this->productExtAttributes = $this->createStub(ProductExtensionInterface::class);
+        $this->productExtAttributes = $this->createPartialMockWithReflection(
+            ProductExtensionInterface::class,
+            ['getStockItem']
+        );
         $this->extensionAttributesFactory
             ->method('create')->willReturn($this->productExtAttributes);
 
@@ -427,13 +426,13 @@ class ProductTest extends TestCase
             $this->createMock(\Magento\Catalog\Model\Indexer\Product\Eav\Processor::class),
             $this->categoryRepository,
             $this->imageCacheFactory,
-            $this->createMock(\Magento\Catalog\Model\ProductLink\CollectionProvider::class), // 28. EntityCollectionProvider
-            $this->createMock(\Magento\Catalog\Model\Product\LinkTypeProvider::class), // 29. LinkTypeProvider
-            $this->createMock(\Magento\Catalog\Api\Data\ProductLinkInterfaceFactory::class), // 30. ProductLinkFactory
-            $this->createMock(\Magento\Catalog\Api\Data\ProductLinkExtensionFactory::class), // 31. ProductLinkExtensionFactory
+            $this->createMock(\Magento\Catalog\Model\ProductLink\CollectionProvider::class),
+            $this->createMock(\Magento\Catalog\Model\Product\LinkTypeProvider::class),
+            $this->createMock(\Magento\Catalog\Api\Data\ProductLinkInterfaceFactory::class),
+            $this->createMock(\Magento\Catalog\Api\Data\ProductLinkExtensionFactory::class),
             $this->mediaGalleryEntryConverterPoolMock,
             $this->dataObjectHelperMock,
-            $this->createMock(\Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface::class), // 34. JoinProcessor
+            $this->createMock(\Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface::class),
             ['id' => 1],
             $this->eavConfig,
             $this->filterCustomAttribute
@@ -548,12 +547,10 @@ class ProductTest extends TestCase
             ]
         );
 
-        // $abstractDbMock = $this->getMockBuilder(AbstractDb::class)
-        //     ->disableOriginalConstructor()
-        //     ->addMethods(['getCategoryCollection'])
-        //     ->getMock();
-
-        $abstractDbMock = $this->createMock(TestAbstractDb::class);
+        $abstractDbMock = $this->createPartialMockWithReflection(
+            AbstractDb::class,
+            ['getCategoryCollection', '_construct']
+        );
         $getCategoryCollectionMock = $this->createMock(
             Collection::class
         );
@@ -828,7 +825,10 @@ class ProductTest extends TestCase
 
     protected function getMockForExtensionAttribute()
     {
-        $extensionAttributesMock = $this->createStub(ProductExtensionInterface::class);
+        $extensionAttributesMock = $this->createPartialMockWithReflection(
+            ProductExtensionInterface::class,
+            ['getStockItem']
+        );
         $stockItemMock = $this->createStub(StockItemInterface::class);
         $extensionAttributesMock->method('getStockItem')->willReturn($stockItemMock);
         return $extensionAttributesMock;
@@ -1251,7 +1251,10 @@ class ProductTest extends TestCase
             'stock_item' => ['stock-item-data']
         ];
 
-        $stockItemMock = new TestStockItem();
+        $stockItemMock = $this->createPartialMockWithReflection(
+            AbstractSimpleObject::class,
+            ['setProduct']
+        );
 
         $this->moduleManager->expects($this->once())
             ->method('isEnabled')
@@ -1754,28 +1757,5 @@ class ProductTest extends TestCase
     public function testGetOptionByIdForProductWithoutOptions(): void
     {
         $this->assertNull($this->model->getOptionById(100));
-    }
-}
-
-class TestAbstractDb extends AbstractDb
-{
-    public function getCategoryCollection($product)
-    {
-        return null;
-    }
-    protected function _construct()
-    {
-        parent::__construct();
-    }
-}
-
-class TestStockItem extends AbstractSimpleObject
-{
-    private $product = null;
-    
-    public function setProduct($product)
-    {
-        $this->product = $product;
-        return $this;
     }
 }

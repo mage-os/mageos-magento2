@@ -23,6 +23,7 @@ use Magento\Quote\Api\Data\ProductOptionExtensionInterface;
 use Magento\Quote\Model\Quote\Item\Option;
 use Magento\Quote\Model\Quote\ProductOption;
 use Magento\Quote\Model\Quote\ProductOptionFactory;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -32,6 +33,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(\Magento\Catalog\Model\CustomOptions\CustomOptionProcessor::class)]
 class CustomOptionProcessorTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var Factory|MockObject
      */
@@ -83,8 +85,9 @@ class CustomOptionProcessorTest extends TestCase
             \Magento\Quote\Model\Quote\Item::class,
             ['getOptionByCode', 'getProductOption', 'setProductOption']
         );
-        $this->extensibleAttribute = $this->createMock(
-            ProductOptionExtensionInterface::class
+        $this->extensibleAttribute = $this->createPartialMockWithReflection(
+            ProductOptionExtensionInterface::class,
+            ['getCustomOptions', 'setCustomOptions']
         );
         $this->productOption = $this->createMock(ProductOption::class);
         $this->customOption = $this->createMock(CustomOptionInterface::class);

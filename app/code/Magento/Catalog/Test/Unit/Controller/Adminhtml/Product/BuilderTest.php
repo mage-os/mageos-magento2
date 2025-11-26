@@ -141,7 +141,6 @@ class BuilderTest extends TestCase
 
         $this->storeFactoryMock->method('create')->willReturn($this->storeMock);
 
-
         $registryValueMap = [
             ['product', $this->productMock, $this->registryMock],
             ['current_product', $this->productMock, $this->registryMock],

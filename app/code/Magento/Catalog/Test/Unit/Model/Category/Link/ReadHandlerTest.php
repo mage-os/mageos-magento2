@@ -14,11 +14,13 @@ use Magento\Catalog\Model\Category\Link\ReadHandler;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ResourceModel\Product\CategoryLink;
 use Magento\Framework\Api\DataObjectHelper;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class ReadHandlerTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var ReadHandler
      */
@@ -89,7 +91,10 @@ class ReadHandlerTest extends TestCase
         $product = $this->createPartialMock(Product::class, ['getExtensionAttributes', 'setExtensionAttributes']);
 
         /** @var ProductExtensionInterface $extensionAttributes */
-        $extensionAttributes = $this->createMock(ProductExtensionInterface::class);
+        $extensionAttributes = $this->createPartialMockWithReflection(
+            ProductExtensionInterface::class,
+            ['getCategoryLinks', 'setCategoryLinks']
+        );
         $extensionAttributes->method('getCategoryLinks')->willReturn($dtoCategoryLinks);
         $extensionAttributes->expects(static::once())->method('setCategoryLinks')->with($dtoCategoryLinks);
 
@@ -118,7 +123,10 @@ class ReadHandlerTest extends TestCase
         $product = $this->createPartialMock(Product::class, ['getExtensionAttributes', 'setExtensionAttributes']);
 
         /** @var ProductExtensionInterface $extensionAttributes */
-        $extensionAttributes = $this->createMock(ProductExtensionInterface::class);
+        $extensionAttributes = $this->createPartialMockWithReflection(
+            ProductExtensionInterface::class,
+            ['getCategoryLinks', 'setCategoryLinks']
+        );
         $extensionAttributes->method('getCategoryLinks')->willReturn(null);
         $extensionAttributes->expects(static::once())->method('setCategoryLinks')->with(null);
 

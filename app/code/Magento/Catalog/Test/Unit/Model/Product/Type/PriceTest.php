@@ -19,6 +19,7 @@ use Magento\Customer\Model\Data\Group;
 use Magento\Customer\Model\GroupManagement;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Store\Model\Website;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -30,6 +31,7 @@ use PHPUnit\Framework\TestCase;
  */
 class PriceTest extends TestCase
 {
+    use MockCreationTrait;
     private const KEY_TIER_PRICE = 'tier_price';
     private const PRICE_SCOPE_GLOBAL = 0;
     private const PRICE_SCOPE_WEBSITE = 1;
@@ -306,6 +308,9 @@ class PriceTest extends TestCase
      */
     private function getProductTierPriceExtensionInterfaceMock(): MockObject
     {
-        return $this->createMock(ProductTierPriceExtensionInterface::class);
+        return $this->createPartialMockWithReflection(
+            ProductTierPriceExtensionInterface::class,
+            ['getWebsiteId', 'setWebsiteId', 'getPercentageValue', 'setPercentageValue']
+        );
     }
 }

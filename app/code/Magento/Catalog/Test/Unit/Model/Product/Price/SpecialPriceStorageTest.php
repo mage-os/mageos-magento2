@@ -68,7 +68,6 @@ class SpecialPriceStorageTest extends TestCase
      */
     protected function setUp(): void
     {
-        /** @var SpecialPriceInterface $this->specialPriceResource */
         $this->specialPriceResource = $this->createPartialMockWithReflection(
             SpecialPriceInterface::class,
             ['getEntityLinkField', 'get', 'update', 'delete']
