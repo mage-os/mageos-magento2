@@ -66,10 +66,7 @@ class UpdateCustomerCookiesObserverTest extends TestCase
     {
         $this->sessionHelperMock = $this->createMock(Session::class);
         $this->customerRepository = $this->createMock(
-            CustomerRepositoryInterface::class,
-            [],
-            '',
-            false
+            CustomerRepositoryInterface::class
         );
         $this->observerMock = $this->createMock(Observer::class);
         // Use createPartialMockWithReflection - PHPUnit 12 compatible
@@ -83,10 +80,7 @@ class UpdateCustomerCookiesObserverTest extends TestCase
             ['getGroupId', 'getCustomerId', 'getId']
         );
         $this->customerMock = $this->createMock(
-            CustomerInterface::class,
-            [],
-            '',
-            false
+            CustomerInterface::class
         );
         $this->model = new UpdateCustomerCookiesObserver(
             $this->sessionHelperMock,

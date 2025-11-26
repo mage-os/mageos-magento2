@@ -87,7 +87,10 @@ class AuthorizationTest extends TestCase
     ): void {
         $this->persistentSessionMock->expects($this->any())->method('isPersistent')->willReturn($isPersistent);
         $this->customerSessionMock->expects($this->any())->method('getCustomerId')->willReturn($customerId);
-        $this->customerSessionMock->expects($this->any())->method('getIsCustomerEmulated')->willReturn($isCustomerEmulated);
+        $this->customerSessionMock->expects(
+            $this->once()
+        )->method('getIsCustomerEmulated')
+        ->willReturn($isCustomerEmulated);
 
         $isAllowedResult = $this->customerAuthorizationComposite->isAllowed('self');
 

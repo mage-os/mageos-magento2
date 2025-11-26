@@ -27,7 +27,7 @@ class JavascriptTest extends TestCase
 {
     use MockCreationTrait;
 
-    const COOKIE_NAME = 'private_content_version';
+    private const COOKIE_NAME = 'private_content_version';
 
     /**
      * @var Javascript|MockObject

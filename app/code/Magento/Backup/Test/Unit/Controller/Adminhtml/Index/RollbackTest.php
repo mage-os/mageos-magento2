@@ -109,7 +109,7 @@ class RollbackTest extends TestCase
             ->getMock();
         $this->requestMock = $this->createPartialMockWithReflection(
             RequestInterface::class,
-            ['getModuleName', 'setModuleName', 'getActionName', 'setActionName', 
+            ['getModuleName', 'setModuleName', 'getActionName', 'setActionName',
              'getParam', 'setParams', 'getParams', 'getCookie', 'isSecure',
              'initForward', 'setDispatched', 'isAjax']
         );
@@ -141,7 +141,7 @@ class RollbackTest extends TestCase
             ->getMock();
         $this->backupManagerMock = $this->createPartialMockWithReflection(
             BackupInterface::class,
-            ['create', 'rollback', 'setBackupExtension', 'setResourceModel', 
+            ['create', 'rollback', 'setBackupExtension', 'setResourceModel',
              'setTime', 'getType', 'setBackupsDir', 'setName']
         );
         $this->objectManager = new ObjectManager($this);

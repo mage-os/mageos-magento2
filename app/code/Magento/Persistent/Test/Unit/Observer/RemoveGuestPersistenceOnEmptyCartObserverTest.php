@@ -128,14 +128,7 @@ class RemoveGuestPersistenceOnEmptyCartObserverTest extends TestCase
         $sessionMock->expects($this->once())->method('getCustomerId')->willReturn($customerId);
         /** @var CartInterface|MockObject $quoteMock */
         $quoteMock = $this->createMock(
-            CartInterface::class,
-            [],
-            '',
-            false,
-            false,
-            true,
-            ['setCustomerEmail', 'getAddressesCollection'],
-            false
+            CartInterface::class
         );
         $this->cartRepositoryMock->expects($this->once())
             ->method('getActiveForCustomer')

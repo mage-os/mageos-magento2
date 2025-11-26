@@ -62,7 +62,16 @@ class SessionTest extends TestCase
         // Include _construct abstract method to avoid "contains 1 abstract method" error
         $resourceMock = $this->createPartialMock(
             AbstractDb::class,
-            ['__wakeup', 'getIdFieldName', 'getConnection', 'beginTransaction', 'delete', 'commit', 'rollBack', '_construct']
+            [
+                '__wakeup',
+                'getIdFieldName',
+                'getConnection',
+                'beginTransaction',
+                'delete',
+                'commit',
+                'rollBack',
+                '_construct'
+            ]
         );
 
         $actionValidatorMock = $this->createMock(RemoveAction::class);

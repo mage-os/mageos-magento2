@@ -62,10 +62,7 @@ class EmulateCustomerObserverTest extends TestCase
     protected function setUp(): void
     {
         $this->customerRepositoryMock = $this->createMock(
-            CustomerRepositoryInterface::class,
-            [],
-            '',
-            false
+            CustomerRepositoryInterface::class
         );
         // Use createPartialMockWithReflection - PHPUnit 12 compatible
         $this->customerSessionMock = $this->createPartialMockWithReflection(

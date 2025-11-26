@@ -9,47 +9,13 @@ namespace Magento\Persistent\Test\Unit\Block\Header;
 
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Customer\Helper\View;
-use Magento\Framework\Math\Random;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Magento\Framework\View\Element\Template\Context;
-use Magento\Framework\View\Helper\SecureHtmlRenderer;
 use Magento\Persistent\Block\Header\Additional;
 use Magento\Persistent\Helper\Data;
 use Magento\Persistent\Helper\Session;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-
-/**
- * Test helper class to avoid ObjectManager issues in constructor chain
- */
-class AdditionalTestHelper extends Additional
-{
-    public function __construct(
-        $customerViewHelper,
-        $persistentSessionHelper,
-        $customerRepository,
-        $jsonSerializer,
-        $persistentHelper
-    ) {
-        // Set protected properties directly
-        $this->_customerViewHelper = $customerViewHelper;
-        $this->_persistentSessionHelper = $persistentSessionHelper;
-        $this->customerRepository = $customerRepository;
-        
-        // Use reflection to set private properties
-        $reflection = new \ReflectionClass(Additional::class);
-        
-        $jsonSerializerProperty = $reflection->getProperty('jsonSerializer');
-        $jsonSerializerProperty->setAccessible(true);
-        $jsonSerializerProperty->setValue($this, $jsonSerializer);
-        
-        $persistentHelperProperty = $reflection->getProperty('persistentHelper');
-        $persistentHelperProperty->setAccessible(true);
-        $persistentHelperProperty->setValue($this, $persistentHelper);
-    }
-}
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -76,11 +42,6 @@ class AdditionalTest extends TestCase
     protected $customerRepositoryMock;
 
     /**
-     * @var Context|MockObject
-     */
-    protected $contextMock;
-
-    /**
      * @var Json|MockObject
      */
     private $jsonSerializerMock;
@@ -94,11 +55,6 @@ class AdditionalTest extends TestCase
      * @var Additional
      */
     protected $additional;
-
-    /**
-     * @var ObjectManager
-     */
-    protected $objectManager;
 
     /**
      * Set up
@@ -125,17 +81,37 @@ class AdditionalTest extends TestCase
             ['getLifeTime']
         );
 
-        // Use test helper class to avoid ObjectManager::getInstance() issues in parent constructors
-        $this->additional = new AdditionalTestHelper(
-            $this->customerViewHelperMock,
-            $this->persistentSessionHelperMock,
-            $this->customerRepositoryMock,
-            $this->jsonSerializerMock,
-            $this->persistentHelperMock
-        );
+        // Create mock of Additional class and use reflection to set properties
+        $this->additional = $this->createPartialMock(Additional::class, []);
+        
+        // Use reflection to set protected properties
+        $reflection = new \ReflectionClass(Additional::class);
+        
+        $customerViewHelperProperty = $reflection->getProperty('_customerViewHelper');
+        $customerViewHelperProperty->setAccessible(true);
+        $customerViewHelperProperty->setValue($this->additional, $this->customerViewHelperMock);
+        
+        $persistentSessionHelperProperty = $reflection->getProperty('_persistentSessionHelper');
+        $persistentSessionHelperProperty->setAccessible(true);
+        $persistentSessionHelperProperty->setValue($this->additional, $this->persistentSessionHelperMock);
+        
+        $customerRepositoryProperty = $reflection->getProperty('customerRepository');
+        $customerRepositoryProperty->setAccessible(true);
+        $customerRepositoryProperty->setValue($this->additional, $this->customerRepositoryMock);
+        
+        // Use reflection to set private properties
+        $jsonSerializerProperty = $reflection->getProperty('jsonSerializer');
+        $jsonSerializerProperty->setAccessible(true);
+        $jsonSerializerProperty->setValue($this->additional, $this->jsonSerializerMock);
+        
+        $persistentHelperProperty = $reflection->getProperty('persistentHelper');
+        $persistentHelperProperty->setAccessible(true);
+        $persistentHelperProperty->setValue($this->additional, $this->persistentHelperMock);
     }
 
     /**
+     * Test getCustomerId method
+     *
      * @return void
      */
     public function testGetCustomerId(): void
@@ -158,6 +134,8 @@ class AdditionalTest extends TestCase
     }
 
     /**
+     * Test getConfig method
+     *
      * @return void
      */
     public function testGetConfig(): void
