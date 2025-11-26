@@ -13,7 +13,7 @@
             <features value="Catalog"/>
             <stories value="Product Price Display"/>
             <title value="Validate price changes for configurable product with dropdown and text swatch attributes on storefront"/>
-            <description value="Create dropdown and text swatch attributes, create two configurable products with different attribute combinations, and validate price changes on storefront product page"/>
+            <description value="Verify configurable product price updates correctly when selecting different attribute options including products displayed in widgets"/>
             <testCaseId value="AC-8423"/>
             <severity value="MAJOR"/>
             <group value="Catalog"/>
@@ -27,63 +27,36 @@
             <createData entity="productDropDownAttribute" stepKey="createDropdownAttribute">
                 <field key="attribute_code">my_size</field>
                 <field key="default_frontend_label">my size</field>
-                <field key="frontend_input">select</field>
-                <field key="scope">global</field>
-                <field key="is_searchable">true</field>
-                <field key="is_visible_in_advanced_search">true</field>
-                <field key="is_visible_on_front">true</field>
-                <field key="is_filterable">true</field>
-                <field key="is_filterable_in_search">true</field>
-                <field key="used_in_product_listing">true</field>
-                <field key="is_used_for_promo_rules">true</field>
-                <field key="is_comparable">true</field>
-                <field key="used_for_sort_by">true</field>
             </createData>
             <createData entity="productAttributeOption" stepKey="createAttributeOptionSmall">
                 <requiredEntity createDataKey="createDropdownAttribute"/>
                 <field key="label">Small</field>
-                <field key="sort_order">0</field>
             </createData>
             <createData entity="productAttributeOption" stepKey="createAttributeOptionMedium">
                 <requiredEntity createDataKey="createDropdownAttribute"/>
                 <field key="label">Medium</field>
-                <field key="sort_order">1</field>
             </createData>
             <createData entity="productAttributeOption" stepKey="createAttributeOptionLarge">
                 <requiredEntity createDataKey="createDropdownAttribute"/>
                 <field key="label">Large</field>
-                <field key="sort_order">2</field>
             </createData>
             <!-- Step-3: Create a text swatch product attribute -->
             <createData entity="productDropDownAttribute" stepKey="createTextSwatchAttribute">
                 <field key="attribute_code">color_swatch</field>
                 <field key="default_frontend_label">color1</field>
                 <field key="frontend_input">swatch_text</field>
-                <field key="scope">global</field>
-                <field key="is_searchable">true</field>
-                <field key="is_visible_in_advanced_search">true</field>
-                <field key="is_visible_on_front">true</field>
-                <field key="is_filterable">true</field>
-                <field key="is_filterable_in_search">true</field>
-                <field key="used_in_product_listing">true</field>
-                <field key="is_used_for_promo_rules">true</field>
-                <field key="is_comparable">true</field>
-                <field key="used_for_sort_by">true</field>
             </createData>
             <createData entity="productAttributeOption" stepKey="createAttributeOptionBlack">
                 <requiredEntity createDataKey="createTextSwatchAttribute"/>
                 <field key="label">Black</field>
-                <field key="sort_order">0</field>
             </createData>
             <createData entity="productAttributeOption" stepKey="createAttributeOptionWhite">
                 <requiredEntity createDataKey="createTextSwatchAttribute"/>
                 <field key="label">White</field>
-                <field key="sort_order">1</field>
             </createData>
             <createData entity="productAttributeOption" stepKey="createAttributeOptionBlue">
                 <requiredEntity createDataKey="createTextSwatchAttribute"/>
                 <field key="label">Blue</field>
-                <field key="sort_order">2</field>
             </createData>
             <!-- Create configurable products -->
             <createData entity="ApiConfigurableProduct" stepKey="createConfigProduct1">
@@ -180,7 +153,7 @@
             <argument name="productPrice" value="270"/>
         </actionGroup>
         <actionGroup ref="SaveConfigurableProductAddToCurrentAttributeSetActionGroup" stepKey="saveConfigProduct2"/>
-        <!-- Step-6: Create Catalog Products List widget -->
+        <!-- Step-6: Create Catalog Products List widget to display Conf 2 on configurable product pages -->
         <actionGroup ref="AdminConfigureWidgetWithSpecificProductsActionGroup" stepKey="configureWidget">
             <argument name="productId" value="$createConfigProduct1.id$"/>
         </actionGroup>
@@ -206,5 +179,40 @@
         <selectOption selector="{{StorefrontProductInfoMainSection.productAttributeOptionsSelectButton}}" userInput="Small" stepKey="selectSmallOptionAgain"/>
         <waitForElementVisible selector="{{StorefrontProductInfoMainSection.productPrice}}" stepKey="waitForPriceAfterSmallSelectionAgain"/>
         <waitForText selector="{{StorefrontProductInfoMainSection.productPrice}}" userInput="$110.00" stepKey="verifySmallPriceAgain"/>
+        <!-- Verify Conf 2 is displayed in widget on Conf 1 product page and validate price changes -->
+        <scrollTo selector="{{StorefrontCategoryProductSection.widgetProduct('Conf 2')}}" stepKey="scrollToWidgetProduct"/>
+        <waitForElementVisible selector="{{StorefrontCategoryProductSection.widgetProduct('Conf 2')}}" stepKey="verifyConf2DisplayedInWidget"/>
+        <!-- Click on Conf 2 from widget to navigate to its product page -->
+        <click selector="{{StorefrontCategoryProductSection.widgetProduct('Conf 2')}}" stepKey="clickConf2FromWidget"/>
+        <waitForPageLoad stepKey="waitForConf2PageLoad"/>
+        <waitForElementVisible selector="{{StorefrontProductInfoMainSection.productName}}" stepKey="waitForConf2ProductName"/>
+        <waitForText selector="{{StorefrontProductInfoMainSection.productName}}" userInput="Conf 2" stepKey="verifyConf2ProductName"/>
+        <!-- Verify price changes for Conf 2 with multiple attribute combinations -->
+        <!-- Select Black color swatch -->
+        <waitForElementVisible selector="{{StorefrontProductInfoMainSection.swatchOptionByLabel('Black')}}" stepKey="waitForBlackSwatch"/>
+        <click selector="{{StorefrontProductInfoMainSection.swatchOptionByLabel('Black')}}" stepKey="selectBlackSwatch"/>
+        <waitForPageLoad stepKey="waitAfterBlackSelection"/>
+        <!-- Select Small size with Black color and verify price -->
+        <waitForElementVisible selector="{{StorefrontProductInfoMainSection.attributeSelectByAttributeID('my size')}}" stepKey="waitForSizeDropdownForBlack"/>
+        <selectOption selector="{{StorefrontProductInfoMainSection.attributeSelectByAttributeID('my size')}}" userInput="Small" stepKey="selectSmallForBlack"/>
+        <waitForElementVisible selector="{{StorefrontProductInfoMainSection.productPrice}}" stepKey="waitForPriceBlackSmall"/>
+        <waitForText selector="{{StorefrontProductInfoMainSection.productPrice}}" userInput="$210.00" stepKey="verifyBlackSmallPrice"/>
+        <!-- Select Large size with Black color and verify price -->
+        <selectOption selector="{{StorefrontProductInfoMainSection.attributeSelectByAttributeID('my size')}}" userInput="Large" stepKey="selectLargeForBlack"/>
+        <waitForElementVisible selector="{{StorefrontProductInfoMainSection.productPrice}}" stepKey="waitForPriceBlackLarge"/>
+        <waitForText selector="{{StorefrontProductInfoMainSection.productPrice}}" userInput="$230.00" stepKey="verifyBlackLargePrice"/>
+        <!-- Select White color swatch -->
+        <waitForElementVisible selector="{{StorefrontProductInfoMainSection.swatchOptionByLabel('White')}}" stepKey="waitForWhiteSwatch"/>
+        <click selector="{{StorefrontProductInfoMainSection.swatchOptionByLabel('White')}}" stepKey="selectWhiteSwatch"/>
+        <waitForPageLoad stepKey="waitAfterWhiteSelection"/>
+        <!-- Select Small size with White color and verify price -->
+        <waitForElementVisible selector="{{StorefrontProductInfoMainSection.attributeSelectByAttributeID('my size')}}" stepKey="waitForSizeDropdownForWhite"/>
+        <selectOption selector="{{StorefrontProductInfoMainSection.attributeSelectByAttributeID('my size')}}" userInput="Small" stepKey="selectSmallForWhite"/>
+        <waitForElementVisible selector="{{StorefrontProductInfoMainSection.productPrice}}" stepKey="waitForPriceWhiteSmall"/>
+        <waitForText selector="{{StorefrontProductInfoMainSection.productPrice}}" userInput="$250.00" stepKey="verifyWhiteSmallPrice"/>
+        <!-- Select Large size with White color and verify price -->
+        <selectOption selector="{{StorefrontProductInfoMainSection.attributeSelectByAttributeID('my size')}}" userInput="Large" stepKey="selectLargeForWhite"/>
+        <waitForElementVisible selector="{{StorefrontProductInfoMainSection.productPrice}}" stepKey="waitForPriceWhiteLarge"/>
+        <waitForText selector="{{StorefrontProductInfoMainSection.productPrice}}" userInput="$270.00" stepKey="verifyWhiteLargePrice"/>
     </test>
 </tests>
