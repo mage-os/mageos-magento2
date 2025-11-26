@@ -93,6 +93,7 @@ class OrderResponseNullKeysTest extends WebapiAbstract
     {
         $order = $this->fixtures->get('order');
         $orderIncrementId = $order->getData('increment_id');
+        $storeCode = $order->getStore()->getCode();
         $this->nullifyOrderStateStatus((int) $order->getId());
 
         $user = $this->fixtures->get('allUser');
@@ -101,7 +102,8 @@ class OrderResponseNullKeysTest extends WebapiAbstract
             'rest' => [
                 'resourcePath' => '/V1/orders/' . $orderIncrementId,
                 'httpMethod' => 'GET',
-                'token' => $accessToken
+                'token' => $accessToken,
+                'headers'      => ['Store' => $storeCode],
             ]
         ];
         $result = $this->_webApiCall($serviceInfo);
