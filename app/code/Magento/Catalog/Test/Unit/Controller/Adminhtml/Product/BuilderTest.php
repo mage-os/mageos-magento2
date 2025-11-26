@@ -16,6 +16,7 @@ use Magento\Cms\Model\Wysiwyg\Config as WysiwygConfig;
 use Magento\Framework\App\Request\Http;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Registry;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreFactory;
@@ -28,6 +29,7 @@ use Psr\Log\LoggerInterface;
  */
 class BuilderTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var ObjectManager
      */
@@ -89,7 +91,10 @@ class BuilderTest extends TestCase
         $this->loggerMock = $this->createMock(LoggerInterface::class);
         $this->productFactoryMock = $this->createPartialMock(ProductFactory::class, ['create']);
         $this->registryMock = $this->createMock(Registry::class);
-        $this->wysiwygConfigMock = $this->createPartialMock(WysiwygConfig::class, []);
+        $this->wysiwygConfigMock = $this->createPartialMockWithReflection(
+            WysiwygConfig::class,
+            ['setStoreId']
+        );
         $this->requestMock = $this->createMock(Http::class);
         $this->productMock = $this->createMock(Product::class);
         $this->storeFactoryMock = $this->createPartialMock(StoreFactory::class, ['create']);
@@ -136,7 +141,6 @@ class BuilderTest extends TestCase
 
         $this->storeFactoryMock->method('create')->willReturn($this->storeMock);
 
-        // No mock expectations needed for anonymous class
 
         $registryValueMap = [
             ['product', $this->productMock, $this->registryMock],
@@ -146,10 +150,9 @@ class BuilderTest extends TestCase
 
         $this->registryMock->method('register')->willReturn($registryValueMap);
 
-        // Remove wysiwygConfig expectations since setStoreId is a magic method
-        // $this->wysiwygConfigMock->expects($this->once())
-        //     ->method('setStoreId')
-        //     ->with($productStore);
+        $this->wysiwygConfigMock->expects($this->once())
+            ->method('setStoreId')
+            ->with($productStore);
 
         $this->assertEquals($this->productMock, $this->builder->build($this->requestMock));
     }
@@ -212,10 +215,9 @@ class BuilderTest extends TestCase
 
         $this->registryMock->method('register')->willReturn($registryValueMap);
 
-        // Remove wysiwygConfig expectations since setStoreId is a magic method
-        // $this->wysiwygConfigMock->expects($this->once())
-        //     ->method('setStoreId')
-        //     ->with($productStore);
+        $this->wysiwygConfigMock->expects($this->once())
+            ->method('setStoreId')
+            ->with($productStore);
 
         $this->assertEquals($this->productMock, $this->builder->build($this->requestMock));
     }
@@ -275,10 +277,9 @@ class BuilderTest extends TestCase
 
         $this->registryMock->method('register')->willReturn($registryValueMap);
 
-        // Remove wysiwygConfig expectations since setStoreId is a magic method
-        // $this->wysiwygConfigMock->expects($this->once())
-        //     ->method('setStoreId')
-        //     ->with($productStore);
+        $this->wysiwygConfigMock->expects($this->once())
+            ->method('setStoreId')
+            ->with($productStore);
 
         $this->assertEquals($this->productMock, $this->builder->build($this->requestMock));
     }

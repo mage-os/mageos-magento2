@@ -246,7 +246,11 @@ class EavTest extends AbstractModifierTestCase
         $this->metaPropertiesMapperMock = $this->createMock(MetaPropertiesMapper::class);
         $this->searchCriteriaBuilderMock = $this->createMock(SearchCriteriaBuilder::class);
         $this->attributeGroupRepositoryMock = $this->createMock(ProductAttributeGroupRepositoryInterface::class);
-        $this->attributeGroupMock = $this->createMock(Group::class);
+        // Group is a framework model with magic methods (extends AbstractExtensibleModel)
+        $this->attributeGroupMock = $this->createPartialMockWithReflection(
+            Group::class,
+            ['getAttributeGroupCode']  // Magic method via @method annotation
+        );
         $this->attributeRepositoryMock = $this->createMock(ProductAttributeRepositoryInterface::class);
         $this->searchCriteriaMock = $this->createMock(SearchCriteria::class);
         $this->attributeGroupSearchResultsMock = $this->createMock(SearchResultsInterface::class);
@@ -358,7 +362,13 @@ class EavTest extends AbstractModifierTestCase
         $this->searchCriteriaBuilderMock->expects($this->any())->method('addFilter')
             ->willReturnSelf();
         $this->searchCriteriaBuilderMock->method('create')->willReturn($this->searchCriteriaMock);
-        $this->attributeGroupRepositoryMock->method('getList')->willReturn($this->searchResultsMock);
+        
+        // Create separate search results for attribute groups (not attributes!)
+        $groupSearchResultsMock = $this->createMock(SearchResultsInterface::class);
+        $this->attributeGroupMock->method('getAttributeGroupCode')->willReturn('product-details');
+        $groupSearchResultsMock->method('getItems')->willReturn([$this->attributeGroupMock]);
+        $this->attributeGroupRepositoryMock->method('getList')->willReturn($groupSearchResultsMock);
+        
         $this->sortOrderBuilderMock->expects($this->once())->method('setField')
             ->willReturnSelf();
         $this->sortOrderBuilderMock->expects($this->once())->method('setAscendingDirection')
@@ -383,9 +393,8 @@ class EavTest extends AbstractModifierTestCase
             ->willReturn('price');
         $this->eavAttributeMock->method('getAttributeCode')->willReturn(ProductAttributeInterface::CODE_PRICE);
 
-        // Configure getItems to return different values on consecutive calls
-        $this->searchResultsMock->expects($this->atLeastOnce())->method('getItems')
-            ->willReturnOnConsecutiveCalls([$this->attributeGroupMock], [$this->eavAttributeMock], [$this->eavAttributeMock]);
+        $this->searchResultsMock->expects($this->once())->method('getItems')
+            ->willReturn([$this->eavAttributeMock]);
 
         $this->assertEquals($sourceData, $this->eav->modifyData([]));
     }

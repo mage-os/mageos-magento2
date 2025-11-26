@@ -14,11 +14,14 @@ use Magento\Eav\Model\Entity\Type;
 use Magento\Eav\Model\Entity\TypeFactory;
 use Magento\Framework\DataObject;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class ProductTest extends TestCase
 {
+    use MockCreationTrait;
+    
     /**
      * @var Product
      */
@@ -36,8 +39,6 @@ class ProductTest extends TestCase
 
     protected function setUp(): void
     {
-        $objectManager = new ObjectManager($this);
-
         $this->setFactoryMock = $this->createPartialMock(
             SetFactory::class,
             ['create']
@@ -47,13 +48,17 @@ class ProductTest extends TestCase
             ['create']
         );
 
-        $this->model = $objectManager->getObject(
-            Product::class,
-            [
-                'setFactory' => $this->setFactoryMock,
-                'typeFactory' => $this->typeFactoryMock,
-            ]
-        );
+        $this->model = $this->createPartialMock(Product::class, []);
+        
+        $reflection = new \ReflectionClass($this->model);
+        
+        $setFactoryProperty = $reflection->getProperty('setFactory');
+        $setFactoryProperty->setAccessible(true);
+        $setFactoryProperty->setValue($this->model, $this->setFactoryMock);
+        
+        $typeFactoryProperty = $reflection->getProperty('typeFactory');
+        $typeFactoryProperty->setAccessible(true);
+        $typeFactoryProperty->setValue($this->model, $this->typeFactoryMock);
     }
 
     public function testValidateWrongAttributeSet()
@@ -61,8 +66,10 @@ class ProductTest extends TestCase
         $productTypeId = 4;
         $expectedErrorMessage = ['attribute_set' => 'Invalid attribute set entity type'];
 
-        $productMock = $this->createPartialMock(DataObject::class, []);
-        $productMock->setData('attribute_set_id', 4);
+        $productMock = $this->createPartialMockWithReflection(
+            DataObject::class,
+            ['getAttributeSetId']
+        );
         $attributeSetMock = $this->createPartialMock(
             Set::class,
             ['load', 'getEntityTypeId']
@@ -73,6 +80,8 @@ class ProductTest extends TestCase
         $entityTypeMock->expects($this->once())->method('loadByCode')->with('catalog_product')->willReturnSelf();
 
         $productAttributeSetId = 4;
+        $productMock->expects($this->once())->method('getAttributeSetId')
+            ->willReturn($productAttributeSetId);
 
         $this->setFactoryMock->expects($this->once())->method('create')->willReturn($attributeSetMock);
         $attributeSetMock->expects($this->once())->method('load')->with($productAttributeSetId)->willReturnSelf();

@@ -57,7 +57,7 @@ class CrossSellTest extends TestCase
 
         $this->_linkMock = $this->createPartialMockWithReflection(
             Link::class,
-            ['setAttributes', 'getAttributes']
+            ['setAttributes', 'getAttributes', 'useCrossSellLinks']
         );
 
         $this->_productMock->method('getLinkInstance')->willReturn(
@@ -72,18 +72,25 @@ class CrossSellTest extends TestCase
 
         $attributes = ['attributeOne' => ['code' => 'one'], 'attributeTwo' => ['code' => 'two']];
 
-        $this->_linkMock->method('setAttributes')->willReturnSelf();
-        $this->_linkMock->method('getAttributes')->willReturn($attributes);
-        $this->_linkMock->setAttributes($attributes);
+        $this->_linkMock->expects($this->once())->method('useCrossSellLinks');
+
+        $this->_linkMock->expects($this->once())->method('getAttributes')->willReturn($attributes);
 
         $productLinkMock = $this->createPartialMockWithReflection(
-            Link::class,
-            ['setLinkedProductId', 'getLinkedProductId', 'setArrayData', 'toArray']
+            \Magento\Catalog\Model\ResourceModel\Product\Link::class,
+            ['getLinkedProductId', 'toArray']
         );
-        $productLinkMock->method('setLinkedProductId')->willReturnSelf();
-        $productLinkMock->method('getLinkedProductId')->willReturn('100500');
-        $productLinkMock->method('toArray')->willReturn(['some' => 'data']);
-        $productLinkMock->setLinkedProductId('100500');
+
+        $productLinkMock->expects($this->once())->method('getLinkedProductId')->willReturn('100500');
+        $productLinkMock->expects(
+            $this->once()
+        )->method(
+            'toArray'
+        )->with(
+            ['one', 'two']
+        )->willReturn(
+            ['some' => 'data']
+        );
 
         $collectionMock = $helper->getCollectionMock(
             Collection::class,
@@ -97,8 +104,7 @@ class CrossSellTest extends TestCase
             $collectionMock
         );
 
-        $this->_duplicateMock->method('setCrossSellLinkData')->willReturnSelf();
-        $this->_duplicateMock->setCrossSellLinkData($expectedData);
+        $this->_duplicateMock->expects($this->once())->method('setCrossSellLinkData')->with($expectedData);
 
         $this->_model->build($this->_productMock, $this->_duplicateMock);
     }

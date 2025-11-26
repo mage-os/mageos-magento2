@@ -39,7 +39,9 @@ use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\Validator\UniversalFactory;
 use Magento\Store\Model\Store;
+use Magento\Store\Model\StoreManager;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -49,6 +51,7 @@ use Psr\Log\LoggerInterface;
  */
 class CollectionTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var ObjectManager
      */
@@ -119,11 +122,15 @@ class CollectionTest extends TestCase
         $eavEntityFactory = $this->createMock(\Magento\Eav\Model\EntityFactory::class);
         $resourceHelper = $this->createMock(Helper::class);
         $universalFactory = $this->createMock(UniversalFactory::class);
-        $this->storeManager = $this->createMock(StoreManagerInterface::class);
-        $store = $this->createPartialMock(Store::class, ['getId', 'getWebsiteId']);
-        $store->method('getId')->willReturn(1);
-        $store->method('getWebsiteId')->willReturn(1);
-        $this->storeManager->method('getStore')->willReturn($store);
+        
+        $this->storeManager = $this->createPartialMockWithReflection(
+            StoreManager::class,
+            ['getStore', 'getId', 'getWebsiteId']
+        );
+        
+        // Configure getStore() to return self (so getStore()->getId() works as storeManager->getId())
+        $this->storeManager->expects($this->any())->method('getStore')->willReturnSelf();
+        $this->storeManager->expects($this->any())->method('getId')->willReturn(1);
         $moduleManager = $this->createMock(Manager::class);
         $catalogProductFlatState = $this->createMock(State::class);
         $scopeConfig = $this->createMock(ScopeConfigInterface::class);
@@ -276,7 +283,8 @@ class CollectionTest extends TestCase
             ->with('tier_price')
             ->willReturn($attributeMock);
         $attributeMock->expects($this->atLeastOnce())->method('getBackend')->willReturn($backend);
-        $attributeMock->method('isScopeGlobal')->willReturn(false);
+        $attributeMock->expects($this->once())->method('isScopeGlobal')->willReturn(false);
+        $this->storeManager->expects($this->once())->method('getWebsiteId')->willReturn(1);
         $backend->expects($this->once())->method('getResource')->willReturn($resource);
         $resource->expects($this->once())->method('getSelect')->willReturn($select);
         $select->expects($this->once())->method('columns')->with(['product_id' => 'entity_id'])->willReturnSelf();
@@ -319,7 +327,8 @@ class CollectionTest extends TestCase
             ->with('tier_price')
             ->willReturn($attributeMock);
         $attributeMock->expects($this->atLeastOnce())->method('getBackend')->willReturn($backend);
-        $attributeMock->method('isScopeGlobal')->willReturn(false);
+        $attributeMock->expects($this->once())->method('isScopeGlobal')->willReturn(false);
+        $this->storeManager->expects($this->once())->method('getWebsiteId')->willReturn(1);
         $backend->expects($this->once())->method('getResource')->willReturn($resource);
         $resource->expects($this->once())->method('getSelect')->willReturn($select);
         $select->expects($this->once())->method('columns')->with(['product_id' => 'entity_id'])->willReturnSelf();

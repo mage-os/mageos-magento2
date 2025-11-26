@@ -133,16 +133,13 @@ class NewProductsTest extends TestCase
             ['setAllowedInRss', 'getAllowedInRss', 'setAllowedPriceInRss', 'getAllowedPriceInRss',
              'setName', 'getName', 'setProductUrl', 'getProductUrl', 'setDescription', 'getDescription']
         );
-        $item->method('setAllowedInRss')->willReturnSelf();
-        $item->method('getAllowedInRss')->willReturn(true);
-        $item->method('setAllowedPriceInRss')->willReturnSelf();
-        $item->method('getAllowedPriceInRss')->willReturn(true);
-        $item->method('setName')->willReturnSelf();
-        $item->method('getName')->willReturn('Product Name');
-        $item->method('setProductUrl')->willReturnSelf();
+        $item->expects($this->once())->method('setAllowedInRss')->with(true);
+        $item->expects($this->once())->method('setAllowedPriceInRss')->with(true);
+        $item->expects($this->once())->method('getAllowedPriceInRss')->willReturn(true);
+        $item->expects($this->once())->method('getAllowedInRss')->willReturn(true);
+        $item->expects($this->once())->method('getDescription')->willReturn('Product Description');
+        $item->expects($this->once())->method('getName')->willReturn('Product Name');
         $item->method('getProductUrl')->willReturn('http://magento.com/product-name.html');
-        $item->method('setDescription')->willReturnSelf();
-        $item->method('getDescription')->willReturn('Product Description');
         
         return $item;
     }

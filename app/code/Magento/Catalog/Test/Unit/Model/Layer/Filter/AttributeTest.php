@@ -19,6 +19,7 @@ use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Filter\StripTags;
 use Magento\Framework\Stdlib\StringUtils;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -28,6 +29,7 @@ use PHPUnit\Framework\TestCase;
  */
 class AttributeTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var Attribute|MockObject
      */
@@ -234,7 +236,26 @@ class AttributeTest extends TestCase
      */
     private function createFilterItem(string $label, string $value, int $count): Item
     {
-        $filterItem = $this->createPartialMock(Item::class, []);
+        $filterItem = $this->createPartialMockWithReflection(
+            Item::class,
+            ['setFilter', 'setLabel', 'setValue', 'setCount']
+        );
+
+        $filterItem->expects($this->once())
+            ->method('setFilter')
+            ->with($this->target)->willReturnSelf();
+
+        $filterItem->expects($this->once())
+            ->method('setLabel')
+            ->with($label)->willReturnSelf();
+
+        $filterItem->expects($this->once())
+            ->method('setValue')
+            ->with($value)->willReturnSelf();
+
+        $filterItem->expects($this->once())
+            ->method('setCount')
+            ->with($count)->willReturnSelf();
 
         $this->filterItemFactory
             ->expects($this->once())

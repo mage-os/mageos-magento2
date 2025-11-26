@@ -175,20 +175,7 @@ class CategoryTest extends TestCase
         $this->catalogConfig = $this->createMock(Config::class);
         $this->filterManager = $this->createPartialMockWithReflection(
             FilterManager::class,
-            ['translitUrl', 'setTranslitUrlResult']
-        );
-        // Use a variable to store the translit URL result
-        $translitUrlResult = 'test';
-        $this->filterManager->method('translitUrl')->willReturnCallback(
-            function () use (&$translitUrlResult) {
-                return $translitUrlResult;
-            }
-        );
-        $this->filterManager->method('setTranslitUrlResult')->willReturnCallback(
-            function ($value) use (&$translitUrlResult) {
-                $translitUrlResult = $value;
-                return $this->filterManager;
-            }
+            ['translitUrl']
         );
         $this->flatState = $this->createMock(State::class);
         $this->flatIndexer = $this->createMock(IndexerInterface::class);
@@ -216,7 +203,8 @@ class CategoryTest extends TestCase
         $strIn = 'Some string';
         $resultString = 'some';
 
-        $this->filterManager->setTranslitUrlResult($resultString);
+        $this->filterManager->expects($this->once())->method('translitUrl')->with($strIn)
+            ->willReturn($resultString);
 
         $this->assertEquals($resultString, $this->category->formatUrlKey($strIn));
     }
@@ -296,8 +284,8 @@ class CategoryTest extends TestCase
      */
     public function testMovePrimaryWorkflow(): void
     {
-        $indexer = $this->createStub(IndexerInterface::class);
-        $indexer->method('isScheduled')->willReturn(true);
+        $indexer = $this->createMock(IndexerInterface::class);
+        $indexer->expects($this->once())->method('isScheduled')->willReturn(true);
         $this->indexerRegistry->expects($this->once())
             ->method('get')
             ->with('catalog_category_product')

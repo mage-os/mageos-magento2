@@ -39,24 +39,8 @@ class CategoryTest extends TestCase
 
         $this->category = $this->createPartialMockWithReflection(
             Category::class,
-            ['setName', 'getName', 'setId', 'getId']
+            ['getName', 'getId']
         );
-        $categoryData = [];
-        $category = $this->category;
-        $this->category->method('getName')->willReturnCallback(function () use (&$categoryData) {
-            return $categoryData['name'] ?? null;
-        });
-        $this->category->method('setName')->willReturnCallback(function ($value) use (&$categoryData, $category) {
-            $categoryData['name'] = $value;
-            return $category;
-        });
-        $this->category->method('getId')->willReturnCallback(function () use (&$categoryData) {
-            return $categoryData['id'] ?? null;
-        });
-        $this->category->method('setId')->willReturnCallback(function ($value) use (&$categoryData, $category) {
-            $categoryData['id'] = $value;
-            return $category;
-        });
 
         $categoryCollectionFactory = $this->createPartialMock(
             CollectionFactory::class,
@@ -91,8 +75,8 @@ class CategoryTest extends TestCase
             new \ArrayIterator([$this->category])
         );
 
-        $this->category->setName('name');
-        $this->category->setId(3);
+        $this->category->expects($this->once())->method('getName')->willReturn('name');
+        $this->category->expects($this->once())->method('getId')->willReturn(3);
 
         $this->assertEquals($expect, $this->model->toOptionArray());
     }

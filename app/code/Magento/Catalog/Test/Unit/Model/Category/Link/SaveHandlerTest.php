@@ -15,11 +15,13 @@ use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ResourceModel\Product\CategoryLink;
 use Magento\Framework\EntityManager\HydratorInterface;
 use Magento\Framework\EntityManager\HydratorPool;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class SaveHandlerTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var SaveHandler
      */
@@ -87,9 +89,9 @@ class SaveHandlerTest extends TestCase
             ->method('getCategoryLinks')
             ->willReturn($categoryLinks);
 
-        $product = $this->createPartialMock(
+        $product = $this->createPartialMockWithReflection(
             Product::class,
-            ['getExtensionAttributes', 'getCategoryIds']
+            ['getExtensionAttributes', 'getCategoryIds', 'setAffectedCategoryIds', 'setIsChangedCategories']
         );
         $product->expects(static::once())
             ->method('getExtensionAttributes')
@@ -102,6 +104,13 @@ class SaveHandlerTest extends TestCase
             ->method('saveCategoryLinks')
             ->with($product, $expectedCategoryLinks)
             ->willReturn($affectedIds);
+
+        if (!empty($affectedIds)) {
+            $product->expects(static::once())
+                ->method('setAffectedCategoryIds')
+                ->with($affectedIds);
+            $product->expects(static::exactly(2))->method('setIsChangedCategories');
+        }
 
         $this->productCategoryLink->expects(static::any())
             ->method('getCategoryLinks')

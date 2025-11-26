@@ -101,8 +101,10 @@ class ImageTest extends TestCase
     {
         $this->valueMock = ['model' => $this->categoryMock];
         $storeMock = $this->createMock(Store::class);
-        $contextExtensionInterfaceMock = $this->createStub(ContextExtensionInterface::class);
-        $contextExtensionInterfaceMock->method('getStore')->willReturn($storeMock);
+        $contextExtensionInterfaceMock = $this->createMock(ContextExtensionInterface::class);
+        $contextExtensionInterfaceMock->expects($this->once())
+            ->method('getStore')
+            ->willReturn($storeMock);
         
         $this->categoryMock
             ->expects($this->once())
@@ -148,8 +150,10 @@ class ImageTest extends TestCase
     {
         $this->valueMock = ['model' => $this->categoryMock];
         $storeMock = $this->createMock(Store::class);
-        $contextExtensionInterfaceMock = $this->createStub(ContextExtensionInterface::class);
-        $contextExtensionInterfaceMock->method('getStore')->willReturn($storeMock);
+        $contextExtensionInterfaceMock = $this->createMock(ContextExtensionInterface::class);
+        $contextExtensionInterfaceMock->expects($this->once())
+            ->method('getStore')
+            ->willReturn($storeMock);
         
         $this->categoryMock
             ->expects($this->once())

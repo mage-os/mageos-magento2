@@ -56,12 +56,12 @@ class OptionTest extends TestCase
 
     public function testGetRegularPrice()
     {
-        $priceInfoMock = $this->createStub(PriceInfoInterface::class);
-        $priceMock = $this->createStub(PriceInterface::class);
+        $priceInfoMock = $this->createMock(PriceInfoInterface::class);
+        $priceMock = $this->createMock(PriceInterface::class);
         $amountMock = $this->createMock(AmountInterface::class);
         
-        $priceMock->method('getAmount')->willReturn($amountMock);
-        $priceInfoMock->method('getPrice')->willReturn($priceMock);
+        $priceInfoMock->expects($this->once())->method('getPrice')->willReturn($priceMock);
+        $priceMock->expects($this->once())->method('getAmount')->willReturn($amountMock);
 
         $this->productMock->expects($this->once())->method('getPriceInfo')->willReturn($priceInfoMock);
 

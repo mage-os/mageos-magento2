@@ -83,47 +83,6 @@ class ProductCustomOptionsDataProviderTest extends TestCase
             AbstractCollection::class,
             ['isLoaded', 'load', 'getSelect', 'getTable', 'getIterator', 'getData', 'getSize', 'toArray', 'setStoreId']
         );
-        $this->collectionMock->method('isLoaded')->willReturnCallback(
-            function () {
-                return $this->collectionData['isLoaded'] ?? false;
-            }
-        );
-        $this->collectionMock->method('load')->willReturnCallback(
-            function () {
-                $this->collectionData['isLoaded'] = true;
-                return $this->collectionData['loadResult'] ?? $this->collectionMock;
-            }
-        );
-        $this->collectionMock->method('getSelect')->willReturnCallback(
-            function () {
-                return $this->collectionData['select'] ?? null;
-            }
-        );
-        $this->collectionMock->method('getTable')->willReturnCallback(
-            function () {
-                return $this->collectionData['table'] ?? null;
-            }
-        );
-        $this->collectionMock->method('getIterator')->willReturnCallback(
-            function () {
-                return $this->collectionData['iterator'] ?? new \ArrayIterator([]);
-            }
-        );
-        $this->collectionMock->method('getData')->willReturnCallback(
-            function () {
-                return $this->collectionData['arrayData'] ?? [];
-            }
-        );
-        $this->collectionMock->method('getSize')->willReturnCallback(
-            function () {
-                return $this->collectionData['size'] ?? 0;
-            }
-        );
-        $this->collectionMock->method('toArray')->willReturnCallback(
-            function () {
-                return $this->collectionData['arrayData'] ?? [];
-            }
-        );
         $this->collectionMock->method('setStoreId')->willReturnSelf();
         
         $this->dbSelectMock = $this->createMock(DbSelect::class);
@@ -175,22 +134,33 @@ class ProductCustomOptionsDataProviderTest extends TestCase
     {
         $tableName = 'catalog_product_option_table';
 
-        $this->collectionData['isLoaded'] = false;
+        $this->collectionMock->expects($this->once())
+            ->method('isLoaded')
+            ->willReturn(false);
         $this->requestMock->expects($this->once())
             ->method('getParam')
             ->with('current_product_id', null)
             ->willReturn(0);
-        $this->collectionData['select'] = $this->dbSelectMock;
+        $this->collectionMock->expects($this->any())
+            ->method('getSelect')
+            ->willReturn($this->dbSelectMock);
         $this->dbSelectMock->expects($this->any())
             ->method('distinct')
             ->willReturnSelf();
-        $this->collectionData['table'] = $tableName;
+        $this->collectionMock->expects($this->any())
+            ->method('getTable')
+            ->with('catalog_product_option')
+            ->willReturn($tableName);
         $this->dbSelectMock->expects($this->once())
             ->method('join')
             ->with(['opt' => $tableName], 'opt.product_id = e.entity_id', null)
             ->willReturnSelf();
-        $this->collectionData['loadResult'] = $this->collectionMock;
-        $this->collectionData['iterator'] = new \ArrayIterator([]);
+        $this->collectionMock->expects($this->once())
+            ->method('load')
+            ->willReturnSelf();
+        $this->collectionMock->expects($this->any())
+            ->method('getIterator')
+            ->willReturn(new \ArrayIterator([]));
 
         $this->setCommonExpectations(false, $amount, $collectionArray);
 
@@ -230,8 +200,14 @@ class ProductCustomOptionsDataProviderTest extends TestCase
      */
     protected function setCommonExpectations($isLoaded, $amount, array $collectionArray)
     {
-        $this->collectionData['isLoaded'] = $isLoaded;
-        $this->collectionData['arrayData'] = $collectionArray;
-        $this->collectionData['size'] = $amount;
+        $this->collectionMock->expects($this->once())
+            ->method('isLoaded')
+            ->willReturn($isLoaded);
+        $this->collectionMock->expects($this->once())
+            ->method('toArray')
+            ->willReturn($collectionArray);
+        $this->collectionMock->expects($this->once())
+            ->method('getSize')
+            ->willReturn($amount);
     }
 }

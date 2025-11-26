@@ -156,7 +156,7 @@ class DeleteTest extends TestCase
         $category->expects($this->once())->method('getParentId')->willReturn($parentId);
         $category->expects($this->once())->method('getPath')->willReturn('category-path');
         $this->categoryRepository->expects($this->once())->method('get')->with($categoryId)->willReturn($category);
-        // No mock expectations needed for anonymous class
+        $this->authStorage->expects($this->once())->method('setDeletedPath')->with('category-path');
         $this->resultRedirect->expects($this->once())->method('setPath')
             ->with('catalog/*/', ['_current' => true, 'id' => $parentId]);
 

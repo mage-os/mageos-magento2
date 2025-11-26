@@ -50,89 +50,36 @@ class StatusTest extends TestCase
         
         $this->collection = $this->createPartialMockWithReflection(
             AbstractCollection::class,
-            ['setStoreId', 'getStoreId', 'setCheckSql', 'getSelect', 'getConnection']
+            ['getSelect', 'getStoreId', 'getConnection', 'order', 'joinLeft', 'getCheckSql']
         );
-        $collectionData = [];
-        $collection = $this->collection;
-        $this->collection->method('setStoreId')->willReturnCallback(function ($value) use (&$collectionData, $collection) {
-            $collectionData['store_id'] = $value;
-            return $collection;
-        });
-        $this->collection->method('getStoreId')->willReturnCallback(function () use (&$collectionData) {
-            return $collectionData['store_id'] ?? null;
-        });
-        $this->collection->method('setCheckSql')->willReturnCallback(function ($value) use (&$collectionData, $collection) {
-            $collectionData['check_sql'] = $value;
-            return $collection;
-        });
-        $select = $this->createMock(\Magento\Framework\DB\Select::class);
-        $select->method('joinLeft')->willReturnSelf();
-        $this->collection->method('getSelect')->willReturn($select);
-        $connection = $this->createMock(\Magento\Framework\DB\Adapter\AdapterInterface::class);
-        $connection->method('getCheckSql')->willReturnCallback(function ($condition, $true, $false) {
-            return "CASE WHEN $condition THEN $true ELSE $false END";
-        });
-        $this->collection->method('getConnection')->willReturn($connection);
+        $this->collection->expects($this->any())->method('getSelect')->willReturnSelf();
+        $this->collection->expects($this->any())->method('joinLeft')->willReturnSelf();
+        $this->collection->expects($this->any())->method('getConnection')->willReturnSelf();
         
         $this->attributeModel = $this->createPartialMockWithReflection(
             AbstractAttribute::class,
-            ['setAttributeCode', 'getAttributeCode', 'setId', 'getId', 'setBackend', 'getBackend',
-             'setIsScopeGlobal', 'isScopeGlobal', 'setEntity', 'getEntity']
+            ['getAttributeCode', 'getId', 'getBackend', 'isScopeGlobal', 'getEntity', 'getAttribute']
         );
-        $attrData = [];
-        $attribute = $this->attributeModel;
-        $this->attributeModel->method('setAttributeCode')->willReturnCallback(function ($value) use (&$attrData, $attribute) {
-            $attrData['attribute_code'] = $value;
-            return $attribute;
-        });
-        $this->attributeModel->method('getAttributeCode')->willReturnCallback(function () use (&$attrData) {
-            return $attrData['attribute_code'] ?? null;
-        });
-        $this->attributeModel->method('setId')->willReturnCallback(function ($value) use (&$attrData, $attribute) {
-            $attrData['id'] = $value;
-            return $attribute;
-        });
-        $this->attributeModel->method('getId')->willReturnCallback(function () use (&$attrData) {
-            return $attrData['id'] ?? null;
-        });
-        $this->attributeModel->method('setBackend')->willReturnCallback(function ($value) use (&$attrData, $attribute) {
-            $attrData['backend'] = $value;
-            return $attribute;
-        });
-        $this->attributeModel->method('getBackend')->willReturnCallback(function () use (&$attrData) {
-            return $attrData['backend'] ?? null;
-        });
-        $this->attributeModel->method('setIsScopeGlobal')->willReturnCallback(function ($value) use (&$attrData, $attribute) {
-            $attrData['is_scope_global'] = $value;
-            return $attribute;
-        });
-        $this->attributeModel->method('isScopeGlobal')->willReturnCallback(function () use (&$attrData) {
-            return $attrData['is_scope_global'] ?? false;
-        });
-        $this->attributeModel->method('setEntity')->willReturnCallback(function ($value) use (&$attrData, $attribute) {
-            $attrData['entity'] = $value;
-            return $attribute;
-        });
-        $this->attributeModel->method('getEntity')->willReturnCallback(function () use (&$attrData) {
-            return $attrData['entity'] ?? null;
-        });
         
         $this->backendAttributeModel = $this->createPartialMock(Sku::class, ['getTable']);
         
         $this->status = $this->objectManagerHelper->getObject(Status::class);
 
-        $this->attributeModel->setAttributeCode('attribute_code');
-        $this->attributeModel->setId('1');
-        $this->attributeModel->setBackend($this->backendAttributeModel);
-        $this->backendAttributeModel->method('getTable')->willReturn('table_name');
+        $this->attributeModel->expects($this->any())->method('getAttribute')->willReturnSelf();
+        $this->attributeModel->expects($this->any())->method('getAttributeCode')->willReturn('attribute_code');
+        $this->attributeModel->expects($this->any())->method('getId')->willReturn('1');
+        $this->attributeModel->expects($this->any())->method('getBackend')->willReturn($this->backendAttributeModel);
+        $this->backendAttributeModel->expects($this->any())->method('getTable')->willReturn('table_name');
 
         $this->entity = $this->createMock(AbstractEntity::class);
     }
 
     public function testAddValueSortToCollectionGlobal()
     {
-        $this->attributeModel->setIsScopeGlobal(true);
-        $this->attributeModel->setEntity($this->entity);
+        $this->attributeModel->expects($this->any())->method('isScopeGlobal')->willReturn(true);
+        $this->collection->expects($this->once())->method('order')->with('attribute_code_t.value asc')->willReturnSelf();
+        
+        $this->attributeModel->expects($this->once())->method('getEntity')->willReturn($this->entity);
         $this->entity->expects($this->once())->method('getLinkField')->willReturn('entity_id');
 
         $this->status->setAttribute($this->attributeModel);
@@ -141,10 +88,13 @@ class StatusTest extends TestCase
 
     public function testAddValueSortToCollectionNotGlobal()
     {
-        $this->attributeModel->setIsScopeGlobal(false);
-        $this->collection->setStoreId(1);
-        $this->collection->setCheckSql('check_sql');
-        $this->attributeModel->setEntity($this->entity);
+        $this->attributeModel->expects($this->any())->method('isScopeGlobal')->willReturn(false);
+        
+        $this->collection->expects($this->once())->method('order')->with('check_sql asc')->willReturnSelf();
+        $this->collection->expects($this->once())->method('getStoreId')->willReturn(1);
+        $this->collection->expects($this->any())->method('getCheckSql')->willReturn('check_sql');
+        
+        $this->attributeModel->expects($this->any())->method('getEntity')->willReturn($this->entity);
         $this->entity->expects($this->once())->method('getLinkField')->willReturn('entity_id');
 
         $this->status->setAttribute($this->attributeModel);

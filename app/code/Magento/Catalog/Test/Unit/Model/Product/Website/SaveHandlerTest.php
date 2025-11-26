@@ -48,14 +48,13 @@ class SaveHandlerTest extends TestCase
         $this->storeManager->expects($this->once())
             ->method("isSingleStoreMode")
             ->willReturn(false);
-        /** @var ExtensionAttributesInterface $extensionAttributes */
         $extensionAttributes = $this->createPartialMockWithReflection(
             ExtensionAttributesInterface::class,
-            ['setWebsiteIds', 'getWebsiteIds']
+            ['getWebsiteIds', 'setWebsiteIds']
         );
-        $extensionAttributes->method('setWebsiteIds')->willReturnSelf();
-        $extensionAttributes->method('getWebsiteIds')->willReturn($websiteIds);
-        $extensionAttributes->setWebsiteIds($websiteIds);
+        $extensionAttributes->expects($this->once())
+            ->method('getWebsiteIds')
+            ->willReturn($websiteIds);
         $this->product->expects($this->once())
             ->method('getExtensionAttributes')
             ->willReturn($extensionAttributes);

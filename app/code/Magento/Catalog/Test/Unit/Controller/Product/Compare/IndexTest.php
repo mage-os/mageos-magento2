@@ -151,7 +151,10 @@ class IndexTest extends TestCase
             ->method('decode')
             ->with($beforeUrl)
             ->willReturn($beforeUrl . '1');
-        // The anonymous class already implements setBeforeCompareUrl to return $this
+        $this->catalogSession->expects($this->once())
+            ->method('setBeforeCompareUrl')
+            ->with($beforeUrl . '1')
+            ->willReturnSelf();
         $this->redirectFactoryMock->expects($this->never())->method('create');
         $this->index->execute();
     }

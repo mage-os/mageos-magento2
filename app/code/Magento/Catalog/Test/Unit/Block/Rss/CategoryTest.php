@@ -197,11 +197,17 @@ class CategoryTest extends TestCase
             ->method('getViewConfig')
             ->willReturn($configViewMock);
 
-        $product = $this->createPartialMock(Product::class, ['getName', 'getProductUrl']);
-        $product->method('getName')->willReturn('Product Name');
-        $product->method('getProductUrl')->willReturn('http://magento.com/product.html');
-        $product->setData('description', 'Product Description');
-        $product->setAllowedInRss(true);
+        $product = $this->createPartialMockWithReflection(
+            Product::class,
+            ['getName', 'getProductUrl', 'getAllowedInRss', 'getDescription', 'getAllowedPriceInRss']
+        );
+        $product->expects($this->once())->method('getName')->willReturn('Product Name');
+        $product->expects($this->once())->method('getAllowedInRss')->willReturn(true);
+        $product->expects($this->exactly(2))->method('getProductUrl')
+            ->willReturn('http://magento.com/product.html');
+        $product->expects($this->once())->method('getDescription')
+            ->willReturn('Product Description');
+        $product->expects($this->once())->method('getAllowedPriceInRss')->willReturn(true);
 
         $this->rssModel->expects($this->once())->method('getProductCollection')
             ->willReturn([$product]);

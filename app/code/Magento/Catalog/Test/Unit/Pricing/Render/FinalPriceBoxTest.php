@@ -126,7 +126,7 @@ class FinalPriceBoxTest extends TestCase
         
         $this->product = $this->createPartialMockWithReflection(
             Product::class,
-            ['setPriceInfo', 'getPriceInfo', 'setCanShowPrice', 'getCanShowPrice']
+            ['setPriceInfo', 'getPriceInfo', 'setCanShowPrice', 'getCanShowPrice', 'getId']
         );
         
         $this->product->method('setPriceInfo')->willReturnCallback(
@@ -378,7 +378,7 @@ class FinalPriceBoxTest extends TestCase
         $html = 'html';
 
         $this->object->setData('price_id', $priceId);
-        // getId() is never called in this test
+        $this->product->expects($this->never())->method('getId');
 
         $amount = $this->createMock(AmountInterface::class);
 

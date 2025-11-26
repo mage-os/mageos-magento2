@@ -306,8 +306,15 @@ class InventoryTest extends TestCase
             ->method('getStockItem')
             ->with($productId, $websiteId)
             ->willReturn($stockItemMock);
-        // The logic for when to call getDefaultConfigValue depends on the test scenario
-        // This will be handled by the anonymous class methods returning appropriate values
+        $stockItemMock->expects($this->once())
+            ->method('getItemId')
+            ->willReturn($stockId);
+
+        if (!empty($methods)) {
+            $stockItemMock->expects($this->once())
+                ->method(reset($methods))
+                ->willReturn('call-method');
+        }
 
         $resultValue = $this->inventory->getFieldValue($fieldName);
         $this->assertEquals($result, $resultValue);
@@ -382,6 +389,12 @@ class InventoryTest extends TestCase
         $stockItemMock->expects($this->once())
             ->method('getItemId')
             ->willReturn($stockId);
+
+        if (!empty($methods)) {
+            $stockItemMock->expects($this->once())
+                ->method(reset($methods))
+                ->willReturn('call-method');
+        }
 
         $resultField = $this->inventory->getConfigFieldValue($fieldName);
         $this->assertEquals($result, $resultField);

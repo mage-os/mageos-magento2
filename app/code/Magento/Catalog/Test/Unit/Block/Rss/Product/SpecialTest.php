@@ -18,6 +18,7 @@ use Magento\Framework\App\Rss\UrlBuilderInterface;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Msrp\Helper\Data as MsrpHelper;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\Store;
@@ -30,6 +31,8 @@ use PHPUnit\Framework\TestCase;
  */
 class SpecialTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var \Magento\Catalog\Block\Rss\Product\Special
      */
@@ -196,21 +199,21 @@ class SpecialTest extends TestCase
      */
     protected function getItemMock(): Product
     {
-        $item = $this->createPartialMock(
+        $item = $this->createPartialMockWithReflection(
             Product::class,
-            ['getPrice', 'getFinalPrice', 'getProductUrl', 'getSpecialPrice', 'getSpecialToDate']
+            ['getPrice', 'getFinalPrice', 'getProductUrl', 'getSpecialPrice', 'getSpecialToDate',
+             'getName', 'getDescription', 'getAllowedInRss', 'getAllowedPriceInRss', 'getUseSpecial']
         );
-        $item->method('getPrice')->willReturn('');
-        $item->method('getFinalPrice')->willReturn(10);
-        $item->method('getSpecialPrice')->willReturn(10);
+        $item->expects($this->once())->method('getAllowedInRss')->willReturn(true);
         $item->method('getSpecialToDate')->willReturn(date('Y-m-d'));
-        $item->method('getProductUrl')->willReturn('http://magento.com/product-name.html');
-        $item->setAllowedInRss(true);
-        $item->setAllowedPriceInRss(true);
-        $item->setUseSpecial(true);
-        $item->setDescription('Product Description');
-        $item->setName('Product Name');
-        $item->setData('product_url', 'http://magento.com/product-name.html');
+        $item->expects($this->exactly(2))->method('getFinalPrice')->willReturn(10);
+        $item->expects($this->once())->method('getSpecialPrice')->willReturn(15);
+        $item->expects($this->exactly(2))->method('getAllowedPriceInRss')->willReturn(true);
+        $item->expects($this->once())->method('getUseSpecial')->willReturn(true);
+        $item->expects($this->once())->method('getDescription')->willReturn('Product Description');
+        $item->expects($this->once())->method('getName')->willReturn('Product Name');
+        $item->expects($this->exactly(2))->method('getProductUrl')
+            ->willReturn('http://magento.com/product-name.html');
 
         return $item;
     }

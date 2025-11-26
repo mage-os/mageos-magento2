@@ -89,9 +89,9 @@ class ReadHandlerTest extends TestCase
         $product = $this->createPartialMock(Product::class, ['getExtensionAttributes', 'setExtensionAttributes']);
 
         /** @var ProductExtensionInterface $extensionAttributes */
-        $extensionAttributes = $this->createStub(ProductExtensionInterface::class);
+        $extensionAttributes = $this->createMock(ProductExtensionInterface::class);
         $extensionAttributes->method('getCategoryLinks')->willReturn($dtoCategoryLinks);
-        $extensionAttributes->method('setCategoryLinks')->willReturnSelf();
+        $extensionAttributes->expects(static::once())->method('setCategoryLinks')->with($dtoCategoryLinks);
 
         $product->expects(static::once())
             ->method('getExtensionAttributes')
@@ -118,9 +118,9 @@ class ReadHandlerTest extends TestCase
         $product = $this->createPartialMock(Product::class, ['getExtensionAttributes', 'setExtensionAttributes']);
 
         /** @var ProductExtensionInterface $extensionAttributes */
-        $extensionAttributes = $this->createStub(ProductExtensionInterface::class);
+        $extensionAttributes = $this->createMock(ProductExtensionInterface::class);
         $extensionAttributes->method('getCategoryLinks')->willReturn(null);
-        $extensionAttributes->method('setCategoryLinks')->willReturnSelf();
+        $extensionAttributes->expects(static::once())->method('setCategoryLinks')->with(null);
 
         $product->expects(static::once())
             ->method('getExtensionAttributes')

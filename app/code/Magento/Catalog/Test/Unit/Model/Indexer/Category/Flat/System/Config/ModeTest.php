@@ -55,16 +55,8 @@ class ModeTest extends TestCase
         );
         $this->indexerRegistry = $this->createPartialMockWithReflection(
             IndexerRegistry::class,
-            ['get', 'setGetResult']
+            ['get', 'load', 'setScheduled']
         );
-        $getResult = null;
-        $this->indexerRegistry->method('setGetResult')->willReturnCallback(function ($value) use (&$getResult) {
-            $getResult = $value;
-            return $this->indexerRegistry;
-        });
-        $this->indexerRegistry->method('get')->willReturnCallback(function () use (&$getResult) {
-            return $getResult;
-        });
 
         $this->flatIndexer = $this->createMock(IndexerInterface::class);
 
@@ -111,7 +103,8 @@ class ModeTest extends TestCase
         $this->indexerStateMock->expects($this->never())->method('setStatus');
         $this->indexerStateMock->expects($this->never())->method('save');
 
-        // indexerRegistry methods are not expected to be called in this test
+        $this->indexerRegistry->expects($this->never())->method('load');
+        $this->indexerRegistry->expects($this->never())->method('setScheduled');
 
         $this->model->processValue();
     }
@@ -160,7 +153,8 @@ class ModeTest extends TestCase
         )->willReturnSelf();
         $this->indexerStateMock->expects($this->once())->method('save')->willReturnSelf();
 
-        // indexerRegistry methods are not expected to be called in this test
+        $this->indexerRegistry->expects($this->never())->method('load');
+        $this->indexerRegistry->expects($this->never())->method('setScheduled');
 
         $this->model->processValue();
     }
@@ -197,7 +191,8 @@ class ModeTest extends TestCase
         $this->indexerStateMock->expects($this->never())->method('setStatus');
         $this->indexerStateMock->expects($this->never())->method('save');
 
-        $this->indexerRegistry->setGetResult($this->flatIndexer);
+        $this->indexerRegistry->expects($this->once())->method('get')->with('catalog_category_flat')
+            ->willReturn($this->flatIndexer);
         $this->flatIndexer->expects($this->once())->method('setScheduled')->with(false);
 
         $this->model->processValue();

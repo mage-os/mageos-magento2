@@ -84,12 +84,12 @@ class AjaxTest extends TestCase
             Option::class,
             ['setIgnoreCaching', 'setProduct', 'getChildHtml', 'getProduct', 'toHtml', 'getOptionValues']
         );
-        $optionsBlock->method('setIgnoreCaching')->willReturnSelf();
-        $optionsBlock->method('setProduct')->willReturnSelf();
+        $optionsBlock->expects($this->once())->method('setIgnoreCaching')->with(true)->willReturnSelf();
+        $optionsBlock->expects($this->once())->method('setProduct')->with($product)->willReturnSelf();
         $optionsBlock->method('getChildHtml')->willReturn('');
         $optionsBlock->method('getProduct')->willReturn($mockProduct);
         $optionsBlock->method('toHtml')->willReturn('');
-        $optionsBlock->method('getOptionValues')->willReturn([]);
+        $optionsBlock->expects($this->once())->method('getOptionValues')->willReturn([]);
 
         $layout = $this->createMock(LayoutInterface::class);
         $layout->expects($this->once())->method('createBlock')

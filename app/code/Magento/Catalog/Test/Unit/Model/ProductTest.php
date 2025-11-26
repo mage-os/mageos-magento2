@@ -1263,7 +1263,6 @@ class ProductTest extends TestCase
         $this->stockItemFactoryMock->expects($this->once())
             ->method('create')
             ->willReturn($stockItemMock);
-        // The setProduct method is now implemented in TestStockItem class
 
         $this->assertEquals($this->model, $this->model->fromArray($data));
     }

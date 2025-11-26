@@ -366,30 +366,42 @@ class CustomOptionPriceTest extends TestCase
         $optionValueMock->method('getValue')->willReturnCallback(function () use (&$optionValueData) {
             return $optionValueData;
         });
+        $groupMock = $this->createPartialMockWithReflection(
+            Select::class,
+            ['setOption', 'setConfigurationItemOption', 'getOptionPrice']
+        );
+
+        $groupMock->expects($this->once())
+            ->method('setOption')
+            ->with($this->callback(function($arg) use ($optionId1) {
+                return $arg->getId() === $optionId1;
+            }))->willReturnSelf();
+        
+        $groupMock->expects($this->once())
+            ->method('setConfigurationItemOption')
+            ->with($optionValueMock)->willReturnSelf();
+        
+        $groupMock->expects($this->once())
+            ->method('getOptionPrice')
+            ->with($optionValue, 0.)
+            ->willReturn($optionValue);
+        
         $optionMock = $this->createPartialMock(Option::class, ['getId', 'getType', 'groupFactory']);
         $optionMock
             ->method('getId')
             ->willReturn($optionId1);
-        $optionMock->expects($this->any())
+        $optionMock->expects($this->once())
             ->method('getType')
             ->willReturn($optionType);
-        
-        $groupMock = $this->createPartialMockWithReflection(
-            Select::class,
-            ['validateUserValue', 'prepareForCart', 'getValues', 'setOption', 'getOption', '_isSingleSelection', 'getOptionPrice']
-        );
-        $groupMock->method('validateUserValue')->willReturn($this->createMock(\Magento\Framework\DataObject::class));
-        $groupMock->method('prepareForCart')->willReturn(null);
-        $groupMock->method('getValues')->willReturn([]);
-        $groupMock->method('setOption')->willReturnSelf();
-        $groupMock->method('getOption')->willReturn($optionMock);
-        $groupMock->method('_isSingleSelection')->willReturn(true);
-        $groupMock->method('getOptionPrice')->willReturn($optionValue);
-        
-        $optionMock->expects($this->any())
+        $optionMock->expects($this->once())
             ->method('groupFactory')
             ->with($optionType)
             ->willReturn($groupMock);
+        
+        $optionValueMock->expects($this->once())
+            ->method('getValue')
+            ->willReturn($optionValue);
+        
         $optionIds = new DataObject(['value' => '1,2']);
 
         $customOptions = ['option_ids' => $optionIds, 'option_1' => $optionValueMock, 'option_2' => null];

@@ -58,7 +58,7 @@ class RelatedTest extends TestCase
 
         $this->_linkMock = $this->createPartialMockWithReflection(
             Link::class,
-            ['setAttributes', 'getAttributes']
+            ['setAttributes', 'getAttributes', 'useRelatedLinks']
         );
 
         $this->_productMock->method('getLinkInstance')->willReturn(
@@ -73,30 +73,25 @@ class RelatedTest extends TestCase
 
         $attributes = ['attributeOne' => ['code' => 'one'], 'attributeTwo' => ['code' => 'two']];
 
-        $this->_linkMock->method('setAttributes')->willReturnSelf();
+        $this->_linkMock->expects($this->once())->method('useRelatedLinks');
 
-
-        $this->_linkMock->method('getAttributes')->willReturn($attributes);
-
-
-        $this->_linkMock->setAttributes($attributes);
+        $this->_linkMock->expects($this->once())->method('getAttributes')->willReturn($attributes);
 
         $productLinkMock = $this->createPartialMockWithReflection(
-            Link::class,
-            ['setLinkedProductId', 'getLinkedProductId', 'setArrayData', 'toArray']
+            \Magento\Catalog\Model\ResourceModel\Product\Link::class,
+            ['getLinkedProductId', 'toArray']
         );
 
-
-        $productLinkMock->method('setLinkedProductId')->willReturnSelf();
-
-
-        $productLinkMock->method('getLinkedProductId')->willReturn('100500');
-
-
-        $productLinkMock->method('toArray')->willReturn(['some' => 'data']);
-
-
-        $productLinkMock->setLinkedProductId('100500');
+        $productLinkMock->expects($this->once())->method('getLinkedProductId')->willReturn('100500');
+        $productLinkMock->expects(
+            $this->once()
+        )->method(
+            'toArray'
+        )->with(
+            ['one', 'two']
+        )->willReturn(
+            ['some' => 'data']
+        );
 
         $collectionMock = $helper->getCollectionMock(
             Collection::class,
@@ -110,10 +105,7 @@ class RelatedTest extends TestCase
             $collectionMock
         );
 
-        $this->_duplicateMock->method('setRelatedLinkData')->willReturnSelf();
-
-
-        $this->_duplicateMock->setRelatedLinkData($expectedData);
+        $this->_duplicateMock->expects($this->once())->method('setRelatedLinkData')->with($expectedData);
 
         $this->_model->build($this->_productMock, $this->_duplicateMock);
     }

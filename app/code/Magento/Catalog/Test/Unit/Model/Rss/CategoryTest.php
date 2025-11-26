@@ -15,11 +15,13 @@ use Magento\Catalog\Model\ResourceModel\Product\Collection;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
 use Magento\Catalog\Model\Rss\Category;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class CategoryTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var Category
      */
@@ -47,9 +49,9 @@ class CategoryTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->categoryLayer = $this->createPartialMock(
+        $this->categoryLayer = $this->createPartialMockWithReflection(
             \Magento\Catalog\Model\Layer\Category::class,
-            ['setCurrentCategory', 'prepareProductCollection', 'getProductCollection', 'getCurrentCategory']
+            ['setCurrentCategory', 'prepareProductCollection', 'getProductCollection', 'getCurrentCategory', 'setStore']
         );
         $this->collectionFactory = $this->createPartialMock(
             CollectionFactory::class,
@@ -104,11 +106,14 @@ class CategoryTest extends TestCase
                 'addCountToCategories',
             ]
         );
-        $resourceCollection = $this->createPartialMock(\Magento\Catalog\Model\ResourceModel\Product\Collection::class, ['addAttributeToSelect', 'addAttributeToFilter', 'load']);
+        $resourceCollection = $this->createPartialMockWithReflection(\Magento\Catalog\Model\ResourceModel\Product\Collection::class, ['addAttributeToSelect', 'addAttributeToFilter', 'addIdFilter', 'load']);
         $resourceCollection->expects($this->exactly(3))
             ->method('addAttributeToSelect')->willReturnSelf();
-        $resourceCollection->expects($this->atLeastOnce())
+        $resourceCollection->expects($this->once())
             ->method('addAttributeToFilter')->willReturnSelf();
+        $resourceCollection->expects($this->once())
+            ->method('addIdFilter')
+            ->with($categoryChildren)->willReturnSelf();
         $resourceCollection->expects($this->once())
             ->method('load')->willReturnSelf();
         $products->expects($this->once())
@@ -163,6 +168,10 @@ class CategoryTest extends TestCase
         $this->categoryLayer->method('getCurrentCategory')
             ->willReturn($category);
 
+        $this->categoryLayer->expects($this->once())
+            ->method('setStore')
+            ->with($storeId)
+            ->willReturn($this->categoryLayer);
         $this->assertEquals($products, $this->model->getProductCollection($category, $storeId));
     }
 }

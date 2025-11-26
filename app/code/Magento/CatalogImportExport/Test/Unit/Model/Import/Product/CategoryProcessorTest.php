@@ -75,7 +75,9 @@ class CategoryProcessorTest extends TestCase
         );
         $categoryCollection->method('getIterator')
             ->willReturn(new \ArrayIterator([$this->parentCategory, $this->childCategory]));
-        $categoryCollection->method('addAttributeToSelect')->willReturnSelf();
+        $categoryCollection->expects($this->exactly(3))
+            ->method('addAttributeToSelect')
+            ->willReturnSelf();
         $categoryCollection->method('addFieldToFilter')->willReturnSelf();
         $categoryCollection->method('addIdFilter')->willReturnSelf();
         $categoryCollection->method('getSize')->willReturn(2);

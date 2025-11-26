@@ -229,6 +229,7 @@ class ViewTest extends TestCase
         $this->categoryHelper->expects($this->once())->method('canShow')->with($this->category)->willReturn(true);
         $this->toolbarMemorizer->expects($this->once())->method('memorizeParams');
         $this->toolbarMemorizer->expects($this->once())->method('isMemorizingAllowed')->willReturn(true);
+        $this->response->expects($this->once())->method('setRedirect');
 
         $settings = $this->createPartialMock(DataObject::class, []);
         $settings->setPageLayout('page_layout');

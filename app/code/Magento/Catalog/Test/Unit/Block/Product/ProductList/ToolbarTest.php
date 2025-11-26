@@ -102,16 +102,8 @@ class ToolbarTest extends TestCase
         $this->pagerBlock = $this->createPartialMockWithReflection(
             Pager::class,
             ['setShowPerPage', 'setShowAmounts', 'setLimit', 'setCollection',
-             'setAvailableLimit', 'setUseContainer', 'setFrameLength', 'toHtml']
+             'setAvailableLimit', 'setUseContainer', 'setFrameLength', 'toHtml', 'setJump']
         );
-        $this->pagerBlock->method('setShowPerPage')->willReturnSelf();
-        $this->pagerBlock->method('setShowAmounts')->willReturnSelf();
-        $this->pagerBlock->method('setLimit')->willReturnSelf();
-        $this->pagerBlock->method('setCollection')->willReturnSelf();
-        $this->pagerBlock->method('setAvailableLimit')->willReturnSelf();
-        $this->pagerBlock->method('setUseContainer')->willReturnSelf();
-        $this->pagerBlock->method('setFrameLength')->willReturnSelf();
-        $this->pagerBlock->method('toHtml')->willReturn(true);
         $this->urlBuilder = $this->createPartialMock(Url::class, ['getUrl']);
         $this->scopeConfig = $this->createMock(ScopeConfigInterface::class);
 
@@ -303,6 +295,31 @@ class ToolbarTest extends TestCase
         $this->memorizer->expects($this->once())
             ->method('getLimit')
             ->willReturn($limit);
+        $this->pagerBlock->expects($this->once())
+            ->method('setUseContainer')
+            ->willReturn($this->pagerBlock);
+        $this->pagerBlock->expects($this->once())
+            ->method('setShowPerPage')
+            ->willReturn($this->pagerBlock);
+        $this->pagerBlock->expects($this->once())
+            ->method('setShowAmounts')
+            ->willReturn($this->pagerBlock);
+        $this->pagerBlock->expects($this->once())
+            ->method('setFrameLength')
+            ->willReturn($this->pagerBlock);
+        $this->pagerBlock->expects($this->once())
+            ->method('setJump')
+            ->willReturn($this->pagerBlock);
+        $this->pagerBlock->expects($this->once())
+            ->method('setLimit')
+            ->with($limit)
+            ->willReturn($this->pagerBlock);
+        $this->pagerBlock->expects($this->once())
+            ->method('setCollection')
+            ->willReturn($this->pagerBlock);
+        $this->pagerBlock->expects($this->once())
+            ->method('toHtml')
+            ->willReturn(true);
 
         $this->assertTrue($this->block->getPagerHtml());
     }

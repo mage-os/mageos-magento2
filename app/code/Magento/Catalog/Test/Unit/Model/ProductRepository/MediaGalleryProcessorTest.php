@@ -125,7 +125,7 @@ class MediaGalleryProcessorTest extends TestCase
         $mediaConfigMock->method('getBaseTmpMediaPath')->willReturn($mediaTmpPath);
         $mediaConfigMock->expects($this->once())->method('getTmpMediaShortUrl')->with($absolutePath)
             ->willReturn($mediaTmpPath . $absolutePath);
-        $this->productMock->method('getMediaConfig')->willReturn($mediaConfigMock);
+        $this->productMock->expects($this->once())->method('getMediaConfig')->willReturn($mediaConfigMock);
         $this->productMock->method('hasGalleryAttribute')->willReturn(true);
         //verify new entries
         $contentDataObject = $this->createMock(ImageContent::class);

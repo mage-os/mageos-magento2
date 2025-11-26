@@ -168,7 +168,7 @@ class MoveTest extends TestCase
             ['pid', false, 2],
             ['aid', false, 1],
         ]);
-        $this->request->method('getPost')->willReturnMap([
+        $this->request->expects($this->exactly(2))->method('getPost')->willReturnMap([
             ['pid', false, 2],
             ['aid', false, 1],
         ]);
@@ -232,7 +232,7 @@ class MoveTest extends TestCase
             ['pid', false, 2],
             ['aid', false, 1],
         ]);
-        $this->request->method('getPost')->willReturnMap([
+        $this->request->expects($this->exactly(2))->method('getPost')->willReturnMap([
             ['pid', false, 2],
             ['aid', false, 1],
         ]);
@@ -294,7 +294,7 @@ class MoveTest extends TestCase
             ['pid', false, 2],
             ['aid', false, 1],
         ]);
-        $this->request->method('getPost')->willReturnMap([
+        $this->request->expects($this->exactly(2))->method('getPost')->willReturnMap([
             ['pid', false, 2],
             ['aid', false, 1],
         ]);

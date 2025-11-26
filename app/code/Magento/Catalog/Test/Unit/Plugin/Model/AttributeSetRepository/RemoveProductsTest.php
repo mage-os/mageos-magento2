@@ -78,7 +78,9 @@ class RemoveProductsTest extends TestCase
              'getExtensionAttributes', 'setExtensionAttributes', 'getId']
         );
         $attributeSet->method('getAttributeSetId')->willReturn($attributeSetId);
-        $attributeSet->method('getId')->willReturn($attributeSetId);
+        $attributeSet->expects(self::once())
+            ->method('getId')
+            ->willReturn($attributeSetId);
         $attributeSet->method('setAttributeSetId')->willReturnSelf();
         $attributeSet->method('getAttributeSetName')->willReturn(null);
         $attributeSet->method('setAttributeSetName')->willReturnSelf();

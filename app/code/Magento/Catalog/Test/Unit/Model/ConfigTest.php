@@ -164,8 +164,8 @@ class ConfigTest extends TestCase
     #[DataProvider('getSourceOptionIdDataProvider')]
     public function testGetSourceOptionId($expected, $data, $search)
     {
-        $object = $this->createPartialMock(DataObject::class, []);
-        $object->setAllOptions($data);
+        $object = $this->createPartialMockWithReflection(DataObject::class, ['getAllOptions']);
+        $object->expects($this->once())->method('getAllOptions')->willReturn($data);
         $objectManager = new ObjectManager($this);
         $model = $objectManager->getObject(Config::class);
         $this->assertEquals($expected, $model->getSourceOptionId($object, $search));

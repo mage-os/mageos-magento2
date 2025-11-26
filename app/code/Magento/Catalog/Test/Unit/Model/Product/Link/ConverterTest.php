@@ -124,13 +124,28 @@ class ConverterTest extends TestCase
             ->method('getSku')
             ->willReturn($linkedProductSku);
         $linkMock->setData($info);
+        $linkMock->expects($this->once())
+            ->method('getData')
+            ->willReturn($info);
         $linkMock->setLinkType($linkType);
+        $linkMock->expects($this->exactly(2))
+            ->method('getLinkType')
+            ->willReturn($linkType);
         $linkMock->setLinkedProductSku($linkedProductSku);
+        $linkMock->expects($this->once())
+            ->method('getLinkedProductSku')
+            ->willReturn($linkedProductSku);
         $linkedProductMock->expects($this->once())
             ->method('getId')
             ->willReturn($linkedProductId);
         $linkMock->setExtensionAttributes($attributeMock);
         $attributeMock->setArrayData(['qty' => 33]);
+        $linkMock->expects($this->once())
+            ->method('getExtensionAttributes')
+            ->willReturn($attributeMock);
+        $attributeMock->expects($this->once())
+            ->method('__toArray')
+            ->willReturn(['qty' => 33]);
 
         $this->assertEquals($linksAsArray, $this->converter->convertLinksToGroupedArray($productMock));
     }

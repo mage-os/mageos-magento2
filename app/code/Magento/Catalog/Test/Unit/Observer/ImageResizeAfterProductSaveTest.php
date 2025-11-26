@@ -75,7 +75,7 @@ class ImageResizeAfterProductSaveTest extends TestCase
         $this->observerMock = $this->createMock(Observer::class);
         $this->eventMock = $this->createPartialMockWithReflection(
             Event::class,
-            ['setProductMock', 'getData']
+            ['getProduct']
         );
         $this->productMock = $this->createPartialMock(Product::class, ['getId', 'getMediaGalleryImages']);
         $this->stateMock = $this->createPartialMock(State::class, ['isAreaCodeEmulated']);
@@ -87,9 +87,10 @@ class ImageResizeAfterProductSaveTest extends TestCase
             ->expects($this->once())
             ->method('getEvent')
             ->willReturn($this->eventMock);
-        $this->eventMock->method('setProductMock')->willReturnSelf();
-        $this->eventMock->method('getData')->with('product')->willReturn($this->productMock);
-        $this->eventMock->setProductMock($this->productMock);
+        $this->eventMock
+            ->expects($this->once())
+            ->method('getProduct')
+            ->willReturn($this->productMock);
         $this->productMock
             ->method('getId')->willReturn(null);
         $this->productMock

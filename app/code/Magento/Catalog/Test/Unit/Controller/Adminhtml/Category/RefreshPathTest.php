@@ -98,7 +98,10 @@ class RefreshPathTest extends TestCase
         $categoryResource = $this->createMock(\Magento\Catalog\Model\ResourceModel\Category::class);
 
         $objectManagerMock = $this->createMock(ObjectManagerInterface::class);
-        $objectManagerMock->method('create')->willReturn($categoryMock);
+        $objectManagerMock->expects($this->once())
+            ->method('create')
+            ->with(Category::class)
+            ->willReturn($categoryMock);
 
         $this->setObjectProperty($categoryMock, '_resource', $categoryResource);
 

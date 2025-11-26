@@ -142,7 +142,9 @@ class ProductViewCounterTest extends TestCase
     public function testGetCurrentProductDataWithNonEmptyProduct()
     {
         $productMock = $this->createPartialMock(Product::class, ['getId', 'isAvailable']);
-        $productMock->method('getId')->willReturn(123);
+        $productMock->expects($this->exactly(2))
+            ->method('getId')
+            ->willReturn(123);
         $productMock->method('isAvailable')->willReturn(true);
         $productRendererMock = $this->createMock(ProductRenderInterface::class);
         $storeMock = $this->createMock(Store::class);

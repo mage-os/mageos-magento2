@@ -127,11 +127,11 @@ class PriceBoxTagsTest extends TestCase
         $this->timezoneInterface->expects($this->any())->method('scopeDate')->with($scopeId)->willReturn($dateTime);
         $dateTime->expects($this->any())->method('format')->with('Ymd')->willReturn($date);
         
-        $this->session->method('getCustomerGroupId')->willReturn($customerGroupId);
-        $this->session->method('getDefaultTaxBillingAddress')->willReturn($billingAddress);
-        $this->session->method('getDefaultTaxShippingAddress')->willReturn($shippingAddress);
-        $this->session->method('getCustomerTaxClassId')->willReturn($customerTaxClassId);
-        $this->session->method('getCustomerId')->willReturn($customerId);
+        $this->session->expects($this->once())->method('getCustomerGroupId')->willReturn($customerGroupId);
+        $this->session->expects($this->once())->method('getDefaultTaxBillingAddress')->willReturn($billingAddress);
+        $this->session->expects($this->once())->method('getDefaultTaxShippingAddress')->willReturn($shippingAddress);
+        $this->session->expects($this->once())->method('getCustomerTaxClassId')->willReturn($customerTaxClassId);
+        $this->session->expects($this->once())->method('getCustomerId')->willReturn($customerId);
         
         $rateRequest = $this->createMock(DataObject::class);
         $this->taxCalculation->expects($this->once())->method('getRateRequest')->with(
@@ -145,7 +145,7 @@ class PriceBoxTagsTest extends TestCase
             SaleableInterface::class,
             ['getTaxClassId', 'getPriceInfo', 'getTypeId', 'getId', 'getQty']
         );
-        $salableInterface->method('getTaxClassId')->willReturn($customerTaxClassId);
+        $salableInterface->expects($this->once())->method('getTaxClassId')->willReturn($customerTaxClassId);
         $salableInterface->method('getPriceInfo')->willReturn(null);
         $salableInterface->method('getTypeId')->willReturn('simple');
         $salableInterface->method('getId')->willReturn(1);
@@ -155,7 +155,7 @@ class PriceBoxTagsTest extends TestCase
             AbstractResource::class,
             ['getRateIds', '_construct', 'getConnection']
         );
-        $resource->method('getRateIds')->with($rateRequest)->willReturn($rateIds);
+        $resource->expects($this->once())->method('getRateIds')->with($rateRequest)->willReturn($rateIds);
         $resource->method('_construct')->willReturn(null);
         $resource->method('getConnection')->willReturn(null);
         $this->taxCalculation->expects($this->once())->method('getResource')->willReturn($resource);

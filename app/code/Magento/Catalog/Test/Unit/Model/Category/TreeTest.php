@@ -210,16 +210,18 @@ class TreeTest extends TestCase
         $node = $this->createPartialMockWithReflection(
             Node::class,
             ['getId', 'getParentId', 'getName', 'getPosition', 'getLevel',
-             'getIsActive', 'getProductCount', 'hasChildren']
+             'getIsActive', 'getProductCount', 'hasChildren', 'getChildren']
         );
-        $node->method('getId')->willReturn($currentLevel);
-        $node->method('getParentId')->willReturn($currentLevel - 1);
-        $node->method('getName')->willReturn('Name' . $currentLevel);
-        $node->method('getPosition')->willReturn($currentLevel);
-        $node->method('getLevel')->willReturn($currentLevel);
-        $node->method('getIsActive')->willReturn(true);
-        $node->method('getProductCount')->willReturn(4);
         $node->method('hasChildren')->willReturn(false);
+        $node->expects($this->never())->method('getChildren');
+        
+        $node->expects($this->once())->method('getId')->willReturn($currentLevel);
+        $node->expects($this->once())->method('getParentId')->willReturn($currentLevel - 1);
+        $node->expects($this->once())->method('getName')->willReturn('Name' . $currentLevel);
+        $node->expects($this->once())->method('getPosition')->willReturn($currentLevel);
+        $node->expects($this->once())->method('getLevel')->willReturn($currentLevel);
+        $node->expects($this->once())->method('getIsActive')->willReturn(true);
+        $node->expects($this->once())->method('getProductCount')->willReturn(4);
         $this->tree->getTree($node);
     }
 }

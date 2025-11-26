@@ -118,8 +118,11 @@ class SpecialPriceBulkResolverTest extends TestCase
         
         // Mock store and website
         $store = $this->createMock(StoreInterface::class);
-        $store->method('getWebsiteId')->willReturn($websiteId);
-        $this->storeManager->method('getStore')->willReturn($store);
+        $store->expects($this->once())->method('getWebsiteId')->willReturn($websiteId);
+        $this->storeManager->expects($this->once())
+            ->method('getStore')
+            ->with($storeId)
+            ->willReturn($store);
         
         $collection = $this->createPartialMock(AbstractCollection::class, ['getAllIds', 'getIterator']);
         $collection->expects($this->once())->method('getAllIds')->willReturn([1]);
@@ -157,7 +160,7 @@ class SpecialPriceBulkResolverTest extends TestCase
         
         // Mock DB connection
         $connection = $this->createMock(AdapterInterface::class);
-        $connection->method('select')->willReturn($select);
+        $connection->expects($this->once())->method('select')->willReturn($select);
         $connection->expects($this->once())->method('fetchAll')->with($select)->willReturn([
             [
                 'product_id' => 2,

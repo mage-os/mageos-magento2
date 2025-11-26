@@ -25,6 +25,7 @@ use Magento\Framework\Registry;
 use Magento\Framework\Stdlib\DateTime;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -35,6 +36,7 @@ use PHPUnit\Framework\TestCase;
  */
 class AdvancedTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var Advanced
      */
@@ -138,7 +140,7 @@ class AdvancedTest extends TestCase
             'getFrontendInput'
         ]);
         $entityType = $this->createMock(EntityType::class);
-        $formElement = $this->createMock(Text::class);
+        $formElement = $this->createPartialMockWithReflection(Text::class, ['setDisabled']);
         $directoryReadInterface = $this->createMock(ReadInterface::class);
 
         $this->registry->expects($this->any())->method('registry')->with('entity_attribute')
@@ -148,7 +150,6 @@ class AdvancedTest extends TestCase
         $form->method('getElement')->willReturn($formElement);
         $fieldSet->expects($this->any())->method('addField')->willReturnSelf();
         $attributeModel->method('getDefaultValue')->willReturn($defaultValue);
-        // $attributeModel->expects($this->any())->method('setDisabled')->willReturnSelf();
         $attributeModel->method('getId')->willReturn(1);
         $attributeModel->method('getEntityType')->willReturn($entityType);
         $attributeModel->method('getIsUserDefined')->willReturn(false);
@@ -171,7 +172,7 @@ class AdvancedTest extends TestCase
 
         $entityType->method('getEntityTypeCode')->willReturn('entity_type_code');
         $this->eavData->method('getFrontendClasses')->willReturn([]);
-        // $formElement->expects($this->exactly(2))->method('setDisabled')->willReturnSelf();
+        $formElement->expects($this->exactly(2))->method('setDisabled')->willReturnSelf();
         $this->yesNo->method('toOptionArray')->willReturn(['yes', 'no']);
         $this->filesystem->method('getDirectoryRead')->willReturn($directoryReadInterface);
         $directoryReadInterface->method('getRelativePath')->willReturn('relative_path');

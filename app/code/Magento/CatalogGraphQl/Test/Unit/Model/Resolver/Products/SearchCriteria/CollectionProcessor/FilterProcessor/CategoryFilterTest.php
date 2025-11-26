@@ -15,6 +15,7 @@ use Magento\Catalog\Model\ResourceModel\Product\Collection\JoinMinimalPosition;
 use Magento\Catalog\Model\Category as CategoryModel;
 use Magento\CatalogGraphQl\Model\Resolver\Products\SearchCriteria\CollectionProcessor\FilterProcessor\CategoryFilter;
 use Magento\Framework\Api\Filter;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -23,6 +24,7 @@ use PHPUnit\Framework\TestCase;
  */
 class CategoryFilterTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var CategoryFilter
      */
@@ -67,13 +69,12 @@ class CategoryFilterTest extends TestCase
         $filter = new Filter();
         
         // Create Category mocks - getIsAnchor() is a magic method via __call()
-        $category1 = $this->createPartialMock(CategoryModel::class, ['getChildren', '__call']);
-        $category1->method('__call')->willReturn(true);
-        $category1->method('getChildren')->willReturn('2');
+        $category1 = $this->createPartialMockWithReflection(CategoryModel::class, ['getIsAnchor', 'getChildren']);
+        $category1->expects($this->once())->method('getIsAnchor')->willReturn(true);
+        $category1->expects($this->once())->method('getChildren')->with(true)->willReturn('2');
         
-        $category3 = $this->createPartialMock(CategoryModel::class, ['getChildren', '__call']);
-        $category3->method('__call')->willReturn(false);
-        $category3->method('getChildren')->willReturn('');
+        $category3 = $this->createPartialMockWithReflection(CategoryModel::class, ['getIsAnchor', 'getChildren']);
+        $category3->expects($this->once())->method('getIsAnchor')->willReturn(false);
         
         $collection = $this->createMock(Collection::class);
         $filter->setConditionType('in');
@@ -105,9 +106,9 @@ class CategoryFilterTest extends TestCase
         $filter = new Filter();
         
         // Create Category mock - getIsAnchor() is a magic method via __call()
-        $category = $this->createPartialMock(CategoryModel::class, ['getChildren', '__call']);
-        $category->method('__call')->willReturn(true);
-        $category->method('getChildren')->willReturn('2');
+        $category = $this->createPartialMockWithReflection(CategoryModel::class, ['getIsAnchor', 'getChildren']);
+        $category->expects($this->once())->method('getIsAnchor')->willReturn(true);
+        $category->expects($this->once())->method('getChildren')->with(true)->willReturn('2');
         
         $collection = $this->createMock(Collection::class);
         $filter->setConditionType($condition);

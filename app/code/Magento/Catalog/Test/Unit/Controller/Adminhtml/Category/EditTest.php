@@ -23,6 +23,7 @@ use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Store\Model\StoreManager;
 use Magento\Framework\View\LayoutFactory;
 use Magento\Framework\View\Page\Title;
 use Magento\Framework\View\Result\Page as ResultPage;
@@ -190,7 +191,10 @@ class EditTest extends TestCase
             JsonFactory::class,
             ['create']
         );
-        $this->storeManagerInterfaceMock = $this->createMock(StoreManagerInterface::class);
+        $this->storeManagerInterfaceMock = $this->createPartialMockWithReflection(
+            StoreManager::class,
+            ['getStore', 'getDefaultStoreView', 'getRootCategoryId', 'getCode']
+        );
         $this->requestMock = $this->createPartialMockWithReflection(
             RequestInterface::class,
             [
@@ -218,7 +222,7 @@ class EditTest extends TestCase
         $this->eventManagerMock = $this->createMock(ManagerInterface::class);
         $this->messageManagerMock = $this->createMock(\Magento\Framework\Message\ManagerInterface::class);
         $this->titleMock = $this->createMock(Title::class);
-        $this->sessionMock = $this->createPartialMockWithReflection(Session::class, ['__call', 'getCategoryData']);
+        $this->sessionMock = $this->createPartialMockWithReflection(Session::class, ['getCategoryData']);
         $this->sessionMock->method('getCategoryData')->willReturn(null);
 
         $this->contextMock = $this->createPartialMockWithReflection(Context::class, [
@@ -258,29 +262,45 @@ class EditTest extends TestCase
     {
         $rootCategoryId = 2;
 
-        // Configure the request mock
-        $this->requestMock->method('getParam')->willReturn($categoryId);
+        $this->requestMock->expects($this->atLeastOnce())
+            ->method('getParam')
+            ->willReturnMap(
+                [
+                    ['id', false, $categoryId],
+                    ['store', null, $storeId],
+                ]
+            );
+        $this->requestMock->expects($this->atLeastOnce())
+            ->method('getQuery')
+            ->with('isAjax')
+            ->willReturn(false);
 
         $this->mockInitCategoryCall();
 
-        $this->sessionMock->expects($this->any())
-            ->method('__call')
+        $this->sessionMock->expects($this->once())
+            ->method('getCategoryData')
+            ->with(true)
             ->willReturn([]);
 
-        // Create a store object
-        $storeObject = $this->createPartialMock(Store::class, ['getCode', 'getRootCategoryId']);
-        $storeObject->method('getCode')->willReturn('default');
-        $storeObject->method('getRootCategoryId')->willReturn(2);
-        
-        // Configure the store manager mock
-        $this->storeManagerInterfaceMock->method('getStore')->willReturn($storeObject);
-        $this->storeManagerInterfaceMock->method('getDefaultStoreView')->willReturn($storeObject);
+        $this->storeManagerInterfaceMock->expects($this->any())
+            ->method('getStore')
+            ->with($storeId)->willReturnSelf();
 
         if (!$categoryId) {
+            if (!$storeId) {
+                $this->storeManagerInterfaceMock->expects($this->once())
+                    ->method('getDefaultStoreView')->willReturnSelf();
+            }
+            $this->storeManagerInterfaceMock->expects($this->once())
+                ->method('getRootCategoryId')
+                ->willReturn($rootCategoryId);
             $categoryId = $rootCategoryId;
         }
 
-        // No mock expectations needed for anonymous class
+        $this->requestMock->expects($this->atLeastOnce())
+            ->method('setParam')
+            ->with('id', $categoryId)
+            ->willReturn(true);
 
         $this->categoryMock->expects($this->atLeastOnce())
             ->method('getId')

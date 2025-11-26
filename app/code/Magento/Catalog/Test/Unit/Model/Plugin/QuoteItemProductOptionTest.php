@@ -93,6 +93,9 @@ class QuoteItemProductOptionTest extends TestCase
     public function testBeforeItemToOrderItemEmptyOptions()
     {
         $this->quoteItemMock->setOptions(null);
+        $this->quoteItemMock->expects(static::once())
+            ->method('getOptions')
+            ->willReturn(null);
 
         $this->plugin->beforeConvert($this->subjectMock, $this->quoteItemMock);
     }
@@ -128,10 +131,22 @@ class QuoteItemProductOptionTest extends TestCase
         $optionMock2->setCode('not_int_text');
         
         $this->quoteItemMock->setOptions([$optionMock1, $optionMock2]);
+        $this->quoteItemMock->expects(static::exactly(2))
+            ->method('getOptions')
+            ->willReturn([$optionMock1, $optionMock2]);
+        $optionMock1->expects(static::exactly(2))
+            ->method('getCode')
+            ->willReturn('someText_8');
+        $optionMock2->expects(static::exactly(2))
+            ->method('getCode')
+            ->willReturn('not_int_text');
         $this->productMock->expects(static::once())
             ->method('getOptionById')
             ->willReturn(new DataObject(['type' => ProductOption::OPTION_TYPE_FILE]));
         $this->quoteItemMock->setProduct($this->productMock);
+        $this->quoteItemMock->expects(static::once())
+            ->method('getProduct')
+            ->willReturn($this->productMock);
 
         $this->plugin->beforeConvert($this->subjectMock, $this->quoteItemMock);
     }
