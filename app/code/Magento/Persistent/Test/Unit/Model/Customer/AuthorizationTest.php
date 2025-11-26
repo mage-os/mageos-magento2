@@ -87,10 +87,17 @@ class AuthorizationTest extends TestCase
     ): void {
         $this->persistentSessionMock->expects($this->any())->method('isPersistent')->willReturn($isPersistent);
         $this->customerSessionMock->expects($this->any())->method('getCustomerId')->willReturn($customerId);
-        $this->customerSessionMock->expects(
-            $this->once()
-        )->method('getIsCustomerEmulated')
-        ->willReturn($isCustomerEmulated);
+        
+        // getIsCustomerEmulated() is only called when isPersistent is true AND customerId is truthy
+        // This is due to short-circuit evaluation in the Authorization::isAllowed() method
+        if ($isPersistent && $customerId) {
+            $this->customerSessionMock->expects($this->once())
+                ->method('getIsCustomerEmulated')
+                ->willReturn($isCustomerEmulated);
+        } else {
+            $this->customerSessionMock->expects($this->never())
+                ->method('getIsCustomerEmulated');
+        }
 
         $isAllowedResult = $this->customerAuthorizationComposite->isAllowed('self');
 
