@@ -19,14 +19,16 @@ use PHPUnit\Framework\TestCase;
 class EntryConverterPoolTest extends TestCase
 {
     /**
+     * \Magento\Catalog\Model\Product\Attribute\Backend\Media\ImageEntryConverter
+     *
      * @var MockObject
-     * |\Magento\Catalog\Model\Product\Attribute\Backend\Media\ImageEntryConverter
      */
     protected $imageMock;
 
     /**
+     * \Magento\ProductVideo\Model\Product\Attribute\Media\ExternalVideoEntryConverter
+     *
      * @var MockObject
-     * |\Magento\ProductVideo\Model\Product\Attribute\Media\ExternalVideoEntryConverter
      */
     protected $videoMock;
 

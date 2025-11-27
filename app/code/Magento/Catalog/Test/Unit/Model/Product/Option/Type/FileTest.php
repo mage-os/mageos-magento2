@@ -327,7 +327,8 @@ class FileTest extends TestCase
             ['setId', 'getId', 'getValue']
         );
         $id = null;
-        $configurationItemOption->method('setId')->willReturnCallback(function ($value) use (&$id, $configurationItemOption) {
+        $configurationItemOption->method('setId')
+            ->willReturnCallback(function ($value) use (&$id, $configurationItemOption) {
             $id = $value;
             return $configurationItemOption;
         });

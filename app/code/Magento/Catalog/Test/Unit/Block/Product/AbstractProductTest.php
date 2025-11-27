@@ -67,15 +67,7 @@ class AbstractProductTest extends TestCase
         );
         $arrayUtilsMock = $this->createMock(ArrayUtils::class);
         $this->layoutMock = $this->createPartialMock(Layout::class, ['getBlock']);
-        $this->stockRegistryMock = $this->createMock(
-            StockRegistryInterface::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['getStockItem']
-        );
+        $this->stockRegistryMock = $this->createMock(StockRegistryInterface::class);
 
         $this->imageBuilder = $this->createPartialMock(ImageBuilder::class, ['create']);
 
@@ -154,15 +146,7 @@ class AbstractProductTest extends TestCase
 
         $productMock = $this->createPartialMock(Product::class, ['getId', 'getStore']);
         $storeMock = $this->createPartialMock(Store::class, ['getWebsiteId']);
-        $stockItemMock = $this->createMock(
-            StockItemInterface::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['getMinSaleQty']
-        );
+        $stockItemMock = $this->createMock(StockItemInterface::class);
 
         $this->stockRegistryMock->expects($this->once())
             ->method('getStockItem')

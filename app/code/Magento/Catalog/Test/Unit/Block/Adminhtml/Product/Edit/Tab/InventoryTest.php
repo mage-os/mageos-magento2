@@ -104,28 +104,13 @@ class InventoryTest extends TestCase
             Context::class,
             ['getRequest', 'getStoreManager']
         );
-        $this->stockConfigurationMock = $this->createMock(
-            StockConfigurationInterface::class,
-            [],
-            '',
-            false
-        );
-        $this->stockRegistryMock =  $this->createMock(
-            StockRegistryInterface::class,
-            [],
-            '',
-            false
-        );
+        $this->stockConfigurationMock = $this->createMock(StockConfigurationInterface::class);
+        $this->stockRegistryMock = $this->createMock(StockRegistryInterface::class);
         $this->backordersMock = $this->createMock(Backorders::class);
         $this->stockMock = $this->createMock(Stock::class);
         $this->coreRegistryMock = $this->createMock(Registry::class);
         $this->moduleManager = $this->createMock(Manager::class);
-        $this->storeManagerMock = $this->createMock(
-            StoreManagerInterface::class,
-            [],
-            '',
-            false
-        );
+        $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
 
         $this->contextMock->expects($this->once())
             ->method('getStoreManager')
@@ -480,15 +465,7 @@ class InventoryTest extends TestCase
     public function testCanUseQtyDecimals()
     {
         $productMock = $this->createPartialMock(Product::class, ['getTypeInstance']);
-        $typeMock = $this->createMock(
-            AbstractType::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['canUseQtyDecimals']
-        );
+        $typeMock = $this->createMock(AbstractType::class);
         $this->coreRegistryMock->expects($this->once())
             ->method('registry')
             ->with('product')

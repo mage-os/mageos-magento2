@@ -15,6 +15,9 @@ use PHPUnit\Framework\TestCase;
 
 class LayoutTest extends TestCase
 {
+    /**
+     * @var array
+     */
     private $testArray = ['test1', ['test1']];
 
     /**

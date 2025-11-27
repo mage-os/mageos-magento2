@@ -65,7 +65,10 @@ class CategoryListTest extends TestCase
     {
         $this->categoryCollectionFactory = $this->createPartialMock(CollectionFactory::class, ['create']);
         $this->extensionAttributesJoinProcessor = $this->createMock(JoinProcessorInterface::class);
-        $this->categorySearchResultsFactory = $this->createPartialMock(CategorySearchResultsInterfaceFactory::class, ['create']);
+        $this->categorySearchResultsFactory = $this->createPartialMock(
+            CategorySearchResultsInterfaceFactory::class,
+            ['create']
+        );
         $this->categoryRepository = $this->createMock(CategoryRepositoryInterface::class);
         $this->collectionProcessorMock = $this->createMock(CollectionProcessorInterface::class);
 

@@ -144,7 +144,10 @@ class ViewTest extends TestCase
     protected function setUp(): void
     {
         $this->request = $this->createMock(RequestInterface::class);
-        $this->response = $this->createPartialMockWithReflection(ResponseInterface::class, ['setRedirect', 'sendResponse']);
+        $this->response = $this->createPartialMockWithReflection(
+            ResponseInterface::class,
+            ['setRedirect', 'sendResponse']
+        );
         $this->response->method('setRedirect')->willReturnSelf();
         $this->response->method('sendResponse')->willReturn(null);
 

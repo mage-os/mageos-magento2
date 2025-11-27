@@ -121,34 +121,10 @@ class SaveTest extends TestCase
             ['create']
         );
         $this->layoutFactoryMock = $this->createPartialMock(LayoutFactory::class, ['create']);
-        $this->requestMock = $this->createMock(
-            RequestInterface::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['getParam', 'getPost', 'getPostValue']
-        );
+        $this->requestMock = $this->createMock(RequestInterface::class);
         $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
-        $this->eventManagerMock = $this->createMock(
-            ManagerInterface::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['dispatch']
-        );
-        $this->messageManagerMock = $this->createMock(
-            \Magento\Framework\Message\ManagerInterface::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['addSuccessMessage', 'getMessages']
-        );
+        $this->eventManagerMock = $this->createMock(ManagerInterface::class);
+        $this->messageManagerMock = $this->createMock(\Magento\Framework\Message\ManagerInterface::class);
 
         $this->save = $this->objectManager->getObject(
             Save::class,

@@ -52,7 +52,10 @@ class AbstractTypeTest extends TestCase
 
         $this->product = $this->createPartialMockWithReflection(
             Product::class,
-            ['setStatus', 'getStatus', 'setData', 'getData', 'setResource', 'getResource', 'setHasOptions', 'getHasOptions']
+            [
+                'setStatus', 'getStatus', 'setData', 'getData', 'setResource',
+                'getResource', 'setHasOptions', 'getHasOptions'
+            ]
         );
         $productData = [];
         $this->product->method('setStatus')->willReturnCallback(function ($v) use (&$productData) {

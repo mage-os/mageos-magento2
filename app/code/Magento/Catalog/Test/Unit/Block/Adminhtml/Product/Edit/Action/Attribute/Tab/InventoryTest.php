@@ -67,18 +67,8 @@ class InventoryTest extends TestCase
 
         $this->contextMock = $this->createPartialMock(Context::class, ['getRequest']);
         $this->backordersMock = $this->createMock(Backorders::class);
-        $this->stockConfigurationMock = $this->createMock(
-            StockConfigurationInterface::class,
-            [],
-            '',
-            false
-        );
-        $this->requestMock = $this->createMock(
-            RequestInterface::class,
-            ['getParam'],
-            '',
-            false
-        );
+        $this->stockConfigurationMock = $this->createMock(StockConfigurationInterface::class);
+        $this->requestMock = $this->createMock(RequestInterface::class);
 
         $this->contextMock->expects($this->once())
             ->method('getRequest')

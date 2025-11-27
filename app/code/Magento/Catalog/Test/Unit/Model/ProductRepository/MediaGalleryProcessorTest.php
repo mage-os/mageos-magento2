@@ -116,7 +116,10 @@ class MediaGalleryProcessorTest extends TestCase
             ]
         ];
         $this->productMock->setData('media_gallery', $newExitingEntriesData);
-        $this->productMock->setData('media_attributes', ["image" => "imageAttribute", "small_image" => "small_image_attribute"]);
+        $this->productMock->setData(
+            'media_attributes',
+            ["image" => "imageAttribute", "small_image" => "small_image_attribute"]
+        );
         $mediaTmpPath = '/tmp';
         $absolutePath = '/a/b/filename.jpg';
         $this->processorMock->expects($this->once())->method('clearMediaAttribute')

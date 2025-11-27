@@ -13,6 +13,23 @@ use Magento\GroupedProduct\Ui\DataProvider\Product\Form\Modifier\CustomOptions a
 class CustomOptionsTest extends AbstractModifierTestCase
 {
     /**
+     * Override parent setUp to recreate arrayManagerMock without willReturnArgument
+     */
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Recreate arrayManagerMock to allow tracking of findPath calls
+        $this->arrayManagerMock = $this->createMock(\Magento\Framework\Stdlib\ArrayManager::class);
+        
+        // Only configure the methods actually used by CustomOptions
+        $this->arrayManagerMock->method('remove')
+            ->willReturnCallback(function ($path, $data) {
+                return $data;
+            });
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function createModel()
@@ -30,7 +47,7 @@ class CustomOptionsTest extends AbstractModifierTestCase
     {
         $data = ['data'];
 
-        $this->productMock->setTypeId('simple');
+        $this->productMock->method('getTypeId')->willReturn('simple');
         $this->arrayManagerMock->expects($this->never())
             ->method('findPath');
 
@@ -41,7 +58,7 @@ class CustomOptionsTest extends AbstractModifierTestCase
     {
         $data = ['data'];
 
-        $this->productMock->setTypeId(CustomOptionsModifier::PRODUCT_TYPE_GROUPED);
+        $this->productMock->method('getTypeId')->willReturn(CustomOptionsModifier::PRODUCT_TYPE_GROUPED);
         $this->arrayManagerMock->expects($this->once())
             ->method('findPath');
 

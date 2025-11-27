@@ -61,7 +61,10 @@ class ProductRenderListTest extends TestCase
         $this->collectionFactoryMock = $this->createPartialMock(CollectionFactory::class, ['create']);
         $this->collectionProcessorMock = $this->createMock(CollectionProcessorInterface::class);
         $this->productRenderCollectorCompositeMock = $this->createMock(ProductRenderCollectorComposite::class);
-        $this->productRenderSearchResultsFactoryMock = $this->createPartialMock(ProductRenderSearchResultsFactory::class, ['create']);
+        $this->productRenderSearchResultsFactoryMock = $this->createPartialMock(
+            ProductRenderSearchResultsFactory::class,
+            ['create']
+        );
         $this->productRenderFactoryMock = $this->createPartialMock(ProductRenderFactory::class, ['create']);
         $this->configMock = $this->createMock(Config::class);
         $this->configMock->expects($this->once())

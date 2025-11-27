@@ -176,15 +176,7 @@ class ValueTest extends TestCase
     {
         $mock = $this->createPartialMock(Product::class, ['getPriceInfo']);
 
-        $priceInfoMock = $this->createMock(
-            PriceInfoInterface::class,
-            [],
-            '',
-            false,
-            false,
-            true,
-            ['getPrice']
-        );
+        $priceInfoMock = $this->createMock(PriceInfoInterface::class);
 
         $priceMock = $this->createMock(PriceInterface::class);
 
@@ -204,7 +196,10 @@ class ValueTest extends TestCase
     {
         $mock = $this->createPartialMock(
             \Magento\Catalog\Model\ResourceModel\Product\Option\Value::class,
-            ['duplicate', 'getIdFieldName', 'deleteValues', 'deleteValue', 'beginTransaction', 'delete', 'commit', 'save', 'addCommitCallback']
+            [
+                'duplicate', 'getIdFieldName', 'deleteValues', 'deleteValue', 'beginTransaction',
+                'delete', 'commit', 'save', 'addCommitCallback'
+            ]
         );
 
         $mock->expects($this->any())

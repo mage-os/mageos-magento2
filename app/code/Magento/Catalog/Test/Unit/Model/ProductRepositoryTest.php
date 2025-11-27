@@ -1227,7 +1227,8 @@ class ProductRepositoryTest extends TestCase
 
             $this->initializedProduct->setData("ignore_links_flag", false);
             $this->resourceModel
-                ->method('getProductsIdsBySkus')->willReturn([$newLinks['linked_product_sku'] => $newLinks['linked_product_sku']]);
+                ->method('getProductsIdsBySkus')
+                ->willReturn([$newLinks['linked_product_sku'] => $newLinks['linked_product_sku']]);
 
             $inputLink = $this->objectManager->getObject(Link::class);
             $inputLink->setProductSku($newLinks['product_sku']);
@@ -1416,7 +1417,8 @@ class ProductRepositoryTest extends TestCase
             ->willReturn($this->productData);
 
         $this->initializedProduct->setData('media_gallery', $newEntriesData);
-        $this->initializedProduct->method('getMediaAttributes')->willReturn(["image" => "imageAttribute", "small_image" => "small_image_attribute"]);
+        $this->initializedProduct->method('getMediaAttributes')
+            ->willReturn(["image" => "imageAttribute", "small_image" => "small_image_attribute"]);
 
         //setup media attribute backend
         $mediaTmpPath = '/tmp';
@@ -1584,7 +1586,8 @@ class ProductRepositoryTest extends TestCase
             ->willReturn($this->productData);
 
         $this->initializedProduct->setData('media_gallery', $existingMediaGallery);
-        $this->initializedProduct->method('getMediaAttributes')->willReturn(["image" => "filename1", "small_image" => "filename2"]);
+        $this->initializedProduct->method('getMediaAttributes')
+            ->willReturn(["image" => "filename1", "small_image" => "filename2"]);
 
         $this->processor->expects($this->once())->method('clearMediaAttribute')
             ->with($this->initializedProduct, ['image', 'small_image']);

@@ -20,14 +20,16 @@ use PHPUnit\Framework\TestCase;
 class ImageEntryConverterTest extends TestCase
 {
     /**
+     * \Magento\Catalog\Api\Data\ProductAttributeMediaGalleryEntryInterfaceFactory
+     *
      * @var MockObject
-     * |\Magento\Catalog\Api\Data\ProductAttributeMediaGalleryEntryInterfaceFactory
      */
     protected $mediaGalleryEntryFactoryMock;
 
     /**
+     * \Magento\Catalog\Api\Data\ProductAttributeMediaGalleryEntry
+     *
      * @var MockObject
-     * |\Magento\Catalog\Api\Data\ProductAttributeMediaGalleryEntry
      */
     protected $mediaGalleryEntryMock;
 
@@ -42,8 +44,9 @@ class ImageEntryConverterTest extends TestCase
     protected $productMock;
 
     /**
+     * \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
+     *
      * @var ImageEntryConverter
-     * |\Magento\Framework\TestFramework\Unit\Helper\ObjectManager
      */
     protected $modelObject;
 

@@ -42,6 +42,9 @@ class LinkTest extends TestCase
      */
     protected $productCollection;
 
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     protected function setUp(): void
     {
         $linkCollection = $this->createPartialMock(Collection::class, ['setLinkModel']);
@@ -61,8 +64,10 @@ class LinkTest extends TestCase
 
         $this->resource = $this->createPartialMockWithReflection(
             AbstractResource::class,
-            ['getIdFieldName', 'getConnection', 'getMainTable', 'getTable', 'getAttributeTypeTable', 'getAttributesByType',
-             'setTable', 'setAttributeTypeTable', 'setAttributesByType', '_construct']
+            [
+                'getIdFieldName', 'getConnection', 'getMainTable', 'getTable', 'getAttributeTypeTable',
+                'getAttributesByType', 'setTable', 'setAttributeTypeTable', 'setAttributesByType', '_construct'
+            ]
         );
         $resourceData = [];
         $this->resource->method('getIdFieldName')->willReturn('link_id');
@@ -80,7 +85,7 @@ class LinkTest extends TestCase
         $this->resource->method('setAttributeTypeTable')->willReturnCallback(function ($table) use (&$resourceData) {
             $resourceData['attributeTypeTable'] = $table;
         });
-        $this->resource->method('getAttributesByType')->willReturnCallback(function ($type) use (&$resourceData) {
+        $this->resource->method('getAttributesByType')->willReturnCallback(function () use (&$resourceData) {
             return $resourceData['attributesByType'] ?? [];
         });
         $this->resource->method('setAttributesByType')->willReturnCallback(function ($attrs) use (&$resourceData) {

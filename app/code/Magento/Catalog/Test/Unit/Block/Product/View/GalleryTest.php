@@ -145,7 +145,8 @@ class GalleryTest extends TestCase
             ->willReturn($storeMock);
 
         $productMock->method('getTypeInstance')->willReturn($productTypeMock);
-        $productMock->method('getMediaGalleryImages')->willReturn($this->getImagesCollectionWithPopulatedDataObject($hasLabel));
+        $productMock->method('getMediaGalleryImages')
+            ->willReturn($this->getImagesCollectionWithPopulatedDataObject($hasLabel));
         $productMock->method('getName')->willReturn('test_product_name');
 
         $this->registry->expects($this->any())

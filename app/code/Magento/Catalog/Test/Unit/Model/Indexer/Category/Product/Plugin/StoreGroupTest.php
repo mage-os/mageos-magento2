@@ -56,15 +56,7 @@ class StoreGroupTest extends TestCase
             GroupModel::class,
             ['dataHasChangedFor', 'isObjectNew']
         );
-        $this->indexerMock = $this->createMock(
-            IndexerInterface::class,
-            [],
-            '',
-            false,
-            false,
-            true,
-            ['getId', 'getState']
-        );
+        $this->indexerMock = $this->createMock(IndexerInterface::class);
         $this->subjectMock = $this->createMock(Group::class);
         $this->indexerRegistryMock = $this->createPartialMock(IndexerRegistry::class, ['get']);
         $this->tableMaintainerMock = $this->createMock(TableMaintainer::class);

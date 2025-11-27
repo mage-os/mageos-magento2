@@ -73,25 +73,9 @@ class ImageTest extends TestCase
     {
         $this->objectManager = new ObjectManager($this);
 
-        $this->attribute = $this->createMock(
-            AbstractAttribute::class,
-            [],
-            '',
-            false,
-            false,
-            true,
-            ['getName']
-        );
+        $this->attribute = $this->createMock(AbstractAttribute::class);
 
-        $this->logger = $this->createMock(
-            LoggerInterface::class,
-            [],
-            '',
-            false,
-            false,
-            true,
-            ['critical']
-        );
+        $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->imageUploader = $this->createPartialMock(
             ImageUploader::class,

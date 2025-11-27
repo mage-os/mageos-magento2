@@ -180,15 +180,7 @@ class ModeTest extends TestCase
         $this->indexerStateMock->expects($this->never())->method('setStatus');
         $this->indexerStateMock->expects($this->never())->method('save');
 
-        $indexerMock = $this->createMock(
-            IndexerInterface::class,
-            [],
-            '',
-            false,
-            false,
-            true,
-            ['setScheduled']
-        );
+        $indexerMock = $this->createMock(IndexerInterface::class);
         $indexerMock->expects($this->once())->method('setScheduled')->with(false);
 
         $this->indexerProcessorMock->expects(

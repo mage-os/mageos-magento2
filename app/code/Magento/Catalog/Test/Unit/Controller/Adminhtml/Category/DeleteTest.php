@@ -73,15 +73,7 @@ class DeleteTest extends TestCase
             RedirectFactory::class,
             ['create']
         );
-        $this->request = $this->createMock(
-            RequestInterface::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['getParam', 'getPost']
-        );
+        $this->request = $this->createMock(RequestInterface::class);
         $auth = $this->createPartialMock(Auth::class, ['getAuthStorage']);
         $this->authStorage = $this->createPartialMockWithReflection(
             StorageInterface::class,
@@ -92,30 +84,9 @@ class DeleteTest extends TestCase
         $this->authStorage->method('processLogout')->willReturnSelf();
         $this->authStorage->method('isLoggedIn')->willReturn(true);
         $this->authStorage->method('prolong')->willReturnSelf();
-        $eventManager = $this->createMock(
-            ManagerInterface::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['dispatch']
-        );
-        $response = $this->createMock(
-            ResponseInterface::class,
-            [],
-            '',
-            false
-        );
-        $messageManager = $this->createMock(
-            \Magento\Framework\Message\ManagerInterface::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['addSuccessMessage']
-        );
+        $eventManager = $this->createMock(ManagerInterface::class);
+        $response = $this->createMock(ResponseInterface::class);
+        $messageManager = $this->createMock(\Magento\Framework\Message\ManagerInterface::class);
         $this->categoryRepository = $this->createMock(CategoryRepositoryInterface::class);
         $context->method('getRequest')->willReturn($this->request);
         $context->method('getResponse')->willReturn($response);

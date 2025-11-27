@@ -30,18 +30,8 @@ class WeightTest extends TestCase
         $objectHelper = new ObjectManager($this);
 
         // we want to use an actual implementation of \Magento\Framework\Locale\FormatInterface
-        $scopeResolver = $this->createMock(
-            ScopeResolverInterface::class,
-            [],
-            '',
-            false
-        );
-        $localeResolver = $this->createMock(
-            ResolverInterface::class,
-            [],
-            '',
-            false
-        );
+        $scopeResolver = $this->createMock(ScopeResolverInterface::class);
+        $localeResolver = $this->createMock(ResolverInterface::class);
         $currencyFactory = $this->createMock(CurrencyFactory::class);
         $localeFormat = $objectHelper->getObject(
             Format::class,
@@ -58,12 +48,7 @@ class WeightTest extends TestCase
             ['localeFormat' => $localeFormat]
         );
 
-        $attribute = $this->createMock(
-            AbstractAttribute::class,
-            [],
-            '',
-            false
-        );
+        $attribute = $this->createMock(AbstractAttribute::class);
         $this->model->setAttribute($attribute);
     }
 

@@ -28,11 +28,6 @@ class StoreViewTest extends TestCase
      */
     private $subjectMock;
     /**
-     * @var AbstractModel|MockObject
-     */
-    private $objectMock;
-
-    /**
      * @var StoreView
      */
     private $storeViewPlugin;

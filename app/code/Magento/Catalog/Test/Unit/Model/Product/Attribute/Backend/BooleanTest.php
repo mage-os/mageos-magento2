@@ -28,15 +28,7 @@ class BooleanTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->attributeMock = $this->createMock(
-            AbstractAttribute::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['getName']
-        );
+        $this->attributeMock = $this->createMock(AbstractAttribute::class);
         $this->model = new BooleanBackend();
         $this->model->setAttribute($this->attributeMock);
     }

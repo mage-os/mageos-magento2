@@ -71,7 +71,6 @@ class ChooserTest extends TestCase
         $this->requestMock = $this->createMock(\Magento\Framework\App\Request\Http::class);
         $this->viewMock = $this->createPartialMock(View::class, ['getLayout']);
         $this->objectManagerMock = $this->createMock(\Magento\Framework\ObjectManager\ObjectManager::class);
-        $helper = new ObjectManager($this);
 
         $context = $this->createPartialMock(
             Context::class,

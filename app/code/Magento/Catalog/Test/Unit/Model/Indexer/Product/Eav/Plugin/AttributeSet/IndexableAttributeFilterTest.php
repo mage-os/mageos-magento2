@@ -34,13 +34,19 @@ class IndexableAttributeFilterTest extends TestCase
             ->method('create')
             ->willReturn($catalogResourceMock);
 
-        $attributeMock1 = $this->createPartialMock(\Magento\Eav\Model\Entity\Attribute::class, ['getId', 'getAttributeId', 'getAttributeCode', 'load']);
+        $attributeMock1 = $this->createPartialMock(
+            \Magento\Eav\Model\Entity\Attribute::class,
+            ['getId', 'getAttributeId', 'getAttributeCode', 'load']
+        );
         $attributeMock1->method('getAttributeCode')->willReturn('indexable_attribute');
         $attributeMock1->expects($this->any())
             ->method('load')
             ->willReturnSelf();
 
-        $attributeMock2 = $this->createPartialMock(\Magento\Eav\Model\Entity\Attribute::class, ['getId', 'getAttributeId', 'getAttributeCode', 'load']);
+        $attributeMock2 = $this->createPartialMock(
+            \Magento\Eav\Model\Entity\Attribute::class,
+            ['getId', 'getAttributeId', 'getAttributeCode', 'load']
+        );
         $attributeMock2->method('getAttributeCode')->willReturn('non_indexable_attribute');
         $attributeMock2->expects($this->any())
             ->method('load')

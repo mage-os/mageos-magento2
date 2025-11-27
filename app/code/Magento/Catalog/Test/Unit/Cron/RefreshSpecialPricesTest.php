@@ -166,15 +166,7 @@ class RefreshSpecialPricesTest extends TestCase
             $indexerMock
         );
 
-        $attributeMock = $this->createMock(
-            AbstractAttribute::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            [ 'getAttributeId']
-        );
+        $attributeMock = $this->createMock(AbstractAttribute::class);
         $attributeMock->method('getAttributeId')->willReturn(1);
 
         $this->_eavConfigMock->method('getAttribute')->willReturn($attributeMock);

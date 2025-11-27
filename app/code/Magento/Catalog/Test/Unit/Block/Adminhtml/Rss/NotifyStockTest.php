@@ -68,7 +68,10 @@ class NotifyStockTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->rssModel = $this->createPartialMock(\Magento\Catalog\Model\Rss\Product\NotifyStock::class, ['getProductsCollection']);
+        $this->rssModel = $this->createPartialMock(
+            \Magento\Catalog\Model\Rss\Product\NotifyStock::class,
+            ['getProductsCollection']
+        );
         $this->rssUrlBuilder = $this->createMock(UrlBuilderInterface::class);
         $this->urlBuilder = $this->createMock(UrlInterface::class);
         $this->objectManagerHelper = new ObjectManagerHelper($this);

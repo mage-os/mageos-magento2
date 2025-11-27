@@ -218,15 +218,7 @@ class SortbyTest extends TestCase
         $this->attribute->method('getIsUnique')
             ->willReturn(true);
 
-        $entityMock = $this->createMock(
-            AbstractEntity::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['checkAttributeUniqueValue']
-        );
+        $entityMock = $this->createMock(AbstractEntity::class);
         $this->attribute->method('getEntity')->willReturn($entityMock);
         $entityMock->method('checkAttributeUniqueValue')
             ->willReturn(true);
@@ -243,24 +235,8 @@ class SortbyTest extends TestCase
         $this->attribute->method('getIsRequired');
         $this->attribute->method('getIsUnique')->willReturn(true);
 
-        $entityMock = $this->createMock(
-            AbstractEntity::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['checkAttributeUniqueValue']
-        );
-        $frontMock = $this->createMock(
-            AbstractFrontend::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['getLabel']
-        );
+        $entityMock = $this->createMock(AbstractEntity::class);
+        $frontMock = $this->createMock(AbstractFrontend::class);
         $this->attribute->method('getEntity')->willReturn($entityMock);
         $this->attribute->method('getFrontend')->willReturn($frontMock);
         $entityMock->method('checkAttributeUniqueValue')->willReturn(false);

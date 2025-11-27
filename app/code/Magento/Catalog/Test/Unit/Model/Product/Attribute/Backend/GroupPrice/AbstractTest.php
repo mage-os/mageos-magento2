@@ -43,13 +43,6 @@ class AbstractTest extends TestCase
         $this->_helper = $this->createPartialMock(Data::class, ['isPriceGlobal']);
         $this->_helper->method('isPriceGlobal')->willReturn(true);
 
-        $currencyFactoryMock = $this->createPartialMock(CurrencyFactory::class, ['create']);
-        $storeManagerMock = $this->createMock(StoreManagerInterface::class);
-        $productTypeMock = $this->createMock(Type::class);
-        $configMock = $this->createMock(ScopeConfigInterface::class);
-        $localeFormatMock = $this->createMock(FormatInterface::class);
-        $groupManagement = $this->createMock(GroupManagementInterface::class);
-        $scopeOverriddenValue = $this->createMock(ScopeOverriddenValue::class);
         $this->_model = $this->createMock(AbstractGroupPrice::class);
         $resource = $this->createPartialMock(DataObject::class, []);
         $resource->setMainTable('table');

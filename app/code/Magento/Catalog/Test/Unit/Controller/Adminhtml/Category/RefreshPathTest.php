@@ -112,20 +112,22 @@ class RefreshPathTest extends TestCase
         // Configure factory to return the Json result
         $this->resultJsonFactoryMock->method('create')->willReturn($jsonResultMock);
 
-        $refreshPath->method('execute')->willReturnCallback(function () use ($requestMock, $objectManagerMock, $jsonResultMock, $value) {
-            $categoryId = $requestMock->getParam('id');
-            if ($categoryId) {
-                $category = $objectManagerMock->create(Category::class);
-                $data = [
-                    'id' => $categoryId,
-                    'path' => $category->getPath(),
-                    'parentId' => (string)$category->getParentId(),
-                    'level' => (string)$value['level']
-                ];
-                return $jsonResultMock->setData($data);
+        $refreshPath->method('execute')->willReturnCallback(
+            function () use ($requestMock, $objectManagerMock, $jsonResultMock, $value) {
+                $categoryId = $requestMock->getParam('id');
+                if ($categoryId) {
+                    $category = $objectManagerMock->create(Category::class);
+                    $data = [
+                        'id' => $categoryId,
+                        'path' => $category->getPath(),
+                        'parentId' => (string)$category->getParentId(),
+                        'level' => (string)$value['level']
+                    ];
+                    return $jsonResultMock->setData($data);
+                }
+                return $jsonResultMock;
             }
-            return $jsonResultMock;
-        });
+        );
 
         $this->assertEquals($result, $refreshPath->execute());
     }

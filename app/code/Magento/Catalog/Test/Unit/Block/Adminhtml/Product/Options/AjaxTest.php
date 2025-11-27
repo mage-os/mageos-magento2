@@ -52,7 +52,10 @@ class AjaxTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->context = $this->createPartialMock(Context::class, ['getEventManager', 'getScopeConfig', 'getLayout', 'getRequest']);
+        $this->context = $this->createPartialMock(
+            Context::class,
+            ['getEventManager', 'getScopeConfig', 'getLayout', 'getRequest']
+        );
         $this->encoderInterface = $this->createMock(EncoderInterface::class);
         $this->productFactory = $this->createPartialMock(ProductFactory::class, ['create']);
         $this->registry = $this->createMock(Registry::class);

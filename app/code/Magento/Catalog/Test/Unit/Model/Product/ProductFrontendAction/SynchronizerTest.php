@@ -73,7 +73,10 @@ class SynchronizerTest extends TestCase
     {
         $this->sessionMock = $this->createMock(Session::class);
         $this->visitorMock = $this->createMock(Visitor::class);
-        $this->productFrontendActionFactoryMock = $this->createPartialMock(ProductFrontendActionFactory::class, ['create']);
+        $this->productFrontendActionFactoryMock = $this->createPartialMock(
+            ProductFrontendActionFactory::class,
+            ['create']
+        );
         $this->entityManagerMock = $this->createMock(EntityManager::class);
         $this->collectionFactoryMock = $this->createPartialMock(CollectionFactory::class, ['create']);
         $this->frontendStorageConfigurationPoolMock = $this->createMock(FrontendStorageConfigurationPool::class);

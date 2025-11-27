@@ -127,7 +127,10 @@ class ImageTest extends TestCase
         $this->config->method('getBaseMediaPath')->willReturn('catalog/product');
         $this->coreFileHelper = $this->createPartialMock(Database::class, ['saveFile', 'deleteFolder']);
 
-        $this->mediaDirectory = $this->createPartialMock(Write::class, ['create', 'isFile', 'isExist', 'getAbsolutePath', 'isDirectory', 'getDriver', 'delete']);
+        $this->mediaDirectory = $this->createPartialMock(
+            Write::class,
+            ['create', 'isFile', 'isExist', 'getAbsolutePath', 'isDirectory', 'getDriver', 'delete']
+        );
 
         $this->filesystem = $this->createMock(Filesystem::class);
         $this->filesystem->expects($this->once())->method('getDirectoryWrite')
@@ -369,7 +372,11 @@ class ImageTest extends TestCase
 
         $imageProcessor = $this->createPartialMock(
             \Magento\Framework\Image::class,
-            ['keepAspectRatio', 'keepFrame', 'keepTransparency', 'constrainOnly', 'backgroundColor', 'quality', 'setWatermarkPosition', 'setWatermarkImageOpacity', 'setWatermarkWidth', 'setWatermarkHeight', 'watermark']
+            [
+                'keepAspectRatio', 'keepFrame', 'keepTransparency', 'constrainOnly', 'backgroundColor', 'quality',
+                'setWatermarkPosition', 'setWatermarkImageOpacity', 'setWatermarkWidth', 'setWatermarkHeight',
+                'watermark'
+            ]
         );
         $imageProcessor->expects($this->once())->method('setWatermarkPosition')->with('center')
             ->willReturn(true);

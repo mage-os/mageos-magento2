@@ -45,8 +45,6 @@ class AbstractTest extends TestCase
 
     public function testWalkAttributes()
     {
-        $objectManager = new ObjectManager($this);
-
         $code = 'test_attr';
         $set = 10;
         $storeId = 100;

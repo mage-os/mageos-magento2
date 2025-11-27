@@ -250,6 +250,7 @@ class ValidateTest extends AttributeTest
      * @param        array   $options
      * @param        boolean $isError
      * @throws       NotFoundException
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     #[DataProvider('provideUniqueData')]
     public function testUniqueValidation(array $options, $isError)
