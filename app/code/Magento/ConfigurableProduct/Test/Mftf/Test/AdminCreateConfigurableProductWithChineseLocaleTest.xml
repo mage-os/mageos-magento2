@@ -24,7 +24,6 @@
             <actionGroup ref="SetAdminAccountActionGroup" stepKey="changeAdminLocaleToChina">
                 <argument name="InterfaceLocaleByValue" value="zh_Hans_CN"/>
             </actionGroup>
-            <createData entity="ApiCategory" stepKey="createCategory"/>
             <createData entity="productAttributeWithTwoOptions" stepKey="createColorAttribute"/>
             <createData entity="productAttributeOption1" stepKey="createColorOptionRed">
                 <requiredEntity createDataKey="createColorAttribute"/>
@@ -60,7 +59,6 @@
             <helper class="Magento\Catalog\Test\Mftf\Helper\ProductApiHelper" method="deleteAllProductsApi" stepKey="deleteAllProductsViaApi"/>
             <deleteData createDataKey="createColorAttribute" stepKey="deleteColorAttribute"/>
             <deleteData createDataKey="createSizeAttribute" stepKey="deleteSizeAttribute"/>
-            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
         </after>
         <!-- Step 1: Create configurable product -->
@@ -72,7 +70,6 @@
         <actionGroup ref="FillMainProductFormActionGroup" stepKey="fillProductForm">
             <argument name="product" value="BaseConfigurableProduct"/>
         </actionGroup>
-        <searchAndMultiSelectOption selector="{{AdminProductFormSection.categoriesDropdown}}" parameterArray="[$createCategory.name$]" stepKey="selectCategory"/>
         <actionGroup ref="AdminFillProductQtyOnProductFormActionGroup" stepKey="fillProductQuantity">
             <argument name="productQty" value="100"/>
         </actionGroup>
