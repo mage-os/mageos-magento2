@@ -35,8 +35,6 @@ use Magento\Framework\DB\Sql\Expression;
 
 class OrderResponseNullKeysTest extends WebapiAbstract
 {
-    private const RESOURCE_PATH = '/V1/customers/search';
-
     /**
      * @var DataFixtureStorage
      */
@@ -52,6 +50,8 @@ class OrderResponseNullKeysTest extends WebapiAbstract
      */
     protected function setUp(): void
     {
+        parent::setUp();
+        $this->_markTestAsRestOnly();
         $this->fixtures = BootstrapHelper::getObjectManager()->get(DataFixtureStorageManager::class)->getStorage();
         $this->adminToken = BootstrapHelper::getObjectManager()->get(AdminTokenServiceInterface::class);
     }
@@ -92,24 +92,22 @@ class OrderResponseNullKeysTest extends WebapiAbstract
     public function testUserWithRestrictedWebsiteAndStoreGroup()
     {
         $order = $this->fixtures->get('order');
-        $orderIncrementId = $order->getData('increment_id');
-        $storeCode = $order->getStore()->getCode();
-        $this->nullifyOrderStateStatus((int) $order->getId());
+        $orderId = (int) $order->getId();
+        $this->nullifyOrderStateStatus($orderId);
 
         $user = $this->fixtures->get('allUser');
         $accessToken = $this->getAccessToken($user->getUsername());
         $serviceInfo = [
             'rest' => [
-                'resourcePath' => '/V1/orders/' . $orderIncrementId,
+                'resourcePath' => '/V1/orders/' . $orderId,
                 'httpMethod' => 'GET',
-                'token' => $accessToken,
-                'headers'      => ['Store' => $storeCode],
+                'token' => $accessToken
             ]
         ];
         $result = $this->_webApiCall($serviceInfo);
 
         $this->assertIsArray($result);
-        $this->assertSame((int)$order->getId(), (int)$result['entity_id']);
+        $this->assertSame($orderId, (int)$result['entity_id']);
         $this->assertArrayHasKey('state', $result);
         $this->assertArrayHasKey('status', $result);
         $this->assertNull($result['state']);
