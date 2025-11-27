@@ -10,6 +10,7 @@ namespace Magento\Contact\Test\Unit\Plugin\UserDataProvider;
 use Magento\Contact\Plugin\UserDataProvider\ViewModel as ViewModelPlugin;
 use Magento\Framework\DataObject;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -38,15 +39,13 @@ class ViewModelTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->viewModelMock = $this->getMockForAbstractClass(ArgumentInterface::class);
+        $this->viewModelMock = $this->createMock(ArgumentInterface::class);
         $this->blockMock = $this->createMock(DataObject::class);
 
         $this->plugin = new ViewModelPlugin($this->viewModelMock);
     }
 
-    /**
-     * @dataProvider dataProvider
-     */
+    #[DataProvider('dataProvider')]
     public function testBeforeToHtml($hasDataResult, $setDataExpects)
     {
         $this->blockMock->expects($this->once())
@@ -54,7 +53,8 @@ class ViewModelTest extends TestCase
             ->with('view_model')
             ->willReturn($hasDataResult);
 
-        $this->blockMock->expects($setDataExpects)
+        $expects = $setDataExpects === 1 ? $this->once() : $this->never();
+        $this->blockMock->expects($expects)
             ->method('setData')
             ->with('view_model', $this->viewModelMock);
 
@@ -66,11 +66,11 @@ class ViewModelTest extends TestCase
         return [
             'view model was not preset before' => [
                 'hasDataResult' => false,
-                'setDataExpects' => self::once(),
+                'setDataExpects' => 1,
             ],
             'view model was pre-installed before' => [
                 'hasDataResult' => true,
-                'setDataExpects' => self::never(),
+                'setDataExpects' => 0,
             ]
         ];
     }
