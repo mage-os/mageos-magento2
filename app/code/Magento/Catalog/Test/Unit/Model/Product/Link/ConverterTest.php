@@ -28,6 +28,9 @@ class ConverterTest extends TestCase
         $this->converter = new Converter();
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function testConvertLinksToGroupedArray()
     {
         $linkedProductSku = 'linkedProductSample';

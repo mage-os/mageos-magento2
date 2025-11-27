@@ -119,6 +119,7 @@ class AttributeTest extends TestCase
 
     /**
      * @return void
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function testDeleteEntity() : void
     {
