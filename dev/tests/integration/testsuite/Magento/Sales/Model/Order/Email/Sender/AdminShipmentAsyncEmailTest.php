@@ -20,6 +20,7 @@ use Magento\Framework\Exception\MailException;
 use Magento\Framework\Mail\EmailMessageInterface;
 use Magento\Quote\Test\Fixture\AddProductToCart as AddProductToCartFixture;
 use Magento\Quote\Test\Fixture\GuestCart as GuestCartFixture;
+use Magento\Sales\Api\Data\ShipmentInterface;
 use Magento\Sales\Api\InvoiceRepositoryInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\Order;
@@ -139,21 +140,33 @@ class AdminShipmentAsyncEmailTest extends TestCase
     }
 
     /**
-     * Creates a shipment for the order from fixtures.
+     * Gets order from fixture storage.
      *
-     * @return \Magento\Sales\Api\Data\ShipmentInterface
-     * @throws LocalizedException
+     * @return Order
      */
-    private function createShipmentForOrder()
+    private function getOrderFromFixture(): Order
     {
         $fixtures = DataFixtureStorageManager::getStorage();
         /** @var Order $fixtureOrder */
         $fixtureOrder = $fixtures->get('order');
         $objectManager = Bootstrap::getObjectManager();
         $orderRepository = $objectManager->get(OrderRepositoryInterface::class);
+        return $orderRepository->get((int)$fixtureOrder->getEntityId());
+    }
+
+    /**
+     * Creates a shipment for the order from fixtures.
+     *
+     * @return ShipmentInterface
+     * @throws LocalizedException
+     */
+    private function createShipmentForOrder(): ShipmentInterface
+    {
+        $order = $this->getOrderFromFixture();
+        $objectManager = Bootstrap::getObjectManager();
         $shipmentRepository = $objectManager->get(ShipmentRepositoryInterface::class);
         $shipmentFactory = $objectManager->get(ShipmentFactory::class);
-        $order = $orderRepository->get((int)$fixtureOrder->getEntityId());
+        $orderRepository = $objectManager->get(OrderRepositoryInterface::class);
         $this->createInvoiceForOrder($order);
         $quantities = $this->calculateShippableQuantities($order);
         $shipment = $shipmentFactory->create($order, $quantities);
@@ -200,9 +213,22 @@ class AdminShipmentAsyncEmailTest extends TestCase
             $email->getSubject(),
             'Email subject should contain shipment confirmation text.'
         );
+
+        // Assert getTo() returns a non-empty array
+        $recipients = $email->getTo();
+        $this->assertNotEmpty(
+            $recipients,
+            'Email should have at least one recipient.'
+        );
+        $this->assertIsArray(
+            $recipients,
+            'Email recipients should be returned as an array.'
+        );
+
+        // Now safely access the first recipient
         $this->assertEquals(
             'async-shipment@example.com',
-            $email->getTo()[0]->getEmail(),
+            $recipients[0]->getEmail(),
             'Email should be sent to the customer email address.'
         );
     }
