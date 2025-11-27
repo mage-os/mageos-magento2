@@ -41,8 +41,6 @@ use PHPUnit\Framework\TestCase;
  */
 class CommonTaxCollectorTest extends TestCase
 {
-    use MockCreationTrait;
-
     /** @var Config|MockObject */
     private $taxConfig;
 
