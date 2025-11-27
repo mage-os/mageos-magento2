@@ -64,7 +64,6 @@ class ConfigurableAttributeDataTest extends TestCase
                     'code' => 'test_attribute',
                     'label' => 'Test',
                     'position' => $position,
-                    'required' => '0',
                     'options' => [
                         0 => [
                             'id' => 'option_id_1',

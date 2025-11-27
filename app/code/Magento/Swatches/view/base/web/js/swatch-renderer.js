@@ -443,7 +443,7 @@ define([
                     listLabel = 'aria-labelledby="' + controlLabelId + '"';
                 }
 
-                let checkIsRequiredAttrClass = item.required === "1" ? 'required' : '';
+                let checkIsRequiredAttrClass = 'required';
 
                 // Create new control
                 container.append(

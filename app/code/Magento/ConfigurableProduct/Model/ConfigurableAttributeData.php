@@ -10,7 +10,7 @@ use Magento\Catalog\Model\Product;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable\Attribute;
 
 /**
- * Class ConfigurableAttributeData builds data for renderer
+ * Class ConfigurableAttributeData
  * @api
  * @since 100.0.2
  */
@@ -38,7 +38,6 @@ class ConfigurableAttributeData
                     'label' => $productAttribute->getStoreLabel($product->getStoreId()),
                     'options' => $attributeOptionsData,
                     'position' => $attribute->getPosition(),
-                    'required'=> $productAttribute->getIsRequired() ? "1" : "0",
                 ];
                 $defaultValues[$attributeId] = $this->getAttributeConfigValue($attributeId, $product);
             }
@@ -50,8 +49,6 @@ class ConfigurableAttributeData
     }
 
     /**
-     * Get attribute options data
-     *
      * @param Attribute $attribute
      * @param array $config
      * @return array
@@ -73,8 +70,6 @@ class ConfigurableAttributeData
     }
 
     /**
-     * Get attribute config value
-     *
      * @param int $attributeId
      * @param Product $product
      * @return mixed|null
