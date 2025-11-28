@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright 2025 Adobe
+ * All Rights Reserved.
+ */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminVerifyDropdownAttributeLabelSelectDisplaysCorrectlyTest">
+        <annotations>
+            <features value="Catalog"/>
+            <stories value="Create product Attribute"/>
+            <title value="Dropdown attribute with label 'select' displays correctly"/>
+            <description value="This test case verify that dropdown attribute with label 'select' displays correctly"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="AC-4540"/>
+            <group value="catalog"/>
+        </annotations>
+        <before>
+            <!-- Pre-condition 1: Create dropdown attribute with label 'select' -->
+            <createData entity="productDropDownAttribute" stepKey="createDropdownAttr">
+                <field key="default_frontend_label">'select'</field>
+            </createData>
+            <!-- Pre-condition 2: Assign created attribute to Default attribute set -->
+            <createData entity="AddToDefaultSet" stepKey="assignToDefaultSet">
+                <requiredEntity createDataKey="createDropdownAttr"/>
+            </createData>
+            <!-- Login to admin -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
+        </before>
+        <after>
+            <!-- Delete dropdown attribute and logout from admin -->
+            <deleteData createDataKey="createDropdownAttr" stepKey="deleteDropdownAttr"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <!-- Step 1: Open products grid page -->
+        <actionGroup ref="AdminOpenProductIndexPageActionGroup" stepKey="openProductIndexPage"/>
+        <!-- Step 2: Start to create simple product and verify attribute presence -->
+        <actionGroup ref="GoToCreateProductPageActionGroup" stepKey="goToCreateSimpleProduct">
+            <argument name="product" value="SimpleProduct"/>
+        </actionGroup>
+        <waitForElementVisible selector="{{AdminProductFormSection.productName}}" stepKey="assertProductFormShown"/>
+        <waitForElementVisible selector="{{AdminProductFormSection.newAddedAttribute($$createDropdownAttr.attribute_code$$)}}" stepKey="seeSelectAttribute"/>
+    </test>
+</tests>
