@@ -58,6 +58,11 @@ class PriceTest extends TestCase
      */
     private Product|MockObject $product;
 
+    /**
+     * Set up test dependencies and mocks.
+     *
+     * @return void
+     */
     protected function setUp(): void
     {
         $objectManagerHelper = new ObjectManager($this);
@@ -78,9 +83,13 @@ class PriceTest extends TestCase
         $this->block = new Price($context, $this->registry, $this->formFactory);
     }
 
+    /**
+     * Test _prepareForm creates proper fieldset and fields.
+     *
+     * @return void
+     */
     public function testPrepareFormCreatesFieldsetAndFields(): void
     {
-        // Mock form and elements
         $form = $this->createMock(Form::class);
         $fieldset = $this->createMock(Fieldset::class);
         $defaultPriceField = $this->createMock(AbstractElement::class);
@@ -88,18 +97,15 @@ class PriceTest extends TestCase
 
         $this->formFactory->method('create')->willReturn($form);
 
-        // Product returns price data
         $this->product->method('getPrice')->willReturn(99.99);
         $this->product->method('getData')->with('tier_price')->willReturn('10=5.00,20=4.00');
         $this->registry->method('registry')->with('product')->willReturn($this->product);
 
-        // Form creates fieldset
         $form->expects($this->once())
             ->method('addFieldset')
             ->with('tiered_price', ['legend' => 'Tier Pricing'])
             ->willReturn($fieldset);
 
-        // Fieldset creates fields - track calls
         $fieldset->expects($this->exactly(2))
             ->method('addField')
             ->willReturnCallback(function ($id, $type, $config) use ($defaultPriceField, $tierPriceField) {
@@ -118,23 +124,19 @@ class PriceTest extends TestCase
                 return null;
             });
 
-        // Form returns tier_price element for renderer
         $form->method('getElement')
             ->with('tier_price')
             ->willReturn($tierPriceField);
 
-        // Renderer is set
         $tierRenderer = $this->createMock(Tier::class);
         $this->layout->method('createBlock')->with(Tier::class)->willReturn($tierRenderer);
         $tierPriceField->expects($this->once())->method('setRenderer')->with($tierRenderer);
 
-        // Act
         $reflection = new ReflectionClass(Price::class);
         $method = $reflection->getMethod('_prepareForm');
         $method->setAccessible(true);
         $method->invoke($this->block);
 
-        // Assert form was set
         $this->assertSame($form, $this->block->getForm());
     }
 }

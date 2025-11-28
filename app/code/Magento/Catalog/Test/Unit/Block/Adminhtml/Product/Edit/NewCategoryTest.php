@@ -69,6 +69,11 @@ class NewCategoryTest extends TestCase
      */
     private UrlInterface|MockObject $urlBuilder;
 
+    /**
+     * Set up test dependencies and mocks.
+     *
+     * @return void
+     */
     protected function setUp(): void
     {
         $objectManagerHelper = new ObjectManager($this);
@@ -96,7 +101,9 @@ class NewCategoryTest extends TestCase
     }
 
     /**
-     * Tests that _prepareForm creates form with correct structure and fields.
+     * Test _prepareForm creates form with correct structure and fields.
+     *
+     * @return void
      */
     public function testPrepareFormCreatesFormWithAllFields(): void
     {
@@ -126,7 +133,6 @@ class NewCategoryTest extends TestCase
             ->with('new_category_form_fieldset', [])
             ->willReturn($fieldset);
 
-        // Mock category options - need 2 categories for options to be returned
         $category1 = $this->createMock(Category::class);
         $category1->method('getEntityId')->willReturn(1);
         $category1->method('getName')->willReturn('Root');
@@ -177,7 +183,9 @@ class NewCategoryTest extends TestCase
     }
 
     /**
-     * Tests getParentCategoryOptions returns correct options when 2 categories exist.
+     * Test _getParentCategoryOptions returns correct options when 2 categories exist.
+     *
+     * @return void
      */
     public function testGetParentCategoryOptionsWithTwoCategories(): void
     {
@@ -196,11 +204,13 @@ class NewCategoryTest extends TestCase
 
         $result = $this->invokeGetParentCategoryOptions();
 
-        $this->assertEquals([2 => 'Default Category'], $result);
+        $this->assertSame([2 => 'Default Category'], $result);
     }
 
     /**
-     * Tests getParentCategoryOptions returns empty array when not 2 categories.
+     * Test _getParentCategoryOptions returns empty array when not 2 categories.
+     *
+     * @return void
      */
     public function testGetParentCategoryOptionsWithNotTwoCategories(): void
     {
@@ -224,11 +234,13 @@ class NewCategoryTest extends TestCase
 
         $result = $this->invokeGetParentCategoryOptions();
 
-        $this->assertEquals([], $result);
+        $this->assertEmpty($result);
     }
 
     /**
-     * Tests getParentCategoryOptions returns empty array when no categories.
+     * Test _getParentCategoryOptions returns empty array when no categories.
+     *
+     * @return void
      */
     public function testGetParentCategoryOptionsWithNoCategories(): void
     {
@@ -236,11 +248,13 @@ class NewCategoryTest extends TestCase
 
         $result = $this->invokeGetParentCategoryOptions();
 
-        $this->assertEquals([], $result);
+        $this->assertEmpty($result);
     }
 
     /**
-     * Tests getSaveCategoryUrl returns correct URL.
+     * Test getSaveCategoryUrl returns correct URL.
+     *
+     * @return void
      */
     public function testGetSaveCategoryUrl(): void
     {
@@ -253,11 +267,13 @@ class NewCategoryTest extends TestCase
 
         $result = $this->block->getSaveCategoryUrl();
 
-        $this->assertEquals($expectedUrl, $result);
+        $this->assertSame($expectedUrl, $result);
     }
 
     /**
-     * Tests getAfterElementHtml returns script tag with widget initialization.
+     * Test getAfterElementHtml returns script tag with widget initialization.
+     *
+     * @return void
      */
     public function testGetAfterElementHtml(): void
     {
@@ -319,17 +335,19 @@ HTML;
     }
 
     /**
-     * Tests constructor sets use container to true.
+     * Test constructor sets use container to true.
+     *
+     * @return void
      */
     public function testConstructorSetsUseContainer(): void
     {
-        // UseContainer is set via setUseContainer(true) in constructor
-        // Verify by checking it's set in the block's data
         $this->assertTrue($this->block->getData('use_container'));
     }
 
     /**
-     * Invokes protected _prepareForm method.
+     * Invoke protected _prepareForm method.
+     *
+     * @return void
      */
     private function invokePrepareForm(): void
     {
@@ -340,7 +358,7 @@ HTML;
     }
 
     /**
-     * Invokes protected _getParentCategoryOptions method.
+     * Invoke protected _getParentCategoryOptions method.
      *
      * @return array
      */
@@ -353,9 +371,10 @@ HTML;
     }
 
     /**
-     * Sets up category collection mock with given items.
+     * Set up category collection mock with given items.
      *
      * @param array $items
+     * @return void
      */
     private function setupCategoryCollectionMock(array $items): void
     {

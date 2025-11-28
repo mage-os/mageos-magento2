@@ -26,6 +26,7 @@ use Magento\Store\Model\StoreFactory;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Store\Model\Website;
 use Magento\Store\Model\WebsiteFactory;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -76,6 +77,12 @@ class WebsitesTest extends TestCase
      */
     private Escaper|MockObject $escaper;
 
+    /**
+     * Set up test dependencies and mocks.
+     *
+     * @return void
+     * @throws Exception
+     */
     protected function setUp(): void
     {
         $objectManagerHelper = new ObjectManager($this);
@@ -83,7 +90,6 @@ class WebsitesTest extends TestCase
 
         $this->registry = $this->createMock(Registry::class);
 
-        // Mock product with methods
         $this->product = $this->getMockBuilder(Product::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getStoreId', 'getId', 'getWebsiteIds'])
@@ -99,38 +105,54 @@ class WebsitesTest extends TestCase
         $context->method('getStoreManager')->willReturn($this->storeManager);
         $context->method('getEscaper')->willReturn($this->escaper);
 
-        $this->block = $this->getMockBuilder(Websites::class)
-            ->setConstructorArgs([
-                $context,
-                $this->websiteFactory,
-                $this->groupFactory,
-                $this->storeFactory,
-                $this->registry
-            ])
-            ->onlyMethods(['getWebsiteCollection', 'getGroupCollection', 'getStoreCollection', 'escapeHtml'])
-            ->getMock();
+        $this->block = new Websites(
+            $context,
+            $this->websiteFactory,
+            $this->groupFactory,
+            $this->storeFactory,
+            $this->registry
+        );
 
-        // Default: product in registry
         $this->registry->method('registry')->with('product')->willReturn($this->product);
     }
 
+    /**
+     * Test getProduct returns correct product.
+     *
+     * @return void
+     */
     public function testGetProduct(): void
     {
         $this->assertSame($this->product, $this->block->getProduct());
     }
 
+    /**
+     * Test getStoreId returns correct store ID.
+     *
+     * @return void
+     */
     public function testGetStoreId(): void
     {
         $this->product->method('getStoreId')->willReturn(5);
         $this->assertSame(5, $this->block->getStoreId());
     }
 
+    /**
+     * Test getProductId returns correct product ID.
+     *
+     * @return void
+     */
     public function testGetProductId(): void
     {
         $this->product->method('getId')->willReturn(123);
         $this->assertSame(123, $this->block->getProductId());
     }
 
+    /**
+     * Test getWebsites returns correct website IDs.
+     *
+     * @return void
+     */
     public function testGetWebsites(): void
     {
         $websiteIds = [1, 2, 3];
@@ -138,30 +160,66 @@ class WebsitesTest extends TestCase
         $this->assertSame($websiteIds, $this->block->getWebsites());
     }
 
-    public function testHasWebsiteReturnsTrue(): void
+    /**
+     * Test hasWebsite method returns correct value.
+     *
+     * @param int $websiteId
+     * @param bool $expected
+     * @return void
+     * @dataProvider hasWebsiteDataProvider
+     */
+    public function testHasWebsite(int $websiteId, bool $expected): void
     {
         $this->product->method('getWebsiteIds')->willReturn([1, 2, 3]);
-        $this->assertTrue($this->block->hasWebsite(2));
+        $this->assertSame($expected, $this->block->hasWebsite($websiteId));
     }
 
-    public function testHasWebsiteReturnsFalse(): void
+    /**
+     * Data provider for testHasWebsite.
+     *
+     * @return array
+     */
+    public static function hasWebsiteDataProvider(): array
     {
-        $this->product->method('getWebsiteIds')->willReturn([1, 2, 3]);
-        $this->assertFalse($this->block->hasWebsite(999));
+        return [
+            'website_exists' => [2, true],
+            'website_not_exists' => [999, false],
+        ];
     }
 
-    public function testIsReadonlyReturnsTrue(): void
+    /**
+     * Test isReadonly method returns correct value.
+     *
+     * @param bool $websitesReadonly
+     * @param bool $expected
+     * @return void
+     * @dataProvider isReadonlyDataProvider
+     */
+    public function testIsReadonly(bool $websitesReadonly, bool $expected): void
     {
-        $this->product->method('getWebsitesReadonly')->willReturn(true);
-        $this->assertTrue($this->block->isReadonly());
+        $this->product->method('getWebsitesReadonly')->willReturn($websitesReadonly);
+        $this->assertSame($expected, $this->block->isReadonly());
     }
 
-    public function testIsReadonlyReturnsFalse(): void
+    /**
+     * Data provider for testIsReadonly.
+     *
+     * @return array
+     */
+    public static function isReadonlyDataProvider(): array
     {
-        $this->product->method('getWebsitesReadonly')->willReturn(false);
-        $this->assertFalse($this->block->isReadonly());
+        return [
+            'readonly_true' => [true, true],
+            'readonly_false' => [false, false],
+        ];
     }
 
+    /**
+     * Test getStoreName returns correct store name.
+     *
+     * @return void
+     * @throws Exception
+     */
     public function testGetStoreName(): void
     {
         $store = $this->createMock(Store::class);
@@ -171,104 +229,315 @@ class WebsitesTest extends TestCase
         $this->assertSame('Main Store', $this->block->getStoreName(1));
     }
 
-    public function testGetChooseFromStoreHtml(): void
+    /**
+     * Test getChooseFromStoreHtml generates correct HTML structure.
+     *
+     * @param array $productWebsites
+     * @param array $websiteData
+     * @param array $groupData
+     * @param array $storeData
+     * @param int $targetStoreId
+     * @param array $expectedContains
+     * @param array $expectedNotContains
+     * @return void
+     * @dataProvider getChooseFromStoreHtmlDataProvider
+     * @throws Exception
+     */
+    public function testGetChooseFromStoreHtml(
+        array $productWebsites,
+        array $websiteData,
+        array $groupData,
+        array $storeData,
+        int $targetStoreId,
+        array $expectedContains,
+        array $expectedNotContains = []
+    ): void {
+        $this->product->method('getWebsiteIds')->willReturn($productWebsites);
+
+        $stores = [];
+        foreach ($storeData as $sData) {
+            $store = $this->createMock(Store::class);
+            $store->method('getId')->willReturn($sData['id']);
+            $store->method('getName')->willReturn($sData['name']);
+            $store->method('getGroupId')->willReturn($sData['group_id']);
+            $stores[] = $store;
+        }
+
+        $storeCollection = $this->createMock(StoreCollection::class);
+        $storeCollection->method('getIterator')->willReturn(new \ArrayIterator($stores));
+        $storeCollection->method('addIdFilter')->willReturnSelf();
+
+        $groups = [];
+        foreach ($groupData as $gData) {
+            $group = $this->getMockBuilder(Group::class)
+                ->disableOriginalConstructor()
+                ->onlyMethods(['getName', 'getWebsiteId', 'getStoreCollection'])
+                ->addMethods(['getGroupId'])
+                ->getMock();
+            $group->method('getName')->willReturn($gData['name']);
+            $group->method('getWebsiteId')->willReturn($gData['website_id']);
+            $group->method('getGroupId')->willReturn($gData['id']);
+            $group->method('getStoreCollection')->willReturn($storeCollection);
+            $groups[] = $group;
+        }
+
+        $groupCollection = $this->createMock(GroupCollection::class);
+        $groupCollection->method('getIterator')->willReturn(new \ArrayIterator($groups));
+
+        $websites = [];
+        foreach ($websiteData as $wData) {
+            $website = $this->createMock(Website::class);
+            $website->method('getId')->willReturn($wData['id']);
+            $website->method('getName')->willReturn($wData['name']);
+            $website->method('getGroupCollection')->willReturn($groupCollection);
+            $websites[] = $website;
+        }
+
+        $websiteCollection = $this->createMock(WebsiteCollection::class);
+        $websiteCollection->method('getIterator')->willReturn(new \ArrayIterator($websites));
+
+        $websiteInstance = $this->createMock(Website::class);
+        $websiteInstance->method('getResourceCollection')->willReturn($websiteCollection);
+        $this->websiteFactory->method('create')->willReturn($websiteInstance);
+
+        $websiteCollection->method('addIdFilter')->willReturnSelf();
+        $websiteCollection->method('load')->willReturnSelf();
+
+        $groupInstance = $this->createMock(Group::class);
+        $groupInstance->method('getCollection')->willReturn($groupCollection);
+        $this->groupFactory->method('create')->willReturn($groupInstance);
+
+        $groupCollection->method('addFieldToFilter')->willReturnSelf();
+        $groupCollection->method('setOrder')->willReturnSelf();
+        $groupCollection->method('load')->willReturnSelf();
+
+        $storeInstance = $this->createMock(Store::class);
+        $storeInstance->method('getCollection')->willReturn($storeCollection);
+        $this->storeFactory->method('create')->willReturn($storeInstance);
+
+        $storeCollection->method('addFieldToFilter')->willReturnSelf();
+        $storeCollection->method('setOrder')->willReturnSelf();
+        $storeCollection->method('load')->willReturnSelf();
+
+        if (!empty($websiteData) && strpos($websiteData[0]['name'], '<') !== false) {
+            $this->escaper->method('escapeHtml')->willReturnCallback(function ($value) {
+                return htmlspecialchars($value, ENT_QUOTES, 'UTF-8', false);
+            });
+        } else {
+            $this->escaper->method('escapeHtml')->willReturnArgument(0);
+        }
+
+        $storeTo = $this->createMock(Store::class);
+        $storeTo->method('getId')->willReturn($targetStoreId);
+
+        $html = $this->block->getChooseFromStoreHtml($storeTo);
+
+        foreach ($expectedContains as $expectedString) {
+            $this->assertStringContainsString($expectedString, $html);
+        }
+
+        foreach ($expectedNotContains as $unexpectedString) {
+            $this->assertStringNotContainsString($unexpectedString, $html);
+        }
+    }
+
+    /**
+     * Data provider for testGetChooseFromStoreHtml.
+     *
+     * @return array
+     */
+    public static function getChooseFromStoreHtmlDataProvider(): array
     {
-        // Mock product websites
+        return [
+            'basic_structure' => [
+                'productWebsites' => [1],
+                'websiteData' => [
+                    ['id' => 1, 'name' => 'Main Website']
+                ],
+                'groupData' => [
+                    ['id' => 1, 'name' => 'Main Store', 'website_id' => 1]
+                ],
+                'storeData' => [
+                    ['id' => 1, 'name' => 'Default Store View', 'group_id' => 1]
+                ],
+                'targetStoreId' => 2,
+                'expectedContains' => [
+                    '<select',
+                    'name="copy_to_stores[2]"',
+                    'disabled="disabled"',
+                    '<option value="0">Default Values</option>',
+                    'Main Website',
+                    'Main Store',
+                    'Default Store View',
+                    '<option value="1">',
+                    '</optgroup>',
+                    '</select>'
+                ],
+                'expectedNotContains' => []
+            ],
+            'multiple_groups' => [
+                'productWebsites' => [1],
+                'websiteData' => [
+                    ['id' => 1, 'name' => 'Main Website']
+                ],
+                'groupData' => [
+                    ['id' => 1, 'name' => 'Store Group 1', 'website_id' => 1],
+                    ['id' => 2, 'name' => 'Store Group 2', 'website_id' => 1]
+                ],
+                'storeData' => [
+                    ['id' => 1, 'name' => 'Store 1', 'group_id' => 1],
+                    ['id' => 2, 'name' => 'Store 2', 'group_id' => 2]
+                ],
+                'targetStoreId' => 5,
+                'expectedContains' => [
+                    'Main Website',
+                    'Store Group 1',
+                    'Store Group 2',
+                    'Store 1',
+                    'Store 2',
+                    '<option value="1">',
+                    '<option value="2">',
+                    'name="copy_to_stores[5]"',
+                    '</optgroup>',
+                    '</select>'
+                ],
+                'expectedNotContains' => []
+            ],
+            'skips_unassigned_websites' => [
+                'productWebsites' => [1],
+                'websiteData' => [
+                    ['id' => 1, 'name' => 'Assigned Website'],
+                    ['id' => 2, 'name' => 'Skipped Website']
+                ],
+                'groupData' => [
+                    ['id' => 1, 'name' => 'Main Store', 'website_id' => 1]
+                ],
+                'storeData' => [
+                    ['id' => 1, 'name' => 'Default Store View', 'group_id' => 1]
+                ],
+                'targetStoreId' => 2,
+                'expectedContains' => [
+                    'Assigned Website',
+                    'Main Store',
+                    'Default Store View'
+                ],
+                'expectedNotContains' => [
+                    'Skipped Website'
+                ]
+            ],
+            'no_websites_assigned' => [
+                'productWebsites' => [],
+                'websiteData' => [
+                    ['id' => 1, 'name' => 'Unassigned Website']
+                ],
+                'groupData' => [],
+                'storeData' => [],
+                'targetStoreId' => 1,
+                'expectedContains' => [
+                    '<select',
+                    'Default Values',
+                    '</select>'
+                ],
+                'expectedNotContains' => [
+                    'Unassigned Website'
+                ]
+            ],
+            'html_escaping' => [
+                'productWebsites' => [1],
+                'websiteData' => [
+                    ['id' => 1, 'name' => '<script type="text/x-magento-init">alert("xss")</script>']
+                ],
+                'groupData' => [
+                    ['id' => 1, 'name' => '<b>Bold Store</b>', 'website_id' => 1]
+                ],
+                'storeData' => [
+                    ['id' => 1, 'name' => '"Quoted Store"', 'group_id' => 1]
+                ],
+                'targetStoreId' => 2,
+                'expectedContains' => [
+                    '&lt;script type=&quot;text/x-magento-init&quot;&gt;alert(&quot;xss&quot;)&lt;/script&gt;',
+                    '&lt;b&gt;Bold Store&lt;/b&gt;',
+                    '&quot;Quoted Store&quot;',
+                    '</optgroup>',
+                    '</select>',
+                    'name="copy_to_stores[2]"'
+                ],
+                'expectedNotContains' => [
+                    '<script type="text/x-magento-init">alert',
+                    '<b>Bold Store</b>'
+                ]
+            ]
+        ];
+    }
+
+    /**
+     * Test getChooseFromStoreHtml caches HTML and reuses it for different stores.
+     *
+     * @return void
+     * @throws Exception
+     */
+    public function testGetChooseFromStoreHtmlCachesResult(): void
+    {
         $this->product->method('getWebsiteIds')->willReturn([1]);
 
-        // Mock website
+        $store = $this->createMock(Store::class);
+        $store->method('getId')->willReturn(1);
+        $store->method('getName')->willReturn('Default Store View');
+        $store->method('getGroupId')->willReturn(1);
+
+        $storeCollection = $this->createMock(StoreCollection::class);
+        $storeCollection->method('getIterator')->willReturn(new \ArrayIterator([$store]));
+        $storeCollection->method('addFieldToFilter')->willReturnSelf();
+        $storeCollection->method('setOrder')->willReturnSelf();
+        $storeCollection->method('load')->willReturnSelf();
+
+        $group = $this->getMockBuilder(Group::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getName', 'getWebsiteId', 'getStoreCollection'])
+            ->addMethods(['getGroupId'])
+            ->getMock();
+        $group->method('getName')->willReturn('Main Store');
+        $group->method('getWebsiteId')->willReturn(1);
+        $group->method('getGroupId')->willReturn(1);
+        $group->method('getStoreCollection')->willReturn($storeCollection);
+
+        $groupCollection = $this->createMock(GroupCollection::class);
+        $groupCollection->method('getIterator')->willReturn(new \ArrayIterator([$group]));
+        $groupCollection->method('addFieldToFilter')->willReturnSelf();
+        $groupCollection->method('setOrder')->willReturnSelf();
+        $groupCollection->method('load')->willReturnSelf();
+
         $website = $this->createMock(Website::class);
         $website->method('getId')->willReturn(1);
         $website->method('getName')->willReturn('Main Website');
+        $website->method('getGroupCollection')->willReturn($groupCollection);
 
         $websiteCollection = $this->createMock(WebsiteCollection::class);
         $websiteCollection->method('getIterator')->willReturn(new \ArrayIterator([$website]));
 
-        // Mock group
-        $group = $this->createMock(Group::class);
-        $group->method('getName')->willReturn('Main Store');
+        $websiteInstance = $this->createMock(Website::class);
+        $websiteInstance->expects($this->once())
+            ->method('getResourceCollection')
+            ->willReturn($websiteCollection);
+        $this->websiteFactory->expects($this->once())
+            ->method('create')
+            ->willReturn($websiteInstance);
 
-        $groupCollection = $this->createMock(GroupCollection::class);
-        $groupCollection->method('getIterator')->willReturn(new \ArrayIterator([$group]));
+        $websiteCollection->method('addIdFilter')->willReturnSelf();
+        $websiteCollection->method('load')->willReturnSelf();
 
-        // Mock store
-        $store = $this->createMock(Store::class);
-        $store->method('getId')->willReturn(1);
-        $store->method('getName')->willReturn('Default Store View');
+        $this->escaper->method('escapeHtml')->willReturnArgument(0);
 
-        $storeCollection = $this->createMock(StoreCollection::class);
-        $storeCollection->method('getIterator')->willReturn(new \ArrayIterator([$store]));
+        $storeTo1 = $this->createMock(Store::class);
+        $storeTo1->method('getId')->willReturn(2);
+        $html1 = $this->block->getChooseFromStoreHtml($storeTo1);
+        $storeTo2 = $this->createMock(Store::class);
+        $storeTo2->method('getId')->willReturn(3);
+        $html2 = $this->block->getChooseFromStoreHtml($storeTo2);
 
-        // Stub collection methods
-        $this->block->method('getWebsiteCollection')->willReturn($websiteCollection);
-        $this->block->method('getGroupCollection')->with($website)->willReturn($groupCollection);
-        $this->block->method('getStoreCollection')->with($group)->willReturn($storeCollection);
-        $this->block->method('escapeHtml')->willReturnArgument(0);
-
-        // Mock target store
-        $storeTo = $this->createMock(Store::class);
-        $storeTo->method('getId')->willReturn(2);
-
-        // Act
-        $html = $this->block->getChooseFromStoreHtml($storeTo);
-
-        // Assert
-        $this->assertStringContainsString('<select', $html);
-        $this->assertStringContainsString('name="copy_to_stores[2]"', $html);
-        $this->assertStringContainsString('Default Values', $html);
-        $this->assertStringContainsString('Main Website', $html);
-        $this->assertStringContainsString('Main Store', $html);
-        $this->assertStringContainsString('Default Store View', $html);
-    }
-
-    public function testGetChooseFromStoreHtmlSkipsWebsitesNotAssignedToProduct(): void
-    {
-        // Mock product with only website ID 1
-        $this->product->method('getWebsiteIds')->willReturn([1]);
-
-        // Mock two websites - one assigned, one not assigned
-        $website1 = $this->createMock(Website::class);
-        $website1->method('getId')->willReturn(1);
-        $website1->method('getName')->willReturn('Assigned Website');
-
-        $website2 = $this->createMock(Website::class);
-        $website2->method('getId')->willReturn(2);
-        $website2->method('getName')->willReturn('Skipped Website');
-
-        $websiteCollection = $this->createMock(WebsiteCollection::class);
-        $websiteCollection->method('getIterator')->willReturn(new \ArrayIterator([$website1, $website2]));
-
-        // Mock group and store for assigned website
-        $group = $this->createMock(Group::class);
-        $group->method('getName')->willReturn('Main Store');
-
-        $groupCollection = $this->createMock(GroupCollection::class);
-        $groupCollection->method('getIterator')->willReturn(new \ArrayIterator([$group]));
-
-        $store = $this->createMock(Store::class);
-        $store->method('getId')->willReturn(1);
-        $store->method('getName')->willReturn('Default Store View');
-
-        $storeCollection = $this->createMock(StoreCollection::class);
-        $storeCollection->method('getIterator')->willReturn(new \ArrayIterator([$store]));
-
-        // Stub collection methods
-        $this->block->method('getWebsiteCollection')->willReturn($websiteCollection);
-        $this->block->method('getGroupCollection')->with($website1)->willReturn($groupCollection);
-        $this->block->method('getStoreCollection')->with($group)->willReturn($storeCollection);
-        $this->block->method('escapeHtml')->willReturnArgument(0);
-
-        // Mock target store
-        $storeTo = $this->createMock(Store::class);
-        $storeTo->method('getId')->willReturn(2);
-
-        // Act
-        $html = $this->block->getChooseFromStoreHtml($storeTo);
-
-        // Assert - should contain assigned website but not the skipped one
-        $this->assertStringContainsString('Assigned Website', $html);
-        $this->assertStringNotContainsString('Skipped Website', $html);
-        $this->assertStringContainsString('Main Store', $html);
-        $this->assertStringContainsString('Default Store View', $html);
+        $this->assertStringContainsString('name="copy_to_stores[2]"', $html1);
+        $this->assertStringContainsString('name="copy_to_stores[3]"', $html2);
+        $this->assertStringContainsString('Main Website', $html1);
+        $this->assertStringContainsString('Main Website', $html2);
     }
 }

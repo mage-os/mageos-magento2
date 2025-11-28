@@ -55,6 +55,11 @@ class AttributeSetTest extends TestCase
      */
     private JsonHelper|MockObject $jsonHelper;
 
+    /**
+     * Set up test dependencies and mocks.
+     *
+     * @return void
+     */
     protected function setUp(): void
     {
         $objectManagerHelper = new ObjectManager($this);
@@ -79,10 +84,14 @@ class AttributeSetTest extends TestCase
             ['jsonHelper' => $this->jsonHelper]
         );
 
-        // Default: product in registry
         $this->registry->method('registry')->with('product')->willReturn($this->product);
     }
 
+    /**
+     * Test constructor accepts JsonHelper as fourth parameter.
+     *
+     * @return void
+     */
     public function testConstructorWithJsonHelper(): void
     {
         $context = $this->createMock(Context::class);
@@ -94,17 +103,19 @@ class AttributeSetTest extends TestCase
         $this->assertInstanceOf(AttributeSet::class, $block);
     }
 
+    /**
+     * Test getSelectorOptions returns correct structure and values.
+     *
+     * @return void
+     */
     public function testGetSelectorOptions(): void
     {
-        // Setup product with attribute set ID
         $this->product->method('getAttributeSetId')->willReturn(123);
 
-        // Setup URL builder
         $this->urlBuilder->method('getUrl')
             ->with('catalog/product/suggestAttributeSets')
             ->willReturn('http://example.com/admin/catalog/product/suggestAttributeSets');
 
-        // Setup escaper - return arguments as-is for testing
         $this->escaper->method('escapeUrl')
             ->willReturnCallback(function ($url) {
                 return 'escaped_' . $url;
@@ -114,10 +125,8 @@ class AttributeSetTest extends TestCase
                 return 'escaped_' . $value;
             });
 
-        // Act
         $options = $this->block->getSelectorOptions();
 
-        // Assert
         $this->assertIsArray($options);
         $this->assertArrayHasKey('source', $options);
         $this->assertArrayHasKey('className', $options);
@@ -126,7 +135,6 @@ class AttributeSetTest extends TestCase
         $this->assertArrayHasKey('minLength', $options);
         $this->assertArrayHasKey('currentlySelected', $options);
 
-        // Assert values
         $this->assertStringContainsString('escaped_', $options['source']);
         $this->assertStringContainsString('catalog/product/suggestAttributeSets', $options['source']);
         $this->assertSame('category-select', $options['className']);
@@ -136,9 +144,13 @@ class AttributeSetTest extends TestCase
         $this->assertSame('escaped_123', $options['currentlySelected']);
     }
 
+    /**
+     * Test getSelectorOptions uses correct attribute set ID.
+     *
+     * @return void
+     */
     public function testGetSelectorOptionsWithDifferentAttributeSetId(): void
     {
-        // Setup product with different attribute set ID
         $this->product->method('getAttributeSetId')->willReturn(456);
 
         $this->urlBuilder->method('getUrl')->willReturn('http://example.com/admin/url');
@@ -150,13 +162,17 @@ class AttributeSetTest extends TestCase
         $this->assertSame(456, $options['currentlySelected']);
     }
 
+    /**
+     * Test getSelectorOptions properly escapes URL to prevent XSS.
+     *
+     * @return void
+     */
     public function testGetSelectorOptionsEscapesUrl(): void
     {
         $this->product->method('getAttributeSetId')->willReturn(1);
 
         // @codingStandardsIgnoreStart
         // phpcs:disable Magento2.Templates.InlineJs
-        // URL with special characters (test data for XSS prevention)
         $rawUrl = 'http://example.com/admin/catalog?test=1&special=<script type="text/x-magento-init">';
         $escapedUrl = 'http://example.com/admin/catalog?test=1&amp;special=&lt;script type=&quot;text/x-magento-init&quot;&gt;';
         // phpcs:enable Magento2.Templates.InlineJs
@@ -171,11 +187,15 @@ class AttributeSetTest extends TestCase
         $this->assertSame($escapedUrl, $options['source']);
     }
 
+    /**
+     * Test getSelectorOptions properly escapes attribute set ID to prevent XSS.
+     *
+     * @return void
+     */
     public function testGetSelectorOptionsEscapesAttributeSetId(): void
     {
         // @codingStandardsIgnoreStart
         // phpcs:disable Magento2.Templates.InlineJs
-        // Attribute set ID that needs escaping (test data for XSS prevention)
         $attributeSetId = '<script type="text/x-magento-init">alert("xss")</script>';
         $escapedAttributeSetId = '&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;';
         // phpcs:enable Magento2.Templates.InlineJs
@@ -191,6 +211,11 @@ class AttributeSetTest extends TestCase
         $this->assertSame($escapedAttributeSetId, $options['currentlySelected']);
     }
 
+    /**
+     * Test getSelectorOptions returns complete structure.
+     *
+     * @return void
+     */
     public function testGetSelectorOptionsStructure(): void
     {
         $this->product->method('getAttributeSetId')->willReturn(10);
@@ -200,13 +225,11 @@ class AttributeSetTest extends TestCase
 
         $options = $this->block->getSelectorOptions();
 
-        // Assert all required keys exist
         $expectedKeys = ['source', 'className', 'showRecent', 'storageKey', 'minLength', 'currentlySelected'];
         foreach ($expectedKeys as $key) {
             $this->assertArrayHasKey($key, $options, "Key '$key' should exist in selector options");
         }
 
-        // Assert correct types
         $this->assertIsString($options['source']);
         $this->assertIsString($options['className']);
         $this->assertIsBool($options['showRecent']);
