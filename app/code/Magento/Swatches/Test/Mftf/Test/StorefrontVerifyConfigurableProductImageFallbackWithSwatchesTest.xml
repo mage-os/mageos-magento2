@@ -34,9 +34,6 @@
             <deleteData createDataKey="createVisualSwatchAttribute" stepKey="deleteVisualSwatchAttribute"/>
             <deleteData createDataKey="createTextSwatchAttr1" stepKey="deleteTextSwatchAttribute1"/>
             <deleteData createDataKey="createTextSwatchAttr2" stepKey="deleteTextSwatchAttribute2"/>
-            <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindexAfterAttributeDeletion">
-                <argument name="indices" value=""/>
-            </actionGroup>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
         </after>
         <!-- Step 1a: Create visual swatch attribute with options A, B, C -->
@@ -76,7 +73,7 @@
         <createData entity="ApiConfigurableProduct" stepKey="createConfigurableProduct">
             <requiredEntity createDataKey="createCategory"/>
             <field key="name">TestConfigurableProduct</field>
-            <field key="sku">test-config-swatch-image</field>
+            <field key="sku" unique="suffix">test-config-swatch-image</field>
             <field key="price">100</field>
         </createData>
         <actionGroup ref="AdminProductPageOpenByIdActionGroup" stepKey="openConfigurableProductEditPage">
