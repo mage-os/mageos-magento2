@@ -50,13 +50,12 @@ class AggregateCount
         $connection = $resourceModel->getConnection();
         $table = $resourceModel->getEntityTable();
 
-        // Use raw Zend select so staging preview modifiers are not applied.
-        $select = new \Zend_Db_Select($connection);
-        $select->from($table, ['cnt' => new \Zend_Db_Expr('COUNT(*)')])
-            ->where('entity_id = ?', (int)$categoryId);
+        // Use raw SQL so staging preview modifiers (created_in/updated_in) are not applied.
+        $sql = sprintf(
+            'SELECT COUNT(*) FROM %s WHERE entity_id = ?',
+            $connection->quoteIdentifier($table)
+        );
 
-        return (int)$connection->fetchOne($select);
+        return (int)$connection->fetchOne($sql, [(int)$categoryId]);
     }
-
-
 }
