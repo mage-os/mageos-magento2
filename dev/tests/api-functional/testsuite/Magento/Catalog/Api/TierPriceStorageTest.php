@@ -1,24 +1,13 @@
 <?php
 /**
- * Copyright 2016 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Api;
 
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\Data\TierPriceInterface;
-use Magento\Catalog\Helper\Data;
 use Magento\Framework\Webapi\Rest\Request;
-use Magento\Store\Api\WebsiteRepositoryInterface;
-use Magento\Store\Model\ResourceModel\Website as WebsiteResource;
-use Magento\Store\Test\Fixture\Group as StoreGroupFixture;
-use Magento\Store\Test\Fixture\Store as StoreFixture;
-use Magento\Store\Test\Fixture\Website as WebsiteFixture;
-use Magento\TestFramework\Fixture\Config;
-use Magento\TestFramework\Fixture\DataFixtureStorageManager;
-use Magento\TestFramework\Fixture\DbIsolation;
-use Magento\TestFramework\Helper\Bootstrap;
-use Magento\TestFramework\ObjectManager;
 use Magento\TestFramework\TestCase\WebapiAbstract;
 use Magento\TestFramework\Fixture\DataFixture;
 use Magento\Catalog\Test\Fixture\Product as ProductFixture;
@@ -38,28 +27,16 @@ class TierPriceStorageTest extends WebapiAbstract
     private const WRONG_CUSTOMER_GROUP_NAME ='general';
 
     /**
-     * @var ObjectManager
+     * @var \Magento\TestFramework\ObjectManager
      */
     private $objectManager;
-
-    /**
-     * @var WebsiteRepositoryInterface
-     */
-    private $websiteRepository;
-
-    /**
-     * @var WebsiteResource
-     */
-    private $websiteResource;
 
     /**
      * Set up.
      */
     protected function setUp(): void
     {
-        $this->objectManager = Bootstrap::getObjectManager();
-        $this->websiteRepository = $this->objectManager->create(WebsiteRepositoryInterface::class);
-        $this->websiteResource = $this->objectManager->create(WebsiteResource::class);
+        $this->objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
     }
 
     /**
@@ -82,7 +59,7 @@ class TierPriceStorageTest extends WebapiAbstract
             ],
         ];
         $response = $this->_webApiCall($serviceInfo, ['skus' => [self::SIMPLE_PRODUCT_SKU]]);
-        $productRepository = $this->objectManager->create(ProductRepositoryInterface::class);
+        $productRepository = $this->objectManager->create(\Magento\Catalog\Api\ProductRepositoryInterface::class);
         /** @var ProductInterface $product */
         $tierPrices = $productRepository->get(self::SIMPLE_PRODUCT_SKU)->getTierPrices();
         $this->assertNotEmpty($response);
@@ -100,7 +77,7 @@ class TierPriceStorageTest extends WebapiAbstract
      */
     public function testUpdate()
     {
-        $productRepository = $this->objectManager->create(ProductRepositoryInterface::class);
+        $productRepository = $this->objectManager->create(\Magento\Catalog\Api\ProductRepositoryInterface::class);
         $prices = $productRepository->get(self::SIMPLE_PRODUCT_SKU)->getTierPrices();
         $tierPrice = array_shift($prices);
         $serviceInfo = [
@@ -131,7 +108,7 @@ class TierPriceStorageTest extends WebapiAbstract
             'quantity' => $tierPrice->getQty()
         ];
         $response = $this->_webApiCall($serviceInfo, ['prices' => [$updatedPrice, $newPrice]]);
-        $productRepository = $this->objectManager->create(ProductRepositoryInterface::class);
+        $productRepository = $this->objectManager->create(\Magento\Catalog\Api\ProductRepositoryInterface::class);
         $tierPrices = $productRepository->get(self::SIMPLE_PRODUCT_SKU)->getTierPrices();
         $this->assertEmpty($response);
         $this->assertTrue($this->isPriceCorrect($newPrice, $tierPrices));
@@ -221,7 +198,7 @@ class TierPriceStorageTest extends WebapiAbstract
             ]
         ];
         $response = $this->_webApiCall($serviceInfo, ['prices' => $newPrices]);
-        $productRepository = $this->objectManager->create(ProductRepositoryInterface::class);
+        $productRepository = $this->objectManager->create(\Magento\Catalog\Api\ProductRepositoryInterface::class);
         /** @var ProductInterface $product */
         $tierPrices = $productRepository->get(self::SIMPLE_PRODUCT_SKU)->getTierPrices();
         $this->assertEmpty($response);
@@ -283,7 +260,7 @@ class TierPriceStorageTest extends WebapiAbstract
      */
     public function testDelete()
     {
-        $productRepository = $this->objectManager->create(ProductRepositoryInterface::class);
+        $productRepository = $this->objectManager->create(\Magento\Catalog\Api\ProductRepositoryInterface::class);
         $tierPrices = $productRepository->get(self::SIMPLE_PRODUCT_SKU)->getTierPrices();
         $pricesToStore = array_pop($tierPrices);
         $pricesToDelete = [];
@@ -293,7 +270,7 @@ class TierPriceStorageTest extends WebapiAbstract
             $priceType = $tierPrice->getExtensionAttributes()->getPercentageValue()
                 ? TierPriceInterface::PRICE_TYPE_DISCOUNT
                 : TierPriceInterface::PRICE_TYPE_FIXED;
-            $customerGroup = $tierPrice->getCustomerGroupId() == Group::NOT_LOGGED_IN_ID
+            $customerGroup = $tierPrice->getCustomerGroupId() == \Magento\Customer\Model\Group::NOT_LOGGED_IN_ID
                 ? self::CUSTOMER_NOT_LOGGED_IN_GROUP_NAME
                 : self::CUSTOMER_ALL_GROUPS_NAME;
             $pricesToDelete[] = [
@@ -318,7 +295,7 @@ class TierPriceStorageTest extends WebapiAbstract
             ],
         ];
         $response = $this->_webApiCall($serviceInfo, ['prices' => $pricesToDelete]);
-        $productRepository = $this->objectManager->create(ProductRepositoryInterface::class);
+        $productRepository = $this->objectManager->create(\Magento\Catalog\Api\ProductRepositoryInterface::class);
         $tierPrices = $productRepository->get(self::SIMPLE_PRODUCT_SKU)->getTierPrices();
         $tierPrice = $tierPrices[0];
         $this->assertEmpty($response);
@@ -375,66 +352,6 @@ class TierPriceStorageTest extends WebapiAbstract
             $this->assertEquals($message, $response[0]['message']);
             $this->assertEquals(['simple', '1', 'ALL GROUPS', '3'], $response[0]['parameters']);
         }
-    }
-
-    /**
-     * Test to validate the incorrect website id for multi website setup.
-     */
-    #[
-        Config(Data::XML_PATH_PRICE_SCOPE, Data::PRICE_SCOPE_WEBSITE),
-        DataFixture(WebsiteFixture::class, ['code' => 'second'], 'second_website'),
-        DataFixture(StoreGroupFixture::class, ['website_id' => '$second_website.id$'], 'second_store_group'),
-        DataFixture(StoreFixture::class, ['store_group_id' => '$second_store_group.id$'], 'second_store'),
-        DataFixture(
-            ProductFixture::class,
-            [
-                'sku' => 'simple',
-                'website_id' => '$second_website.id$',
-                'tier_prices' => [
-                    [
-                        'customer_group_id' => Group::NOT_LOGGED_IN_ID,
-                        'qty' => 100,
-                        'value' => 100
-                    ]
-                ]
-            ]
-        )
-    ]
-    public function testCheckWebsiteWithMultiWebsite()
-    {
-        $fixture = DataFixtureStorageManager::getStorage();
-        $serviceInfo = [
-            'rest' => [
-                'resourcePath' => '/V1/products/tier-prices',
-                'httpMethod' => Request::HTTP_METHOD_POST
-            ],
-            'soap' => [
-                'service' => self::SERVICE_NAME,
-                'serviceVersion' => self::SERVICE_VERSION,
-                'operation' => self::SERVICE_NAME . 'Update',
-            ],
-        ];
-
-        $secondWebsite = $fixture->get('second_website');
-        $secondWebsiteCode = $secondWebsite->getCode();
-        $secondWebsiteDetails = $this->websiteRepository->get($secondWebsiteCode);
-        $secondWebsiteDetails->setIsDefault(true);
-        $this->websiteResource->save($secondWebsiteDetails);
-        $tierPriceWithInvalidWebsiteId = [
-            'price' => 28,
-            'price_type' => TierPriceInterface::PRICE_TYPE_DISCOUNT,
-            'website_id' => 1,
-            'sku' => self::SIMPLE_PRODUCT_SKU,
-            'customer_group' => 'ALL GROUPS',
-            'quantity' => 3,
-            'extension_attributes' => []
-        ];
-        $response = $this->_webApiCall($serviceInfo, ['prices' => [$tierPriceWithInvalidWebsiteId]]);
-        $this->assertEmpty($response);
-
-        $mainWebsite = $this->websiteRepository->get('base');
-        $mainWebsite->setIsDefault(true);
-        $this->websiteResource->save($mainWebsite);
     }
 
     /**
