@@ -134,7 +134,10 @@ class PrintActionTest extends TestCase
 
         $invoiceMock = $this->createMock(Invoice::class);
 
-        $pdfMock = $this->createPartialMockWithReflection(\Magento\Sales\Model\Order\Pdf\Invoice::class, array_merge(['render'], ['getPdf']));
+        $pdfMock = $this->createPartialMockWithReflection(
+            \Magento\Sales\Model\Order\Pdf\Invoice::class,
+            array_merge(['render'], ['getPdf'])
+        );
         $pdfMock->expects($this->once())
             ->method('getPdf')
             ->willReturnSelf();

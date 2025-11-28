@@ -143,29 +143,31 @@ class AddCommentTest extends TestCase
         bool $expectedNotify,
         string $expectedOrderStatus
     ) {
-        $orderId = 30;
-        $this->requestMock->expects($this->once())->method('getParam')->with('order_id')->willReturn($orderId);
-        $this->orderMock->expects($this->any())->method('getDataByKey')
+         $orderId = 30;
+         $this->requestMock->expects($this->once())->method('getParam')->with('order_id')->willReturn($orderId);
+         $this->orderMock->expects($this->any())->method('getDataByKey')
             ->with('status')->willReturn($orderStatus);
-        $this->orderRepositoryMock->expects($this->once())
+         $this->orderRepositoryMock->expects($this->once())
             ->method('get')
             ->willReturn($this->orderMock);
-        $this->requestMock->expects($this->once())->method('getPost')->with('history')->willReturn($historyData);
-        $this->authorizationMock->expects($this->any())->method('isAllowed')->willReturn($userHasResource);
-        $this->orderMock->expects($this->once())
+         $this->requestMock->expects($this->once())->method('getPost')->with('history')->willReturn($historyData);
+         $this->authorizationMock->expects($this->any())->method('isAllowed')->willReturn($userHasResource);
+         $this->orderMock->expects($this->once())
             ->method('addStatusHistoryComment')
             ->willReturn($this->statusHistoryCommentMock);
-        $this->statusHistoryCommentMock->expects($this->once())->method('setIsCustomerNotified')->with($expectedNotify);
-        $this->objectManagerMock->expects($this->once())->method('create')->willReturn(
-            $this->createMock(OrderCommentSender::class)
-        );
+         $this->statusHistoryCommentMock->expects($this->once())
+            ->method('setIsCustomerNotified')
+            ->with($expectedNotify);
+         $this->objectManagerMock->expects($this->once())->method('create')->willReturn(
+             $this->createMock(OrderCommentSender::class)
+         );
 
         // Verify the getOrderStatus method call
-        $this->orderMock->expects($this->once())->method('setStatus')->with($expectedOrderStatus);
-        $this->orderMock->expects($this->once())->method('save');
-        $this->statusHistoryCommentMock->expects($this->once())->method('save');
+         $this->orderMock->expects($this->once())->method('setStatus')->with($expectedOrderStatus);
+         $this->orderMock->expects($this->once())->method('save');
+         $this->statusHistoryCommentMock->expects($this->once())->method('save');
 
-        $this->addCommentController->execute();
+         $this->addCommentController->execute();
     }
 
     /**

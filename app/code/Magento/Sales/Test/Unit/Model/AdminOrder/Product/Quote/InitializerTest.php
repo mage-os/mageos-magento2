@@ -105,7 +105,10 @@ class InitializerTest extends TestCase
 
     public function testInitWithDecimalQty()
     {
-        $quoteItemMock = $this->createPartialMockWithReflection(\Magento\Quote\Model\Quote\Item::class, ['getStockId', 'getIsQtyDecimal']);
+        $quoteItemMock = $this->createPartialMockWithReflection(
+            \Magento\Quote\Model\Quote\Item::class,
+            ['getStockId', 'getIsQtyDecimal']
+        );
 
         $this->stockItemMock->expects($this->once())
             ->method('getIsQtyDecimal')
@@ -143,7 +146,10 @@ class InitializerTest extends TestCase
 
     public function testInitWithNonDecimalQty()
     {
-        $quoteItemMock = $this->createPartialMockWithReflection(\Magento\Quote\Model\Quote\Item::class, ['getStockId', 'getIsQtyDecimal']);
+        $quoteItemMock = $this->createPartialMockWithReflection(
+            \Magento\Quote\Model\Quote\Item::class,
+            ['getStockId', 'getIsQtyDecimal']
+        );
 
         $this->productMock->expects($this->once())
             ->method('getId')->willReturnSelf();

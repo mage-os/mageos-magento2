@@ -106,28 +106,28 @@ class ManagerTest extends TestCase
         $type,
         $expectedResult
     ) {
-        $transactionBasedOn = false;
+         $transactionBasedOn = false;
 
-        $payment = $this->createPartialMock(
-            Payment::class,
-            ["setParentTransactionId", "getParentTransactionId", "getTransactionId"]
-        );
-        $payment->expects($this->atLeastOnce())->method('getTransactionId')->willReturn($transactionId);
+         $payment = $this->createPartialMock(
+             Payment::class,
+             ["setParentTransactionId", "getParentTransactionId", "getTransactionId"]
+         );
+         $payment->expects($this->atLeastOnce())->method('getTransactionId')->willReturn($transactionId);
 
-        if (!$parentTransactionId && !$transactionId && $transactionBasedTxnId) {
-            $transactionBasedOn = $this->createMock(Transaction::class);
-            $transactionBasedOn->expects($this->once())->method('getTxnId')->willReturn($transactionBasedTxnId);
-            $payment->expects($this->once())->method("setParentTransactionId")->with($transactionBasedTxnId);
-        }
-        $payment->expects($this->exactly(2))->method('getParentTransactionId')->willReturnOnConsecutiveCalls(
-            $parentTransactionId,
-            $transactionBasedOn ? $transactionBasedTxnId : $parentTransactionId
-        );
+         if (!$parentTransactionId && !$transactionId && $transactionBasedTxnId) {
+             $transactionBasedOn = $this->createMock(Transaction::class);
+             $transactionBasedOn->expects($this->once())->method('getTxnId')->willReturn($transactionBasedTxnId);
+             $payment->expects($this->once())->method("setParentTransactionId")->with($transactionBasedTxnId);
+         }
+         $payment->expects($this->exactly(2))->method('getParentTransactionId')->willReturnOnConsecutiveCalls(
+             $parentTransactionId,
+             $transactionBasedOn ? $transactionBasedTxnId : $parentTransactionId
+         );
 
-        $this->assertEquals(
-            $expectedResult,
-            $this->manager->generateTransactionId($payment, $type, $transactionBasedOn)
-        );
+         $this->assertEquals(
+             $expectedResult,
+             $this->manager->generateTransactionId($payment, $type, $transactionBasedOn)
+         );
     }
 
     /**

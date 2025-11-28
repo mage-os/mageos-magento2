@@ -83,7 +83,10 @@ class StateTest extends TestCase
                 ]
             )
         ];
-        $collectionMock = $this->createPartialMockWithReflection(Collection::class, array_merge(['create'], ['joinStates']));
+        $collectionMock = $this->createPartialMockWithReflection(
+            Collection::class,
+            array_merge(['create'], ['joinStates'])
+        );
         $this->orderStatusCollectionFactoryMock->expects($this->once())
             ->method('create')
             ->willReturn($collectionMock);

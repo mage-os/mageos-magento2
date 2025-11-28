@@ -53,14 +53,14 @@ class CaptureCommandTest extends TestCase
         $expectedStatus,
         $expectedMessage
     ) {
-        $actualReturn = (new CaptureCommand($this->getStatusResolver()))->execute(
-            $this->getPayment($isTransactionPending, $isFraudDetected),
-            $this->amount,
-            $this->getOrder()
-        );
+         $actualReturn = (new CaptureCommand($this->getStatusResolver()))->execute(
+             $this->getPayment($isTransactionPending, $isFraudDetected),
+             $this->amount,
+             $this->getOrder()
+         );
 
-        $this->assertOrderStateAndStatus($this->getOrder(), $expectedState, $expectedStatus);
-        self::assertEquals(__($expectedMessage, $this->amount), $actualReturn);
+         $this->assertOrderStateAndStatus($this->getOrder(), $expectedState, $expectedStatus);
+         self::assertEquals(__($expectedMessage, $this->amount), $actualReturn);
     }
 
     /**

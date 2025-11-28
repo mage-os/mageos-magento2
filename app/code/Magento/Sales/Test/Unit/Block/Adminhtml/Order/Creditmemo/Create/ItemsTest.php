@@ -131,7 +131,10 @@ class ItemsTest extends TestCase
                 ->method('getProductId')
                 ->willReturn($productId);
 
-            $creditMemoItem = $this->createPartialMockWithReflection(\Magento\Sales\Model\Order\Creditmemo\Item::class, array_merge(['setCanReturnToStock'], ['getOrderItem']));
+            $creditMemoItem = $this->createPartialMockWithReflection(
+                \Magento\Sales\Model\Order\Creditmemo\Item::class,
+                array_merge(['setCanReturnToStock'], ['getOrderItem'])
+            );
 
             $creditMemo = $this->createMock(Creditmemo::class);
             $creditMemo->expects($this->once())

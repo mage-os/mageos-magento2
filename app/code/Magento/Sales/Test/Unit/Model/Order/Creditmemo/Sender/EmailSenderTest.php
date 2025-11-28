@@ -270,26 +270,26 @@ class EmailSenderTest extends TestCase
         bool $isComment,
         bool $emailSendingResult
     ): void {
-        $this->globalConfigMock->expects($this->once())
+         $this->globalConfigMock->expects($this->once())
             ->method('getValue')
             ->with('sales_email/general/async_sending')
             ->willReturn($configValue);
 
-        if (!$isComment) {
-            $this->commentMock = null;
-        }
+         if (!$isComment) {
+             $this->commentMock = null;
+         }
 
-        $this->creditmemoMock->expects($this->once())
+         $this->creditmemoMock->expects($this->once())
             ->method('setSendEmail')
             ->with($emailSendingResult);
 
-        $this->orderMock->method('getCustomerName')->willReturn('Customer name');
-        $this->orderMock->method('getIsNotVirtual')->willReturn(true);
-        $this->orderMock->method('getEmailCustomerNote')->willReturn(null);
-        $this->orderMock->method('getFrontendStatusLabel')->willReturn('Pending');
+         $this->orderMock->method('getCustomerName')->willReturn('Customer name');
+         $this->orderMock->method('getIsNotVirtual')->willReturn(true);
+         $this->orderMock->method('getEmailCustomerNote')->willReturn(null);
+         $this->orderMock->method('getFrontendStatusLabel')->willReturn('Pending');
 
-        if (!$configValue || $forceSyncMode) {
-            $transport = [
+         if (!$configValue || $forceSyncMode) {
+             $transport = [
                 'order' => $this->orderMock,
                 'order_id' => self::ORDER_ID,
                 'creditmemo' => $this->creditmemoMock,
@@ -306,10 +306,10 @@ class EmailSenderTest extends TestCase
                     'email_customer_note' => null,
                     'frontend_status_label' => 'Pending'
                 ]
-            ];
-            $transport = new DataObject($transport);
+             ];
+             $transport = new DataObject($transport);
 
-            $this->eventManagerMock->expects($this->once())
+             $this->eventManagerMock->expects($this->once())
                 ->method('dispatch')
                 ->with(
                     'email_creditmemo_set_template_vars_before',
@@ -320,65 +320,65 @@ class EmailSenderTest extends TestCase
                     ]
                 );
 
-            $this->templateContainerMock->expects($this->once())
+             $this->templateContainerMock->expects($this->once())
                 ->method('setTemplateVars')
                 ->with($transport->getData());
 
-            $this->identityContainerMock->expects($this->exactly(2))
+             $this->identityContainerMock->expects($this->exactly(2))
                 ->method('isEnabled')
                 ->willReturn($emailSendingResult);
 
-            if ($emailSendingResult) {
-                $this->identityContainerMock->expects($this->once())
+             if ($emailSendingResult) {
+                 $this->identityContainerMock->expects($this->once())
                     ->method('getCopyMethod')
                     ->willReturn('copy');
 
-                $this->senderBuilderFactoryMock->expects($this->once())
+                 $this->senderBuilderFactoryMock->expects($this->once())
                     ->method('create')
                     ->willReturn($this->senderMock);
 
-                $this->senderMock->expects($this->once())
+                 $this->senderMock->expects($this->once())
                     ->method('send');
 
-                $this->senderMock->expects($this->once())
+                 $this->senderMock->expects($this->once())
                     ->method('sendCopyTo');
 
-                $this->creditmemoMock->expects($this->once())
+                 $this->creditmemoMock->expects($this->once())
                     ->method('setEmailSent')
                     ->with(true);
 
-                $this->creditmemoResourceMock->expects($this->once())
+                 $this->creditmemoResourceMock->expects($this->once())
                     ->method('saveAttribute')
                     ->with($this->creditmemoMock, ['send_email', 'email_sent']);
 
-                $this->assertTrue(
-                    $this->subject->send(
-                        $this->orderMock,
-                        $this->creditmemoMock,
-                        $this->commentMock,
-                        $forceSyncMode
-                    )
-                );
-            } else {
-                $this->creditmemoResourceMock->expects($this->once())
+                 $this->assertTrue(
+                     $this->subject->send(
+                         $this->orderMock,
+                         $this->creditmemoMock,
+                         $this->commentMock,
+                         $forceSyncMode
+                     )
+                 );
+             } else {
+                 $this->creditmemoResourceMock->expects($this->once())
                     ->method('saveAttribute')
                     ->with($this->creditmemoMock, 'send_email');
 
-                $this->assertFalse(
-                    $this->subject->send(
-                        $this->orderMock,
-                        $this->creditmemoMock,
-                        $this->commentMock,
-                        $forceSyncMode
-                    )
-                );
-            }
-        } else {
-            $this->creditmemoMock->expects($this->once())
+                 $this->assertFalse(
+                     $this->subject->send(
+                         $this->orderMock,
+                         $this->creditmemoMock,
+                         $this->commentMock,
+                         $forceSyncMode
+                     )
+                 );
+             }
+         } else {
+             $this->creditmemoMock->expects($this->once())
                 ->method('setEmailSent')
                 ->with(null);
 
-            $this->creditmemoResourceMock
+             $this->creditmemoResourceMock
                 ->method('saveAttribute')
                 ->willReturnCallback(function ($arg1, $arg2) {
                     if ($arg1 == $this->creditmemoMock &&
@@ -388,15 +388,15 @@ class EmailSenderTest extends TestCase
                     }
                 });
 
-            $this->assertFalse(
-                $this->subject->send(
-                    $this->orderMock,
-                    $this->creditmemoMock,
-                    $this->commentMock,
-                    $forceSyncMode
-                )
-            );
-        }
+             $this->assertFalse(
+                 $this->subject->send(
+                     $this->orderMock,
+                     $this->creditmemoMock,
+                     $this->commentMock,
+                     $forceSyncMode
+                 )
+             );
+         }
     }
 
     /**

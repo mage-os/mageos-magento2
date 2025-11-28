@@ -70,7 +70,10 @@ class SaleOperationTest extends TestCase
         $paymentMethod = $this->createMock(MethodInterface::class);
 
         /** @var Payment|MockObject  $orderPayment | */
-        $orderPayment = $this->createPartialMockWithReflection(Payment::class, array_merge(['setCreatedInvoice'], ['getOrder', 'getMethodInstance', 'getIsFraudDetected']));
+        $orderPayment = $this->createPartialMockWithReflection(
+            Payment::class,
+            array_merge(['setCreatedInvoice'], ['getOrder', 'getMethodInstance', 'getIsFraudDetected'])
+        );
         $orderPayment->expects($this->once())
             ->method('setCreatedInvoice')
             ->with($invoice);
@@ -101,9 +104,12 @@ class SaleOperationTest extends TestCase
     /**
      * @return MockObject
      */
-    private function getPaidInvoice(): MockObject
+    public function getPaidInvoice(): MockObject
     {
-        $invoice = $this->createPartialMockWithReflection(Invoice::class, array_merge(['getIsPaid'], ['register', 'pay']));
+        $invoice = $this->createPartialMockWithReflection(
+            Invoice::class,
+            array_merge(['getIsPaid'], ['register', 'pay'])
+        );
         $invoice->expects($this->once())
             ->method('register');
         $invoice->method('getIsPaid')
@@ -117,9 +123,12 @@ class SaleOperationTest extends TestCase
     /**
      * @return MockObject
      */
-    private function getUnpaidInvoice(): MockObject
+    public function getUnpaidInvoice(): MockObject
     {
-        $invoice = $this->createPartialMockWithReflection(Invoice::class, array_merge(['getIsPaid'], ['register', 'pay']));
+        $invoice = $this->createPartialMockWithReflection(
+            Invoice::class,
+            array_merge(['getIsPaid'], ['register', 'pay'])
+        );
         $invoice->expects($this->once())
             ->method('register');
         $invoice->method('getIsPaid')

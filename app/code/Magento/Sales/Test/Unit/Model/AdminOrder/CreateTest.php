@@ -382,11 +382,17 @@ class CreateTest extends TestCase
     public function testApplyCoupon()
     {
         $couponCode = '123';
-        $quote = $this->createPartialMockWithReflection(Quote::class, array_merge(['setCouponCode'], ['getShippingAddress']));
+        $quote = $this->createPartialMockWithReflection(
+            Quote::class,
+            array_merge(['setCouponCode'], ['getShippingAddress'])
+        );
         $this->sessionQuote->method('getQuote')
             ->willReturn($quote);
 
-        $address = $this->createPartialMockWithReflection(Address::class, ['setCollectShippingRates', 'setFreeShipping']);
+        $address = $this->createPartialMockWithReflection(
+            Address::class,
+            ['setCollectShippingRates', 'setFreeShipping']
+        );
         $quote->method('getShippingAddress')
             ->willReturn($address);
         $quote->method('setCouponCode')

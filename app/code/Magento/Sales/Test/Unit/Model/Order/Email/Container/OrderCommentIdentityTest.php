@@ -40,6 +40,9 @@ class OrderCommentIdentityTest extends TestCase
      */
     protected $storeMock;
 
+    /**
+     * @var int
+     */
     protected $storeId;
 
     protected function setUp(): void

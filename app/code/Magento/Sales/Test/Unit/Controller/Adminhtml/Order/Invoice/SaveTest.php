@@ -231,77 +231,77 @@ class SaveTest extends TestCase
         bool $emailEnabled,
         bool $shouldEmailBeSent
     ): void {
-        $redirectMock = $this->getMockBuilder(Redirect::class)
+         $redirectMock = $this->getMockBuilder(Redirect::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $redirectMock->expects($this->once())
+         $redirectMock->expects($this->once())
             ->method('setPath')
             ->with('sales/order/view')
             ->willReturnSelf();
 
-        $this->resultPageFactoryMock->expects($this->once())
+         $this->resultPageFactoryMock->expects($this->once())
             ->method('create')
             ->willReturn($redirectMock);
-        $this->formKeyValidatorMock->expects($this->once())
+         $this->formKeyValidatorMock->expects($this->once())
             ->method('validate')
             ->with($this->requestMock)
             ->willReturn(true);
-        $this->requestMock->expects($this->once())
+         $this->requestMock->expects($this->once())
             ->method('isPost')
             ->willReturn(true);
 
-        $invoiceData = ['items' => [], 'send_email' => $sendEmail];
+         $invoiceData = ['items' => [], 'send_email' => $sendEmail];
 
-        $orderId = 2;
-        $order = $this->createPartialMock(
-            Order::class,
-            ['load','getId','canInvoice']
-        );
-        $order->expects($this->once())
+         $orderId = 2;
+         $order = $this->createPartialMock(
+             Order::class,
+             ['load','getId','canInvoice']
+         );
+         $order->expects($this->once())
             ->method('load')
             ->willReturn($order);
-        $order->expects($this->once())
+         $order->expects($this->once())
             ->method('getId')
             ->willReturn($orderId);
-        $order->expects($this->once())
+         $order->expects($this->once())
             ->method('canInvoice')
             ->willReturn(true);
 
-        $invoice = $this->getMockBuilder(Invoice::class)
+         $invoice = $this->getMockBuilder(Invoice::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getTotalQty', 'getOrder', 'register'])
             ->getMock();
-        $invoice->expects($this->any())
+         $invoice->expects($this->any())
             ->method('getTotalQty')
             ->willReturn(1);
-        $invoice->expects($this->any())
+         $invoice->expects($this->any())
             ->method('getOrder')
             ->willReturn($order);
-        $invoice->expects($this->once())
+         $invoice->expects($this->once())
             ->method('register')
             ->willReturn($order);
 
-        $this->invoiceService->expects($this->any())
+         $this->invoiceService->expects($this->any())
             ->method('prepareInvoice')
             ->willReturn($invoice);
 
-        $saveTransaction = $this->getMockBuilder(Transaction::class)
+         $saveTransaction = $this->getMockBuilder(Transaction::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['addObject', 'save'])
             ->getMock();
-        $saveTransaction
+         $saveTransaction
             ->method('addObject')
             ->willReturnCallback(fn($param) => match ([$param]) {
                 [$invoice] => $saveTransaction,
                 [$order] => $saveTransaction
             });
 
-        $session = $this->createPartialMockWithReflection(Session::class, ['getCommentText']);
-        $session->expects($this->once())
+         $session = $this->createPartialMockWithReflection(Session::class, ['getCommentText']);
+         $session->expects($this->once())
             ->method('getCommentText')
             ->with(true);
 
-        $this->objectManager->expects($this->any())
+         $this->objectManager->expects($this->any())
             ->method('create')
             ->willReturnMap(
                 [
@@ -310,12 +310,12 @@ class SaveTest extends TestCase
                     [Session::class, [], $session]
                 ]
             );
-        $this->objectManager->expects($this->any())
+         $this->objectManager->expects($this->any())
             ->method('get')
             ->with(Session::class)
             ->willReturn($session);
 
-        $this->requestMock->expects($this->any())
+         $this->requestMock->expects($this->any())
             ->method('getParam')
             ->willReturnMap(
                 [
@@ -323,18 +323,18 @@ class SaveTest extends TestCase
                     ['invoice', null, $invoiceData]
                 ]
             );
-        $this->requestMock->expects($this->any())
+         $this->requestMock->expects($this->any())
             ->method('getPost')
             ->willReturn($invoiceData);
 
-        $this->salesData->expects($this->any())
+         $this->salesData->expects($this->any())
             ->method('canSendNewInvoiceEmail')
             ->willReturn($emailEnabled);
-        if ($shouldEmailBeSent) {
-            $this->invoiceSender->expects($this->once())
+         if ($shouldEmailBeSent) {
+             $this->invoiceSender->expects($this->once())
                 ->method('send');
-        }
+         }
 
-        $this->assertEquals($redirectMock, $this->controller->execute());
+         $this->assertEquals($redirectMock, $this->controller->execute());
     }
 }

@@ -61,7 +61,7 @@ class StatusResolverTest extends TestCase
      * @param array $stateStatuses
      * @return OrderInterface|MockObject
      */
-    private function getOrder($newOrderStatus, $stateStatuses)
+    public function getOrder($newOrderStatus, $stateStatuses)
     {
         $order = $this->createPartialMockWithReflection(Order::class, ['getConfig', 'getPayment']);
         $order->method('getPayment')

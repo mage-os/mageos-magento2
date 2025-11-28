@@ -43,14 +43,7 @@ class GridAsyncInsertTest extends TestCase
     {
         $this->gridAggregatorMock = $this->getMockBuilder(GridInterface::class)
             ->getMock();
-        $this->salesModelMock = $this->getMockBuilder(AbstractModel::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(
-                [
-                    'getId'
-                ]
-            )
-            ->getMock();
+        $this->salesModelMock = $this->createPartialMock(AbstractModel::class, ['getId']);
         $this->scopeConfigurationMock = $this->getMockBuilder(ScopeConfigInterface::class)
             ->getMock();
 

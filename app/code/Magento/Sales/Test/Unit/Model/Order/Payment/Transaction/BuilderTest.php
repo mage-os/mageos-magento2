@@ -51,7 +51,10 @@ class BuilderTest extends TestCase
         $this->repositoryMock = $this->createMock(Repository::class);
         $this->paymentMock = $this->createPartialMockWithReflection(
             Payment::class,
-            ['hasIsTransactionClosed', 'getIsTransactionClosed', 'getId', 'getParentTransactionId', 'getShouldCloseParentTransaction']
+            [
+                'hasIsTransactionClosed', 'getIsTransactionClosed', 'getId',
+                'getParentTransactionId', 'getShouldCloseParentTransaction'
+            ]
         );
         $this->orderMock = $this->createMock(Order::class);
         $this->builder = $objectManager->getObject(
@@ -86,46 +89,46 @@ class BuilderTest extends TestCase
         bool $document,
         bool $isTransactionExists
     ): void {
-        $parentTransactionId = '12';
-        $shouldCloseParentTransaction = true;
-        $parentTransactionIsClosed = false;
-        if ($document) {
-            $document = $this->expectDocument($transactionId);
-        }
-        $parentTransaction = $this->expectTransaction($orderId, $paymentId);
-        $transaction = $this->expectTransaction($orderId, $paymentId);
-        $transaction->expects($this->atLeastOnce())->method('getTxnId')->willReturn($transactionId);
-        $transaction->expects($this->once())
+         $parentTransactionId = '12';
+         $shouldCloseParentTransaction = true;
+         $parentTransactionIsClosed = false;
+         if ($document) {
+             $document = $this->expectDocument($transactionId);
+         }
+         $parentTransaction = $this->expectTransaction($orderId, $paymentId);
+         $transaction = $this->expectTransaction($orderId, $paymentId);
+         $transaction->expects($this->atLeastOnce())->method('getTxnId')->willReturn($transactionId);
+         $transaction->expects($this->once())
             ->method('setPayment')
             ->withAnyParameters()
             ->willReturnSelf();
-        $transaction->expects($this->once())
+         $transaction->expects($this->once())
             ->method('setOrder')
             ->withAnyParameters()
             ->willReturnSelf();
 
-        if ($isTransactionExists) {
-            $this->repositoryMock->method('getByTransactionId')
-            ->willReturnCallback(function (
-                $arg1,
-                $arg2,
-                $arg3
-            ) use (
-                $transactionId,
-                $paymentId,
-                $orderId,
-                $parentTransactionId,
-                $parentTransaction,
-                $transaction
-            ) {
+         if ($isTransactionExists) {
+             $this->repositoryMock->method('getByTransactionId')
+             ->willReturnCallback(function (
+                 $arg1,
+                 $arg2,
+                 $arg3
+             ) use (
+                 $transactionId,
+                 $paymentId,
+                 $orderId,
+                 $parentTransactionId,
+                 $parentTransaction,
+                 $transaction
+             ) {
                 if ($arg1 == $transactionId && $arg2 == $paymentId && $arg3 ==  $orderId) {
                     return $transaction;
                 } elseif ($arg1 == $parentTransactionId && $arg2 == $paymentId && $arg3 ==  $orderId) {
                     return $parentTransaction;
                 }
-            });
-        } else {
-            $this->repositoryMock->method('getByTransactionId')
+             });
+         } else {
+             $this->repositoryMock->method('getByTransactionId')
                 ->willReturnCallback(function (
                     $arg1,
                     $arg2,
@@ -144,35 +147,35 @@ class BuilderTest extends TestCase
                     }
                 });
 
-            $this->repositoryMock->method('create')
+             $this->repositoryMock->method('create')
                 ->willReturn($transaction);
-            $transaction->expects($this->once())->method('setTxnId')
+             $transaction->expects($this->once())->method('setTxnId')
                 ->with($transactionId)
                 ->willReturn($transaction);
-        }
-        $this->expectSetPaymentObject($transaction, $type, $failSafe);
-        $this->expectsIsPaymentTransactionClosed($isPaymentTransactionClosed, $transaction);
-        $this->expectsIsPaymentTransactionClosed($isPaymentTransactionClosed, $transaction);
-        $this->expectSetPaymentObject($transaction, $type, $failSafe);
-        $this->expectsLinkWithParentTransaction(
-            $transaction,
-            $parentTransactionId,
-            $shouldCloseParentTransaction,
-            $parentTransaction,
-            $parentTransactionIsClosed
-        );
-        if ($additionalInfo) {
-            $transaction->expects($this->exactly(count($additionalInfo)))->method('setAdditionalInformation');
-        }
-        $builder = $this->builder->setPayment($this->paymentMock)
+         }
+         $this->expectSetPaymentObject($transaction, $type, $failSafe);
+         $this->expectsIsPaymentTransactionClosed($isPaymentTransactionClosed, $transaction);
+         $this->expectsIsPaymentTransactionClosed($isPaymentTransactionClosed, $transaction);
+         $this->expectSetPaymentObject($transaction, $type, $failSafe);
+         $this->expectsLinkWithParentTransaction(
+             $transaction,
+             $parentTransactionId,
+             $shouldCloseParentTransaction,
+             $parentTransaction,
+             $parentTransactionIsClosed
+         );
+         if ($additionalInfo) {
+             $transaction->expects($this->exactly(count($additionalInfo)))->method('setAdditionalInformation');
+         }
+         $builder = $this->builder->setPayment($this->paymentMock)
             ->setOrder($this->orderMock)
             ->setAdditionalInformation($additionalInfo)
             ->setFailSafe($failSafe)
             ->setTransactionId($transactionId);
-        if ($document) {
-            $builder->setSalesDocument($document);
-        }
-        $this->assertSame($transaction, $builder->build($type));
+         if ($document) {
+             $builder->setSalesDocument($document);
+         }
+         $this->assertSame($transaction, $builder->build($type));
     }
 
     /**
@@ -226,7 +229,11 @@ class BuilderTest extends TestCase
      */
     protected function expectTransaction(int $orderId, int $paymentId): MockObject
     {
-        $newTransaction = $this->createPartialMockWithReflection(Transaction::class, array_merge(['loadByTxnId', 'setPayment'], [
+        $newTransaction = $this->createPartialMockWithReflection(
+            Transaction::class,
+            array_merge(
+                ['loadByTxnId', 'setPayment'],
+                [
                     'getId',
                     'setOrderId',
                     'setPaymentId',
@@ -242,7 +249,9 @@ class BuilderTest extends TestCase
                     'getIsClosed',
                     'setOrder',
                     'setIsClosed'
-                ]));
+                ]
+            )
+        );
 
         $this->orderMock->expects($this->atLeastOnce())->method('getId')->willReturn($orderId);
         $this->paymentMock->expects($this->atLeastOnce())->method('getId')->willReturn($paymentId);

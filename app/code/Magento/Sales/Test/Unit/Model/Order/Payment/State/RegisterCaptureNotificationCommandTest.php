@@ -55,15 +55,15 @@ class RegisterCaptureNotificationCommandTest extends TestCase
         string $expectedStatus,
         string $expectedMessage
     ): void {
-        $order = $this->getOrder($currentState);
-        $actualReturn = (new RegisterCaptureNotificationCommand($this->getStatusResolver()))->execute(
-            $this->getPayment($isTransactionPending, $isFraudDetected),
-            $this->amount,
-            $order
-        );
+         $order = $this->getOrder($currentState);
+         $actualReturn = (new RegisterCaptureNotificationCommand($this->getStatusResolver()))->execute(
+             $this->getPayment($isTransactionPending, $isFraudDetected),
+             $this->amount,
+             $order
+         );
 
-        $this->assertOrderStateAndStatus($order, $expectedState, $expectedStatus);
-        self::assertEquals(__($expectedMessage, $this->amount), $actualReturn);
+         $this->assertOrderStateAndStatus($order, $expectedState, $expectedStatus);
+         self::assertEquals(__($expectedMessage, $this->amount), $actualReturn);
     }
 
     /**
@@ -152,7 +152,10 @@ class RegisterCaptureNotificationCommandTest extends TestCase
     private function getOrder($state)
     {
         /** @var Order|MockObject $order */
-        $order = $this->createPartialMockWithReflection(Order::class, array_merge(['getOrderStatusByState'], ['getBaseCurrency']));
+        $order = $this->createPartialMockWithReflection(
+            Order::class,
+            array_merge(['getOrderStatusByState'], ['getBaseCurrency'])
+        );
         $order->method('getBaseCurrency')
             ->willReturn($this->getCurrency());
         $order->setState($state);
@@ -167,7 +170,10 @@ class RegisterCaptureNotificationCommandTest extends TestCase
      */
     private function getPayment($isTransactionPending, $isFraudDetected)
     {
-        $payment = $this->createPartialMockWithReflection(Payment::class, ['getIsTransactionPending', 'getIsFraudDetected']);
+        $payment = $this->createPartialMockWithReflection(
+            Payment::class,
+            ['getIsTransactionPending', 'getIsFraudDetected']
+        );
         $payment->method('getIsTransactionPending')
             ->willReturn($isTransactionPending);
         $payment->method('getIsFraudDetected')

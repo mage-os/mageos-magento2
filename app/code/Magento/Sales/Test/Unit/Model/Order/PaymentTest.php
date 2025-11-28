@@ -234,7 +234,13 @@ class PaymentTest extends TestCase
 
         $this->order = $this->createPartialMockWithReflection(
             Order::class,
-            ['getConfig', 'setState', 'setStatus', 'getStoreId', 'getBaseGrandTotal', 'getBaseCurrency', 'getBaseCurrencyCode', 'getTotalDue', 'getBaseTotalDue', 'getInvoiceCollection', 'addRelatedObject', 'getState', 'getStatus', 'addStatusHistoryComment', 'registerCancellation', 'getCustomerNote', 'prepareInvoice', 'getPaymentsCollection', 'setIsCustomerNotified']
+            [
+                'getConfig', 'setState', 'setStatus', 'getStoreId', 'getBaseGrandTotal', 'getBaseCurrency',
+                'getBaseCurrencyCode', 'getTotalDue', 'getBaseTotalDue', 'getInvoiceCollection',
+                'addRelatedObject', 'getState', 'getStatus', 'addStatusHistoryComment',
+                'registerCancellation', 'getCustomerNote', 'prepareInvoice', 'getPaymentsCollection',
+                'setIsCustomerNotified'
+            ]
         );
 
         $this->transactionCollectionFactory = $this->getMockBuilder(CollectionFactory::class)
@@ -252,7 +258,11 @@ class PaymentTest extends TestCase
             ->getMock();
         $this->creditMemoMock = $this->createPartialMockWithReflection(
             Creditmemo::class,
-            ['getItemsCollection', 'getItems', 'addComment', 'save', 'getGrandTotal', 'getBaseGrandTotal', 'getInvoice', 'getOrder', 'setPaymentRefundDisallowed', 'setAutomaticallyCreated', 'register', 'getDoTransaction', 'getPaymentRefundDisallowed']
+            [
+                'getItemsCollection', 'getItems', 'addComment', 'save', 'getGrandTotal',
+                'getBaseGrandTotal', 'getInvoice', 'getOrder', 'setPaymentRefundDisallowed',
+                'setAutomaticallyCreated', 'register', 'getDoTransaction', 'getPaymentRefundDisallowed'
+            ]
         );
 
         $this->creditmemoManagerMock = $this->getMockBuilder(CreditmemoManagementInterface::class)
@@ -439,7 +449,7 @@ class PaymentTest extends TestCase
         $this->order->expects($this->any())
             ->method('addStatusHistoryComment')
             ->willReturnCallback(
-                function ($arg1, $arg2) use ($customerNote,$statusHistory,$sum) {
+                function ($arg1, $arg2) use ($customerNote, $statusHistory, $sum) {
                     if ($arg1 == $customerNote || $arg2 == __('Authorized amount of %1', $sum)) {
                         return $statusHistory;
                     }
@@ -723,7 +733,7 @@ class PaymentTest extends TestCase
      * @return void     */
 
      #[DataProvider('acceptPaymentFalseProvider')]
-    public function testAcceptApprovePaymentFalseOrderState(bool $isFraudDetected, $status): void
+    public function testAcceptApprovePaymentFalseOrderState(bool $isFraudDetected): void
     {
         $message = sprintf('There is no need to approve this payment. Transaction ID: "%s"', $this->transactionId);
         $acceptPayment = false;
@@ -1494,8 +1504,12 @@ class PaymentTest extends TestCase
             ->method('createByInvoice')
             ->with($this->invoice, ['adjustment_negative' => $invoiceBaseGrandTotal - $amount])
             ->willReturn($this->creditMemoMock);
-        $this->creditMemoMock->expects($this->once())->method('setPaymentRefundDisallowed')->willReturnSelf();
-        $this->creditMemoMock->expects($this->once())->method('setAutomaticallyCreated')->willReturnSelf();
+        $this->creditMemoMock->expects($this->once())
+            ->method('setPaymentRefundDisallowed')
+            ->willReturnSelf();
+        $this->creditMemoMock->expects($this->once())
+            ->method('setAutomaticallyCreated')
+            ->willReturnSelf();
         $this->creditMemoMock->expects($this->once())->method('addComment')->willReturnSelf();
 
         $this->creditmemoManagerMock->expects($this->once())
@@ -1505,7 +1519,13 @@ class PaymentTest extends TestCase
 
         $this->order->expects($this->once())->method('getBaseCurrency')->willReturn($this->currencyMock);
 
-        $parentTransaction = $this->createPartialMockWithReflection(Transaction::class, array_merge(['loadByTxnId'], ['setOrderId', 'setPaymentId', 'getId', 'getTxnId', 'setTxnId', 'getTxnType']));
+        $parentTransaction = $this->createPartialMockWithReflection(
+            Transaction::class,
+            array_merge(
+                ['loadByTxnId'],
+                ['setOrderId', 'setPaymentId', 'getId', 'getTxnId', 'setTxnId', 'getTxnType']
+            )
+        );
         $newTransactionId = $this->transactionId . '-' . Transaction::TYPE_REFUND;
         $this->transactionRepositoryMock->expects($this->once())
             ->method('getByTransactionId')
@@ -1549,15 +1569,22 @@ class PaymentTest extends TestCase
         $grandTotalCreditMemo = 50;
         $invoiceBaseGrandTotal = 50;
         $invoiceBaseTotalRefunded = 0;
-        $this->invoice->expects($this->any())->method('getBaseGrandTotal')->willReturn($invoiceBaseGrandTotal);
-        $this->invoice->expects($this->any())->method('getBaseTotalRefunded')->willReturn(
-            $invoiceBaseTotalRefunded
-        );
-        $this->creditMemoMock->expects($this->any())->method('getGrandTotal')->willReturn($grandTotalCreditMemo);
+        $this->invoice->expects($this->any())
+            ->method('getBaseGrandTotal')
+            ->willReturn($invoiceBaseGrandTotal);
+        $this->invoice->expects($this->any())
+            ->method('getBaseTotalRefunded')
+            ->willReturn($invoiceBaseTotalRefunded);
+        $this->creditMemoMock->expects($this->any())
+            ->method('getGrandTotal')
+            ->willReturn($grandTotalCreditMemo);
         $this->payment->setParentTransactionId($this->transactionId);
         $this->mockInvoice($this->transactionId, 1);
         $this->order->expects($this->once())->method('getBaseCurrency')->willReturn($this->currencyMock);
-        $parentTransaction = $this->createPartialMockWithReflection(Transaction::class, array_merge(['loadByTxnId'], ['setOrderId', 'setPaymentId', 'getId', 'getTxnId', 'getTxnType']));
+        $parentTransaction = $this->createPartialMockWithReflection(
+            Transaction::class,
+            array_merge(['loadByTxnId'], ['setOrderId', 'setPaymentId', 'getId', 'getTxnId', 'getTxnType'])
+        );
         //generate new transaction and check if not exists
         $this->transactionRepositoryMock->expects($this->once())
             ->method('getByTransactionId')
@@ -1826,9 +1853,9 @@ class PaymentTest extends TestCase
         array $additionalInformation,
         bool $failSafe,
         $transactionType,
-        $transactionId = false
+        $transactionId = null
     ): void {
-        if (!$transactionId) {
+        if ($transactionId === null) {
             $transactionId = $this->transactionId;
         }
         $this->transactionBuilderMock->expects($this->once())

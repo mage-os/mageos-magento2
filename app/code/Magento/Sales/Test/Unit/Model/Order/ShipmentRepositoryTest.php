@@ -153,7 +153,7 @@ class ShipmentRepositoryTest extends TestCase
             ->method('process')
             ->with($searchCriteria, $collection);
         $this->searchResultFactory->expects($this->once())
-            ->method('create')
+            ->method(constraint: 'create')
             ->willReturn($collection);
 
         $this->assertEquals($collection, $this->subject->getList($searchCriteria));
@@ -166,15 +166,7 @@ class ShipmentRepositoryTest extends TestCase
             ->method('getEntityId')
             ->willReturn(1);
 
-        $mapper = $this->createMock(
-            AbstractDb::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['delete']
-        );
+        $mapper = $this->createMock(AbstractDb::class);
         $mapper->expects($this->once())
             ->method('delete')
             ->with($shipment);
@@ -194,15 +186,7 @@ class ShipmentRepositoryTest extends TestCase
         $shipment->expects($this->never())
             ->method('getEntityId');
 
-        $mapper = $this->createMock(
-            AbstractDb::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['delete']
-        );
+        $mapper = $this->createMock(AbstractDb::class);
         $mapper->expects($this->once())
             ->method('delete')
             ->willThrowException(new \Exception('error'));

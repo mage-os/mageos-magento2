@@ -678,7 +678,11 @@ class StateTest extends TestCase
     {
         return $this->createPartialMockWithReflection(
             Order::class,
-            ['getState', 'setState', 'setStatus', 'getConfig', 'isCanceled', 'canUnhold', 'canInvoice', 'getInvoiceCollection', 'getTotalDue', 'canShip', 'canCreditmemo', 'getIsNotVirtual', 'getAllItems', 'getIsVirtual', 'getStatus', 'getIsInProcess']
+            [
+                'getState', 'setState', 'setStatus', 'getConfig', 'isCanceled', 'canUnhold',
+                'canInvoice', 'getInvoiceCollection', 'getTotalDue', 'canShip', 'canCreditmemo',
+                'getIsNotVirtual', 'getAllItems', 'getIsVirtual', 'getStatus', 'getIsInProcess'
+            ]
         );
     }
 

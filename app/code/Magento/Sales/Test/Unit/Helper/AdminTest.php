@@ -138,35 +138,35 @@ class AdminTest extends TestCase
         $strong = false,
         $separator = '<br/>'
     ) {
-        $this->orderMock->expects($this->any())
+         $this->orderMock->expects($this->any())
             ->method('isCurrencyDifferent')
             ->willReturn($isCurrencyDifferent);
-        $storeMock = $this->getMockBuilder(Store::class)
+         $storeMock = $this->getMockBuilder(Store::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->storeManagerMock->expects($this->any())
+         $this->storeManagerMock->expects($this->any())
             ->method('getStore')
             ->willReturn($storeMock);
-        $this->priceCurrency->expects($this->any())
+         $this->priceCurrency->expects($this->any())
             ->method('format')
             ->willReturn('storeFormattedPrice');
-        $dataObject = $this->orderMock;
-        if (!$dataObjectIsOrder) {
-            $returnRes = false;
-            if ($magentoDataObjectHasOrder) {
-                $returnRes = $this->orderMock;
-            }
-            $this->magentoObjectMock->expects($this->once())
+         $dataObject = $this->orderMock;
+         if (!$dataObjectIsOrder) {
+             $returnRes = false;
+             if ($magentoDataObjectHasOrder) {
+                 $returnRes = $this->orderMock;
+             }
+             $this->magentoObjectMock->expects($this->once())
                 ->method('getOrder')
                 ->willReturn($returnRes);
-            $dataObject = $this->magentoObjectMock;
-        }
-        $basePrice = 10.00;
-        $price = 15.00;
-        $this->assertEquals(
-            $expected,
-            $this->adminHelper->displayPrices($dataObject, $basePrice, $price, $strong, $separator)
-        );
+             $dataObject = $this->magentoObjectMock;
+         }
+         $basePrice = 10.00;
+         $price = 15.00;
+         $this->assertEquals(
+             $expected,
+             $this->adminHelper->displayPrices($dataObject, $basePrice, $price, $strong, $separator)
+         );
     }
 
     /**
@@ -186,36 +186,36 @@ class AdminTest extends TestCase
         $strong = false,
         $separator = '<br/>'
     ) {
-        $this->orderMock->expects($this->any())
+         $this->orderMock->expects($this->any())
             ->method('isCurrencyDifferent')
             ->willReturn($isCurrencyDifferent);
-        $storeMock = $this->getMockBuilder(Store::class)
+         $storeMock = $this->getMockBuilder(Store::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->storeManagerMock->expects($this->any())
+         $this->storeManagerMock->expects($this->any())
             ->method('getStore')
             ->willReturn($storeMock);
-        $this->priceCurrency->expects($this->any())
+         $this->priceCurrency->expects($this->any())
             ->method('format')
             ->willReturn('storeFormattedPrice');
-        $dataObject = $this->orderMock;
-        if (!$dataObjectIsOrder) {
-            $returnRes = false;
-            if ($magentoDataObjectHasOrder) {
-                $returnRes = $this->orderMock;
-            }
-            $this->magentoObjectMock->expects($this->once())
+         $dataObject = $this->orderMock;
+         if (!$dataObjectIsOrder) {
+             $returnRes = false;
+             if ($magentoDataObjectHasOrder) {
+                 $returnRes = $this->orderMock;
+             }
+             $this->magentoObjectMock->expects($this->once())
                 ->method('getOrder')
                 ->willReturn($returnRes);
-            $this->magentoObjectMock->expects($this->any())
+             $this->magentoObjectMock->expects($this->any())
                 ->method('getData')
                 ->willReturn('data');
-            $dataObject = $this->magentoObjectMock;
-        }
-        $this->assertEquals(
-            $expected,
-            $this->adminHelper->displayPriceAttribute($dataObject, 'code', $strong, $separator)
-        );
+             $dataObject = $this->magentoObjectMock;
+         }
+         $this->assertEquals(
+             $expected,
+             $this->adminHelper->displayPriceAttribute($dataObject, 'code', $strong, $separator)
+         );
     }
 
     /**

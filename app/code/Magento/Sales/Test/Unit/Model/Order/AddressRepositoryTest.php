@@ -221,15 +221,7 @@ class AddressRepositoryTest extends TestCase
             ->method('getEntityId')
             ->willReturn(1);
 
-        $mapper = $this->createMock(
-            AbstractDb::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['delete']
-        );
+        $mapper = $this->createMock(AbstractDb::class);
         $mapper->expects($this->once())
             ->method('delete')
             ->with($this->orderAddress);
@@ -253,15 +245,7 @@ class AddressRepositoryTest extends TestCase
         $this->orderAddress->expects($this->never())
             ->method('getEntityId');
 
-        $mapper = $this->createMock(
-            AbstractDb::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['delete']
-        );
+        $mapper = $this->createMock(AbstractDb::class);
         $mapper->expects($this->once())
             ->method('delete')
             ->willThrowException(new \Exception('error'));
@@ -368,53 +352,53 @@ class AddressRepositoryTest extends TestCase
         array $attributeValue,
         string $expected
     ): void {
-        $orderAddress = $this->getMockBuilder(OrderAddress::class)
+         $orderAddress = $this->getMockBuilder(OrderAddress::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getEntityId', 'hasData', 'getData', 'setData'])
             ->getMock();
 
-        $orderAddress->expects($this->any())
+         $orderAddress->expects($this->any())
             ->method('getEntityId')
             ->willReturn(1);
 
-        $mapper = $this->createMock(
-            AbstractDb::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['save']
-        );
-        $mapper->method('save')
+         $mapper = $this->createMock(
+             AbstractDb::class,
+             [],
+             '',
+             false,
+             true,
+             true,
+             ['save']
+         );
+         $mapper->method('save')
             ->with($orderAddress);
-        $this->metadata->method('getMapper')
+         $this->metadata->method('getMapper')
             ->willReturn($mapper);
 
-        $attributeModel = $this->getMockBuilder(Attribute::class)
+         $attributeModel = $this->getMockBuilder(Attribute::class)
             ->onlyMethods(['getFrontendInput', 'getAttributeCode'])
             ->disableOriginalConstructor()
             ->getMock();
-        $attributeModel->method('getFrontendInput')->willReturn($attributeType);
-        $attributeModel->method('getAttributeCode')->willReturn($attributeCode);
-        $this->attributesList = [$attributeModel];
+         $attributeModel->method('getFrontendInput')->willReturn($attributeType);
+         $attributeModel->method('getAttributeCode')->willReturn($attributeCode);
+         $this->attributesList = [$attributeModel];
 
-        $this->subject = $this->objectManager->getObject(
-            AddressRepository::class,
-            [
+         $this->subject = $this->objectManager->getObject(
+             AddressRepository::class,
+             [
                 'metadata' => $this->metadata,
                 'searchResultFactory' => $this->searchResultFactory,
                 'collectionProcessor' => $this->collectionProcessorMock,
                 'attributeMetadataDataProvider' => $this->attributeMetadataDataProvider,
                 'attributesList' => $this->attributesList,
-            ]
-        );
+             ]
+         );
 
-        $orderAddress->method('hasData')->with($attributeCode)->willReturn(true);
-        $orderAddress->method('getData')->with($attributeCode)->willReturn($attributeValue);
-        $orderAddress->expects($this->once())->method('setData')->with($attributeCode, $expected);
+         $orderAddress->method('hasData')->with($attributeCode)->willReturn(true);
+         $orderAddress->method('getData')->with($attributeCode)->willReturn($attributeValue);
+         $orderAddress->expects($this->once())->method('setData')->with($attributeCode, $expected);
 
-        $this->assertEquals($orderAddress, $this->subject->save($orderAddress));
+         $this->assertEquals($orderAddress, $this->subject->save($orderAddress));
     }
 
     /**

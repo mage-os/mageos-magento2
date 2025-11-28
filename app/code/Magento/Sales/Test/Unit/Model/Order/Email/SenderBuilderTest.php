@@ -60,7 +60,10 @@ class SenderBuilderTest extends TestCase
 
         $this->identityContainerMock = $this->createPartialMockWithReflection(
             ShipmentIdentity::class,
-            ['getTemplateOptions', 'getEmailIdentity', 'getCustomerEmail', 'getCustomerName', 'getEmailCopyTo', 'getCopyMethod', 'getStore']
+            [
+                'getTemplateOptions', 'getEmailIdentity', 'getCustomerEmail', 'getCustomerName',
+                'getEmailCopyTo', 'getCopyMethod', 'getStore'
+            ]
         );
 
         $this->transportBuilder = $this->createPartialMock(

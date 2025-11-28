@@ -47,14 +47,7 @@ class GridSyncRemoveObserverTest extends TestCase
             Observer::class,
             ['getObject', 'getDataObject']
         );
-        $this->salesModelMock = $this->getMockBuilder(AbstractModel::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(
-                [
-                    'getId'
-                ]
-            )
-            ->getMock();
+        $this->salesModelMock = $this->createPartialMock(AbstractModel::class, ['getId']);
         $this->unit = new GridSyncRemoveObserver(
             $this->gridAggregatorMock
         );

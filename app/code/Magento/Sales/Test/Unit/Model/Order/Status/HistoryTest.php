@@ -45,12 +45,9 @@ class HistoryTest extends TestCase
         $this->objectManager = new ObjectManager($this);
 
         $this->order = $this->createMock(Order::class);
-        $this->storeManager = $this->createMock(
-            StoreManagerInterface::class,
-            [],
-            '',
-            false
-        );
+        $this->storeManager = $this->getMockBuilder(StoreManagerInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->model = $this->objectManager->getObject(
             History::class,

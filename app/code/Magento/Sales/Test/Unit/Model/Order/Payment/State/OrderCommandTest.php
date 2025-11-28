@@ -53,14 +53,14 @@ class OrderCommandTest extends TestCase
         $expectedStatus,
         $expectedMessage
     ) {
-        $actualReturn = (new OrderCommand($this->getStatusResolver()))->execute(
-            $this->getPayment($isTransactionPending, $isFraudDetected),
-            $this->amount,
-            $this->getOrder()
-        );
+         $actualReturn = (new OrderCommand($this->getStatusResolver()))->execute(
+             $this->getPayment($isTransactionPending, $isFraudDetected),
+             $this->amount,
+             $this->getOrder()
+         );
 
-        $this->assertOrderStateAndStatus($this->getOrder(), $expectedState, $expectedStatus);
-        self::assertEquals(__($expectedMessage, $this->amount), $actualReturn);
+         $this->assertOrderStateAndStatus($this->getOrder(), $expectedState, $expectedStatus);
+         self::assertEquals(__($expectedMessage, $this->amount), $actualReturn);
     }
 
     /**
@@ -135,7 +135,10 @@ class OrderCommandTest extends TestCase
      */
     private function getPayment($isTransactionPending, $isFraudDetected)
     {
-        $payment = $this->createPartialMockWithReflection(Payment::class, ['getIsTransactionPending', 'getIsFraudDetected']);
+        $payment = $this->createPartialMockWithReflection(
+            Payment::class,
+            ['getIsTransactionPending', 'getIsFraudDetected']
+        );
         $payment->method('getIsTransactionPending')
             ->willReturn($isTransactionPending);
         $payment->method('getIsFraudDetected')

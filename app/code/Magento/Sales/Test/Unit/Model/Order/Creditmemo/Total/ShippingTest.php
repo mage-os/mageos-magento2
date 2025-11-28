@@ -46,7 +46,11 @@ class ShippingTest extends TestCase
 
         $this->creditmemoMock = $this->createPartialMockWithReflection(
             Creditmemo::class,
-            ['hasBaseShippingAmount', 'getOrder', 'getBaseShippingAmount', 'setShippingAmount', 'setBaseShippingAmount', 'setShippingInclTax', 'setBaseShippingInclTax', 'setGrandTotal', 'setBaseGrandTotal', 'getGrandTotal', 'getBaseGrandTotal']
+            [
+                'hasBaseShippingAmount', 'getOrder', 'getBaseShippingAmount', 'setShippingAmount',
+                'setBaseShippingAmount', 'setShippingInclTax', 'setBaseShippingInclTax',
+                'setGrandTotal', 'setBaseGrandTotal', 'getGrandTotal', 'getBaseGrandTotal'
+            ]
         );
 
         $priceCurrencyMock = $this->createMock(PriceCurrencyInterface::class);

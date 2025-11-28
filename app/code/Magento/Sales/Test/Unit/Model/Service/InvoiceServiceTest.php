@@ -77,18 +77,12 @@ class InvoiceServiceTest extends TestCase
     {
         $objectManager = new ObjectManagerHelper($this);
 
-        $this->repositoryMock = $this->createMock(
-            InvoiceRepositoryInterface::class,
-            ['get'],
-            '',
-            false
-        );
-        $this->commentRepositoryMock = $this->createMock(
-            InvoiceCommentRepositoryInterface::class,
-            ['getList'],
-            '',
-            false
-        );
+        $this->repositoryMock = $this->getMockBuilder(InvoiceRepositoryInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->commentRepositoryMock = $this->getMockBuilder(InvoiceCommentRepositoryInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->searchCriteriaBuilderMock = $this->createPartialMock(
             SearchCriteriaBuilder::class,
             ['create', 'addFilters']
@@ -180,12 +174,7 @@ class InvoiceServiceTest extends TestCase
         $id = 123;
         $returnValue = 'return-value';
 
-        $modelMock = $this->createMock(
-            AbstractModel::class,
-            [],
-            '',
-            false
-        );
+        $modelMock = $this->createMock(AbstractModel::class);
 
         $this->repositoryMock->expects($this->once())
             ->method('get')

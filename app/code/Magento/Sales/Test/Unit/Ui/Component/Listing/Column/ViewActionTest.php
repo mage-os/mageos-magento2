@@ -58,33 +58,33 @@ class ViewActionTest extends TestCase
         $expectedUrlPath,
         $expectedUrlParam
     ) {
-        $contextMock = $this->getMockBuilder(ContextInterface::class)
+         $contextMock = $this->getMockBuilder(ContextInterface::class)
             ->getMock();
-        $processor = $this->getMockBuilder(Processor::class)
+         $processor = $this->getMockBuilder(Processor::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $contextMock->expects($this->never())->method('getProcessor')->willReturn($processor);
-        $this->model = $this->objectManager->getObject(
-            ViewAction::class,
-            [
+         $contextMock->expects($this->never())->method('getProcessor')->willReturn($processor);
+         $this->model = $this->objectManager->getObject(
+             ViewAction::class,
+             [
                 'urlBuilder' => $this->urlBuilder,
                 'data' => $data,
                 'context' => $contextMock,
-            ]
-        );
+             ]
+         );
 
-        $this->urlBuilder->expects($this->once())
+         $this->urlBuilder->expects($this->once())
             ->method('getUrl')
             ->with($expectedUrlPath, $expectedUrlParam)
             ->willReturn('url');
 
-        $dataSource = [
+         $dataSource = [
             'data' => [
                 'items' => $dataSourceItems
             ]
-        ];
-        $dataSource = $this->model->prepareDataSource($dataSource);
-        $this->assertEquals($expectedDataSourceItems, $dataSource['data']['items']);
+         ];
+         $dataSource = $this->model->prepareDataSource($dataSource);
+         $this->assertEquals($expectedDataSourceItems, $dataSource['data']['items']);
     }
 
     /**

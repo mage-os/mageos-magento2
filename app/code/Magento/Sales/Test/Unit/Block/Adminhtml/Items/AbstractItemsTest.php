@@ -147,7 +147,13 @@ class AbstractItemsTest extends TestCase
     {
         $productId = $itemConfig['product_id'] ?? null;
         $manageStock = $itemConfig['manage_stock'] ?? false;
-        $item = $this->createPartialMockWithReflection(\Magento\Sales\Model\Order\Creditmemo\Item::class, array_merge(['hasCanReturnToStock', 'setCanReturnToStock', 'getCanReturnToStock'], ['getOrderItem']));
+        $item = $this->createPartialMockWithReflection(
+            \Magento\Sales\Model\Order\Creditmemo\Item::class,
+            array_merge(
+                ['hasCanReturnToStock', 'setCanReturnToStock', 'getCanReturnToStock'],
+                ['getOrderItem']
+            )
+        );
         $dependencies = $this->prepareServiceMockDependency(
             $item,
             $canReturnToStock,

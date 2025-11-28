@@ -120,24 +120,12 @@ class NewActionTest extends TestCase
             ['getIncrementId']
         );
         $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
-        $this->requestMock = $this->createMock(
-            RequestInterface::class,
-            [],
-            '',
-            false,
-            false,
-            true,
-            []
-        );
-        $this->responseMock = $this->createMock(
-            ResponseInterface::class,
-            [],
-            '',
-            false,
-            false,
-            true,
-            []
-        );
+        $this->requestMock = $this->getMockBuilder(RequestInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->responseMock = $this->getMockBuilder(ResponseInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->titleMock = $this->createMock(Title::class);
         $this->pageConfigMock = $this->getMockBuilder(Config::class)
             ->disableOriginalConstructor()
@@ -146,15 +134,9 @@ class NewActionTest extends TestCase
             Session::class,
             ['getCommentText']
         );
-        $this->layoutMock = $this->createMock(
-            LayoutInterface::class,
-            [],
-            '',
-            false,
-            false,
-            true,
-            []
-        );
+        $this->layoutMock = $this->getMockBuilder(LayoutInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->resultPageFactoryMock = $this->getMockBuilder(PageFactory::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['create'])

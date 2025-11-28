@@ -66,7 +66,10 @@ class AbstractTest extends TestCase
         $pdfConfig->expects($this->once())->method('getTotals')->willReturn($configTotals);
 
         // Setup total factory
-        $total1 = $this->createPartialMockWithReflection(DefaultTotal::class, array_merge(['setSource', 'setOrder'], ['canDisplay', 'getTotalsForDisplay']));
+        $total1 = $this->createPartialMockWithReflection(
+            DefaultTotal::class,
+            array_merge(['setSource', 'setOrder'], ['canDisplay', 'getTotalsForDisplay'])
+        );
         $total1->expects($this->once())->method('setOrder')->with($order)->willReturnSelf();
         $total1->expects($this->once())->method('setSource')->with($source)->willReturnSelf();
         $total1->expects($this->once())->method('canDisplay')->willReturn(true);
@@ -74,7 +77,10 @@ class AbstractTest extends TestCase
             ->method('getTotalsForDisplay')
             ->willReturn([['label' => 'label1', 'font_size' => 1, 'amount' => '$1']]);
 
-        $total2 = $this->createPartialMockWithReflection(DefaultTotal::class, array_merge(['setSource', 'setOrder'], ['canDisplay', 'getTotalsForDisplay']));
+        $total2 = $this->createPartialMockWithReflection(
+            DefaultTotal::class,
+            array_merge(['setSource', 'setOrder'], ['canDisplay', 'getTotalsForDisplay'])
+        );
         $total2->expects($this->once())->method('setOrder')->with($order)->willReturnSelf();
         $total2->expects($this->once())->method('setSource')->with($source)->willReturnSelf();
         $total2->expects($this->once())->method('canDisplay')->willReturn(true);

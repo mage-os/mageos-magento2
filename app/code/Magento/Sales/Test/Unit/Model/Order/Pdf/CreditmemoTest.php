@@ -138,7 +138,10 @@ class CreditmemoTest extends TestCase
             ->method('getTotals')
             ->willReturn([]);
 
-        $block = $this->createPartialMockWithReflection(\Magento\Framework\View\Element\Template::class, ['setIsSecureMode', 'toPdf']);
+        $block = $this->createPartialMockWithReflection(
+            \Magento\Framework\View\Element\Template::class,
+            ['setIsSecureMode', 'toPdf']
+        );
         $block->expects($this->any())
             ->method('setIsSecureMode')
             ->willReturn($block);

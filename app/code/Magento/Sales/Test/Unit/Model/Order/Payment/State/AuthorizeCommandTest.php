@@ -53,14 +53,14 @@ class AuthorizeCommandTest extends TestCase
         $expectedStatus,
         $expectedMessage
     ) {
-        $actualReturn = (new AuthorizeCommand($this->getStatusResolver()))->execute(
-            $this->getPayment($isTransactionPending, $isFraudDetected),
-            $this->amount,
-            $this->getOrder()
-        );
+         $actualReturn = (new AuthorizeCommand($this->getStatusResolver()))->execute(
+             $this->getPayment($isTransactionPending, $isFraudDetected),
+             $this->amount,
+             $this->getOrder()
+         );
 
-        $this->assertOrderStateAndStatus($this->getOrder(), $expectedState, $expectedStatus);
-        self::assertEquals(__($expectedMessage, $this->amount), $actualReturn);
+         $this->assertOrderStateAndStatus($this->getOrder(), $expectedState, $expectedStatus);
+         self::assertEquals(__($expectedMessage, $this->amount), $actualReturn);
     }
 
     /**

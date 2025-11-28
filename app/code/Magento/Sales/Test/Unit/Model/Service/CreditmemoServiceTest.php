@@ -83,18 +83,14 @@ class CreditmemoServiceTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->creditmemoRepositoryMock = $this->createMock(
-            CreditmemoRepositoryInterface::class,
-            ['get'],
-            '',
-            false
-        );
-        $this->creditmemoCommentRepositoryMock = $this->createMock(
-            CreditmemoCommentRepositoryInterface::class,
-            [],
-            '',
-            false
-        );
+        $this->creditmemoRepositoryMock = $this->getMockBuilder(CreditmemoRepositoryInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->creditmemoCommentRepositoryMock = $this->getMockBuilder(
+            CreditmemoCommentRepositoryInterface::class
+        )
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->searchCriteriaBuilderMock = $this->createPartialMock(
             SearchCriteriaBuilder::class,
             ['create', 'addFilters']
@@ -175,12 +171,7 @@ class CreditmemoServiceTest extends TestCase
         $id = 123;
         $returnValue = 'return-value';
 
-        $modelMock = $this->createMock(
-            AbstractModel::class,
-            [],
-            '',
-            false
-        );
+        $modelMock = $this->createMock(AbstractModel::class);
 
         $this->creditmemoRepositoryMock->expects($this->once())
             ->method('get')

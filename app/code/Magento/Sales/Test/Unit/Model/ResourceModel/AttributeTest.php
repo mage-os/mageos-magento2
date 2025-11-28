@@ -54,10 +54,10 @@ class AttributeTest extends TestCase
             ->onlyMethods(['dispatch'])
             ->disableOriginalConstructor()
             ->getMock();
-        $this->modelMock = $this->getMockBuilder(AbstractModel::class)
-            ->onlyMethods(['getId', 'getEventPrefix', 'getEventObject', 'getData'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->modelMock = $this->createPartialMock(
+            AbstractModel::class,
+            ['getId', 'getEventPrefix', 'getEventObject', 'getData']
+        );
         $this->connectionMock = $this->getMockBuilder(Mysql::class)
             ->onlyMethods(['rollback', 'describeTable', 'insert', 'lastInsertId', 'beginTransaction', 'commit'])
             ->disableOriginalConstructor()

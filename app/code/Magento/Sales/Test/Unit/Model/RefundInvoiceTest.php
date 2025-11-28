@@ -484,7 +484,8 @@ class RefundInvoiceTest extends TestCase
         );
     }
 
-    protected function getMockForCreditMemoItem() {
+    protected function getMockForCreditMemoItem()
+    {
         $creditmemoItemCreationMock = $this->getMockBuilder(CreditmemoItemCreationInterface::class)
             ->disableOriginalConstructor()
             ->getMock();

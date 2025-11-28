@@ -82,39 +82,39 @@ class PriceTest extends TestCase
         string $currencyCode,
         ?int $expectedStoreId = null
     ): void {
-        $itemName = 'itemName';
-        $oldItemValue = 'oldItemValue';
-        $newItemValue = 'newItemValue';
+         $itemName = 'itemName';
+         $oldItemValue = 'oldItemValue';
+         $newItemValue = 'newItemValue';
 
-        $store = $this->getMockBuilder(Store::class)
+         $store = $this->getMockBuilder(Store::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $currencyMock = $this->getMockBuilder(Currency::class)
+         $currencyMock = $this->getMockBuilder(Currency::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $currencyMock->expects($hasCurrency ? $this->never() : $this->once())
+         $currencyMock->expects($hasCurrency ? $this->never() : $this->once())
             ->method('getCurrencyCode')
             ->willReturn($currencyCode);
-        $this->storeManagerMock->expects($hasCurrency ? $this->never() : $this->once())
+         $this->storeManagerMock->expects($hasCurrency ? $this->never() : $this->once())
             ->method('getStore')
             ->with($expectedStoreId)
             ->willReturn($store);
-        $store->expects($hasCurrency ? $this->never() : $this->once())
+         $store->expects($hasCurrency ? $this->never() : $this->once())
             ->method('getBaseCurrency')
             ->willReturn($currencyMock);
 
-        $this->currencyMock->expects($this->once())
+         $this->currencyMock->expects($this->once())
             ->method('load')
             ->willReturnSelf();
 
-        $this->currencyMock->expects($this->once())
+         $this->currencyMock->expects($this->once())
             ->method('format')
             ->with($oldItemValue, [], false)
             ->willReturn($newItemValue);
 
-        $this->model->setData('name', $itemName);
-        $dataSource = $this->model->prepareDataSource($dataSource);
-        $this->assertEquals($newItemValue, $dataSource['data']['items'][0][$itemName]);
+         $this->model->setData('name', $itemName);
+         $dataSource = $this->model->prepareDataSource($dataSource);
+         $this->assertEquals($newItemValue, $dataSource['data']['items'][0][$itemName]);
     }
 
     /**

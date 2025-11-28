@@ -82,7 +82,10 @@ class CreditmemoNotifierTest extends TestCase
      */
     public function testNotifySuccess(): void
     {
-        $historyCollection = $this->createPartialMockWithReflection(Collection::class, array_merge(['setIsCustomerNotified'], ['getUnnotifiedForInstance', 'save']));
+        $historyCollection = $this->createPartialMockWithReflection(
+            Collection::class,
+            array_merge(['setIsCustomerNotified'], ['getUnnotifiedForInstance', 'save'])
+        );
         $historyItem = $this->createPartialMock(
             History::class,
             ['setIsCustomerNotified', 'save']

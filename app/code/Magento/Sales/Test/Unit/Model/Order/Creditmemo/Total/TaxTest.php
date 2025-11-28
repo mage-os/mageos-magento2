@@ -83,13 +83,16 @@ class TaxTest extends TestCase
     /**
      * @param array $orderData
      * @param array $creditmemoData
-     * @param array $expectedResults     */
-
-     #[DataProvider('collectDataProvider')]
+     * @param array $expectedResults
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
+    #[DataProvider('collectDataProvider')]
     public function testCollect($orderData, $creditmemoData, $expectedResults)
     {
-        if (
-            !empty($creditmemoData['data_fields'])
+        if (!empty($creditmemoData['data_fields'])
             && !empty($creditmemoData['data_fields']['invoice'])
             && is_callable($creditmemoData['data_fields']['invoice'])
         ) {
@@ -925,12 +928,16 @@ class TaxTest extends TestCase
      * @param array $data
      * @return MockObject|Invoice
      */
-    private function createInvoiceMock(array $data): MockObject
+    public function createInvoiceMock(array $data): MockObject
     {
         /** @var MockObject|Invoice $invoice */
         $invoice = $this->createPartialMockWithReflection(
             Invoice::class,
-            ['getBaseShippingDiscountTaxCompensationAmount', 'getTaxAmount', 'getBaseTaxAmount', 'getShippingTaxAmount', 'getBaseShippingTaxAmount', 'getShippingDiscountTaxCompensationAmount']
+            [
+                'getBaseShippingDiscountTaxCompensationAmount', 'getTaxAmount', 'getBaseTaxAmount',
+                'getShippingTaxAmount', 'getBaseShippingTaxAmount',
+                'getShippingDiscountTaxCompensationAmount'
+            ]
         );
 
         $invoice->method('getTaxAmount')->willReturn($data['tax_amount'] ?? 0);

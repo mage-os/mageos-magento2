@@ -35,8 +35,6 @@ class ValidatorTest extends TestCase
     private $validator;
 
     /**
-     * Object Manager
-     *
      * @var ObjectManager
      */
     private $objectManager;

@@ -73,12 +73,9 @@ class InfoTest extends TestCase
         $this->coreRegistryMock = $this->createMock(Registry::class);
         $methods = ['getCustomerGroupId'];
         $this->orderMock = $this->createPartialMock(Order::class, $methods);
-        $this->groupMock = $this->createMock(
-            GroupInterface::class,
-            [],
-            '',
-            false
-        );
+        $this->groupMock = $this->getMockBuilder(GroupInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $arguments = [
             'context' => $this->contextMock,
             'groupRepository' => $this->groupRepositoryMock,

@@ -37,24 +37,12 @@ class UrlGeneratorTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->urlMock = $this->createMock(
-            UrlInterface::class,
-            [],
-            '',
-            false,
-            false,
-            true,
-            []
-        );
-        $this->authorizationMock = $this->createMock(
-            AuthorizationInterface::class,
-            [],
-            '',
-            false,
-            false,
-            true,
-            []
-        );
+        $this->urlMock = $this->getMockBuilder(UrlInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->authorizationMock = $this->getMockBuilder(AuthorizationInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->urlGenerator = new UrlGenerator(
             $this->urlMock,
             $this->authorizationMock,

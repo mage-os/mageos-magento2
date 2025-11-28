@@ -69,7 +69,15 @@ class RefundOperationTest extends TestCase
 
         $this->creditmemoMock = $this->createPartialMockWithReflection(
             Creditmemo::class,
-            ['getBaseCost', 'setDoTransaction', 'getPaymentRefundDisallowed', 'getState', 'getOrderId', 'getItems', 'getBaseGrandTotal', 'getGrandTotal', 'getBaseSubtotal', 'getSubtotal', 'getBaseTaxAmount', 'getTaxAmount', 'getBaseShippingAmount', 'getShippingAmount', 'getBaseDiscountTaxCompensationAmount', 'getDiscountTaxCompensationAmount', 'getBaseShippingTaxAmount', 'getShippingTaxAmount', 'getAdjustmentPositive', 'getBaseAdjustmentPositive', 'getAdjustmentNegative', 'getBaseAdjustmentNegative', 'getDiscountAmount', 'getBaseDiscountAmount']
+            [
+                'getBaseCost', 'setDoTransaction', 'getPaymentRefundDisallowed', 'getState', 'getOrderId',
+                'getItems', 'getBaseGrandTotal', 'getGrandTotal', 'getBaseSubtotal', 'getSubtotal',
+                'getBaseTaxAmount', 'getTaxAmount', 'getBaseShippingAmount', 'getShippingAmount',
+                'getBaseDiscountTaxCompensationAmount', 'getDiscountTaxCompensationAmount',
+                'getBaseShippingTaxAmount', 'getShippingTaxAmount', 'getAdjustmentPositive',
+                'getBaseAdjustmentPositive', 'getAdjustmentNegative', 'getBaseAdjustmentNegative',
+                'getDiscountAmount', 'getBaseDiscountAmount'
+            ]
         );
 
         $this->paymentMock = $this->createPartialMockWithReflection(

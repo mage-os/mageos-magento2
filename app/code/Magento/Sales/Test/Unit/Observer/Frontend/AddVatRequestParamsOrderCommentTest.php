@@ -59,42 +59,42 @@ class AddVatRequestParamsOrderCommentTest extends TestCase
         $vatRequestDate,
         $orderHistoryComment
     ) {
-        $this->customerAddressHelperMock->expects($this->once())
+         $this->customerAddressHelperMock->expects($this->once())
             ->method('getTaxCalculationAddressType')
             ->willReturn($configAddressType);
 
-        $orderAddressMock = $this->createPartialMock(
-            \Magento\Sales\Model\Order\Address::class,
-            ['getVatRequestId', 'getVatRequestDate']
-        );
-        $orderAddressMock->expects($this->any())
+         $orderAddressMock = $this->createPartialMock(
+             \Magento\Sales\Model\Order\Address::class,
+             ['getVatRequestId', 'getVatRequestDate']
+         );
+         $orderAddressMock->expects($this->any())
             ->method('getVatRequestId')
             ->willReturn($vatRequestId);
-        $orderAddressMock->expects($this->any())
+         $orderAddressMock->expects($this->any())
             ->method('getVatRequestDate')
             ->willReturn($vatRequestDate);
 
-        $orderMock = $this->getMockBuilder(Order::class)
+         $orderMock = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getShippingAddress', 'addStatusHistoryComment', 'getBillingAddress'])
             ->getMock();
-        $orderMock->expects($this->any())
+         $orderMock->expects($this->any())
             ->method('getShippingAddress')
             ->willReturn($orderAddressMock);
-        if ($orderHistoryComment === null) {
-            $orderMock->expects($this->never())
+         if ($orderHistoryComment === null) {
+             $orderMock->expects($this->never())
                 ->method('addStatusHistoryComment');
-        } else {
-            $orderMock->expects($this->once())
+         } else {
+             $orderMock->expects($this->once())
                 ->method('addStatusHistoryComment')
                 ->with($orderHistoryComment, false);
-        }
-        $observer = $this->createPartialMockWithReflection(Observer::class, ['getOrder']);
-        $observer->expects($this->once())
+         }
+         $observer = $this->createPartialMockWithReflection(Observer::class, ['getOrder']);
+         $observer->expects($this->once())
             ->method('getOrder')
             ->willReturn($orderMock);
 
-        $this->assertNull($this->observer->execute($observer));
+         $this->assertNull($this->observer->execute($observer));
     }
 
     /**

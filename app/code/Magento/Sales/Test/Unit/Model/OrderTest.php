@@ -798,7 +798,10 @@ class OrderTest extends TestCase
 
     public function testCanCancelCanReviewPayment()
     {
-        $paymentMock = $this->createPartialMockWithReflection(Payment::class, ['isDeleted', 'canReviewPayment', 'canFetchTransactionInfo']);
+        $paymentMock = $this->createPartialMockWithReflection(
+            Payment::class,
+            ['isDeleted', 'canReviewPayment', 'canFetchTransactionInfo']
+        );
         $paymentMock->expects($this->any())
             ->method('canReviewPayment')
             ->willReturn(false);
@@ -820,7 +823,10 @@ class OrderTest extends TestCase
     {
         $this->prepareOrderItem();
 
-        $paymentMock = $this->createPartialMockWithReflection(Payment::class, ['isDeleted', 'canReviewPayment', 'canFetchTransactionInfo']);
+        $paymentMock = $this->createPartialMockWithReflection(
+            Payment::class,
+            ['isDeleted', 'canReviewPayment', 'canFetchTransactionInfo']
+        );
         $paymentMock->expects($this->any())
             ->method('canReviewPayment')
             ->willReturn(false);
@@ -856,7 +862,10 @@ class OrderTest extends TestCase
 
     public function testCanCancelState()
     {
-        $paymentMock = $this->createPartialMockWithReflection(Payment::class, ['isDeleted', 'canReviewPayment', 'canFetchTransactionInfo']);
+        $paymentMock = $this->createPartialMockWithReflection(
+            Payment::class,
+            ['isDeleted', 'canReviewPayment', 'canFetchTransactionInfo']
+        );
         $paymentMock->expects($this->any())
             ->method('canReviewPayment')
             ->willReturn(false);
@@ -885,7 +894,10 @@ class OrderTest extends TestCase
     {
         $this->prepareOrderItem();
 
-        $paymentMock = $this->createPartialMockWithReflection(Payment::class, ['isDeleted', 'canReviewPayment', 'canFetchTransactionInfo']);
+        $paymentMock = $this->createPartialMockWithReflection(
+            Payment::class,
+            ['isDeleted', 'canReviewPayment', 'canFetchTransactionInfo']
+        );
         $paymentMock->expects($this->any())
             ->method('canReviewPayment')
             ->willReturn(false);
@@ -1068,7 +1080,10 @@ class OrderTest extends TestCase
      */
     protected function prepareItemMock($qtyInvoiced)
     {
-        $itemMock = $this->createPartialMockWithReflection(Item::class, array_merge(['filterByTypes', 'filterByParent'], ['isDeleted', 'getQtyToInvoice']));
+        $itemMock = $this->createPartialMockWithReflection(
+            Item::class,
+            array_merge(['filterByTypes', 'filterByParent'], ['isDeleted', 'getQtyToInvoice'])
+        );
 
         $itemMock->expects($this->any())
             ->method('getQtyToInvoice')

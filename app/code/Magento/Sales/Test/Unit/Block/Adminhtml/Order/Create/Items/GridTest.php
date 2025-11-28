@@ -269,7 +269,10 @@ class GridTest extends TestCase
             Item::class,
             ['getProduct', 'setHasError', 'setQty', 'getQty', 'getChildren']
         );
-        $productMock = $this->createPartialMockWithReflection(Product::class, array_merge(['getStockItem'], ['getStatus', 'getID']));
+        $productMock = $this->createPartialMockWithReflection(
+            Product::class,
+            array_merge(['getStockItem'], ['getStatus', 'getID'])
+        );
 
         $checkMock = $this->createPartialMockWithReflection(DataObject::class, ['getMessage', 'getHasError']);
 
@@ -403,7 +406,13 @@ class GridTest extends TestCase
      */
     public function testGetSubtotalWithDiscount($orderData, $displayTotalsIncludeTax, $expected)
     {
-        $quoteAddressMock = $this->createPartialMockWithReflection(Address::class, ['getSubtotal', 'getTaxAmount', 'getDiscountTaxCompensationAmount', 'getDiscountAmount']);
+        $quoteAddressMock = $this->createPartialMockWithReflection(
+            Address::class,
+            [
+                'getSubtotal', 'getTaxAmount', 'getDiscountTaxCompensationAmount',
+                'getDiscountAmount'
+            ]
+        );
         $gridMock = $this->createPartialMock(
             Grid::class,
             ['getQuoteAddress','displayTotalsIncludeTax']

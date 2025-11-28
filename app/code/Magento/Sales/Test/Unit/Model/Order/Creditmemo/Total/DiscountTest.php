@@ -59,15 +59,25 @@ class DiscountTest extends TestCase
         );
         $this->orderItemMock = $this->createPartialMockWithReflection(
             Order::class,
-            ['isDummy', 'getQtyInvoiced', 'getQty', 'getQtyRefunded', 'getDiscountInvoiced', 'getBaseDiscountInvoiced', 'getDiscountRefunded']
+            [
+                'isDummy', 'getQtyInvoiced', 'getQty', 'getQtyRefunded', 'getDiscountInvoiced',
+                'getBaseDiscountInvoiced', 'getDiscountRefunded'
+            ]
         );
         $this->creditmemoMock = $this->createPartialMockWithReflection(
             Creditmemo::class,
-            ['setBaseCost', 'getAllItems', 'getOrder', 'getBaseShippingAmount', 'roundPrice', 'setDiscountAmount', 'setBaseDiscountAmount', 'getBaseShippingInclTax', 'getBaseShippingTaxAmount']
+            [
+                'setBaseCost', 'getAllItems', 'getOrder', 'getBaseShippingAmount', 'roundPrice',
+                'setDiscountAmount', 'setBaseDiscountAmount', 'getBaseShippingInclTax',
+                'getBaseShippingTaxAmount'
+            ]
         );
         $this->creditmemoItemMock = $this->createPartialMockWithReflection(
             Item::class,
-            ['getHasChildren', 'getBaseCost', 'getQty', 'getOrderItem', 'setDiscountAmount', 'setBaseDiscountAmount', 'isLast']
+            [
+                'getHasChildren', 'getBaseCost', 'getQty', 'getOrderItem', 'setDiscountAmount',
+                'setBaseDiscountAmount', 'isLast'
+            ]
         );
         $this->taxConfig = $this->createMock(Config::class);
 

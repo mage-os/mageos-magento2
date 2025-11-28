@@ -136,14 +136,14 @@ class ItemTest extends TestCase
         $qtyShipped,
         $expectedStatus
     ) {
-        $this->model->setQtyBackordered($qtyBackOrdered);
-        $this->model->setQtyCanceled($qtyCanceled);
-        $this->model->setQtyInvoiced($qtyInvoiced);
-        $this->model->setQtyOrdered($qtyOrdered);
-        $this->model->setQtyRefunded($qtyRefunded);
-        $this->model->setQtyShipped($qtyShipped);
+         $this->model->setQtyBackordered($qtyBackOrdered);
+         $this->model->setQtyCanceled($qtyCanceled);
+         $this->model->setQtyInvoiced($qtyInvoiced);
+         $this->model->setQtyOrdered($qtyOrdered);
+         $this->model->setQtyRefunded($qtyRefunded);
+         $this->model->setQtyShipped($qtyShipped);
 
-        $this->assertEquals($expectedStatus, $this->model->getStatusId());
+         $this->assertEquals($expectedStatus, $this->model->getStatusId());
     }
 
     /**

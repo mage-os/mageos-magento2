@@ -91,15 +91,9 @@ class ProcessDataTest extends TestCase
         $context = $this->createMock(Context::class);
 
         $this->request = $this->createPartialMock(Http::class, ['getPost', 'getPostValue', 'has', 'getParam']);
-        $response = $this->createMock(
-            ResponseInterface::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            []
-        );
+        $response = $this->getMockBuilder(ResponseInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $context->expects($this->any())->method('getResponse')->willReturn($response);
         $context->expects($this->any())->method('getRequest')->willReturn($this->request);
 
@@ -146,7 +140,10 @@ class ProcessDataTest extends TestCase
      #[DataProvider('isApplyDiscountDataProvider')]
     public function testExecute($noDiscount, $couponCode)
     {
-        $quote = $this->createPartialMockWithReflection(\Magento\Quote\Model\Quote::class, array_merge(['getCouponCode'], ['isVirtual', 'getAllItems']));
+        $quote = $this->createPartialMockWithReflection(
+            \Magento\Quote\Model\Quote::class,
+            array_merge(['getCouponCode'], ['isVirtual', 'getAllItems'])
+        );
         $create = $this->createMock(Create::class);
 
         $paramReturnMap = [

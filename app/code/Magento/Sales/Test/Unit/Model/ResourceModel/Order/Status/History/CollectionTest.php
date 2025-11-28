@@ -85,15 +85,7 @@ class CollectionTest extends TestCase
             History::class,
             ['addData']
         );
-        $this->resourceMock = $this->createMock(
-            EntityAbstract::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['getConnection', 'getMainTable', 'getTable']
-        );
+        $this->resourceMock = $this->createMock(EntityAbstract::class);
         $this->entitySnapshotMock = $this->createMock(
             Snapshot::class
         );
@@ -155,13 +147,11 @@ class CollectionTest extends TestCase
         $this->connectionMock->expects($this->exactly(3))
             ->method('prepareSqlCondition')
             ->willReturnMap(
-                
-                    [
+                [
                         ['entity_name', $entityType, 'sql-string'],
                         ['is_customer_notified', 0, 'sql-string'],
                         ['parent_id', $orderId, 'sql-string'],
                     ]
-                
             );
         $result = $this->collection->getUnnotifiedForInstance($order);
         $this->assertEquals($this->historyItemMock, $result);

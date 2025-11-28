@@ -242,8 +242,7 @@ class SaveTest extends TestCase
             ->with('sales/*/new', ['_current' => true])
             ->willReturnSelf();
 
-        $this->_setSaveActionExpectationForMageCoreException(
-            $data,
+        $this->setSaveActionExpectationForMageCoreException(
             'Cannot create online refund for Refund to Store Credit.'
         );
 
@@ -300,7 +299,7 @@ class SaveTest extends TestCase
             ->with('sales/*/new', ['_current' => true])
             ->willReturnSelf();
 
-        $this->_setSaveActionExpectationForMageCoreException($data, 'The credit memo\'s total must be positive.');
+        $this->setSaveActionExpectationForMageCoreException('The credit memo\'s total must be positive.');
 
         $this->_controller->execute();
     }
@@ -308,10 +307,9 @@ class SaveTest extends TestCase
     /**
      * Set expectations in case of \Magento\Framework\Exception\LocalizedException for saveAction method
      *
-     * @param array $data
      * @param string $errorMessage
      */
-    protected function _setSaveActionExpectationForMageCoreException($data, $errorMessage)
+    protected function setSaveActionExpectationForMageCoreException($errorMessage)
     {
         $this->_messageManager->expects($this->once())->method('addErrorMessage')->with($errorMessage);
         // Session is now a real object, setFormData will be called but we can't verify with expects()
@@ -347,49 +345,49 @@ class SaveTest extends TestCase
         $emailEnabled,
         $shouldEmailBeSent
     ) {
-        $orderId = 1;
-        $creditmemoId = 2;
-        $invoiceId = 3;
-        $creditmemoData = ['items' => [], 'send_email' => $sendEmail];
+         $orderId = 1;
+         $creditmemoId = 2;
+         $invoiceId = 3;
+         $creditmemoData = ['items' => [], 'send_email' => $sendEmail];
 
-        $this->resultRedirectFactoryMock->expects($this->once())
+         $this->resultRedirectFactoryMock->expects($this->once())
             ->method('create')
             ->willReturn($this->resultRedirectMock);
-        $this->resultRedirectMock->expects($this->once())
+         $this->resultRedirectMock->expects($this->once())
             ->method('setPath')
             ->with('sales/order/view', ['order_id' => $orderId])
             ->willReturnSelf();
 
-        $order = $this->createPartialMock(
-            Order::class,
-            []
-        );
+         $order = $this->createPartialMock(
+             Order::class,
+             []
+         );
 
-        $creditmemo = $this->createPartialMock(
-            Creditmemo::class,
-            ['isValidGrandTotal', 'getOrder', 'getOrderId', 'getAllItems']
-        );
-        $creditmemo->expects($this->once())
+         $creditmemo = $this->createPartialMock(
+             Creditmemo::class,
+             ['isValidGrandTotal', 'getOrder', 'getOrderId', 'getAllItems']
+         );
+         $creditmemo->expects($this->once())
             ->method('isValidGrandTotal')
             ->willReturn(true);
-        $creditmemo->expects($this->once())
+         $creditmemo->expects($this->once())
             ->method('getOrder')
             ->willReturn($order);
-        $creditmemo->expects($this->once())
+         $creditmemo->expects($this->once())
             ->method('getOrderId')
             ->willReturn($orderId);
-        $orderItem = $this->createMock(Order\Item::class);
-        $orderItem->expects($this->once())
+         $orderItem = $this->createMock(Order\Item::class);
+         $orderItem->expects($this->once())
             ->method('getParentItemId');
-        $creditMemoItem = $this->createMock(Item::class);
-        $creditMemoItem->expects($this->once())
+         $creditMemoItem = $this->createMock(Item::class);
+         $creditMemoItem->expects($this->once())
             ->method('getOrderItem')
             ->willReturn($orderItem);
-        $creditmemo->expects($this->once())
+         $creditmemo->expects($this->once())
             ->method('getAllItems')
             ->willReturn([$creditMemoItem]);
 
-        $this->_requestMock->expects($this->any())
+         $this->_requestMock->expects($this->any())
             ->method('getParam')
             ->willReturnMap(
                 [
@@ -400,22 +398,22 @@ class SaveTest extends TestCase
                 ]
             );
 
-        $this->_requestMock->expects($this->any())
+         $this->_requestMock->expects($this->any())
             ->method('getPost')
             ->willReturn($creditmemoData);
 
-        $this->memoLoaderMock->expects($this->once())
+         $this->memoLoaderMock->expects($this->once())
             ->method('load')
             ->willReturn($creditmemo);
 
-        $this->salesData->expects($this->any())
+         $this->salesData->expects($this->any())
             ->method('canSendNewCreditmemoEmail')
             ->willReturn($emailEnabled);
-        if ($shouldEmailBeSent) {
-            $this->creditmemoSender->expects($this->once())
+         if ($shouldEmailBeSent) {
+             $this->creditmemoSender->expects($this->once())
                 ->method('send');
-        }
-        $this->assertEquals($this->resultRedirectMock, $this->_controller->execute());
+         }
+         $this->assertEquals($this->resultRedirectMock, $this->_controller->execute());
     }
 
     /**

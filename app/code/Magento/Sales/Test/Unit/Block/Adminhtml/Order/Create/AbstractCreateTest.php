@@ -96,7 +96,8 @@ class AbstractCreateTest extends TestCase
         self::assertInstanceOf(Product::class, $product);
     }
 
-    protected function getMockForItemClass() {
+    protected function getMockForItemClass()
+    {
         $productMock = $this->createMock(Product::class);
         $itemMock = $this->createMock(Item::class);
         $itemMock->expects($this->once())->method('getProduct')->willReturn($productMock);

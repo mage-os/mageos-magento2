@@ -120,7 +120,12 @@ abstract class AbstractSenderTestCase extends TestCase
 
         $this->orderMock = $this->createPartialMockWithReflection(
             Order::class,
-            ['setSendEmail', 'getId', 'getStore', 'getBillingAddress', 'getPayment', 'getCustomerIsGuest', 'getCustomerName', 'getCustomerEmail', 'getShippingAddress', 'setEmailSent', 'getCreatedAtFormatted', 'getIsNotVirtual', 'getEmailCustomerNote', 'getFrontendStatusLabel']
+            [
+                'setSendEmail', 'getId', 'getStore', 'getBillingAddress', 'getPayment',
+                'getCustomerIsGuest', 'getCustomerName', 'getCustomerEmail', 'getShippingAddress',
+                'setEmailSent', 'getCreatedAtFormatted', 'getIsNotVirtual', 'getEmailCustomerNote',
+                'getFrontendStatusLabel'
+            ]
         );
         $this->orderMock->expects($this->any())
             ->method('getStore')

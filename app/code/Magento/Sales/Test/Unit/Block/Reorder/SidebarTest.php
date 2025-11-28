@@ -179,7 +179,10 @@ class SidebarTest extends TestCase
             ->method('getWebsiteIds')
             ->willReturn([$websiteId]);
 
-        $item = $this->createPartialMockWithReflection(\Magento\Sales\Model\ResourceModel\Order\Item::class, ['getProduct']);
+        $item = $this->createPartialMockWithReflection(
+            \Magento\Sales\Model\ResourceModel\Order\Item::class,
+            ['getProduct']
+        );
         $item->expects($this->atLeastOnce())
             ->method('getProduct')
             ->willReturn($product);

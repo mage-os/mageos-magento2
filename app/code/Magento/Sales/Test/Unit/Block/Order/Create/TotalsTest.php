@@ -61,7 +61,10 @@ class TotalsTest extends TestCase
             ->getMock();
         $this->quoteMock = $this->createPartialMockWithReflection(
             \Magento\Quote\Model\Quote::class,
-            ['collectTotals', 'getTotals', 'isVirtual', 'getBillingAddress', 'getShippingAddress', 'setTotalsCollectedFlag']
+            [
+                'collectTotals', 'getTotals', 'isVirtual', 'getBillingAddress', 'getShippingAddress',
+                'setTotalsCollectedFlag'
+            ]
         );
         $this->shippingAddressMock = $this->getMockBuilder(Address::class)
             ->disableOriginalConstructor()

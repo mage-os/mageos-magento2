@@ -49,7 +49,12 @@ class AddressTest extends TestCase
         $this->attributeMock = $this->createMock(Attribute::class);
         $this->orderMock = $this->createPartialMockWithReflection(
             Order::class,
-            ['hasBillingAddressId', 'unsBillingAddressId', 'hasShippingAddressId', 'getShippingAddressId', 'setShippingAddressId', 'unsShippingAddressId', 'getAddresses', 'save', 'getBillingAddress', 'getShippingAddress', 'getBillingAddressId', 'setBillingAddressId']
+            [
+                'hasBillingAddressId', 'unsBillingAddressId', 'hasShippingAddressId',
+                'getShippingAddressId', 'setShippingAddressId', 'unsShippingAddressId', 'getAddresses',
+                'save', 'getBillingAddress', 'getShippingAddress', 'getBillingAddressId',
+                'setBillingAddressId'
+            ]
         );
         $this->addressMock = $this->createMock(\Magento\Sales\Model\Order\Address::class);
         $this->addressCollectionMock = $this->createMock(
