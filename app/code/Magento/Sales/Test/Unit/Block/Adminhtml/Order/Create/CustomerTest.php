@@ -11,14 +11,17 @@ use Magento\Backend\Block\Template\Context;
 use Magento\Framework\AuthorizationInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Sales\Block\Adminhtml\Order\Create\Customer;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class CustomerTest extends TestCase
 {
+    use MockCreationTrait;
+
     public function testGetButtonsHtml()
     {
         $contextMock = $this->createPartialMock(Context::class, ['getAuthorization']);
-        $authorizationMock = $this->getMockForAbstractClass(AuthorizationInterface::class);
+        $authorizationMock = $this->createMock(AuthorizationInterface::class);
         $contextMock->expects($this->any())->method('getAuthorization')->willReturn($authorizationMock);
         $arguments = ['context' => $contextMock];
 

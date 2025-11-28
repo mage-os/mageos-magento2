@@ -24,7 +24,9 @@ use Magento\Sales\Model\ResourceModel\Order\Invoice\Item\CollectionFactory;
 use Magento\Sales\Model\ResourceModel\OrderFactory;
 use Magento\Store\Model\Store;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  *
@@ -32,6 +34,8 @@ use PHPUnit\Framework\TestCase;
  */
 class InvoiceTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Invoice
      */
@@ -98,7 +102,7 @@ class InvoiceTest extends TestCase
 
         $this->orderFactory = $this->createPartialMock(SalesOrderFactory::class, ['create']);
 
-        $this->eventManagerMock = $this->getMockForAbstractClass(ManagerInterface::class);
+        $this->eventManagerMock = $this->createMock(ManagerInterface::class);
         $contextMock = $this->createMock(Context::class);
         $contextMock->expects($this->any())
             ->method('getEventDispatcher')
@@ -122,10 +126,10 @@ class InvoiceTest extends TestCase
         );
     }
 
-    /**
-     * @dataProvider canVoidDataProvider
-     * @param bool $canVoid
+    /**     * @param bool $canVoid
      */
+
+     #[DataProvider('canVoidDataProvider')]
     public function testCanVoid($canVoid)
     {
         $this->order->expects($this->once())->method('getPayment')->willReturn($this->paymentMock);
@@ -137,10 +141,10 @@ class InvoiceTest extends TestCase
         $this->assertEquals($canVoid, $this->model->canVoid());
     }
 
-    /**
-     * @dataProvider canVoidDataProvider
-     * @param bool $canVoid
+    /**     * @param bool $canVoid
      */
+
+     #[DataProvider('canVoidDataProvider')]
     public function testDefaultCanVoid($canVoid)
     {
         $this->model->setState(Invoice::STATE_PAID);
@@ -225,12 +229,12 @@ class InvoiceTest extends TestCase
         $this->assertEquals($address, $this->model->getShippingAddress());
     }
 
-    /**
-     * @dataProvider canCaptureDataProvider
-     * @param string $state
+    /**     * @param string $state
      * @param bool|null $canPaymentCapture
      * @param bool $expectedResult
      */
+
+     #[DataProvider('canCaptureDataProvider')]
     public function testCanCapture($state, $canPaymentCapture, $expectedResult)
     {
         $this->model->setState($state);
@@ -261,11 +265,11 @@ class InvoiceTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider canCancelDataProvider
-     * @param string $state
+    /**     * @param string $state
      * @param bool $expectedResult
      */
+
+     #[DataProvider('canCancelDataProvider')]
     public function testCanCancel($state, $expectedResult)
     {
         $this->model->setState($state);
@@ -286,13 +290,13 @@ class InvoiceTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider canRefundDataProvider
-     * @param string $state
+    /**     * @param string $state
      * @param float $baseGrandTotal
      * @param float $baseTotalRefunded
      * @param bool $expectedResult
      */
+
+     #[DataProvider('canRefundDataProvider')]
     public function testCanRefund($state, $baseGrandTotal, $baseTotalRefunded, $expectedResult)
     {
         $this->model->setState($state);
@@ -355,15 +359,15 @@ class InvoiceTest extends TestCase
             ->with('sales_order_invoice_pay');
     }
 
-    /**
-     * @dataProvider payDataProvider
-     * @param float $totalPaid
+    /**     * @param float $totalPaid
      * @param float $baseTotalPaid
      * @param float $expectedTotal
      * @param float $expectedBaseTotal
      * @param float $expectedState
      * @param array $items
      */
+
+     #[DataProvider('payDataProvider')]
     public function testPay(
         $totalPaid,
         $baseTotalPaid,
@@ -461,8 +465,9 @@ class InvoiceTest extends TestCase
      *
      * @param $initialInvoiceStatus
      * @param $finalInvoiceStatus
-     * @dataProvider getNotOpenedInvoiceStatuses
      */
+
+     #[DataProvider('getNotOpenedInvoiceStatuses')]
     public function testCannotCancelNotOpenedInvoice($initialInvoiceStatus, $finalInvoiceStatus)
     {
         $this->order->expects($this->never())->method('getPayment');

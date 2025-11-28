@@ -25,12 +25,16 @@ use Magento\Sales\Model\Order\Invoice;
 use Magento\Sales\Model\Service\InvoiceService;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class SaveTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var MockObject
      */
@@ -89,6 +93,7 @@ class SaveTest extends TestCase
     protected function setUp(): void
     {
         $objectManager = new ObjectManager($this);
+        $objectManager->prepareObjectManager();
 
         $this->requestMock = $this->getMockBuilder(Http::class)
             ->disableOriginalConstructor()
@@ -108,7 +113,7 @@ class SaveTest extends TestCase
 
         $this->messageManagerMock = $this->getMockBuilder(ManagerInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $contextMock = $this->getMockBuilder(Context::class)
             ->disableOriginalConstructor()
@@ -196,7 +201,7 @@ class SaveTest extends TestCase
     /**
      * @return array
      */
-    public static function testExecuteEmailsDataProvider(): array
+    public static function executeEmailsDataProvider(): array
     {
         /**
         * string $sendEmail
@@ -218,8 +223,9 @@ class SaveTest extends TestCase
      *
      * @return void
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     * @dataProvider testExecuteEmailsDataProvider
      */
+
+     #[DataProvider('executeEmailsDataProvider')]
     public function testExecuteEmails(
         string $sendEmail,
         bool $emailEnabled,
@@ -290,24 +296,19 @@ class SaveTest extends TestCase
                 [$order] => $saveTransaction
             });
 
-        $session = $this->getMockBuilder(Session::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getCommentText'])
-            ->getMock();
+        $session = $this->createPartialMockWithReflection(Session::class, ['getCommentText']);
         $session->expects($this->once())
             ->method('getCommentText')
             ->with(true);
 
         $this->objectManager->expects($this->any())
             ->method('create')
-            ->will(
-                $this->returnValueMap(
-                    [
-                        [Transaction::class, [], $saveTransaction],
-                        [Order::class, [], $order],
-                        [Session::class, [], $session]
-                    ]
-                )
+            ->willReturnMap(
+                [
+                    [Transaction::class, [], $saveTransaction],
+                    [Order::class, [], $order],
+                    [Session::class, [], $session]
+                ]
             );
         $this->objectManager->expects($this->any())
             ->method('get')

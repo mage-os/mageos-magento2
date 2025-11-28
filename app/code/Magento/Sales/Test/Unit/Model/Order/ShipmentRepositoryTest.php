@@ -19,7 +19,9 @@ use Magento\Sales\Model\Order\ShipmentRepository;
 use Magento\Sales\Model\ResourceModel\Metadata;
 use Magento\Sales\Model\ResourceModel\Order\Shipment\Collection;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Unit test for shipment repository class.
@@ -27,6 +29,8 @@ use PHPUnit\Framework\TestCase;
  */
 class ShipmentRepositoryTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * Subject of testing.
      *
@@ -80,8 +84,9 @@ class ShipmentRepositoryTest extends TestCase
     /**
      * @param int|null $id
      * @param int|null $entityId
-     * @dataProvider getDataProvider
      */
+
+     #[DataProvider('getDataProvider')]
     public function testGet($id, $entityId)
     {
         if (!$id) {
@@ -161,7 +166,7 @@ class ShipmentRepositoryTest extends TestCase
             ->method('getEntityId')
             ->willReturn(1);
 
-        $mapper = $this->getMockForAbstractClass(
+        $mapper = $this->createMock(
             AbstractDb::class,
             [],
             '',
@@ -189,7 +194,7 @@ class ShipmentRepositoryTest extends TestCase
         $shipment->expects($this->never())
             ->method('getEntityId');
 
-        $mapper = $this->getMockForAbstractClass(
+        $mapper = $this->createMock(
             AbstractDb::class,
             [],
             '',
@@ -216,7 +221,7 @@ class ShipmentRepositoryTest extends TestCase
             ->method('getEntityId')
             ->willReturn(1);
 
-        $mapper = $this->getMockForAbstractClass(
+        $mapper = $this->createMock(
             AbstractDb::class,
             [],
             '',
@@ -244,7 +249,7 @@ class ShipmentRepositoryTest extends TestCase
         $shipment->expects($this->never())
             ->method('getEntityId');
 
-        $mapper = $this->getMockForAbstractClass(
+        $mapper = $this->createMock(
             AbstractDb::class,
             [],
             '',
@@ -271,7 +276,7 @@ class ShipmentRepositoryTest extends TestCase
         $shipment->expects($this->never())
             ->method('getEntityId');
 
-        $mapper = $this->getMockForAbstractClass(
+        $mapper = $this->createMock(
             AbstractDb::class,
             [],
             '',

@@ -29,12 +29,15 @@ use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Invoice;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class VoidActionTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var MockObject
      */
@@ -110,7 +113,7 @@ class VoidActionTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->objectManagerMock = $this->getMockForAbstractClass(ObjectManagerInterface::class);
+        $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
 
         $this->messageManagerMock = $this->getMockBuilder(Manager::class)
             ->disableOriginalConstructor()
@@ -140,7 +143,7 @@ class VoidActionTest extends TestCase
 
         $this->invoiceManagement = $this->getMockBuilder(InvoiceManagementInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->objectManagerMock->expects($this->any())
             ->method('get')
             ->with(InvoiceManagementInterface::class)
@@ -174,7 +177,7 @@ class VoidActionTest extends TestCase
 
         $this->invoiceRepository = $this->getMockBuilder(InvoiceRepositoryInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->controller = $objectManager->getObject(
             VoidAction::class,
@@ -203,10 +206,7 @@ class VoidActionTest extends TestCase
             ->with('invoice_id')
             ->willReturn($invoiceId);
 
-        $orderMock = $this->getMockBuilder(Order::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['setIsInProcess'])
-            ->getMock();
+        $orderMock = $this->createPartialMockWithReflection(Order::class, ['setIsInProcess']);
 
         $this->invoiceManagement->expects($this->once())
             ->method('setVoid')

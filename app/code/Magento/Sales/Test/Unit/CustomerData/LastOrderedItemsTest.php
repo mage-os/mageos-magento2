@@ -23,6 +23,7 @@ use Magento\Sales\Model\ResourceModel\Order\CollectionFactory;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
@@ -31,6 +32,8 @@ use Psr\Log\LoggerInterface;
  */
 class LastOrderedItemsTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var MockObject
      */
@@ -99,16 +102,16 @@ class LastOrderedItemsTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->stockRegistryMock = $this->getMockBuilder(StockRegistryInterface::class)
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->storeManagerMock = $this->getMockBuilder(StoreManagerInterface::class)
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->orderMock = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->productRepositoryMock = $this->getMockBuilder(ProductRepositoryInterface::class)
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->loggerMock = $this->getMockBuilder(LoggerInterface::class)
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->section = new LastOrderedItems(
             $this->orderCollectionFactoryMock,
@@ -145,7 +148,7 @@ class LastOrderedItemsTest extends TestCase
         $productIdVisible = 1;
         $productIdNotVisible = 2;
         $stockItemMock = $this->getMockBuilder(StockItemInterface::class)
-            ->getMockForAbstractClass();
+            ->getMock();
         $itemWithVisibleProduct = $this->getMockBuilder(Item::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -161,7 +164,7 @@ class LastOrderedItemsTest extends TestCase
         $items = [$itemWithVisibleProduct, $itemWithNotVisibleProduct];
         $this->getLastOrderMock();
         $storeMock = $this->getMockBuilder(StoreInterface::class)
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->storeManagerMock->expects($this->any())->method('getStore')->willReturn($storeMock);
         $storeMock->expects($this->any())->method('getWebsiteId')->willReturn($websiteId);
         $storeMock->expects($this->any())->method('getId')->willReturn($storeId);
@@ -252,7 +255,7 @@ class LastOrderedItemsTest extends TestCase
             ->onlyMethods(['getProductId'])
             ->getMock();
         $storeMock = $this->getMockBuilder(StoreInterface::class)
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->getLastOrderMock();
         $this->storeManagerMock->expects($this->exactly(2))->method('getStore')->willReturn($storeMock);

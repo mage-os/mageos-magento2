@@ -29,6 +29,7 @@ use Magento\Sales\Controller\Adminhtml\Order\CreditmemoLoader;
 use Magento\Sales\Model\Order\Creditmemo;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyFields)
@@ -37,6 +38,8 @@ use PHPUnit\Framework\TestCase;
  */
 class UpdateQtyTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var UpdateQty
      */
@@ -129,18 +132,17 @@ class UpdateQtyTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->creditmemoMock = $this->getMockBuilder(Creditmemo::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['cancel'])
-            ->onlyMethods(['getInvoice', 'getOrder', 'getId'])
-            ->getMock();
+        $this->creditmemoMock = $this->createPartialMockWithReflection(
+            Creditmemo::class,
+            ['cancel', 'getInvoice', 'getOrder', 'getId']
+        );
         $this->requestMock = $this->getMockBuilder(Http::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->responseMock = $this->getMockBuilder(\Magento\Framework\App\Response\Http::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->objectManagerMock = $this->getMockForAbstractClass(ObjectManagerInterface::class);
+        $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
         $this->messageManagerMock = $this->getMockBuilder(Manager::class)
             ->disableOriginalConstructor()
             ->getMock();

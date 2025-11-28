@@ -11,6 +11,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Quote\Model\Quote;
 use Magento\Sales\Block\Adminhtml\Order\Create\Totals;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -60,7 +61,9 @@ class TotalsTest extends TestCase
     /**
      * @param mixed $customerNoteNotify
      * @param bool $expectedResult
-     * @dataProvider getNoteNotifyDataProvider
+     */
+    #[DataProvider('getNoteNotifyDataProvider')]
+    /**
      */
     public function testGetNoteNotify($customerNoteNotify, $expectedResult)
     {

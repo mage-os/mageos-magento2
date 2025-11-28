@@ -23,6 +23,7 @@ use Magento\Sales\Controller\Adminhtml\Order\CreditmemoLoader;
 use Magento\Sales\Model\Order\Creditmemo;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * @covers \Magento\Sales\Controller\Adminhtml\Order\Creditmemo\PrintAction
@@ -30,6 +31,8 @@ use PHPUnit\Framework\TestCase;
  */
 class PrintActionTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var PrintAction
      */
@@ -107,15 +110,13 @@ class PrintActionTest extends TestCase
     {
         $this->requestMock = $this->getMockBuilder(RequestInterface::class)
             ->getMock();
-        $this->creditmemoLoaderMock = $this->getMockBuilder(
-            CreditmemoLoader::class
-        )->disableOriginalConstructor()
-            ->addMethods(['setOrderId', 'setCreditmemoId', 'setCreditmemo', 'setInvoiceId'])
-            ->onlyMethods(['load'])
-            ->getMock();
+        $this->creditmemoLoaderMock = $this->createPartialMockWithReflection(
+            CreditmemoLoader::class,
+            ['setOrderId', 'setCreditmemoId', 'setCreditmemo', 'setInvoiceId', 'load']
+        );
         $this->objectManagerMock = $this->getMockBuilder(ObjectManagerInterface::class)
             ->getMock();
-        $this->creditmemoRepositoryMock = $this->getMockForAbstractClass(CreditmemoRepositoryInterface::class);
+        $this->creditmemoRepositoryMock = $this->createMock(CreditmemoRepositoryInterface::class);
         $this->creditmemoMock = $this->getMockBuilder(Creditmemo::class)
             ->disableOriginalConstructor()
             ->getMock();

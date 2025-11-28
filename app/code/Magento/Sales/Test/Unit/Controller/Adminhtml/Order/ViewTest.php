@@ -26,6 +26,7 @@ use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Controller\Adminhtml\Order\View;
 use Magento\Sales\Model\Order;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
@@ -36,6 +37,8 @@ use Psr\Log\LoggerInterface;
  */
 class ViewTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var View
      */
@@ -127,11 +130,11 @@ class ViewTest extends TestCase
     protected function setUp(): void
     {
         $this->orderManagementMock = $this->getMockBuilder(OrderManagementInterface::class)
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->orderRepositoryMock = $this->getMockBuilder(OrderRepositoryInterface::class)
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->loggerMock = $this->getMockBuilder(LoggerInterface::class)
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->requestMock = $this->getMockBuilder(RequestInterface::class)
             ->getMock();
         $this->objectManagerMock = $this->getMockBuilder(ObjectManagerInterface::class)

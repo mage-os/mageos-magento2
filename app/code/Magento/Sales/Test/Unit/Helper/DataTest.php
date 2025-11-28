@@ -21,13 +21,17 @@ use Magento\Sales\Model\Order\Email\Container\ShipmentIdentity;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\Store;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class DataTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Data
      */
@@ -50,7 +54,7 @@ class DataTest extends TestCase
     {
         $this->scopeConfigMock = $this->getMockBuilder(ScopeConfigInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $contextMock = $this->getMockBuilder(Context::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -66,8 +70,9 @@ class DataTest extends TestCase
     }
 
     /**
-     * @dataProvider getScopeConfigValue
      */
+
+     #[DataProvider('getScopeConfigValue')]
     public function testCanSendNewOrderConfirmationEmail($scopeConfigValue)
     {
         $this->setupScopeConfigIsSetFlag(
@@ -78,10 +83,10 @@ class DataTest extends TestCase
         $this->assertEquals($scopeConfigValue, $this->helper->canSendNewOrderConfirmationEmail($this->storeMock));
     }
 
-    /**
-     * @dataProvider getScopeConfigValue
-     * @return void
+    /**     * @return void
      */
+
+     #[DataProvider('getScopeConfigValue')]
     public function testCanSendNewOrderEmail($scopeConfigValue)
     {
         $this->setupScopeConfigIsSetFlag(
@@ -92,10 +97,10 @@ class DataTest extends TestCase
         $this->assertEquals($scopeConfigValue, $this->helper->canSendNewOrderEmail($this->storeMock));
     }
 
-    /**
-     * @dataProvider getScopeConfigValue
-     * @return void
+    /**     * @return void
      */
+
+     #[DataProvider('getScopeConfigValue')]
     public function testCanSendOrderCommentEmail($scopeConfigValue)
     {
         $this->setupScopeConfigIsSetFlag(
@@ -106,10 +111,10 @@ class DataTest extends TestCase
         $this->assertEquals($scopeConfigValue, $this->helper->canSendOrderCommentEmail($this->storeMock));
     }
 
-    /**
-     * @dataProvider getScopeConfigValue
-     * @return void
+    /**     * @return void
      */
+
+     #[DataProvider('getScopeConfigValue')]
     public function testCanSendNewShipmentEmail($scopeConfigValue)
     {
         $this->setupScopeConfigIsSetFlag(
@@ -120,10 +125,10 @@ class DataTest extends TestCase
         $this->assertEquals($scopeConfigValue, $this->helper->canSendNewShipmentEmail($this->storeMock));
     }
 
-    /**
-     * @dataProvider getScopeConfigValue
-     * @return void
+    /**     * @return void
      */
+
+     #[DataProvider('getScopeConfigValue')]
     public function testCanSendShipmentCommentEmail($scopeConfigValue)
     {
         $this->setupScopeConfigIsSetFlag(
@@ -135,8 +140,9 @@ class DataTest extends TestCase
     }
 
     /**
-     * @dataProvider getScopeConfigValue
      */
+
+     #[DataProvider('getScopeConfigValue')]
     public function testCanSendNewInvoiceEmail($scopeConfigValue)
     {
         $this->setupScopeConfigIsSetFlag(
@@ -148,8 +154,9 @@ class DataTest extends TestCase
     }
 
     /**
-     * @dataProvider getScopeConfigValue
      */
+
+     #[DataProvider('getScopeConfigValue')]
     public function testCanSendInvoiceCommentEmail($scopeConfigValue)
     {
         $this->setupScopeConfigIsSetFlag(
@@ -160,10 +167,10 @@ class DataTest extends TestCase
         $this->assertEquals($scopeConfigValue, $this->helper->canSendInvoiceCommentEmail($this->storeMock));
     }
 
-    /**
-     * @dataProvider getScopeConfigValue
-     * @return void
+    /**     * @return void
      */
+
+     #[DataProvider('getScopeConfigValue')]
     public function testCanSendNewCreditmemoEmail($scopeConfigValue)
     {
         $this->setupScopeConfigIsSetFlag(
@@ -174,10 +181,10 @@ class DataTest extends TestCase
         $this->assertEquals($scopeConfigValue, $this->helper->canSendNewCreditmemoEmail($this->storeMock));
     }
 
-    /**
-     * @dataProvider getScopeConfigValue
-     * @return void
+    /**     * @return void
      */
+
+     #[DataProvider('getScopeConfigValue')]
     public function testCanSendCreditmemoCommentEmail($scopeConfigValue)
     {
         $this->setupScopeConfigIsSetFlag(

@@ -18,6 +18,7 @@ use Magento\Sales\Model\Order\Creditmemo\CommentRepository;
 use Magento\Sales\Model\Order\Email\Sender\CreditmemoCommentSender;
 use Magento\Sales\Model\Spi\CreditmemoCommentResourceInterface;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
@@ -27,6 +28,8 @@ use Psr\Log\LoggerInterface;
  */
 class CommentRepositoryTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var MockObject|CreditmemoCommentResourceInterface
      */
@@ -81,7 +84,7 @@ class CommentRepositoryTest extends TestCase
     {
         $this->commentResource = $this->getMockBuilder(CreditmemoCommentResourceInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->commentFactory = $this->getMockBuilder(CreditmemoCommentInterfaceFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -90,16 +93,16 @@ class CommentRepositoryTest extends TestCase
             ->getMock();
         $this->collectionProcessor = $this->getMockBuilder(CollectionProcessorInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->creditmemoRepositoryMock = $this->getMockBuilder(CreditmemoRepositoryInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->creditmemoCommentSender = $this->getMockBuilder(CreditmemoCommentSender::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->loggerMock = $this->getMockBuilder(LoggerInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->creditmemoMock = $this->getMockBuilder(Creditmemo::class)
             ->disableOriginalConstructor()

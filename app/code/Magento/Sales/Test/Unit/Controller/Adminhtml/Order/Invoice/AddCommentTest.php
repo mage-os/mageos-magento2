@@ -28,6 +28,7 @@ use Magento\Sales\Controller\Adminhtml\Order\Invoice\AddComment;
 use Magento\Sales\Model\Order\Email\Sender\InvoiceCommentSender;
 use Magento\Sales\Model\Order\Invoice;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -36,6 +37,8 @@ use PHPUnit\Framework\TestCase;
  */
 class AddCommentTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var MockObject
      */
@@ -183,7 +186,7 @@ class AddCommentTest extends TestCase
             ->getMock();
         $this->invoiceRepository = $this->getMockBuilder(InvoiceRepositoryInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->controller = $objectManager->getObject(
             AddComment::class,

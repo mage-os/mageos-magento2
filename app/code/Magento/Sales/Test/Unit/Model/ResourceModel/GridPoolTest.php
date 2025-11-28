@@ -10,10 +10,13 @@ namespace Magento\Sales\Test\Unit\Model\ResourceModel;
 use Magento\Sales\Model\ResourceModel\Grid;
 use Magento\Sales\Model\ResourceModel\GridPool;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class GridPoolTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var GridPool
      */
@@ -48,7 +51,7 @@ class GridPoolTest extends TestCase
         $this->invoiceGridMock = $this->createMock(Grid::class);
         $this->shipmentGridMock = $this->createMock(Grid::class);
         $this->creditmemoGridMock = $this->createMock(Grid::class);
-        $this->statementMock = $this->getMockForAbstractClass(\Zend_Db_Statement_Interface::class);
+        $this->statementMock = $this->createMock(\Zend_Db_Statement_Interface::class);
         $grids = [
             'order_grid' => $this->orderGridMock,
             'invoice_grid' => $this->invoiceGridMock,

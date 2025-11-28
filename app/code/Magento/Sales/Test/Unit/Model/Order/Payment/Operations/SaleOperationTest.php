@@ -16,9 +16,13 @@ use Magento\Sales\Model\Order\Payment\Operations\ProcessInvoiceOperation;
 use Magento\Sales\Model\Order\Payment\Operations\SaleOperation;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 class SaleOperationTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var ProcessInvoiceOperation|MockObject
      */
@@ -43,9 +47,9 @@ class SaleOperationTest extends TestCase
     /**
      * Tests a case when 'sale' operation is called with fraud payment.
      *
-     * @throws LocalizedException
-     * @dataProvider saleDataProvider
-     */
+     * @throws LocalizedException     */
+
+     #[DataProvider('saleDataProvider')]
     public function testExecute(\Closure $invoice)
     {
         $invoice = $invoice($this);
@@ -63,14 +67,10 @@ class SaleOperationTest extends TestCase
             ->with(Order::STATUS_FRAUD);
 
         /** @var MethodInterface|MockObject $paymentMethod */
-        $paymentMethod = $this->getMockForAbstractClass(MethodInterface::class);
+        $paymentMethod = $this->createMock(MethodInterface::class);
 
         /** @var Payment|MockObject  $orderPayment | */
-        $orderPayment = $this->getMockBuilder(Payment::class)
-            ->addMethods(['setCreatedInvoice'])
-            ->onlyMethods(['getOrder', 'getMethodInstance', 'getIsFraudDetected'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $orderPayment = $this->createPartialMockWithReflection(Payment::class, array_merge(['setCreatedInvoice'], ['getOrder', 'getMethodInstance', 'getIsFraudDetected']));
         $orderPayment->expects($this->once())
             ->method('setCreatedInvoice')
             ->with($invoice);
@@ -103,11 +103,7 @@ class SaleOperationTest extends TestCase
      */
     private function getPaidInvoice(): MockObject
     {
-        $invoice = $this->getMockBuilder(Invoice::class)
-            ->addMethods(['getIsPaid'])
-            ->onlyMethods(['register', 'pay'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $invoice = $this->createPartialMockWithReflection(Invoice::class, array_merge(['getIsPaid'], ['register', 'pay']));
         $invoice->expects($this->once())
             ->method('register');
         $invoice->method('getIsPaid')
@@ -123,11 +119,7 @@ class SaleOperationTest extends TestCase
      */
     private function getUnpaidInvoice(): MockObject
     {
-        $invoice = $this->getMockBuilder(Invoice::class)
-            ->addMethods(['getIsPaid'])
-            ->onlyMethods(['register', 'pay'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $invoice = $this->createPartialMockWithReflection(Invoice::class, array_merge(['getIsPaid'], ['register', 'pay']));
         $invoice->expects($this->once())
             ->method('register');
         $invoice->method('getIsPaid')

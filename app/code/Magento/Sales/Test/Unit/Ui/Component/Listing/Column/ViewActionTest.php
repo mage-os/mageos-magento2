@@ -13,10 +13,14 @@ use Magento\Framework\View\Element\UiComponent\ContextInterface;
 use Magento\Framework\View\Element\UiComponent\Processor;
 use Magento\Sales\Ui\Component\Listing\Column\ViewAction;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class ViewActionTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var ViewAction
      */
@@ -35,7 +39,7 @@ class ViewActionTest extends TestCase
     protected function setUp(): void
     {
         $this->objectManager = new ObjectManager($this);
-        $this->urlBuilder = $this->getMockForAbstractClass(UrlInterface::class);
+        $this->urlBuilder = $this->createMock(UrlInterface::class);
     }
 
     /**
@@ -44,8 +48,9 @@ class ViewActionTest extends TestCase
      * @param array $expectedDataSourceItems
      * @param string $expectedUrlPath
      * @param array $expectedUrlParam
-     * @dataProvider prepareDataSourceDataProvider
      */
+
+     #[DataProvider('prepareDataSourceDataProvider')]
     public function testPrepareDataSource(
         $data,
         $dataSourceItems,
@@ -54,7 +59,7 @@ class ViewActionTest extends TestCase
         $expectedUrlParam
     ) {
         $contextMock = $this->getMockBuilder(ContextInterface::class)
-            ->getMockForAbstractClass();
+            ->getMock();
         $processor = $this->getMockBuilder(Processor::class)
             ->disableOriginalConstructor()
             ->getMock();

@@ -22,12 +22,16 @@ use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class AdminTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Context|MockObject
      */
@@ -75,7 +79,7 @@ class AdminTest extends TestCase
             ->getMock();
         $this->storeManagerMock = $this->getMockBuilder(StoreManagerInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->salesConfigMock = $this->getMockBuilder(Config::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -98,11 +102,10 @@ class AdminTest extends TestCase
             ]
         );
 
-        $this->magentoObjectMock = $this->getMockBuilder(DataObject::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getOrder'])
-            ->onlyMethods(['getData'])
-            ->getMock();
+        $this->magentoObjectMock = $this->createPartialMockWithReflection(
+            DataObject::class,
+            ['getOrder', 'getData']
+        );
 
         $this->orderMock = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
@@ -124,9 +127,9 @@ class AdminTest extends TestCase
      * @param bool $isCurrencyDifferent
      * @param bool $magentoDataObjectHasOrder
      * @param bool $strong
-     * @param string $separator
-     * @dataProvider displayPricesDataProvider
-     */
+     * @param string $separator     */
+
+     #[DataProvider('displayPricesDataProvider')]
     public function testDisplayPrices(
         $expected,
         $dataObjectIsOrder,
@@ -172,9 +175,9 @@ class AdminTest extends TestCase
      * @param bool $isCurrencyDifferent
      * @param bool $magentoDataObjectHasOrder
      * @param bool $strong
-     * @param string $separator
-     * @dataProvider displayPricesDataProvider
-     */
+     * @param string $separator     */
+
+     #[DataProvider('displayPricesDataProvider')]
     public function testDisplayPriceAttribute(
         $expected,
         $dataObjectIsOrder,
@@ -285,9 +288,9 @@ class AdminTest extends TestCase
     /**
      * @param string $itemKey
      * @param string $type
-     * @param int $calledTimes
-     * @dataProvider applySalableProductTypesFilterDataProvider
-     */
+     * @param int $calledTimes     */
+
+     #[DataProvider('applySalableProductTypesFilterDataProvider')]
     public function testApplySalableProductTypesFilter($itemKey, $type, $calledTimes)
     {
         $productMock = $this->getMockBuilder(Product::class)

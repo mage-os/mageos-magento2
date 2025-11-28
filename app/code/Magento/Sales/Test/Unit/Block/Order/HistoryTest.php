@@ -18,10 +18,13 @@ use Magento\Sales\Model\ResourceModel\Order\Collection;
 use Magento\Sales\Model\ResourceModel\Order\CollectionFactory;
 use Magento\Sales\Model\ResourceModel\Order\CollectionFactoryInterface;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class HistoryTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var History
      */
@@ -82,8 +85,8 @@ class HistoryTest extends TestCase
             $this->getMockBuilder(CollectionFactoryInterface::class)
                 ->disableOriginalConstructor()
                 ->onlyMethods(['create'])
-                ->getMockForAbstractClass();
-        $this->objectManager = $this->getMockForAbstractClass(ObjectManagerInterface::class);
+                ->getMock();
+        $this->objectManager = $this->createMock(ObjectManagerInterface::class);
         $this->objectManager->expects($this->any())
             ->method('get')
             ->willReturn($this->orderCollectionFactoryInterface);

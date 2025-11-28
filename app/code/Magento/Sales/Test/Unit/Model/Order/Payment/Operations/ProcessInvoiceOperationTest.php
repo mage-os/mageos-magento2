@@ -18,10 +18,13 @@ use Magento\Sales\Model\Order\Payment\Transaction;
 use Magento\Sales\Model\Order\Payment\Transaction\BuilderInterface;
 use Magento\Sales\Model\Order\Payment\Transaction\ManagerInterface as TransactionManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class ProcessInvoiceOperationTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var TransactionManagerInterface|MockObject
      */
@@ -49,10 +52,10 @@ class ProcessInvoiceOperationTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->transactionManager = $this->getMockForAbstractClass(TransactionManagerInterface::class);
-        $this->eventManager = $this->getMockForAbstractClass(EventManagerInterface::class);
-        $this->transactionBuilder = $this->getMockForAbstractClass(BuilderInterface::class);
-        $this->stateCommand = $this->getMockForAbstractClass(CommandInterface::class);
+        $this->transactionManager = $this->createMock(TransactionManagerInterface::class);
+        $this->eventManager = $this->createMock(EventManagerInterface::class);
+        $this->transactionBuilder = $this->createMock(BuilderInterface::class);
+        $this->stateCommand = $this->createMock(CommandInterface::class);
 
         $this->model = new ProcessInvoiceOperation(
             $this->stateCommand,

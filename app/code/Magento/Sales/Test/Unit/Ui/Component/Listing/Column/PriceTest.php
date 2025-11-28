@@ -15,13 +15,17 @@ use Magento\Sales\Ui\Component\Listing\Column\Price;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Contains tests for Price class
  */
 class PriceTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Price
      */
@@ -44,7 +48,7 @@ class PriceTest extends TestCase
     {
         $objectManager = new ObjectManager($this);
         $contextMock = $this->getMockBuilder(ContextInterface::class)
-            ->getMockForAbstractClass();
+            ->getMock();
         $processor = $this->getMockBuilder(Processor::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -69,8 +73,9 @@ class PriceTest extends TestCase
      * @param array $dataSource
      * @param string $currencyCode
      * @param int|null $expectedStoreId
-     * @dataProvider testPrepareDataSourceDataProvider
      */
+
+     #[DataProvider('prepareDataSourceDataProvider')]
     public function testPrepareDataSource(
         bool $hasCurrency,
         array $dataSource,
@@ -117,7 +122,7 @@ class PriceTest extends TestCase
      *
      * @return array
      */
-    public static function testPrepareDataSourceDataProvider(): array
+    public static function prepareDataSourceDataProvider(): array
     {
         $dataSource1 = [
             'data' => [

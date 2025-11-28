@@ -23,6 +23,8 @@ use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * Unit test of sales emails sending observer.
@@ -31,6 +33,8 @@ use PHPUnit\Framework\TestCase;
  */
 class EmailSenderHandlerTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * Subject of testing.
      *
@@ -93,12 +97,9 @@ class EmailSenderHandlerTest extends TestCase
     {
         $objectManager = new ObjectManager($this);
 
-        $this->emailSender = $this->getMockBuilder(Sender::class)
-            ->addMethods(['send'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->emailSender = $this->createPartialMockWithReflection(Sender::class, ['send']);
 
-        $this->entityResource = $this->getMockForAbstractClass(
+        $this->entityResource = $this->createMock(
             EntityAbstract::class,
             [],
             '',
@@ -108,7 +109,7 @@ class EmailSenderHandlerTest extends TestCase
             ['saveAttribute']
         );
 
-        $this->entityCollection = $this->getMockForAbstractClass(
+        $this->entityCollection = $this->createMock(
             AbstractCollection::class,
             [],
             '',
@@ -153,10 +154,10 @@ class EmailSenderHandlerTest extends TestCase
      * @param bool|null $emailSendingResult
      * @param int|null $expectedIsEmailSent
      *
-     * @return void
-     * @dataProvider executeDataProvider
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     * @return void     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
+
+     #[DataProvider('executeDataProvider')]
     public function testExecute(
         int $configValue,
         ?array $collectionItems,
@@ -221,11 +222,10 @@ class EmailSenderHandlerTest extends TestCase
                 ->willReturn($collectionItems);
 
             /** @var Value|Encrypted|MockObject $valueMock */
-            $backendModelMock = $this->getMockBuilder(Value::class)
-                ->disableOriginalConstructor()
-                ->onlyMethods(['load', 'getId'])
-                ->addMethods(['getUpdatedAt'])
-                ->getMock();
+            $backendModelMock = $this->createPartialMockWithReflection(
+                Value::class,
+                ['load', 'getId', 'getUpdatedAt']
+            );
             $backendModelMock->expects($this->once())->method('load')->willReturnSelf();
             $backendModelMock->expects($this->once())->method('getId')->willReturn(1);
             $backendModelMock->expects($this->once())->method('getUpdatedAt')->willReturn($nowDate);
@@ -283,13 +283,8 @@ class EmailSenderHandlerTest extends TestCase
      */
     public static function executeDataProvider(): array
     {
-        $entityModel = static fn (self $testCase) => $testCase->getMockForAbstractClass(
+        $entityModel = static fn (self $testCase) => $testCase->createPartialMockWithReflection(
             AbstractModel::class,
-            [],
-            '',
-            false,
-            false,
-            true,
             ['setEmailSent', 'getOrder']
         );
 

@@ -28,12 +28,15 @@ use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Invoice;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class CaptureTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var MockObject
      */
@@ -108,7 +111,7 @@ class CaptureTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->objectManagerMock = $this->getMockForAbstractClass(ObjectManagerInterface::class);
+        $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
 
         $this->messageManagerMock = $this->getMockBuilder(Manager::class)
             ->disableOriginalConstructor()
@@ -166,14 +169,14 @@ class CaptureTest extends TestCase
 
         $this->invoiceManagement = $this->getMockBuilder(InvoiceManagementInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->objectManagerMock->expects($this->any())
             ->method('get')
             ->with(InvoiceManagementInterface::class)
             ->willReturn($this->invoiceManagement);
         $this->invoiceRepository = $this->getMockBuilder(InvoiceRepositoryInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->controller = $objectManager->getObject(
             Capture::class,
@@ -202,10 +205,7 @@ class CaptureTest extends TestCase
             ->with('invoice_id')
             ->willReturn($invoiceId);
 
-        $orderMock = $this->getMockBuilder(Order::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['setIsInProcess'])
-            ->getMock();
+        $orderMock = $this->createPartialMockWithReflection(Order::class, ['setIsInProcess']);
 
         $this->invoiceManagement->expects($this->once())
             ->method('setCapture')

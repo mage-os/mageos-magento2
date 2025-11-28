@@ -19,6 +19,8 @@ use Magento\Store\Model\Store;
 use Magento\Catalog\Helper\Product\Composite;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Catalog\Helper\Product;
 use Magento\Framework\Escaper;
 use Magento\Framework\View\Result\PageFactory;
@@ -31,6 +33,8 @@ use Magento\Framework\DataObject;
  */
 class ConfigureProductToAddTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Context
      */
@@ -101,14 +105,12 @@ class ConfigureProductToAddTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->requestMock = $this->getMockBuilder(RequestInterface::class)
-            ->onlyMethods(['getParam'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-        $this->objectManagerMock = $this->getMockBuilder(ObjectManagerInterface::class)
-            ->onlyMethods(['get'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        // Initialize ObjectManager to avoid "ObjectManager isn't initialized" errors
+        $objectManagerHelper = new ObjectManager($this);
+        $objectManagerHelper->prepareObjectManager();
+        
+        $this->requestMock = $this->createMock(RequestInterface::class);
+        $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
         $this->contextMock = $this->getMockBuilder(Context::class)
             ->onlyMethods(['getObjectManager', 'getRequest'])
             ->disableOriginalConstructor()
@@ -131,11 +133,10 @@ class ConfigureProductToAddTest extends TestCase
         $this->resultForwardFactoryMock = $this->getMockBuilder(ForwardFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->quoteSessionMock = $this->getMockBuilder(Quote::class)
-            ->onlyMethods(['getStore'])
-            ->addMethods(['getCustomerId'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->quoteSessionMock = $this->createPartialMockWithReflection(
+            Quote::class,
+            ['getStore', 'getCustomerId']
+        );
         $this->storeMock = $this->getMockBuilder(Store::class)
             ->onlyMethods(['getCode', 'getId'])
             ->disableOriginalConstructor()
@@ -147,10 +148,7 @@ class ConfigureProductToAddTest extends TestCase
         $this->layoutMock = $this->getMockBuilder(Layout::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->storeManagerMock = $this->getMockBuilder(StoreManagerInterface::class)
-            ->onlyMethods(['setCurrentStore'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
 
         $this->configureProductToAdd = new ConfigureProductToAdd(
             $this->contextMock,

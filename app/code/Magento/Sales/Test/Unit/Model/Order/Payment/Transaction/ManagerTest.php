@@ -14,6 +14,7 @@ use Magento\Sales\Model\Order\Payment\Transaction\Manager;
 use Magento\Sales\Model\Order\Payment\Transaction\Repository;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class ManagerTest extends TestCase
 {
@@ -40,12 +41,12 @@ class ManagerTest extends TestCase
         );
     }
 
-    /**
-     * @dataProvider getAuthorizationDataProvider
-     * @param $parentTransactionId
+    /**     * @param $parentTransactionId
      * @param $paymentId
      * @param $orderId
      */
+
+     #[DataProvider('getAuthorizationDataProvider')]
     public function testGetAuthorizationTransaction($parentTransactionId, $paymentId, $orderId)
     {
         $transaction = $this->createMock(Transaction::class);
@@ -68,12 +69,12 @@ class ManagerTest extends TestCase
         );
     }
 
-    /**
-     * @dataProvider isTransactionExistsDataProvider
-     * @param string|null $transactionId
+    /**     * @param string|null $transactionId
      * @param bool $isRepositoryReturnTransaction
      * @param bool $expectedResult
      */
+
+     #[DataProvider('isTransactionExistsDataProvider')]
     public function testIsTransactionExists($transactionId, $isRepositoryReturnTransaction, $expectedResult)
     {
         $paymentId = 1;
@@ -90,14 +91,14 @@ class ManagerTest extends TestCase
         );
     }
 
-    /**
-     * @dataProvider generateTransactionIdDataProvider
-     * @param string|null $transactionId
+    /**     * @param string|null $transactionId
      * @param string|null $parentTransactionId
      * @param string|null $transactionBasedTxnId
      * @param string $type
      * @param string|null $expectedResult
      */
+
+     #[DataProvider('generateTransactionIdDataProvider')]
     public function testGenerateTransactionId(
         $transactionId,
         $parentTransactionId,

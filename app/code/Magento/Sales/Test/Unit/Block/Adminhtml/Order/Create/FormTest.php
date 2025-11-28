@@ -29,12 +29,15 @@ use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class FormTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var QuoteSession|MockObject
      */
@@ -81,23 +84,22 @@ class FormTest extends TestCase
         $context = $this->getMockBuilder(Context::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->storeManager = $this->getMockForAbstractClass(StoreManagerInterface::class);
+        $this->storeManager = $this->createMock(StoreManagerInterface::class);
         $context->method('getStoreManager')
             ->willReturn($this->storeManager);
 
-        $this->quoteSession = $this->getMockBuilder(QuoteSession::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getStore', 'getQuote'])
-            ->addMethods(['getQuoteId', 'getStoreId', 'getCustomerId'])
-            ->getMock();
+        $this->quoteSession = $this->createPartialMockWithReflection(
+            QuoteSession::class,
+            ['getStore', 'getQuote', 'getQuoteId', 'getStoreId', 'getCustomerId']
+        );
         /** @var Create|MockObject $create */
         $create = $this->getMockBuilder(Create::class)
             ->disableOriginalConstructor()
             ->getMock();
         /** @var PriceCurrencyInterface|MockObject $priceCurrency */
-        $priceCurrency = $this->getMockForAbstractClass(PriceCurrencyInterface::class);
+        $priceCurrency = $this->createMock(PriceCurrencyInterface::class);
         /** @var EncoderInterface|MockObject $encoder */
-        $encoder = $this->getMockForAbstractClass(EncoderInterface::class);
+        $encoder = $this->createMock(EncoderInterface::class);
         $encoder->method('encode')
             ->willReturnCallback(function ($param) {
                 return json_encode($param);
@@ -106,9 +108,9 @@ class FormTest extends TestCase
         $formFactory = $this->getMockBuilder(FormFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->customerRepository = $this->getMockForAbstractClass(CustomerRepositoryInterface::class);
+        $this->customerRepository = $this->createMock(CustomerRepositoryInterface::class);
 
-        $this->localeCurrency = $this->getMockForAbstractClass(CurrencyInterface::class);
+        $this->localeCurrency = $this->createMock(CurrencyInterface::class);
         /** @var Mapper|MockObject $addressMapper */
         $addressMapper = $this->getMockBuilder(Mapper::class)
             ->disableOriginalConstructor()
@@ -156,7 +158,7 @@ class FormTest extends TestCase
 
         $customer = $this->getMockBuilder(CustomerInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $customer->method('getAddresses')
             ->willReturn([]);
         $this->customerRepository->method('getById')

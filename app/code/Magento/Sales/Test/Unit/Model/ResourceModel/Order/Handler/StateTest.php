@@ -14,9 +14,12 @@ use Magento\Catalog\Model\Product\Type;
 use Magento\Catalog\Model\Product\Type\AbstractType;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 class StateTest extends TestCase
 {
+    use MockCreationTrait;
+
     /** @var State */
     private $subject;
 
@@ -673,15 +676,10 @@ class StateTest extends TestCase
      */
     private function createOrderMock(): Order|MockObject
     {
-        return $this->getMockBuilder(Order::class)
-            ->onlyMethods([
-                'getState', 'setState', 'setStatus', 'getConfig',
-                'isCanceled', 'canUnhold', 'canInvoice', 'getInvoiceCollection', 'getTotalDue',
-                'canShip', 'canCreditmemo', 'getIsNotVirtual', 'getAllItems', 'getIsVirtual', 'getStatus'
-            ])
-            ->addMethods(['getIsInProcess'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        return $this->createPartialMockWithReflection(
+            Order::class,
+            ['getState', 'setState', 'setStatus', 'getConfig', 'isCanceled', 'canUnhold', 'canInvoice', 'getInvoiceCollection', 'getTotalDue', 'canShip', 'canCreditmemo', 'getIsNotVirtual', 'getAllItems', 'getIsVirtual', 'getStatus', 'getIsInProcess']
+        );
     }
 
     /**

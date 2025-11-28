@@ -14,9 +14,12 @@ use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 class ShipmentIdentityTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var ShipmentIdentity
      */
@@ -41,15 +44,12 @@ class ShipmentIdentityTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->scopeConfigInterfaceMock = $this->getMockForAbstractClass(
+        $this->scopeConfigInterfaceMock = $this->createMock(
             ScopeConfigInterface::class
         );
-        $this->storeManagerMock = $this->getMockForAbstractClass(StoreManagerInterface::class);
+        $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
 
-        $this->storeMock = $this->getMockBuilder(Store::class)
-            ->addMethods(['getStoreId'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->storeMock = $this->createPartialMockWithReflection(Store::class, ['getStoreId']);
 
         $this->storeId = 999999999999;
         $this->storeMock->expects($this->any())

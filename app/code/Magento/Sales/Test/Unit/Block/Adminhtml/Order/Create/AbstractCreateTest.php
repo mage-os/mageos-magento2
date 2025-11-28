@@ -14,10 +14,14 @@ use Magento\Framework\Pricing\PriceInfo\Base;
 use Magento\Sales\Block\Adminhtml\Order\Create\AbstractCreate;
 use Magento\Wishlist\Model\Item;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class AbstractCreateTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var AbstractCreate|MockObject
      */
@@ -43,7 +47,7 @@ class AbstractCreateTest extends TestCase
         $this->model = $this->getMockBuilder(AbstractCreate::class)
             ->onlyMethods(['convertPrice'])
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->priceInfoMock = $this->getMockBuilder(Base::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -80,7 +84,9 @@ class AbstractCreateTest extends TestCase
     /**
      * @param $item
      *
-     * @dataProvider getProductDataProvider
+     */
+    #[DataProvider('getProductDataProvider')]
+    /**
      */
     public function testGetProduct($item)
     {

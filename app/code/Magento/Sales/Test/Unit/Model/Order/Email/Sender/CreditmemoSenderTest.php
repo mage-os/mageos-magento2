@@ -15,6 +15,7 @@ use Magento\Sales\Model\Order\Email\Sender\CreditmemoSender;
 use Magento\Sales\Model\ResourceModel\EntityAbstract;
 use Magento\Sales\Model\ResourceModel\Order\Creditmemo as CreditmemoResource;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Test for Magento\Sales\Model\Order\Email\Sender\CreditmemoSender class.
@@ -52,11 +53,10 @@ class CreditmemoSenderTest extends AbstractSenderTestCase
             ['saveAttribute']
         );
 
-        $this->creditmemoMock = $this->getMockBuilder(Creditmemo::class)
-            ->addMethods(['setSendEmail', 'getCustomerNoteNotify', 'getCustomerNote'])
-            ->onlyMethods(['getStore', 'getId', 'getOrder', 'setEmailSent'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->creditmemoMock = $this->createPartialMockWithReflection(
+            Creditmemo::class,
+            ['setSendEmail', 'getCustomerNoteNotify', 'getCustomerNote', 'getStore', 'getId', 'getOrder', 'setEmailSent']
+        );
         $this->creditmemoMock->expects($this->any())
             ->method('getStore')
             ->willReturn($this->storeMock);
@@ -98,8 +98,9 @@ class CreditmemoSenderTest extends AbstractSenderTestCase
      *
      * @return void
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     * @dataProvider sendDataProvider
      */
+
+     #[DataProvider('sendDataProvider')]
     public function testSend(
         int $configValue,
         ?int $forceSyncMode,
@@ -259,8 +260,9 @@ class CreditmemoSenderTest extends AbstractSenderTestCase
      * @param string|null $expectedShippingAddress
      *
      * @return void
-     * @dataProvider sendVirtualOrderDataProvider
      */
+
+     #[DataProvider('sendVirtualOrderDataProvider')]
     public function testSendVirtualOrder(
         bool $isVirtualOrder,
         int $formatCallCount,

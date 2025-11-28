@@ -14,10 +14,13 @@ use Magento\Payment\Helper\Data;
 use Magento\Payment\Model\MethodInterface;
 use Magento\Sales\Ui\Component\Listing\Column\PaymentMethod;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class PaymentMethodTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var PaymentMethod
      */
@@ -32,7 +35,7 @@ class PaymentMethodTest extends TestCase
     {
         $objectManager = new ObjectManager($this);
         $contextMock = $this->getMockBuilder(ContextInterface::class)
-            ->getMockForAbstractClass();
+            ->getMock();
         $processor = $this->getMockBuilder(Processor::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -57,7 +60,7 @@ class PaymentMethodTest extends TestCase
             ]
         ];
 
-        $payment = $this->getMockForAbstractClass(MethodInterface::class);
+        $payment = $this->createMock(MethodInterface::class);
         $payment->expects($this->once())
             ->method('getTitle')
             ->willReturn($newItemValue);

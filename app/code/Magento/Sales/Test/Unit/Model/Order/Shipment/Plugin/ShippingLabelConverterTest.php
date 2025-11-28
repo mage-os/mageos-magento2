@@ -12,6 +12,7 @@ use Magento\Sales\Api\Data\ShipmentSearchResultInterface;
 use Magento\Sales\Api\ShipmentRepositoryInterface;
 use Magento\Sales\Plugin\ShippingLabelConverter;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -19,6 +20,8 @@ use PHPUnit\Framework\TestCase;
  */
 class ShippingLabelConverterTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var ShippingLabelConverter
      */
@@ -40,7 +43,7 @@ class ShippingLabelConverterTest extends TestCase
         $shippingLabelEncoded = base64_encode('shipping_label_test');
         $this->shipmentMock = $this->getMockBuilder(ShipmentInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->shipmentMock->expects($this->exactly(2))->method('getShippingLabel')->willReturn($shippingLabel);
         $this->shipmentMock->expects($this->once())
             ->method('setShippingLabel')
@@ -56,7 +59,7 @@ class ShippingLabelConverterTest extends TestCase
         $this->model->afterGet(
             $this->getMockBuilder(ShipmentRepositoryInterface::class)
                 ->disableOriginalConstructor()
-                ->getMockForAbstractClass(),
+                ->getMock(),
             $this->shipmentMock
         );
     }
@@ -68,13 +71,13 @@ class ShippingLabelConverterTest extends TestCase
     {
         $searchResultMock = $this->getMockBuilder(ShipmentSearchResultInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $searchResultMock->expects($this->once())->method('getItems')->willReturn([$this->shipmentMock]);
 
         $this->model->afterGetList(
             $this->getMockBuilder(ShipmentRepositoryInterface::class)
                 ->disableOriginalConstructor()
-                ->getMockForAbstractClass(),
+                ->getMock(),
             $searchResultMock
         );
     }

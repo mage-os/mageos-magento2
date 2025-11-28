@@ -13,6 +13,7 @@ use Magento\Sales\Model\CronJob\AggregateSalesReportBestsellersData;
 use Magento\Sales\Model\ResourceModel\Report\Bestsellers;
 use Magento\Sales\Model\ResourceModel\Report\BestsellersFactory;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -20,6 +21,8 @@ use PHPUnit\Framework\TestCase;
  */
 class AggregateSalesReportBestsellersDataTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var ResolverInterface|MockObject
      */
@@ -44,7 +47,7 @@ class AggregateSalesReportBestsellersDataTest extends TestCase
     {
         $this->localeResolverMock = $this->getMockBuilder(ResolverInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->bestsellersFactoryMock =
             $this->getMockBuilder(BestsellersFactory::class)
@@ -53,7 +56,7 @@ class AggregateSalesReportBestsellersDataTest extends TestCase
                 ->getMock();
         $this->localeDateMock = $this->getMockBuilder(TimezoneInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->observer = new AggregateSalesReportBestsellersData(
             $this->localeResolverMock,

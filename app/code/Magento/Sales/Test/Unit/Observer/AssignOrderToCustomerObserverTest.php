@@ -15,10 +15,14 @@ use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\Order\CustomerAssignment;
 use Magento\Sales\Observer\AssignOrderToCustomerObserver;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class AssignOrderToCustomerObserverTest extends TestCase
 {
+    use MockCreationTrait;
+
     /** @var AssignOrderToCustomerObserver */
     protected $sut;
 
@@ -35,7 +39,7 @@ class AssignOrderToCustomerObserverTest extends TestCase
     {
         $this->orderRepositoryMock = $this->getMockBuilder(OrderRepositoryInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->assignmentMock =  $this->getMockBuilder(CustomerAssignment::class)
             ->disableOriginalConstructor()
@@ -46,12 +50,12 @@ class AssignOrderToCustomerObserverTest extends TestCase
 
     /**
      * Test assigning order to customer after issuing guest order
-     *
-     * @dataProvider getCustomerIds
-     * @param null|int $orderCustomerId
+     *     * @param null|int $orderCustomerId
      * @param null|int $customerId
      * @return void
      */
+
+     #[DataProvider('getCustomerIds')]
     public function testAssignOrderToCustomerAfterGuestOrder($orderCustomerId, $customerId)
     {
         $orderId = 1;
@@ -63,11 +67,11 @@ class AssignOrderToCustomerObserverTest extends TestCase
             ->onlyMethods(['getData'])
             ->getMock();
         /** @var CustomerInterface|MockObject $customerMock */
-        $customerMock = $this->getMockForAbstractClass(CustomerInterface::class);
+        $customerMock = $this->createMock(CustomerInterface::class);
         /** @var OrderInterface|MockObject $orderMock */
         $orderMock = $this->getMockBuilder(OrderInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $observerMock->expects($this->once())->method('getEvent')->willReturn($eventMock);
         $eventMock->expects($this->any())->method('getData')
             ->willReturnMap(

@@ -14,10 +14,13 @@ use Magento\Framework\View\Element\UiComponent\Processor;
 use Magento\Sales\Ui\Component\Listing\Column\Price;
 use Magento\Sales\Ui\Component\Listing\Column\PurchasedPrice;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class PurchasedPriceTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Price
      */
@@ -32,7 +35,7 @@ class PurchasedPriceTest extends TestCase
     {
         $objectManager = new ObjectManager($this);
         $contextMock = $this->getMockBuilder(ContextInterface::class)
-            ->getMockForAbstractClass();
+            ->getMock();
         $processor = $this->getMockBuilder(Processor::class)
             ->disableOriginalConstructor()
             ->getMock();

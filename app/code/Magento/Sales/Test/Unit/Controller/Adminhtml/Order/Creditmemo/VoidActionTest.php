@@ -30,6 +30,7 @@ use Magento\Sales\Model\Order\Email\Sender\CreditmemoSender;
 use Magento\Sales\Model\Order\Invoice;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyFields)
@@ -38,6 +39,8 @@ use PHPUnit\Framework\TestCase;
  */
 class VoidActionTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var AddComment
      */
@@ -123,18 +126,17 @@ class VoidActionTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->creditmemoMock = $this->getMockBuilder(Creditmemo::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['cancel', 'void'])
-            ->onlyMethods(['getInvoice', 'getOrder', 'getId'])
-            ->getMock();
+        $this->creditmemoMock = $this->createPartialMockWithReflection(
+            Creditmemo::class,
+            ['cancel', 'void', 'getInvoice', 'getOrder', 'getId']
+        );
         $this->requestMock = $this->getMockBuilder(Http::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->responseMock = $this->getMockBuilder(\Magento\Framework\App\Response\Http::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->objectManagerMock = $this->getMockForAbstractClass(ObjectManagerInterface::class);
+        $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
         $this->helperMock = $this->getMockBuilder(Data::class)
             ->disableOriginalConstructor()
             ->getMock();

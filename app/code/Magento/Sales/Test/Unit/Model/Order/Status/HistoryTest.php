@@ -13,10 +13,13 @@ use Magento\Sales\Model\Order\Config;
 use Magento\Sales\Model\Order\Status\History;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class HistoryTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var ObjectManager
      */
@@ -42,7 +45,7 @@ class HistoryTest extends TestCase
         $this->objectManager = new ObjectManager($this);
 
         $this->order = $this->createMock(Order::class);
-        $this->storeManager = $this->getMockForAbstractClass(
+        $this->storeManager = $this->createMock(
             StoreManagerInterface::class,
             [],
             '',

@@ -14,6 +14,7 @@ use Magento\Sales\Api\Data\ShipmentInterface;
 use Magento\Sales\Api\Data\ShipmentItemCreationInterface;
 use Magento\Sales\Api\Data\ShipmentTrackCreationInterface;
 use Magento\Sales\Model\Order;
+use Magento\Sales\Model\Order\Shipment;
 use Magento\Sales\Model\Order\Shipment\Track;
 use Magento\Sales\Model\Order\Shipment\TrackFactory;
 use Magento\Sales\Model\Order\ShipmentDocumentFactory;
@@ -21,12 +22,15 @@ use Magento\Sales\Model\Order\ShipmentDocumentFactory\ExtensionAttributesProcess
 use Magento\Sales\Model\Order\ShipmentFactory;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class ShipmentDocumentFactoryTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var MockObject|ShipmentFactory
      */
@@ -94,16 +98,16 @@ class ShipmentDocumentFactoryTest extends TestCase
 
         $this->itemMock = $this->getMockBuilder(ShipmentItemCreationInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->commentMock = $this->getMockBuilder(ShipmentCommentCreationInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
-        $this->shipmentMock = $this->getMockBuilder(ShipmentInterface::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['addComment', 'addTrack', 'setCustomerNote', 'setCustomerNoteNotify'])
-            ->getMockForAbstractClass();
+        $this->shipmentMock = $this->createPartialMockWithReflection(
+            Shipment::class,
+            ['addComment', 'addTrack', 'setCustomerNote', 'setCustomerNoteNotify']
+        );
 
         $this->hydratorPoolMock = $this->getMockBuilder(HydratorPool::class)
             ->disableOriginalConstructor()
@@ -120,7 +124,7 @@ class ShipmentDocumentFactoryTest extends TestCase
 
         $this->hydratorMock = $this->getMockBuilder(HydratorInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->extensionAttributeProcessorMock = $this->getMockBuilder(ExtensionAttributesProcessor::class)
             ->disableOriginalConstructor()

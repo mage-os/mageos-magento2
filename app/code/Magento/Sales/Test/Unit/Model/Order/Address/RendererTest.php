@@ -20,6 +20,7 @@ use Magento\Sales\Model\Order\Address\Renderer as OrderAddressRenderer;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Store\Model\Store;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -27,6 +28,8 @@ use PHPUnit\Framework\TestCase;
  */
 class RendererTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var OrderAddressRenderer
      */
@@ -81,7 +84,7 @@ class RendererTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->eventManagerMock = $this->getMockBuilder(EventManager::class)
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->orderAddressMock = $this->getMockBuilder(OrderAddress::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -89,17 +92,14 @@ class RendererTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->customerAddressBlockRendererMock = $this->getMockBuilder(CustomerAddressBlockRenderer::class)
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->orderAddressMock->expects(static::any())
             ->method('getOrder')
             ->willReturn($this->orderMock);
 
         $this->storeConfigMock = $this->createMock(ScopeConfigInterface::class);
-        $this->storeManagerMck = $this->getMockBuilder(StoreManagerInterface::class)
-            ->onlyMethods(['setCurrentStore', 'getStore'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->storeManagerMck = $this->createMock(StoreManagerInterface::class);
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->orderAddressRenderer = $this->objectManagerHelper->getObject(
             OrderAddressRenderer::class,
@@ -166,11 +166,11 @@ class RendererTest extends TestCase
         $originalStoreMock = $this->getMockBuilder(Store::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getId'])
-            ->getMockForAbstractClass();
+            ->getMock();
         $storeMock = $this->getMockBuilder(Store::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getId'])
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->orderMock->expects(self::once())->method('getStore')->willReturn($storeMock);
 

@@ -10,19 +10,26 @@ namespace Magento\Sales\Test\Unit\Model\Order;
 use Magento\Payment\Model\MethodInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\Data\OrderPaymentInterface;
+use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Config;
+use Magento\Sales\Model\Order\Payment;
 use Magento\Sales\Model\Order\StatusResolver;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 class StatusResolverTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @param \Closure $order
      * @param string $expectedReturn
      *
-     * @dataProvider statesDataProvider
      */
+
+     #[DataProvider('statesDataProvider')]
     public function testGetOrderStatusByState($order, $expectedReturn)
     {
         $order = $order($this);
@@ -56,9 +63,7 @@ class StatusResolverTest extends TestCase
      */
     private function getOrder($newOrderStatus, $stateStatuses)
     {
-        $order = $this->getMockBuilder(OrderInterface::class)
-            ->addMethods(['getConfig'])
-            ->getMockForAbstractClass();
+        $order = $this->createPartialMockWithReflection(Order::class, ['getConfig', 'getPayment']);
         $order->method('getPayment')
             ->willReturn($this->getPayment($newOrderStatus));
         $order->method('getConfig')
@@ -73,9 +78,7 @@ class StatusResolverTest extends TestCase
      */
     private function getPayment($newOrderStatus)
     {
-        $payment = $this->getMockBuilder(OrderPaymentInterface::class)
-            ->addMethods(['getMethodInstance'])
-            ->getMockForAbstractClass();
+        $payment = $this->createPartialMockWithReflection(Payment::class, ['getMethodInstance']);
         $payment->method('getMethodInstance')
             ->willReturn($this->getMethodInstance($newOrderStatus));
 
@@ -89,7 +92,7 @@ class StatusResolverTest extends TestCase
     private function getMethodInstance($newOrderStatus)
     {
         $methodInstance = $this->getMockBuilder(MethodInterface::class)
-            ->getMockForAbstractClass();
+            ->getMock();
         $methodInstance->method('getConfigData')
             ->with('order_status')
             ->willReturn($newOrderStatus);

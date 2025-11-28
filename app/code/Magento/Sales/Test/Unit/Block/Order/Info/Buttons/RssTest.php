@@ -18,10 +18,13 @@ use Magento\Sales\Model\OrderFactory;
 use Magento\Sales\Model\Rss\Signature;
 use Magento\Store\Model\ScopeInterface;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class RssTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Rss
      */
@@ -64,9 +67,9 @@ class RssTest extends TestCase
     {
         $this->context = $this->createMock(Context::class);
         $this->orderFactory = $this->createPartialMock(OrderFactory::class, ['create']);
-        $this->urlBuilderInterface = $this->getMockForAbstractClass(UrlBuilderInterface::class);
-        $this->scopeConfigInterface = $this->getMockForAbstractClass(ScopeConfigInterface::class);
-        $request = $this->getMockForAbstractClass(RequestInterface::class);
+        $this->urlBuilderInterface = $this->createMock(UrlBuilderInterface::class);
+        $this->scopeConfigInterface = $this->createMock(ScopeConfigInterface::class);
+        $request = $this->createMock(RequestInterface::class);
         $this->signature = $this->createMock(Signature::class);
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);

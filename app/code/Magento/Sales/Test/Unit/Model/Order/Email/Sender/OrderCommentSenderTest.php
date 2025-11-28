@@ -10,6 +10,7 @@ namespace Magento\Sales\Test\Unit\Model\Order\Email\Sender;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Model\Order\Email\Container\OrderCommentIdentity;
 use Magento\Sales\Model\Order\Email\Sender\OrderCommentSender;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class OrderCommentSenderTest extends AbstractSenderTestCase
 {

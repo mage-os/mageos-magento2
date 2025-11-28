@@ -13,10 +13,13 @@ use Magento\Sales\Model\Order;
 use Magento\Sales\Model\ResourceModel\Order as ResourceOrder;
 use Magento\Sales\Model\ResourceModel\Order\Plugin\Authorization;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class AuthorizationTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var ObjectManager
      */
@@ -47,7 +50,7 @@ class AuthorizationTest extends TestCase
         $this->objectManager = new ObjectManager($this);
         $this->userContextMock = $this->getMockBuilder(UserContextInterface::class)
             ->onlyMethods(['getUserType', 'getUserId'])
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->subjectMock = $this->getMockBuilder(ResourceOrder::class)
             ->disableOriginalConstructor()
             ->getMock();

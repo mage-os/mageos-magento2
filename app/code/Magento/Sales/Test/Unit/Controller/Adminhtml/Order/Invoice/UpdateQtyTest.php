@@ -28,6 +28,7 @@ use Magento\Sales\Model\Order\Invoice;
 use Magento\Sales\Model\Service\InvoiceService;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  *
@@ -35,6 +36,8 @@ use PHPUnit\Framework\TestCase;
  */
 class UpdateQtyTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var MockObject
      */
@@ -122,34 +125,33 @@ class UpdateQtyTest extends TestCase
 
         $this->viewMock = $this->getMockBuilder(ViewInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->viewMock->expects($this->any())->method('loadLayout')->willReturnSelf();
 
-        $this->objectManagerMock = $this->getMockForAbstractClass(ObjectManagerInterface::class);
+        $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
 
         $this->pageConfigMock->expects($this->any())->method('getTitle')->willReturn($this->titleMock);
 
         $this->objectManagerMock = $this->getMockBuilder(ObjectManagerInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-
-        $contextMock = $this->getMockBuilder(Context::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(
-                [
-                    'getRequest',
-                    'getResponse',
-                    'getObjectManager',
-                    'getSession',
-                    'getHelper',
-                    'getActionFlag',
-                    'getMessageManager',
-                    'getResultRedirectFactory',
-                    'getView'
-                ]
-            )->addMethods(['getTitle'])
             ->getMock();
+
+        $contextMock = $this->createPartialMockWithReflection(
+            Context::class,
+            [
+                'getRequest',
+                'getResponse',
+                'getObjectManager',
+                'getSession',
+                'getHelper',
+                'getActionFlag',
+                'getMessageManager',
+                'getResultRedirectFactory',
+                'getView',
+                'getTitle'
+            ]
+        );
         $contextMock->expects($this->any())
             ->method('getRequest')
             ->willReturn($this->requestMock);

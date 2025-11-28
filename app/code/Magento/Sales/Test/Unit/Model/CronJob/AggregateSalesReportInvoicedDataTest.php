@@ -13,6 +13,7 @@ use Magento\Sales\Model\CronJob\AggregateSalesReportInvoicedData;
 use Magento\Sales\Model\ResourceModel\Report\Invoiced;
 use Magento\Sales\Model\ResourceModel\Report\InvoicedFactory;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -20,6 +21,8 @@ use PHPUnit\Framework\TestCase;
  */
 class AggregateSalesReportInvoicedDataTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var ResolverInterface|MockObject
      */
@@ -44,7 +47,7 @@ class AggregateSalesReportInvoicedDataTest extends TestCase
     {
         $this->localeResolverMock = $this->getMockBuilder(ResolverInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->invoicedFactoryMock = $this->getMockBuilder(
             InvoicedFactory::class
@@ -54,7 +57,7 @@ class AggregateSalesReportInvoicedDataTest extends TestCase
             ->getMock();
         $this->localeDateMock = $this->getMockBuilder(TimezoneInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->observer = new AggregateSalesReportInvoicedData(
             $this->localeResolverMock,

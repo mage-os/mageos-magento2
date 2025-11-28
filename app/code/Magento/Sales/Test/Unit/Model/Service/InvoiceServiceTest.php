@@ -19,6 +19,7 @@ use Magento\Sales\Model\Order\Invoice;
 use Magento\Sales\Model\Order\InvoiceNotifier;
 use Magento\Sales\Model\Service\InvoiceService;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -27,6 +28,8 @@ use PHPUnit\Framework\TestCase;
  */
 class InvoiceServiceTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * Repository
      *
@@ -74,13 +77,13 @@ class InvoiceServiceTest extends TestCase
     {
         $objectManager = new ObjectManagerHelper($this);
 
-        $this->repositoryMock = $this->getMockForAbstractClass(
+        $this->repositoryMock = $this->createMock(
             InvoiceRepositoryInterface::class,
             ['get'],
             '',
             false
         );
-        $this->commentRepositoryMock = $this->getMockForAbstractClass(
+        $this->commentRepositoryMock = $this->createMock(
             InvoiceCommentRepositoryInterface::class,
             ['getList'],
             '',
@@ -177,7 +180,7 @@ class InvoiceServiceTest extends TestCase
         $id = 123;
         $returnValue = 'return-value';
 
-        $modelMock = $this->getMockForAbstractClass(
+        $modelMock = $this->createMock(
             AbstractModel::class,
             [],
             '',

@@ -14,10 +14,13 @@ use Magento\Framework\View\Element\UiComponent\ContextInterface;
 use Magento\Framework\View\Element\UiComponent\Processor;
 use Magento\Sales\Ui\Component\Listing\Column\CustomerGroup;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class CustomerGroupTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var CustomerGroup
      */
@@ -32,12 +35,12 @@ class CustomerGroupTest extends TestCase
     {
         $objectManager = new ObjectManager($this);
         $contextMock = $this->getMockBuilder(ContextInterface::class)
-            ->getMockForAbstractClass();
+            ->getMock();
         $processor = $this->getMockBuilder(Processor::class)
             ->disableOriginalConstructor()
             ->getMock();
         $contextMock->expects($this->never())->method('getProcessor')->willReturn($processor);
-        $this->groupRepository = $this->getMockForAbstractClass(GroupRepositoryInterface::class);
+        $this->groupRepository = $this->createMock(GroupRepositoryInterface::class);
         $this->model = $objectManager->getObject(
             CustomerGroup::class,
             ['groupRepository' => $this->groupRepository, 'context' => $contextMock]
@@ -57,7 +60,7 @@ class CustomerGroupTest extends TestCase
             ]
         ];
 
-        $group = $this->getMockForAbstractClass(GroupInterface::class);
+        $group = $this->createMock(GroupInterface::class);
         $group->expects($this->once())
             ->method('getCode')
             ->willReturn($newItemValue);

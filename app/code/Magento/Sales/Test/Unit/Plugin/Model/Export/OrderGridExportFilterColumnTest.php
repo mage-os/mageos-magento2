@@ -15,6 +15,7 @@ use Magento\Sales\Model\ExportViewFilterProcessor;
 use Magento\Ui\Model\Export\MetadataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Test case for Process and filter order grid export columns according to view
@@ -73,10 +74,10 @@ class OrderGridExportFilterColumnTest extends TestCase
      *
      * @param string $namespace
      * @param array $activeColumns
-     * @param array $result
-     * @dataProvider getColumnsDataProvider
-     * @throws Exception
+     * @param array $result     * @throws Exception
      */
+
+     #[DataProvider('getColumnsDataProvider')]
     public function testAfterGetHeaders(string $namespace, array $activeColumns, array $result): void
     {
         $this->contextInterfaceMock->expects($this->any())
@@ -103,10 +104,10 @@ class OrderGridExportFilterColumnTest extends TestCase
      *
      * @param string $namespace
      * @param array $activeColumns
-     * @param array $result
-     * @dataProvider getColumnsDataProvider
-     * @throws Exception
+     * @param array $result     * @throws Exception
      */
+
+     #[DataProvider('getColumnsDataProvider')]
     public function testAfterGetFields(string $namespace, array $activeColumns, array $result): void
     {
         $this->contextInterfaceMock->expects($this->any())

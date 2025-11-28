@@ -12,6 +12,7 @@ use Magento\Sales\Helper\SalesEntityCommentValidator;
 use Magento\Authorization\Model\UserContextInterface;
 use Magento\Sales\Model\Order\Invoice\Comment as InvoiceComment;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Test cases of sales entity comment validator test
@@ -58,14 +59,14 @@ class SalesEntityCommentValidatorTest extends TestCase
 
     /**
      * Tests that comment is allowed to edit
-     *
-     * @dataProvider commentDataProvider
-     * @param $userId
+     *     * @param $userId
      * @param $userType
      * @param $commentData
      * @param $result
      * @return void
      */
+
+     #[DataProvider('commentDataProvider')]
     public function testIsEditCommentAllowed($userId, $userType, $commentData, $result): void
     {
         $this->userContextMock->expects($this->any())->method('getUserId')->willReturn($userId);

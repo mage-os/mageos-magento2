@@ -11,10 +11,14 @@ use Magento\Framework\ObjectManagerInterface;
 use Magento\Sales\Model\Order\Pdf\Total\DefaultTotal;
 use Magento\Sales\Model\Order\Pdf\Total\Factory;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class FactoryTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var MockObject|ObjectManagerInterface
      */
@@ -27,16 +31,16 @@ class FactoryTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->_objectManager = $this->getMockForAbstractClass(ObjectManagerInterface::class);
+        $this->_objectManager = $this->createMock(ObjectManagerInterface::class);
         $this->_factory = new Factory($this->_objectManager);
     }
 
     /**
      * @param mixed $class
      * @param array $arguments
-     * @param string $expectedClassName
-     * @dataProvider createDataProvider
-     */
+     * @param string $expectedClassName     */
+
+     #[DataProvider('createDataProvider')]
     public function testCreate($class, $arguments, $expectedClassName)
     {
         $createdModel = $this->getMockBuilder(DefaultTotal::class)

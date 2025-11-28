@@ -18,13 +18,17 @@ use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Invoice;
 use Magento\Sales\Model\Order\Invoice\PayOperation;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Unit test for Invoice pay operation.
  */
 class PayOperationTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var PayOperation
      */
@@ -70,46 +74,9 @@ class PayOperationTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->orderMock = $this->getMockForAbstractClass(
-            OrderInterface::class,
-            [],
-            '',
-            false,
-            false,
-            true,
-            [
-                'getPayment',
-                'setTotalInvoiced',
-                'getTotalInvoiced',
-                'setBaseTotalInvoiced',
-                'getBaseTotalInvoiced',
-                'setSubtotalInvoiced',
-                'getSubtotalInvoiced',
-                'setBaseSubtotalInvoiced',
-                'getBaseSubtotalInvoiced',
-                'setTaxInvoiced',
-                'getTaxInvoiced',
-                'setBaseTaxInvoiced',
-                'getBaseTaxInvoiced',
-                'setDiscountTaxCompensationInvoiced',
-                'getDiscountTaxCompensationInvoiced',
-                'setBaseDiscountTaxCompensationInvoiced',
-                'getBaseDiscountTaxCompensationInvoiced',
-                'setShippingTaxInvoiced',
-                'getShippingTaxInvoiced',
-                'setBaseShippingTaxInvoiced',
-                'getBaseShippingTaxInvoiced',
-                'setShippingInvoiced',
-                'getShippingInvoiced',
-                'setBaseShippingInvoiced',
-                'getBaseShippingInvoiced',
-                'setDiscountInvoiced',
-                'getDiscountInvoiced',
-                'setBaseDiscountInvoiced',
-                'getBaseDiscountInvoiced',
-                'setBaseTotalInvoicedCost',
-                'getBaseTotalInvoicedCost',
-            ]
+        $this->orderMock = $this->createPartialMockWithReflection(
+            Order::class,
+            ['getPayment', 'setTotalInvoiced', 'getTotalInvoiced', 'setBaseTotalInvoiced', 'getBaseTotalInvoiced', 'setSubtotalInvoiced', 'getSubtotalInvoiced', 'setBaseSubtotalInvoiced', 'getBaseSubtotalInvoiced', 'setTaxInvoiced', 'getTaxInvoiced', 'setBaseTaxInvoiced', 'getBaseTaxInvoiced', 'setDiscountTaxCompensationInvoiced', 'getDiscountTaxCompensationInvoiced', 'setBaseDiscountTaxCompensationInvoiced', 'getBaseDiscountTaxCompensationInvoiced', 'setShippingTaxInvoiced', 'getShippingTaxInvoiced', 'setBaseShippingTaxInvoiced', 'getBaseShippingTaxInvoiced', 'setShippingInvoiced', 'getShippingInvoiced', 'setBaseShippingInvoiced', 'getBaseShippingInvoiced', 'setDiscountInvoiced', 'getDiscountInvoiced', 'setBaseDiscountInvoiced', 'getBaseDiscountInvoiced', 'setBaseTotalInvoicedCost', 'getBaseTotalInvoicedCost']
         );
         $this->orderMock->expects($this->any())
             ->method('getTotalInvoiced')
@@ -157,35 +124,9 @@ class PayOperationTest extends TestCase
             ->method('getBaseTotalInvoicedCost')
             ->willReturn(31);
 
-        $this->invoiceMock = $this->getMockForAbstractClass(
-            InvoiceInterface::class,
-            [],
-            '',
-            false,
-            false,
-            true,
-            [
-                'getItems',
-                'getState',
-                'capture',
-                'setCanVoidFlag',
-                'pay',
-                'getGrandTotal',
-                'getBaseGrandTotal',
-                'getSubtotal',
-                'getBaseSubtotal',
-                'getTaxAmount',
-                'getBaseTaxAmount',
-                'getDiscountTaxCompensationAmount',
-                'getBaseDiscountTaxCompensationAmount',
-                'getShippingTaxAmount',
-                'getBaseShippingTaxAmount',
-                'getShippingAmount',
-                'getBaseShippingAmount',
-                'getDiscountAmount',
-                'getBaseDiscountAmount',
-                'getBaseCost',
-            ]
+        $this->invoiceMock = $this->createPartialMockWithReflection(
+            Invoice::class,
+            ['getItems', 'getState', 'capture', 'setCanVoidFlag', 'pay', 'getGrandTotal', 'getBaseGrandTotal', 'getSubtotal', 'getBaseSubtotal', 'getTaxAmount', 'getBaseTaxAmount', 'getDiscountTaxCompensationAmount', 'getBaseDiscountTaxCompensationAmount', 'getShippingTaxAmount', 'getBaseShippingTaxAmount', 'getShippingAmount', 'getBaseShippingAmount', 'getDiscountAmount', 'getBaseDiscountAmount', 'getBaseCost']
         );
         $this->invoiceMock->expects($this->any())
             ->method('getGrandTotal')
@@ -235,17 +176,9 @@ class PayOperationTest extends TestCase
 
         $this->contextMock = $this->createMock(Context::class);
 
-        $this->invoiceItemMock = $this->getMockForAbstractClass(
-            InvoiceItemInterface::class,
-            [],
-            '',
-            false,
-            false,
-            true,
-            [
-                'isDeleted',
-                'register',
-            ]
+        $this->invoiceItemMock = $this->createPartialMockWithReflection(
+            \Magento\Sales\Model\Order\Invoice\Item::class,
+            ['isDeleted', 'register', 'getQty', 'getOrderItem']
         );
         $this->invoiceItemMock->expects($this->any())
             ->method('isDeleted')
@@ -254,24 +187,15 @@ class PayOperationTest extends TestCase
             ->method('getQty')
             ->willReturn(1);
 
-        $this->orderPaymentMock = $this->getMockForAbstractClass(
-            OrderPaymentInterface::class,
-            [],
-            '',
-            false,
-            false,
-            true,
-            [
-                'canCapture',
-                'getMethodInstance',
-                'getIsTransactionPending',
-            ]
+        $this->orderPaymentMock = $this->createPartialMockWithReflection(
+            \Magento\Sales\Model\Order\Payment::class,
+            ['canCapture', 'getMethodInstance', 'getIsTransactionPending']
         );
         $this->orderMock->expects($this->any())
             ->method('getPayment')
             ->willReturn($this->orderPaymentMock);
 
-        $this->eventManagerMock = $this->getMockForAbstractClass(
+        $this->eventManagerMock = $this->createMock(
             ManagerInterface::class,
             [],
             '',
@@ -284,7 +208,7 @@ class PayOperationTest extends TestCase
             ->method('getEventDispatcher')
             ->willReturn($this->eventManagerMock);
 
-        $this->paymentMethodMock = $this->getMockForAbstractClass(
+        $this->paymentMethodMock = $this->createMock(
             MethodInterface::class,
             [],
             '',
@@ -307,12 +231,12 @@ class PayOperationTest extends TestCase
      * @param bool|null $isOnline
      * @param bool|null $isGateway
      * @param bool|null $isTransactionPending
-     *
-     * @dataProvider payDataProvider
-     *
+     *     *
      * @return void
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
+
+     #[DataProvider('payDataProvider')]
     public function testExecute($canCapture, $isOnline, $isGateway, $isTransactionPending)
     {
         $this->invoiceMock->expects($this->any())

@@ -13,6 +13,7 @@ use Magento\Sales\Model\Order\Email\Container\InvoiceCommentIdentity;
 use Magento\Sales\Model\Order\Email\Sender\InvoiceCommentSender;
 use Magento\Sales\Model\ResourceModel\Order\Invoice;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class InvoiceCommentSenderTest extends AbstractSenderTestCase
 {

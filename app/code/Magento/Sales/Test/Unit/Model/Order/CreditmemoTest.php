@@ -25,6 +25,7 @@ use Magento\Sales\Model\ResourceModel\Order\Creditmemo\Item\Collection as ItemCo
 use Magento\Sales\Model\ResourceModel\Order\Creditmemo\Item\CollectionFactory;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -33,6 +34,8 @@ use PHPUnit\Framework\TestCase;
  */
 class CreditmemoTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var OrderRepositoryInterface|MockObject
      */
@@ -55,8 +58,8 @@ class CreditmemoTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->orderRepository = $this->getMockForAbstractClass(OrderRepositoryInterface::class);
-        $this->scopeConfigMock = $this->getMockForAbstractClass(ScopeConfigInterface::class);
+        $this->orderRepository = $this->createMock(OrderRepositoryInterface::class);
+        $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
 
         $objectManagerHelper = new ObjectManagerHelper($this);
         $this->cmItemCollectionFactoryMock = $this->getMockBuilder(
@@ -77,7 +80,7 @@ class CreditmemoTest extends TestCase
             ),
             'cmItemCollectionFactory' => $this->cmItemCollectionFactoryMock,
             'calculatorFactory' => $this->createMock(CalculatorFactory::class),
-            'storeManager' => $this->getMockForAbstractClass(StoreManagerInterface::class),
+            'storeManager' => $this->createMock(StoreManagerInterface::class),
             'commentFactory' => $this->createMock(CommentFactory::class),
             'commentCollectionFactory' => $this->createMock(
                 \Magento\Sales\Model\ResourceModel\Order\Creditmemo\Comment\CollectionFactory::class

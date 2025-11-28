@@ -13,10 +13,13 @@ use Magento\Framework\Model\Context;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Sales\Model\ResourceModel\Order\Status;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class StatusTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Status|MockObject
      */
@@ -144,7 +147,7 @@ class StatusTest extends TestCase
             $resource = $this->createMock(Status::class);
         }
         if (!$eventDispatcher) {
-            $eventDispatcher = $this->getMockForAbstractClass(ManagerInterface::class);
+            $eventDispatcher = $this->createMock(ManagerInterface::class);
         }
         $helper = new ObjectManager($this);
         $model = $helper->getObject(
@@ -174,7 +177,7 @@ class StatusTest extends TestCase
             );
         $resource->expects($this->once())->method('commit');
 
-        $eventDispatcher = $this->getMockForAbstractClass(ManagerInterface::class);
+        $eventDispatcher = $this->createMock(ManagerInterface::class);
 
         $model = $this->_getPreparedModel($resource, $eventDispatcher);
         $model->setStatus($status);

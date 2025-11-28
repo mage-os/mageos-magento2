@@ -30,7 +30,9 @@ use Magento\Sales\Model\Order\Validation\InvoiceOrderInterface;
 use Magento\Sales\Model\OrderMutex;
 use Magento\Sales\Model\ValidatorResultInterface;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -40,6 +42,8 @@ use Psr\Log\LoggerInterface;
  */
 class InvoiceOrderTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var ResourceConnection|MockObject
      */
@@ -133,7 +137,7 @@ class InvoiceOrderTest extends TestCase
 
         $this->orderRepositoryMock = $this->getMockBuilder(OrderRepositoryInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->invoiceDocumentFactoryMock = $this->getMockBuilder(InvoiceDocumentFactory::class)
             ->disableOriginalConstructor()
@@ -141,11 +145,11 @@ class InvoiceOrderTest extends TestCase
 
         $this->paymentAdapterMock = $this->getMockBuilder(PaymentAdapterInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->orderStateResolverMock = $this->getMockBuilder(OrderStateResolverInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->configMock = $this->getMockBuilder(OrderConfig::class)
             ->disableOriginalConstructor()
@@ -157,40 +161,40 @@ class InvoiceOrderTest extends TestCase
 
         $this->notifierInterfaceMock = $this->getMockBuilder(NotifierInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->loggerMock = $this->getMockBuilder(LoggerInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->invoiceCommentCreationMock = $this->getMockBuilder(InvoiceCommentCreationInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->invoiceCreationArgumentsMock = $this->getMockBuilder(InvoiceCreationArgumentsInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->orderMock = $this->getMockBuilder(OrderInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->invoiceMock = $this->getMockBuilder(InvoiceInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->adapterInterface = $this->getMockBuilder(AdapterInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->invoiceOrderValidatorMock = $this->getMockBuilder(InvoiceOrderInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->errorMessagesMock = $this->getMockBuilder(ValidatorResultInterface::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['hasMessages', 'getMessages', 'addMessage'])
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->invoiceOrder = new InvoiceOrder(
             $this->resourceConnectionMock,
@@ -214,9 +218,9 @@ class InvoiceOrderTest extends TestCase
      * @param bool $notify
      * @param bool $appendComment
      * @throws CouldNotInvoiceException
-     * @throws DocumentValidationException
-     * @dataProvider dataProvider
-     */
+     * @throws DocumentValidationException     */
+
+     #[DataProvider('dataProvider')]
     public function testOrderInvoice($orderId, $capture, $items, $notify, $appendComment)
     {
         $this->mockConnection($orderId);

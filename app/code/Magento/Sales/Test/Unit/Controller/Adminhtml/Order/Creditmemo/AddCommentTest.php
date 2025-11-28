@@ -26,6 +26,7 @@ use Magento\Sales\Model\Order\Creditmemo;
 use Magento\Sales\Model\Order\Creditmemo\Comment;
 use Magento\Sales\Model\Order\Email\Sender\CreditmemoSender;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -34,6 +35,8 @@ use PHPUnit\Framework\TestCase;
  */
 class AddCommentTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var AddComment
      */
@@ -112,7 +115,7 @@ class AddCommentTest extends TestCase
         $this->responseMock = $this->getMockBuilder(\Magento\Framework\App\Response\Http::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->objectManagerMock = $this->getMockForAbstractClass(ObjectManagerInterface::class);
+        $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
         $this->contextMock = $this->getMockBuilder(Context::class)
             ->onlyMethods(['getRequest', 'getResponse', 'getObjectManager'])
             ->disableOriginalConstructor()

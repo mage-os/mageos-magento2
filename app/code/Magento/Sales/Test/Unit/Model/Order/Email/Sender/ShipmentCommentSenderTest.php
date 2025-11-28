@@ -12,6 +12,7 @@ use Magento\Sales\Model\Order\Email\Container\ShipmentCommentIdentity;
 use Magento\Sales\Model\Order\Email\Sender\ShipmentCommentSender;
 use Magento\Sales\Model\Order\Shipment;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class ShipmentCommentSenderTest extends AbstractSenderTestCase
 {

@@ -22,13 +22,17 @@ use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Email\Sender\OrderCommentSender;
 use Magento\Sales\Model\Order\Status\History;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class AddCommentTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var AddComment
      */
@@ -92,13 +96,13 @@ class AddCommentTest extends TestCase
     {
         $this->contextMock = $this->createMock(Context::class);
         $this->requestMock = $this->createMock(Http::class);
-        $this->orderRepositoryMock = $this->getMockForAbstractClass(OrderRepositoryInterface::class);
+        $this->orderRepositoryMock = $this->createMock(OrderRepositoryInterface::class);
         $this->orderMock = $this->createMock(Order::class);
         $this->resultRedirectFactoryMock = $this->createMock(RedirectFactory::class);
         $this->resultRedirectMock = $this->createMock(Redirect::class);
-        $this->authorizationMock = $this->getMockForAbstractClass(AuthorizationInterface::class);
+        $this->authorizationMock = $this->createMock(AuthorizationInterface::class);
         $this->statusHistoryCommentMock = $this->createMock(History::class);
-        $this->objectManagerMock = $this->getMockForAbstractClass(ObjectManagerInterface::class);
+        $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
 
         $this->contextMock->expects($this->once())->method('getRequest')->willReturn($this->requestMock);
 
@@ -129,8 +133,9 @@ class AddCommentTest extends TestCase
      * @param bool $expectedNotify
      * @param string $expectedOrderStatus
      *
-     * @dataProvider executeWillNotifyCustomerDataProvider
      */
+
+     #[DataProvider('executeWillNotifyCustomerDataProvider')]
     public function testExecuteWillNotifyCustomer(
         array $historyData,
         string $orderStatus,

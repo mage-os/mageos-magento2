@@ -17,6 +17,7 @@ use Magento\Sales\Model\Order\Shipment\TrackFactory;
 use Magento\Sales\Model\Order\ShipmentFactory;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Unit test for shipment factory class.
@@ -73,10 +74,10 @@ class ShipmentFactoryTest extends TestCase
     }
 
     /**
-     * @param array|null $tracks
-     * @dataProvider createDataProvider
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     * @param array|null $tracks     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
+
+     #[DataProvider('createDataProvider')]
     public function testCreate($tracks)
     {
         $orderItem = $this->createPartialMock(
@@ -166,10 +167,10 @@ class ShipmentFactoryTest extends TestCase
     }
 
     /**
-     * @param array|null $tracks
-     * @dataProvider createDataProvider
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     * @param array|null $tracks     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
+
+     #[DataProvider('createDataProvider')]
     public function testCreateWithFloatQtyShipment(?array $tracks): void
     {
         $orderItem = $this->createPartialMock(

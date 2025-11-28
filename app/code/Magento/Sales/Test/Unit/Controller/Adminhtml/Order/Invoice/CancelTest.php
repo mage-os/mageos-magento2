@@ -27,6 +27,7 @@ use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Invoice;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  *
@@ -34,6 +35,8 @@ use PHPUnit\Framework\TestCase;
  */
 class CancelTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var MockObject
      */
@@ -103,7 +106,7 @@ class CancelTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->objectManagerMock = $this->getMockForAbstractClass(ObjectManagerInterface::class);
+        $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
 
         $this->messageManagerMock = $this->getMockBuilder(Manager::class)
             ->disableOriginalConstructor()
@@ -161,7 +164,7 @@ class CancelTest extends TestCase
 
         $this->invoiceRepository = $this->getMockBuilder(InvoiceRepositoryInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->controller = $objectManager->getObject(
             Cancel::class,
@@ -190,10 +193,7 @@ class CancelTest extends TestCase
             ->with('invoice_id')
             ->willReturn($invoiceId);
 
-        $orderMock = $this->getMockBuilder(Order::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['setIsInProcess'])
-            ->getMock();
+        $orderMock = $this->createPartialMockWithReflection(Order::class, ['setIsInProcess']);
 
         $invoiceMock = $this->getMockBuilder(Invoice::class)
             ->disableOriginalConstructor()

@@ -10,13 +10,17 @@ namespace Magento\Sales\Test\Unit\Model\Order\Shipment;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\Data\ShipmentInterface;
 use Magento\Sales\Api\Data\ShipmentItemInterface;
+use Magento\Sales\Model\Order\Shipment\Item as ShipmentItem;
 use Magento\Sales\Model\Order\Item;
 use Magento\Sales\Model\Order\Shipment\OrderRegistrar;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 class OrderRegistrarTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var OrderRegistrar
      */
@@ -36,10 +40,10 @@ class OrderRegistrarTest extends TestCase
     {
         $this->orderMock = $this->getMockBuilder(OrderInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->shipmentMock = $this->getMockBuilder(ShipmentInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->model = new OrderRegistrar();
     }
@@ -72,9 +76,9 @@ class OrderRegistrarTest extends TestCase
      */
     private function getShipmentItemMock()
     {
-        return $this->getMockBuilder(ShipmentItemInterface::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['register', 'getOrderItem'])
-            ->getMockForAbstractClass();
+        return $this->createPartialMockWithReflection(
+            ShipmentItem::class,
+            ['register', 'getOrderItem', 'getQty']
+        );
     }
 }

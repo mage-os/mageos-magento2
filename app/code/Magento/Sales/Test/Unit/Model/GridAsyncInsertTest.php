@@ -12,10 +12,13 @@ use Magento\Sales\Model\AbstractModel;
 use Magento\Sales\Model\GridAsyncInsert;
 use Magento\Sales\Model\ResourceModel\GridInterface;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class GridAsyncInsertTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var GridAsyncInsert
      */
@@ -39,7 +42,7 @@ class GridAsyncInsertTest extends TestCase
     protected function setUp(): void
     {
         $this->gridAggregatorMock = $this->getMockBuilder(GridInterface::class)
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->salesModelMock = $this->getMockBuilder(AbstractModel::class)
             ->disableOriginalConstructor()
             ->onlyMethods(
@@ -47,9 +50,9 @@ class GridAsyncInsertTest extends TestCase
                     'getId'
                 ]
             )
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->scopeConfigurationMock = $this->getMockBuilder(ScopeConfigInterface::class)
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->unit = new GridAsyncInsert(
             $this->gridAggregatorMock,

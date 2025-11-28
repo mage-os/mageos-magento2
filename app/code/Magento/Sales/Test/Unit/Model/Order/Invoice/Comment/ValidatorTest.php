@@ -12,6 +12,7 @@ use Magento\Sales\Model\Order\Invoice\Comment;
 use Magento\Sales\Model\Order\Invoice\Comment\Validator;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Sales\Helper\SalesEntityCommentValidator;
 
 class ValidatorTest extends TestCase
@@ -57,8 +58,9 @@ class ValidatorTest extends TestCase
      * @param $commentDataMap
      * @param $commentData
      * @param $expectedWarnings
-     * @dataProvider providerCommentData
      */
+
+     #[DataProvider('providerCommentData')]
     public function testValidate($commentDataMap, $commentData, $expectedWarnings)
     {
         $this->commentModelMock->expects($this->any())

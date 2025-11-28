@@ -20,6 +20,7 @@ use Magento\Sales\Model\Order\Status\History;
 use Magento\Sales\Model\ResourceModel\EntityAbstract;
 use Magento\Sales\Model\ResourceModel\Order\Status\History\Collection;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
@@ -28,6 +29,8 @@ use Psr\Log\LoggerInterface;
  */
 class CollectionTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Collection
      */
@@ -75,14 +78,14 @@ class CollectionTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->eventManagerMock = $this->getMockForAbstractClass(ManagerInterface::class);
+        $this->eventManagerMock = $this->createMock(ManagerInterface::class);
         $this->connectionMock = $this->createMock(Mysql::class);
         $this->selectMock = $this->createMock(Select::class);
         $this->historyItemMock = $this->createPartialMock(
             History::class,
             ['addData']
         );
-        $this->resourceMock = $this->getMockForAbstractClass(
+        $this->resourceMock = $this->createMock(
             EntityAbstract::class,
             [],
             '',
@@ -94,7 +97,7 @@ class CollectionTest extends TestCase
         $this->entitySnapshotMock = $this->createMock(
             Snapshot::class
         );
-        $this->fetchStrategyMock = $this->getMockForAbstractClass(
+        $this->fetchStrategyMock = $this->createMock(
             FetchStrategyInterface::class
         );
         $this->entityFactoryMock = $this->createMock(EntityFactory::class);
@@ -123,7 +126,7 @@ class CollectionTest extends TestCase
             ->method('create')
             ->willReturn($this->historyItemMock);
 
-        $logger = $this->getMockForAbstractClass(LoggerInterface::class);
+        $logger = $this->createMock(LoggerInterface::class);
         $this->collection = new Collection(
             $this->entityFactoryMock,
             $logger,

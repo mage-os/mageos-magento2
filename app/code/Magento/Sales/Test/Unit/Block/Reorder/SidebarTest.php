@@ -23,6 +23,7 @@ use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  *
@@ -30,6 +31,8 @@ use PHPUnit\Framework\TestCase;
  */
 class SidebarTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Sidebar|MockObject
      */
@@ -96,11 +99,10 @@ class SidebarTest extends TestCase
             Config::class,
             ['getVisibleOnFrontStatuses']
         );
-        $this->orderCollection = $this->getMockBuilder(Collection::class)
-            ->addMethods(['setOrders'])
-            ->onlyMethods(['addAttributeToFilter', 'addAttributeToSort', 'setPage'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->orderCollection = $this->createPartialMockWithReflection(
+            Collection::class,
+            ['setOrders', 'addAttributeToFilter', 'addAttributeToSort', 'setPage']
+        );
         $this->stockRegistry = $this->getMockBuilder(StockRegistry::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getStockItem'])
@@ -177,10 +179,7 @@ class SidebarTest extends TestCase
             ->method('getWebsiteIds')
             ->willReturn([$websiteId]);
 
-        $item = $this->getMockBuilder(\Magento\Sales\Model\ResourceModel\Order\Item::class)
-            ->addMethods(['getProduct'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $item = $this->createPartialMockWithReflection(\Magento\Sales\Model\ResourceModel\Order\Item::class, ['getProduct']);
         $item->expects($this->atLeastOnce())
             ->method('getProduct')
             ->willReturn($product);

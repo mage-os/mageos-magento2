@@ -18,10 +18,13 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Sales\Block\Adminhtml\Order\View\Info;
 use Magento\Sales\Model\Order;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class InfoTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Info
      */
@@ -61,16 +64,16 @@ class InfoTest extends TestCase
     {
         $this->contextMock
             = $this->createPartialMock(Context::class, ['getAuthorization']);
-        $this->authorizationMock = $this->getMockForAbstractClass(AuthorizationInterface::class);
+        $this->authorizationMock = $this->createMock(AuthorizationInterface::class);
         $this->contextMock
             ->expects($this->any())->method('getAuthorization')->willReturn($this->authorizationMock);
-        $this->groupRepositoryMock = $this->getMockForAbstractClass(
+        $this->groupRepositoryMock = $this->createMock(
             GroupRepositoryInterface::class
         );
         $this->coreRegistryMock = $this->createMock(Registry::class);
         $methods = ['getCustomerGroupId'];
         $this->orderMock = $this->createPartialMock(Order::class, $methods);
-        $this->groupMock = $this->getMockForAbstractClass(
+        $this->groupMock = $this->createMock(
             GroupInterface::class,
             [],
             '',
@@ -90,7 +93,7 @@ class InfoTest extends TestCase
     public function testGetAddressEditLink()
     {
         $contextMock = $this->createPartialMock(Context::class, ['getAuthorization']);
-        $authorizationMock = $this->getMockForAbstractClass(AuthorizationInterface::class);
+        $authorizationMock = $this->createMock(AuthorizationInterface::class);
         $contextMock->expects($this->any())->method('getAuthorization')->willReturn($authorizationMock);
         $arguments = ['context' => $contextMock];
 

@@ -19,6 +19,7 @@ use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Controller\Adminhtml\Order\Cancel;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  *
@@ -26,6 +27,8 @@ use PHPUnit\Framework\TestCase;
  */
 class CancelTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Cancel
      */
@@ -82,10 +85,10 @@ class CancelTest extends TestCase
             RedirectFactory::class,
             ['create']
         );
-        $this->response = $this->getMockBuilder(ResponseInterface::class)
-            ->addMethods(['setRedirect'])
-            ->onlyMethods(['sendResponse'])
-            ->getMockForAbstractClass();
+        $this->response = $this->createPartialMockWithReflection(
+            ResponseInterface::class,
+            ['setRedirect', 'sendResponse']
+        );
         $this->request = $this->getMockBuilder(Http::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -95,7 +98,7 @@ class CancelTest extends TestCase
         );
         $this->orderRepositoryMock = $this->getMockBuilder(OrderRepositoryInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->validatorMock = $this->getMockBuilder(Validator::class)
             ->disableOriginalConstructor()

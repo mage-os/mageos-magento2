@@ -13,6 +13,7 @@ use Magento\Backend\Model\View\Result\Forward;
 use Magento\Backend\Model\View\Result\ForwardFactory;
 use Magento\Eav\Model\Entity\Collection\AbstractCollection;
 use Magento\Framework\App\RequestInterface;
+use Magento\Framework\App\Request\Http;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Escaper;
 use Magento\Framework\Event\ManagerInterface;
@@ -24,6 +25,8 @@ use Magento\Sales\Model\AdminOrder\Create;
 use PHPUnit\Framework\MockObject\MockObject;
 
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  *
@@ -32,6 +35,8 @@ use PHPUnit\Framework\TestCase;
  */
 class ProcessDataTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var ProcessData
      */
@@ -85,29 +90,8 @@ class ProcessDataTest extends TestCase
         $objectManagerHelper = new ObjectManagerHelper($this);
         $context = $this->createMock(Context::class);
 
-        $this->request = $this->getMockForAbstractClass(
-            RequestInterface::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            [
-                'getParam',
-                'getPost',
-                'getPostValue',
-                'get',
-                'has',
-                'setModuleName',
-                'setActionName',
-                'initForward',
-                'setDispatched',
-                'getModuleName',
-                'getActionName',
-                'getCookie'
-            ]
-        );
-        $response = $this->getMockForAbstractClass(
+        $this->request = $this->createPartialMock(Http::class, ['getPost', 'getPostValue', 'has', 'getParam']);
+        $response = $this->createMock(
             ResponseInterface::class,
             [],
             '',
@@ -122,10 +106,10 @@ class ProcessDataTest extends TestCase
         $this->messageManager = $this->createMock(\Magento\Framework\Message\ManagerInterface::class);
         $context->expects($this->any())->method('getMessageManager')->willReturn($this->messageManager);
 
-        $this->eventManager = $this->getMockForAbstractClass(ManagerInterface::class);
+        $this->eventManager = $this->createMock(ManagerInterface::class);
         $context->expects($this->any())->method('getEventManager')->willReturn($this->eventManager);
 
-        $this->objectManager = $this->getMockForAbstractClass(ObjectManagerInterface::class);
+        $this->objectManager = $this->createMock(ObjectManagerInterface::class);
         $context->expects($this->any())->method('getObjectManager')->willReturn($this->objectManager);
 
         $this->session = $this->createMock(Quote::class);
@@ -157,14 +141,12 @@ class ProcessDataTest extends TestCase
     /**
      * @param bool $noDiscount
      * @param string $couponCode
-     * @dataProvider isApplyDiscountDataProvider
      */
+
+     #[DataProvider('isApplyDiscountDataProvider')]
     public function testExecute($noDiscount, $couponCode)
     {
-        $quote = $this->getMockBuilder(\Magento\Quote\Model\Quote::class)->addMethods(['getCouponCode'])
-            ->onlyMethods(['isVirtual', 'getAllItems'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $quote = $this->createPartialMockWithReflection(\Magento\Quote\Model\Quote::class, array_merge(['getCouponCode'], ['isVirtual', 'getAllItems']));
         $create = $this->createMock(Create::class);
 
         $paramReturnMap = [
@@ -220,13 +202,8 @@ class ProcessDataTest extends TestCase
         $create->expects($this->once())->method('saveQuote')->willReturnSelf();
 
         $this->session->expects($this->any())->method('getQuote')->willReturn($quote);
-        $item = $this->getMockForAbstractClass(
+        $item = $this->createPartialMockWithReflection(
             AbstractCollection::class,
-            [],
-            '',
-            false,
-            true,
-            true,
             ['getNoDiscount']
         );
         $quote->expects($this->any())->method('getAllItems')->willReturn([$item]);

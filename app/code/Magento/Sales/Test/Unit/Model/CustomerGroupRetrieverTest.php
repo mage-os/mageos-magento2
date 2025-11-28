@@ -14,12 +14,15 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Sales\Model\CustomerGroupRetriever;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * Test for class CustomerGroupRetriever.
  */
 class CustomerGroupRetrieverTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var CustomerGroupRetriever
      */
@@ -40,14 +43,13 @@ class CustomerGroupRetrieverTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->quoteSession = $this->getMockBuilder(Quote::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getQuoteId'])
-            ->onlyMethods(['getQuote'])
-            ->getMock();
+        $this->quoteSession = $this->createPartialMockWithReflection(
+            Quote::class,
+            ['getQuoteId', 'getQuote']
+        );
         $this->groupManagement = $this->getMockBuilder(GroupManagementInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $helper = new ObjectManager($this);
         $this->retriever = $helper->getObject(
@@ -83,7 +85,7 @@ class CustomerGroupRetrieverTest extends TestCase
         $this->quoteSession->expects($this->never())->method('getQuote');
         $group = $this->getMockBuilder(GroupInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->groupManagement->expects($this->once())->method('getNotLoggedInGroup')->willReturn($group);
         $group->expects($this->once())->method('getId')->willReturn(2);
 

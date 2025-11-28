@@ -27,6 +27,7 @@ use Magento\Sales\Model\OrderMutex;
 use Magento\Sales\Model\OrderNotifier;
 use Magento\Sales\Model\Service\OrderService;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Magento\Framework\Exception\LocalizedException;
@@ -38,6 +39,8 @@ use Magento\Framework\Exception\LocalizedException;
  */
 class OrderServiceTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var OrderService
      */
@@ -182,14 +185,14 @@ class OrderServiceTest extends TestCase
             ->getMock();
 
         /** @var PaymentFailuresInterface|MockObject  $paymentFailures */
-        $paymentFailures = $this->getMockForAbstractClass(PaymentFailuresInterface::class);
+        $paymentFailures = $this->createMock(PaymentFailuresInterface::class);
 
         /** @var LoggerInterface|MockObject $logger */
-        $logger = $this->getMockForAbstractClass(LoggerInterface::class);
+        $logger = $this->createMock(LoggerInterface::class);
 
         $this->adapterInterfaceMock = $this->getMockBuilder(AdapterInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->resourceConnectionMock = $this->getMockBuilder(ResourceConnection::class)
             ->disableOriginalConstructor()

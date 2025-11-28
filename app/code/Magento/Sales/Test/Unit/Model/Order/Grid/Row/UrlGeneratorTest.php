@@ -12,10 +12,14 @@ use Magento\Framework\AuthorizationInterface;
 use Magento\Framework\DataObject;
 use Magento\Sales\Model\Order\Grid\Row\UrlGenerator;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class UrlGeneratorTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var UrlGenerator
      */
@@ -33,7 +37,7 @@ class UrlGeneratorTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->urlMock = $this->getMockForAbstractClass(
+        $this->urlMock = $this->createMock(
             UrlInterface::class,
             [],
             '',
@@ -42,7 +46,7 @@ class UrlGeneratorTest extends TestCase
             true,
             []
         );
-        $this->authorizationMock = $this->getMockForAbstractClass(
+        $this->authorizationMock = $this->createMock(
             AuthorizationInterface::class,
             [],
             '',
@@ -73,9 +77,9 @@ class UrlGeneratorTest extends TestCase
 
     /**
      * @param bool $isAllowed
-     * @param null|bool $url
-     * @dataProvider permissionProvider
-     */
+     * @param null|bool $url     */
+
+     #[DataProvider('permissionProvider')]
     public function testGetUrl($isAllowed, $url)
     {
         $this->authorizationMock->expects($this->once())

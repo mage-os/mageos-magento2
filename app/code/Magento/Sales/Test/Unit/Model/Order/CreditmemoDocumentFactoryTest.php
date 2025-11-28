@@ -12,6 +12,7 @@ use Magento\Framework\EntityManager\HydratorPool;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Sales\Api\Data\CreditmemoCommentCreationInterface;
 use Magento\Sales\Api\Data\CreditmemoCommentInterface;
+use Magento\Sales\Model\Order\Creditmemo\Comment as CreditmemoComment;
 use Magento\Sales\Api\Data\CreditmemoCommentInterfaceFactory;
 use Magento\Sales\Api\Data\CreditmemoCreationArgumentsInterface;
 use Magento\Sales\Api\Data\CreditmemoItemCreationInterface;
@@ -23,12 +24,15 @@ use Magento\Sales\Model\Order\CreditmemoFactory;
 use Magento\Sales\Model\Order\Invoice;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class CreditmemoDocumentFactoryTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var ObjectManager
      */
@@ -114,7 +118,7 @@ class CreditmemoDocumentFactoryTest extends TestCase
             ->getMock();
         $this->orderRepositoryMock = $this->getMockBuilder(OrderRepositoryInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->orderMock = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -123,30 +127,27 @@ class CreditmemoDocumentFactoryTest extends TestCase
             ->getMock();
         $this->creditmemoItemCreationMock = $this->getMockBuilder(CreditmemoItemCreationInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->creditmemoMock = $this->getMockBuilder(Creditmemo::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->hydratorMock = $this->getMockBuilder(HydratorInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->commentCreationArgumentsMock = $this->getMockBuilder(CreditmemoCreationArgumentsInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->commentCreationMock = $this->getMockBuilder(CreditmemoCommentCreationInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->creditmemoMock->expects($this->once())
             ->method('getEntityId')
             ->willReturn(11);
 
-        $this->commentMock = $this->getMockBuilder(CreditmemoCommentInterface::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['setStoreId', 'setCreditmemo'])
-            ->onlyMethods(
-                    get_class_methods(CreditmemoCommentInterface::class)
-            )
-            ->getMock();
+        $this->commentMock = $this->createPartialMockWithReflection(
+            CreditmemoComment::class,
+            array_merge(get_class_methods(CreditmemoCommentInterface::class), ['setStoreId', 'setCreditmemo'])
+        );
         $this->factory = $this->objectManager->getObject(
             CreditmemoDocumentFactory::class,
             [

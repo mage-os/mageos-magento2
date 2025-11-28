@@ -16,6 +16,7 @@ use Magento\Sales\Model\OrderFactory as SalesOrderFactory;
 use Magento\Sales\Model\ResourceModel\OrderFactory;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Unit test for order item class.
@@ -123,9 +124,9 @@ class ItemTest extends TestCase
      * @param $qtyRefunded
      * @param $qtyShipped
      * @param $expectedStatus
-     *
-     * @dataProvider getStatusIdDataProvider
-     */
+     *     */
+
+     #[DataProvider('getStatusIdDataProvider')]
     public function testGetStatusId(
         $qtyBackOrdered,
         $qtyCanceled,
@@ -198,9 +199,9 @@ class ItemTest extends TestCase
      *
      * @param array|string $options
      * @param array $expectedResult
-     *
-     * @dataProvider getProductOptionsDataProvider
-     */
+     *     */
+
+     #[DataProvider('getProductOptionsDataProvider')]
     public function testGetProductOptions($options, $expectedResult)
     {
         if (is_string($options)) {
@@ -249,9 +250,9 @@ class ItemTest extends TestCase
      *
      * @param array $options
      * @param float $expectedResult
-     *
-     * @dataProvider getItemQtyVariants
-     */
+     *     */
+
+     #[DataProvider('getItemQtyVariants')]
     public function testGetSimpleQtyToMethods(array $options, $expectedResult)
     {
         $this->model->setData($options);

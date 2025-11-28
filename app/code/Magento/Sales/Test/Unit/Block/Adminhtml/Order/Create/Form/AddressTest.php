@@ -25,12 +25,15 @@ use Magento\Sales\Block\Adminhtml\Order\Create\Form\Address;
 use Magento\Store\Model\Store;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class AddressTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var QuoteSession|MockObject
      */
@@ -112,11 +115,10 @@ class AddressTest extends TestCase
         $this->customerId = 10;
         $this->addressId = 100;
 
-        $this->quoteSession = $this->getMockBuilder(QuoteSession::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getStore'])
-            ->addMethods(['getCustomerId'])
-            ->getMock();
+        $this->quoteSession = $this->createPartialMockWithReflection(
+            QuoteSession::class,
+            ['getStore', 'getCustomerId']
+        );
         $this->store = $this->getMockBuilder(Store::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -145,12 +147,8 @@ class AddressTest extends TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['create', 'addFilters'])
             ->getMock();
-        $this->addressService = $this->getMockBuilder(AddressRepositoryInterface::class)
-            ->onlyMethods(['getList'])
-            ->getMockForAbstractClass();
-        $this->addressItem = $this->getMockBuilder(AddressInterface::class)
-            ->onlyMethods(['getId'])
-            ->getMockForAbstractClass();
+        $this->addressService = $this->createMock(AddressRepositoryInterface::class);
+        $this->addressItem = $this->createMock(AddressInterface::class);
         $this->addressItem->expects($this->any())
             ->method('getId')
             ->willReturn($this->addressId);
@@ -220,9 +218,7 @@ class AddressTest extends TestCase
             ->with([$filter]);
 
         /** @var AddressSearchResultsInterface|MockObject $result */
-        $result = $this->getMockBuilder(AddressSearchResultsInterface::class)
-            ->addMethods(['getList'])
-            ->getMockForAbstractClass();
+        $result = $this->createMock(AddressSearchResultsInterface::class);
         $result->expects($this->once())
             ->method('getItems')
             ->willReturn([$this->addressItem]);

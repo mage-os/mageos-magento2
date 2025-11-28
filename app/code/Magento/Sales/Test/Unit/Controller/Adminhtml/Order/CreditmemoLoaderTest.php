@@ -22,6 +22,7 @@ use Magento\Sales\Model\Order\Invoice;
 use Magento\Sales\Model\Order\Item;
 use Magento\Sales\Model\OrderFactory;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -30,6 +31,8 @@ use PHPUnit\Framework\TestCase;
  */
 class CreditmemoLoaderTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var CreditmemoLoader
      */
@@ -90,16 +93,13 @@ class CreditmemoLoaderTest extends TestCase
         $data = [];
         $this->creditmemoRepositoryMock = $this->getMockBuilder(CreditmemoRepositoryInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->creditmemoFactoryMock = $this->createMock(CreditmemoFactory::class);
         $this->orderFactoryMock = $this->getMockBuilder(OrderFactory::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['create'])
             ->getMock();
-        $this->invoiceRepositoryMock = $this->getMockBuilder(InvoiceRepositoryInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMockForAbstractClass();
+        $this->invoiceRepositoryMock = $this->createMock(InvoiceRepositoryInterface::class);
         $this->eventManagerMock = $this->getMockBuilder(Manager::class)
             ->disableOriginalConstructor()
             ->getMock();

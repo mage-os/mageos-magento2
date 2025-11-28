@@ -13,10 +13,13 @@ use Magento\Sales\Api\Data\TotalInterfaceFactory;
 use Magento\Sales\Model\OrderFactory;
 use Magento\Sales\Model\Order\ShippingBuilder;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class ShippingBuilderTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var ShippingBuilder
      */
@@ -62,7 +65,7 @@ class ShippingBuilderTest extends TestCase
     public function testCreateWithOrder() : void
     {
         $order = $this->getMockBuilder(OrderInterface::class)
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->shippingBuilder->setOrder($order);
         $order->expects($this->any())
             ->method('getEntityId')

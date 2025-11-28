@@ -13,6 +13,7 @@ use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Model\Order\Creditmemo\RefundOperation;
 use Magento\Sales\Model\Order\RefundAdapter;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -20,6 +21,8 @@ use PHPUnit\Framework\TestCase;
  */
 class RefundAdapterTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var RefundAdapter
      */
@@ -49,11 +52,11 @@ class RefundAdapterTest extends TestCase
     {
         $this->orderMock = $this->getMockBuilder(OrderInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->creditmemoMock = $this->getMockBuilder(CreditmemoInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->refundOperationMock = $this->getMockBuilder(RefundOperation::class)
             ->disableOriginalConstructor()
@@ -61,7 +64,7 @@ class RefundAdapterTest extends TestCase
 
         $this->invoiceMock = $this->getMockBuilder(InvoiceInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->subject = new RefundAdapter(
             $this->refundOperationMock

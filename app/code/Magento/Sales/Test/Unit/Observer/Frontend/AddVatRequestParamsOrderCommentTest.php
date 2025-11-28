@@ -14,12 +14,16 @@ use Magento\Sales\Model\Order;
 use Magento\Sales\Observer\Frontend\AddVatRequestParamsOrderComment;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * Tests Magento\Sales\Observer\Frontend\AddVatRequestParamsOrderComment
  */
 class AddVatRequestParamsOrderCommentTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Address|MockObject
      */
@@ -46,8 +50,9 @@ class AddVatRequestParamsOrderCommentTest extends TestCase
      * @param string|int $vatRequestId
      * @param string|int $vatRequestDate
      * @param string $orderHistoryComment
-     * @dataProvider addVatRequestParamsOrderCommentDataProvider
      */
+
+     #[DataProvider('addVatRequestParamsOrderCommentDataProvider')]
     public function testAddVatRequestParamsOrderComment(
         $configAddressType,
         $vatRequestId,
@@ -84,10 +89,7 @@ class AddVatRequestParamsOrderCommentTest extends TestCase
                 ->method('addStatusHistoryComment')
                 ->with($orderHistoryComment, false);
         }
-        $observer = $this->getMockBuilder(Observer::class)
-            ->addMethods(['getOrder'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $observer = $this->createPartialMockWithReflection(Observer::class, ['getOrder']);
         $observer->expects($this->once())
             ->method('getOrder')
             ->willReturn($orderMock);

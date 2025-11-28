@@ -19,10 +19,13 @@ use Magento\Sales\Model\Order\Shipment;
 use Magento\Sales\Model\Service\ShipmentService;
 use Magento\Shipping\Model\ShipmentNotifier;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class ShipmentServiceTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * Repository
      *
@@ -70,7 +73,7 @@ class ShipmentServiceTest extends TestCase
     {
         $objectManager = new ObjectManagerHelper($this);
 
-        $this->commentRepositoryMock = $this->getMockForAbstractClass(
+        $this->commentRepositoryMock = $this->createMock(
             ShipmentCommentRepositoryInterface::class,
             ['getList'],
             '',
@@ -84,7 +87,7 @@ class ShipmentServiceTest extends TestCase
             FilterBuilder::class,
             ['setField', 'setValue', 'setConditionType', 'create']
         );
-        $this->repositoryMock = $this->getMockForAbstractClass(
+        $this->repositoryMock = $this->createMock(
             ShipmentRepositoryInterface::class,
             ['get'],
             '',
@@ -170,7 +173,7 @@ class ShipmentServiceTest extends TestCase
         $id = 123;
         $returnValue = 'return-value';
 
-        $modelMock = $this->getMockForAbstractClass(
+        $modelMock = $this->createMock(
             AbstractModel::class,
             [],
             '',

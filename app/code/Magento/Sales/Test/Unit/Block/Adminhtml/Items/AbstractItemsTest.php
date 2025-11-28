@@ -17,7 +17,9 @@ use Magento\Sales\Block\Adminhtml\Items\AbstractItems;
 use Magento\Sales\Block\Adminhtml\Order\View\Items\Renderer\DefaultRenderer;
 use Magento\Store\Model\Store;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * TODO refactor me PLEASE
@@ -26,6 +28,8 @@ use PHPUnit\Framework\TestCase;
  */
 class AbstractItemsTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var ObjectManagerHelper
      */
@@ -47,10 +51,8 @@ class AbstractItemsTest extends TestCase
     protected function setUp(): void
     {
         $this->objectManagerHelper = new ObjectManagerHelper($this);
-        $this->stockRegistry = $this->getMockBuilder(StockRegistry::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getStockItem'])
-            ->getMock();
+        $this->objectManagerHelper->prepareObjectManager();
+        $this->stockRegistry = $this->createPartialMock(StockRegistry::class, ['getStockItem']);
 
         $this->stockItemMock = $this->createPartialMock(
             Item::class,
@@ -137,18 +139,15 @@ class AbstractItemsTest extends TestCase
      * @param bool $result
      *
      * @return void
-     * @dataProvider canReturnItemToStockDataProvider
+     */
+    #[DataProvider('canReturnItemToStockDataProvider')]
+    /**
      */
     public function testCanReturnItemToStock(bool $canReturnToStock, array $itemConfig, bool $result): void
     {
         $productId = $itemConfig['product_id'] ?? null;
         $manageStock = $itemConfig['manage_stock'] ?? false;
-        $item = $this->getMockBuilder(\Magento\Sales\Model\Order\Creditmemo\Item::class)->addMethods(
-            ['hasCanReturnToStock', 'setCanReturnToStock', 'getCanReturnToStock']
-        )
-            ->onlyMethods(['getOrderItem'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $item = $this->createPartialMockWithReflection(\Magento\Sales\Model\Order\Creditmemo\Item::class, array_merge(['hasCanReturnToStock', 'setCanReturnToStock', 'getCanReturnToStock'], ['getOrderItem']));
         $dependencies = $this->prepareServiceMockDependency(
             $item,
             $canReturnToStock,

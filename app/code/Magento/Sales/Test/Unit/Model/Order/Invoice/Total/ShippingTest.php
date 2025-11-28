@@ -18,13 +18,17 @@ use Magento\Sales\Model\Order\Invoice\Total\Shipping;
 use Magento\Sales\Model\OrderFactory;
 use Magento\Sales\Model\ResourceModel\Order\Invoice\Item\CollectionFactory;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class ShippingTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Shipping
      */
@@ -35,12 +39,12 @@ class ShippingTest extends TestCase
         $this->total = new Shipping();
     }
 
-    /**
-     * @dataProvider collectWithNoOrZeroPrevInvoiceDataProvider
-     * @param array $prevInvoicesData
+    /**     * @param array $prevInvoicesData
      * @param float $orderShipping
      * @param float $expectedShipping
      */
+
+     #[DataProvider('collectWithNoOrZeroPrevInvoiceDataProvider')]
     public function testCollectWithNoOrZeroPrevInvoice(array $prevInvoicesData, $orderShipping, $expectedShipping)
     {
         $invoice = $this->createInvoiceStub($prevInvoicesData, $orderShipping);
@@ -93,7 +97,7 @@ class ShippingTest extends TestCase
         $order = $this->getMockBuilder(Order::class)
             ->onlyMethods(['getInvoiceCollection', 'getShippingAmount'])
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $order->expects($this->any())
             ->method('getInvoiceCollection')
             ->willReturn($this->getInvoiceCollection($prevInvoicesData));

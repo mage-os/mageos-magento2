@@ -26,6 +26,8 @@ use Magento\Sales\Model\ResourceModel\Order\Invoice;
 use Magento\Store\Model\Store;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -35,6 +37,8 @@ use Psr\Log\LoggerInterface;
  */
 class EmailSenderTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var EmailSender
      */
@@ -131,10 +135,7 @@ class EmailSenderTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->storeMock = $this->getMockBuilder(Store::class)
-            ->addMethods(['getStoreId'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->storeMock = $this->createPartialMockWithReflection(Store::class, ['getStoreId']);
 
         $this->storeMock->expects($this->any())
             ->method('getStoreId')
@@ -144,24 +145,20 @@ class EmailSenderTest extends TestCase
             ->method('getStore')
             ->willReturn($this->storeMock);
 
-        $this->senderMock = $this->getMockBuilder(Sender::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['send', 'sendCopyTo'])
-            ->getMock();
+        $this->senderMock = $this->createPartialMockWithReflection(Sender::class, ['send', 'sendCopyTo']);
 
         $this->loggerMock = $this->getMockBuilder(LoggerInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-
-        $this->invoiceMock = $this->getMockBuilder(\Magento\Sales\Model\Order\Invoice::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['setEmailSent', 'getId'])
-            ->addMethods(['setSendEmail'])
             ->getMock();
+
+        $this->invoiceMock = $this->createPartialMockWithReflection(
+            \Magento\Sales\Model\Order\Invoice::class,
+            ['setEmailSent', 'getId', 'setSendEmail']
+        );
 
         $this->commentMock = $this->getMockBuilder(InvoiceCommentCreationInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->commentMock->expects($this->any())
             ->method('getComment')
@@ -181,11 +178,11 @@ class EmailSenderTest extends TestCase
 
         $this->globalConfigMock = $this->getMockBuilder(ScopeConfigInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->eventManagerMock = $this->getMockBuilder(ManagerInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->paymentInfoMock = $this->getMockBuilder(Info::class)
             ->disableOriginalConstructor()
@@ -257,8 +254,9 @@ class EmailSenderTest extends TestCase
      *
      * @return void
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     * @dataProvider sendDataProvider
      */
+
+     #[DataProvider('sendDataProvider')]
     public function testSend(
         int $configValue,
         bool $forceSyncMode,

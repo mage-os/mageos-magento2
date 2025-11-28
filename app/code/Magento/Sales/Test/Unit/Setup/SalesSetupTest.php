@@ -15,6 +15,7 @@ use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Sales\Setup\SalesSetup;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -23,6 +24,8 @@ use PHPUnit\Framework\TestCase;
  */
 class SalesSetupTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var SalesSetup
      */
@@ -61,17 +64,17 @@ class SalesSetupTest extends TestCase
     protected function setUp(): void
     {
         $this->moduleDataSetupMock = $this->getMockBuilder(ModuleDataSetupInterface::class)
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->contextMock = $this->getMockBuilder(Context::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->cacheMock = $this->getMockBuilder(CacheInterface::class)
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->collectionFactoryMock = $this->getMockBuilder(CollectionFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->scopeConfigMock = $this->getMockBuilder(ScopeConfigInterface::class)
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->model = $this->objectManagerHelper->getObject(

@@ -18,9 +18,13 @@ use Magento\Tax\Model\Calculation as TaxCalculation;
 use Magento\Tax\Model\Config;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 class ShippingTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var MockObject
      */
@@ -40,25 +44,12 @@ class ShippingTest extends TestCase
     {
         $objectManager = new ObjectManager($this);
 
-        $this->creditmemoMock = $this->getMockBuilder(Creditmemo::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['hasBaseShippingAmount'])
-            ->onlyMethods(
-                [
-                    'getOrder',
-                    'getBaseShippingAmount',
-                    'setShippingAmount',
-                    'setBaseShippingAmount',
-                    'setShippingInclTax',
-                    'setBaseShippingInclTax',
-                    'setGrandTotal',
-                    'setBaseGrandTotal',
-                    'getGrandTotal',
-                    'getBaseGrandTotal',
-                ]
-            )->getMock();
+        $this->creditmemoMock = $this->createPartialMockWithReflection(
+            Creditmemo::class,
+            ['hasBaseShippingAmount', 'getOrder', 'getBaseShippingAmount', 'setShippingAmount', 'setBaseShippingAmount', 'setShippingInclTax', 'setBaseShippingInclTax', 'setGrandTotal', 'setBaseGrandTotal', 'getGrandTotal', 'getBaseGrandTotal']
+        );
 
-        $priceCurrencyMock = $this->getMockForAbstractClass(PriceCurrencyInterface::class);
+        $priceCurrencyMock = $this->createMock(PriceCurrencyInterface::class);
         $priceCurrencyMock->expects($this->any())
             ->method('round')
             ->willReturnCallback(
@@ -227,9 +218,9 @@ class ShippingTest extends TestCase
     }
 
     /**
-     * @param float $ratio
-     * @dataProvider collectWithSpecifiedShippingAmountDataProvider
-     */
+     * @param float $ratio     */
+
+     #[DataProvider('collectWithSpecifiedShippingAmountDataProvider')]
     public function testCollectWithSpecifiedShippingAmount($ratio)
     {
         $orderShippingAmount = 10;
@@ -508,10 +499,10 @@ class ShippingTest extends TestCase
 
     /**
      * situation: The admin user specified the desired refund amount that has taxes and discount embedded within it
-     *
-     * @dataProvider calculationSequenceDataProvider
-     * @throws LocalizedException
+     *     * @throws LocalizedException
      */
+
+     #[DataProvider('calculationSequenceDataProvider')]
     public function testCollectUsingShippingInclTaxAndDiscountBeforeTax(string $calculationSequence)
     {
         $this->taxConfig->expects($this->any())->method('displaySalesShippingInclTax')->willReturn(true);

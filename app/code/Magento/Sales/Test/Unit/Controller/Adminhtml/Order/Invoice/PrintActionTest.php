@@ -20,12 +20,15 @@ use Magento\Sales\Controller\Adminhtml\Order\Invoice\PrintAction;
 use Magento\Sales\Model\Order\Invoice;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class PrintActionTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var MockObject
      */
@@ -83,7 +86,7 @@ class PrintActionTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->objectManagerMock = $this->getMockForAbstractClass(ObjectManagerInterface::class);
+        $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
 
         $contextMock = $this->getMockBuilder(Context::class)
             ->disableOriginalConstructor()
@@ -131,10 +134,7 @@ class PrintActionTest extends TestCase
 
         $invoiceMock = $this->createMock(Invoice::class);
 
-        $pdfMock = $this->getMockBuilder(\Magento\Sales\Model\Order\Pdf\Invoice::class)->addMethods(['render'])
-            ->onlyMethods(['getPdf'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $pdfMock = $this->createPartialMockWithReflection(\Magento\Sales\Model\Order\Pdf\Invoice::class, array_merge(['render'], ['getPdf']));
         $pdfMock->expects($this->once())
             ->method('getPdf')
             ->willReturnSelf();
@@ -144,7 +144,7 @@ class PrintActionTest extends TestCase
 
         $invoiceRepository = $this->getMockBuilder(InvoiceRepositoryInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $invoiceRepository->expects($this->any())
             ->method('get')
             ->willReturn($invoiceMock);

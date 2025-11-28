@@ -17,10 +17,13 @@ use Magento\Sales\Model\ResourceModel\Order\CollectionFactory;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class RecentTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Recent
      */
@@ -67,7 +70,7 @@ class RecentTest extends TestCase
             ['getVisibleOnFrontStatuses']
         );
         $this->storeManagerMock = $this->getMockBuilder(StoreManagerInterface::class)
-            ->getMockForAbstractClass();
+            ->getMock();
     }
 
     /**
@@ -92,9 +95,9 @@ class RecentTest extends TestCase
             ->willReturn($statuses);
 
         $this->storeManagerMock = $this->getMockBuilder(StoreManagerInterface::class)
-            ->getMockForAbstractClass();
+            ->getMock();
         $storeMock = $this->getMockBuilder(StoreInterface::class)
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->storeManagerMock->expects($this->exactly(0))->method('getStore')->willReturn($storeMock);
         $storeMock->expects($this->any())->method('getId')->willReturn($storeId);
 

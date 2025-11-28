@@ -15,10 +15,13 @@ use Magento\Sales\Model\ResourceModel\Order\Collection;
 use Magento\Sales\Model\ResourceModel\Order\CollectionFactory;
 use Magento\Store\Model\StoresConfig;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class CleanExpiredOrdersTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var MockObject
      */
@@ -57,7 +60,7 @@ class CleanExpiredOrdersTest extends TestCase
             ['create']
         );
         $this->orderCollectionMock = $this->createMock(Collection::class);
-        $this->orderManagementMock = $this->getMockForAbstractClass(OrderManagementInterface::class);
+        $this->orderManagementMock = $this->createMock(OrderManagementInterface::class);
 
         $this->model = new CleanExpiredOrders(
             $this->storesConfigMock,

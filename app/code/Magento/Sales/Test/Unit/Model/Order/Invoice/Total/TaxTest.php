@@ -14,6 +14,7 @@ use Magento\Sales\Model\Order\Invoice\Item;
 use Magento\Sales\Model\Order\Invoice\Total\Tax;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class TaxTest extends TestCase
 {
@@ -65,8 +66,9 @@ class TaxTest extends TestCase
      * @param array $orderData
      * @param array $invoiceData
      * @param array $expectedResults
-     * @dataProvider collectDataProvider
      */
+
+     #[DataProvider('collectDataProvider')]
     public function testCollect($orderData, $invoiceData, $expectedResults)
     {
         $roundingDelta = [];

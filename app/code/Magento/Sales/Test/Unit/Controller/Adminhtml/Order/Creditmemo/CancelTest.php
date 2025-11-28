@@ -23,6 +23,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Sales\Api\CreditmemoManagementInterface;
 use Magento\Sales\Controller\Adminhtml\Order\Creditmemo\Cancel;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -31,6 +32,8 @@ use PHPUnit\Framework\TestCase;
  */
 class CancelTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Cancel
      */
@@ -106,14 +109,14 @@ class CancelTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->creditmemoManagementMock = $this->getMockForAbstractClass(CreditmemoManagementInterface::class);
+        $this->creditmemoManagementMock = $this->createMock(CreditmemoManagementInterface::class);
         $this->requestMock = $this->getMockBuilder(Http::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->responseMock = $this->getMockBuilder(\Magento\Framework\App\Response\Http::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->objectManagerMock = $this->getMockForAbstractClass(ObjectManagerInterface::class);
+        $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
         $this->messageManagerMock = $this->getMockBuilder(Manager::class)
             ->disableOriginalConstructor()
             ->getMock();

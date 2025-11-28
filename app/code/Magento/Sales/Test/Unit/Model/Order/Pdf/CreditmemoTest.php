@@ -13,6 +13,7 @@ use Magento\Sales\Model\Order\Address\Renderer;
 use Magento\Sales\Model\Order\Creditmemo;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * Class CreditmemoTest
@@ -23,6 +24,8 @@ use PHPUnit\Framework\TestCase;
  */
 class CreditmemoTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var \Magento\Sales\Model\Order\Pdf\Invoice
      */
@@ -72,20 +75,18 @@ class CreditmemoTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->directoryMock = $this->createMock(\Magento\Framework\Filesystem\Directory\Write::class);
-        $this->directoryMock->expects($this->any())->method('getAbsolutePath')->will(
-            $this->returnCallback(
-                function ($argument) {
-                    return BP . '/' . $argument;
-                }
-            )
+        $this->directoryMock->expects($this->any())->method('getAbsolutePath')->willReturnCallback(
+            function ($argument) {
+                return BP . '/' . $argument;
+            }
         );
         $filesystemMock = $this->createMock(\Magento\Framework\Filesystem::class);
         $filesystemMock->expects($this->any())
             ->method('getDirectoryRead')
-            ->will($this->returnValue($this->directoryMock));
+            ->willReturn($this->directoryMock);
         $filesystemMock->expects($this->any())
             ->method('getDirectoryWrite')
-            ->will($this->returnValue($this->directoryMock));
+            ->willReturn($this->directoryMock);
 
         $this->databaseMock = $this->createMock(Database::class);
         $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
@@ -132,32 +133,29 @@ class CreditmemoTest extends TestCase
         $this->pdfConfigMock->expects($this->once())
             ->method('getRenderersPerProduct')
             ->with('creditmemo')
-            ->will($this->returnValue(['product_type_one' => 'Renderer_Type_One_Product_One']));
+            ->willReturn(['product_type_one' => 'Renderer_Type_One_Product_One']);
         $this->pdfConfigMock->expects($this->any())
             ->method('getTotals')
-            ->will($this->returnValue([]));
+            ->willReturn([]);
 
-        $block = $this->getMockBuilder(\Magento\Framework\View\Element\Template::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['setIsSecureMode', 'toPdf'])
-            ->getMock();
+        $block = $this->createPartialMockWithReflection(\Magento\Framework\View\Element\Template::class, ['setIsSecureMode', 'toPdf']);
         $block->expects($this->any())
             ->method('setIsSecureMode')
             ->willReturn($block);
         $block->expects($this->any())
             ->method('toPdf')
-            ->will($this->returnValue(''));
+            ->willReturn('');
         $this->paymentDataMock->expects($this->any())
             ->method('getInfoBlock')
             ->willReturn($block);
 
         $this->addressRendererMock->expects($this->any())
             ->method('format')
-            ->will($this->returnValue(''));
+            ->willReturn('');
 
         $this->databaseMock->expects($this->any())
             ->method('checkDbUsage')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $creditmemoMock = $this->createMock(Creditmemo::class);
         $orderMock = $this->createMock(Order::class);
@@ -167,7 +165,7 @@ class CreditmemoTest extends TestCase
             ->willReturn($addressMock);
         $orderMock->expects($this->any())
             ->method('getIsVirtual')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
         $infoMock = $this->createMock(\Magento\Payment\Model\InfoInterface::class);
         $orderMock->expects($this->any())
             ->method('getPayment')
@@ -199,10 +197,7 @@ class CreditmemoTest extends TestCase
         $this->directoryMock->expects($this->any())
             ->method('isFile')
             ->with($path . $filename)
-            ->willReturnOnConsecutiveCalls(
-                $this->returnValue(false),
-                $this->returnValue(false)
-            );
+            ->willReturnOnConsecutiveCalls(false, false);
 
         $this->databaseMock->expects($this->once())
             ->method('saveFileToFilesystem')

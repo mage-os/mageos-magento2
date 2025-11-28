@@ -11,15 +11,20 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\Data\OrderItemInterface;
 use Magento\Sales\Model\Order;
+use Magento\Sales\Model\Order\Item;
 use Magento\Sales\Model\Order\Validation\CanInvoice;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * Test for \Magento\Sales\Model\Order\OrderValidator class
  */
 class CanInvoiceTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var CanInvoice|MockObject
      */
@@ -44,25 +49,23 @@ class CanInvoiceTest extends TestCase
     {
         $this->objectManager = new ObjectManager($this);
 
-        $this->orderMock = $this->getMockBuilder(OrderInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getStatus', 'getItems'])
-            ->getMockForAbstractClass();
+        $this->orderMock = $this->createPartialMock(
+            Order::class,
+            ['getStatus', 'getItems', 'getState']
+        );
 
-        $this->orderItemMock = $this->getMockBuilder(OrderItemInterface::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getQtyToInvoice'])
-            ->onlyMethods(['getLockedDoInvoice'])
-            ->getMockForAbstractClass();
+        $this->orderItemMock = $this->createPartialMock(
+            Item::class,
+            ['getQtyToInvoice', 'getLockedDoInvoice']
+        );
 
         $this->model = new CanInvoice();
     }
 
     /**
      * @param string $state
-     *
-     * @dataProvider canInvoiceWrongStateDataProvider
      */
+    #[DataProvider('canInvoiceWrongStateDataProvider')]
     public function testCanInvoiceWrongState($state)
     {
         $this->orderMock->expects($this->any())
@@ -113,9 +116,8 @@ class CanInvoiceTest extends TestCase
      * @param float $qtyToInvoice
      * @param bool|null $itemLockedDoInvoice
      * @param bool $expectedResult
-     *
-     * @dataProvider canInvoiceDataProvider
      */
+    #[DataProvider('canInvoiceDataProvider')]
     public function testCanInvoice($qtyToInvoice, $itemLockedDoInvoice, $expectedResult)
     {
         $this->orderMock->expects($this->any())

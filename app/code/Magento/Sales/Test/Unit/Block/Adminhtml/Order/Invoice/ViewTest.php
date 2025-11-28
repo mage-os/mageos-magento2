@@ -13,6 +13,7 @@ namespace Magento\Sales\Test\Unit\Block\Adminhtml\Order\Invoice;
 use Magento\Sales\Block\Adminhtml\Order\Invoice\View;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Invoice;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class ViewTest extends TestCase
@@ -21,7 +22,9 @@ class ViewTest extends TestCase
      * @param bool $canReviewPayment
      * @param bool $canFetchUpdate
      * @param bool $expectedResult
-     * @dataProvider isPaymentReviewDataProvider
+     */
+    #[DataProvider('isPaymentReviewDataProvider')]
+    /**
      */
     public function testIsPaymentReview($canReviewPayment, $canFetchUpdate, $expectedResult)
     {

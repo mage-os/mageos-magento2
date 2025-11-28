@@ -15,6 +15,7 @@ use Magento\Sales\Model\Order\Creditmemo\Item;
 use Magento\Sales\Model\Order\ItemFactory;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class ItemTest extends TestCase
 {
@@ -219,8 +220,9 @@ class ItemTest extends TestCase
     }
 
     /**
-     * @dataProvider calcRowTotalDataProvider
      */
+
+     #[DataProvider('calcRowTotalDataProvider')]
     public function testCalcRowTotal($qty)
     {
         $creditmemoMock = $this->getMockBuilder(Creditmemo::class)

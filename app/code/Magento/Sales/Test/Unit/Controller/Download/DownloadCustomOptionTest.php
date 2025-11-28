@@ -19,9 +19,13 @@ use Magento\Sales\Controller\Download\DownloadCustomOption;
 use Magento\Sales\Model\Download;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 class DownloadCustomOptionTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * Option ID Test Value
      */
@@ -116,22 +120,17 @@ class DownloadCustomOptionTest extends TestCase
                 ]
             );
 
-        $this->itemOptionMock = $this->getMockBuilder(Option::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getCode', 'getProductId'])
-            ->onlyMethods(['load', 'getId', 'getValue'])
-            ->getMock();
+        $this->itemOptionMock = $this->createPartialMockWithReflection(
+            Option::class,
+            ['getCode', 'getProductId', 'load', 'getId', 'getValue']
+        );
 
-        $this->productOptionMock = $this->getMockBuilder(\Magento\Catalog\Model\Product\Option::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getProductId'])
-            ->onlyMethods(['load', 'getId', 'getType'])
-            ->getMock();
+        $this->productOptionMock = $this->createPartialMockWithReflection(
+            \Magento\Catalog\Model\Product\Option::class,
+            ['getProductId', 'load', 'getId', 'getType']
+        );
 
-        $objectManagerMock = $this->getMockBuilder(Download::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['create'])
-            ->getMock();
+        $objectManagerMock = $this->createPartialMockWithReflection(Download::class, ['create']);
         $objectManagerMock->expects($this->any())->method('create')
             ->willReturnMap(
                 [
@@ -170,8 +169,9 @@ class DownloadCustomOptionTest extends TestCase
      * @param array $itemOptionValues
      * @param array $productOptionValues
      * @param bool $noRouteOccurs
-     * @dataProvider executeDataProvider
      */
+
+     #[DataProvider('executeDataProvider')]
     public function testExecute($itemOptionValues, $productOptionValues, $noRouteOccurs)
     {
         if (!empty($itemOptionValues)) {

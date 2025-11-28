@@ -14,9 +14,12 @@ use Magento\Sales\Model\ResourceModel\GridInterface;
 use Magento\Sales\Observer\GridSyncInsertObserver;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 class GridSyncInsertObserverTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var GridSyncInsertObserver
      */
@@ -45,16 +48,11 @@ class GridSyncInsertObserverTest extends TestCase
     protected function setUp(): void
     {
         $this->gridAggregatorMock = $this->getMockBuilder(GridInterface::class)
-            ->getMockForAbstractClass();
-        $this->eventObserverMock = $this->getMockBuilder(Observer::class)
-            ->disableOriginalConstructor()
-            ->addMethods(
-                [
-                    'getObject',
-                    'getDataObject'
-                ]
-            )
             ->getMock();
+        $this->eventObserverMock = $this->createPartialMockWithReflection(
+            Observer::class,
+            ['getObject', 'getDataObject']
+        );
         $this->salesModelMock = $this->getMockBuilder(AbstractModel::class)
             ->disableOriginalConstructor()
             ->onlyMethods(
@@ -62,9 +60,9 @@ class GridSyncInsertObserverTest extends TestCase
                     'getId'
                 ]
             )
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->scopeConfigurationMock = $this->getMockBuilder(ScopeConfigInterface::class)
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->unit = new GridSyncInsertObserver(
             $this->gridAggregatorMock,

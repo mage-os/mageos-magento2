@@ -13,6 +13,7 @@ use Magento\Sales\Model\CronJob\AggregateSalesReportRefundedData;
 use Magento\Sales\Model\ResourceModel\Report\Refunded;
 use Magento\Sales\Model\ResourceModel\Report\RefundedFactory;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -20,6 +21,8 @@ use PHPUnit\Framework\TestCase;
  */
 class AggregateSalesReportRefundedDataTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var ResolverInterface|MockObject
      */
@@ -44,7 +47,7 @@ class AggregateSalesReportRefundedDataTest extends TestCase
     {
         $this->localeResolverMock = $this->getMockBuilder(ResolverInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->refundedFactoryMock = $this->getMockBuilder(
             RefundedFactory::class
@@ -54,7 +57,7 @@ class AggregateSalesReportRefundedDataTest extends TestCase
             ->getMock();
         $this->localeDateMock = $this->getMockBuilder(TimezoneInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->observer = new AggregateSalesReportRefundedData(
             $this->localeResolverMock,

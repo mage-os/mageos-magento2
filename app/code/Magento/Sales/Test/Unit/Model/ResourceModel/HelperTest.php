@@ -14,6 +14,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHe
 use Magento\Sales\Model\ResourceModel\Helper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class HelperTest extends TestCase
 {
@@ -62,9 +63,9 @@ class HelperTest extends TestCase
      * @param string $aggregation
      * @param array $aggregationAliases
      * @param string $expectedType
-     *
-     * @dataProvider getBestsellersReportUpdateRatingPosProvider
-     */
+     *     */
+
+     #[DataProvider('getBestsellersReportUpdateRatingPosProvider')]
     public function testGetBestsellersReportUpdateRatingPos($aggregation, $aggregationAliases, $expectedType)
     {
         $mainTable = 'main_table';

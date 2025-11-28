@@ -12,6 +12,7 @@ use Magento\Sales\Model\ValidatorResultInterface;
 use Magento\Sales\Model\ValidatorResultInterfaceFactory;
 use Magento\Sales\Model\ValidatorResultMerger;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -19,6 +20,8 @@ use PHPUnit\Framework\TestCase;
  */
 class ValidatorResultMergerTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var ValidatorResultMerger
      */
@@ -61,9 +64,9 @@ class ValidatorResultMergerTest extends TestCase
      */
     public function testMerge(): void
     {
-        $validatorResultMock = $this->getMockForAbstractClass(ValidatorResultInterface::class);
-        $orderValidationResultMock = $this->getMockForAbstractClass(ValidatorResultInterface::class);
-        $creditmemoValidationResultMock = $this->getMockForAbstractClass(ValidatorResultInterface::class);
+        $validatorResultMock = $this->createMock(ValidatorResultInterface::class);
+        $orderValidationResultMock = $this->createMock(ValidatorResultInterface::class);
+        $creditmemoValidationResultMock = $this->createMock(ValidatorResultInterface::class);
         $itemsValidationMessages = [['test04', 'test05'], ['test06']];
         $this->validatorResultFactoryMock->expects($this->once())->method('create')
             ->willReturn($validatorResultMock);

@@ -18,6 +18,7 @@ use Magento\Sales\Model\Order\Shipment\Comment;
 use Magento\Sales\Model\Order\Shipment\CommentRepository;
 use Magento\Sales\Model\Spi\ShipmentCommentResourceInterface;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
@@ -27,6 +28,8 @@ use Psr\Log\LoggerInterface;
  */
 class CommentRepositoryTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var MockObject|ShipmentCommentResourceInterface
      */
@@ -81,7 +84,7 @@ class CommentRepositoryTest extends TestCase
     {
         $this->commentResource = $this->getMockBuilder(ShipmentCommentResourceInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->commentFactory = $this->getMockBuilder(ShipmentCommentInterfaceFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -90,16 +93,16 @@ class CommentRepositoryTest extends TestCase
             ->getMock();
         $this->collectionProcessor = $this->getMockBuilder(CollectionProcessorInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->shipmentRepositoryMock = $this->getMockBuilder(ShipmentRepositoryInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->shipmentCommentSender = $this->getMockBuilder(ShipmentCommentSender::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->loggerMock = $this->getMockBuilder(LoggerInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->shipmentMock = $this->getMockBuilder(Shipment::class)
             ->disableOriginalConstructor()

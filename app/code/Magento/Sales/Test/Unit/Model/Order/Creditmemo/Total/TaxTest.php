@@ -16,12 +16,16 @@ use Magento\Sales\Model\Order\Creditmemo\Total\Tax;
 use Magento\Sales\Model\Order\Invoice;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * Class to test Collecting credit memo taxes
  */
 class TaxTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var float
      */
@@ -79,9 +83,9 @@ class TaxTest extends TestCase
     /**
      * @param array $orderData
      * @param array $creditmemoData
-     * @param array $expectedResults
-     * @dataProvider collectDataProvider
-     */
+     * @param array $expectedResults     */
+
+     #[DataProvider('collectDataProvider')]
     public function testCollect($orderData, $creditmemoData, $expectedResults)
     {
         if (
@@ -924,20 +928,10 @@ class TaxTest extends TestCase
     private function createInvoiceMock(array $data): MockObject
     {
         /** @var MockObject|Invoice $invoice */
-        $invoice = $this->getMockBuilder(Invoice::class)
-            ->disableOriginalConstructor()
-            ->disableOriginalClone()
-            ->disableArgumentCloning()
-            ->disallowMockingUnknownTypes()
-            ->addMethods(['getBaseShippingDiscountTaxCompensationAmount'])
-            ->onlyMethods([
-                'getTaxAmount',
-                'getBaseTaxAmount',
-                'getShippingTaxAmount',
-                'getBaseShippingTaxAmount',
-                'getShippingDiscountTaxCompensationAmount'
-            ])
-            ->getMock();
+        $invoice = $this->createPartialMockWithReflection(
+            Invoice::class,
+            ['getBaseShippingDiscountTaxCompensationAmount', 'getTaxAmount', 'getBaseTaxAmount', 'getShippingTaxAmount', 'getBaseShippingTaxAmount', 'getShippingDiscountTaxCompensationAmount']
+        );
 
         $invoice->method('getTaxAmount')->willReturn($data['tax_amount'] ?? 0);
         $invoice->method('getBaseTaxAmount')->willReturn($data['base_tax_amount'] ?? 0);

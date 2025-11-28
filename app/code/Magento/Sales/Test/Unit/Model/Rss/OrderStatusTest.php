@@ -20,7 +20,9 @@ use Magento\Sales\Model\Rss\OrderStatus;
 use Magento\Sales\Model\Rss\Signature;
 use Magento\Store\Model\ScopeInterface;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  *
@@ -28,6 +30,8 @@ use PHPUnit\Framework\TestCase;
  */
 class OrderStatusTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var OrderStatus
      */
@@ -110,17 +114,17 @@ class OrderStatusTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->objectManager = $this->getMockForAbstractClass(ObjectManagerInterface::class);
-        $this->urlInterface = $this->getMockForAbstractClass(UrlInterface::class);
-        $this->requestInterface = $this->getMockForAbstractClass(RequestInterface::class);
+        $this->objectManager = $this->createMock(ObjectManagerInterface::class);
+        $this->urlInterface = $this->createMock(UrlInterface::class);
+        $this->requestInterface = $this->createMock(RequestInterface::class);
         $this->orderStatusFactory =
             $this->getMockBuilder(OrderStatusFactory::class)
                 ->onlyMethods(['create'])
                 ->disableOriginalConstructor()
                 ->getMock();
-        $this->timezoneInterface = $this->getMockForAbstractClass(TimezoneInterface::class);
+        $this->timezoneInterface = $this->createMock(TimezoneInterface::class);
         $this->orderFactory = $this->createPartialMock(OrderFactory::class, ['create']);
-        $this->scopeConfigInterface = $this->getMockForAbstractClass(ScopeConfigInterface::class);
+        $this->scopeConfigInterface = $this->createMock(ScopeConfigInterface::class);
 
         $this->order = $this->getMockBuilder(Order::class)
             ->onlyMethods(
@@ -270,9 +274,9 @@ class OrderStatusTest extends TestCase
      * Test caching.
      *
      * @param string $requestData
-     * @param string $result
-     * @dataProvider getCacheKeyDataProvider
-     */
+     * @param string $result     */
+
+     #[DataProvider('getCacheKeyDataProvider')]
     public function testGetCacheKey($requestData, $result)
     {
         $this->requestInterface->expects($this->any())->method('getParam')

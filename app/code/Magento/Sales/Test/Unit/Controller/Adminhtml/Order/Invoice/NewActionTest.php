@@ -30,6 +30,7 @@ use Magento\Sales\Model\Order\Invoice;
 use Magento\Sales\Model\Service\InvoiceService;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
@@ -38,6 +39,8 @@ use PHPUnit\Framework\TestCase;
  */
 class NewActionTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var MockObject
      */
@@ -129,8 +132,8 @@ class NewActionTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->messageManagerMock = $this->getMockForAbstractClass(ManagerInterface::class);
-        $this->objectManagerMock = $this->getMockForAbstractClass(ObjectManagerInterface::class);
+        $this->messageManagerMock = $this->createMock(ManagerInterface::class);
+        $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
 
         $this->actionFlagMock = $this->getMockBuilder(ActionFlag::class)
             ->disableOriginalConstructor()
@@ -147,10 +150,10 @@ class NewActionTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->sessionMock = $this->getMockBuilder(Session::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getCommentText', 'setIsUrlNotice'])
-            ->getMock();
+        $this->sessionMock = $this->createPartialMockWithReflection(
+            Session::class,
+            ['getCommentText', 'setIsUrlNotice']
+        );
         $this->resultPageMock = $this->getMockBuilder(Page::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -229,7 +232,7 @@ class NewActionTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->orderRepositoryMock = $this->getMockForAbstractClass(OrderRepositoryInterface::class);
+        $this->orderRepositoryMock = $this->createMock(OrderRepositoryInterface::class);
 
         $this->controller = $objectManager->getObject(
             NewAction::class,
@@ -286,11 +289,10 @@ class NewActionTest extends TestCase
             ->with($orderMock, [])
             ->willReturn($invoiceMock);
 
-        $menuBlockMock = $this->getMockBuilder(Menu::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getMenuModel'])
-            ->addMethods(['getParentItems'])
-            ->getMock();
+        $menuBlockMock = $this->createPartialMockWithReflection(
+            Menu::class,
+            ['getMenuModel', 'getParentItems']
+        );
         $menuBlockMock->expects($this->any())
             ->method('getMenuModel')->willReturnSelf();
         $menuBlockMock->expects($this->any())

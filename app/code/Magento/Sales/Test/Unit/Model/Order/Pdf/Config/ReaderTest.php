@@ -15,10 +15,13 @@ use Magento\Sales\Model\Order\Pdf\Config\SchemaLocator;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class ReaderTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Reader
      */
@@ -46,7 +49,7 @@ class ReaderTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->_fileResolverMock = $this->getMockForAbstractClass(FileResolverInterface::class);
+        $this->_fileResolverMock = $this->createMock(FileResolverInterface::class);
         $this->_fileResolverMock->expects(
             $this->once()
         )->method(
@@ -80,7 +83,7 @@ class ReaderTest extends TestCase
         );
 
         $this->_schemaLocator = new SchemaLocator($moduleReader);
-        $this->_validationState = $this->getMockForAbstractClass(ValidationStateInterface::class);
+        $this->_validationState = $this->createMock(ValidationStateInterface::class);
         $this->_validationState->expects($this->any())
             ->method('isValidationRequired')
             ->willReturn(false);

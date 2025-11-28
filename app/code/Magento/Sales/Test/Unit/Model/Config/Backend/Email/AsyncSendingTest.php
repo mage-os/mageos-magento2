@@ -16,6 +16,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Sales\Model\Config\Backend\Email\AsyncSending;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Unit test of backend model for global configuration value
@@ -66,10 +67,10 @@ class AsyncSendingTest extends TestCase
     /**
      * @param int $value
      * @param int $oldValue
-     * @param string $eventName
-     * @dataProvider afterSaveDataProvider
-     * @return void
+     * @param string $eventName     * @return void
      */
+
+     #[DataProvider('afterSaveDataProvider')]
     public function testAfterSave($value, $oldValue, $eventName)
     {
         $path = 'sales_email/general/async_sending';

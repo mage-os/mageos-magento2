@@ -23,7 +23,9 @@ use Magento\Sales\Model\Order\AddressRepository as OrderAddressRepository;
 use Magento\Sales\Model\ResourceModel\Metadata;
 use Magento\Sales\Model\ResourceModel\Order\Address\Collection as OrderAddressCollection;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Unit test for order address repository class.
@@ -32,6 +34,8 @@ use PHPUnit\Framework\TestCase;
  */
 class AddressRepositoryTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * Subject of testing.
      *
@@ -127,8 +131,9 @@ class AddressRepositoryTest extends TestCase
      * @param int|null $entityId
      *
      * @return void
-     * @dataProvider getDataProvider
      */
+
+     #[DataProvider('getDataProvider')]
     public function testGet(?int $id, ?int $entityId): void
     {
         if (!$id) {
@@ -216,7 +221,7 @@ class AddressRepositoryTest extends TestCase
             ->method('getEntityId')
             ->willReturn(1);
 
-        $mapper = $this->getMockForAbstractClass(
+        $mapper = $this->createMock(
             AbstractDb::class,
             [],
             '',
@@ -248,7 +253,7 @@ class AddressRepositoryTest extends TestCase
         $this->orderAddress->expects($this->never())
             ->method('getEntityId');
 
-        $mapper = $this->getMockForAbstractClass(
+        $mapper = $this->createMock(
             AbstractDb::class,
             [],
             '',
@@ -279,7 +284,7 @@ class AddressRepositoryTest extends TestCase
             ->method('getEntityId')
             ->willReturn(1);
 
-        $mapper = $this->getMockForAbstractClass(
+        $mapper = $this->createMock(
             AbstractDb::class,
             [],
             '',
@@ -311,7 +316,7 @@ class AddressRepositoryTest extends TestCase
         $this->orderAddress->expects($this->never())
             ->method('getEntityId');
 
-        $mapper = $this->getMockForAbstractClass(
+        $mapper = $this->createMock(
             AbstractDb::class,
             [],
             '',
@@ -354,8 +359,9 @@ class AddressRepositoryTest extends TestCase
      * @param string $expected
      *
      * @return void
-     * @dataProvider dataMultiAttribute
      */
+
+     #[DataProvider('dataMultiAttribute')]
     public function testSaveWithMultiAttribute(
         string $attributeType,
         string $attributeCode,
@@ -371,7 +377,7 @@ class AddressRepositoryTest extends TestCase
             ->method('getEntityId')
             ->willReturn(1);
 
-        $mapper = $this->getMockForAbstractClass(
+        $mapper = $this->createMock(
             AbstractDb::class,
             [],
             '',

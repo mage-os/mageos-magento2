@@ -17,6 +17,7 @@ use Magento\Tax\Model\ResourceModel\Sales\Order\Tax\Collection;
 use Magento\Tax\Model\Sales\Order\Tax as TaxModel;
 use Magento\Tax\Model\Sales\Order\TaxFactory;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -75,7 +76,9 @@ class TaxTest extends TestCase
      * @param array $expectedResult
      * @return void
      *
-     * @dataProvider getFullTaxInfoDataProvider
+     */
+    #[DataProvider('getFullTaxInfoDataProvider')]
+    /**
      */
     public function testGetFullTaxInfo($source, array $expectedResult): void
     {
@@ -100,7 +103,9 @@ class TaxTest extends TestCase
      * @param array $expectedResult
      * @return void
      *
-     * @dataProvider getCreditAndInvoiceFullTaxInfoDataProvider
+     */
+    #[DataProvider('getCreditAndInvoiceFullTaxInfoDataProvider')]
+    /**
      */
     public function testGetFullTaxInfoWithCreditAndInvoice($source, array $expectedResult): void
     {

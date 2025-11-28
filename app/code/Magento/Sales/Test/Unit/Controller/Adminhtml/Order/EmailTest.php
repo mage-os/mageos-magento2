@@ -24,6 +24,7 @@ use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Controller\Adminhtml\Order\Email;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -31,6 +32,8 @@ use Psr\Log\LoggerInterface;
  */
 class EmailTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Email
      */
@@ -119,19 +122,19 @@ class EmailTest extends TestCase
             'getResultRedirectFactory'
         ]);
         $this->orderManagementMock = $this->getMockBuilder(OrderManagementInterface::class)
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->orderRepositoryMock = $this->getMockBuilder(OrderRepositoryInterface::class)
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->loggerMock = $this->getMockBuilder(LoggerInterface::class)
-            ->getMockForAbstractClass();
+            ->getMock();
         $resultRedirectFactory = $this->createPartialMock(
             RedirectFactory::class,
             ['create']
         );
-        $this->response = $this->getMockBuilder(ResponseInterface::class)
-            ->addMethods(['setRedirect'])
-            ->onlyMethods(['sendResponse'])
-            ->getMockForAbstractClass();
+        $this->response = $this->createPartialMockWithReflection(
+            ResponseInterface::class,
+            ['setRedirect', 'sendResponse']
+        );
         $this->request = $this->getMockBuilder(Http::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -141,11 +144,8 @@ class EmailTest extends TestCase
         );
 
         $this->orderMock = $this->getMockBuilder(OrderInterface::class)
-            ->getMockForAbstractClass();
-        $this->session = $this->getMockBuilder(Session::class)
-            ->addMethods(['setIsUrlNotice'])
-            ->disableOriginalConstructor()
             ->getMock();
+        $this->session = $this->createPartialMockWithReflection(Session::class, ['setIsUrlNotice']);
         $this->actionFlag = $this->createPartialMock(ActionFlag::class, ['get', 'set']);
         $this->helper = $this->createPartialMock(Data::class, ['getUrl']);
         $this->resultRedirect = $this->createMock(Redirect::class);

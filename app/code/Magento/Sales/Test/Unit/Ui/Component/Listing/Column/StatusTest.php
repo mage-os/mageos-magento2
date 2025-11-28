@@ -13,10 +13,13 @@ use Magento\Framework\View\Element\UiComponent\Processor;
 use Magento\Sales\Model\ResourceModel\Order\Status\Collection;
 use Magento\Sales\Model\ResourceModel\Order\Status\CollectionFactory;
 use Magento\Sales\Ui\Component\Listing\Column\Status;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class StatusTest extends TestCase
 {
+    use MockCreationTrait;
+
     public function testPrepareDataSource()
     {
         $itemName = 'itemName';
@@ -45,7 +48,7 @@ class StatusTest extends TestCase
 
         $objectManager = new ObjectManager($this);
         $contextMock = $this->getMockBuilder(ContextInterface::class)
-            ->getMockForAbstractClass();
+            ->getMock();
         $processor = $this->getMockBuilder(Processor::class)
             ->disableOriginalConstructor()
             ->getMock();

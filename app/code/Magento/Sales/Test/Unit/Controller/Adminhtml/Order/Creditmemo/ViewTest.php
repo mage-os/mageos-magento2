@@ -30,6 +30,8 @@ use Magento\Sales\Model\Order\Creditmemo;
 use Magento\Sales\Model\Order\Invoice;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyFields)
@@ -37,6 +39,8 @@ use PHPUnit\Framework\TestCase;
  */
 class ViewTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var View
      */
@@ -145,18 +149,17 @@ class ViewTest extends TestCase
         self::$invoiceMock = $this->getMockBuilder(Invoice::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->creditmemoMock = $this->getMockBuilder(Creditmemo::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['cancel'])
-            ->onlyMethods(['getInvoice', 'getOrder', 'getId'])
-            ->getMock();
+        $this->creditmemoMock = $this->createPartialMockWithReflection(
+            Creditmemo::class,
+            ['cancel', 'getInvoice', 'getOrder', 'getId']
+        );
         $this->requestMock = $this->getMockBuilder(Http::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->responseMock = $this->getMockBuilder(\Magento\Framework\App\Response\Http::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->objectManagerMock = $this->getMockForAbstractClass(ObjectManagerInterface::class);
+        $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
         $this->messageManagerMock = $this->getMockBuilder(Manager::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -166,22 +169,20 @@ class ViewTest extends TestCase
         $this->helperMock = $this->getMockBuilder(Data::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->contextMock = $this->getMockBuilder(Context::class)
-            ->addMethods(['getTitle'])
-            ->onlyMethods(
-                [
-                    'getRequest',
-                    'getResponse',
-                    'getObjectManager',
-                    'getSession',
-                    'getHelper',
-                    'getActionFlag',
-                    'getMessageManager',
-                    'getResultRedirectFactory'
-                ]
-            )
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->contextMock = $this->createPartialMockWithReflection(
+            Context::class,
+            [
+                'getTitle',
+                'getRequest',
+                'getResponse',
+                'getObjectManager',
+                'getSession',
+                'getHelper',
+                'getActionFlag',
+                'getMessageManager',
+                'getResultRedirectFactory'
+            ]
+        );
         $this->contextMock->expects($this->any())
             ->method('getHelper')
             ->willReturn($this->helperMock);
@@ -276,8 +277,9 @@ class ViewTest extends TestCase
     }
 
     /**
-     * @dataProvider executeDataProvider
      */
+
+     #[DataProvider('executeDataProvider')]
     public function testExecute($invoice)
     {
         $layoutMock = $this->getMockBuilder(Layout::class)

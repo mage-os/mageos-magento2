@@ -14,6 +14,7 @@ use Magento\Sales\Model\Order\Email\Sender\OrderSender;
 use Magento\Sales\Model\ResourceModel\EntityAbstract;
 use Magento\Sales\Model\ResourceModel\Order;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class OrderSenderTest extends AbstractSenderTestCase
 {
@@ -73,8 +74,9 @@ class OrderSenderTest extends AbstractSenderTestCase
      *
      * @return void
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     * @dataProvider sendDataProvider
      */
+
+     #[DataProvider('sendDataProvider')]
     public function testSend(
         int $configValue,
         ?int $forceSyncMode,
@@ -260,8 +262,9 @@ class OrderSenderTest extends AbstractSenderTestCase
      * @param string|null $expectedShippingAddress
      *
      * @return void
-     * @dataProvider sendVirtualOrderDataProvider
      */
+
+     #[DataProvider('sendVirtualOrderDataProvider')]
     public function testSendVirtualOrder(
         bool $isVirtualOrder,
         int $formatCallCount,

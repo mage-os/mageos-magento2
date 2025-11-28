@@ -15,6 +15,7 @@ use Magento\Sales\Model\Order\Invoice;
 use Magento\Sales\Model\ResourceModel\EntityAbstract;
 use Magento\Sales\Model\ResourceModel\Order\Invoice as InvoiceResource;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Test for Magento\Sales\Model\Order\Email\Sender\InvoiceSender class.
@@ -52,11 +53,10 @@ class InvoiceSenderTest extends AbstractSenderTestCase
             ['saveAttribute']
         );
 
-        $this->invoiceMock = $this->getMockBuilder(Invoice::class)
-            ->addMethods(['setSendEmail', 'getCustomerNoteNotify', 'getCustomerNote'])
-            ->onlyMethods(['getStore', 'getId', 'getOrder', 'setEmailSent'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->invoiceMock = $this->createPartialMockWithReflection(
+            Invoice::class,
+            ['setSendEmail', 'getCustomerNoteNotify', 'getCustomerNote', 'getStore', 'getId', 'getOrder', 'setEmailSent']
+        );
         $this->invoiceMock->expects($this->any())
             ->method('getStore')
             ->willReturn($this->storeMock);
@@ -99,8 +99,9 @@ class InvoiceSenderTest extends AbstractSenderTestCase
      *
      * @return void
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     * @dataProvider sendDataProvider
      */
+
+     #[DataProvider('sendDataProvider')]
     public function testSend(
         int $configValue,
         ?int $forceSyncMode,
@@ -265,8 +266,9 @@ class InvoiceSenderTest extends AbstractSenderTestCase
      * @param string|null $expectedShippingAddress
      *
      * @return void
-     * @dataProvider sendVirtualOrderDataProvider
      */
+
+     #[DataProvider('sendVirtualOrderDataProvider')]
     public function testSendVirtualOrder(
         bool $isVirtualOrder,
         int $formatCallCount,

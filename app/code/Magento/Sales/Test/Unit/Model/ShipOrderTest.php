@@ -32,7 +32,9 @@ use Magento\Sales\Model\OrderMutex;
 use Magento\Sales\Model\ShipOrder;
 use Magento\Sales\Model\ValidatorResultInterface;
 use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -44,6 +46,8 @@ use Psr\Log\LoggerInterface;
  */
 class ShipOrderTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var ResourceConnection|MockObject
      */
@@ -146,56 +150,56 @@ class ShipOrderTest extends TestCase
             ->getMock();
         $this->orderRepositoryMock = $this->getMockBuilder(OrderRepositoryInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->shipmentDocumentFactoryMock = $this->getMockBuilder(ShipmentDocumentFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->orderRegistrarMock = $this->getMockBuilder(OrderRegistrarInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->orderStateResolverMock = $this->getMockBuilder(OrderStateResolverInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->configMock = $this->getMockBuilder(OrderConfig::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->shipmentRepositoryMock = $this->getMockBuilder(ShipmentRepositoryInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->notifierInterfaceMock = $this->getMockBuilder(NotifierInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->loggerMock = $this->getMockBuilder(LoggerInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->shipmentCommentCreationMock = $this->getMockBuilder(ShipmentCommentCreationInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->shipmentCreationArgumentsMock = $this->getMockBuilder(ShipmentCreationArgumentsInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->orderMock = $this->getMockBuilder(OrderInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->shipmentMock = $this->getMockBuilder(ShipmentInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->packageMock = $this->getMockBuilder(ShipmentPackageInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->trackMock = $this->getMockBuilder(ShipmentTrackCreationInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->adapterMock = $this->getMockBuilder(AdapterInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->shipOrderValidatorMock = $this->getMockBuilder(ShipOrderInterface::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->validationMessagesMock = $this->getMockBuilder(ValidatorResultInterface::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['hasMessages', 'getMessages', 'addMessage'])
-            ->getMockForAbstractClass();
+            ->getMock();
         $helper = new ObjectManager($this);
 
         $this->model = $helper->getObject(
@@ -222,9 +226,9 @@ class ShipOrderTest extends TestCase
      * @param bool $notify
      * @param bool $appendComment
      * @throws CouldNotShipException
-     * @throws DocumentValidationException
-     * @dataProvider dataProvider
-     */
+     * @throws DocumentValidationException     */
+
+     #[DataProvider('dataProvider')]
     public function testExecute($orderId, $items, $notify, $appendComment)
     {
         $this->mockConnection($orderId);

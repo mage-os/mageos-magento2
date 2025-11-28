@@ -12,10 +12,14 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Quote\Model\Quote\Address;
 use Magento\Sales\Block\Adminhtml\Order\Create\Totals;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 class TotalsTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var MockObject
      */
@@ -55,16 +59,10 @@ class TotalsTest extends TestCase
         $this->sessionQuoteMock = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->quoteMock = $this->getMockBuilder(\Magento\Quote\Model\Quote::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([
-                'collectTotals',
-                'getTotals',
-                'isVirtual',
-                'getBillingAddress',
-                'getShippingAddress'
-            ])->addMethods(['setTotalsCollectedFlag'])
-            ->getMock();
+        $this->quoteMock = $this->createPartialMockWithReflection(
+            \Magento\Quote\Model\Quote::class,
+            ['collectTotals', 'getTotals', 'isVirtual', 'getBillingAddress', 'getShippingAddress', 'setTotalsCollectedFlag']
+        );
         $this->shippingAddressMock = $this->getMockBuilder(Address::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -89,7 +87,9 @@ class TotalsTest extends TestCase
      * @param bool $isVirtual
      *
      * @return void
-     * @dataProvider totalsDataProvider
+     */
+    #[DataProvider('totalsDataProvider')]
+    /**
      */
     public function testGetTotals(bool $isVirtual): void
     {

@@ -10,16 +10,21 @@ namespace Magento\Sales\Test\Unit\Model\Order\Payment\State;
 use Magento\Directory\Model\Currency;
 use Magento\Sales\Api\Data\OrderPaymentInterface;
 use Magento\Sales\Model\Order;
+use Magento\Sales\Model\Order\Payment;
 use Magento\Sales\Model\Order\Payment\State\OrderCommand;
 use Magento\Sales\Model\Order\StatusResolver;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * @see OrderCommand
  */
 class OrderCommandTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var float
      */
@@ -38,9 +43,9 @@ class OrderCommandTest extends TestCase
      * @param string $expectedState
      * @param string $expectedStatus
      * @param string $expectedMessage
-     *
-     * @dataProvider commandResultDataProvider
-     */
+     *     */
+
+     #[DataProvider('commandResultDataProvider')]
     public function testExecute(
         $isTransactionPending,
         $isFraudDetected,
@@ -130,9 +135,7 @@ class OrderCommandTest extends TestCase
      */
     private function getPayment($isTransactionPending, $isFraudDetected)
     {
-        $payment = $this->getMockBuilder(OrderPaymentInterface::class)
-            ->addMethods(['getIsTransactionPending', 'getIsFraudDetected'])
-            ->getMockForAbstractClass();
+        $payment = $this->createPartialMockWithReflection(Payment::class, ['getIsTransactionPending', 'getIsFraudDetected']);
         $payment->method('getIsTransactionPending')
             ->willReturn($isTransactionPending);
         $payment->method('getIsFraudDetected')

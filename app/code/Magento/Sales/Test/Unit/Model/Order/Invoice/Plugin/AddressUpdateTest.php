@@ -17,6 +17,7 @@ use Magento\Sales\Model\ResourceModel\GridPool;
 use Magento\Sales\Model\ResourceModel\Order\Invoice\Collection;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class AddressUpdateTest extends TestCase
 {
@@ -53,8 +54,9 @@ class AddressUpdateTest extends TestCase
     }
 
     /**
-     * @dataProvider dataProvider
      */
+
+     #[DataProvider('dataProvider')]
     public function testAfterProcess($asyncReindexEnabled, $expectedReindexCalledCount)
     {
         $billingId = 100;

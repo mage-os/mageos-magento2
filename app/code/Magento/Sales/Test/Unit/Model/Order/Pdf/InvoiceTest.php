@@ -25,6 +25,7 @@ use Magento\Store\Model\App\Emulation;
 use Magento\Store\Model\ScopeInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  *
@@ -34,6 +35,8 @@ use PHPUnit\Framework\TestCase;
  */
 class InvoiceTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var \Magento\Sales\Model\Order\Pdf\Invoice
      */
@@ -97,7 +100,7 @@ class InvoiceTest extends TestCase
             ->willReturn($this->directoryMock);
 
         $this->databaseMock = $this->createMock(Database::class);
-        $this->scopeConfigMock = $this->getMockForAbstractClass(ScopeConfigInterface::class);
+        $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
         $this->addressRendererMock = $this->createMock(Renderer::class);
         $this->paymentDataMock = $this->createMock(Data::class);
         $this->appEmulation = $this->createMock(Emulation::class);
@@ -176,10 +179,7 @@ class InvoiceTest extends TestCase
             ->method('getTotals')
             ->willReturn([]);
 
-        $block = $this->getMockBuilder(Template::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['setIsSecureMode', 'toPdf'])
-            ->getMock();
+        $block = $this->createPartialMockWithReflection(Template::class, ['setIsSecureMode', 'toPdf']);
         $block->expects($this->any())
             ->method('setIsSecureMode')
             ->willReturn($block);
@@ -207,7 +207,7 @@ class InvoiceTest extends TestCase
         $orderMock->expects($this->any())
             ->method('getIsVirtual')
             ->willReturn(true);
-        $infoMock = $this->getMockForAbstractClass(InfoInterface::class);
+        $infoMock = $this->createMock(InfoInterface::class);
         $orderMock->expects($this->any())
             ->method('getPayment')
             ->willReturn($infoMock);
@@ -234,10 +234,7 @@ class InvoiceTest extends TestCase
         $this->directoryMock->expects($this->any())
             ->method('isFile')
             ->with($path . $filename)
-            ->willReturnOnConsecutiveCalls(
-                $this->returnValue(false),
-                $this->returnValue(false)
-            );
+            ->willReturnOnConsecutiveCalls(false, false);
 
         $this->databaseMock->expects($this->once())
             ->method('saveFileToFilesystem')
