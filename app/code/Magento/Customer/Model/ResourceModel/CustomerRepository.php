@@ -185,7 +185,8 @@ class CustomerRepository implements CustomerRepositoryInterface
         $this->collectionProcessor = $collectionProcessor;
         $this->notificationStorage = $notificationStorage;
         $this->delegatedStorage = $delegatedStorage ?? ObjectManager::getInstance()->get(DelegatedStorage::class);
-        $this->groupRepository = $groupRepository ?: ObjectManager::getInstance()->get(GroupRepositoryInterface::class);
+        $this->groupRepository = $groupRepository
+            ?: ObjectManager::getInstance()->get(GroupRepositoryInterface::class);
     }
 
     /**
@@ -250,6 +251,7 @@ class CustomerRepository implements CustomerRepositoryInterface
         if ($prevCustomerData && $prevCustomerData->getEmail() !== $customerModel->getEmail()) {
             $customerModel->setRpToken(null);
             $customerModel->setRpTokenCreatedAt(null);
+            $isEmailChanged = true;
         }
         if (!array_key_exists('addresses', $customerArr)
             && null !== $prevCustomerDataArr
@@ -296,6 +298,15 @@ class CustomerRepository implements CustomerRepositoryInterface
         }
         $this->customerRegistry->remove($customerId);
         $savedCustomer = $this->get($customer->getEmail(), $customer->getWebsiteId());
+        if (!empty($isEmailChanged)) {
+            $this->eventManager->dispatch(
+                'customer_email_changed',
+                [
+                    'customer' => $savedCustomer,
+                    'original_customer_email' => $prevCustomerData->getEmail()
+                ]
+            );
+        }
         $this->eventManager->dispatch(
             'customer_save_after_data_object',
             [
