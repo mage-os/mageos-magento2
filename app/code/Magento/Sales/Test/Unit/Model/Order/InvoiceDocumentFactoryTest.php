@@ -55,23 +55,15 @@ class InvoiceDocumentFactoryTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->invoiceServiceMock = $this->getMockBuilder(InvoiceService::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->invoiceServiceMock = $this->createMock(InvoiceService::class);
 
-        $this->orderMock = $this->getMockBuilder(Order::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->orderMock = $this->createMock(Order::class);
 
         $this->invoiceMock = $this->createPartialMock(Invoice::class, ['addComment']);
 
-        $this->itemMock = $this->getMockBuilder(InvoiceItemCreationInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->itemMock = $this->createMock(InvoiceItemCreationInterface::class);
 
-        $this->commentMock = $this->getMockBuilder(InvoiceCommentCreationInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->commentMock = $this->createMock(InvoiceCommentCreationInterface::class);
 
         $this->invoiceDocumentFactory = new InvoiceDocumentFactory($this->invoiceServiceMock);
     }

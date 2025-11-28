@@ -102,12 +102,8 @@ class HistoryTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->pageConfig = $this->getMockBuilder(\Magento\Framework\View\Page\Config::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->pageTitleMock = $this->getMockBuilder(Title::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->pageConfig = $this->createMock(\Magento\Framework\View\Page\Config::class);
+        $this->pageTitleMock = $this->createMock(Title::class);
     }
 
     /**

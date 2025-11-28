@@ -43,14 +43,12 @@ class DataTest extends TestCase
     protected function setUp(): void
     {
         $this->objectManager = new ObjectManager($this);
-        $this->_readerMock = $this->getMockBuilder(
+        $this->_readerMock = $this->createMock(
             Reader::class
-        )->disableOriginalConstructor()
-            ->getMock();
-        $this->_cacheMock = $this->getMockBuilder(
+        );
+        $this->_cacheMock = $this->createMock(
             Config::class
-        )->disableOriginalConstructor()
-            ->getMock();
+        );
         $this->serializerMock = $this->createMock(SerializerInterface::class);
     }
 

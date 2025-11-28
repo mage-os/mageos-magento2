@@ -35,9 +35,7 @@ class SaleOperationTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->processInvoiceOperation = $this->getMockBuilder(ProcessInvoiceOperation::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->processInvoiceOperation = $this->createMock(ProcessInvoiceOperation::class);
 
         $this->model = new SaleOperation(
             $this->processInvoiceOperation

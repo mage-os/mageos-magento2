@@ -92,9 +92,7 @@ class RefundOperationTest extends TestCase
             ->onlyMethods(['getEventDispatcher'])
             ->getMock();
 
-        $this->eventManagerMock = $this->getMockBuilder(ManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->eventManagerMock = $this->createMock(ManagerInterface::class);
 
         $contextMock->expects($this->once())
             ->method('getEventDispatcher')

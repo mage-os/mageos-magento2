@@ -39,9 +39,7 @@ class SalesEntityCommentValidatorTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->userContextMock = $this->getMockBuilder(UserContextInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->userContextMock = $this->createMock(UserContextInterface::class);
 
         $this->invoiceComment = $this->getMockBuilder(InvoiceComment::class)
             ->onlyMethods(['getData','getId','setData'])

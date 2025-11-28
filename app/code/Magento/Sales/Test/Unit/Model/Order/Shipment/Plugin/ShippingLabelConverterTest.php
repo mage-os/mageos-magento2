@@ -41,9 +41,7 @@ class ShippingLabelConverterTest extends TestCase
 
         $shippingLabel = 'shipping_label_test';
         $shippingLabelEncoded = base64_encode('shipping_label_test');
-        $this->shipmentMock = $this->getMockBuilder(ShipmentInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->shipmentMock = $this->createMock(ShipmentInterface::class);
         $this->shipmentMock->expects($this->exactly(2))->method('getShippingLabel')->willReturn($shippingLabel);
         $this->shipmentMock->expects($this->once())
             ->method('setShippingLabel')
@@ -57,9 +55,7 @@ class ShippingLabelConverterTest extends TestCase
     public function testAfterGet()
     {
         $this->model->afterGet(
-            $this->getMockBuilder(ShipmentRepositoryInterface::class)
-                ->disableOriginalConstructor()
-                ->getMock(),
+            $this->createMock(ShipmentRepositoryInterface::class),
             $this->shipmentMock
         );
     }
@@ -69,15 +65,11 @@ class ShippingLabelConverterTest extends TestCase
      */
     public function testAfterGetList()
     {
-        $searchResultMock = $this->getMockBuilder(ShipmentSearchResultInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $searchResultMock = $this->createMock(ShipmentSearchResultInterface::class);
         $searchResultMock->expects($this->once())->method('getItems')->willReturn([$this->shipmentMock]);
 
         $this->model->afterGetList(
-            $this->getMockBuilder(ShipmentRepositoryInterface::class)
-                ->disableOriginalConstructor()
-                ->getMock(),
+            $this->createMock(ShipmentRepositoryInterface::class),
             $searchResultMock
         );
     }

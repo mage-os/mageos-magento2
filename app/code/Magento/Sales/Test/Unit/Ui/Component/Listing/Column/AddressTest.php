@@ -35,9 +35,7 @@ class AddressTest extends TestCase
         $objectManager = new ObjectManager($this);
         $contextMock = $this->getMockBuilder(ContextInterface::class)
             ->getMock();
-        $processor = $this->getMockBuilder(Processor::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $processor = $this->createMock(Processor::class);
         $contextMock->expects($this->never())->method('getProcessor')->willReturn($processor);
         $this->escaper = $this->createPartialMock(Escaper::class, ['escapeHtml']);
         $this->model = $objectManager->getObject(

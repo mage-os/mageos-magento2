@@ -36,9 +36,7 @@ class PurchasedPriceTest extends TestCase
         $objectManager = new ObjectManager($this);
         $contextMock = $this->getMockBuilder(ContextInterface::class)
             ->getMock();
-        $processor = $this->getMockBuilder(Processor::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $processor = $this->createMock(Processor::class);
         $contextMock->expects($this->never())->method('getProcessor')->willReturn($processor);
         $this->currencyMock = $this->getMockBuilder(Currency::class)
             ->onlyMethods(['load', 'format'])

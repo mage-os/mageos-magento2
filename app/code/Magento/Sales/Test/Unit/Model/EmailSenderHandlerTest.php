@@ -150,10 +150,10 @@ class EmailSenderHandlerTest extends TestCase
         ?bool $emailSendingResult,
         ?int $expectedIsEmailSent
     ): void {
-         if ($collectionItems !== null && count($collectionItems) > 0) {
-             $collectionItems[0] = $collectionItems[0]($this);
-         }
-         $this->globalConfig
+        if ($collectionItems !== null && count($collectionItems) > 0) {
+            $collectionItems[0] = $collectionItems[0]($this);
+        }
+        $this->globalConfig
             ->method('getValue')
             ->willReturnCallback(function ($path) use ($configValue) {
                 if ($path === 'sales_email/general/async_sending') {
@@ -165,7 +165,7 @@ class EmailSenderHandlerTest extends TestCase
                 return null;
             });
 
-         if ($configValue) {
+        if ($configValue) {
              $nowDate = date('Y-m-d H:i:s');
              $fromDate = date('Y-m-d H:i:s', strtotime($nowDate . ' ' . $this->modifyStartFromDate));
              $this->entityCollection
@@ -218,9 +218,9 @@ class EmailSenderHandlerTest extends TestCase
 
              $this->configValueFactory->expects($this->once())
                 ->method('create')
-                ->willReturn($backendModelMock);
+               ->willReturn($backendModelMock);
 
-             if ($collectionItems) {
+            if ($collectionItems) {
 
                  /** @var AbstractModel|MockObject $collectionItem */
                  $collectionItem = $collectionItems[0];
@@ -255,11 +255,11 @@ class EmailSenderHandlerTest extends TestCase
                     ->willReturn($collectionItem);
 
                  $this->entityResource
-                    ->expects($this->once())
-                    ->method('saveAttribute')
-                    ->with($collectionItem);
-             }
-         }
+                   ->expects($this->once())
+                   ->method('saveAttribute')
+                   ->with($collectionItem);
+            }
+        }
 
          $this->object->sendEmails();
     }

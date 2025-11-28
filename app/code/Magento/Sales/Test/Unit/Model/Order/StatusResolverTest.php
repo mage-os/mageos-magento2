@@ -106,9 +106,7 @@ class StatusResolverTest extends TestCase
      */
     private function getConfig($stateStatuses)
     {
-        $config = $this->getMockBuilder(Config::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $config = $this->createMock(Config::class);
         $config->method('getStateStatuses')
             ->willReturn($stateStatuses);
         $config->method('getStateDefaultStatus')

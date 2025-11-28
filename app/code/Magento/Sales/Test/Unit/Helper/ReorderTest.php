@@ -57,9 +57,7 @@ class ReorderTest extends TestCase
             ->onlyMethods(['getValue'])
             ->disableOriginalConstructor()
             ->getMock();
-        $contextMock = $this->getMockBuilder(Context::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $contextMock = $this->createMock(Context::class);
         $contextMock->expects($this->any())
             ->method('getScopeConfig')
             ->willReturn($this->scopeConfigMock);
@@ -71,13 +69,9 @@ class ReorderTest extends TestCase
             $this->repositoryMock
         );
 
-        $this->storeParam = $this->getMockBuilder(\Magento\Store\Model\Store::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->storeParam = $this->createMock(\Magento\Store\Model\Store::class);
 
-        $this->orderMock = $this->getMockBuilder(Order::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->orderMock = $this->createMock(Order::class);
     }
 
     /**

@@ -49,18 +49,10 @@ class OrderGridExportFilterColumnTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->exportViewFilterProcessorMock = $this->getMockBuilder(ExportViewFilterProcessor::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->metadataProviderMock = $this->getMockBuilder(MetadataProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->uiComponentInterfaceMock = $this->getMockBuilder(UiComponentInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->contextInterfaceMock = $this->getMockBuilder(ContextInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->exportViewFilterProcessorMock = $this->createMock(ExportViewFilterProcessor::class);
+        $this->metadataProviderMock = $this->createMock(MetadataProvider::class);
+        $this->uiComponentInterfaceMock = $this->createMock(UiComponentInterface::class);
+        $this->contextInterfaceMock = $this->createMock(ContextInterface::class);
         $this->uiComponentInterfaceMock->expects($this->any())
             ->method('getContext')
             ->willReturn($this->contextInterfaceMock);

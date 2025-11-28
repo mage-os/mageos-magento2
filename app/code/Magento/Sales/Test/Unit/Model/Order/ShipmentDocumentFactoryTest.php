@@ -88,47 +88,31 @@ class ShipmentDocumentFactoryTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->shipmentFactoryMock = $this->getMockBuilder(ShipmentFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->shipmentFactoryMock = $this->createMock(ShipmentFactory::class);
 
-        $this->orderMock = $this->getMockBuilder(Order::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->orderMock = $this->createMock(Order::class);
 
-        $this->itemMock = $this->getMockBuilder(ShipmentItemCreationInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->itemMock = $this->createMock(ShipmentItemCreationInterface::class);
 
-        $this->commentMock = $this->getMockBuilder(ShipmentCommentCreationInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->commentMock = $this->createMock(ShipmentCommentCreationInterface::class);
 
         $this->shipmentMock = $this->createPartialMockWithReflection(
             Shipment::class,
             ['addComment', 'addTrack', 'setCustomerNote', 'setCustomerNoteNotify']
         );
 
-        $this->hydratorPoolMock = $this->getMockBuilder(HydratorPool::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->hydratorPoolMock = $this->createMock(HydratorPool::class);
 
         $this->trackFactoryMock = $this->getMockBuilder(TrackFactory::class)
             ->onlyMethods(['create'])
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->trackMock = $this->getMockBuilder(Track::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->trackMock = $this->createMock(Track::class);
 
-        $this->hydratorMock = $this->getMockBuilder(HydratorInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->hydratorMock = $this->createMock(HydratorInterface::class);
 
-        $this->extensionAttributeProcessorMock = $this->getMockBuilder(ExtensionAttributesProcessor::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->extensionAttributeProcessorMock = $this->createMock(ExtensionAttributesProcessor::class);
 
         $this->shipmentDocumentFactory = new ShipmentDocumentFactory(
             $this->shipmentFactoryMock,

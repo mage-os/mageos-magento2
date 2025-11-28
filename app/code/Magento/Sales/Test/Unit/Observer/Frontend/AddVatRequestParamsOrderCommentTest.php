@@ -36,9 +36,7 @@ class AddVatRequestParamsOrderCommentTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->customerAddressHelperMock = $this->getMockBuilder(Address::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->customerAddressHelperMock = $this->createMock(Address::class);
 
         $this->observer = new AddVatRequestParamsOrderComment(
             $this->customerAddressHelperMock

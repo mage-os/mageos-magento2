@@ -106,40 +106,18 @@ class CreditmemoDocumentFactoryTest extends TestCase
     protected function setUp(): void
     {
         $this->objectManager = new ObjectManager($this);
-        $this->creditmemoFactoryMock = $this->getMockBuilder(CreditmemoFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->creditmemoFactoryMock = $this->createMock(CreditmemoFactory::class);
         $this->commentFactoryMock =
-            $this->getMockBuilder(CreditmemoCommentInterfaceFactory::class)
-                ->disableOriginalConstructor()
-                ->getMock();
-        $this->hydratorPoolMock = $this->getMockBuilder(HydratorPool::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->orderRepositoryMock = $this->getMockBuilder(OrderRepositoryInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->orderMock = $this->getMockBuilder(Order::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->invoiceMock = $this->getMockBuilder(Invoice::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->creditmemoItemCreationMock = $this->getMockBuilder(CreditmemoItemCreationInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->creditmemoMock = $this->getMockBuilder(Creditmemo::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->hydratorMock = $this->getMockBuilder(HydratorInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->commentCreationArgumentsMock = $this->getMockBuilder(CreditmemoCreationArgumentsInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->commentCreationMock = $this->getMockBuilder(CreditmemoCommentCreationInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+            $this->createMock(CreditmemoCommentInterfaceFactory::class);
+        $this->hydratorPoolMock = $this->createMock(HydratorPool::class);
+        $this->orderRepositoryMock = $this->createMock(OrderRepositoryInterface::class);
+        $this->orderMock = $this->createMock(Order::class);
+        $this->invoiceMock = $this->createMock(Invoice::class);
+        $this->creditmemoItemCreationMock = $this->createMock(CreditmemoItemCreationInterface::class);
+        $this->creditmemoMock = $this->createMock(Creditmemo::class);
+        $this->hydratorMock = $this->createMock(HydratorInterface::class);
+        $this->commentCreationArgumentsMock = $this->createMock(CreditmemoCreationArgumentsInterface::class);
+        $this->commentCreationMock = $this->createMock(CreditmemoCommentCreationInterface::class);
         $this->creditmemoMock->expects($this->once())
             ->method('getEntityId')
             ->willReturn(11);

@@ -56,9 +56,7 @@ class TotalsTest extends TestCase
     protected function setUp(): void
     {
         $this->helperManager = new ObjectManager($this);
-        $this->sessionQuoteMock = $this->getMockBuilder(Quote::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->sessionQuoteMock = $this->createMock(Quote::class);
         $this->quoteMock = $this->createPartialMockWithReflection(
             \Magento\Quote\Model\Quote::class,
             [
@@ -66,12 +64,8 @@ class TotalsTest extends TestCase
                 'setTotalsCollectedFlag'
             ]
         );
-        $this->shippingAddressMock = $this->getMockBuilder(Address::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->billingAddressMock = $this->getMockBuilder(Address::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->shippingAddressMock = $this->createMock(Address::class);
+        $this->billingAddressMock = $this->createMock(Address::class);
 
         $this->quoteMock->expects($this->any())
             ->method('getBillingAddress')

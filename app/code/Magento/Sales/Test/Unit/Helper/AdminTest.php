@@ -74,22 +74,14 @@ class AdminTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->contextMock = $this->getMockBuilder(Context::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->storeManagerMock = $this->getMockBuilder(StoreManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->salesConfigMock = $this->getMockBuilder(Config::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->contextMock = $this->createMock(Context::class);
+        $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
+        $this->salesConfigMock = $this->createMock(Config::class);
         $this->priceCurrency = $this->getMockBuilder(
             PriceCurrencyInterface::class
         )->getMock();
 
-        $this->escaperMock = $this->getMockBuilder(Escaper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->escaperMock = $this->createMock(Escaper::class);
 
         $this->adminHelper = (new ObjectManager($this))->getObject(
             Admin::class,
@@ -107,9 +99,7 @@ class AdminTest extends TestCase
             ['getOrder', 'getData']
         );
 
-        $this->orderMock = $this->getMockBuilder(Order::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->orderMock = $this->createMock(Order::class);
         $this->orderMock->expects($this->any())
             ->method('formatBasePrice')
             ->willReturn('formattedBasePrice');
@@ -141,9 +131,7 @@ class AdminTest extends TestCase
          $this->orderMock->expects($this->any())
             ->method('isCurrencyDifferent')
             ->willReturn($isCurrencyDifferent);
-         $storeMock = $this->getMockBuilder(Store::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+         $storeMock = $this->createMock(Store::class);
          $this->storeManagerMock->expects($this->any())
             ->method('getStore')
             ->willReturn($storeMock);
@@ -189,9 +177,7 @@ class AdminTest extends TestCase
          $this->orderMock->expects($this->any())
             ->method('isCurrencyDifferent')
             ->willReturn($isCurrencyDifferent);
-         $storeMock = $this->getMockBuilder(Store::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+         $storeMock = $this->createMock(Store::class);
          $this->storeManagerMock->expects($this->any())
             ->method('getStore')
             ->willReturn($storeMock);
@@ -293,9 +279,7 @@ class AdminTest extends TestCase
      #[DataProvider('applySalableProductTypesFilterDataProvider')]
     public function testApplySalableProductTypesFilter($itemKey, $type, $calledTimes)
     {
-        $productMock = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $productMock = $this->createMock(Product::class);
         $productMock->expects($this->any())
             ->method('getTypeId')
             ->willReturn($type);
@@ -306,9 +290,7 @@ class AdminTest extends TestCase
         $orderMock->expects($this->any())
             ->method('getProductType')
             ->willReturn($type);
-        $quoteMock = $this->getMockBuilder(\Magento\Quote\Model\Quote\Item::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $quoteMock = $this->createMock(\Magento\Quote\Model\Quote\Item::class);
         $quoteMock->expects($this->any())
             ->method('getProductType')
             ->willReturn($type);
@@ -319,9 +301,7 @@ class AdminTest extends TestCase
             'other' => 'other',
         ];
         $collectionClassName = AbstractCollection::class;
-        $collectionMock = $this->getMockBuilder($collectionClassName)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $collectionMock = $this->createMock($collectionClassName);
         $collectionMock->expects($this->any())
             ->method('getItems')
             ->willReturn([$items[$itemKey]]);

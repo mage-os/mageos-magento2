@@ -95,29 +95,19 @@ class SaveTest extends TestCase
         $objectManager = new ObjectManager($this);
         $objectManager->prepareObjectManager();
 
-        $this->requestMock = $this->getMockBuilder(Http::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->responseMock = $this->getMockBuilder(\Magento\Framework\App\Response\Http::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->requestMock = $this->createMock(Http::class);
+        $this->responseMock = $this->createMock(\Magento\Framework\App\Response\Http::class);
 
         $this->resultPageFactoryMock = $this->getMockBuilder(PageFactory::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['create'])
             ->getMock();
 
-        $this->formKeyValidatorMock = $this->getMockBuilder(Validator::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->formKeyValidatorMock = $this->createMock(Validator::class);
 
-        $this->messageManagerMock = $this->getMockBuilder(ManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->messageManagerMock = $this->createMock(ManagerInterface::class);
 
-        $contextMock = $this->getMockBuilder(Context::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $contextMock = $this->createMock(Context::class);
         $contextMock->expects($this->any())
             ->method('getRequest')
             ->willReturn($this->requestMock);
@@ -174,9 +164,7 @@ class SaveTest extends TestCase
      */
     public function testExecuteNotValidPost(): void
     {
-        $redirectMock = $this->getMockBuilder(Redirect::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $redirectMock = $this->createMock(Redirect::class);
         $this->resultPageFactoryMock->expects($this->once())
             ->method('create')
             ->willReturn($redirectMock);
@@ -231,9 +219,7 @@ class SaveTest extends TestCase
         bool $emailEnabled,
         bool $shouldEmailBeSent
     ): void {
-         $redirectMock = $this->getMockBuilder(Redirect::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+         $redirectMock = $this->createMock(Redirect::class);
          $redirectMock->expects($this->once())
             ->method('setPath')
             ->with('sales/order/view')

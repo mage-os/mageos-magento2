@@ -129,18 +129,14 @@ class SaveTest extends TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['create'])
             ->getMock();
-        $this->resultForwardMock = $this->getMockBuilder(Forward::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->resultForwardMock = $this->createMock(Forward::class);
         $this->resultRedirectFactoryMock = $this->getMockBuilder(
             RedirectFactory::class
         )
             ->disableOriginalConstructor()
             ->onlyMethods(['create'])
             ->getMock();
-        $this->resultRedirectMock = $this->getMockBuilder(Redirect::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->resultRedirectMock = $this->createMock(Redirect::class);
         $this->_objectManager = $this->createMock(ObjectManagerInterface::class);
         $registryMock = $this->createMock(Registry::class);
         $this->_objectManager->expects(
@@ -165,9 +161,7 @@ class SaveTest extends TestCase
 
         $context = $helper->getObject(Context::class, $arguments);
 
-        $creditmemoManagement =  $this->getMockBuilder(CreditmemoManagementInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $creditmemoManagement =  $this->createMock(CreditmemoManagementInterface::class);
         $this->_objectManager->expects($this->any())
             ->method('create')
             ->with(CreditmemoManagementInterface::class)

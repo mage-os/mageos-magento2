@@ -160,17 +160,11 @@ class PaymentTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->eventManagerMock = $this->getMockBuilder(Manager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->eventManagerMock = $this->createMock(Manager::class);
 
-        $this->saleOperation = $this->getMockBuilder(SaleOperation::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->saleOperation = $this->createMock(SaleOperation::class);
 
-        $this->context = $this->getMockBuilder(Context::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->context = $this->createMock(Context::class);
 
         $this->context->expects($this->atLeastOnce())
             ->method('getEventDispatcher')
@@ -205,9 +199,7 @@ class PaymentTest extends TestCase
                 }
             );
 
-        $this->paymentMethod = $this->getMockBuilder(Adapter::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->paymentMethod = $this->createMock(Adapter::class);
 
         $this->invoice = $this->getMockBuilder(Invoice::class)
             ->disableOriginalConstructor()
@@ -253,9 +245,7 @@ class PaymentTest extends TestCase
         $this->transactionBuilderMock = $this->createMock(
             Builder::class
         );
-        $this->orderStateResolver = $this->getMockBuilder(OrderStateResolverInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->orderStateResolver = $this->createMock(OrderStateResolverInterface::class);
         $this->creditMemoMock = $this->createPartialMockWithReflection(
             Creditmemo::class,
             [
@@ -265,9 +255,7 @@ class PaymentTest extends TestCase
             ]
         );
 
-        $this->creditmemoManagerMock = $this->getMockBuilder(CreditmemoManagementInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->creditmemoManagerMock = $this->createMock(CreditmemoManagementInterface::class);
 
         $this->payment = $this->initPayment();
         $helper = new ObjectManager($this);
@@ -729,11 +717,13 @@ class PaymentTest extends TestCase
 
     /**
      * @param bool $isFraudDetected
+     * @param string|bool $status
      *
-     * @return void     */
-
-     #[DataProvider('acceptPaymentFalseProvider')]
-    public function testAcceptApprovePaymentFalseOrderState(bool $isFraudDetected): void
+     * @return void
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    #[DataProvider('acceptPaymentFalseProvider')]
+    public function testAcceptApprovePaymentFalseOrderState(bool $isFraudDetected, $status): void
     {
         $message = sprintf('There is no need to approve this payment. Transaction ID: "%s"', $this->transactionId);
         $acceptPayment = false;

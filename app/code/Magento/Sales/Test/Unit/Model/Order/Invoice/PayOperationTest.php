@@ -213,16 +213,12 @@ class PayOperationTest extends TestCase
             ->method('getPayment')
             ->willReturn($this->orderPaymentMock);
 
-        $this->eventManagerMock = $this->getMockBuilder(ManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->eventManagerMock = $this->createMock(ManagerInterface::class);
         $this->contextMock->expects($this->any())
             ->method('getEventDispatcher')
             ->willReturn($this->eventManagerMock);
 
-        $this->paymentMethodMock = $this->getMockBuilder(MethodInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->paymentMethodMock = $this->createMock(MethodInterface::class);
         $this->orderPaymentMock->expects($this->any())
             ->method('getMethodInstance')
             ->willReturn($this->paymentMethodMock);

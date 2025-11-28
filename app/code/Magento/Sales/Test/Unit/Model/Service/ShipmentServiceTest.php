@@ -73,9 +73,7 @@ class ShipmentServiceTest extends TestCase
     {
         $objectManager = new ObjectManagerHelper($this);
 
-        $this->commentRepositoryMock = $this->getMockBuilder(ShipmentCommentRepositoryInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->commentRepositoryMock = $this->createMock(ShipmentCommentRepositoryInterface::class);
         $this->searchCriteriaBuilderMock = $this->createPartialMock(
             SearchCriteriaBuilder::class,
             ['create', 'addFilters']
@@ -84,9 +82,7 @@ class ShipmentServiceTest extends TestCase
             FilterBuilder::class,
             ['setField', 'setValue', 'setConditionType', 'create']
         );
-        $this->repositoryMock = $this->getMockBuilder(ShipmentRepositoryInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->repositoryMock = $this->createMock(ShipmentRepositoryInterface::class);
         $this->notifierMock = $this->createPartialMock(ShipmentNotifier::class, ['notify']);
 
         $this->shipmentService = $objectManager->getObject(

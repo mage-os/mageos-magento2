@@ -90,9 +90,7 @@ class GridTest extends TestCase
     protected function setUp(): void
     {
         $orderCreateMock = $this->createMock(Create::class);
-        $taxData = $this->getMockBuilder(Data::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $taxData = $this->createMock(Data::class);
         $this->priceCurrency = $this->getMockBuilder(
             PriceCurrencyInterface::class
         )->getMock();
@@ -106,9 +104,7 @@ class GridTest extends TestCase
             ->onlyMethods(['getStore'])
             ->getMock();
 
-        $storeMock = $this->getMockBuilder(Store::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $storeMock = $this->createMock(Store::class);
         $this->priceCurrency->expects($this->any())
             ->method('convertAndFormat')
             ->willReturnArgument(0);
@@ -116,13 +112,9 @@ class GridTest extends TestCase
         $sessionMock->expects($this->any())->method('getQuote')->willReturn($quoteMock);
         $wishlistFactoryMock = $this->createPartialMockWithReflection(WishlistFactory::class, ['methods']);
 
-        $giftMessageSave = $this->getMockBuilder(\Magento\Giftmessage\Model\Save::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $giftMessageSave = $this->createMock(\Magento\Giftmessage\Model\Save::class);
 
-        $taxConfig = $this->getMockBuilder(Config::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $taxConfig = $this->createMock(Config::class);
 
         $this->stockRegistry = $this->getMockBuilder(StockRegistry::class)
             ->disableOriginalConstructor()
@@ -180,9 +172,7 @@ class GridTest extends TestCase
             ->onlyMethods(['getBlock'])
             ->getMock();
 
-        $this->itemMock = $this->getMockBuilder(Item::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->itemMock = $this->createMock(Item::class);
     }
 
     /**

@@ -150,20 +150,16 @@ class CreditmemoTest extends TestCase
         $this->creditmemo->setId($id);
 
         $items = [];
-        $itemMock = $this->getMockBuilder(Item::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $itemMock = $this->createMock(Item::class);
         $itemMock->expects($this->once())
             ->method('setCreditmemo')
             ->with($this->creditmemo);
         $items[] = $itemMock;
 
         /** @var ItemCollection|MockObject $itemCollectionMock */
-        $itemCollectionMock = $this->getMockBuilder(
+        $itemCollectionMock = $this->createMock(
             \Magento\Sales\Model\ResourceModel\Order\Creditmemo\Item\Collection::class
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
+        );
         $itemCollectionMock->expects($this->once())
             ->method('setCreditmemoFilter')
             ->with($id)
@@ -180,19 +176,15 @@ class CreditmemoTest extends TestCase
     public function testGetItemsCollectionWithoutId()
     {
         $items = [];
-        $itemMock = $this->getMockBuilder(Item::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $itemMock = $this->createMock(Item::class);
         $itemMock->expects($this->never())
             ->method('setCreditmemo');
         $items[] = $itemMock;
 
         /** @var ItemCollection|MockObject $itemCollectionMock */
-        $itemCollectionMock = $this->getMockBuilder(
+        $itemCollectionMock = $this->createMock(
             \Magento\Sales\Model\ResourceModel\Order\Creditmemo\Item\Collection::class
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
+        );
         $itemCollectionMock->expects($this->once())
             ->method('setCreditmemoFilter')
             ->with(null)
@@ -208,8 +200,8 @@ class CreditmemoTest extends TestCase
 
     public function testIsLastForLastCreditMemo(): void
     {
-        $item = $this->getMockBuilder(Item::class)->disableOriginalConstructor()->getMock();
-        $orderItem = $this->getMockBuilder(OrderItem::class)->disableOriginalConstructor()->getMock();
+        $item = $this->createMock(Item::class);
+        $orderItem = $this->createMock(OrderItem::class);
         $orderItem
             ->expects($this->once())
             ->method('isDummy')
@@ -223,8 +215,8 @@ class CreditmemoTest extends TestCase
 
     public function testIsLastForNonLastCreditMemo(): void
     {
-        $item = $this->getMockBuilder(Item::class)->disableOriginalConstructor()->getMock();
-        $orderItem = $this->getMockBuilder(OrderItem::class)->disableOriginalConstructor()->getMock();
+        $item = $this->createMock(Item::class);
+        $orderItem = $this->createMock(OrderItem::class);
         $orderItem
             ->expects($this->once())
             ->method('isDummy')

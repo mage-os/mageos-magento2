@@ -49,17 +49,13 @@ class PriceTest extends TestCase
         $objectManager = new ObjectManager($this);
         $contextMock = $this->getMockBuilder(ContextInterface::class)
             ->getMock();
-        $processor = $this->getMockBuilder(Processor::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $processor = $this->createMock(Processor::class);
         $contextMock->expects($this->never())->method('getProcessor')->willReturn($processor);
         $this->currencyMock = $this->getMockBuilder(Currency::class)
             ->onlyMethods(['load', 'format'])
             ->disableOriginalConstructor()
             ->getMock();
-        $this->storeManagerMock = $this->getMockBuilder(StoreManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
         $this->model = $objectManager->getObject(
             Price::class,
             ['currency' => $this->currencyMock, 'context' => $contextMock, 'storeManager' => $this->storeManagerMock]
@@ -86,12 +82,8 @@ class PriceTest extends TestCase
          $oldItemValue = 'oldItemValue';
          $newItemValue = 'newItemValue';
 
-         $store = $this->getMockBuilder(Store::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-         $currencyMock = $this->getMockBuilder(Currency::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+         $store = $this->createMock(Store::class);
+         $currencyMock = $this->createMock(Currency::class);
          $currencyMock->expects($hasCurrency ? $this->never() : $this->once())
             ->method('getCurrencyCode')
             ->willReturn($currencyCode);

@@ -48,17 +48,11 @@ class RefundTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->orderRepositoryMock = $this->getMockBuilder(OrderRepositoryInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->orderRepositoryMock = $this->createMock(OrderRepositoryInterface::class);
 
-        $this->invoiceRepositoryMock = $this->getMockBuilder(InvoiceRepositoryInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->invoiceRepositoryMock = $this->createMock(InvoiceRepositoryInterface::class);
 
-        $this->priceCurrencyMock = $this->getMockBuilder(PriceCurrencyInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->priceCurrencyMock = $this->createMock(PriceCurrencyInterface::class);
 
         $objectManager = new ObjectManager($this);
         $this->refundResource = $objectManager->getObject(
@@ -73,20 +67,14 @@ class RefundTest extends TestCase
 
     public function testProcessRelation()
     {
-        $paymentMock = $this->getMockBuilder(Payment::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $paymentMock = $this->createMock(Payment::class);
 
-        $orderMock = $this->getMockBuilder(Order::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $orderMock = $this->createMock(Order::class);
         $orderMock->expects($this->once())
             ->method('getPayment')
             ->willReturn($paymentMock);
 
-        $creditmemoMock = $this->getMockBuilder(Creditmemo::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $creditmemoMock = $this->createMock(Creditmemo::class);
         $creditmemoMock->expects($this->once())
             ->method('getState')
             ->willReturn(Creditmemo::STATE_REFUNDED);

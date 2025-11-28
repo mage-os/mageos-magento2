@@ -38,12 +38,8 @@ class OrderRegistrarTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->orderMock = $this->getMockBuilder(OrderInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->shipmentMock = $this->getMockBuilder(ShipmentInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->orderMock = $this->createMock(OrderInterface::class);
+        $this->shipmentMock = $this->createMock(ShipmentInterface::class);
 
         $this->model = new OrderRegistrar();
     }

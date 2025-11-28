@@ -120,30 +120,20 @@ class NewActionTest extends TestCase
             ['getIncrementId']
         );
         $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
-        $this->requestMock = $this->getMockBuilder(RequestInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->responseMock = $this->getMockBuilder(ResponseInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->requestMock = $this->createMock(RequestInterface::class);
+        $this->responseMock = $this->createMock(ResponseInterface::class);
         $this->titleMock = $this->createMock(Title::class);
-        $this->pageConfigMock = $this->getMockBuilder(Config::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->pageConfigMock = $this->createMock(Config::class);
         $this->backendSessionMock = $this->createPartialMockWithReflection(
             Session::class,
             ['getCommentText']
         );
-        $this->layoutMock = $this->getMockBuilder(LayoutInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->layoutMock = $this->createMock(LayoutInterface::class);
         $this->resultPageFactoryMock = $this->getMockBuilder(PageFactory::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['create'])
             ->getMock();
-        $this->resultPageMock = $this->getMockBuilder(Page::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->resultPageMock = $this->createMock(Page::class);
 
         $this->contextMock->expects($this->once())
             ->method('getRequest')

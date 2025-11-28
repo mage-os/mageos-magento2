@@ -82,34 +82,16 @@ class CommentRepositoryTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->commentResource = $this->getMockBuilder(CreditmemoCommentResourceInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->commentFactory = $this->getMockBuilder(CreditmemoCommentInterfaceFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->searchResultFactory = $this->getMockBuilder(CreditmemoCommentSearchResultInterfaceFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->collectionProcessor = $this->getMockBuilder(CollectionProcessorInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->creditmemoRepositoryMock = $this->getMockBuilder(CreditmemoRepositoryInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->creditmemoCommentSender = $this->getMockBuilder(CreditmemoCommentSender::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->loggerMock = $this->getMockBuilder(LoggerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->commentResource = $this->createMock(CreditmemoCommentResourceInterface::class);
+        $this->commentFactory = $this->createMock(CreditmemoCommentInterfaceFactory::class);
+        $this->searchResultFactory = $this->createMock(CreditmemoCommentSearchResultInterfaceFactory::class);
+        $this->collectionProcessor = $this->createMock(CollectionProcessorInterface::class);
+        $this->creditmemoRepositoryMock = $this->createMock(CreditmemoRepositoryInterface::class);
+        $this->creditmemoCommentSender = $this->createMock(CreditmemoCommentSender::class);
+        $this->loggerMock = $this->createMock(LoggerInterface::class);
 
-        $this->creditmemoMock = $this->getMockBuilder(Creditmemo::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->commentMock = $this->getMockBuilder(Comment::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->creditmemoMock = $this->createMock(Creditmemo::class);
+        $this->commentMock = $this->createMock(Comment::class);
 
         $this->commentRepository = new CommentRepository(
             $this->commentResource,

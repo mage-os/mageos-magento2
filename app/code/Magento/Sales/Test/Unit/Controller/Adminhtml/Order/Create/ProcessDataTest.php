@@ -91,9 +91,7 @@ class ProcessDataTest extends TestCase
         $context = $this->createMock(Context::class);
 
         $this->request = $this->createPartialMock(Http::class, ['getPost', 'getPostValue', 'has', 'getParam']);
-        $response = $this->getMockBuilder(ResponseInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $response = $this->createMock(ResponseInterface::class);
         $context->expects($this->any())->method('getResponse')->willReturn($response);
         $context->expects($this->any())->method('getRequest')->willReturn($this->request);
 
@@ -110,9 +108,7 @@ class ProcessDataTest extends TestCase
         $context->expects($this->any())->method('getSession')->willReturn($this->session);
         $this->escaper = $this->createPartialMock(Escaper::class, ['escapeHtml']);
 
-        $this->resultForward = $this->getMockBuilder(Forward::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->resultForward = $this->createMock(Forward::class);
         $this->resultForwardFactory = $this->getMockBuilder(ForwardFactory::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['create'])

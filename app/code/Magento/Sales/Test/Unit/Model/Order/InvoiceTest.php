@@ -415,9 +415,7 @@ class InvoiceTest extends TestCase
      */
     private function getOrderInvoiceCollection()
     {
-        $collection = $this->getMockBuilder(InvoiceCollection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $collection = $this->createMock(InvoiceCollection::class);
 
         $refObject = new \ReflectionClass($this->order);
         $refProperty = $refObject->getProperty('_invoices');

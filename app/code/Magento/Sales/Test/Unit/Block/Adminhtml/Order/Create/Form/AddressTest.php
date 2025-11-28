@@ -119,9 +119,7 @@ class AddressTest extends TestCase
             QuoteSession::class,
             ['getStore', 'getCustomerId']
         );
-        $this->store = $this->getMockBuilder(Store::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->store = $this->createMock(Store::class);
         $this->quoteSession->expects($this->any())
             ->method('getStore')
             ->willReturn($this->store);
@@ -187,9 +185,7 @@ class AddressTest extends TestCase
             ->willReturn('emptyFormData');
 
         /** @var Filter|MockObject $filter */
-        $filter = $this->getMockBuilder(Filter::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $filter = $this->createMock(Filter::class);
         $this->filterBuilder->expects($this->once())
             ->method('setField')
             ->with('parent_id')
@@ -207,9 +203,7 @@ class AddressTest extends TestCase
             ->willReturn($filter);
 
         /** @var SearchCriteria|MockObject $searchCriteria */
-        $searchCriteria = $this->getMockBuilder(SearchCriteria::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $searchCriteria = $this->createMock(SearchCriteria::class);
         $this->criteriaBuilder->expects($this->once())
             ->method('create')
             ->willReturn($searchCriteria);

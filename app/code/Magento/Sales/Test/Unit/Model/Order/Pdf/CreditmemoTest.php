@@ -71,9 +71,7 @@ class CreditmemoTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->pdfConfigMock = $this->getMockBuilder(\Magento\Sales\Model\Order\Pdf\Config::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->pdfConfigMock = $this->createMock(\Magento\Sales\Model\Order\Pdf\Config::class);
         $this->directoryMock = $this->createMock(\Magento\Framework\Filesystem\Directory\Write::class);
         $this->directoryMock->expects($this->any())->method('getAbsolutePath')->willReturnCallback(
             function ($argument) {

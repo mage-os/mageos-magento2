@@ -45,9 +45,7 @@ class AggregateSalesReportRefundedDataTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->localeResolverMock = $this->getMockBuilder(ResolverInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->localeResolverMock = $this->createMock(ResolverInterface::class);
 
         $this->refundedFactoryMock = $this->getMockBuilder(
             RefundedFactory::class
@@ -55,9 +53,7 @@ class AggregateSalesReportRefundedDataTest extends TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['create'])
             ->getMock();
-        $this->localeDateMock = $this->getMockBuilder(TimezoneInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->localeDateMock = $this->createMock(TimezoneInterface::class);
 
         $this->observer = new AggregateSalesReportRefundedData(
             $this->localeResolverMock,
@@ -69,9 +65,7 @@ class AggregateSalesReportRefundedDataTest extends TestCase
     public function testExecute()
     {
         $date = $this->setupAggregate();
-        $refundedMock = $this->getMockBuilder(Refunded::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $refundedMock = $this->createMock(Refunded::class);
         $refundedMock->expects($this->once())
             ->method('aggregate')
             ->with($date);

@@ -82,9 +82,7 @@ class InvoiceTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->pdfConfigMock = $this->getMockBuilder(Config::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->pdfConfigMock = $this->createMock(Config::class);
         $this->directoryMock = $this->createMock(Write::class);
         $this->directoryMock->expects($this->any())->method('getAbsolutePath')->willReturnCallback(
             function ($argument) {

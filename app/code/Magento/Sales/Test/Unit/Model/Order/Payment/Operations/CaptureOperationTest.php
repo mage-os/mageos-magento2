@@ -62,9 +62,7 @@ class CaptureOperationTest extends TestCase
         $this->eventManager = $this->createMock(EventManagerInterface::class);
         $this->transactionBuilder = $this->createMock(BuilderInterface::class);
         $this->stateCommand = $this->createMock(CommandInterface::class);
-        $this->processInvoiceOperation = $this->getMockBuilder(ProcessInvoiceOperation::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->processInvoiceOperation = $this->createMock(ProcessInvoiceOperation::class);
 
         $this->model = new CaptureOperation(
             $this->stateCommand,
@@ -82,9 +80,7 @@ class CaptureOperationTest extends TestCase
      */
     public function testCaptureWithoutInvoice()
     {
-        $invoice = $this->getMockBuilder(Invoice::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $invoice = $this->createMock(Invoice::class);
         $invoice->expects($this->once())
             ->method('register');
         $invoice->expects($this->once())
@@ -137,14 +133,10 @@ class CaptureOperationTest extends TestCase
     public function testCaptureWithInvoice()
     {
         /** @var Invoice|MockObject  $invoice */
-        $invoice = $this->getMockBuilder(Invoice::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $invoice = $this->createMock(Invoice::class);
 
         /** @var Payment|MockObject  $orderPayment | */
-        $orderPayment = $this->getMockBuilder(Payment::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $orderPayment = $this->createMock(Payment::class);
 
         $this->processInvoiceOperation->expects($this->once())
             ->method('execute')

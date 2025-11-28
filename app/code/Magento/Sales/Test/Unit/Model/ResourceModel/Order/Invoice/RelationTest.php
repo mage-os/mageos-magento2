@@ -82,15 +82,9 @@ class RelationTest extends TestCase
                 ]
             )
             ->getMock();
-        $this->invoiceItemMock = $this->getMockBuilder(\Magento\Sales\Model\Order\Invoice\Item::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->invoiceCommentMock = $this->getMockBuilder(\Magento\Sales\Model\Order\Invoice\Comment::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->orderItemMock = $this->getMockBuilder(\Magento\Sales\Model\Order\Item::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->invoiceItemMock = $this->createMock(\Magento\Sales\Model\Order\Invoice\Item::class);
+        $this->invoiceCommentMock = $this->createMock(\Magento\Sales\Model\Order\Invoice\Comment::class);
+        $this->orderItemMock = $this->createMock(\Magento\Sales\Model\Order\Item::class);
         $this->relationProcessor = new Relation(
             $this->invoiceItemResourceMock,
             $this->invoiceCommentResourceMock

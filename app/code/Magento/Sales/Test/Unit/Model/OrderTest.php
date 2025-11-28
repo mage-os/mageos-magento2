@@ -1024,10 +1024,9 @@ class OrderTest extends TestCase
      */
     protected function _prepareOrderPayment($order, $mockedMethods = [])
     {
-        $payment = $this->getMockBuilder(
+        $payment = $this->createMock(
             \Magento\Sales\Model\Order\Payment::class
-        )->disableOriginalConstructor()
-            ->getMock();
+        );
         foreach ($mockedMethods as $method => $value) {
             $payment->expects($this->any())->method($method)->willReturn($value);
         }

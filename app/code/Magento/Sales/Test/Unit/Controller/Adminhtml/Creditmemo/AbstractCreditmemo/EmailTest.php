@@ -107,9 +107,7 @@ class EmailTest extends TestCase
             ['setRedirect', 'sendResponse']
         );
 
-        $this->request = $this->getMockBuilder(Http::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->request = $this->createMock(Http::class);
         $this->objectManager = $this->createPartialMock(
             \Magento\Framework\ObjectManager\ObjectManager::class,
             ['create']
@@ -126,9 +124,7 @@ class EmailTest extends TestCase
         )->disableOriginalConstructor()
             ->onlyMethods(['create'])
             ->getMock();
-        $this->resultRedirectMock = $this->getMockBuilder(Redirect::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->resultRedirectMock = $this->createMock(Redirect::class);
         $this->context->expects($this->once())->method('getMessageManager')->willReturn($this->messageManager);
         $this->context->expects($this->once())->method('getRequest')->willReturn($this->request);
         $this->context->expects($this->once())->method('getResponse')->willReturn($this->response);

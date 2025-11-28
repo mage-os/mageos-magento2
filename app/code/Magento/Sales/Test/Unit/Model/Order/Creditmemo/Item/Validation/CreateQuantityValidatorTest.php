@@ -78,9 +78,7 @@ class CreateQuantityValidatorTest extends TestCase
 
         $this->contexMock = null;
         if ($withContext) {
-            $this->contexMock = $this->getMockBuilder(OrderInterface::class)
-                ->disableOriginalConstructor()
-                ->getMock();
+            $this->contexMock = $this->createMock(OrderInterface::class);
 
             $this->entity->expects($this->once())
                 ->method('getQty')

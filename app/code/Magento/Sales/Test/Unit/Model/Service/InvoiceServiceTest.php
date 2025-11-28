@@ -77,12 +77,8 @@ class InvoiceServiceTest extends TestCase
     {
         $objectManager = new ObjectManagerHelper($this);
 
-        $this->repositoryMock = $this->getMockBuilder(InvoiceRepositoryInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->commentRepositoryMock = $this->getMockBuilder(InvoiceCommentRepositoryInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->repositoryMock = $this->createMock(InvoiceRepositoryInterface::class);
+        $this->commentRepositoryMock = $this->createMock(InvoiceCommentRepositoryInterface::class);
         $this->searchCriteriaBuilderMock = $this->createPartialMock(
             SearchCriteriaBuilder::class,
             ['create', 'addFilters']
@@ -212,8 +208,7 @@ class InvoiceServiceTest extends TestCase
     public function testPrepareInvoiceSetsHistoryEntityNameWhenOriginalEntityTypePresent(): void
     {
         $orderRepository   = $this->createMock(\Magento\Sales\Api\OrderRepositoryInterface::class);
-        $orderConverter    = $this->getMockBuilder(\Magento\Sales\Model\Convert\Order::class)
-            ->disableOriginalConstructor()->getMock();
+        $orderConverter    = $this->createMock(\Magento\Sales\Model\Convert\Order::class);
         $serializer   = $this->createMock(\Magento\Framework\Serialize\Serializer\Json::class);
 
         $service = new InvoiceService(

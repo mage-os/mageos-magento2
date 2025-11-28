@@ -72,9 +72,7 @@ class DefaultOrderTest extends TestCase
             ['setItem', 'toHtml']
         );
 
-        $this->itemMock = $this->getMockBuilder(OrderItem::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->itemMock = $this->createMock(OrderItem::class);
     }
 
     public function testGetItemPrice()

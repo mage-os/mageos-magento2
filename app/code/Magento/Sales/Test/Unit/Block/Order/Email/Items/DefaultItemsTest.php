@@ -70,9 +70,7 @@ class DefaultItemsTest extends TestCase
             ['setItem', 'toHtml']
         );
 
-        $this->itemMock = $this->getMockBuilder(OrderItem::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->itemMock = $this->createMock(OrderItem::class);
 
         $this->quoteItemMock = $this->getMockBuilder(QuoteItem::class)
             ->disableOriginalConstructor()

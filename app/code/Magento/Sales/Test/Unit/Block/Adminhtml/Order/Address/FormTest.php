@@ -94,9 +94,7 @@ class FormTest extends TestCase
             ['getStoreId', 'getStore']
         );
 
-        $this->orderCreate = $this->getMockBuilder(Create::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->orderCreate = $this->createMock(Create::class);
         $this->orderCreate->method('getSession')
             ->willReturn($this->sessionQuote);
 

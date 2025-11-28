@@ -37,8 +37,7 @@ class ValidatorTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->salesEntityCommentValidator = $this->getMockBuilder(SalesEntityCommentValidator::class)
-            ->disableOriginalConstructor()->getMock();
+        $this->salesEntityCommentValidator = $this->createMock(SalesEntityCommentValidator::class);
 
         $this->commentModelMock = $this->createPartialMock(
             Comment::class,

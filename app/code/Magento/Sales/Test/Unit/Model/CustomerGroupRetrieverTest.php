@@ -47,9 +47,7 @@ class CustomerGroupRetrieverTest extends TestCase
             Quote::class,
             ['getQuoteId', 'getQuote']
         );
-        $this->groupManagement = $this->getMockBuilder(GroupManagementInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->groupManagement = $this->createMock(GroupManagementInterface::class);
 
         $helper = new ObjectManager($this);
         $this->retriever = $helper->getObject(
@@ -67,9 +65,7 @@ class CustomerGroupRetrieverTest extends TestCase
     public function testGetCustomerGroupIdQuote()
     {
         $this->quoteSession->expects($this->atLeastOnce())->method('getQuoteId')->willReturn(1);
-        $quote = $this->getMockBuilder(\Magento\Quote\Model\Quote::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $quote = $this->createMock(\Magento\Quote\Model\Quote::class);
         $this->quoteSession->expects($this->atLeastOnce())->method('getQuote')->willReturn($quote);
         $quote->expects($this->once())->method('getCustomerGroupId')->willReturn(2);
 
@@ -83,9 +79,7 @@ class CustomerGroupRetrieverTest extends TestCase
     {
         $this->quoteSession->expects($this->atLeastOnce())->method('getQuoteId')->willReturn(0);
         $this->quoteSession->expects($this->never())->method('getQuote');
-        $group = $this->getMockBuilder(GroupInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $group = $this->createMock(GroupInterface::class);
         $this->groupManagement->expects($this->once())->method('getNotLoggedInGroup')->willReturn($group);
         $group->expects($this->once())->method('getId')->willReturn(2);
 

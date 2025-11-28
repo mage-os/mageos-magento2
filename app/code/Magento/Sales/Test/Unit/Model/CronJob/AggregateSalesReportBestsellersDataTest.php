@@ -45,18 +45,14 @@ class AggregateSalesReportBestsellersDataTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->localeResolverMock = $this->getMockBuilder(ResolverInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->localeResolverMock = $this->createMock(ResolverInterface::class);
 
         $this->bestsellersFactoryMock =
             $this->getMockBuilder(BestsellersFactory::class)
                 ->disableOriginalConstructor()
                 ->onlyMethods(['create'])
                 ->getMock();
-        $this->localeDateMock = $this->getMockBuilder(TimezoneInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->localeDateMock = $this->createMock(TimezoneInterface::class);
 
         $this->observer = new AggregateSalesReportBestsellersData(
             $this->localeResolverMock,
@@ -68,9 +64,7 @@ class AggregateSalesReportBestsellersDataTest extends TestCase
     public function testExecute()
     {
         $date = $this->setupAggregate();
-        $bestsellersMock = $this->getMockBuilder(Bestsellers::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $bestsellersMock = $this->createMock(Bestsellers::class);
         $bestsellersMock->expects($this->once())
             ->method('aggregate')
             ->with($date);

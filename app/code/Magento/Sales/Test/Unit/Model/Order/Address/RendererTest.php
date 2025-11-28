@@ -80,17 +80,11 @@ class RendererTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->customerAddressConfigMock = $this->getMockBuilder(CustomerAddressConfig::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->customerAddressConfigMock = $this->createMock(CustomerAddressConfig::class);
         $this->eventManagerMock = $this->getMockBuilder(EventManager::class)
             ->getMock();
-        $this->orderAddressMock = $this->getMockBuilder(OrderAddress::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->orderMock = $this->getMockBuilder(Order::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->orderAddressMock = $this->createMock(OrderAddress::class);
+        $this->orderMock = $this->createMock(Order::class);
         $this->customerAddressBlockRendererMock = $this->getMockBuilder(CustomerAddressBlockRenderer::class)
             ->getMock();
 

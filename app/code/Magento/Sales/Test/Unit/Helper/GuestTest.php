@@ -114,9 +114,7 @@ class GuestTest extends TestCase
         $this->managerInterfaceMock = $this->createMock(ManagerInterface::class);
         $this->orderFactoryMock = $this->createPartialMock(OrderFactory::class, ['create']);
         $this->viewInterfaceMock = $this->createMock(ViewInterface::class);
-        $this->storeModelMock = $this->getMockBuilder(Store::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->storeModelMock = $this->createMock(Store::class);
         $this->salesOrderMock = $this->createPartialMock(
             Order::class,
             [

@@ -29,9 +29,7 @@ class ViewTest extends TestCase
     public function testIsPaymentReview($canReviewPayment, $canFetchUpdate, $expectedResult)
     {
         // Create order mock
-        $order = $this->getMockBuilder(Order::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $order = $this->createMock(Order::class);
         $order->expects($this->any())->method('canReviewPayment')->willReturn($canReviewPayment);
         $order->expects(
             $this->any()

@@ -92,9 +92,7 @@ class ShippingTest extends TestCase
 
         $this->taxConfig->expects($this->any())->method('displaySalesShippingInclTax')->willReturn(false);
 
-        $currencyMock = $this->getMockBuilder(Currency::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $currencyMock = $this->createMock(Currency::class);
         $currencyMock->expects($this->once())
             ->method('format')
             ->with($allowedShippingAmount, null, false)
@@ -124,9 +122,7 @@ class ShippingTest extends TestCase
 
     private function getOrderMock($data)
     {
-        $orderMock = $this->getMockBuilder(\Magento\Sales\Model\Order::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $orderMock = $this->createMock(\Magento\Sales\Model\Order::class);
 
         foreach ($data as $method => $returnValue) {
             $orderMock

@@ -82,34 +82,16 @@ class CommentRepositoryTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->commentResource = $this->getMockBuilder(ShipmentCommentResourceInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->commentFactory = $this->getMockBuilder(ShipmentCommentInterfaceFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->searchResultFactory = $this->getMockBuilder(ShipmentCommentSearchResultInterfaceFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->collectionProcessor = $this->getMockBuilder(CollectionProcessorInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->shipmentRepositoryMock = $this->getMockBuilder(ShipmentRepositoryInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->shipmentCommentSender = $this->getMockBuilder(ShipmentCommentSender::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->loggerMock = $this->getMockBuilder(LoggerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->commentResource = $this->createMock(ShipmentCommentResourceInterface::class);
+        $this->commentFactory = $this->createMock(ShipmentCommentInterfaceFactory::class);
+        $this->searchResultFactory = $this->createMock(ShipmentCommentSearchResultInterfaceFactory::class);
+        $this->collectionProcessor = $this->createMock(CollectionProcessorInterface::class);
+        $this->shipmentRepositoryMock = $this->createMock(ShipmentRepositoryInterface::class);
+        $this->shipmentCommentSender = $this->createMock(ShipmentCommentSender::class);
+        $this->loggerMock = $this->createMock(LoggerInterface::class);
 
-        $this->shipmentMock = $this->getMockBuilder(Shipment::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->commentMock = $this->getMockBuilder(Comment::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->shipmentMock = $this->createMock(Shipment::class);
+        $this->commentMock = $this->createMock(Comment::class);
 
         $this->commentRepository = new CommentRepository(
             $this->commentResource,

@@ -73,20 +73,14 @@ class ProcessInvoiceOperationTest extends TestCase
         $transactionId = '1ASD3456';
 
         /** @var Order|MockObject $order */
-        $order = $this->getMockBuilder(Order::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $order = $this->createMock(Order::class);
         $order->method('getStoreId')
             ->willReturn($storeId);
 
         /** @var Adapter|MockObject $paymentMethod */
-        $paymentMethod = $this->getMockBuilder(Adapter::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $paymentMethod = $this->createMock(Adapter::class);
 
-        $orderPayment = $this->getMockBuilder(Payment::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $orderPayment = $this->createMock(Payment::class);
         $orderPayment->method('formatAmount')
             ->with($baseGrandTotal)
             ->willReturnArgument(0);
@@ -124,9 +118,7 @@ class ProcessInvoiceOperationTest extends TestCase
             ->with($orderPayment)
             ->willReturnSelf();
 
-        $invoice = $this->getMockBuilder(Invoice::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $invoice = $this->createMock(Invoice::class);
         $invoice->method('getBaseGrandTotal')
             ->willReturn($baseGrandTotal);
 

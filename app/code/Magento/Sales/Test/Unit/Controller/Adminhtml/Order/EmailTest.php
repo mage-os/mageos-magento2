@@ -135,9 +135,7 @@ class EmailTest extends TestCase
             ResponseInterface::class,
             ['setRedirect', 'sendResponse']
         );
-        $this->request = $this->getMockBuilder(Http::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->request = $this->createMock(Http::class);
         $this->messageManager = $this->createPartialMock(
             Manager::class,
             ['addSuccessMessage', 'addErrorMessage']

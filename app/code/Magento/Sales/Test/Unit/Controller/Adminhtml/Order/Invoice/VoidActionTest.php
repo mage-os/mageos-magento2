@@ -106,30 +106,18 @@ class VoidActionTest extends TestCase
     {
         $objectManager = new ObjectManager($this);
 
-        $this->requestMock = $this->getMockBuilder(Http::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->responseMock = $this->getMockBuilder(\Magento\Framework\App\Response\Http::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->requestMock = $this->createMock(Http::class);
+        $this->responseMock = $this->createMock(\Magento\Framework\App\Response\Http::class);
 
         $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
 
-        $this->messageManagerMock = $this->getMockBuilder(Manager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->messageManagerMock = $this->createMock(Manager::class);
 
-        $this->actionFlagMock = $this->getMockBuilder(ActionFlag::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->actionFlagMock = $this->createMock(ActionFlag::class);
 
-        $this->helperMock = $this->getMockBuilder(Data::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->helperMock = $this->createMock(Data::class);
 
-        $this->sessionMock = $this->getMockBuilder(Session::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->sessionMock = $this->createMock(Session::class);
 
         $this->resultRedirectFactoryMock = $this->getMockBuilder(RedirectFactory::class)
             ->disableOriginalConstructor()
@@ -141,9 +129,7 @@ class VoidActionTest extends TestCase
             ->onlyMethods(['create'])
             ->getMock();
 
-        $this->invoiceManagement = $this->getMockBuilder(InvoiceManagementInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->invoiceManagement = $this->createMock(InvoiceManagementInterface::class);
         $this->objectManagerMock->expects($this->any())
             ->method('get')
             ->with(InvoiceManagementInterface::class)
@@ -175,9 +161,7 @@ class VoidActionTest extends TestCase
             ->method('getResultRedirectFactory')
             ->willReturn($this->resultRedirectFactoryMock);
 
-        $this->invoiceRepository = $this->getMockBuilder(InvoiceRepositoryInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->invoiceRepository = $this->createMock(InvoiceRepositoryInterface::class);
 
         $this->controller = $objectManager->getObject(
             VoidAction::class,
@@ -213,9 +197,7 @@ class VoidActionTest extends TestCase
             ->with($invoiceId)
             ->willReturn(true);
 
-        $invoiceMock = $this->getMockBuilder(Invoice::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $invoiceMock = $this->createMock(Invoice::class);
         $invoiceMock->expects($this->any())
             ->method('getEntityId')
             ->willReturn($invoiceId);
@@ -226,9 +208,7 @@ class VoidActionTest extends TestCase
             ->method('getId')
             ->willReturn($invoiceId);
 
-        $transactionMock = $this->getMockBuilder(Transaction::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $transactionMock = $this->createMock(Transaction::class);
         $transactionMock->method('addObject')
             ->willReturnCallback(fn($param) => match ([$param]) {
                 [$invoiceMock] => $transactionMock,
@@ -248,9 +228,7 @@ class VoidActionTest extends TestCase
             ->method('addSuccessMessage')
             ->with('The invoice has been voided.');
 
-        $resultRedirect = $this->getMockBuilder(Redirect::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $resultRedirect = $this->createMock(Redirect::class);
         $resultRedirect->expects($this->once())->method('setPath')->with('sales/*/view', ['invoice_id' => $invoiceId]);
 
         $this->resultRedirectFactoryMock->expects($this->once())
@@ -281,9 +259,7 @@ class VoidActionTest extends TestCase
         $this->messageManagerMock->expects($this->never())
             ->method('addSuccessMessage');
 
-        $resultForward = $this->getMockBuilder(Forward::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $resultForward = $this->createMock(Forward::class);
         $resultForward->expects($this->once())->method('forward')->with(('noroute'))->willReturnSelf();
 
         $this->resultForwardFactoryMock->expects($this->once())
@@ -312,9 +288,7 @@ class VoidActionTest extends TestCase
             ->with($invoiceId)
             ->willThrowException($e);
 
-        $invoiceMock = $this->getMockBuilder(Invoice::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $invoiceMock = $this->createMock(Invoice::class);
         $invoiceMock->expects($this->once())
             ->method('getEntityId')
             ->willReturn($invoiceId);
@@ -329,9 +303,7 @@ class VoidActionTest extends TestCase
         $this->messageManagerMock->expects($this->once())
             ->method('addErrorMessage');
 
-        $resultRedirect = $this->getMockBuilder(Redirect::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $resultRedirect = $this->createMock(Redirect::class);
         $resultRedirect->expects($this->once())->method('setPath')->with('sales/*/view', ['invoice_id' => $invoiceId]);
 
         $this->resultRedirectFactoryMock->expects($this->once())

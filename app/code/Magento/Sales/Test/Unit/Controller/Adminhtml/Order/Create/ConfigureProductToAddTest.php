@@ -121,18 +121,10 @@ class ConfigureProductToAddTest extends TestCase
         $this->contextMock->expects($this->once())
             ->method('getRequest')
             ->willReturn($this->requestMock);
-        $this->productHelperMock = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->escaperMock = $this->getMockBuilder(Escaper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->resultPageFactoryMock = $this->getMockBuilder(PageFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->resultForwardFactoryMock = $this->getMockBuilder(ForwardFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->productHelperMock = $this->createMock(Product::class);
+        $this->escaperMock = $this->createMock(Escaper::class);
+        $this->resultPageFactoryMock = $this->createMock(PageFactory::class);
+        $this->resultForwardFactoryMock = $this->createMock(ForwardFactory::class);
         $this->quoteSessionMock = $this->createPartialMockWithReflection(
             Quote::class,
             ['getStore', 'getCustomerId']
@@ -145,9 +137,7 @@ class ConfigureProductToAddTest extends TestCase
             ->onlyMethods(['renderConfigureResult'])
             ->disableOriginalConstructor()
             ->getMock();
-        $this->layoutMock = $this->getMockBuilder(Layout::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->layoutMock = $this->createMock(Layout::class);
         $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
 
         $this->configureProductToAdd = new ConfigureProductToAdd(

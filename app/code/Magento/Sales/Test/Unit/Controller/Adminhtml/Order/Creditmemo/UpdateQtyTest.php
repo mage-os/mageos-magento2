@@ -136,22 +136,12 @@ class UpdateQtyTest extends TestCase
             Creditmemo::class,
             ['cancel', 'getInvoice', 'getOrder', 'getId']
         );
-        $this->requestMock = $this->getMockBuilder(Http::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->responseMock = $this->getMockBuilder(\Magento\Framework\App\Response\Http::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->requestMock = $this->createMock(Http::class);
+        $this->responseMock = $this->createMock(\Magento\Framework\App\Response\Http::class);
         $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
-        $this->messageManagerMock = $this->getMockBuilder(Manager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->sessionMock = $this->getMockBuilder(Session::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->helperMock = $this->getMockBuilder(Data::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->messageManagerMock = $this->createMock(Manager::class);
+        $this->sessionMock = $this->createMock(Session::class);
+        $this->helperMock = $this->createMock(Data::class);
         $this->contextMock = $this->getMockBuilder(Context::class)
             ->onlyMethods(
                 [
@@ -170,9 +160,7 @@ class UpdateQtyTest extends TestCase
         $this->contextMock->expects($this->any())
             ->method('getHelper')
             ->willReturn($this->helperMock);
-        $this->actionFlagMock = $this->getMockBuilder(ActionFlag::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->actionFlagMock = $this->createMock(ActionFlag::class);
         $this->contextMock->expects($this->any())
             ->method('getSession')
             ->willReturn($this->sessionMock);
@@ -191,9 +179,7 @@ class UpdateQtyTest extends TestCase
         $this->contextMock->expects($this->any())
             ->method('getMessageManager')
             ->willReturn($this->messageManagerMock);
-        $this->loaderMock = $this->getMockBuilder(CreditmemoLoader::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->loaderMock = $this->createMock(CreditmemoLoader::class);
         $this->resultPageFactoryMock = $this->getMockBuilder(PageFactory::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['create'])
@@ -206,15 +192,9 @@ class UpdateQtyTest extends TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['create'])
             ->getMock();
-        $this->resultPageMock = $this->getMockBuilder(Page::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->resultJsonMock = $this->getMockBuilder(Json::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->resultRawMock = $this->getMockBuilder(Raw::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->resultPageMock = $this->createMock(Page::class);
+        $this->resultJsonMock = $this->createMock(Json::class);
+        $this->resultRawMock = $this->createMock(Raw::class);
 
         $objectManager = new ObjectManager($this);
         $this->controller = $objectManager->getObject(
@@ -305,12 +285,8 @@ class UpdateQtyTest extends TestCase
             ->withAnyParameters()
             ->willReturnArgument(0);
 
-        $layoutMock = $this->getMockBuilder(Layout::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $blockMock = $this->getMockBuilder(Items::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $layoutMock = $this->createMock(Layout::class);
+        $blockMock = $this->createMock(Items::class);
 
         $this->resultPageFactoryMock->expects($this->once())
             ->method('create')

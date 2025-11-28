@@ -50,21 +50,13 @@ class RefundAdapterTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->orderMock = $this->getMockBuilder(OrderInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->orderMock = $this->createMock(OrderInterface::class);
 
-        $this->creditmemoMock = $this->getMockBuilder(CreditmemoInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->creditmemoMock = $this->createMock(CreditmemoInterface::class);
 
-        $this->refundOperationMock = $this->getMockBuilder(RefundOperation::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->refundOperationMock = $this->createMock(RefundOperation::class);
 
-        $this->invoiceMock = $this->getMockBuilder(InvoiceInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->invoiceMock = $this->createMock(InvoiceInterface::class);
 
         $this->subject = new RefundAdapter(
             $this->refundOperationMock

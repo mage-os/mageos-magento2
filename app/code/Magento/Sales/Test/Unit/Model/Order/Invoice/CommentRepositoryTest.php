@@ -82,34 +82,16 @@ class CommentRepositoryTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->commentResource = $this->getMockBuilder(InvoiceCommentResourceInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->commentFactory = $this->getMockBuilder(InvoiceCommentInterfaceFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->searchResultFactory = $this->getMockBuilder(InvoiceCommentSearchResultInterfaceFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->collectionProcessor = $this->getMockBuilder(CollectionProcessorInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->invoiceRepositoryMock = $this->getMockBuilder(InvoiceRepositoryInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->invoiceCommentSender = $this->getMockBuilder(InvoiceCommentSender::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->loggerMock = $this->getMockBuilder(LoggerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->commentResource = $this->createMock(InvoiceCommentResourceInterface::class);
+        $this->commentFactory = $this->createMock(InvoiceCommentInterfaceFactory::class);
+        $this->searchResultFactory = $this->createMock(InvoiceCommentSearchResultInterfaceFactory::class);
+        $this->collectionProcessor = $this->createMock(CollectionProcessorInterface::class);
+        $this->invoiceRepositoryMock = $this->createMock(InvoiceRepositoryInterface::class);
+        $this->invoiceCommentSender = $this->createMock(InvoiceCommentSender::class);
+        $this->loggerMock = $this->createMock(LoggerInterface::class);
 
-        $this->invoiceMock = $this->getMockBuilder(Invoice::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->commentMock = $this->getMockBuilder(Comment::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->invoiceMock = $this->createMock(Invoice::class);
+        $this->commentMock = $this->createMock(Comment::class);
 
         $this->commentRepository = new CommentRepository(
             $this->commentResource,

@@ -105,9 +105,7 @@ class OrderCommandTest extends TestCase
      */
     private function getStatusResolver()
     {
-        $statusResolver = $this->getMockBuilder(StatusResolver::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $statusResolver = $this->createMock(StatusResolver::class);
         $statusResolver->method('getOrderStatusByState')
             ->willReturn(self::$newOrderStatus);
 
@@ -119,9 +117,7 @@ class OrderCommandTest extends TestCase
      */
     private function getOrder()
     {
-        $order = $this->getMockBuilder(Order::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $order = $this->createMock(Order::class);
         $order->method('getBaseCurrency')
             ->willReturn($this->getCurrency());
 
@@ -152,9 +148,7 @@ class OrderCommandTest extends TestCase
      */
     private function getCurrency()
     {
-        $currency = $this->getMockBuilder(Currency::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $currency = $this->createMock(Currency::class);
         $currency->method('formatTxt')
             ->willReturn($this->amount);
 

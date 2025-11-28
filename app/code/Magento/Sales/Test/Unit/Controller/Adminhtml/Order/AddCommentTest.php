@@ -106,12 +106,8 @@ class AddCommentTest extends TestCase
 
         $this->contextMock->expects($this->once())->method('getRequest')->willReturn($this->requestMock);
 
-        $this->resultJson = $this->getMockBuilder(Json::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->jsonFactory = $this->getMockBuilder(JsonFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->resultJson = $this->createMock(Json::class);
+        $this->jsonFactory = $this->createMock(JsonFactory::class);
 
         $objectManagerHelper = new ObjectManager($this);
         $this->addCommentController = $objectManagerHelper->getObject(

@@ -105,9 +105,7 @@ class ShippingTest extends TestCase
             ->method('getShippingAmount')
             ->willReturn($orderShipping);
         /** @var \Magento\Sales\Model\Order\Invoice|MockObject $invoice */
-        $invoice = $this->getMockBuilder(Invoice::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $invoice = $this->createMock(Invoice::class);
         $invoice->expects($this->any())
             ->method('getOrder')
             ->willReturn($order);

@@ -23,9 +23,7 @@ class ItemTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->orderItemMock = $this->getMockBuilder(\Magento\Sales\Model\Order\Item::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->orderItemMock = $this->createMock(\Magento\Sales\Model\Order\Item::class);
         $this->item = new Item();
     }
 

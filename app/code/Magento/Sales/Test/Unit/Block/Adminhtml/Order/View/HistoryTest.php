@@ -28,9 +28,7 @@ class HistoryTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->adminHelperMock = $this->getMockBuilder(Admin::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->adminHelperMock = $this->createMock(Admin::class);
 
         $this->viewHistory = (new ObjectManager($this))->getObject(
             History::class,

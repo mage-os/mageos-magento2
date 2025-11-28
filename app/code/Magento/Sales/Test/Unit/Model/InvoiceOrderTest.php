@@ -131,65 +131,21 @@ class InvoiceOrderTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->resourceConnectionMock = $this->getMockBuilder(ResourceConnection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->orderRepositoryMock = $this->getMockBuilder(OrderRepositoryInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->invoiceDocumentFactoryMock = $this->getMockBuilder(InvoiceDocumentFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->paymentAdapterMock = $this->getMockBuilder(PaymentAdapterInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->orderStateResolverMock = $this->getMockBuilder(OrderStateResolverInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->configMock = $this->getMockBuilder(OrderConfig::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->invoiceRepositoryMock = $this->getMockBuilder(InvoiceRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->notifierInterfaceMock = $this->getMockBuilder(NotifierInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->loggerMock = $this->getMockBuilder(LoggerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->invoiceCommentCreationMock = $this->getMockBuilder(InvoiceCommentCreationInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->invoiceCreationArgumentsMock = $this->getMockBuilder(InvoiceCreationArgumentsInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->orderMock = $this->getMockBuilder(OrderInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->invoiceMock = $this->getMockBuilder(InvoiceInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->adapterInterface = $this->getMockBuilder(AdapterInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->invoiceOrderValidatorMock = $this->getMockBuilder(InvoiceOrderInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->resourceConnectionMock = $this->createMock(ResourceConnection::class);
+        $this->orderRepositoryMock = $this->createMock(OrderRepositoryInterface::class);
+        $this->invoiceDocumentFactoryMock = $this->createMock(InvoiceDocumentFactory::class);
+        $this->paymentAdapterMock = $this->createMock(PaymentAdapterInterface::class);
+        $this->orderStateResolverMock = $this->createMock(OrderStateResolverInterface::class);
+        $this->configMock = $this->createMock(OrderConfig::class);
+        $this->invoiceRepositoryMock = $this->createMock(InvoiceRepository::class);
+        $this->notifierInterfaceMock = $this->createMock(NotifierInterface::class);
+        $this->loggerMock = $this->createMock(LoggerInterface::class);
+        $this->invoiceCommentCreationMock = $this->createMock(InvoiceCommentCreationInterface::class);
+        $this->invoiceCreationArgumentsMock = $this->createMock(InvoiceCreationArgumentsInterface::class);
+        $this->orderMock = $this->createMock(OrderInterface::class);
+        $this->invoiceMock = $this->createMock(InvoiceInterface::class);
+        $this->adapterInterface = $this->createMock(AdapterInterface::class);
+        $this->invoiceOrderValidatorMock = $this->createMock(InvoiceOrderInterface::class);
 
         $this->errorMessagesMock = $this->getMockBuilder(ValidatorResultInterface::class)
             ->disableOriginalConstructor()

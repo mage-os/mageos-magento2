@@ -117,21 +117,11 @@ class PrintActionTest extends TestCase
         $this->objectManagerMock = $this->getMockBuilder(ObjectManagerInterface::class)
             ->getMock();
         $this->creditmemoRepositoryMock = $this->createMock(CreditmemoRepositoryInterface::class);
-        $this->creditmemoMock = $this->getMockBuilder(Creditmemo::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->creditmemoPdfMock = $this->getMockBuilder(\Magento\Sales\Model\Order\Pdf\Creditmemo::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->pdfMock = $this->getMockBuilder(\Zend_Pdf::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->dateTimeMock = $this->getMockBuilder(DateTime::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->fileFactoryMock = $this->getMockBuilder(FileFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->creditmemoMock = $this->createMock(Creditmemo::class);
+        $this->creditmemoPdfMock = $this->createMock(\Magento\Sales\Model\Order\Pdf\Creditmemo::class);
+        $this->pdfMock = $this->createMock(\Zend_Pdf::class);
+        $this->dateTimeMock = $this->createMock(DateTime::class);
+        $this->fileFactoryMock = $this->createMock(FileFactory::class);
         $this->responseMock = $this->getMockBuilder(ResponseInterface::class)
             ->getMock();
         $this->resultForwardFactoryMock = $this->getMockBuilder(
@@ -139,9 +129,7 @@ class PrintActionTest extends TestCase
         )->disableOriginalConstructor()
             ->onlyMethods(['create'])
             ->getMock();
-        $this->resultForwardMock = $this->getMockBuilder(Forward::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->resultForwardMock = $this->createMock(Forward::class);
 
         $objectManager = new ObjectManager($this);
         $this->context = $objectManager->getObject(

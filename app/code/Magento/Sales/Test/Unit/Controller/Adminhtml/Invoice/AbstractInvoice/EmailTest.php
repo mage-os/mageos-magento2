@@ -120,9 +120,7 @@ class EmailTest extends TestCase
         $this->session = $this->createPartialMockWithReflection(Session::class, ['setIsUrlNotice']);
         $this->actionFlag = $this->createMock(ActionFlag::class);
         $this->helper = $this->createMock(Data::class);
-        $this->resultRedirect = $this->getMockBuilder(Redirect::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->resultRedirect = $this->createMock(Redirect::class);
         $this->resultRedirectFactory = $this->getMockBuilder(RedirectFactory::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['create'])
@@ -153,12 +151,8 @@ class EmailTest extends TestCase
             ->method('getResultRedirectFactory')
             ->willReturn($this->resultRedirectFactory);
 
-        $this->invoiceManagement = $this->getMockBuilder(InvoiceManagementInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->resultForward = $this->getMockBuilder(Forward::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->invoiceManagement = $this->createMock(InvoiceManagementInterface::class);
+        $this->resultForward = $this->createMock(Forward::class);
         $this->resultForwardFactory = $this->getMockBuilder(ForwardFactory::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['create'])
@@ -195,9 +189,7 @@ class EmailTest extends TestCase
             ->method('getParam')
             ->with('invoice_id')
             ->willReturn($invoiceId);
-        $invoiceRepository = $this->getMockBuilder(InvoiceRepositoryInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $invoiceRepository = $this->createMock(InvoiceRepositoryInterface::class);
         $invoiceRepository->expects($this->any())
             ->method('get')
             ->willReturn($invoice);
@@ -261,9 +253,7 @@ class EmailTest extends TestCase
             ->with('invoice_id')
             ->willReturn($invoiceId);
 
-        $invoiceRepository = $this->getMockBuilder(InvoiceRepositoryInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $invoiceRepository = $this->createMock(InvoiceRepositoryInterface::class);
         $invoiceRepository->expects($this->any())
             ->method('get')
             ->willReturn(null);

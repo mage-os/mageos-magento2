@@ -611,9 +611,7 @@ class LoadBlockTest extends TestCase
     public function testConstructorWithNullRegexValidator(): void
     {
         // Create controller without passing regexValidator (null)
-        $forwardFactory = $this->getMockBuilder(ForwardFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $forwardFactory = $this->createMock(ForwardFactory::class);
         $controller = new LoadBlock(
             $this->context,
             $this->productHelper,
@@ -637,9 +635,7 @@ class LoadBlockTest extends TestCase
     public function testExecuteWithLocalizedExceptionDuringProcessing(): void
     {
         // Create a partial mock that will throw LocalizedException
-        $forwardFactory = $this->getMockBuilder(ForwardFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $forwardFactory = $this->createMock(ForwardFactory::class);
         $controller = $this->getMockBuilder(LoadBlock::class)
             ->setConstructorArgs([
                 $this->context,
@@ -719,9 +715,7 @@ class LoadBlockTest extends TestCase
     public function testExecuteWithGenericExceptionDuringProcessing(): void
     {
         // Create a partial mock that will throw Exception
-        $forwardFactory = $this->getMockBuilder(ForwardFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $forwardFactory = $this->createMock(ForwardFactory::class);
         $controller = $this->getMockBuilder(LoadBlock::class)
             ->setConstructorArgs([
                 $this->context,

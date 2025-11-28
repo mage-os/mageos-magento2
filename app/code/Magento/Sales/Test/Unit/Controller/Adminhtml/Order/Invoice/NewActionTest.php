@@ -128,41 +128,25 @@ class NewActionTest extends TestCase
     {
         $objectManager = new ObjectManager($this);
 
-        $this->viewMock = $this->getMockBuilder(View::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->viewMock = $this->createMock(View::class);
 
         $this->messageManagerMock = $this->createMock(ManagerInterface::class);
         $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
 
-        $this->actionFlagMock = $this->getMockBuilder(ActionFlag::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->actionFlagMock = $this->createMock(ActionFlag::class);
 
-        $this->helperMock = $this->getMockBuilder(Data::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->helperMock = $this->createMock(Data::class);
 
-        $this->requestMock = $this->getMockBuilder(Http::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->responseMock = $this->getMockBuilder(\Magento\Framework\App\Response\Http::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->requestMock = $this->createMock(Http::class);
+        $this->responseMock = $this->createMock(\Magento\Framework\App\Response\Http::class);
 
         $this->sessionMock = $this->createPartialMockWithReflection(
             Session::class,
             ['getCommentText', 'setIsUrlNotice']
         );
-        $this->resultPageMock = $this->getMockBuilder(Page::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->pageConfigMock = $this->getMockBuilder(Config::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->pageTitleMock = $this->getMockBuilder(Title::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->resultPageMock = $this->createMock(Page::class);
+        $this->pageConfigMock = $this->createMock(Config::class);
+        $this->pageTitleMock = $this->createMock(Title::class);
         $this->resultPageFactoryMock = $this->getMockBuilder(PageFactory::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['create'])
@@ -228,9 +212,7 @@ class NewActionTest extends TestCase
             ->method('getTitle')
             ->willReturn($this->pageTitleMock);
 
-        $this->invoiceServiceMock = $this->getMockBuilder(InvoiceService::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->invoiceServiceMock = $this->createMock(InvoiceService::class);
 
         $this->orderRepositoryMock = $this->createMock(OrderRepositoryInterface::class);
 
@@ -264,9 +246,7 @@ class NewActionTest extends TestCase
                 }
             });
 
-        $invoiceMock = $this->getMockBuilder(Invoice::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $invoiceMock = $this->createMock(Invoice::class);
         $invoiceMock->expects($this->once())
             ->method('getTotalQty')
             ->willReturn(2);
@@ -346,9 +326,7 @@ class NewActionTest extends TestCase
             ->with($orderId)
             ->willReturn($orderMock);
 
-        $resultRedirect = $this->getMockBuilder(Redirect::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $resultRedirect = $this->createMock(Redirect::class);
         $resultRedirect->expects($this->once())->method('setPath')->with('sales/order/view', ['order_id' => $orderId]);
 
         $this->resultRedirectFactoryMock->expects($this->once())

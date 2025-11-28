@@ -154,9 +154,7 @@ class CreateTest extends TestCase
             ->getMock();
 
         $this->groupRepository = $this->createMock(GroupRepositoryInterface::class);
-        $this->dataObjectHelper = $this->getMockBuilder(DataObjectHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->dataObjectHelper = $this->createMock(DataObjectHelper::class);
 
         $this->orderMock = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()

@@ -50,21 +50,13 @@ class PaymentAdapterTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->orderMock = $this->getMockBuilder(OrderInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->orderMock = $this->createMock(OrderInterface::class);
 
-        $this->creditmemoMock = $this->getMockBuilder(CreditmemoInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->creditmemoMock = $this->createMock(CreditmemoInterface::class);
 
-        $this->invoiceMock = $this->getMockBuilder(InvoiceInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->invoiceMock = $this->createMock(InvoiceInterface::class);
 
-        $this->payOperationMock = $this->getMockBuilder(PayOperation::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->payOperationMock = $this->createMock(PayOperation::class);
 
         $this->subject = new PaymentAdapter(
             $this->payOperationMock

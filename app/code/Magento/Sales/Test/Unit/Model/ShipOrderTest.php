@@ -145,57 +145,23 @@ class ShipOrderTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->resourceConnectionMock = $this->getMockBuilder(ResourceConnection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->orderRepositoryMock = $this->getMockBuilder(OrderRepositoryInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->shipmentDocumentFactoryMock = $this->getMockBuilder(ShipmentDocumentFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->orderRegistrarMock = $this->getMockBuilder(OrderRegistrarInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->orderStateResolverMock = $this->getMockBuilder(OrderStateResolverInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->configMock = $this->getMockBuilder(OrderConfig::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->shipmentRepositoryMock = $this->getMockBuilder(ShipmentRepositoryInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->notifierInterfaceMock = $this->getMockBuilder(NotifierInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->loggerMock = $this->getMockBuilder(LoggerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->shipmentCommentCreationMock = $this->getMockBuilder(ShipmentCommentCreationInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->shipmentCreationArgumentsMock = $this->getMockBuilder(ShipmentCreationArgumentsInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->orderMock = $this->getMockBuilder(OrderInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->shipmentMock = $this->getMockBuilder(ShipmentInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->packageMock = $this->getMockBuilder(ShipmentPackageInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->trackMock = $this->getMockBuilder(ShipmentTrackCreationInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->adapterMock = $this->getMockBuilder(AdapterInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->shipOrderValidatorMock = $this->getMockBuilder(ShipOrderInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->resourceConnectionMock = $this->createMock(ResourceConnection::class);
+        $this->orderRepositoryMock = $this->createMock(OrderRepositoryInterface::class);
+        $this->shipmentDocumentFactoryMock = $this->createMock(ShipmentDocumentFactory::class);
+        $this->orderRegistrarMock = $this->createMock(OrderRegistrarInterface::class);
+        $this->orderStateResolverMock = $this->createMock(OrderStateResolverInterface::class);
+        $this->configMock = $this->createMock(OrderConfig::class);
+        $this->shipmentRepositoryMock = $this->createMock(ShipmentRepositoryInterface::class);
+        $this->notifierInterfaceMock = $this->createMock(NotifierInterface::class);
+        $this->loggerMock = $this->createMock(LoggerInterface::class);
+        $this->shipmentCommentCreationMock = $this->createMock(ShipmentCommentCreationInterface::class);
+        $this->shipmentCreationArgumentsMock = $this->createMock(ShipmentCreationArgumentsInterface::class);
+        $this->orderMock = $this->createMock(OrderInterface::class);
+        $this->shipmentMock = $this->createMock(ShipmentInterface::class);
+        $this->packageMock = $this->createMock(ShipmentPackageInterface::class);
+        $this->trackMock = $this->createMock(ShipmentTrackCreationInterface::class);
+        $this->adapterMock = $this->createMock(AdapterInterface::class);
+        $this->shipOrderValidatorMock = $this->createMock(ShipOrderInterface::class);
         $this->validationMessagesMock = $this->getMockBuilder(ValidatorResultInterface::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['hasMessages', 'getMessages', 'addMessage'])

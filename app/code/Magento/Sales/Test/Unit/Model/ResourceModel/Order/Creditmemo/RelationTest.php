@@ -82,9 +82,7 @@ class RelationTest extends TestCase
             )
             ->getMock();
         $this->itemMock = $this->createPartialMockWithReflection(OrderItem::class, ['setParentId']);
-        $this->commentMock = $this->getMockBuilder(Creditmemo::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->commentMock = $this->createMock(Creditmemo::class);
         $this->relationProcessor = new Relation(
             $this->itemResourceMock,
             $this->commentResourceMock

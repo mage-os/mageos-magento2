@@ -135,9 +135,7 @@ class EmailSenderTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->orderMock = $this->getMockBuilder(Order::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->orderMock = $this->createMock(Order::class);
 
         $this->storeMock = $this->createPartialMockWithReflection(Store::class, ['getStoreId']);
 
@@ -150,9 +148,7 @@ class EmailSenderTest extends TestCase
 
         $this->senderMock = $this->createPartialMockWithReflection(Sender::class, ['send', 'sendCopyTo']);
 
-        $this->loggerMock = $this->getMockBuilder(LoggerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->loggerMock = $this->createMock(LoggerInterface::class);
 
         $this->creditmemoMock = $this->createPartialMockWithReflection(
             \Magento\Sales\Model\Order\Creditmemo::class,
@@ -161,17 +157,13 @@ class EmailSenderTest extends TestCase
         $this->creditmemoMock->method('getId')
             ->willReturn(self::CREDITMEMO_ID);
 
-        $this->commentMock = $this->getMockBuilder(CreditmemoCommentCreationInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->commentMock = $this->createMock(CreditmemoCommentCreationInterface::class);
 
         $this->commentMock->expects($this->any())
             ->method('getComment')
             ->willReturn('Comment text');
 
-        $this->addressMock = $this->getMockBuilder(Address::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->addressMock = $this->createMock(Address::class);
 
         $this->orderMock->expects($this->any())
             ->method('getBillingAddress')
@@ -180,17 +172,11 @@ class EmailSenderTest extends TestCase
             ->method('getShippingAddress')
             ->willReturn($this->addressMock);
 
-        $this->globalConfigMock = $this->getMockBuilder(ScopeConfigInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->globalConfigMock = $this->createMock(ScopeConfigInterface::class);
 
-        $this->eventManagerMock = $this->getMockBuilder(ManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->eventManagerMock = $this->createMock(ManagerInterface::class);
 
-        $this->paymentInfoMock = $this->getMockBuilder(Info::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->paymentInfoMock = $this->createMock(Info::class);
 
         $this->orderMock->expects($this->any())
             ->method('getPayment')
@@ -198,38 +184,29 @@ class EmailSenderTest extends TestCase
         $this->orderMock->method('getId')
             ->willReturn(self::ORDER_ID);
 
-        $this->paymentHelperMock = $this->getMockBuilder(Data::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->paymentHelperMock = $this->createMock(Data::class);
 
         $this->paymentHelperMock->expects($this->any())
             ->method('getInfoBlockHtml')
             ->with($this->paymentInfoMock, 1)
             ->willReturn('Payment Info Block');
 
-        $this->creditmemoResourceMock = $this->getMockBuilder(
+        $this->creditmemoResourceMock = $this->createMock(
             Creditmemo::class
-        )->disableOriginalConstructor()
-            ->getMock();
+        );
 
-        $this->addressRendererMock = $this->getMockBuilder(Renderer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->addressRendererMock = $this->createMock(Renderer::class);
 
         $this->addressRendererMock->expects($this->any())
             ->method('format')
             ->with($this->addressMock, 'html')
             ->willReturn('Formatted address');
 
-        $this->templateContainerMock = $this->getMockBuilder(Template::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->templateContainerMock = $this->createMock(Template::class);
 
-        $this->identityContainerMock = $this->getMockBuilder(
+        $this->identityContainerMock = $this->createMock(
             CreditmemoIdentity::class
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
+        );
 
         $this->identityContainerMock->expects($this->any())
             ->method('getStore')

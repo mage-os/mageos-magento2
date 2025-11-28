@@ -89,20 +89,14 @@ class UnholdTest extends TestCase
             ResponseInterface::class,
             ['setRedirect', 'sendResponse']
         );
-        $this->request = $this->getMockBuilder(Http::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->request = $this->createMock(Http::class);
         $this->messageManager = $this->createPartialMock(
             Manager::class,
             ['addSuccessMessage', 'addErrorMessage']
         );
-        $this->orderRepositoryMock = $this->getMockBuilder(OrderRepositoryInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->orderRepositoryMock = $this->createMock(OrderRepositoryInterface::class);
 
-        $this->validatorMock = $this->getMockBuilder(Validator::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->validatorMock = $this->createMock(Validator::class);
 
         $this->resultRedirect = $this->createMock(Redirect::class);
         $resultRedirectFactory->expects($this->any())->method('create')->willReturn($this->resultRedirect);

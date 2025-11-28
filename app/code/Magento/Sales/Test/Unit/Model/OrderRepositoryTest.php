@@ -175,9 +175,7 @@ class OrderRepositoryTest extends TestCase
             ->method('getShippingAssignments')
             ->willReturn([$shippingAssignment]);
         $shippingAssignment->expects($this->once())->method('getShipping')->willReturn($shippingMock);
-        $shippingAddressMock = $this->getMockBuilder(OrderAddressInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $shippingAddressMock = $this->createMock(OrderAddressInterface::class);
         $shippingAddressMock = $this->createMock(OrderAddressInterface::class);
         $shippingMock->expects($this->once())->method('getAddress')->willReturn($shippingAddressMock);
         $shippingMock->expects($this->once())->method('getMethod');

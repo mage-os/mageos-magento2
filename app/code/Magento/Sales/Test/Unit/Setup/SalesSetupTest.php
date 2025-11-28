@@ -65,14 +65,10 @@ class SalesSetupTest extends TestCase
     {
         $this->moduleDataSetupMock = $this->getMockBuilder(ModuleDataSetupInterface::class)
             ->getMock();
-        $this->contextMock = $this->getMockBuilder(Context::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->contextMock = $this->createMock(Context::class);
         $this->cacheMock = $this->getMockBuilder(CacheInterface::class)
             ->getMock();
-        $this->collectionFactoryMock = $this->getMockBuilder(CollectionFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->collectionFactoryMock = $this->createMock(CollectionFactory::class);
         $this->scopeConfigMock = $this->getMockBuilder(ScopeConfigInterface::class)
             ->getMock();
 

@@ -37,13 +37,9 @@ class AssignOrderToCustomerObserverTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->orderRepositoryMock = $this->getMockBuilder(OrderRepositoryInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->orderRepositoryMock = $this->createMock(OrderRepositoryInterface::class);
 
-        $this->assignmentMock =  $this->getMockBuilder(CustomerAssignment::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->assignmentMock =  $this->createMock(CustomerAssignment::class);
 
         $this->sut = new AssignOrderToCustomerObserver($this->orderRepositoryMock, $this->assignmentMock);
     }
@@ -69,9 +65,7 @@ class AssignOrderToCustomerObserverTest extends TestCase
         /** @var CustomerInterface|MockObject $customerMock */
         $customerMock = $this->createMock(CustomerInterface::class);
         /** @var OrderInterface|MockObject $orderMock */
-        $orderMock = $this->getMockBuilder(OrderInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $orderMock = $this->createMock(OrderInterface::class);
         $observerMock->expects($this->once())->method('getEvent')->willReturn($eventMock);
         $eventMock->expects($this->any())->method('getData')
             ->willReturnMap(

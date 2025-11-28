@@ -136,54 +136,22 @@ class RefundOrderTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->resourceConnectionMock = $this->getMockBuilder(ResourceConnection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->orderRepositoryMock = $this->getMockBuilder(OrderRepositoryInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->creditmemoDocumentFactoryMock = $this->getMockBuilder(CreditmemoDocumentFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->refundOrderValidatorMock = $this->getMockBuilder(RefundOrderInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->refundAdapterMock = $this->getMockBuilder(RefundAdapterInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->orderStateResolverMock = $this->getMockBuilder(OrderStateResolverInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->configMock = $this->getMockBuilder(OrderConfig::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->creditmemoRepositoryMock = $this->getMockBuilder(CreditmemoRepositoryInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->notifierMock = $this->getMockBuilder(NotifierInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->loggerMock = $this->getMockBuilder(LoggerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->creditmemoCommentCreationMock = $this->getMockBuilder(CreditmemoCommentCreationInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->creditmemoCreationArgumentsMock = $this->getMockBuilder(CreditmemoCreationArgumentsInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->orderMock = $this->getMockBuilder(OrderInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->creditmemoMock = $this->getMockBuilder(CreditmemoInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->adapterInterface = $this->getMockBuilder(AdapterInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->creditmemoItemCreationMock = $this->getMockBuilder(CreditmemoItemCreationInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->resourceConnectionMock = $this->createMock(ResourceConnection::class);
+        $this->orderRepositoryMock = $this->createMock(OrderRepositoryInterface::class);
+        $this->creditmemoDocumentFactoryMock = $this->createMock(CreditmemoDocumentFactory::class);
+        $this->refundOrderValidatorMock = $this->createMock(RefundOrderInterface::class);
+        $this->refundAdapterMock = $this->createMock(RefundAdapterInterface::class);
+        $this->orderStateResolverMock = $this->createMock(OrderStateResolverInterface::class);
+        $this->configMock = $this->createMock(OrderConfig::class);
+        $this->creditmemoRepositoryMock = $this->createMock(CreditmemoRepositoryInterface::class);
+        $this->notifierMock = $this->createMock(NotifierInterface::class);
+        $this->loggerMock = $this->createMock(LoggerInterface::class);
+        $this->creditmemoCommentCreationMock = $this->createMock(CreditmemoCommentCreationInterface::class);
+        $this->creditmemoCreationArgumentsMock = $this->createMock(CreditmemoCreationArgumentsInterface::class);
+        $this->orderMock = $this->createMock(OrderInterface::class);
+        $this->creditmemoMock = $this->createMock(CreditmemoInterface::class);
+        $this->adapterInterface = $this->createMock(AdapterInterface::class);
+        $this->creditmemoItemCreationMock = $this->createMock(CreditmemoItemCreationInterface::class);
         $this->validationMessagesMock = $this->getMockBuilder(ValidatorResultInterface::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['hasMessages', 'getMessages', 'addMessage'])

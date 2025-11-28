@@ -36,9 +36,7 @@ class GridProcessAddressChangeTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->gridPoolMock = $this->getMockBuilder(GridPool::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->gridPoolMock = $this->createMock(GridPool::class);
         $this->eventObserverMock = $this->createPartialMockWithReflection(
             Observer::class,
             ['getOrderId']
