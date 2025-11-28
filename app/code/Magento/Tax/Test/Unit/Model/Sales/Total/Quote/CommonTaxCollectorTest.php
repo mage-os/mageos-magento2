@@ -29,6 +29,7 @@ use Magento\Tax\Api\Data\TaxClassKeyInterfaceFactory;
 use Magento\Tax\Api\Data\TaxDetailsInterface;
 use Magento\Tax\Api\Data\TaxDetailsItemInterface;
 use Magento\Tax\Api\TaxCalculationInterface;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Tax\Helper\Data as TaxHelper;
 use \Magento\Quote\Model\Quote\Address\Total as QuoteAddressTotal;
 use Magento\Tax\Model\Config;
@@ -41,6 +42,8 @@ use PHPUnit\Framework\TestCase;
  */
 class CommonTaxCollectorTest extends TestCase
 {
+    use MockCreationTrait;
+    
     /** @var Config|MockObject */
     private $taxConfig;
 
@@ -1126,7 +1129,7 @@ class CommonTaxCollectorTest extends TestCase
     public function testSaveAppliedTaxesAggregatesAmounts(): void
     {
         $total = $this->createPartialMockWithReflection(
-           QuoteAddressTotal::class,
+            QuoteAddressTotal::class,
             ['getAppliedTaxes', 'setAppliedTaxes']
         );
         $total->method('getAppliedTaxes')->willReturn([]);

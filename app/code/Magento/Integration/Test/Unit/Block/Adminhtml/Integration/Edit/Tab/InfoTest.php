@@ -72,5 +72,4 @@ class InfoTest extends TestCase
     {
         $this->assertFalse($this->infoBlock->isHidden());
     }
-
 }
