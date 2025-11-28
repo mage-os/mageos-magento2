@@ -11,6 +11,7 @@ namespace Magento\Weee\Test\Unit\Observer;
 use Magento\Framework\DataObject;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Reports\Model\Event;
 use Magento\Weee\Block\Element\Weee\Tax;
 use Magento\Weee\Observer\UpdateElementTypesObserver;
@@ -21,10 +22,11 @@ use PHPUnit\Framework\TestCase;
  * Unit test for Magento\Weee\Observer\UpdateElementTypesObserver
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @SuppressWarnings(PHPMD.UnusedLocalVariable)
  */
 class UpdateElementTypesObserverTest extends TestCase
 {
+    use MockCreationTrait;
+
     /*
      * Stub response type
      */
@@ -65,15 +67,12 @@ class UpdateElementTypesObserverTest extends TestCase
         $this->objectManager = new ObjectManager($this);
         $this->observerMock = $this->createMock(Observer::class);
 
-        $this->eventMock = $this->createPartialMock(Event::class, []);
-        $reflection = new \ReflectionClass($this->eventMock);
-        $property = $reflection->getProperty('_data');
-        $property->setValue($this->eventMock, []);
+        $this->eventMock = $this->createPartialMockWithReflection(Event::class, ['getResponse']);
 
-        $this->responseMock = $this->createPartialMock(DataObject::class, []);
-        $reflection = new \ReflectionClass($this->responseMock);
-        $property = $reflection->getProperty('_data');
-        $property->setValue($this->responseMock, []);
+        $this->responseMock = $this->createPartialMockWithReflection(
+            DataObject::class,
+            ['getTypes', 'setTypes']
+        );
 
         $this->observer = $this->objectManager->getObject(UpdateElementTypesObserver::class);
     }
@@ -88,12 +87,21 @@ class UpdateElementTypesObserverTest extends TestCase
             ->method('getEvent')
             ->willReturn($this->eventMock);
 
-        $this->eventMock->setResponse($this->responseMock);
+        $this->eventMock
+            ->expects($this->once())
+            ->method('getResponse')
+            ->willReturn($this->responseMock);
 
-        $this->responseMock->setTypes(self::STUB_RESPONSE_TYPE);
+        $this->responseMock
+            ->expects($this->once())
+            ->method('getTypes')
+            ->willReturn(self::STUB_RESPONSE_TYPE);
+
+        $this->responseMock
+            ->expects($this->once())
+            ->method('setTypes')
+            ->with(['weee' => Tax::class]);
 
         $this->observer->execute($this->observerMock);
-
-        $this->assertEquals(['weee' => Tax::class], $this->responseMock->getTypes());
     }
 }

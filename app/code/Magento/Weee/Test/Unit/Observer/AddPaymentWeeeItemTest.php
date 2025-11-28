@@ -17,6 +17,7 @@ use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Weee\Helper\Data;
 use Magento\Weee\Observer\AddPaymentWeeeItem;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -25,10 +26,11 @@ use PHPUnit\Framework\TestCase;
  * Unit Tests to cover AddPaymentWeeeItem
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @SuppressWarnings(PHPMD.UnusedLocalVariable)
  */
 class AddPaymentWeeeItemTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * Testable object
      *
@@ -75,13 +77,10 @@ class AddPaymentWeeeItemTest extends TestCase
         $observerMock = $this->createMock(Observer::class);
         $cartModelMock = $this->createMock(Cart::class);
         $salesModelMock = $this->createMock(SalesModelInterface::class);
-        $itemMock = $this->createPartialMock(Item::class, ['getProduct']);
+        $itemMock = $this->createPartialMockWithReflection(Item::class, ['getProduct', 'getOriginalItem']);
         $originalItemMock = $this->createPartialMock(Item::class, ['getParentItem']);
         $parentItemMock = $this->createMock(Item::class);
-        $eventMock = $this->createPartialMock(Event::class, []);
-        $reflection = new \ReflectionClass($eventMock);
-        $property = $reflection->getProperty('_data');
-        $property->setValue($eventMock, []);
+        $eventMock = $this->createPartialMockWithReflection(Event::class, ['getCart']);
 
         $asCustomItem = $this->prepareShouldBeAddedAsCustomItem($isEnabled, $includeInSubtotal);
         $toBeCalled = 1;
@@ -89,11 +88,15 @@ class AddPaymentWeeeItemTest extends TestCase
             $toBeCalled = 0;
         }
 
-        $eventMock->setCart($cartModelMock);
+        $eventMock->expects($this->exactly($toBeCalled))
+            ->method('getCart')
+            ->willReturn($cartModelMock);
         $observerMock->expects($this->exactly($toBeCalled))
             ->method('getEvent')
             ->willReturn($eventMock);
-        $itemMock->setOriginalItem($originalItemMock);
+        $itemMock->expects($this->exactly($toBeCalled))
+            ->method('getOriginalItem')
+            ->willReturn($originalItemMock);
         $originalItemMock->expects($this->exactly($toBeCalled))
             ->method('getParentItem')
             ->willReturn($parentItemMock);

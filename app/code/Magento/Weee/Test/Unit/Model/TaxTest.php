@@ -17,6 +17,7 @@ use Magento\Framework\DataObject;
 use Magento\Framework\Model\Context;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Framework\Registry;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Store\Model\Group;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
@@ -34,10 +35,11 @@ use PHPUnit\Framework\TestCase;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.TooManyFields)
- * @SuppressWarnings(PHPMD.UnusedLocalVariable)
  */
 class TaxTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Tax
      */
@@ -116,18 +118,26 @@ class TaxTest extends TestCase
         $this->context = $this->createMock(Context::class);
         $this->registry = $this->createMock(Registry::class);
 
-        $this->attributeFactory = $this->createPartialMock(AttributeFactory::class, ['create']);
+        $this->attributeFactory = $this->getMockBuilder(AttributeFactory::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['create'])
+            ->getMock();
 
         $this->storeManager = $this->createPartialMock(\Magento\Store\Model\StoreManager::class, ['getWebsite']);
 
-        $this->calculationFactory = $this->createPartialMock(CalculationFactory::class, ['create']);
+        $this->calculationFactory = $this->getMockBuilder(CalculationFactory::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['create'])
+            ->getMock();
 
-        $this->customerSession = $this->createCustomerSessionMock();
-        $this->customerSession->setCustomerId(null);
-        // Use magic __call methods via storage
-        $this->customerSession->setData('default_tax_shipping_address', null);
-        $this->customerSession->setData('default_tax_billing_address', null);
-        $this->customerSession->setData('customer_tax_class_id', null);
+        $this->customerSession = $this->createPartialMockWithReflection(
+            Session::class,
+            ['getCustomerId', 'getDefaultTaxShippingAddress', 'getDefaultTaxBillingAddress', 'getCustomerTaxClassId']
+        );
+        $this->customerSession->expects($this->any())->method('getCustomerId')->willReturn(null);
+        $this->customerSession->expects($this->any())->method('getDefaultTaxShippingAddress')->willReturn(null);
+        $this->customerSession->expects($this->any())->method('getDefaultTaxBillingAddress')->willReturn(null);
+        $this->customerSession->expects($this->any())->method('getCustomerTaxClassId')->willReturn(null);
 
         $className = AccountManagementInterface::class;
         $this->accountManagement = $this->createMock($className);
@@ -161,23 +171,6 @@ class TaxTest extends TestCase
             $this->priceCurrency,
             $this->resourceCollection
         );
-    }
-
-    /**
-     * Create customer session mock with all required methods
-     *
-     * @return Session
-     */
-    private function createCustomerSessionMock(): Session
-    {
-        $session = $this->createPartialMock(Session::class, []);
-        
-        // Initialize storage for magic __call methods
-        $reflection = new \ReflectionClass($session);
-        $property = $reflection->getProperty('storage');
-        $property->setValue($session, new \Magento\Framework\Session\Storage());
-        
-        return $session;
     }
 
     /**
@@ -299,23 +292,16 @@ class TaxTest extends TestCase
     #[DataProvider('getWeeeAmountExclTaxDataProvider')]
     public function testGetWeeeAmountExclTax($productTypeId, $productPriceType): void
     {
-        $product = $this->createPartialMock(Product::class, []);
-        $reflection = new \ReflectionClass($product);
-        $dataProperty = $reflection->getProperty('_data');
-        $dataProperty->setValue($product, [
-            'type_id' => $productTypeId,
-            'price_type' => $productPriceType
-        ]);
+        $product = $this->createPartialMockWithReflection(Product::class, ['getTypeId', 'getPriceType']);
+        $product->expects($this->any())->method('getTypeId')->willReturn($productTypeId);
+        $product->expects($this->any())->method('getPriceType')->willReturn($productPriceType);
         $weeeDataHelper1 = new DataObject();
         $weeeDataHelper1->setData('amount_excl_tax', 10);
         
         $weeeDataHelper2 = new DataObject();
         $weeeDataHelper2->setData('amount_excl_tax', 30);
         
-        $tax = $this->getMockBuilder(Tax::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getProductWeeeAttributes'])
-            ->getMock();
+        $tax = $this->createPartialMock(Tax::class, ['getProductWeeeAttributes']);
         $tax->expects($this->once())->method('getProductWeeeAttributes')
             ->willReturn([$weeeDataHelper1, $weeeDataHelper2]);
         $this->assertEquals(40, $tax->getWeeeAmountExclTax($product));
@@ -328,20 +314,11 @@ class TaxTest extends TestCase
      */
     public function testGetWeeeAmountExclTaxForDynamicBundleProduct(): void
     {
-        $product = $this->createPartialMock(Product::class, []);
-        $reflection = new \ReflectionClass($product);
-        $dataProperty = $reflection->getProperty('_data');
-        $dataProperty->setValue($product, [
-            'type_id' => 'bundle',
-            'price_type' => 0
-        ]);
-        $weeeDataHelper = $this->getMockBuilder(DataObject::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $tax = $this->getMockBuilder(Tax::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getProductWeeeAttributes'])
-            ->getMock();
+        $product = $this->createPartialMockWithReflection(Product::class, ['getTypeId', 'getPriceType']);
+        $product->expects($this->any())->method('getTypeId')->willReturn('bundle');
+        $product->expects($this->any())->method('getPriceType')->willReturn(0);
+        $weeeDataHelper = $this->createMock(DataObject::class);
+        $tax = $this->createPartialMock(Tax::class, ['getProductWeeeAttributes']);
         $tax->expects($this->once())->method('getProductWeeeAttributes')->willReturn([$weeeDataHelper]);
         $this->assertEquals(0, $tax->getWeeeAmountExclTax($product));
     }

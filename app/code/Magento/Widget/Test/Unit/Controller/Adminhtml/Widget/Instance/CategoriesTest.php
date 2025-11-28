@@ -13,6 +13,7 @@ use Magento\Framework\Controller\Result\Raw;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Math\Random;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\View\Layout;
 use Magento\Widget\Block\Adminhtml\Widget\Catalog\Category\Chooser;
 use Magento\Widget\Controller\Adminhtml\Widget\Instance\Categories;
@@ -24,6 +25,8 @@ use PHPUnit\Framework\TestCase;
  */
 class CategoriesTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var RequestInterface|MockObject
      */
@@ -73,14 +76,10 @@ class CategoriesTest extends TestCase
     {
         $this->request = $this->createMock(RequestInterface::class);
         $this->mathRandom = $this->createMock(Random::class);
-        $this->chooser = $this->createPartialMock(Chooser::class, ['toHtml', 'setSelectedCategories']);
-        
-        $reflection = new \ReflectionClass($this->chooser);
-        $dataProperty = $reflection->getProperty('_data');
-        $dataProperty->setValue($this->chooser, []);
-        
-        $this->chooser->method('setSelectedCategories')->willReturnSelf();
-        $this->chooser->method('toHtml')->willReturn('block_content');
+        $this->chooser = $this->createPartialMockWithReflection(
+            $this->blockClass,
+            ['setUseMassaction', 'setId', 'setIsAnchorOnly', 'setSelectedCategories', 'toHtml']
+        );
         $this->layout = $this->createMock(Layout::class);
         $this->resultRaw = $this->createMock(Raw::class);
         $this->resultFactory = $this->createMock(ResultFactory::class);
@@ -103,7 +102,19 @@ class CategoriesTest extends TestCase
 
         $this->mathRandom->expects($this->once())->method('getUniqueHash')->with('categories')->willReturn($hash);
 
-        $this->layout->method('createBlock')->willReturn($this->chooser);
+        $this->chooser->expects($this->once())->method('setUseMassaction')->with()->willReturnSelf();
+        $this->chooser->expects($this->once())->method('setId')->with($hash)->willReturnSelf();
+        $this->chooser->expects($this->once())->method('setIsAnchorOnly')->with($isAnchorOnly)->willReturnSelf();
+        $this->chooser->expects($this->once())
+            ->method('setSelectedCategories')
+            ->with(explode(',', $selectedCategories))
+            ->willReturnSelf();
+        $this->chooser->expects($this->once())->method('toHtml')->willReturn($content);
+
+        $this->layout->expects($this->once())
+            ->method('createBlock')
+            ->with($this->blockClass)
+            ->willReturn($this->chooser);
 
         $this->resultRaw->expects($this->once())->method('setContents')->with($content)->willReturnSelf();
 
@@ -116,15 +127,15 @@ class CategoriesTest extends TestCase
         $this->context->expects($this->once())->method('getResultFactory')->willReturn($this->resultFactory);
 
         /** @var Categories $controller */
-        $this->controller = new Categories(
-            $this->context,
-            $this->createMock(\Magento\Framework\Registry::class),
-            $this->createMock(\Magento\Widget\Model\Widget\InstanceFactory::class),
-            $this->createMock(\Psr\Log\LoggerInterface::class),
-            $this->mathRandom,
-            $this->createMock(\Magento\Framework\Translate\InlineInterface::class),
-            $this->layout
-        );
+        $this->controller = (new ObjectManager($this))
+            ->getObject(
+                Categories::class,
+                [
+                    'context' => $this->context,
+                    'mathRandom' => $this->mathRandom,
+                    'layout' => $this->layout
+                ]
+            );
         $this->assertSame($this->resultRaw, $this->controller->execute());
     }
 }

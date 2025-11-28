@@ -16,6 +16,7 @@ use Magento\Framework\App\RequestInterface;
 use Magento\Framework\DataObject;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Review\Block\Adminhtml\Main as MainBlock;
+use Magento\Backend\Block\Template\Context;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -86,16 +87,16 @@ class MainTest extends TestCase
             ->willReturn($productCollection);
 
         $objectManagerHelper = new ObjectManagerHelper($this);
-        
+
         // Fix ObjectManager initialization issue using existing helper method
         $objects = [
             [
-                \Magento\Backend\Block\Template\Context::class,
-                $this->createMock(\Magento\Backend\Block\Template\Context::class)
+                Context::class,
+                $this->createMock(Context::class)
             ]
         ];
         $objectManagerHelper->prepareObjectManager($objects);
-        
+
         $this->model = $objectManagerHelper->getObject(
             MainBlock::class,
             [

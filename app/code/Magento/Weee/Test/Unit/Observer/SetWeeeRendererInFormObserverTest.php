@@ -13,6 +13,7 @@ use Magento\Framework\Event\Observer;
 use Magento\Framework\View\LayoutInterface;
 use Magento\Weee\Model\Tax;
 use Magento\Weee\Observer\SetWeeeRendererInFormObserver;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -20,10 +21,11 @@ use PHPUnit\Framework\TestCase;
  * Unit Tests to cover SetWeeeRendererInFormObserver
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @SuppressWarnings(PHPMD.UnusedLocalVariable)
  */
 class SetWeeeRendererInFormObserverTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * Testable object
      *
@@ -63,17 +65,16 @@ class SetWeeeRendererInFormObserverTest extends TestCase
     {
         $attributes = new \ArrayIterator(['element_code_1', 'element_code_2']);
         /** @var Event|MockObject $eventMock */
-        $eventMock = $this->createPartialMock(Event::class, []);
-        $reflection = new \ReflectionClass($eventMock);
-        $property = $reflection->getProperty('_data');
-        $property->setValue($eventMock, []);
+        $eventMock = $this->createPartialMockWithReflection(Event::class, ['getForm']);
 
         /** @var Observer|MockObject $observerMock */
         $observerMock = $this->createMock(Observer::class);
         /** @var Form|MockObject $formMock */
         $formMock = $this->createMock(Form::class);
 
-        $eventMock->setForm($formMock);
+        $eventMock->expects($this->once())
+            ->method('getForm')
+            ->willReturn($formMock);
         $observerMock->expects($this->once())
             ->method('getEvent')
             ->willReturn($eventMock);

@@ -27,6 +27,7 @@ use Magento\Review\Model\Review;
 use Magento\Review\Model\ReviewFactory;
 use Magento\Review\Model\ResourceModel\Review as ReviewResourceModel;
 use Magento\Review\Model\Review\Config;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -38,6 +39,8 @@ use PHPUnit\Framework\TestCase;
  */
 class PostTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var MockObject
      */
@@ -133,10 +136,6 @@ class PostTest extends TestCase
      *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    /**
-     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     */
     protected function setUp(): void
     {
         $this->redirect = $this->createMock(RedirectInterface::class);
@@ -150,45 +149,32 @@ class PostTest extends TestCase
             Config::class,
             ['isEnabled']
         );
-        $this->reviewSession = $this->createPartialMock(Generic::class, []);
-        $sessionReflection = new \ReflectionClass($this->reviewSession);
-        $storageProperty = $sessionReflection->getProperty('storage');
-        $storage = new \Magento\Framework\Session\Storage();
-        $storageProperty->setValue($this->reviewSession, $storage);
+        $this->reviewSession = $this->createPartialMockWithReflection(
+            Generic::class,
+            ['getFormData', 'getRedirectUrl', 'setFormData', 'setRedirectUrl']
+        );
         $this->eventManager = $this->createMock(ManagerInterface::class);
         $this->productRepository = $this->createMock(ProductRepositoryInterface::class);
         $this->coreRegistry = $this->createMock(Registry::class);
-        $this->review = $this->createPartialMock(Review::class, []);
-        $reviewReflection = new \ReflectionClass($this->review);
-        $reviewDataProperty = $reviewReflection->getProperty('_data');
-        $reviewDataProperty->setValue($this->review, []);
-        
+        $this->review = $this->createPartialMockWithReflection(
+            Review::class,
+            [
+                'setEntityPkValue', 'setStatusId', 'setCustomerId', 'setStoreId', 'setStores',
+                'setData', 'validate', 'setEntityId', 'getEntityIdByCode', 'save',
+                'unsetData', 'getId', 'getResource'
+            ]
+        );
         $reviewResource = $this->createMock(ReviewResourceModel::class);
-        $reviewResource->method('getEntityIdByCode')->willReturn(1);
         $reviewResource->method('aggregate')->willReturnSelf();
-        
-        $reviewResourceProperty = $reviewReflection->getProperty('_resource');
-        $reviewResourceProperty->setValue($this->review, $reviewResource);
+        $this->review->method('getResource')->willReturn($reviewResource);
         
         $reviewFactory = $this->createPartialMock(ReviewFactory::class, ['create']);
         $reviewFactory->expects($this->once())->method('create')->willReturn($this->review);
         $this->customerSession = $this->createPartialMock(Session::class, ['getCustomerId']);
-        $this->rating = $this->createPartialMock(Rating::class, []);
-        $ratingReflection = new \ReflectionClass($this->rating);
-        $ratingDataProperty = $ratingReflection->getProperty('_data');
-        $ratingDataProperty->setValue($this->rating, []);
-        
-        $ratingOption = $this->createPartialMock(\Magento\Review\Model\Rating\Option::class, ['addVote']);
-        $optionReflection = new \ReflectionClass($ratingOption);
-        $optionDataProperty = $optionReflection->getProperty('_data');
-        $optionDataProperty->setValue($ratingOption, []);
-        $ratingOption->method('addVote')->willReturnSelf();
-        
-        $optionFactory = $this->createMock(\Magento\Review\Model\Rating\OptionFactory::class);
-        $optionFactory->method('create')->willReturn($ratingOption);
-        
-        $ratingFactoryProperty = $ratingReflection->getProperty('_ratingOptionFactory');
-        $ratingFactoryProperty->setValue($this->rating, $optionFactory);
+        $this->rating = $this->createPartialMockWithReflection(
+            Rating::class,
+            ['setRatingId', 'setReviewId', 'setCustomerId', 'addOptionVote']
+        );
         $ratingFactory = $this->createPartialMock(RatingFactory::class, ['create']);
         $ratingFactory->expects($this->once())->method('create')->willReturn($this->rating);
         $this->messageManager = $this->createMock(\Magento\Framework\Message\ManagerInterface::class);
@@ -245,7 +231,6 @@ class PostTest extends TestCase
     /**
      * @return void
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      */
     public function testExecute(): void
     {
@@ -266,6 +251,10 @@ class PostTest extends TestCase
             ->willReturn(true);
         $this->reviewsConfig->expects($this->any())->method('isEnabled')
             ->willReturn(true);
+        $this->reviewSession->expects($this->any())->method('getFormData')
+            ->willReturn($reviewData);
+        $this->reviewSession->expects($this->any())->method('getRedirectUrl')
+            ->willReturn($redirectUrl);
         $this->reviewSession->setFormData($reviewData);
         $this->reviewSession->setRedirectUrl($redirectUrl);
         $this->request
@@ -315,6 +304,41 @@ class PostTest extends TestCase
             ->method('getId')
             ->willReturn($productId);
         // Review and rating mock methods provided by anonymous classes
+        $this->review->expects($this->once())->method('setData')
+            ->with($reviewData)->willReturnSelf();
+        $this->review->expects($this->once())->method('validate')
+            ->willReturn(true);
+        $this->review->expects($this->once())->method('getEntityIdByCode')
+            ->with(Review::ENTITY_PRODUCT_CODE)->willReturn(1);
+        $this->review->expects($this->once())->method('setEntityId')
+            ->with(1)->willReturnSelf();
+        $this->review->expects($this->once())->method('unsetData')->with('review_id')
+            ->willReturnSelf();
+        $this->review->expects($this->once())->method('setEntityPkValue')
+            ->with($productId)->willReturnSelf();
+        $this->review->expects($this->once())->method('setStatusId')
+            ->with(Review::STATUS_PENDING)->willReturnSelf();
+        $this->customerSession->expects($this->exactly(2))->method('getCustomerId')
+            ->willReturn($customerId);
+        $this->review->expects($this->once())->method('setCustomerId')->with($customerId)->willReturnSelf();
+        $this->store->expects($this->exactly(2))->method('getId')
+            ->willReturn($storeId);
+        $this->review->expects($this->once())->method('setStoreId')
+            ->with($storeId)->willReturnSelf();
+        $this->review->expects($this->once())->method('setStores')
+            ->with([$storeId])->willReturnSelf();
+        $this->review->expects($this->once())->method('save')
+            ->willReturn($this->review);
+        $this->rating->expects($this->once())->method('setRatingId')
+            ->with(1)->willReturnSelf();
+        $this->review->expects($this->once())->method('getId')
+            ->willReturn($reviewId);
+        $this->rating->expects($this->once())->method('setReviewId')
+            ->with($reviewId)->willReturnSelf();
+        $this->rating->expects($this->once())->method('setCustomerId')
+            ->with($customerId)->willReturnSelf();
+        $this->rating->expects($this->once())->method('addOptionVote')
+            ->with(1, $productId)->willReturnSelf();
         $this->messageManager->expects($this->once())->method('addSuccessMessage')
             ->with(__('You submitted your review for moderation.'))
             ->willReturnSelf();

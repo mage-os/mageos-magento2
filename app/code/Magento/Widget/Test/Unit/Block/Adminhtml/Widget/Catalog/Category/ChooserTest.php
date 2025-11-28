@@ -17,6 +17,7 @@ use Magento\Framework\Data\Tree\Node\Collection as NodeCollection;
 use Magento\Framework\Escaper;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Widget\Block\Adminhtml\Widget\Catalog\Category\Chooser;
@@ -28,6 +29,8 @@ use PHPUnit\Framework\TestCase;
  */
 class ChooserTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Collection|MockObject
      */
@@ -81,54 +84,19 @@ class ChooserTest extends TestCase
     protected function setUp(): void
     {
         $objectManager = new ObjectManager($this);
-
-        $objects = [
-            [
-                \Magento\Framework\View\Element\Template\Context::class,
-                $this->createMock(\Magento\Framework\View\Element\Template\Context::class)
-            ],
-            [
-                \Magento\Framework\App\ObjectManager::class,
-                $this->createMock(\Magento\Framework\App\ObjectManager::class)
-            ],
-            [
-                \Magento\Framework\View\Element\BlockFactory::class,
-                $this->createMock(\Magento\Framework\View\Element\BlockFactory::class)
-            ],
-            [
-                \Magento\Backend\Block\Template::class,
-                $this->createMock(\Magento\Backend\Block\Template::class)
-            ],
-            [
-                \Magento\Catalog\Block\Adminhtml\Category\AbstractCategory::class,
-                $this->createMock(\Magento\Catalog\Block\Adminhtml\Category\AbstractCategory::class)
-            ],
-            [
-                \Magento\Catalog\Block\Adminhtml\Category\Tree::class,
-                $this->createMock(\Magento\Catalog\Block\Adminhtml\Category\Tree::class)
-            ]
-        ];
-        $objectManager->prepareObjectManager($objects);
+        $objectManager->prepareObjectManager();
 
         $this->collection = $this->createMock(Collection::class);
 
-        $this->childNode = $this->createPartialMock(Node::class, []);
-        $childReflection = new \ReflectionClass($this->childNode);
-        $childNodesProperty = $childReflection->getProperty('_childNodes');
-        $childNodesProperty->setValue($this->childNode, new NodeCollection($this->childNode));
-        $idFieldProperty = $childReflection->getProperty('_idField');
-        $idFieldProperty->setValue($this->childNode, 'id');
-        $this->childNode->setLevel(3);
+        $this->childNode = $this->createPartialMockWithReflection(
+            Node::class,
+            ['getLevel', 'hasChildren', 'getIdField']
+        );
 
-        $this->rootNode = $this->createPartialMock(Node::class, []);
-        $rootReflection = new \ReflectionClass($this->rootNode);
-        $rootNodesProperty = $rootReflection->getProperty('_childNodes');
-        $rootNodesCollection = new NodeCollection($this->rootNode);
-        $rootNodesCollection[0] = $this->childNode;
-        $rootNodesProperty->setValue($this->rootNode, $rootNodesCollection);
-        $rootIdFieldProperty = $rootReflection->getProperty('_idField');
-        $rootIdFieldProperty->setValue($this->rootNode, 'id');
-        $this->rootNode->setLevel(1);
+        $this->rootNode = $this->createPartialMockWithReflection(
+            Node::class,
+            ['getLevel', 'hasChildren', 'getChildren', 'getIdField']
+        );
         $this->categoryTree = $this->createMock(Tree::class);
         $this->store = $this->createMock(Store::class);
         $this->storeManager = $this->createMock(StoreManagerInterface::class);
@@ -143,6 +111,7 @@ class ChooserTest extends TestCase
         $rootId = Category::TREE_ROOT_ID;
         $storeGroups = [];
         $storeId = 1;
+        $rootLevel = 2;
         $level = 3;
 
         $this->collection->expects($this->any())->method('addAttributeToSelect')->willReturnMap(
@@ -151,6 +120,14 @@ class ChooserTest extends TestCase
                 ['is_anchor', false, $this->collection]
             ]
         );
+
+        $this->rootNode->method('getIdField')->willReturn('test_id_field');
+        $this->childNode->method('getIdField')->willReturn('test_id_field');
+        $this->childNode->expects($this->atLeastOnce())->method('getLevel')->willReturn($level);
+
+        $this->rootNode->expects($this->atLeastOnce())->method('getLevel')->willReturn($rootLevel);
+        $this->rootNode->expects($this->once())->method('hasChildren')->willReturn(true);
+        $this->rootNode->expects($this->once())->method('getChildren')->willReturn([$this->childNode]);
 
         $this->categoryTree->expects($this->once())->method('load')->with(null, 3)->willReturnSelf();
         $this->categoryTree->expects($this->atLeastOnce())

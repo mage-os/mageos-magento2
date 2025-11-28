@@ -16,6 +16,7 @@ use Magento\Framework\Pricing\Amount\Base;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Framework\Pricing\Render\Amount;
 use Magento\Framework\View\Element\Template\Context;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Weee\Helper\Data;
 use Magento\Weee\Model\Tax;
 use Magento\Weee\Pricing\Adjustment as PricingAdjustment;
@@ -25,10 +26,11 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @SuppressWarnings(PHPMD.UnusedLocalVariable)
  */
 class AdjustmentTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Adjustment
      */
@@ -58,16 +60,22 @@ class AdjustmentTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->contextMock = $this->createPartialMock(Context::class, []);
-        $contextReflection = new \ReflectionClass($this->contextMock);
-        $eventManagerProperty = $contextReflection->getProperty('_eventManager');
-        $eventManagerProperty->setValue($this->contextMock, $this->createMock(ManagerInterface::class));
-        $scopeConfigProperty = $contextReflection->getProperty('_scopeConfig');
-        $scopeConfigProperty->setValue($this->contextMock, $this->createMock(ScopeConfigInterface::class));
-        
-        $this->priceCurrencyMock = $this->createMock(
-            PriceCurrencyInterface::class
+        $this->contextMock = $this->createPartialMockWithReflection(
+            Context::class,
+            ['getEventManager', 'getScopeConfig', 'getStoreConfig']
         );
+        
+        $eventManagerMock = $this->createMock(ManagerInterface::class);
+        $scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
+        
+        $this->contextMock->expects($this->any())
+            ->method('getEventManager')
+            ->willReturn($eventManagerMock);
+        $this->contextMock->expects($this->any())
+            ->method('getScopeConfig')
+            ->willReturn($scopeConfigMock);
+        
+        $this->priceCurrencyMock = $this->createMock(PriceCurrencyInterface::class);
         $this->weeeHelperMock = $this->createMock(Data::class);
 
         $this->model = new Adjustment(

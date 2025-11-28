@@ -10,6 +10,7 @@ namespace Magento\Weee\Test\Unit\Model\Total\Quote;
 use Magento\Catalog\Model\Product;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Quote\Api\Data\ShippingAssignmentInterface;
 use Magento\Quote\Api\Data\ShippingInterface;
 use Magento\Quote\Model\Quote;
@@ -26,10 +27,11 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @SuppressWarnings(PHPMD.UnusedLocalVariable)
  */
 class WeeeTaxTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * Constants for array keys
      */
@@ -117,20 +119,6 @@ class WeeeTaxTest extends TestCase
     }
 
     /**
-     * Create total mock with all required methods
-     *
-     * @return Total
-     */
-    private function createTotalMock(): Total
-    {
-        $totalMock = $this->createPartialMock(Total::class, []);
-        $reflection = new \ReflectionClass($totalMock);
-        $property = $reflection->getProperty('_data');
-        $property->setValue($totalMock, []);
-        return $totalMock;
-    }
-
-    /**
      * Setup address mock
      *
      * @param  MockObject|Item $itemMock
@@ -141,7 +129,10 @@ class WeeeTaxTest extends TestCase
      */
     protected function setupTotalMock($itemMock, $isWeeeTaxable, $itemWeeeTaxDetails, $addressData)
     {
-        $totalMock = $this->createTotalMock();
+        $totalMock = $this->createPartialMockWithReflection(
+            Total::class,
+            ['getWeeeCodeToItemMap', 'getExtraTaxableDetails', 'getWeeeTotalExclTax', 'getWeeeBaseTotalExclTax']
+        );
 
         $map = [];
         $extraDetails = [];
@@ -181,10 +172,10 @@ class WeeeTaxTest extends TestCase
             }
         }
 
-        $totalMock->setWeeeCodeToItemMap($map);
-        $totalMock->setExtraTaxableDetails($extraDetails);
-        $totalMock->setWeeeTotalExclTax($weeeTotals);
-        $totalMock->setWeeeBaseTotalExclTax($weeeBaseTotals);
+        $totalMock->expects($this->any())->method('getWeeeCodeToItemMap')->willReturn($map);
+        $totalMock->expects($this->any())->method('getExtraTaxableDetails')->willReturn($extraDetails);
+        $totalMock->expects($this->any())->method('getWeeeTotalExclTax')->willReturn($weeeTotals);
+        $totalMock->expects($this->any())->method('getWeeeBaseTotalExclTax')->willReturn($weeeBaseTotals);
 
         return $totalMock;
     }

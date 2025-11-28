@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Review\Test\Unit\Controller\Adminhtml\Product;
 
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 use Magento\Review\Controller\Adminhtml\Product\MassUpdateStatus;
@@ -28,6 +29,8 @@ use Magento\Review\Model\ResourceModel\Review as ReviewResourceModel;
  */
 class MassUpdateStatusTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var MassUpdateStatus
      */
@@ -66,9 +69,6 @@ class MassUpdateStatusTest extends TestCase
     /**
      * @inheritdoc
      */
-    /**
-     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
-     */
     protected function setUp(): void
     {
         $this->collectionMock = $this->createMock(ReviewCollection::class);
@@ -103,9 +103,6 @@ class MassUpdateStatusTest extends TestCase
     /**
      * @return void
      */
-    /**
-     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
-     */
     public function testExecute(): void
     {
         $this->requestMock->expects(self::atLeastOnce())
@@ -128,15 +125,22 @@ class MassUpdateStatusTest extends TestCase
             ->method('addFieldToFilter')
             ->with('main_table.id', [1, 2])
             ->willReturnSelf();
-        $modelMock = $this->createPartialMock(Review::class, []);
-        $reviewReflection = new \ReflectionClass($modelMock);
-        $reviewDataProperty = $reviewReflection->getProperty('_data');
-        $reviewDataProperty->setValue($modelMock, []);
-        
-        $reviewResource = $this->createMock(ReviewResourceModel::class);
-        $reviewResourceProperty = $reviewReflection->getProperty('_resource');
-        $reviewResourceProperty->setValue($modelMock, $reviewResource);
-        
+        $modelMock = $this->createPartialMockWithReflection(
+            Review::class,
+            ['setStatusId', 'save', 'aggregate', '_getResource']
+        );
+        $modelMock->expects($this->once())
+            ->method('setStatusId')
+            ->with(Review::STATUS_APPROVED)
+            ->willReturnSelf();
+        $modelMock->expects($this->once())
+            ->method('save')
+            ->willReturnSelf();
+        $modelMock->expects($this->once())
+            ->method('aggregate')
+            ->willReturnSelf();
+        $modelMock->method('_getResource')
+            ->willReturn($this->createMock(ReviewResourceModel::class));
         $this->collectionMock->expects($this->once())->method('getIterator')
             ->willReturn(new \ArrayIterator([$modelMock]));
         $this->messageManagerMock->expects($this->once())

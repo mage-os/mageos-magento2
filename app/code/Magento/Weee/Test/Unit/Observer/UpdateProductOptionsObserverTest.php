@@ -13,6 +13,7 @@ use Magento\Framework\DataObject;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Registry;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Tax\Model\Config as TaxConfig;
 use Magento\Weee\Helper\Data;
 use Magento\Weee\Model\Tax as WeeeDisplayConfig;
@@ -24,11 +25,12 @@ use PHPUnit\Framework\TestCase;
  * Unit Tests to cover UpdateProductOptionsObserver
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @SuppressWarnings(PHPMD.UnusedLocalVariable)
  * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  */
 class UpdateProductOptionsObserverTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * Tests the methods that rely on the ScopeConfigInterface object to provide their return values
      *
@@ -62,23 +64,34 @@ class UpdateProductOptionsObserverTest extends TestCase
         );
 
         $weeeHelper=$this->createMock(Data::class);
-        $weeeHelper->method('isEnabled')->willReturn($weeeEnabled);
-        $weeeHelper->method('isDisplayIncl')
+        $weeeHelper->expects($this->any())
+            ->method('isEnabled')
+            ->willReturn($weeeEnabled);
+        $weeeHelper->expects($this->any())
+            ->method('isDisplayIncl')
             ->willReturn($weeeDisplay == WeeeDisplayConfig::DISPLAY_INCL);
-        $weeeHelper->method('isDisplayExclDescIncl')
+        $weeeHelper->expects($this->any())
+            ->method('isDisplayExclDescIncl')
             ->willReturn($weeeDisplay == WeeeDisplayConfig::DISPLAY_EXCL_DESCR_INCL);
-        $weeeHelper->method('isDisplayExcl')
+        $weeeHelper->expects($this->any())
+            ->method('isDisplayExcl')
             ->willReturn($weeeDisplay == WeeeDisplayConfig::DISPLAY_EXCL);
-        $weeeHelper->method('getWeeeAttributesForBundle')
+        $weeeHelper->expects($this->any())
+            ->method('getWeeeAttributesForBundle')
             ->willReturn([['fpt1' => $weeeObject1], ['fpt1'=>$weeeObject1, 'fpt2'=>$weeeObject2]]);
 
         $taxHelper=$this->createMock(\Magento\Tax\Helper\Data::class);
-        $taxHelper->method('displayPriceExcludingTax')
+        $taxHelper->expects($this->any())
+            ->method('displayPriceExcludingTax')
             ->willReturn($priceDisplay == TaxConfig::DISPLAY_TYPE_EXCLUDING_TAX);
-        $taxHelper->method('priceIncludesTax')->willReturn(true);
+        $taxHelper->expects($this->any())
+            ->method('priceIncludesTax')
+            ->willReturn(true);
 
-        $responseObject = $this->createResponseObjectMock();
-        $responseObject->setResponseObject($configObj);
+        $responseObject=$this->createPartialMockWithReflection(Observer::class, ['getResponseObject']);
+        $responseObject->expects($this->any())
+            ->method('getResponseObject')
+            ->willReturn($configObj);
 
         $observerObject=$this->createPartialMock(Observer::class, ['getEvent']);
         $observerObject->expects($this->any())
@@ -86,8 +99,12 @@ class UpdateProductOptionsObserverTest extends TestCase
             ->willReturn($responseObject);
 
         $product = $this->createPartialMock(Product::class, ['getStoreId', 'getTypeId']);
-        $product->method('getStoreId')->willReturn(1);
-        $product->method('getTypeId')->willReturn('bundle');
+        $product->expects($this->any())
+            ->method('getStoreId')
+            ->willReturn(1);
+        $product->expects($this->any())
+            ->method('getTypeId')
+            ->willReturn('bundle');
 
         $registry=$this->createMock(Registry::class);
         $registry->expects($this->any())
@@ -214,19 +231,5 @@ class UpdateProductOptionsObserverTest extends TestCase
                 ],
             ],
         ];
-    }
-
-    /**
-     * Create a mock for Response Object
-     *
-     * @return Observer
-     */
-    private function createResponseObjectMock(): Observer
-    {
-        $observer = $this->createPartialMock(Observer::class, []);
-        $reflection = new \ReflectionClass($observer);
-        $property = $reflection->getProperty('_data');
-        $property->setValue($observer, []);
-        return $observer;
     }
 }

@@ -15,6 +15,7 @@ use Magento\Review\Model\ResourceModel\Review\SummaryFactory;
 use Magento\Review\Observer\CatalogProductListCollectionAppendSummaryFieldsObserver;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -23,6 +24,8 @@ use PHPUnit\Framework\TestCase;
  */
 class CatalogProductListCollectionAppendSummaryFieldsObserverTest extends TestCase
 {
+    use MockCreationTrait;
+
     private const STORE_ID = 1;
 
     /**
@@ -70,15 +73,9 @@ class CatalogProductListCollectionAppendSummaryFieldsObserverTest extends TestCa
     /**
      * @inheritdoc
      */
-    /**
-     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
-     */
     protected function setUp(): void
     {
-        $this->eventMock = $this->createPartialMock(Event::class, []);
-        $reflection = new \ReflectionClass($this->eventMock);
-        $property = $reflection->getProperty('_data');
-        $property->setValue($this->eventMock, []);
+        $this->eventMock = $this->createPartialMockWithReflection(Event::class, ['getCollection']);
 
         $this->observerMock = $this->createMock(Observer::class);
 
@@ -106,7 +103,10 @@ class CatalogProductListCollectionAppendSummaryFieldsObserverTest extends TestCa
      */
     public function testAddSummaryFieldToProductsCollection() : void
     {
-        $this->eventMock->setCollection($this->productCollectionMock);
+        $this->eventMock
+            ->expects($this->once())
+            ->method('getCollection')
+            ->willReturn($this->productCollectionMock);
 
         $this->observerMock
             ->expects($this->once())

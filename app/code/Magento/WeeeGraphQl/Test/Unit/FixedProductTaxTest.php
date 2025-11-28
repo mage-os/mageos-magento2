@@ -58,7 +58,6 @@ class FixedProductTaxTest extends TestCase
 
     /**
      * Build the Testing Environment
-     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      */
     protected function setUp(): void
     {
@@ -66,26 +65,10 @@ class FixedProductTaxTest extends TestCase
             ContextExtensionInterface::class,
             ['setStore', 'getStore', 'getIsCustomer', 'setIsCustomer', 'getCustomerGroupId', 'setCustomerGroupId']
         );
-        
-        $this->extensionAttributesMock->method('getIsCustomer')->willReturn(null);
-        $this->extensionAttributesMock->method('setIsCustomer')->willReturnSelf();
-        $this->extensionAttributesMock->method('getCustomerGroupId')->willReturn(null);
-        $this->extensionAttributesMock->method('setCustomerGroupId')->willReturnSelf();
-        
-        $store = null;
-        $this->extensionAttributesMock->method('setStore')->willReturnCallback(
-            function ($storeValue) use (&$store) {
-                $store = $storeValue;
-            }
-        );
-        $this->extensionAttributesMock->method('getStore')->willReturnCallback(
-            function () use (&$store) {
-                return $store;
-            }
-        );
 
-        $this->contextMock = $this->createPartialMock(Context::class, ['getExtensionAttributes']);
-        $this->contextMock->method('getExtensionAttributes')
+        $this->contextMock = $this->createPartialMockWithReflection(Context::class, ['getExtensionAttributes']);
+        $this->contextMock->expects($this->any())
+            ->method('getExtensionAttributes')
             ->willReturn($this->extensionAttributesMock);
 
         $this->productMock = $this->createMock(DataObject::class);
@@ -120,13 +103,14 @@ class FixedProductTaxTest extends TestCase
     public function testNotGettingAttributesWhenWeeeDisabledForStore(): void
     {
         // Given
-        $storeMock = $this->createMock(StoreInterface::class);
-        $storeMock->method('getId')->willReturn(self::STUB_STORE_ID);
-        $this->extensionAttributesMock->setStore($storeMock);
+        $this->extensionAttributesMock->expects($this->any())
+            ->method('getStore')
+            ->willReturn(self::STUB_STORE_ID);
 
         // When
-        $this->weeeHelperMock->method('isEnabled')
-            ->with($this->isInstanceOf(\Magento\Store\Api\Data\StoreInterface::class))
+        $this->weeeHelperMock->expects($this->any())
+            ->method('isEnabled')
+            ->with(self::STUB_STORE_ID)
             ->willReturn(false);
 
         // Then

@@ -18,7 +18,7 @@ use Magento\Review\Model\Rating;
 use Magento\Review\Model\RatingFactory;
 use Magento\Review\Model\Review;
 use Magento\Review\Model\ReviewFactory;
-use Magento\Review\Model\Rating\OptionFactory;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -30,6 +30,8 @@ use PHPUnit\Framework\TestCase;
  */
 class PostTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Post
      */
@@ -127,23 +129,10 @@ class PostTest extends TestCase
             ['save', 'getId', 'aggregate', 'getEntityIdByCode']
         );
         $this->reviewFactoryMock = $this->createPartialMock(ReviewFactory::class, ['create']);
-        $this->ratingMock = $this->createPartialMock(Rating::class, []);
-        $reflection = new \ReflectionClass($this->ratingMock);
-        $dataProperty = $reflection->getProperty('_data');
-        $dataProperty->setValue($this->ratingMock, []);
-        
-        $ratingOption = $this->createPartialMock(\Magento\Review\Model\Rating\Option::class, ['addVote']);
-        $optionReflection = new \ReflectionClass($ratingOption);
-        $optionDataProperty = $optionReflection->getProperty('_data');
-        $optionDataProperty->setValue($ratingOption, []);
-        $ratingOption->method('addVote')->willReturnSelf();
-        
-        $optionFactory = $this->createMock(OptionFactory::class);
-        $optionFactory->method('create')->willReturn($ratingOption);
-        
-        $factoryProperty = $reflection->getProperty('_ratingOptionFactory');
-        $factoryProperty->setValue($this->ratingMock, $optionFactory);
-        
+        $this->ratingMock = $this->createPartialMockWithReflection(
+            Rating::class,
+            ['setRatingId', 'setReviewId', 'addOptionVote']
+        );
         $this->ratingFactoryMock = $this->createPartialMock(RatingFactory::class, ['create']);
         $this->ratingFactoryMock->expects($this->any())->method('create')->willReturn($this->ratingMock);
         $this->resultFactoryMock = $this->createMock(ResultFactory::class);
@@ -203,6 +192,14 @@ class PostTest extends TestCase
             ->method('getEntityIdByCode')
             ->with(Review::ENTITY_PRODUCT_CODE)
             ->willReturn(1);
+        $this->ratingMock->expects($this->once())
+            ->method('setRatingId')
+            ->willReturnSelf();
+        $this->ratingMock->expects($this->once())
+            ->method('setReviewId')
+            ->willReturnSelf();
+        $this->ratingMock->expects($this->once())
+            ->method('addOptionVote');
 
         $this->assertSame($this->resultRedirectMock, $this->postController->execute());
     }

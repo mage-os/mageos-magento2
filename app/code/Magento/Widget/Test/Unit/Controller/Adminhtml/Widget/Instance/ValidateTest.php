@@ -13,6 +13,7 @@ use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\App\ViewInterface;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\View\Element\Messages;
 use Magento\Framework\View\Layout;
 use Magento\Framework\View\LayoutInterface;
@@ -26,11 +27,12 @@ use PHPUnit\Framework\TestCase;
  * Test for \Magento\Widget\Controller\Adminhtml\Widget\Instance\Validate.
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @SuppressWarnings(PHPMD.UnusedLocalVariable)
  * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  */
 class ValidateTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var string
      */
@@ -72,32 +74,37 @@ class ValidateTest extends TestCase
         $this->messageManagerMock = $this->createMock(ManagerInterface::class);
         $viewMock = $this->createMock(ViewInterface::class);
         $this->messagesBlock = $this->createMock(Messages::class);
-        $layoutMock = $this->createPartialMock(Layout::class, ['getMessagesBlock', 'initMessages']);
-        $layoutMock->method('getMessagesBlock')->willReturn($this->messagesBlock);
-        $layoutMock->method('initMessages')->willReturnSelf();
-        $viewMock->method('getLayout')->willReturn($layoutMock);
-        $this->responseMock = $this->createMock(\Magento\Framework\App\Response\Http::class);
-        $this->responseMock->method('representJson')->willReturnSelf();
+        $layoutMock = $this->createMock(Layout::class);
+        $layoutMock->expects($this->any())->method('getMessagesBlock')->willReturn($this->messagesBlock);
+        $viewMock->expects($this->any())->method('getLayout')->willReturn($layoutMock);
+        $this->responseMock = $this->createPartialMockWithReflection(
+            \Magento\Framework\App\Response\Http::class,
+            ['representJson']
+        );
 
         $context = $this->createMock(Context::class);
-        $context->method('getRequest')->willReturn($request);
-        $context->method('getMessageManager')->willReturn($this->messageManagerMock);
-        $context->method('getView')->willReturn($viewMock);
-        $context->method('getResponse')->willReturn($this->responseMock);
+        $context->expects($this->any())->method('getRequest')->willReturn($request);
+        $context->expects($this->any())->method('getMessageManager')->willReturn($this->messageManagerMock);
+        $context->expects($this->any())->method('getView')->willReturn($viewMock);
+        $context->expects($this->any())->method('getResponse')->willReturn($this->responseMock);
 
-        $this->widgetMock = $this->createPartialMock(Instance::class, ['isCompleteToCreate']);
-        $this->widgetMock->method('isCompleteToCreate')->willReturn(true);
+        $this->widgetMock = $this->createPartialMockWithReflection(
+            Instance::class,
+            ['setType', 'setCode', 'getType', 'setThemeId', 'getThemeId']
+        );
+        $this->widgetMock->expects($this->any())->method('setType')->willReturnSelf();
+        $this->widgetMock->expects($this->any())->method('setCode')->willReturnSelf();
+        $this->widgetMock->expects($this->any())->method('setThemeId')->willReturnSelf();
         
         $widgetFactoryMock = $this->createMock(InstanceFactory::class);
-        $widgetFactoryMock->method('create')->willReturn($this->widgetMock);
+        $widgetFactoryMock->expects($this->any())->method('create')->willReturn($this->widgetMock);
 
-        $this->model = new Validate(
-            $context,
-            $this->createMock(\Magento\Framework\Registry::class),
-            $widgetFactoryMock,
-            $this->createMock(\Psr\Log\LoggerInterface::class),
-            $this->createMock(\Magento\Framework\Math\Random::class),
-            $this->createMock(\Magento\Framework\Translate\InlineInterface::class)
+        $this->model = $objectManager->getObject(
+            Validate::class,
+            [
+                'widgetFactory' => $widgetFactoryMock,
+                'context' => $context
+            ]
         );
     }
 
@@ -108,9 +115,19 @@ class ValidateTest extends TestCase
      */
     public function testExecute(): void
     {
+        $this->widgetMock->expects($this->once())
+            ->method('getThemeId')
+            ->willReturn(777);
+        $this->widgetMock->expects($this->once())
+            ->method('getType')
+            ->willReturn('some type');
+
         $this->messageManagerMock->expects($this->never())
             ->method('addErrorMessage')
             ->with($this->errorMessage);
+        $this->responseMock->expects($this->once())
+            ->method('representJson')
+            ->with(json_encode(['error' => false]));
 
         $this->model->execute();
     }

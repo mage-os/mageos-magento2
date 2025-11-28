@@ -11,6 +11,7 @@ use Magento\Customer\Model\Address;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Module\Manager;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\PageCache\Model\Config;
 use Magento\Tax\Api\TaxAddressManagerInterface;
 use Magento\Weee\Helper\Data;
@@ -23,10 +24,11 @@ use PHPUnit\Framework\TestCase;
  * Unit Tests to cover AfterAddressSave
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @SuppressWarnings(PHPMD.UnusedLocalVariable)
  */
 class AfterAddressSaveTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var ObjectManager
      */
@@ -69,10 +71,7 @@ class AfterAddressSaveTest extends TestCase
     protected function setUp(): void
     {
         $this->objectManager = new ObjectManager($this);
-        $this->observerMock = $this->createPartialMock(Observer::class, []);
-        $reflection = new \ReflectionClass($this->observerMock);
-        $property = $reflection->getProperty('_data');
-        $property->setValue($this->observerMock, []);
+        $this->observerMock = $this->createPartialMockWithReflection(Observer::class, ['getCustomerAddress']);
 
         $this->moduleManagerMock = $this->createMock(Manager::class);
 
@@ -128,7 +127,9 @@ class AfterAddressSaveTest extends TestCase
         /** @var \Magento\Customer\Model\Address|MockObject $address */
         $address = $this->createMock(Address::class);
 
-        $this->observerMock->setCustomerAddress($address);
+        $this->observerMock->expects($this->any())
+            ->method('getCustomerAddress')
+            ->willReturn($address);
 
         $this->addressManagerMock->expects($isNeedSetAddress ? $this->once() : $this->never())
             ->method('setDefaultAddressAfterSave')

@@ -115,34 +115,17 @@ class FixedProductTaxResolverTest extends TestCase
 
     /**
      * @inheritdoc
-     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      */
     protected function setUp(): void
     {
         $this->contextExtensionAttributesMock = $this->createPartialMockWithReflection(
             ContextExtensionInterface::class,
-            ['setStore', 'getStore', 'getIsCustomer', 'setIsCustomer', 'getCustomerGroupId', 'setCustomerGroupId']
-        );
-        
-        $this->contextExtensionAttributesMock->method('getIsCustomer')->willReturn(null);
-        $this->contextExtensionAttributesMock->method('setIsCustomer')->willReturnSelf();
-        $this->contextExtensionAttributesMock->method('getCustomerGroupId')->willReturn(null);
-        $this->contextExtensionAttributesMock->method('setCustomerGroupId')->willReturnSelf();
-        
-        $store = null;
-        $this->contextExtensionAttributesMock->method('setStore')->willReturnCallback(
-            function ($storeValue) use (&$store) {
-                $store = $storeValue;
-            }
-        );
-        $this->contextExtensionAttributesMock->method('getStore')->willReturnCallback(
-            function () use (&$store) {
-                return $store;
-            }
+            ['getStore']
         );
 
-        $this->contextMock = $this->createPartialMock(Context::class, ['getExtensionAttributes']);
-        $this->contextMock->method('getExtensionAttributes')
+        $this->contextMock = $this->createPartialMockWithReflection(Context::class, ['getExtensionAttributes']);
+        $this->contextMock->expects($this->any())
+            ->method('getExtensionAttributes')
             ->willReturn($this->contextExtensionAttributesMock);
 
         $this->weeeHelperMock = $this->createPartialMock(WeeeHelper::class, ['isEnabled', 'getApplied']);
@@ -175,9 +158,9 @@ class FixedProductTaxResolverTest extends TestCase
      */
     public function testShouldReturnEmptyResult(): void
     {
-        $this->contextExtensionAttributesMock->setStore($this->storeMock);
-        $this->contextMock->method('getExtensionAttributes')
-            ->willReturn($this->contextExtensionAttributesMock);
+        $this->contextExtensionAttributesMock->expects($this->any())
+            ->method('getStore')
+            ->willReturn($this->storeMock);
 
         $this->weeeHelperMock->method('isEnabled')
             ->with($this->storeMock)
@@ -206,9 +189,9 @@ class FixedProductTaxResolverTest extends TestCase
     #[DataProvider('shouldReturnResultDataProvider')]
     public function testShouldReturnResult(int $displayType, array $expected): void
     {
-        $this->contextExtensionAttributesMock->setStore($this->storeMock);
-        $this->contextMock->method('getExtensionAttributes')
-            ->willReturn($this->contextExtensionAttributesMock);
+        $this->contextExtensionAttributesMock->expects($this->any())
+            ->method('getStore')
+            ->willReturn($this->storeMock);
 
         $this->weeeHelperMock->method('isEnabled')
             ->with($this->storeMock)

@@ -12,6 +12,7 @@ use Magento\Customer\Model\Data\Customer;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Module\Manager;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\PageCache\Model\Config;
 use Magento\Tax\Api\TaxAddressManagerInterface;
 use Magento\Weee\Helper\Data;
@@ -23,10 +24,11 @@ use PHPUnit\Framework\TestCase;
  * Unit Tests to cover CustomerLoggedIn
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @SuppressWarnings(PHPMD.UnusedLocalVariable)
  */
 class CustomerLoggedInTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Observer
      */
@@ -64,10 +66,10 @@ class CustomerLoggedInTest extends TestCase
     protected function setUp(): void
     {
         $objectManager = new ObjectManager($this);
-        $this->observerMock = $this->createPartialMock(Observer::class, []);
-        $reflection = new \ReflectionClass($this->observerMock);
-        $property = $reflection->getProperty('_data');
-        $property->setValue($this->observerMock, []);
+        $this->observerMock = $this->createPartialMockWithReflection(
+            Observer::class,
+            ['getData', 'getCustomerAddress']
+        );
 
         $this->moduleManagerMock = $this->createMock(Manager::class);
 
@@ -118,7 +120,10 @@ class CustomerLoggedInTest extends TestCase
             ->method('getAddresses')
             ->willReturn([$address]);
 
-        $this->observerMock->setData('customer', $customerMock);
+        $this->observerMock->expects($this->once())
+            ->method('getData')
+            ->with('customer')
+            ->willReturn($customerMock);
 
         $this->addressManagerMock->expects($this->once())
             ->method('setDefaultAddressAfterLogIn')

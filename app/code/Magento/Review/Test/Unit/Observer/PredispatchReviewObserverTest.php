@@ -12,6 +12,7 @@ use Magento\Framework\App\Response\RedirectInterface;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\UrlInterface;
 use Magento\Review\Observer\PredispatchReviewObserver;
 use Magento\Store\Model\ScopeInterface;
@@ -23,6 +24,8 @@ use PHPUnit\Framework\TestCase;
  */
 class PredispatchReviewObserverTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Observer|MockObject
      */
@@ -79,14 +82,22 @@ class PredispatchReviewObserverTest extends TestCase
      */
     public function testReviewEnabled() : void
     {
-        $observerMock = $this->createPartialMock(Observer::class, []);
-        $reflection = new \ReflectionClass($observerMock);
-        $property = $reflection->getProperty('_data');
-        $property->setValue($observerMock, []);
+        $observerMock = $this->createPartialMockWithReflection(
+            Observer::class,
+            ['getData', 'getResponse']
+        );
 
         $this->configMock->method('getValue')
             ->with(PredispatchReviewObserver::XML_PATH_REVIEW_ACTIVE, ScopeInterface::SCOPE_STORE)
             ->willReturn(true);
+        $observerMock->expects($this->never())
+            ->method('getData')
+            ->with('controller_action')
+            ->willReturnSelf();
+
+        $observerMock->expects($this->never())
+            ->method('getResponse')
+            ->willReturnSelf();
 
         $this->assertNull($this->mockObject->execute($observerMock));
     }
@@ -96,15 +107,12 @@ class PredispatchReviewObserverTest extends TestCase
      *
      * @return void
      */
-    /**
-     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
-     */
     public function testReviewDisabled() : void
     {
-        $observerMock = $this->createPartialMock(Observer::class, []);
-        $reflection = new \ReflectionClass($observerMock);
-        $property = $reflection->getProperty('_data');
-        $property->setValue($observerMock, []);
+        $observerMock = $this->createPartialMockWithReflection(
+            Observer::class,
+            ['getControllerAction', 'getResponse']
+        );
 
         $expectedRedirectUrl = 'https://test.com/index';
 
@@ -122,9 +130,13 @@ class PredispatchReviewObserverTest extends TestCase
             ->method('getUrl')
             ->willReturn($expectedRedirectUrl);
 
-        $controllerActionMock = $this->createMock(\Magento\Framework\App\Action\Action::class);
-        $controllerActionMock->method('getResponse')->willReturn($this->responseMock);
-        $observerMock->setControllerAction($controllerActionMock);
+        $observerMock->expects($this->once())
+            ->method('getControllerAction')
+            ->willReturnSelf();
+
+        $observerMock->expects($this->once())
+            ->method('getResponse')
+            ->willReturn($this->responseMock);
 
         $this->responseMock->expects($this->once())
             ->method('setRedirect')
