@@ -48,12 +48,10 @@ class AggregateCount
         $categoryId
     ): int {
         $connection = $resourceModel->getConnection();
-        $table      = $resourceModel->getEntityTable();
+        $table = $resourceModel->getEntityTable();
 
-        // Tell staging NOT to add created_in / updated_in filters
-        $select = $connection->select();
-        $select->setPart('disable_staging_preview', true);
-
+        // Use raw Zend select so staging preview modifiers are not applied.
+        $select = new \Zend_Db_Select($connection);
         $select->from($table, ['cnt' => new \Zend_Db_Expr('COUNT(*)')])
             ->where('entity_id = ?', (int)$categoryId);
 
