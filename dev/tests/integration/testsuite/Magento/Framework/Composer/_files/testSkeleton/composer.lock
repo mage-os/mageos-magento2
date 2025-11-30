@@ -2310,28 +2310,8 @@
                 "laminas/laminas-validator": "^2.6.0",
                 "laminas/laminas-view": "~2.10.0"
             },
-            "conflict": {
-                "gene/bluefoot": "*"
-            },
-            "replace": {
-                "blueimp/jquery-file-upload": "5.6.14",
-                "components/jquery": "1.11.0",
-                "components/jqueryui": "1.10.4",
-                "trentrichardson/jquery-timepicker-addon": "1.4.3",
-                "twbs/bootstrap": "3.1.0"
-            },
             "type": "magento2-component",
             "extra": {
-                "component_paths": {
-                    "trentrichardson/jquery-timepicker-addon": "lib/web/jquery/jquery-ui-timepicker-addon.js",
-                    "components/jquery": [
-                        "lib/web/jquery.js",
-                        "lib/web/jquery/jquery.min.js"
-                    ],
-                    "blueimp/jquery-file-upload": "lib/web/jquery/fileUploader",
-                    "components/jqueryui": "lib/web/jquery/jquery-ui.js",
-                    "twbs/bootstrap": "lib/web/jquery/jquery.tabs.js"
-                },
                 "map": [
                     [
                         ".github",

@@ -339,33 +339,11 @@
         "magento/framework-amqp": "*",
         "magento/framework-bulk": "*",
         "magento/framework-message-queue": "*",
-        "trentrichardson/jquery-timepicker-addon": "1.4.3",
-        "components/jquery": "1.11.0",
-        "components/jqueryui": "1.10.4",
-        "twbs/bootstrap": "3.1.0",
         "magento/module-csp": "*",
         "magento/module-aws-s3": "*",
         "magento/module-remote-storage": "*",
         "magento/module-jwt-framework-adapter": "*",
         "magento/module-jwt-user-token": "*"
-    },
-    "conflict": {
-        "gene/bluefoot": "*"
-    },
-    "extra": {
-        "component_paths": {
-            "trentrichardson/jquery-timepicker-addon": "lib/web/jquery/jquery-ui-timepicker-addon.js",
-            "components/jquery": [
-                "lib/web/jquery.js",
-                "lib/web/jquery/jquery.min.js"
-            ],
-            "components/jqueryui": [
-                "lib/web/jquery/jquery-ui.js"
-            ],
-            "twbs/bootstrap": [
-                "lib/web/jquery/jquery.tabs.js"
-            ]
-        }
     },
     "autoload": {
         "psr-4": {
