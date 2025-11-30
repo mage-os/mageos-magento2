@@ -7,6 +7,8 @@ declare(strict_types=1);
 
 use Magento\Catalog\Api\Data\ProductExtensionInterfaceFactory;
 use Magento\Catalog\Api\ProductRepositoryInterface;
+use Magento\Catalog\Model\Indexer\Category\Product\Processor as CategoryProductProcessor;
+use Magento\Catalog\Model\Indexer\Product\Category\Processor as ProductCategoryProcessor;
 use Magento\Catalog\Model\Product\Attribute\Source\Status;
 use Magento\Catalog\Model\Product\Type;
 use Magento\Catalog\Model\Product\Visibility;
@@ -35,6 +37,8 @@ $productFactory = $objectManager->get(ProductFactory::class);
 /** @var WebsiteRepositoryInterface $websiteRepository */
 $websiteRepository = $objectManager->get(WebsiteRepositoryInterface::class);
 $baseWebsite = $websiteRepository->get('base');
+$rootCategoryId = $baseWebsite->getDefaultStore()->getRootCategoryId();
+$productIds = [];
 $eavConfig = Bootstrap::getObjectManager()->get(Config::class);
 $attribute = $eavConfig->getAttribute(Product::ENTITY, 'test_configurable');
 /** @var AttributeOptionInterface[] $options */
@@ -54,6 +58,7 @@ foreach ($options as $option) {
     $product->setTypeId(Type::TYPE_SIMPLE)
         ->setAttributeSetId($product->getDefaultAttributeSetId())
         ->setWebsiteIds([$baseWebsite->getId()])
+        ->setCategoryIds([$rootCategoryId])
         ->setName('Configurable ' . $option->getLabel())
         ->setSku($productSku)
         ->setPrice($productPrice)
@@ -70,11 +75,15 @@ foreach ($options as $option) {
     ];
     $associatedProductIds[] = $product->getId();
 }
+
+$productIds[] = $product->getId();
+
 $product = $productFactory->create();
 $product->isObjectNew(true);
 $product->setTypeId(Configurable::TYPE_CODE)
     ->setAttributeSetId($product->getDefaultAttributeSetId())
     ->setWebsiteIds([$baseWebsite->getId()])
+    ->setCategoryIds([$rootCategoryId])
     ->setName('Configurable product with two child')
     ->setSku('Configurable product')
     ->setVisibility(Visibility::VISIBILITY_BOTH)
@@ -96,3 +105,10 @@ $extensionConfigurableAttributes->setConfigurableProductOptions($configurableOpt
 $extensionConfigurableAttributes->setConfigurableProductLinks($associatedProductIds);
 $product->setExtensionAttributes($extensionConfigurableAttributes);
 $productRepository->save($product);
+
+$productIds[] = $product->getId();
+
+Bootstrap::getObjectManager()->get(CategoryProductProcessor::class)
+    ->reindexList([$rootCategoryId]);
+Bootstrap::getObjectManager()->get(ProductCategoryProcessor::class)
+    ->reindexList($productIds);
