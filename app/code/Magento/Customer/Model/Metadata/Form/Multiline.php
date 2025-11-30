@@ -116,7 +116,7 @@ class Multiline extends Text
                 $output = implode("<br />", $values);
                 break;
             case ElementFactory::OUTPUT_FORMAT_ONELINE:
-                $output = implode(" ", $values);
+                $output = trim(implode(" ", $values), ' ');
                 break;
             default:
                 $output = implode("\n", $values);
