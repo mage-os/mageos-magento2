@@ -103,8 +103,6 @@ class TaxTest extends TestCase
      *
      */
     #[DataProvider('getCreditAndInvoiceFullTaxInfoDataProvider')]
-    /**
-     */
     public function testGetFullTaxInfoWithCreditAndInvoice($source, array $expectedResult): void
     {
         $source = $source($this);

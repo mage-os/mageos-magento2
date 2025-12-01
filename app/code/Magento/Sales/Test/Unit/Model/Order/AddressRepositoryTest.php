@@ -268,7 +268,8 @@ class AddressRepositoryTest extends TestCase
             ->method('getEntityId')
             ->willReturn(1);
 
-        $mapper = $this->createMock(AbstractDb::class, ['save']);
+        $mapper = $this->createPartialMock(AbstractDb::class, ['save', '_construct']);
+
         $mapper->expects($this->once())
             ->method('save')
             ->with($this->orderAddress);
@@ -292,15 +293,7 @@ class AddressRepositoryTest extends TestCase
         $this->orderAddress->expects($this->never())
             ->method('getEntityId');
 
-        $mapper = $this->createMock(
-            AbstractDb::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['save']
-        );
+        $mapper = $this->createPartialMock(AbstractDb::class, ['save', '_construct']);
         $mapper->expects($this->once())
             ->method('save')
             ->willThrowException(new \Exception('error'));
@@ -353,15 +346,7 @@ class AddressRepositoryTest extends TestCase
             ->method('getEntityId')
             ->willReturn(1);
 
-         $mapper = $this->createMock(
-             AbstractDb::class,
-             [],
-             '',
-             false,
-             true,
-             true,
-             ['save']
-         );
+         $mapper = $this->createPartialMock(AbstractDb::class, ['save', '_construct']);
          $mapper->method('save')
             ->with($orderAddress);
          $this->metadata->method('getMapper')

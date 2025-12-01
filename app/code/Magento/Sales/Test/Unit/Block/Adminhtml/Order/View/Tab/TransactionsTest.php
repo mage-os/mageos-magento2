@@ -124,8 +124,6 @@ class TransactionsTest extends TestCase
      * @param bool $expectedResult
      */
     #[DataProvider('isHiddenDataProvider')]
-    /**
-     */
     public function testIsHidden($isAllowed, $expectedResult)
     {
         $this->authorizationMock->expects($this->any())
