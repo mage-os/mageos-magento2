@@ -18,7 +18,6 @@
             <testCaseId value="AC-4423"/>
             <group value="sales"/>
             <group value="catalog"/>
-            <group value="custom_options"/>
         </annotations>
         <before>
             <!-- Step 1: Create simple product with file custom option via API -->
@@ -41,16 +40,13 @@
         <actionGroup ref="StorefrontOpenProductPageActionGroup" stepKey="openProductPageOnStorefront">
             <argument name="productUrl" value="$createProduct.custom_attributes[url_key]$"/>
         </actionGroup>
-        <waitForPageLoad stepKey="waitForProductPageLoad"/>
         <!-- Step 3: Upload any file and add product to cart -->
         <waitForElementVisible selector="{{StorefrontProductInfoMainSection.addLinkFileUploadFile(ProductOptionFile.title)}}" stepKey="waitForFileUploadField"/>
         <attachFile selector="{{StorefrontProductInfoMainSection.addLinkFileUploadFile(ProductOptionFile.title)}}" userInput="{{MagentoLogo.file}}" stepKey="attachFileToCustomOption"/>
         <waitForPageLoad stepKey="waitForFileUploaded"/>
         <actionGroup ref="StorefrontAddToTheCartActionGroup" stepKey="addProductToCart"/>
-        <waitForPageLoad stepKey="waitForProductAddedToCart"/>
         <!-- Step 4: Open the cart -->
         <actionGroup ref="StorefrontOpenCartFromMinicartActionGroup" stepKey="openShoppingCart"/>
-        <waitForPageLoad stepKey="waitForCartPageLoad"/>
         <!-- Step 4 Expected Result: The cart displays the product and the custom option as a clickable filename -->
         <waitForElementVisible selector="{{CheckoutCartProductSection.ProductLinkByName($createProduct.name$)}}" stepKey="waitForProductInCart"/>
         <waitForText selector="{{CheckoutCartProductSection.ProductLinkByName($createProduct.name$)}}" userInput="$createProduct.name$" stepKey="waitForProductNameInCart"/>
@@ -64,10 +60,8 @@
             <argument name="customerVar" value="CustomerEntityOne"/>
             <argument name="customerAddressVar" value="CustomerAddressSimple"/>
         </actionGroup>
-        <waitForPageLoad stepKey="waitForShippingMethodsLoad"/>
         <!-- Place order -->
         <actionGroup ref="ClickPlaceOrderActionGroup" stepKey="placeOrder"/>
-        <waitForPageLoad stepKey="waitForOrderPlaced"/>
         <!-- Get order ID -->
         <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber}}" stepKey="grabOrderId"/>
         <!-- Step 6: Open order from admin -->
