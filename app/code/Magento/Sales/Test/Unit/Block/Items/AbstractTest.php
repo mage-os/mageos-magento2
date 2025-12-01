@@ -68,8 +68,6 @@ class AbstractTest extends TestCase
      * @param string $expected
      */
     #[DataProvider('getItemHtmlDataProvider')]
-    /**
-     */
     public function testGetItemHtml(string $type, ?string $resolvedType, string $expected): void
     {
         $renderers = [

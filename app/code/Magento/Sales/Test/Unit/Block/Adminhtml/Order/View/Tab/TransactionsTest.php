@@ -95,8 +95,6 @@ class TransactionsTest extends TestCase
      * @depends testGetOrder
      */
     #[DataProvider('canShowTabDataProvider')]
-    /**
-     */
     public function testCanShowTab($methodClass, $expectedResult)
     {
         $methodInstance = $this->objectManager->getObject($methodClass);

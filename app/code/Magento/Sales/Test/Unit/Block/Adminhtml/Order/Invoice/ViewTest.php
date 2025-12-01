@@ -24,8 +24,6 @@ class ViewTest extends TestCase
      * @param bool $expectedResult
      */
     #[DataProvider('isPaymentReviewDataProvider')]
-    /**
-     */
     public function testIsPaymentReview($canReviewPayment, $canFetchUpdate, $expectedResult)
     {
         // Create order mock

@@ -205,15 +205,7 @@ class ShipmentRepositoryTest extends TestCase
             ->method('getEntityId')
             ->willReturn(1);
 
-        $mapper = $this->createMock(
-            AbstractDb::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['save']
-        );
+        $mapper = $this->createMock(AbstractDb::class);
         $mapper->expects($this->once())
             ->method('save')
             ->with($shipment);
@@ -233,15 +225,7 @@ class ShipmentRepositoryTest extends TestCase
         $shipment->expects($this->never())
             ->method('getEntityId');
 
-        $mapper = $this->createMock(
-            AbstractDb::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['save']
-        );
+        $mapper = $this->createMock(AbstractDb::class);
         $mapper->expects($this->once())
             ->method('save')
             ->willThrowException(new \Exception('error'));
@@ -260,15 +244,7 @@ class ShipmentRepositoryTest extends TestCase
         $shipment->expects($this->never())
             ->method('getEntityId');
 
-        $mapper = $this->createMock(
-            AbstractDb::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['save']
-        );
+        $mapper = $this->createMock(AbstractDb::class);
         $mapper->expects($this->once())
             ->method('save')
             ->willThrowException(new \Magento\Framework\Validator\Exception());

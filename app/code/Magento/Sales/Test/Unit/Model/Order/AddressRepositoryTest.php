@@ -268,15 +268,7 @@ class AddressRepositoryTest extends TestCase
             ->method('getEntityId')
             ->willReturn(1);
 
-        $mapper = $this->createMock(
-            AbstractDb::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['save']
-        );
+        $mapper = $this->createMock(AbstractDb::class, ['save']);
         $mapper->expects($this->once())
             ->method('save')
             ->with($this->orderAddress);

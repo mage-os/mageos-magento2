@@ -181,8 +181,6 @@ class ProcessDataTest extends TestCase
         ];
         $this->request->expects($this->atLeastOnce())->method('getPost')->willReturnMap($postReturnMap);
 
-        $create->expects($this->once())->method('importPostData')->willReturnSelf();
-        $create->expects($this->once())->method('initRuleData')->willReturnSelf();
         $create->expects($this->any())->method('getQuote')->willReturn($quote);
 
         $address = $this->createMock(Address::class);

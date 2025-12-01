@@ -46,8 +46,6 @@ class AbstractSidebarTest extends TestCase
      * @param int $expectedValue
      */
     #[DataProvider('getItemQtyDataProvider')]
-    /**
-     */
     public function testGetItemQty($itemQty, $qty, $expectedValue)
     {
         $this->itemMock->expects($this->exactly($itemQty))->method('getQty')->willReturn($qty);

@@ -78,8 +78,6 @@ class TaxTest extends TestCase
      *
      */
     #[DataProvider('getFullTaxInfoDataProvider')]
-    /**
-     */
     public function testGetFullTaxInfo($source, array $expectedResult): void
     {
         if ($source != null) {

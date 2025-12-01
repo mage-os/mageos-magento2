@@ -80,6 +80,33 @@ class OrderRepositoryTest extends TestCase
     private $shippingAssignmentBuilder;
 
     /**
+     * Create OrderExtensionInterface mock compatible with both PHPUnit 10 and 12
+     *
+     * @return MockObject
+     */
+    private function createOrderExtensionMock(): MockObject
+    {
+        // PHPUnit 10: Use getMockBuilder with addMethods for dynamic extension attributes
+        if (method_exists($this->getMockBuilder(OrderExtensionInterface::class), 'addMethods')) {
+            return $this->getMockBuilder(OrderExtensionInterface::class)
+                ->addMethods([
+                    'getShippingAssignments',
+                    'setShippingAssignments',
+                    'setAppliedTaxes',
+                    'setConvertingFromQuote',
+                    'setItemAppliedTaxes',
+                    'setPaymentAdditionalInfo'
+                ])
+                ->disableOriginalConstructor()
+                ->getMockForAbstractClass();
+        }
+
+        // PHPUnit 12: Use createMock for simple interface mocking
+        // Note: In PHPUnit 12, extension attributes should be properly typed in generated code
+        return $this->createMock(OrderExtensionInterface::class);
+    }
+
+    /**
      * Setup the test
      *
      * @return void
@@ -125,7 +152,7 @@ class OrderRepositoryTest extends TestCase
         $paymentMock = $this->createMock(OrderPaymentInterface::class);
         $paymentAdditionalInfo = $this->createMock(PaymentAdditionalInfoInterface::class);
 
-        $extensionAttributes = $this->createMock(OrderExtensionInterface::class);
+        $extensionAttributes = $this->createOrderExtensionMock();
         $shippingAssignmentBuilder = $this->createMock(
             ShippingAssignmentBuilder::class
         );
@@ -165,7 +192,7 @@ class OrderRepositoryTest extends TestCase
     {
         $mapperMock = $this->createMock(OrderResource::class);
         $orderEntity = $this->createMock(Order::class);
-        $extensionAttributes = $this->createMock(OrderExtensionInterface::class);
+        $extensionAttributes = $this->createOrderExtensionMock();
         $shippingAssignment = $this->createPartialMock(ShippingAssignment::class, ['getShipping']);
         $shippingMock = $this->createPartialMock(Shipping::class, ['getAddress', 'getMethod']);
         $orderEntity->expects($this->once())->method('getExtensionAttributes')->willReturn($extensionAttributes);
@@ -202,7 +229,7 @@ class OrderRepositoryTest extends TestCase
         $paymentMock = $this->createMock(OrderPaymentInterface::class);
         $paymentMock->expects($this->once())->method('getAdditionalInformation')->willReturn($paymentInfo);
 
-        $orderExtension = $this->createMock(OrderExtensionInterface::class);
+        $orderExtension = $this->createOrderExtensionMock();
         $orderExtension->expects($this->once())->method('getShippingAssignments')->willReturn(null);
         $orderExtension->expects($this->once())->method('setAppliedTaxes')->with($appliedTaxes);
         $orderExtension->expects($this->once())->method('setConvertingFromQuote')->with(false);

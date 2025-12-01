@@ -23,6 +23,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Element\AbstractBlock;
 use Magento\Framework\View\Layout;
 use Magento\Framework\View\LayoutInterface;
+use Magento\GiftMessage\Model\Save as GiftMessageSave;
 use Magento\Quote\Model\Quote\Address;
 use Magento\Quote\Model\Quote\Item;
 use Magento\Sales\Block\Adminhtml\Order\Create\Items\Grid;
@@ -112,7 +113,7 @@ class GridTest extends TestCase
         $sessionMock->expects($this->any())->method('getQuote')->willReturn($quoteMock);
         $wishlistFactoryMock = $this->createPartialMockWithReflection(WishlistFactory::class, ['methods']);
 
-        $giftMessageSave = $this->createMock(\Magento\Giftmessage\Model\Save::class);
+        $giftMessageSave = $this->createMock(GiftMessageSave::class);
 
         $taxConfig = $this->createMock(Config::class);
 
@@ -181,8 +182,6 @@ class GridTest extends TestCase
      * @param string $productType
      */
     #[DataProvider('tierPriceDataProvider')]
-    /**
-     */
     public function testTierPriceInfo($itemData, $expectedMessage, $productType)
     {
         $itemMock = $this->prepareItem($itemData, $productType);
@@ -392,8 +391,6 @@ class GridTest extends TestCase
      * @param float $expected
      */
     #[DataProvider('getSubtotalWithDiscountDataProvider')]
-    /**
-     */
     public function testGetSubtotalWithDiscount($orderData, $displayTotalsIncludeTax, $expected)
     {
         $quoteAddressMock = $this->createPartialMockWithReflection(

@@ -42,6 +42,8 @@ class TotalsTest extends TestCase
     protected function setUp(): void
     {
         $this->objectManager = new ObjectManager($this);
+        // Initialize ObjectManager to avoid "ObjectManager isn't initialized" errors
+        $this->objectManager->prepareObjectManager();
 
         $this->quoteMock = $this->createPartialMock(Quote::class, ['getCustomerNoteNotify']);
         $this->sessionQuoteMock = $this->createMock(\Magento\Backend\Model\Session\Quote::class);
@@ -63,8 +65,6 @@ class TotalsTest extends TestCase
      * @param bool $expectedResult
      */
     #[DataProvider('getNoteNotifyDataProvider')]
-    /**
-     */
     public function testGetNoteNotify($customerNoteNotify, $expectedResult)
     {
         $this->quoteMock->expects($this->any())

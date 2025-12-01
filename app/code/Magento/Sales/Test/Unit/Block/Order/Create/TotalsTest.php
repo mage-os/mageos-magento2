@@ -86,8 +86,6 @@ class TotalsTest extends TestCase
      * @return void
      */
     #[DataProvider('totalsDataProvider')]
-    /**
-     */
     public function testGetTotals(bool $isVirtual): void
     {
         $expected = 'expected';

@@ -44,8 +44,6 @@ class ViewTest extends TestCase
      * @param null|array $allowedTags
      */
     #[DataProvider('escapeHtmlDataProvider')]
-    /**
-     */
     public function testEscapeHtml($data, $expected, $allowedTags = null)
     {
         $this->adminHelperMock

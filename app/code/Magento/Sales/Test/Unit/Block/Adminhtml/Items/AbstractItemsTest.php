@@ -15,6 +15,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHe
 use Magento\Framework\View\Layout;
 use Magento\Sales\Block\Adminhtml\Items\AbstractItems;
 use Magento\Sales\Block\Adminhtml\Order\View\Items\Renderer\DefaultRenderer;
+use Magento\Sales\Model\Order\Creditmemo\Item as CreditmemoItem;
 use Magento\Store\Model\Store;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -141,14 +142,12 @@ class AbstractItemsTest extends TestCase
      * @return void
      */
     #[DataProvider('canReturnItemToStockDataProvider')]
-    /**
-     */
     public function testCanReturnItemToStock(bool $canReturnToStock, array $itemConfig, bool $result): void
     {
         $productId = $itemConfig['product_id'] ?? null;
         $manageStock = $itemConfig['manage_stock'] ?? false;
         $item = $this->createPartialMockWithReflection(
-            \Magento\Sales\Model\Order\Creditmemo\Item::class,
+            CreditmemoItem::class,
             array_merge(
                 ['hasCanReturnToStock', 'setCanReturnToStock', 'getCanReturnToStock'],
                 ['getOrderItem']

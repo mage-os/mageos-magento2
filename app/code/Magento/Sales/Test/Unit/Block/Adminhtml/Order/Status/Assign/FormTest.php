@@ -102,7 +102,7 @@ class FormTest extends TestCase
 
         $fieldset->method('addField')
             ->willReturnCallback(
-                function ($arg1, $arg2, $arg3) use ($statusesForField, $statesForField) {
+                function ($arg1, $arg2, $arg3) {
                     if ($arg1 === 'status' && $arg2 === 'select' && $arg3['name'] === 'status') {
                         return null;
                     } elseif ($arg1 === 'state' && $arg2 === 'select' && $arg3['name'] === 'state') {

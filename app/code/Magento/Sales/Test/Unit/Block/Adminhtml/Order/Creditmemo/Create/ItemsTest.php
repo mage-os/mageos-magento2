@@ -103,8 +103,6 @@ class ItemsTest extends TestCase
      * @param bool $result
      */
     #[DataProvider('canReturnItemsToStockDataProvider')]
-    /**
-     */
     public function testCanReturnItemsToStock($canReturnToStock, $manageStock, $result)
     {
         $productId = 7;

@@ -80,8 +80,6 @@ class AbstractCreateTest extends TestCase
      *
      */
     #[DataProvider('getProductDataProvider')]
-    /**
-     */
     public function testGetProduct($item)
     {
         $item = $item($this);

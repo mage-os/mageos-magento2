@@ -16,6 +16,7 @@ use Magento\Sales\Model\OrderFactory as SalesOrderFactory;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * Unit test for order item class.
@@ -25,6 +26,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
  */
 class ItemTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var Item
      */
@@ -391,8 +393,8 @@ class ItemTest extends TestCase
      *
      * @param array $data
      * @param bool $expected
-     * @dataProvider canInvoiceDataProvider
      */
+    #[DataProvider('canInvoiceDataProvider')]
     public function testCanInvoice(array $data, bool $expected)
     {
         $this->model->setData($data);
@@ -427,8 +429,8 @@ class ItemTest extends TestCase
      *
      * @param array $data
      * @param bool $expected
-     * @dataProvider canShipDataProvider
      */
+    #[DataProvider('canShipDataProvider')]
     public function testCanShip(array $data, bool $expected)
     {
         $this->model->setData($data);
@@ -463,8 +465,8 @@ class ItemTest extends TestCase
      *
      * @param array $data
      * @param bool $expected
-     * @dataProvider canRefundDataProvider
      */
+    #[DataProvider('canRefundDataProvider')]
     public function testCanRefund(array $data, bool $expected)
     {
         $this->model->setData($data);
@@ -499,8 +501,8 @@ class ItemTest extends TestCase
      *
      * @param array $data
      * @param float $expected
-     * @dataProvider getQtyToRefundDataProvider
      */
+    #[DataProvider('getQtyToRefundDataProvider')]
     public function testGetQtyToRefund(array $data, float $expected)
     {
         $this->model->setData($data);
@@ -624,8 +626,8 @@ class ItemTest extends TestCase
      *
      * @param string|null $code
      * @param mixed $expected
-     * @dataProvider getProductOptionByCodeDataProvider
      */
+    #[DataProvider('getProductOptionByCodeDataProvider')]
     public function testGetProductOptionByCode($code, $expected)
     {
         $options = [
@@ -717,8 +719,8 @@ class ItemTest extends TestCase
      * @param bool $hasParent
      * @param int|null $calculation
      * @param bool $expected
-     * @dataProvider isChildrenCalculatedDataProvider
      */
+    #[DataProvider('isChildrenCalculatedDataProvider')]
     public function testIsChildrenCalculated(bool $hasParent, ?int $calculation, bool $expected)
     {
         if ($hasParent) {
@@ -774,8 +776,8 @@ class ItemTest extends TestCase
      * @param bool $hasParent
      * @param int|null $shipmentType
      * @param bool $expected
-     * @dataProvider isShipSeparatelyDataProvider
      */
+    #[DataProvider('isShipSeparatelyDataProvider')]
     public function testIsShipSeparately(bool $hasParent, ?int $shipmentType, bool $expected)
     {
         if ($hasParent) {
@@ -830,8 +832,8 @@ class ItemTest extends TestCase
      *
      * @param array $setup
      * @param bool $expected
-     * @dataProvider isDummyShipmentDataProvider
      */
+    #[DataProvider('isDummyShipmentDataProvider')]
     public function testIsDummyForShipment(array $setup, bool $expected)
     {
         if (isset($setup['has_children'])) {
@@ -892,8 +894,8 @@ class ItemTest extends TestCase
      *
      * @param array $setup
      * @param bool $expected
-     * @dataProvider isDummyCalculationDataProvider
      */
+    #[DataProvider('isDummyCalculationDataProvider')]
     public function testIsDummyForCalculation(array $setup, bool $expected)
     {
         if (isset($setup['has_children'])) {
@@ -1165,14 +1167,9 @@ class ItemTest extends TestCase
      */
     public function testGetForceApplyDiscountToParentItemWithoutParent()
     {
-        $typeInstance = $this->getMockForAbstractClass(
+        $typeInstance = $this->createPartialMockWithReflection(
             \Magento\Catalog\Model\Product\Type\AbstractType::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['getForceApplyDiscountToParentItem']
+            ['getForceApplyDiscountToParentItem', 'deleteTypeSpecificData']
         );
         $typeInstance->expects($this->once())
             ->method('getForceApplyDiscountToParentItem')
@@ -1193,14 +1190,9 @@ class ItemTest extends TestCase
      */
     public function testGetForceApplyDiscountToParentItemWithParent()
     {
-        $typeInstance = $this->getMockForAbstractClass(
+        $typeInstance = $this->createPartialMockWithReflection(
             \Magento\Catalog\Model\Product\Type\AbstractType::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            ['getForceApplyDiscountToParentItem']
+            ['getForceApplyDiscountToParentItem', 'deleteTypeSpecificData']
         );
         $typeInstance->expects($this->once())
             ->method('getForceApplyDiscountToParentItem')
