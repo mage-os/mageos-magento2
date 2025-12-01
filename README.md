@@ -1,84 +1,184 @@
-
 <p align="center">
-<a href="https://www.codetriage.com/magento/magento2"><img src="https://www.codetriage.com/magento/magento2/badges/users.svg" alt="Open Source Helpers" /></a>
-<a href="https://gitter.im/magento/magento2?utm_source=badge&amp;utm_medium=badge&amp;utm_campaign=pr-badge"><img src="https://badges.gitter.im/Join%20Chat.svg" alt="Gitter" /></a> <a href="https://crowdin.com/project/magento-2"><img src="https://d322cqt584bo4o.cloudfront.net/magento-2/localized.svg" alt="Crowdin" /></a><br/>
-<a href="https://magento.com/products/magento-open-source">
-<img alt="Adobe logo" height="50px" src="https://www.adobe.com/content/dam/cc/icons/Adobe_Corporate_Horizontal_Red_HEX.svg"/>
-</a>
+  <a href="https://mage-os.org">
+    <img src="https://raw.githubusercontent.com/mage-os/mageos-magento2/refs/heads/main/lib/web/images/mage-os-logo.svg" alt="Mage-OS">
+  </a>
 </p>
 
-<h1 align="center">Magento Open Source</h1>
+[![Website](https://img.shields.io/badge/Website-mage--os.org-orange?style=for-the-badge)](https://mage-os.org)
+[![Discord](https://img.shields.io/badge/Discord-Join%20Community-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://mage-os.org/discord-channel/)
+[![License](https://img.shields.io/badge/License-OSL--3.0-blue?style=for-the-badge)](https://opensource.org/licenses/OSL-3.0)
 
-Welcome to the Magento Open Source project! [Magento Open Source](https://magento.com/products/magento-open-source) software delivers basic eCommerce capabilities to build a unique online store from the ground up.
+## 🚀 What is Mage-OS?
 
-However, for those who need a full-featured eCommerce solution, we recommend [Adobe Commerce](https://magento.com/products/magento-commerce), which includes our optimized cloud architecture and hosting as well as AI-powered merchandising and analytics.
+Mage-OS is an open-source eCommerce platform. It is an **independent distribution** of Magento™ Open Source, designed to be fully compatible with the existing ecosystem while moving faster to fix bugs, merge improvements, and modernize the technical stack.
 
-## Get started
+Mage-OS focuses on:
 
-- [Quick start install](https://experienceleague.adobe.com/docs/commerce-operations/installation-guide/composer.html)
-- [System requirements](https://experienceleague.adobe.com/docs/commerce-operations/installation-guide/system-requirements.html)
-- [Prerequisites](https://experienceleague.adobe.com/docs/commerce-operations/installation-guide/prerequisites/overview.html)
-- [More installation options](https://experienceleague.adobe.com/docs/commerce-operations/installation-guide/overview.html)
+- **Innovation:** Implementing new features and performance improvements that the community actually needs.
+- **Velocity:** Reducing the time and barriers from contribution to release.
+- **Compatibility:** Ensuring existing Magento 2 themes and extensions continue to work seamlessly.
+- **Open Governance:** Managed by the non-profit **Mage-OS Association**, ensuring the platform serves our users' best interests.
 
-## Get help
+[**Learn more at mage-os.org →**](https://mage-os.org)
 
-- [Help center](https://support.magento.com/hc/en-us)
+---
 
-## Contribute
+## 📦 About This Repository
 
-Our [Community](https://opensource.magento.com/) is large and diverse, and our project is enormous. As a contributor, you have countless opportunities to impact product development and delivery by introducing new features or improving existing ones, enhancing test coverage, updating documentation for [developers](https://developer.adobe.com/commerce/docs/) and [end-users](https://experienceleague.adobe.com/docs/commerce-admin/user-guides/home.html), catching and fixing code bugs, suggesting points for optimization, and sharing your great ideas.
+The `mageos-magento2` repository is the **canonical source code** for the Mage-OS distribution.
 
-- [Contribute to the code](https://developer.adobe.com/commerce/contributor/guides/code-contributions/)
-- [Report an issue](https://developer.adobe.com/commerce/contributor/guides/code-contributions/#report)
-- [Improve the developer documentation](https://github.com/magento/devdocs)
-- [Improve the end-user documentation](https://github.com/magento/merchdocs)
-- [Shape the future of Magento Open Source](https://developer.adobe.com/open/magento)
+This codebase is based on Magento Open Source, with independent management and revisions. It includes community-contributed fixes, performance enhancements, and features that may not exist yet (or ever) in Magento itself.
 
-### Maintainers
+**This repository is:**
 
-We encourage experts from the Community to help us with GitHub routines such as accepting, merging, or rejecting pull requests and reviewing issues. Adobe has granted the Community Maintainers permission to accept, merge, and reject pull requests, as well as review issues. Thanks to invaluable input from the Community Maintainers team, we can significantly improve contribution quality and accelerate the time to deliver your updates to production.
+- The core code used to generate Mage-OS Composer packages.
+- The place where core bug fixes and improvements are merged.
 
-- [Learn more about the Maintainer role](https://developer.adobe.com/commerce/contributor/guides/maintainers/)
-- [Maintainer's Handbook](https://developer.adobe.com/commerce/contributor/guides/maintainers/handbook/)
+**It is _not_:**
 
-[![](https://raw.githubusercontent.com/wiki/magento/magento2/images/maintainers.png)](https://magento.com/magento-contributors#maintainers)
+- A “kitchen sink” for all community extensions (see [Mage-OS Lab](#-mage-os-lab--innovation) instead).
+- The project root for your specific store (you should install via Composer).
 
-### Leaders
+---
 
-Adobe highly appreciates contributions that help us to improve the code, clarify the documentation, and increase test coverage. Check out our Community leaders, superstars, and superheroes on the [leaderboard](https://magento.biterg.io/app/kibana#/dashboard/41dc0c60-fa06-11eb-bbaa-dd6ca6f8fda8?_g=()).
+## 🛠️ Getting Started
 
-[![](https://raw.githubusercontent.com/wiki/magento/magento2/images/contributors.png)](https://magento.com/magento-contributors)
+### Installation
 
-### Labeling
+The recommended way to install Mage-OS is via Composer. This ensures you get the correct dependency tree and can easily upgrade in the future.
 
-We use labels in the GitHub issues and pull requests to help the participants retrieve additional information such as progress, component assignments, or release lines.
+```
+composer create-project --repository-url=https://repo.mage-os.org/ mage-os/project-community-edition .
+```
 
-- [Labels applied by the Community Engineering team](https://developer.adobe.com/commerce/contributor/guides/code-contributions/#labels)
+For detailed installation instructions, server configuration, and troubleshooting, visit the **[Official Mage-OS Documentation](https://devdocs.mage-os.org/docs/main)**.
 
-## Security
+### Upgrading
 
-[Security](https://developer.adobe.com/commerce/php/architecture/basics/security/) is one of the highest priorities at Adobe. To learn more about reporting security concerns, visit the [Adobe Bug Bounty Program](https://hackerone.com/adobe).
+Mage-OS maintains compatibility with upstream Magento versions while layering on improvements. We only support our latest release branch at any time, so we advise always staying up to date. Review the release notes before upgrading.
 
-Stay up-to-date on the latest security news and patches by signing up for [Security Alert Notifications](https://magento.com/security/sign-up).
+- **[View Release Notes](https://mage-os.org/releases/)**
+- **[Upgrade Guide](https://devdocs.mage-os.org/docs/main)**
 
-## Licensing
+### System Requirements
 
-Each Magento source file included in this distribution is licensed under OSL 3.0 or the terms and conditions of the applicable ordering document between Licensee/Customer and Adobe (or Magento).
+Mage-OS generally follows the same system requirements (PHP, MySQL, OpenSearch) as the equivalent version of Magento Open Source. Refer to the documentation for up-to-date details:
 
-[Open Software License (OSL 3.0)](https://opensource.org/licenses/osl-3.0.php) – Please see [LICENSE.txt](LICENSE.txt) for the full text of the OSL 3.0 license.
+- **[System Requirements](https://devdocs.mage-os.org/docs/main)**
 
-Subject to Licensee's/Customer's payment of fees and compliance with the terms and conditions of the applicable ordering document between Licensee/Customer and Adobe (or Magento), the terms and conditions of the applicable ordering between Licensee/Customer and Adobe (or Magento) supersede the OSL 3.0 license for each source file.
+---
 
-## Communications
+## 🤝 Contributing to the Core
 
-We are dedicated to our Community and encourage your contributions and welcome feedback through [events](https://www.adobe.io/open/magento/calendar), our [DevBlog](https://community.magento.com/t5/Magento-DevBlog/bg-p/devblog), Twitter and YouTube channels, and [other Community resources](https://developer.adobe.com/commerce/contributor/community/).
+Mage-OS is built by people like you. Contributions of all sizes are welcome, anything from typo fixes to major architectural improvements.
 
-To connect with people from the Community and Adobe engineering, [join us in Slack](https://magentocommeng.slack.com). We have a channel for every project. To join a particular channel, send us a request at [engcom@adobe.com](mailto:engcom@adobe.com), or [sign up](https://opensource.magento.com/slack).
+If you have any questions or concerns first, please open an issue or join our community chat.
 
-- [Popular Slack channels](https://www.adobe.io/open/magento/slack)
+### Reporting Issues & Security Concerns
 
-If you are a new Community member, check out the following channels:
+- Use **[GitHub Issues](https://github.com/mage-os/mageos-magento2/issues)** for bugs and feature requests.
+    - Include clear reproduction steps, affected versions, and environment details.
+- For security-sensitive issues, please refer to:
+    - **[Security Policy](SECURITY.md)**
+    - Or contact: `security@mage-os.org`
 
-- [general](https://magentocommeng.slack.com/archives/C4YS78WE6) is an open chat for introductions and Magento 2 questions
-- [github](https://magentocommeng.slack.com/archives/C7KB93M32) is a support channel for GitHub issues, pull requests, and processes
-- [public-backlog](https://magentocommeng.slack.com/archives/CCV3J3RV5) for discussions of the backlog
+### Contributing Code (Pull Requests)
+
+- Open PRs directly against this repository.
+- Keep changes focused and well-scoped.
+- Include tests where appropriate and avoid unnecessary breaking changes.
+- Follow the **[Coding Standards](https://devdocs.mage-os.org/docs/main/magento-2-coding-standards)**
+
+---
+
+## 🔌 Extensions, Themes & Integrations
+
+Mage-OS is designed to work with the broader Magento ecosystem.
+
+- Extensions, themes, and integrations are typically maintained in **separate Composer packages**.
+- They may live under the Mage-OS organization or in vendor-owned repositories.
+- For experimental or early-stage ideas, see **Mage-OS Lab**.
+
+If you want to build an extension or theme that aligns closely with Mage-OS goals, we can help you with best practices and guidance.
+
+---
+
+## 🔬 Mage-OS Lab & Innovation
+
+### 🧪 Mage-OS Lab
+
+- **[Mage-OS Lab @ GitHub →](https://github.com/mage-os-lab)**  
+  The innovation hub for experimental projects and forward-looking ideas. This is where new tools, modules, and approaches are created and tested.
+
+### 🌱 Graduated Lab Projects
+
+- **[Graduated Mage-OS Lab Projects →](https://github.com/mage-os?q=topic%3Amage-os-lab)**  
+  A curated set of projects that started in Mage-OS Lab and have matured into stable, ecosystem-ready solutions. Many of these are a bundled part of the Mage-OS Distribution.
+
+---
+
+## 🧰 Related Repositories & Tools
+
+Mage-OS includes tooling to support distribution, CI, and ecosystem workflows.
+
+- **Mage-OS GitHub Organization**  
+  - https://github.com/mage-os
+  - Contains all Mage-OS repositories and related tools, and mirror copies of each Magento repository.
+
+- **Release & Mirror Generator**  
+  - **Repo:** https://github.com/mage-os/generate-mirror-repo-js/  
+  - Generates Composer packages, repositories, and releases from this codebase.
+
+- **Magento / Mage-OS GitHub Actions**  
+  - **Repo:** https://github.com/mage-os/github-actions  
+  - Reusable CI building blocks for Mage-OS and Magento 2 projects.
+
+For more projects, visit the [community modules directory](https://mage-os.org/community-modules-directory/).
+
+---
+
+## 💬 Community & Support
+
+Join the global Mage-OS community:
+
+- **Discord (chat & support):** https://mage-os.org/discord-channel/  
+- **Website:** https://mage-os.org  
+- **Events:** https://mage-os.org/community/magento-events/  
+
+Our active Discord server has channels for #tech discussion, chat, #help, and more. You can browse at the link above.
+
+---
+
+## 🏛️ Governance & Membership
+
+Mage-OS is a project of the **Mage-OS Association**, a non-profit organization that provides open governance and long-term stewardship.
+
+- Decisions are made transparently with community input.
+- Memberships fund infrastructure, development, and community initiatives.
+
+Learn more and become a member:
+
+- **[Membership Levels](https://mage-os.org/about/mage-os-membership/)**  
+- **[About the Association](https://mage-os.org/about/)**  
+
+---
+
+## 🙌 Contributors & Acknowledgements
+
+Mage-OS exists thanks to:
+
+- Individual contributors from around the world.
+- Agencies, extension vendors, and hosting providers investing their time, money, and expertise.
+- The extensive past and ongoing work of Adobe and the Magento Open Source community.
+
+You can view the current list of contributors here:
+
+- **[Contributors Graph](https://github.com/mage-os/mageos-magento2/graphs/contributors)**
+
+---
+
+## ⚖️ License & Legal
+
+The code in this repository is dual-licensed under the **[Open Software License (OSL 3.0)](LICENSE.txt)** and **[Academic Free License (AFL 3.0)](LICENSE_AFL.txt)**, in line with the original Magento Open Source licensing.
+
+_Magento® is a registered trademark of Adobe Inc. Mage-OS is not affiliated with Adobe or Magento Open Source in any way._
