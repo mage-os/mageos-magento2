@@ -9,7 +9,6 @@ namespace Magento\Catalog\Test\Unit\Block\Adminhtml\Category\Helper;
 
 use Magento\Catalog\Block\Adminhtml\Category\Helper\Pricestep;
 use Magento\Framework\Data\Form;
-use Magento\Framework\View\Helper\SecureHtmlRenderer;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -19,9 +18,9 @@ use PHPUnit\Framework\TestCase;
 class PricestepTest extends TestCase
 {
     /**
-     * @var Pricestep|MockObject
+     * @var Pricestep
      */
-    private $model;
+    private Pricestep $model;
 
     /**
      * @var Form|MockObject
@@ -29,16 +28,10 @@ class PricestepTest extends TestCase
     private $formMock;
 
     /**
-     * @var SecureHtmlRenderer|MockObject
-     */
-    private $secureRendererMock;
-
-    /**
      * @inheritdoc
      */
     protected function setUp(): void
     {
-        $this->secureRendererMock = $this->createMock(SecureHtmlRenderer::class);
         $this->formMock = $this->getMockBuilder(Form::class)
             ->disableOriginalConstructor()
             ->addMethods(['getHtmlIdPrefix', 'getFieldNameSuffix', 'getHtmlIdSuffix'])
@@ -50,7 +43,9 @@ class PricestepTest extends TestCase
         $this->formMock->method('getHtmlIdSuffix')->willReturn('');
         $this->formMock->method('addSuffixToName')->willReturnArgument(0);
 
-        // Create a partial mock to avoid parent constructor issues
+        // Create object with mocked dependencies
+        // Note: Using getMockBuilder with disableOriginalConstructor to avoid parent constructor
+        // ObjectManager::getInstance() calls, which are not available in unit tests
         $this->model = $this->getMockBuilder(Pricestep::class)
             ->disableOriginalConstructor()
             ->onlyMethods([])
@@ -82,8 +77,8 @@ class PricestepTest extends TestCase
         $testData = ['html_id' => 'test', 'id' => 'price_id'];
         $this->model->setData($testData);
         
-        $this->assertEquals('test', $this->model->getData('html_id'));
-        $this->assertEquals('price_id', $this->model->getData('id'));
+        $this->assertSame('test', $this->model->getData('html_id'));
+        $this->assertSame('price_id', $this->model->getData('id'));
     }
 
     /**

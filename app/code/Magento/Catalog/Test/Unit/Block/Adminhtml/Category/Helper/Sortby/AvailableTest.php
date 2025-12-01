@@ -27,7 +27,7 @@ class AvailableTest extends TestCase
     /**
      * @var Available
      */
-    private $model;
+    private Available $model;
 
     /**
      * @var Factory|MockObject
@@ -107,7 +107,7 @@ class AvailableTest extends TestCase
                 'factoryElement' => $this->factoryElementMock,
                 'factoryCollection' => $this->factoryCollectionMock,
                 'escaper' => $this->escaperMock,
-                'data' => [],
+                'data' => ['html_id' => 'default_test_id'],
                 'secureRenderer' => $this->secureRendererMock,
                 'random' => $this->randomMock
             ]
@@ -201,5 +201,22 @@ class AvailableTest extends TestCase
     public function testModelInstantiation(): void
     {
         $this->assertInstanceOf(Available::class, $this->model);
+    }
+
+    /**
+     * Test getToggleCode method returns correct JavaScript code
+     *
+     * @return void
+     */
+    public function testGetToggleCode(): void
+    {
+        $result = $this->model->getToggleCode();
+
+        $this->assertIsString($result);
+        $this->assertStringContainsString('toggleValueElements', $result);
+        $this->assertStringContainsString('use_config_', $result);
+        $this->assertStringContainsString('parentNode.parentNode', $result);
+        $this->assertStringContainsString('this.checked', $result);
+        $this->assertStringContainsString('if (!this.checked)', $result);
     }
 }

@@ -20,9 +20,9 @@ use PHPUnit\Framework\TestCase;
 class ImageTest extends TestCase
 {
     /**
-     * @var Image|MockObject
+     * @var Image
      */
-    private $model;
+    private Image $model;
 
     /**
      * @var StoreManagerInterface|MockObject
@@ -44,13 +44,15 @@ class ImageTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        // Create a partial mock to avoid parent constructor issues
+        // Create object with mocked dependencies
+        // Note: Using getMockBuilder with disableOriginalConstructor to avoid parent constructor
+        // ObjectManager::getInstance() calls, which are not available in unit tests
         $this->model = $this->getMockBuilder(Image::class)
             ->disableOriginalConstructor()
             ->onlyMethods([])
             ->getMock();
 
-        // Use reflection to inject the storeManager dependency
+        // Inject the storeManager dependency using reflection
         $reflection = new \ReflectionClass($this->model);
         $property = $reflection->getProperty('_storeManager');
         $property->setAccessible(true);
@@ -66,7 +68,6 @@ class ImageTest extends TestCase
     {
         $this->model->setValue(null);
 
-        // Use reflection to access protected method
         $reflection = new \ReflectionClass($this->model);
         $method = $reflection->getMethod('_getUrl');
         $method->setAccessible(true);
@@ -98,7 +99,6 @@ class ImageTest extends TestCase
             ->with(UrlInterface::URL_TYPE_MEDIA)
             ->willReturn($baseUrl);
 
-        // Use reflection to access protected method
         $reflection = new \ReflectionClass($this->model);
         $method = $reflection->getMethod('_getUrl');
         $method->setAccessible(true);
@@ -131,7 +131,6 @@ class ImageTest extends TestCase
             ->with(UrlInterface::URL_TYPE_MEDIA)
             ->willReturn($baseUrl);
 
-        // Use reflection to access protected method
         $reflection = new \ReflectionClass($this->model);
         $method = $reflection->getMethod('_getUrl');
         $method->setAccessible(true);
@@ -150,7 +149,6 @@ class ImageTest extends TestCase
     {
         $this->model->setValue('');
 
-        // Use reflection to access protected method
         $reflection = new \ReflectionClass($this->model);
         $method = $reflection->getMethod('_getUrl');
         $method->setAccessible(true);
@@ -177,7 +175,6 @@ class ImageTest extends TestCase
             ->method('getBaseUrl')
             ->willReturn('http://example.com/media/');
 
-        // Use reflection to access protected method
         $reflection = new \ReflectionClass($this->model);
         $method = $reflection->getMethod('_getUrl');
         $method->setAccessible(true);
