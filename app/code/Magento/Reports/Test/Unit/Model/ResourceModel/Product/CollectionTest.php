@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Reports\Test\Unit\Model\ResourceModel\Product;
 
+use Magento\Framework\Data\Collection\ArrayIterator;
 use Magento\Catalog\Model\Indexer\Product\Flat\State;
 use Magento\Catalog\Model\Product\Attribute\DefaultAttributes;
 use Magento\Catalog\Model\Product\OptionFactory;
@@ -29,7 +30,6 @@ use Magento\Framework\Data\Collection\EntityFactory;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Select;
 use Magento\Framework\Event\ManagerInterface;
-use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
 use Magento\Framework\Module\Manager as Manager;
 use Magento\Framework\Stdlib\DateTime;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
@@ -219,7 +219,7 @@ class CollectionTest extends TestCase
             ->willReturn([$eventTypeMock]);
         $eventTypesCollection->expects($this->any())
             ->method('getIterator')
-            ->willReturn(new \ArrayIterator([$eventTypeMock]));
+            ->willReturn(new ArrayIterator([$eventTypeMock]));
 
         $this->eventTypeFactoryMock->expects($this->once())
             ->method('create')

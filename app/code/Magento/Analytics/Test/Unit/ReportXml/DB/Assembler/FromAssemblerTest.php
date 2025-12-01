@@ -82,14 +82,11 @@ class FromAssemblerTest extends TestCase
     }
 
     /**
-     *
-     */
-    #[DataProvider('assembleDataProvider')]
-    /**
      * @param array $queryConfig
      * @param string $tableName
      * @return void
      */
+    #[DataProvider('assembleDataProvider')]
     public function testAssemble(array $queryConfig, $tableName)
     {
         $this->nameResolverMock

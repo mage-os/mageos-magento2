@@ -119,11 +119,9 @@ class UpdateTest extends TestCase
      * @param $counterData
      * @return void
      *
-     */
-    #[DataProvider('executeWithEmptyReverseCounterDataProvider')]
-    /**
      * @throws NotFoundException
      */
+    #[DataProvider('executeWithEmptyReverseCounterDataProvider')]
     public function testExecuteWithEmptyReverseCounter($counterData)
     {
         $this->flagManagerMock
@@ -162,11 +160,9 @@ class UpdateTest extends TestCase
      * @param bool $functionResult
      * @return void
      *
-     */
-    #[DataProvider('executeRegularScenarioDataProvider')]
-    /**
      * @throws NotFoundException
      */
+    #[DataProvider('executeRegularScenarioDataProvider')]
     public function testExecuteRegularScenario(
         int $reverseCount,
         bool $commandResult,
