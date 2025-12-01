@@ -15,29 +15,19 @@ use Magento\Framework\Validator\AbstractValidator;
 class MessageValidator extends AbstractValidator
 {
     /**
-     * Suspicious patterns that suggest code injection attempts.
+     * Patterns that indicate template injection or code execution attempts.
      */
     private const FORBIDDEN_PATTERNS = [
-        // Any HTML tags (XSS/script injection)
-        '/<[^>]+>/',
-    
-        // PHP/server-side execution attempts
-        '/<\?(php|=)?/i',
-        '/\b(system|exec|passthru|shell_exec|eval|assert)\s*\(/i',
-    
-        // Template injection
+        // Template directives (Magento, Twig, Mustache, etc.)
         '/\{\{.*?\}\}/s',
         '/\{%.*?%\}/s',
     
-        // JS protocol / event handlers
-        '/javascript:/i',
-        '/on\w+\s*=/i',
+        // Server-side code execution
+        '/<\?/i',
         
-        // Magento template object access patterns (method chaining with dots and parentheses)
-        '/this\s*\.\s*\w+\s*\(/i',
-        '/getTemplateFilter/i',
-        '/\.\s*filter\s*\(/i',
-        '/addAfterFilterCallback/i'
+        // Template filter/processor access (Magento-specific)
+        '/\bthis\s*\.\s*get\w+/i',
+        '/TemplateFilter|FilterCallback/i',
     ];
 
     /**

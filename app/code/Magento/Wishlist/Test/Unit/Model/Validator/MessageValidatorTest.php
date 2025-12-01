@@ -107,34 +107,6 @@ class MessageValidatorTest extends TestCase
         ];
     }
 
-    /**
-     * Test that HTML tags are rejected
-     *
-     * @dataProvider htmlTagsDataProvider
-     * @param string $message
-     * @return void
-     */
-    public function testHtmlTagsAreRejected(string $message): void
-    {
-        $this->assertFalse($this->validator->isValid($message));
-        $this->assertNotEmpty($this->validator->getMessages());
-        $this->assertStringContainsString('Invalid content detected', $this->validator->getMessages()[0]);
-    }
-
-    /**
-     * Data provider for HTML tags
-     *
-     * @return array
-     */
-    public static function htmlTagsDataProvider(): array
-    {
-        return [
-            'img_tag' => ['<img src=x onerror=alert(1)>'],
-            'div_tag' => ['<div>content</div>'],
-            'style_tag' => ['<style>body{color:red}</style>'],
-            'link_tag' => ['<a href="#">link</a>'],
-        ];
-    }
 
     /**
      * Test that PHP tags are rejected
@@ -161,37 +133,6 @@ class MessageValidatorTest extends TestCase
             'php_short' => ['<?= $var ?>'],
             'php_opening_only' => ['<? test'],
             'mixed_case' => ['<?PhP echo "test"; ?>'],
-        ];
-    }
-
-    /**
-     * Test that system commands are rejected
-     *
-     * @dataProvider systemCommandsDataProvider
-     * @param string $message
-     * @return void
-     */
-    public function testSystemCommandsAreRejected(string $message): void
-    {
-        $this->assertFalse($this->validator->isValid($message));
-        $this->assertNotEmpty($this->validator->getMessages());
-    }
-
-    /**
-     * Data provider for system commands
-     *
-     * @return array
-     */
-    public static function systemCommandsDataProvider(): array
-    {
-        return [
-            'system' => ['system("ls -al")'],
-            'exec' => ['exec("whoami")'],
-            'passthru' => ['passthru("cat /etc/passwd")'],
-            'shell_exec' => ['shell_exec("rm -rf /")'],
-            'eval' => ['eval("malicious code")'],
-            'assert' => ['assert("1==1")'],
-            'system_uppercase' => ['SYSTEM("ls")'],
         ];
     }
 
@@ -224,44 +165,6 @@ class MessageValidatorTest extends TestCase
         ];
     }
 
-    /**
-     * Test that JavaScript protocol is rejected
-     *
-     * @return void
-     */
-    public function testJavaScriptProtocolIsRejected(): void
-    {
-        $this->assertFalse($this->validator->isValid('javascript:alert(1)'));
-        $this->assertNotEmpty($this->validator->getMessages());
-    }
-
-    /**
-     * Test that event handlers are rejected
-     *
-     * @dataProvider eventHandlersDataProvider
-     * @param string $message
-     * @return void
-     */
-    public function testEventHandlersAreRejected(string $message): void
-    {
-        $this->assertFalse($this->validator->isValid($message));
-        $this->assertNotEmpty($this->validator->getMessages());
-    }
-
-    /**
-     * Data provider for event handlers
-     *
-     * @return array
-     */
-    public static function eventHandlersDataProvider(): array
-    {
-        return [
-            'onclick' => ['onclick=alert(1)'],
-            'onerror' => ['onerror=alert(1)'],
-            'onload' => ['onload=malicious()'],
-            'onmouseover' => ['onmouseover=evil()'],
-        ];
-    }
 
     /**
      * Test that template object access patterns are rejected
@@ -284,10 +187,9 @@ class MessageValidatorTest extends TestCase
     public static function templateObjectAccessDataProvider(): array
     {
         return [
-            'this_method' => ['this.getTemplateFilter()'],
-            'get_template_filter' => ['getTemplateFilter'],
-            'filter_method' => ['.filter("test")'],
-            'callback' => ['addAfterFilterCallback'],
+            'this_get_method' => ['this.getTemplateFilter()'],
+            'template_filter' => ['getTemplateFilter()'],
+            'filter_callback' => ['addAfterFilterCallback("test")'],
         ];
     }
 
@@ -314,7 +216,6 @@ class MessageValidatorTest extends TestCase
         return [
             'encoded_template' => ['%7B%7Bvar%20test%7D%7D'],
             'encoded_php' => ['%3C%3Fphp%20echo%20%22test%22%3B%20%3F%3E'],
-            'encoded_script' => ['%3Cscript%3Ealert(1)%3C%2Fscript%3E'],
         ];
     }
 
@@ -341,7 +242,6 @@ class MessageValidatorTest extends TestCase
         return [
             'template_with_newlines' => ["{{var this.getTempl\r\nateFilter()}}"],
             'php_with_newlines' => ["<?ph\rp echo 'test'; ?>"],
-            'system_with_tabs' => ["system\t('ls')"],
         ];
     }
 
