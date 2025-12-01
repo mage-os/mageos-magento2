@@ -18,13 +18,13 @@ class MessageValidator extends AbstractValidator
      * Patterns that indicate template injection or code execution attempts.
      */
     private const FORBIDDEN_PATTERNS = [
-        // Template directives (Magento, Twig, Mustache, etc.)
+        // Template directives
         '/\{\{.*?\}\}/s',
         '/\{%.*?%\}/s',
     
         // Server-side code execution
         '/<\?/i',
-        
+
         // Template filter/processor access (Magento-specific)
         '/\bthis\s*\.\s*get\w+/i',
         '/TemplateFilter|FilterCallback/i',

@@ -107,7 +107,6 @@ class MessageValidatorTest extends TestCase
         ];
     }
 
-
     /**
      * Test that PHP tags are rejected
      *
@@ -164,7 +163,6 @@ class MessageValidatorTest extends TestCase
             'complex_directive' => ['{{var this.getTemplateFilter().filter("ls -al")}}'],
         ];
     }
-
 
     /**
      * Test that template object access patterns are rejected
