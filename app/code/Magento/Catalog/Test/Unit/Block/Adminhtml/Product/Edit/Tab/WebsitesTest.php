@@ -349,123 +349,126 @@ class WebsitesTest extends TestCase
     public static function getChooseFromStoreHtmlDataProvider(): array
     {
         return [
-            'basic_structure' => [
-                'productWebsites' => [1],
-                'websiteData' => [
-                    ['id' => 1, 'name' => 'Main Website']
-                ],
-                'groupData' => [
-                    ['id' => 1, 'name' => 'Main Store', 'website_id' => 1]
-                ],
-                'storeData' => [
-                    ['id' => 1, 'name' => 'Default Store View', 'group_id' => 1]
-                ],
-                'targetStoreId' => 2,
-                'expectedContains' => [
-                    '<select',
-                    'name="copy_to_stores[2]"',
-                    'disabled="disabled"',
-                    '<option value="0">Default Values</option>',
-                    'Main Website',
-                    'Main Store',
-                    'Default Store View',
-                    '<option value="1">',
-                    '</optgroup>',
-                    '</select>'
-                ],
-                'expectedNotContains' => []
+            'basic_structure' => self::getBasicStructureData(),
+            'multiple_groups' => self::getMultipleGroupsData(),
+            'skips_unassigned_websites' => self::getSkipsUnassignedWebsitesData(),
+            'no_websites_assigned' => self::getNoWebsitesAssignedData(),
+            'html_escaping' => self::getHtmlEscapingData()
+        ];
+    }
+
+    /**
+     * Basic structure test data.
+     *
+     * @return array
+     */
+    private static function getBasicStructureData(): array
+    {
+        return [
+            'productWebsites' => [1],
+            'websiteData' => [['id' => 1, 'name' => 'Main Website']],
+            'groupData' => [['id' => 1, 'name' => 'Main Store', 'website_id' => 1]],
+            'storeData' => [['id' => 1, 'name' => 'Default Store View', 'group_id' => 1]],
+            'targetStoreId' => 2,
+            'expectedContains' => [
+                '<select', 'name="copy_to_stores[2]"', 'disabled="disabled"',
+                '<option value="0">Default Values</option>', 'Main Website',
+                'Main Store', 'Default Store View', '<option value="1">',
+                '</optgroup>', '</select>'
             ],
-            'multiple_groups' => [
-                'productWebsites' => [1],
-                'websiteData' => [
-                    ['id' => 1, 'name' => 'Main Website']
-                ],
-                'groupData' => [
-                    ['id' => 1, 'name' => 'Store Group 1', 'website_id' => 1],
-                    ['id' => 2, 'name' => 'Store Group 2', 'website_id' => 1]
-                ],
-                'storeData' => [
-                    ['id' => 1, 'name' => 'Store 1', 'group_id' => 1],
-                    ['id' => 2, 'name' => 'Store 2', 'group_id' => 2]
-                ],
-                'targetStoreId' => 5,
-                'expectedContains' => [
-                    'Main Website',
-                    'Store Group 1',
-                    'Store Group 2',
-                    'Store 1',
-                    'Store 2',
-                    '<option value="1">',
-                    '<option value="2">',
-                    'name="copy_to_stores[5]"',
-                    '</optgroup>',
-                    '</select>'
-                ],
-                'expectedNotContains' => []
+            'expectedNotContains' => []
+        ];
+    }
+
+    /**
+     * Multiple groups test data.
+     *
+     * @return array
+     */
+    private static function getMultipleGroupsData(): array
+    {
+        return [
+            'productWebsites' => [1],
+            'websiteData' => [['id' => 1, 'name' => 'Main Website']],
+            'groupData' => [
+                ['id' => 1, 'name' => 'Store Group 1', 'website_id' => 1],
+                ['id' => 2, 'name' => 'Store Group 2', 'website_id' => 1]
             ],
-            'skips_unassigned_websites' => [
-                'productWebsites' => [1],
-                'websiteData' => [
-                    ['id' => 1, 'name' => 'Assigned Website'],
-                    ['id' => 2, 'name' => 'Skipped Website']
-                ],
-                'groupData' => [
-                    ['id' => 1, 'name' => 'Main Store', 'website_id' => 1]
-                ],
-                'storeData' => [
-                    ['id' => 1, 'name' => 'Default Store View', 'group_id' => 1]
-                ],
-                'targetStoreId' => 2,
-                'expectedContains' => [
-                    'Assigned Website',
-                    'Main Store',
-                    'Default Store View'
-                ],
-                'expectedNotContains' => [
-                    'Skipped Website'
-                ]
+            'storeData' => [
+                ['id' => 1, 'name' => 'Store 1', 'group_id' => 1],
+                ['id' => 2, 'name' => 'Store 2', 'group_id' => 2]
             ],
-            'no_websites_assigned' => [
-                'productWebsites' => [],
-                'websiteData' => [
-                    ['id' => 1, 'name' => 'Unassigned Website']
-                ],
-                'groupData' => [],
-                'storeData' => [],
-                'targetStoreId' => 1,
-                'expectedContains' => [
-                    '<select',
-                    'Default Values',
-                    '</select>'
-                ],
-                'expectedNotContains' => [
-                    'Unassigned Website'
-                ]
+            'targetStoreId' => 5,
+            'expectedContains' => [
+                'Main Website', 'Store Group 1', 'Store Group 2', 'Store 1',
+                'Store 2', '<option value="1">', '<option value="2">',
+                'name="copy_to_stores[5]"', '</optgroup>', '</select>'
             ],
-            'html_escaping' => [
-                'productWebsites' => [1],
-                'websiteData' => [
-                    ['id' => 1, 'name' => '<script type="text/x-magento-init">alert("xss")</script>']
-                ],
-                'groupData' => [
-                    ['id' => 1, 'name' => '<b>Bold Store</b>', 'website_id' => 1]
-                ],
-                'storeData' => [
-                    ['id' => 1, 'name' => '"Quoted Store"', 'group_id' => 1]
-                ],
-                'targetStoreId' => 2,
-                'expectedContains' => [
-                    '&lt;script type=&quot;text/x-magento-init&quot;&gt;alert(&quot;xss&quot;)&lt;/script&gt;',
-                    '&lt;b&gt;Bold Store&lt;/b&gt;',
-                    '&quot;Quoted Store&quot;',
-                    '</optgroup>',
-                    '</select>',
-                    'name="copy_to_stores[2]"'
-                ],
-                'expectedNotContains' => [
-                    '<script type="text/x-magento-init">alert',
-                    '<b>Bold Store</b>'
-                ]
+            'expectedNotContains' => []
+        ];
+    }
+
+    /**
+     * Skips unassigned websites test data.
+     *
+     * @return array
+     */
+    private static function getSkipsUnassignedWebsitesData(): array
+    {
+        return [
+            'productWebsites' => [1],
+            'websiteData' => [
+                ['id' => 1, 'name' => 'Assigned Website'],
+                ['id' => 2, 'name' => 'Skipped Website']
+            ],
+            'groupData' => [['id' => 1, 'name' => 'Main Store', 'website_id' => 1]],
+            'storeData' => [['id' => 1, 'name' => 'Default Store View', 'group_id' => 1]],
+            'targetStoreId' => 2,
+            'expectedContains' => ['Assigned Website', 'Main Store', 'Default Store View'],
+            'expectedNotContains' => ['Skipped Website']
+        ];
+    }
+
+    /**
+     * No websites assigned test data.
+     *
+     * @return array
+     */
+    private static function getNoWebsitesAssignedData(): array
+    {
+        return [
+            'productWebsites' => [],
+            'websiteData' => [['id' => 1, 'name' => 'Unassigned Website']],
+            'groupData' => [],
+            'storeData' => [],
+            'targetStoreId' => 1,
+            'expectedContains' => ['<select', 'Default Values', '</select>'],
+            'expectedNotContains' => ['Unassigned Website']
+        ];
+    }
+
+    /**
+     * HTML escaping test data.
+     *
+     * @return array
+     */
+    private static function getHtmlEscapingData(): array
+    {
+        return [
+            'productWebsites' => [1],
+            'websiteData' => [
+                ['id' => 1, 'name' => '<script type="text/x-magento-init">alert("xss")</script>']
+            ],
+            'groupData' => [['id' => 1, 'name' => '<b>Bold Store</b>', 'website_id' => 1]],
+            'storeData' => [['id' => 1, 'name' => '"Quoted Store"', 'group_id' => 1]],
+            'targetStoreId' => 2,
+            'expectedContains' => [
+                '&lt;script type=&quot;text/x-magento-init&quot;&gt;alert(&quot;xss&quot;)&lt;/script&gt;',
+                '&lt;b&gt;Bold Store&lt;/b&gt;', '&quot;Quoted Store&quot;',
+                '</optgroup>', '</select>', 'name="copy_to_stores[2]"'
+            ],
+            'expectedNotContains' => [
+                '<script type="text/x-magento-init">alert', '<b>Bold Store</b>'
             ]
         ];
     }
