@@ -20,10 +20,17 @@
         </annotations>
         <before>
             <!-- Pre-condition 1: Create dropdown attribute with label 'select' -->
-            <createData entity="productDropDownAttribute" stepKey="createDropdownAttr">
+            <createData entity="dropdownProductAttribute" stepKey="createDropdownAttr">
                 <field key="default_frontend_label">'select'</field>
             </createData>
-            <!-- Pre-condition 2: Assign created attribute to Default attribute set -->
+            <!-- Create dropdown options  -->
+            <createData entity="productAttributeOption1" stepKey="createProductAttributeOption1">
+                <requiredEntity createDataKey="createDropdownAttr"/>
+            </createData>
+            <createData entity="productAttributeOption2" stepKey="createProductAttributeOption2">
+                <requiredEntity createDataKey="createDropdownAttr"/>
+            </createData>
+            <!-- Pre-condition 2: Assign created attribute to default attribute set -->
             <createData entity="AddToDefaultSet" stepKey="assignToDefaultSet">
                 <requiredEntity createDataKey="createDropdownAttr"/>
             </createData>
@@ -37,11 +44,16 @@
         </after>
         <!-- Step 1: Open products grid page -->
         <actionGroup ref="AdminOpenProductIndexPageActionGroup" stepKey="openProductIndexPage"/>
-        <!-- Step 2: Start to create simple product and verify attribute presence -->
+        <!-- Step 2: Start to create simple product and verify 'select' attribute presence -->
         <actionGroup ref="GoToCreateProductPageActionGroup" stepKey="goToCreateSimpleProduct">
             <argument name="product" value="SimpleProduct"/>
         </actionGroup>
         <waitForElementVisible selector="{{AdminProductFormSection.productName}}" stepKey="assertProductFormShown"/>
         <waitForElementVisible selector="{{AdminProductFormSection.newAddedAttribute($$createDropdownAttr.attribute_code$$)}}" stepKey="seeSelectAttribute"/>
+        <!-- Verify dropdown options are present on the product form -->
+        <waitForElementClickable selector="{{AdminProductFormSection.customSelectAttribute($$createDropdownAttr.attribute_code$$)}}" stepKey="waitSelectClickable"/>
+        <click selector="{{AdminProductFormSection.customSelectAttribute($$createDropdownAttr.attribute_code$$)}}" stepKey="openSelectDropdown"/>
+        <waitForElementVisible selector="{{AdminProductFormSection.newAddedAttributeValue($$createProductAttributeOption1.option[store_labels][0][label]$$)}}" stepKey="seeFirstOption"/>
+        <waitForElementVisible selector="{{AdminProductFormSection.newAddedAttributeValue($$createProductAttributeOption2.option[store_labels][0][label]$$)}}" stepKey="seeSecondOption"/>
     </test>
 </tests>
