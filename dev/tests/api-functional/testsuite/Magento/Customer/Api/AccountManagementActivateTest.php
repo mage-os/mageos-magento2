@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\Customer\Api;
 
 use Magento\Customer\Test\Fixture\Customer as CustomerFixture;
+use Magento\TestFramework\Fixture\Config as ConfigFixture;
 use Magento\TestFramework\Fixture\DataFixture;
 use Magento\TestFramework\Fixture\DataFixtureStorageManager;
 use Magento\TestFramework\TestCase\WebapiAbstract;
@@ -24,12 +25,8 @@ class AccountManagementActivateTest extends WebapiAbstract
         $this->_markTestAsRestOnly();
     }
 
-    /**
-     * Require confirmation for new accounts.
-     *
-     * @magentoConfigFixture default_store customer/create_account/confirm 1
-     */
     #[
+        ConfigFixture("customer/create_account/confirm", 1),
         DataFixture(CustomerFixture::class, as: 'customer')
     ]
     public function testActivateCustomerAnonymous(): void
