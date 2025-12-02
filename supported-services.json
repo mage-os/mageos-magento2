@@ -1,0 +1,25 @@
+{
+    "services": {
+        "php": [
+            8.3
+        ],
+        "composer": [
+            2
+        ],
+        "database": [
+            "mariadb:11.4"
+        ],
+        "search": [
+          "opensearch:2.17"
+        ],
+        "message_queue": [
+            "rabbitmq:4.0"
+        ],
+        "cache": [
+            "redis:7.4"
+        ],
+        "http_cache": [
+            "varnish:7.6"
+        ]
+    }
+}

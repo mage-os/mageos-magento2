@@ -1,5 +1,5 @@
 <!---
-    Thank you for contributing to Magento.
+    Thank you for contributing to Mage-OS.
     To help us process this issue we recommend that you add the following information:
      - Summary of the issue,
      - Information on your environment,
@@ -13,7 +13,7 @@
 ### Preconditions (*)
 <!---
     Please provide as detailed information about your environment as possible.
-    For example Magento version, tag, HEAD, PHP & MySQL version, etc..
+    For example Mage-OS Magento version, tag, HEAD, PHP & MySQL version, etc..
 -->
 1. 
 2. 
