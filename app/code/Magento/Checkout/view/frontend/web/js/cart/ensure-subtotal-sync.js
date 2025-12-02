@@ -86,19 +86,20 @@ define([
                     url: window.location.href,
                     type: 'GET',
                     data: { ajax: 1 },
-                    success: function(response) {
+                    success: function (response) {
                         // Extract and replace cart form
                         const newContent = $(response).find('#form-validate');
-                        $('#form-validate').replaceWith(newContent);
 
+                        // Replace the form with the new content
+                        $('#form-validate').replaceWith(newContent);
                         // Reinitialize widgets on new content
                         $('#form-validate').trigger('contentUpdated');
                     },
-                    error: function() {
+                    error: function () {
                         $('body').trigger('processStop');
                         $('body').data('cart-synced', false);
                     },
-                    complete: function() {
+                    complete: function () {
                         $('body').trigger('processStop');
                     }
                 });
