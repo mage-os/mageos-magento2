@@ -18,23 +18,23 @@ class AccountManagementActivateTest extends WebapiAbstract
 {
     private const RESOURCE_PATH = '/V1/customers/activate';
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->_markTestAsRestOnly();
+    }
+
     /**
      * Require confirmation for new accounts.
      *
      * @magentoConfigFixture default_store customer/create_account/confirm 1
      */
     #[
-        DataFixture(
-            CustomerFixture::class,
-            [
-                'email' => 'anon.activate@example.com'
-            ],
-            'customer_unconfirmed'
-        )
+        DataFixture(CustomerFixture::class, as: 'customer')
     ]
     public function testActivateCustomerAnonymous(): void
     {
-        $customer = DataFixtureStorageManager::getStorage()->get('customer_unconfirmed');
+        $customer = DataFixtureStorageManager::getStorage()->get('customer');
         $om = Bootstrap::getObjectManager();
         $customerRepository = $om->get(CustomerRepositoryInterface::class);
         $customerEntity = $customerRepository->getById((int)$customer->getId());
