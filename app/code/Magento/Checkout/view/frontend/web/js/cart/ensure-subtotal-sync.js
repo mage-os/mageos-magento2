@@ -44,7 +44,7 @@ define([
             // Sum of row totals on the table
             let sum = 0;
 
-            $root.find('#shopping-cart-table .col.subtotal .cart-price').each(function () {
+            $root.find('#shopping-cart-table .col.subtotal .price-excluding-tax .cart-price').each(function () {
                 const text = $(this).text(), val = parsePrice(text);
 
                 if (!isNaN(val)) {
