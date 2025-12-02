@@ -21,6 +21,7 @@ use Magento\Framework\App\Request\InvalidRequestException;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Controller\Result\Redirect;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Message\AbstractMessage;
 use Magento\Framework\Message\MessageInterface;
 use Magento\Framework\Phrase;
 use Magento\Store\Model\StoreManagerInterface;
@@ -40,6 +41,7 @@ use Magento\Framework\Exception\StateException;
 use Magento\Framework\Exception\InputException;
 use Magento\Framework\Data\Form\FormKey\Validator;
 use Magento\Customer\Controller\AbstractAccount;
+use Magento\Framework\Validator\Exception as ValidatorException;
 
 /**
  * Post create customer action
@@ -423,10 +425,7 @@ class CreatePost extends AbstractAccount implements CsrfAwareActionInterface, Ht
                 ]
             );
         } catch (InputException $e) {
-            $this->messageManager->addErrorMessage($e->getMessage());
-            foreach ($e->getErrors() as $error) {
-                $this->messageManager->addErrorMessage($error->getMessage());
-            }
+            $this->processInputException($e);
         } catch (LocalizedException $e) {
             $this->messageManager->addErrorMessage($e->getMessage());
         } catch (\Exception $e) {
@@ -515,6 +514,65 @@ class CreatePost extends AbstractAccount implements CsrfAwareActionInterface, Ht
         }
 
         return $message;
+    }
+
+    /**
+     * Process InputException and add error messages to message manager
+     *
+     * @param InputException $exception
+     * @return void
+     */
+    private function processInputException(InputException $exception): void
+    {
+        if ($exception instanceof ValidatorException) {
+            $this->processValidatorException($exception);
+        } else {
+            $this->processStandardInputException($exception);
+        }
+    }
+
+    /**
+     * Process ValidatorException by extracting, translating and merging again individual messages
+     *
+     * @param ValidatorException $exception
+     * @return void
+     */
+    private function processValidatorException(ValidatorException $exception): void
+    {
+        $validatorMessages = $exception->getMessages();
+        if (empty($validatorMessages)) {
+            $this->messageManager->addErrorMessage($exception->getMessage());
+            return;
+        }
+
+        $translatedMessages = [];
+        foreach ($validatorMessages as $message) {
+            $messageText = $message instanceof AbstractMessage
+                ? $message->getText()
+                : (string)$message;
+            $translatedMessages[] = (string)__($messageText);
+        }
+
+        $combinedTranslatedMessage = implode(' ', $translatedMessages);
+        $this->messageManager->addErrorMessage($combinedTranslatedMessage);
+    }
+
+    /**
+     * Process standard InputException by extracting individual errors
+     *
+     * @param InputException $exception
+     * @return void
+     */
+    private function processStandardInputException(InputException $exception): void
+    {
+        $errors = $exception->getErrors();
+        if (!empty($errors)) {
+            foreach ($errors as $error) {
+                $this->messageManager->addErrorMessage($error->getMessage());
+            }
+        } else {
+            $this->messageManager->addErrorMessage($exception->getMessage());
+        }
     }
 
     /**
