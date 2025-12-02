@@ -27,7 +27,11 @@ class AccountManagementActivateTest extends WebapiAbstract
 
     #[
         ConfigFixture("customer/create_account/confirm", 1),
-        DataFixture(CustomerFixture::class, as: 'customer')
+        DataFixture(
+            CustomerFixture::class,
+            ['confirmation' => 'CONFIRM-INIT'],
+            'customer'
+        )
     ]
     public function testActivateCustomerAnonymous(): void
     {
@@ -52,8 +56,7 @@ class AccountManagementActivateTest extends WebapiAbstract
         ];
 
         $result = $this->_webApiCall($serviceInfo, $requestData);
-
-        $this->assertEquals((int)$customer->getId(), (int)$result['id'], 'Customer ID mismatch after activation');
+        $this->assertEquals((int)$customer->getId(), (int)$result['id']);
     }
 
     /**
