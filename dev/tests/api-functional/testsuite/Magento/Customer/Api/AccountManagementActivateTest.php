@@ -41,7 +41,9 @@ class AccountManagementActivateTest extends WebapiAbstract
 
         $serviceInfo = [
             'rest' => [
-                'resourcePath' => self::RESOURCE_PATH,
+                'resourcePath' => self::RESOURCE_PATH
+                    . '?email=' . rawurlencode($customer->getEmail())
+                    . '&confirmationKey=' . $customerEntity->getConfirmation(),
                 'httpMethod' => RestRequest::HTTP_METHOD_POST,
             ],
         ];
@@ -49,6 +51,7 @@ class AccountManagementActivateTest extends WebapiAbstract
         $requestData = [
             'email' => $customer->getEmail(),
             'confirmationKey' => $customerEntity->getConfirmation(),
+            'confirmation_key' => $customerEntity->getConfirmation(),
         ];
 
         $result = $this->_webApiCall($serviceInfo, $requestData);
