@@ -125,8 +125,7 @@ class InputParamsResolverTest extends TestCase
     public function testResolveAsync(
         array $requestData,
         string $expectedExceptionMessage
-    ): void
-    {
+    ): void {
         $this->webapiInputParamsResolverMock->expects($this->once())
             ->method('resolve')
             ->willReturn($requestData);
