@@ -118,8 +118,14 @@ class InputParamsResolverTest extends TestCase
         $this->assertEquals($requestData, $this->getModel(true)->resolve());
     }
 
-    #[DataProvider('requestBodyDataProviderForAsync')]
-    public function testResolveAsync(array $requestData): void
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    #[DataProvider('requestBodyDataProvider')]
+    public function testResolveAsync(
+        array $requestData,
+        string $expectedExceptionMessage
+    ): void
     {
         $this->webapiInputParamsResolverMock->expects($this->once())
             ->method('resolve')
@@ -137,17 +143,6 @@ class InputParamsResolverTest extends TestCase
             [['str' => []], 'Request body must be an array'],
             [['str' => [], 1 => []], 'Request body must be an array'],
             [['str' => [], 0 => [], 1 => []], 'Request body must be an array'],
-        ];
-    }
-
-    public static function requestBodyDataProviderForAsync(): array
-    {
-        return [
-            [[1 => []]],
-            [['0str' => []]],
-            [['str' => []]],
-            [['str' => [], 1 => []]],
-            [['str' => [], 0 => [], 1 => []]],
         ];
     }
 
