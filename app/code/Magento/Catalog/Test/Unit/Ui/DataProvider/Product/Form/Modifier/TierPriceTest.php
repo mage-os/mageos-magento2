@@ -129,7 +129,7 @@ class TierPriceTest extends TestCase
         $this->arrayManager
             ->expects($this->once())
             ->method('merge')
-            ->with($priceWrapperPath, $meta, $this->isType('array'))
+            ->with($priceWrapperPath, $meta, $this->isArray())
             ->willReturnArgument(2);
 
         $modifiedMeta = $this->tierPrice->modifyMeta($meta);
