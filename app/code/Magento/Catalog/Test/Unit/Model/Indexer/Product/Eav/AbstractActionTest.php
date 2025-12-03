@@ -57,7 +57,7 @@ class AbstractActionTest extends TestCase
             ['create']
         );
         $this->scopeConfig = $this->createMock(ScopeConfigInterface::class);
-        $this->_model = $this->createPartialMockWithReflectionAndArgs(
+        $this->_model = $this->createPartialMockWithReflection(
             AbstractAction::class,
             ['execute'],
             [

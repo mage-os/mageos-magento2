@@ -42,34 +42,4 @@ trait MockCreationTrait
         $mockBuilder->disableOriginalConstructor();
         return $mockBuilder->getMock();
     }
-
-    /**
-     * Create a partial mock with reflection and constructor arguments.
-     *
-     * Use this when you need to mock methods that don't exist in the class/interface
-     * and need to pass constructor arguments (e.g., for abstract classes with dependencies).
-     *
-     * @param string $className
-     * @param array $methods Methods to mock
-     * @param array $constructorArgs Constructor arguments
-     * @return MockObject
-     */
-    protected function createPartialMockWithReflectionAndArgs(
-        string $className,
-        array $methods,
-        array $constructorArgs
-    ): MockObject {
-        $reflection = new ReflectionClass($this);
-        $getMockBuilderMethod = $reflection->getMethod('getMockBuilder');
-        $getMockBuilderMethod->setAccessible(true);
-        $mockBuilder = $getMockBuilderMethod->invoke($this, $className);
-
-        $builderReflection = new ReflectionClass($mockBuilder);
-        $methodsProperty = $builderReflection->getProperty('methods');
-        $methodsProperty->setAccessible(true);
-        $methodsProperty->setValue($mockBuilder, $methods);
-
-        $mockBuilder->setConstructorArgs($constructorArgs);
-        return $mockBuilder->getMock();
-    }
 }
