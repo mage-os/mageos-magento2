@@ -23,7 +23,7 @@ use Magento\Sales\Api\OrderManagementInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Controller\Adminhtml\Order\Email;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Store\Model\Store;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
@@ -103,11 +103,6 @@ class EmailTest extends TestCase
     protected $orderMock;
 
     /**
-     * @var ScopeConfigInterface|MockObject
-     */
-    private $scopeConfigMock;
-
-    /**
      * Test setup
      */
     protected function setUp(): void
@@ -143,11 +138,13 @@ class EmailTest extends TestCase
             ->getMock();
         $this->messageManager = $this->createPartialMock(
             Manager::class,
-            ['addSuccessMessage', 'addErrorMessage', 'addWarningMessage', 'addNoticeMessage']
+            ['addSuccessMessage', 'addErrorMessage', 'addWarningMessage']
         );
 
         $this->orderMock = $this->getMockBuilder(OrderInterface::class)
+            ->addMethods(['getStore'])
             ->getMockForAbstractClass();
+
         $this->session = $this->getMockBuilder(Session::class)
             ->addMethods(['setIsUrlNotice'])
             ->disableOriginalConstructor()
@@ -166,8 +163,6 @@ class EmailTest extends TestCase
         $this->context->expects($this->once())->method('getHelper')->willReturn($this->helper);
         $this->context->expects($this->once())->method('getResultRedirectFactory')->willReturn($resultRedirectFactory);
 
-        $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
-
         $this->orderEmail = $objectManagerHelper->getObject(
             Email::class,
             [
@@ -176,8 +171,7 @@ class EmailTest extends TestCase
                 'response' => $this->response,
                 'orderManagement' => $this->orderManagementMock,
                 'orderRepository' => $this->orderRepositoryMock,
-                'logger' => $this->loggerMock,
-                'scopeConfig' => $this->scopeConfigMock
+                'logger' => $this->loggerMock
             ]
         );
     }
@@ -189,14 +183,12 @@ class EmailTest extends TestCase
     {
         $orderId = 10000031;
 
-        $this->scopeConfigMock->method('isSetFlag')->willReturnCallback(
-            function (string $path): bool {
-                if ($path === 'sales_email/order/enabled') {
-                    return true;
-                }
-                return false;
-            }
-        );
+        $store = $this->createMock(Store::class);
+        $store->method('getConfig')->willReturnMap([
+            ['sales_email/order/enabled', 1],
+            ['sales_email/general/async_sending', 0],
+        ]);
+        $this->orderMock->method('getStore')->willReturn($store);
 
         $this->request->expects($this->once())
             ->method('getParam')
@@ -232,42 +224,31 @@ class EmailTest extends TestCase
     {
         $orderId = 10000031;
 
-        $this->scopeConfigMock->method('isSetFlag')->willReturnCallback(
-            function (string $path): bool {
-                if ($path === 'sales_email/order/enabled') {
-                    return false;
-                }
-                return false;
-            }
-        );
+        $store = $this->createMock(Store::class);
+        $store->method('getConfig')->willReturnMap([
+            ['sales_email/order/enabled', 0],
+            ['sales_email/general/async_sending', 0],
+        ]);
+        $this->orderMock->method('getStore')->willReturn($store);
 
         $this->request->expects($this->once())
-            ->method('getParam')
-            ->with('order_id')
-            ->willReturn($orderId);
-
+            ->method('getParam')->with('order_id')->willReturn($orderId);
         $this->orderRepositoryMock->expects($this->once())
-            ->method('get')
-            ->with($orderId)
-            ->willReturn($this->orderMock);
-
+            ->method('get')->with($orderId)->willReturn($this->orderMock);
+        $this->orderMock->method('getStore')->willReturn($store);
         $this->orderMock->method('getStoreId')->willReturn(1);
         $this->orderMock->method('getEntityId')->willReturn($orderId);
 
-        $this->orderManagementMock->expects($this->never())
-            ->method('notify');
+        $this->orderManagementMock->expects($this->never())->method('notify');
 
         $this->messageManager->expects($this->once())
             ->method('addWarningMessage')
             ->with('Order emails are disabled for this store. No email was sent.');
 
         $this->resultRedirect->expects($this->once())
-            ->method('setPath')
-            ->with('sales/order/view', ['order_id' => $orderId])
-            ->willReturnSelf();
+            ->method('setPath')->with('sales/order/view', ['order_id' => $orderId])->willReturnSelf();
 
-        $result = $this->orderEmail->execute();
-        $this->assertInstanceOf(Redirect::class, $result);
+        $this->assertInstanceOf(Redirect::class, $this->orderEmail->execute());
     }
 
     /**
