@@ -50,7 +50,7 @@ class AggregateCount
      * @param int $categoryId
      * @return int
      */
-    public function getCategoryRowCount(
+    private function getCategoryRowCount(
         \Magento\Framework\DB\Adapter\AdapterInterface $connection,
         string $table,
         $categoryId
