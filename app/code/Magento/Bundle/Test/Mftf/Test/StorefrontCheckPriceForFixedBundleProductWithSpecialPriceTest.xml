@@ -156,19 +156,19 @@
         <!-- Step 2: check the prices on category page -->
         <actionGroup ref="AssertStorefrontElementVisibleActionGroup" stepKey="seeCategoryFromPriceDiscounted">
             <argument name="selector" value="{{StorefrontCategoryProductSection.priceFromByProductId($$createBundleProduct.id$$)}}"/>
-            <argument name="userInput" value="$77.00"/>
+            <argument name="userInput" value="77.00"/>
         </actionGroup>
         <actionGroup ref="AssertStorefrontElementVisibleActionGroup" stepKey="seeCategoryFromPriceRegular">
             <argument name="selector" value="{{StorefrontCategoryProductSection.priceFromByProductId($$createBundleProduct.id$$)}}"/>
-            <argument name="userInput" value="$110.00"/>
+            <argument name="userInput" value="110.00"/>
         </actionGroup>
         <actionGroup ref="AssertStorefrontElementVisibleActionGroup" stepKey="seeCategoryToPriceDiscounted">
             <argument name="selector" value="{{StorefrontCategoryProductSection.priceToByProductId($$createBundleProduct.id$$)}}"/>
-            <argument name="userInput" value="$192.85"/>
+            <argument name="userInput" value="192.85"/>
         </actionGroup>
         <actionGroup ref="AssertStorefrontElementVisibleActionGroup" stepKey="seeCategoryToPriceRegular">
             <argument name="selector" value="{{StorefrontCategoryProductSection.priceToByProductId($$createBundleProduct.id$$)}}"/>
-            <argument name="userInput" value="$275.50"/>
+            <argument name="userInput" value="275.50"/>
         </actionGroup>
         <!-- Step 3: go to product page -->
         <actionGroup ref="StorefrontOpenProductPageActionGroup" stepKey="openProductPage">
@@ -177,19 +177,19 @@
         <!-- Step 4: check the prices on product page  -->
         <actionGroup ref="AssertStorefrontElementVisibleActionGroup" stepKey="seePdpFromPriceDiscounted">
             <argument name="selector" value="{{StorefrontProductInfoMainSection.priceFrom}}"/>
-            <argument name="userInput" value="$77.00"/>
+            <argument name="userInput" value="77.00"/>
         </actionGroup>
         <actionGroup ref="AssertStorefrontElementVisibleActionGroup" stepKey="seePdpFromPriceRegular">
             <argument name="selector" value="{{StorefrontProductInfoMainSection.priceFrom}}"/>
-            <argument name="userInput" value="$110.00"/>
+            <argument name="userInput" value="110.00"/>
         </actionGroup>
         <actionGroup ref="AssertStorefrontElementVisibleActionGroup" stepKey="seePdpToPriceDiscounted">
             <argument name="selector" value="{{StorefrontProductInfoMainSection.priceTo}}"/>
-            <argument name="userInput" value="$192.85"/>
+            <argument name="userInput" value="192.85"/>
         </actionGroup>
         <actionGroup ref="AssertStorefrontElementVisibleActionGroup" stepKey="seePdpToPriceRegular">
             <argument name="selector" value="{{StorefrontProductInfoMainSection.priceTo}}"/>
-            <argument name="userInput" value="$275.50"/>
+            <argument name="userInput" value="275.50"/>
         </actionGroup>
     </test>
 </tests>
