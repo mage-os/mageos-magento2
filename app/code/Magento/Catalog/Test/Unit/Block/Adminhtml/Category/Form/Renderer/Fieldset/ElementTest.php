@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\Catalog\Test\Unit\Block\Adminhtml\Form\Renderer\Fieldset;
+namespace Magento\Catalog\Test\Unit\Block\Adminhtml\Category\Form\Renderer\Fieldset;
 
 use Magento\Catalog\Block\Adminhtml\Form\Renderer\Fieldset\Element;
 use PHPUnit\Framework\TestCase;
