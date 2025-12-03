@@ -468,12 +468,12 @@ class Dob extends AbstractWidget
     /**
      * Normalize the dob for a proper output on the frontend
      *
-     * @param bool|string $value
+     * @param bool|string|null $value
      * @return bool|string
      */
-    private function normalizedDobOutput(bool|string $value): bool|string
+    private function normalizedDobOutput(bool|string|null $value): bool|string
     {
-        if ($value === false) {
+        if ($value === false || $value === null) {
             return false;
         }
         $locale = $this->localeResolver->getLocale();
