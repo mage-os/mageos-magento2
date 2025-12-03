@@ -7,7 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Reports\Test\Unit\Model\ResourceModel\Product;
 
-use Magento\Framework\Data\Collection\ArrayIterator;
+use ArrayIterator;
 use Magento\Catalog\Model\Indexer\Product\Flat\State;
 use Magento\Catalog\Model\Product\Attribute\DefaultAttributes;
 use Magento\Catalog\Model\Product\OptionFactory;
