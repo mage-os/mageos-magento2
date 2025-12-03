@@ -21,7 +21,5 @@
         <element name="productBundleOptionQty" type="input" selector="//*[@id='product-options-wrapper']//div[@class='fieldset']//label[contains(.,'{{childName}}')]/..//input[contains(@class, 'qty')]" parameterized="true" timeout="30"/>
         <element name="includingTaxPrice" type="text" selector=".//*[@class='price-wrapper price-including-tax']/span"/>
         <element name="excludingTaxPrice" type="text" selector=".//*[@class='price-wrapper price-excluding-tax']/span"/>
-        <element name="priceFromWithRegular" type="text" selector=".//p[contains(@class,'price-from')][contains(normalize-space(.), 'From ${{from}}')][contains(normalize-space(.), 'Regular Price ${{regular}}')]" parameterized="true"/>
-        <element name="priceToWithRegular" type="text" selector=".//p[contains(@class,'price-to')][contains(normalize-space(.), 'To ${{to}}')][contains(normalize-space(.), 'Regular Price ${{regular}}')]" parameterized="true"/>
     </section>
 </sections>

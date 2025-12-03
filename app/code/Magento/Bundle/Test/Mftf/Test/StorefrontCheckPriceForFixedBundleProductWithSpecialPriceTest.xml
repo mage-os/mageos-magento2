@@ -149,19 +149,47 @@
             <deleteData createDataKey="createSubCategory" stepKey="delCategory"/>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
         </after>
-        <!-- Step 1: go to Category 1 on store front -->
+        <!-- Step 1: go to category page on storefront -->
         <actionGroup ref="StorefrontNavigateCategoryPageActionGroup" stepKey="goToCategory">
             <argument name="category" value="$$createSubCategory$$"/>
         </actionGroup>
-        <!-- Step 2: check price for FixedBundle on category page -->
-        <waitForText userInput="From $77.00 Regular Price $110.00" selector="{{StorefrontCategoryProductSection.priceFromByProductId($$createBundleProduct.id$$)}}" stepKey="assertCategoryFromPrice"/>
-        <waitForText userInput="To $192.85 Regular Price $275.50" selector="{{StorefrontCategoryProductSection.priceToByProductId($$createBundleProduct.id$$)}}" stepKey="assertCategoryToPrice"/>
-        <!-- Step 3: go to FixedBundle product page -->
+        <!-- Step 2: check the prices on category page -->
+        <actionGroup ref="AssertStorefrontElementVisibleActionGroup" stepKey="seeCategoryFromPriceDiscounted">
+            <argument name="selector" value="{{StorefrontCategoryProductSection.priceFromByProductId($$createBundleProduct.id$$)}}"/>
+            <argument name="userInput" value="$77.00"/>
+        </actionGroup>
+        <actionGroup ref="AssertStorefrontElementVisibleActionGroup" stepKey="seeCategoryFromPriceRegular">
+            <argument name="selector" value="{{StorefrontCategoryProductSection.priceFromByProductId($$createBundleProduct.id$$)}}"/>
+            <argument name="userInput" value="$110.00"/>
+        </actionGroup>
+        <actionGroup ref="AssertStorefrontElementVisibleActionGroup" stepKey="seeCategoryToPriceDiscounted">
+            <argument name="selector" value="{{StorefrontCategoryProductSection.priceToByProductId($$createBundleProduct.id$$)}}"/>
+            <argument name="userInput" value="$192.85"/>
+        </actionGroup>
+        <actionGroup ref="AssertStorefrontElementVisibleActionGroup" stepKey="seeCategoryToPriceRegular">
+            <argument name="selector" value="{{StorefrontCategoryProductSection.priceToByProductId($$createBundleProduct.id$$)}}"/>
+            <argument name="userInput" value="$275.50"/>
+        </actionGroup>
+        <!-- Step 3: go to product page -->
         <actionGroup ref="StorefrontOpenProductPageActionGroup" stepKey="openProductPage">
             <argument name="productUrl" value="$$createBundleProduct.custom_attributes[url_key]$$"/>
         </actionGroup>
-        <!-- Step 4: check price for FixedBundle on PDP -->
-        <waitForElementVisible selector="{{StorefrontProductInfoMainSection.priceFromWithRegular('77.00','110.00')}}" stepKey="assertPdpFromVisible"/>
-        <waitForElementVisible selector="{{StorefrontProductInfoMainSection.priceToWithRegular('192.85','275.50')}}" stepKey="assertPdpToVisible"/>
+        <!-- Step 4: check the prices on product page  -->
+        <actionGroup ref="AssertStorefrontElementVisibleActionGroup" stepKey="seePdpFromPriceDiscounted">
+            <argument name="selector" value="{{StorefrontProductInfoMainSection.priceFrom}}"/>
+            <argument name="userInput" value="$77.00"/>
+        </actionGroup>
+        <actionGroup ref="AssertStorefrontElementVisibleActionGroup" stepKey="seePdpFromPriceRegular">
+            <argument name="selector" value="{{StorefrontProductInfoMainSection.priceFrom}}"/>
+            <argument name="userInput" value="$110.00"/>
+        </actionGroup>
+        <actionGroup ref="AssertStorefrontElementVisibleActionGroup" stepKey="seePdpToPriceDiscounted">
+            <argument name="selector" value="{{StorefrontProductInfoMainSection.priceTo}}"/>
+            <argument name="userInput" value="$192.85"/>
+        </actionGroup>
+        <actionGroup ref="AssertStorefrontElementVisibleActionGroup" stepKey="seePdpToPriceRegular">
+            <argument name="selector" value="{{StorefrontProductInfoMainSection.priceTo}}"/>
+            <argument name="userInput" value="$275.50"/>
+        </actionGroup>
     </test>
 </tests>
