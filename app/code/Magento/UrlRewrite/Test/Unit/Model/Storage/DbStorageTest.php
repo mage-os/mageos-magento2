@@ -16,6 +16,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\UrlRewrite\Model\Storage\DbStorage;
 use Magento\UrlRewrite\Service\V1\Data\UrlRewrite;
 use Magento\UrlRewrite\Service\V1\Data\UrlRewriteFactory;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -620,11 +621,11 @@ class DbStorageTest extends TestCase
     /**
      * Test that invalid UTF-8 sequences are rejected to prevent collation errors
      *
-     * @dataProvider invalidRequestPathDataProvider
      * @param string $requestPath
      * @param string $description
      * @return void
      */
+    #[DataProvider('invalidRequestPathDataProvider')]
     public function testFindOneByDataRejectsInvalidUtf8Sequences(string $requestPath, string $description): void
     {
         $data = [
@@ -647,11 +648,11 @@ class DbStorageTest extends TestCase
     /**
      * Test that valid UTF-8 paths with normal characters work correctly
      *
-     * @dataProvider validRequestPathDataProvider
      * @param string $requestPath
      * @param string $description
      * @return void
      */
+    #[DataProvider('validRequestPathDataProvider')]
     public function testFindOneByDataAcceptsValidUtf8Paths(string $requestPath, string $description): void
     {
         $data = [
@@ -682,7 +683,7 @@ class DbStorageTest extends TestCase
      *
      * @return array
      */
-    public function invalidRequestPathDataProvider(): array
+    public static function invalidRequestPathDataProvider(): array
     {
         return [
             // Path traversal attempts with overlong UTF-8 encoding (invalid UTF-8)
@@ -747,7 +748,7 @@ class DbStorageTest extends TestCase
      *
      * @return array
      */
-    public function validRequestPathDataProvider(): array
+    public static function validRequestPathDataProvider(): array
     {
         return [
             // Standard ASCII paths
