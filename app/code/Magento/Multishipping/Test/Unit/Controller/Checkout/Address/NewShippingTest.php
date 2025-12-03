@@ -133,6 +133,14 @@ class NewShippingTest extends TestCase
         );
     }
 
+    /**
+     * Test execute method with different scenarios
+     *
+     * @param string $backUrl
+     * @param string $shippingAddress
+     * @param string $url
+     * @return void
+     */
     #[DataProvider('executeDataProvider')]
     public function testExecute($backUrl, $shippingAddress, $url)
     {
@@ -174,6 +182,11 @@ class NewShippingTest extends TestCase
         $this->controller->execute();
     }
 
+    /**
+     * Data provider for testExecute
+     *
+     * @return array
+     */
     public static function executeDataProvider(): array
     {
         return [
@@ -182,6 +195,11 @@ class NewShippingTest extends TestCase
         ];
     }
 
+    /**
+     * Test execute when customer address block does not exist
+     *
+     * @return void
+     */
     public function testExecuteWhenCustomerAddressBlockNotExist()
     {
         $this->stateMock

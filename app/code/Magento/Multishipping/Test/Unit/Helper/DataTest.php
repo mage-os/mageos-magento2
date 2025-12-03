@@ -63,6 +63,11 @@ class DataTest extends TestCase
         $this->scopeConfigMock = $context->getScopeConfig();
     }
 
+    /**
+     * Test getting maximum quantity for multishipping
+     *
+     * @return void
+     */
     public function testGetMaximumQty()
     {
         $maximumQty = 10;
@@ -79,6 +84,18 @@ class DataTest extends TestCase
         $this->assertEquals($maximumQty, $this->helper->getMaximumQty());
     }
 
+    /**
+     * Test multishipping checkout availability
+     *
+     * @param bool $result
+     * @param bool $quoteHasItems
+     * @param bool $isMultiShipping
+     * @param bool $hasItemsWithDecimalQty
+     * @param bool $validateMinimumAmount
+     * @param int $itemsSummaryQty
+     * @param int $itemVirtualQty
+     * @param int $maximumQty
+     */
     #[DataProvider('isMultishippingCheckoutAvailableDataProvider')]
     public function testIsMultishippingCheckoutAvailable(
         $result,
@@ -151,6 +168,11 @@ class DataTest extends TestCase
         $this->assertEquals($result, $this->helper->isMultishippingCheckoutAvailable());
     }
 
+    /**
+     * Data provider for testIsMultishippingCheckoutAvailable
+     *
+     * @return array
+     */
     public static function isMultishippingCheckoutAvailableDataProvider(): array
     {
         return [

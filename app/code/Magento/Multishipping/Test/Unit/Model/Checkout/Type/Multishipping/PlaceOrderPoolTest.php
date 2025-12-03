@@ -19,11 +19,17 @@ use PHPUnit\Framework\TestCase;
  */
 class PlaceOrderPoolTest extends TestCase
 {
+    /**
+     * @param string $paymentProviderCode
+     * @param PlaceOrderInterface[] $placeOrderList
+     * @param \Closure $expectedResult
+     * @return void
+     */
     #[DataProvider('getDataProvider')]
     public function testGet(string $paymentProviderCode, array $placeOrderList, $expectedResult)
     {
         $placeOrderList['payment_code'] = $placeOrderList['payment_code']($this);
-        if($expectedResult != null) {
+        if ($expectedResult != null) {
             $expectedResult = $expectedResult($this);
         }
         /** @var TMapFactory|MockObject $tMapFactory */

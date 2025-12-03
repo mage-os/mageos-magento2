@@ -73,6 +73,15 @@ class MultishippingClearItemAddressTest extends TestCase
         );
     }
 
+    /**
+     * Test clearing address items in multishipping flow
+     *
+     * @param string $actionName
+     * @param int $addressId
+     * @param int $customerAddressId
+     * @param bool $isMultiShippingAddresses
+     * @return void
+     */
     #[DataProvider('getDataDataProvider')]
     public function testClearAddressItem(
         string $actionName,
@@ -142,6 +151,11 @@ class MultishippingClearItemAddressTest extends TestCase
         );
     }
 
+    /**
+     * Data provider for testClearAddressItem
+     *
+     * @return array
+     */
     public static function getDataDataProvider(): array
     {
         return [

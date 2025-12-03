@@ -7,13 +7,12 @@ declare(strict_types=1);
 
 namespace Magento\Multishipping\Test\Unit\Model;
 
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Multishipping\Model\DisableMultishipping;
 use Magento\Quote\Api\Data\CartExtensionInterface;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
-use Magento\Quote\Api\Data\CartInterface;
+use Magento\Quote\Model\Quote;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\MockObject\RuntimeException;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -24,7 +23,7 @@ class DisableMultishippingTest extends TestCase
     use MockCreationTrait;
 
     /**
-     * @var CartInterface|MockObject
+     * @var Quote|MockObject
      */
     private $quoteMock;
 
@@ -39,12 +38,18 @@ class DisableMultishippingTest extends TestCase
     protected function setUp(): void
     {
         $this->quoteMock = $this->createPartialMockWithReflection(
-            \Magento\Quote\Model\Quote::class,
+            Quote::class,
             ['getIsMultiShipping', 'setIsMultiShipping', 'getExtensionAttributes']
         );
         $this->disableMultishippingModel = new DisableMultishipping();
     }
 
+    /**
+     * Test 'execute' method if 'MultiShipping' mode is enabled.
+     *
+     * @param bool $hasShippingAssignments
+     * @return void
+     */
     #[DataProvider('executeWithMultishippingModeEnabledDataProvider')]
     public function testExecuteWithMultishippingModeEnabled(bool $hasShippingAssignments): void
     {
@@ -109,6 +114,11 @@ class DisableMultishippingTest extends TestCase
         $this->assertFalse($this->disableMultishippingModel->execute($this->quoteMock));
     }
 
+    /**
+     * Build cart extension mock.
+     *
+     * @return MockObject
+     */
     private function getCartExtensionMock(): MockObject
     {
         return $this->createPartialMockWithReflection(

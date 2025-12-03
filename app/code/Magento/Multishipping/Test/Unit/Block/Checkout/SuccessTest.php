@@ -46,7 +46,7 @@ class SuccessTest extends TestCase
             ['getOrderIds']
         );
         $this->contextMock = $this->createMock(Context::class);
-        $this->storeManagerMock = $this->getMockForAbstractClass(StoreManagerInterface::class);
+        $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
 
         $objectManager = new ObjectManager($this);
         $this->contextMock->expects($this->once())->method('getSession')->willReturn($this->sessionMock);
