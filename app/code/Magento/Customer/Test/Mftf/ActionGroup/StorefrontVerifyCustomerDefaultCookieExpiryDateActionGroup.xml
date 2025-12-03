@@ -17,9 +17,6 @@
             <argument name="timeUnit" type="string" defaultValue="minute"/>
         </arguments>
 
-        <!--Generate expected date first to avoid race condition-->
-        <generateDate date="{{timezoneOffset}} {{timeUnit}}" format="d/m/Y" timezone="UTC" stepKey="generateExpireDate"/>
-
         <!--Verify that there are cookies exists with the given name `section_data_ids`, `mage-cache-sessid`, `mage-cache-storage`-->
         <seeCookie userInput="section_data_ids" stepKey="seeCookieForMagentoSectionDataIds"/>
         <seeCookie userInput="mage-cache-sessid" stepKey="seeCookieForMagentoCacheSessionId"/>
@@ -29,6 +26,9 @@
         <grabCookieAttributes userInput="section_data_ids" stepKey="grabCookieForMagentoDataIds"/>
         <grabCookieAttributes userInput="mage-cache-sessid" stepKey="grabCookieForMagentoCacheSessionId"/>
         <grabCookieAttributes userInput="mage-cache-storage" stepKey="grabCookieForMagentoCacheStorage"/>
+
+        <!--Grab expected date-->
+        <generateDate date="{{timezoneOffset}} {{timeUnit}}" format="d/m/Y" timezone="UTC" stepKey="generateExpireDate"/>
 
         <!--Assert cookies `section_data_ids`, `mage-cache-sessid`, `mage-cache-storage` having expiry date equal to expected date-->
         <assertEquals stepKey="validateExpiryDateForMagentoDataIds">

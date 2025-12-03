@@ -43,13 +43,14 @@
         <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginCustomer">
             <argument name="Customer" value="$$createCustomer$$"/>
         </actionGroup>
-
-        <!--Verify default expiry date for cookies immediately after login to avoid race condition-->
-        <actionGroup ref="StorefrontVerifyCustomerDefaultCookieExpiryDateActionGroup" stepKey="VerifyCookiesExpiryDate">
-            <argument name="timezoneOffset" value="60"/>
-        </actionGroup>
-
         <see userInput="Welcome, $$createCustomer.firstname$$ $$createCustomer.lastname$$!" selector="{{StorefrontPanelHeaderSection.welcomeMessage}}" stepKey="checkWelcomeMessage"/>
+
+        <!--Grab timezone offset-->
+        <executeJS function="return -(new Date().getTimezoneOffset());" stepKey="getTimezoneOffset"/>
+        <!--Verify default expiry date for cookies-->
+        <actionGroup ref="StorefrontVerifyCustomerDefaultCookieExpiryDateActionGroup" stepKey="VerifyCookiesExpiryDate">
+            <argument name="timezoneOffset" value="{$getTimezoneOffset}"/>
+        </actionGroup>
 
         <!--Logout customer before in case of it logged in from previous test-->
         <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="customerLogoutStorefront"/>
@@ -86,9 +87,10 @@
         </actionGroup>
         <actionGroup ref="StorefrontClickSignOnCustomerLoginFormActionGroup" stepKey="clickSignInAccountButtonFirstAttempt"/>
 
-        <!--Verify cookies expiry date after 30 days immediately after login (cookie lifetime is set to 2592000 seconds = 43200 minutes)-->
+        <!--Grab current timezone offset after 30 days-->
+        <executeJS function="return {$getTimezoneOffset} + (30*24*60);" stepKey="getTimezoneOffsetAfterReset"/>
         <actionGroup ref="StorefrontVerifyCustomerDefaultCookieExpiryDateActionGroup" stepKey="VerifyCookiesExpiryDateAfterReset">
-            <argument name="timezoneOffset" value="43200"/>
+            <argument name="timezoneOffset" value="{$getTimezoneOffsetAfterReset}"/>
         </actionGroup>
     </test>
 </tests>
