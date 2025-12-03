@@ -59,6 +59,7 @@ class InitializeDirectoryData implements DataPatchInterface, PatchVersionInterfa
             ['AI', 'AI', 'AIA'],
             ['AL', 'AL', 'ALB'],
             ['AM', 'AM', 'ARM'],
+            ['AN', 'AN', 'ANT'],
             ['AO', 'AO', 'AGO'],
             ['AQ', 'AQ', 'ATA'],
             ['AR', 'AR', 'ARG'],

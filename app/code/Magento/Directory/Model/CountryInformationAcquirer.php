@@ -59,7 +59,7 @@ class CountryInformationAcquirer implements \Magento\Directory\Api\CountryInform
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getCountriesInfo()
     {
@@ -87,7 +87,7 @@ class CountryInformationAcquirer implements \Magento\Directory\Api\CountryInform
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getCountryInfo($countryId)
     {
