@@ -228,8 +228,8 @@ class AssignProductsTest extends TestCase
      */
     private function setProperty(object $object, string $property, $value): void
     {
-        $ref = new \ReflectionClass($object);
-        $prop = $ref->getProperty($property);
+        $reflectionObject = new \ReflectionClass($object);
+        $prop = $reflectionObject->getProperty($property);
         $prop->setAccessible(true);
         $prop->setValue($object, $value);
     }

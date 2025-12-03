@@ -41,6 +41,11 @@ class ElementTest extends TestCase
     /** @var StoreManagerInterface */
     private $storeManagerMock;
 
+    /**
+     * Prepare SUT and collaborators.
+     *
+     * @return void
+     */
     protected function setUp(): void
     {
         // Preserve real methods on AbstractElement so magic __call and setData work
@@ -92,18 +97,20 @@ class ElementTest extends TestCase
             ->getMock();
 
         // Inject _storeManager and _element via reflection
-        $ref = new \ReflectionClass($this->block);
-        $storeProp = $ref->getProperty('_storeManager');
+        $reflectionClass = new \ReflectionClass($this->block);
+        $storeProp = $reflectionClass->getProperty('_storeManager');
         $storeProp->setAccessible(true);
         $storeProp->setValue($this->block, $this->storeManagerMock);
 
-        $elementProp = $ref->getProperty('_element');
+        $elementProp = $reflectionClass->getProperty('_element');
         $elementProp->setAccessible(true);
         $elementProp->setValue($this->block, $this->elementMock);
     }
 
     /**
-     * Test getDataObject returns the form's data object
+     * Test getDataObject returns the form's data object.
+     *
+     * @return void
      */
     public function testGetDataObject(): void
     {
@@ -111,7 +118,9 @@ class ElementTest extends TestCase
     }
 
     /**
-     * Test getAttribute returns the element's entity attribute
+     * Test getAttribute returns the element's entity attribute.
+     *
+     * @return void
      */
     public function testGetAttribute(): void
     {
@@ -119,7 +128,9 @@ class ElementTest extends TestCase
     }
 
     /**
-     * Test getAttributeCode proxies to attribute->getAttributeCode
+     * Test getAttributeCode proxies to attribute->getAttributeCode.
+     *
+     * @return void
      */
     public function testGetAttributeCode(): void
     {
@@ -128,7 +139,9 @@ class ElementTest extends TestCase
     }
 
     /**
-     * Test canDisplayUseDefault returns true when attribute not global and entity has id/store
+     * Test canDisplayUseDefault returns true when attribute not global and entity has id/store.
+     *
+     * @return void
      */
     public function testCanDisplayUseDefaultReturnsTrue(): void
     {
@@ -140,7 +153,9 @@ class ElementTest extends TestCase
     }
 
     /**
-     * Test canDisplayUseDefault returns false when attribute is global
+     * Test canDisplayUseDefault returns false when attribute is global.
+     *
+     * @return void
      */
     public function testCanDisplayUseDefaultReturnsFalse(): void
     {
@@ -149,7 +164,9 @@ class ElementTest extends TestCase
     }
 
     /**
-     * Test usedDefault returns true when no store value flag is set
+     * Test usedDefault returns true when no store value flag is set.
+     *
+     * @return void
      */
     public function testUsedDefaultReturnsTrueWhenNoStoreValueFlag(): void
     {
@@ -161,7 +178,9 @@ class ElementTest extends TestCase
     }
 
     /**
-     * Test usedDefault returns false when value equals default for non-default store
+     * Test usedDefault returns false when value equals default for non-default store.
+     *
+     * @return void
      */
     public function testUsedDefaultReturnsFalseWhenValueEqualsDefault(): void
     {
@@ -175,7 +194,9 @@ class ElementTest extends TestCase
     }
 
     /**
-     * Test checkFieldDisable sets element disabled when default is used
+     * Test checkFieldDisable sets element disabled when default is used.
+     *
+     * @return void
      */
     public function testCheckFieldDisableDisablesElement(): void
     {
@@ -191,7 +212,9 @@ class ElementTest extends TestCase
     }
 
     /**
-     * Test getScopeLabel returns [GLOBAL] when attribute is global
+     * Test getScopeLabel returns [GLOBAL] when attribute is global.
+     *
+     * @return void
      */
     public function testGetScopeLabelGlobal(): void
     {
@@ -203,7 +226,9 @@ class ElementTest extends TestCase
     }
 
     /**
-     * Test getScopeLabel returns empty string in single store mode
+     * Test getScopeLabel returns empty string in single store mode.
+     *
+     * @return void
      */
     public function testGetScopeLabelReturnsEmptyForSingleStoreMode(): void
     {
@@ -212,7 +237,9 @@ class ElementTest extends TestCase
     }
 
     /**
-     * Test getElementLabelHtml contains label text when label is set
+     * Test getElementLabelHtml contains label text when label is set.
+     *
+     * @return void
      */
     public function testGetElementLabelHtmlWithLabel(): void
     {
@@ -222,7 +249,9 @@ class ElementTest extends TestCase
     }
 
     /**
-     * Test getElementLabelHtml returns string when label is empty
+     * Test getElementLabelHtml returns string when label is empty.
+     *
+     * @return void
      */
     public function testGetElementLabelHtmlWithoutLabel(): void
     {
@@ -232,7 +261,9 @@ class ElementTest extends TestCase
     }
 
     /**
-     * Test getElementHtml renders input element markup
+     * Test getElementHtml renders input element markup.
+     *
+     * @return void
      */
     public function testGetElementHtml(): void
     {
