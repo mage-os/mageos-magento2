@@ -11,12 +11,10 @@ use Magento\Backend\Block\Template\Context;
 use Magento\Framework\AuthorizationInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Sales\Block\Adminhtml\Order\Create\Customer;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class CustomerTest extends TestCase
 {
-    use MockCreationTrait;
 
     public function testGetButtonsHtml()
     {

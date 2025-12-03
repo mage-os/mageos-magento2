@@ -12,12 +12,10 @@ use Magento\Framework\Model\Context;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Sales\Model\Order\Payment\Transaction;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class TransactionTest extends TestCase
 {
-    use MockCreationTrait;
 
     /** @var  Transaction */
     protected $transaction;

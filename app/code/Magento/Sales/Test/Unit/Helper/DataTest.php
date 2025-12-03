@@ -21,7 +21,6 @@ use Magento\Sales\Model\Order\Email\Container\ShipmentIdentity;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\Store;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
@@ -30,8 +29,6 @@ use PHPUnit\Framework\Attributes\DataProvider;
  */
 class DataTest extends TestCase
 {
-    use MockCreationTrait;
-
     /**
      * @var Data
      */
@@ -64,8 +61,8 @@ class DataTest extends TestCase
     }
 
     /**
+     * @return void
      */
-
      #[DataProvider('getScopeConfigValue')]
     public function testCanSendNewOrderConfirmationEmail($scopeConfigValue)
     {
@@ -77,9 +74,9 @@ class DataTest extends TestCase
         $this->assertEquals($scopeConfigValue, $this->helper->canSendNewOrderConfirmationEmail($this->storeMock));
     }
 
-    /**     * @return void
+    /**     
+     * @return void
      */
-
      #[DataProvider('getScopeConfigValue')]
     public function testCanSendNewOrderEmail($scopeConfigValue)
     {
@@ -91,9 +88,9 @@ class DataTest extends TestCase
         $this->assertEquals($scopeConfigValue, $this->helper->canSendNewOrderEmail($this->storeMock));
     }
 
-    /**     * @return void
+    /**     
+     * @return void
      */
-
      #[DataProvider('getScopeConfigValue')]
     public function testCanSendOrderCommentEmail($scopeConfigValue)
     {
@@ -105,9 +102,9 @@ class DataTest extends TestCase
         $this->assertEquals($scopeConfigValue, $this->helper->canSendOrderCommentEmail($this->storeMock));
     }
 
-    /**     * @return void
+    /**     
+     * @return void
      */
-
      #[DataProvider('getScopeConfigValue')]
     public function testCanSendNewShipmentEmail($scopeConfigValue)
     {
@@ -119,9 +116,9 @@ class DataTest extends TestCase
         $this->assertEquals($scopeConfigValue, $this->helper->canSendNewShipmentEmail($this->storeMock));
     }
 
-    /**     * @return void
+    /**     
+     * @return void
      */
-
      #[DataProvider('getScopeConfigValue')]
     public function testCanSendShipmentCommentEmail($scopeConfigValue)
     {
@@ -134,8 +131,8 @@ class DataTest extends TestCase
     }
 
     /**
+     * @return void
      */
-
      #[DataProvider('getScopeConfigValue')]
     public function testCanSendNewInvoiceEmail($scopeConfigValue)
     {

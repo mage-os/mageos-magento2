@@ -13,13 +13,10 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Sales\Model\Config\Data;
 use Magento\Sales\Model\Config\Reader;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class DataTest extends TestCase
 {
-    use MockCreationTrait;
-
     /**
      * @var ObjectManager
      */

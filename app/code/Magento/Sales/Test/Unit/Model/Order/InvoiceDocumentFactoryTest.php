@@ -17,11 +17,9 @@ use Magento\Sales\Model\Order\InvoiceDocumentFactory;
 use Magento\Sales\Model\Service\InvoiceService;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 class InvoiceDocumentFactoryTest extends TestCase
 {
-    use MockCreationTrait;
 
     /**
      * @var MockObject|InvoiceService

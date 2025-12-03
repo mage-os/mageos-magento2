@@ -11,13 +11,11 @@ use Magento\Framework\ObjectManagerInterface;
 use Magento\Sales\Model\Order\Pdf\Total\DefaultTotal;
 use Magento\Sales\Model\Order\Pdf\Total\Factory;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 class FactoryTest extends TestCase
 {
-    use MockCreationTrait;
 
     /**
      * @var MockObject|ObjectManagerInterface

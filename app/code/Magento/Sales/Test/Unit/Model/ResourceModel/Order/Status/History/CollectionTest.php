@@ -20,7 +20,6 @@ use Magento\Sales\Model\Order\Status\History;
 use Magento\Sales\Model\ResourceModel\EntityAbstract;
 use Magento\Sales\Model\ResourceModel\Order\Status\History\Collection;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
@@ -29,7 +28,6 @@ use Psr\Log\LoggerInterface;
  */
 class CollectionTest extends TestCase
 {
-    use MockCreationTrait;
 
     /**
      * @var Collection

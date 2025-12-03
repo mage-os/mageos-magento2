@@ -15,13 +15,11 @@ use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\Order\CustomerAssignment;
 use Magento\Sales\Observer\AssignOrderToCustomerObserver;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 class AssignOrderToCustomerObserverTest extends TestCase
 {
-    use MockCreationTrait;
 
     /** @var AssignOrderToCustomerObserver */
     protected $sut;

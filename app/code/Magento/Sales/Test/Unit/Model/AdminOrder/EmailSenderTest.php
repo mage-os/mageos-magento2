@@ -16,7 +16,6 @@ use Magento\Sales\Model\Order\Email\Sender\OrderSender;
 use Magento\Sales\Model\Order\Invoice;
 use Magento\Sales\Model\ResourceModel\Order\Invoice\Collection as InvoiceCollection;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
@@ -25,8 +24,6 @@ use Psr\Log\LoggerInterface;
  */
 class EmailSenderTest extends TestCase
 {
-    use MockCreationTrait;
-
     /**
      * @var LoggerInterface|MockObject
      */

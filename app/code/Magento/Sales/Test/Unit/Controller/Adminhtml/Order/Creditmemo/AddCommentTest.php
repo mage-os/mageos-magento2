@@ -10,6 +10,7 @@ namespace Magento\Sales\Test\Unit\Controller\Adminhtml\Order\Creditmemo;
 use Magento\Backend\App\Action\Context;
 use Magento\Backend\Model\View\Result\Page;
 use Magento\Framework\App\Request\Http;
+use Magento\Framework\App\Response\Http as ResponseHttp;
 use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\Controller\Result\Raw;
@@ -26,7 +27,6 @@ use Magento\Sales\Model\Order\Creditmemo;
 use Magento\Sales\Model\Order\Creditmemo\Comment;
 use Magento\Sales\Model\Order\Email\Sender\CreditmemoSender;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -35,7 +35,6 @@ use PHPUnit\Framework\TestCase;
  */
 class AddCommentTest extends TestCase
 {
-    use MockCreationTrait;
 
     /**
      * @var AddComment
@@ -110,7 +109,7 @@ class AddCommentTest extends TestCase
     protected function setUp(): void
     {
         $this->requestMock = $this->createMock(Http::class);
-        $this->responseMock = $this->createMock(\Magento\Framework\App\Response\Http::class);
+        $this->responseMock = $this->createMock(ResponseHttp::class);
         $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
         $this->contextMock = $this->getMockBuilder(Context::class)
             ->onlyMethods(['getRequest', 'getResponse', 'getObjectManager'])

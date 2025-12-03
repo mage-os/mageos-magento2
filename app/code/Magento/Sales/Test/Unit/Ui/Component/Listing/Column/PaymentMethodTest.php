@@ -14,12 +14,10 @@ use Magento\Payment\Helper\Data;
 use Magento\Payment\Model\MethodInterface;
 use Magento\Sales\Ui\Component\Listing\Column\PaymentMethod;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class PaymentMethodTest extends TestCase
 {
-    use MockCreationTrait;
 
     /**
      * @var PaymentMethod

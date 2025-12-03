@@ -22,7 +22,6 @@ use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Email\Sender\OrderCommentSender;
 use Magento\Sales\Model\Order\Status\History;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
@@ -31,8 +30,6 @@ use PHPUnit\Framework\Attributes\DataProvider;
  */
 class AddCommentTest extends TestCase
 {
-    use MockCreationTrait;
-
     /**
      * @var AddComment
      */

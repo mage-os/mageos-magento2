@@ -16,6 +16,7 @@ use Magento\Backend\Model\View\Result\Redirect;
 use Magento\Backend\Model\View\Result\RedirectFactory;
 use Magento\Framework\App\ActionFlag;
 use Magento\Framework\App\Request\Http;
+use Magento\Framework\App\Response\Http as ResponseHttp;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Message\Manager;
 use Magento\Framework\ObjectManagerInterface;
@@ -23,7 +24,6 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Sales\Api\CreditmemoManagementInterface;
 use Magento\Sales\Controller\Adminhtml\Order\Creditmemo\Cancel;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -32,7 +32,6 @@ use PHPUnit\Framework\TestCase;
  */
 class CancelTest extends TestCase
 {
-    use MockCreationTrait;
 
     /**
      * @var Cancel
@@ -111,7 +110,7 @@ class CancelTest extends TestCase
     {
         $this->creditmemoManagementMock = $this->createMock(CreditmemoManagementInterface::class);
         $this->requestMock = $this->createMock(Http::class);
-        $this->responseMock = $this->createMock(\Magento\Framework\App\Response\Http::class);
+        $this->responseMock = $this->createMock(ResponseHttp::class);
         $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
         $this->messageManagerMock = $this->createMock(Manager::class);
         $this->sessionMock = $this->createMock(Session::class);

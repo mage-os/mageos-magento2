@@ -23,7 +23,6 @@ use Magento\Sales\Model\ResourceModel\Order\CollectionFactory;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
@@ -32,8 +31,6 @@ use Psr\Log\LoggerInterface;
  */
 class LastOrderedItemsTest extends TestCase
 {
-    use MockCreationTrait;
-
     /**
      * @var MockObject
      */

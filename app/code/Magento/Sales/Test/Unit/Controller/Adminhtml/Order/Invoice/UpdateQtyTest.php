@@ -10,6 +10,7 @@ namespace Magento\Sales\Test\Unit\Controller\Adminhtml\Order\Invoice;
 use Magento\Backend\App\Action\Context;
 use Magento\Backend\Model\View\Result\Page;
 use Magento\Framework\App\Request\Http;
+use Magento\Framework\App\Response\Http as ResponseHttp;
 use Magento\Framework\App\ViewInterface;
 use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\Result\JsonFactory;
@@ -109,7 +110,7 @@ class UpdateQtyTest extends TestCase
 
         $this->titleMock = $this->createMock(Title::class);
         $this->requestMock = $this->createMock(Http::class);
-        $this->responseMock = $this->createMock(\Magento\Framework\App\Response\Http::class);
+        $this->responseMock = $this->createMock(ResponseHttp::class);
         $this->resultPageMock = $this->createMock(Page::class);
         $this->pageConfigMock = $this->createMock(Config::class);
 

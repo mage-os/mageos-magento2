@@ -15,12 +15,10 @@ use Magento\Sales\Model\Order\Pdf\Config\SchemaLocator;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class ReaderTest extends TestCase
 {
-    use MockCreationTrait;
 
     /**
      * @var Reader

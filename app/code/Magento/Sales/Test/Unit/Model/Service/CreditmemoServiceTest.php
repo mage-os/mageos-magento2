@@ -29,14 +29,12 @@ use Magento\Sales\Model\Service\CreditmemoService;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class CreditmemoServiceTest extends TestCase
 {
-    use MockCreationTrait;
 
     /**
      * @var CreditmemoRepositoryInterface|MockObject

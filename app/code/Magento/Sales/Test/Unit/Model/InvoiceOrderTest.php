@@ -30,7 +30,6 @@ use Magento\Sales\Model\Order\Validation\InvoiceOrderInterface;
 use Magento\Sales\Model\OrderMutex;
 use Magento\Sales\Model\ValidatorResultInterface;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Psr\Log\LoggerInterface;
@@ -42,7 +41,6 @@ use Psr\Log\LoggerInterface;
  */
 class InvoiceOrderTest extends TestCase
 {
-    use MockCreationTrait;
 
     /**
      * @var ResourceConnection|MockObject

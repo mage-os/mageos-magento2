@@ -15,12 +15,10 @@ use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Validation\CanRefund;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\DataProvider;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class CanRefundTest extends TestCase
 {
-    use MockCreationTrait;
 
     /**
      * @var CanRefund|MockObject

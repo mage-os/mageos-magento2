@@ -19,12 +19,10 @@ use Magento\Sales\Model\Order\Shipment;
 use Magento\Sales\Model\Service\ShipmentService;
 use Magento\Shipping\Model\ShipmentNotifier;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class ShipmentServiceTest extends TestCase
 {
-    use MockCreationTrait;
 
     /**
      * Repository

@@ -12,13 +12,11 @@ use Magento\Framework\AuthorizationInterface;
 use Magento\Framework\DataObject;
 use Magento\Sales\Model\Order\Grid\Row\UrlGenerator;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 class UrlGeneratorTest extends TestCase
 {
-    use MockCreationTrait;
 
     /**
      * @var UrlGenerator

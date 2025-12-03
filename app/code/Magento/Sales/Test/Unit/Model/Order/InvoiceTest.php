@@ -24,7 +24,6 @@ use Magento\Sales\Model\ResourceModel\Order\Invoice\Item\CollectionFactory;
 use Magento\Sales\Model\ResourceModel\OrderFactory;
 use Magento\Store\Model\Store;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
@@ -34,7 +33,6 @@ use PHPUnit\Framework\Attributes\DataProvider;
  */
 class InvoiceTest extends TestCase
 {
-    use MockCreationTrait;
 
     /**
      * @var Invoice

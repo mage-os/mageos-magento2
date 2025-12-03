@@ -11,18 +11,19 @@ use Magento\Backend\Model\Session;
 use Magento\CatalogInventory\Helper\Data;
 use Magento\CatalogInventory\Model\Configuration;
 use Magento\Framework\Event\Manager;
+use Magento\Framework\Message\Manager as MessageManager;
 use Magento\Framework\Registry;
 use Magento\Sales\Api\CreditmemoRepositoryInterface;
 use Magento\Sales\Api\InvoiceRepositoryInterface;
 use Magento\Sales\Controller\Adminhtml\Order\CreditmemoLoader;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Creditmemo;
+use Magento\Sales\Model\Order\Creditmemo\Item as CreditmemoItem;
 use Magento\Sales\Model\Order\CreditmemoFactory;
 use Magento\Sales\Model\Order\Invoice;
 use Magento\Sales\Model\Order\Item;
 use Magento\Sales\Model\OrderFactory;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -31,8 +32,6 @@ use PHPUnit\Framework\TestCase;
  */
 class CreditmemoLoaderTest extends TestCase
 {
-    use MockCreationTrait;
-
     /**
      * @var CreditmemoLoader
      */
@@ -100,7 +99,7 @@ class CreditmemoLoaderTest extends TestCase
         $this->invoiceRepositoryMock = $this->createMock(InvoiceRepositoryInterface::class);
         $this->eventManagerMock = $this->createMock(Manager::class);
         $this->sessionMock = $this->createMock(Session::class);
-        $this->messageManagerMock = $this->createMock(\Magento\Framework\Message\Manager::class);
+        $this->messageManagerMock = $this->createMock(MessageManager::class);
         $this->registryMock = $this->createMock(Registry::class);
         $this->helperMock = $this->createMock(Data::class);
 
@@ -208,7 +207,7 @@ class CreditmemoLoaderTest extends TestCase
         $creditmemoMock = $this->createMock(Creditmemo::class);
 
         $orderItemMock = $this->createMock(Item::class);
-        $creditmemoItemMock = $this->createMock(\Magento\Sales\Model\Order\Creditmemo\Item::class);
+        $creditmemoItemMock = $this->createMock(CreditmemoItem::class);
         $creditmemoItemMock->expects($this->any())
             ->method('getOrderItem')
             ->willReturn($orderItemMock);

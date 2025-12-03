@@ -9,6 +9,7 @@ namespace Magento\Sales\Test\Unit\Block\Order\Create;
 
 use Magento\Backend\Model\Session\Quote;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Quote\Model\Quote as QuoteModel;
 use Magento\Quote\Model\Quote\Address;
 use Magento\Sales\Block\Adminhtml\Order\Create\Totals;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -46,7 +47,7 @@ class TotalsTest extends TestCase
     protected $sessionQuoteMock;
 
     /**
-     * @var \Magento\Quote\Model\Quote|MockObject
+     * @var QuoteModel|MockObject
      */
     protected $quoteMock;
 
@@ -56,9 +57,10 @@ class TotalsTest extends TestCase
     protected function setUp(): void
     {
         $this->helperManager = new ObjectManager($this);
+        $this->helperManager->prepareObjectManager();
         $this->sessionQuoteMock = $this->createMock(Quote::class);
         $this->quoteMock = $this->createPartialMockWithReflection(
-            \Magento\Quote\Model\Quote::class,
+            QuoteModel::class,
             [
                 'collectTotals', 'getTotals', 'isVirtual', 'getBillingAddress', 'getShippingAddress',
                 'setTotalsCollectedFlag'

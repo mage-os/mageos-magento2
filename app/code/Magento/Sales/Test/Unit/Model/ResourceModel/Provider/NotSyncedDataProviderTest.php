@@ -11,14 +11,12 @@ use Magento\Framework\ObjectManager\TMapFactory;
 use Magento\Sales\Model\ResourceModel\Provider\NotSyncedDataProvider;
 use Magento\Sales\Model\ResourceModel\Provider\NotSyncedDataProviderInterface;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 /** testing not synchronized DataProvider.
  */
 class NotSyncedDataProviderTest extends TestCase
 {
-    use MockCreationTrait;
 
     public function testGetIdsEmpty()
     {

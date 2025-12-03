@@ -12,12 +12,10 @@ use Magento\Sales\Model\AbstractModel;
 use Magento\Sales\Model\GridAsyncInsert;
 use Magento\Sales\Model\ResourceModel\GridInterface;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class GridAsyncInsertTest extends TestCase
 {
-    use MockCreationTrait;
 
     /**
      * @var GridAsyncInsert

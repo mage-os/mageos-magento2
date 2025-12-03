@@ -13,7 +13,6 @@ use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Model\Order\Invoice\PayOperation;
 use Magento\Sales\Model\Order\PaymentAdapter;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -21,7 +20,6 @@ use PHPUnit\Framework\TestCase;
  */
 class PaymentAdapterTest extends TestCase
 {
-    use MockCreationTrait;
 
     /**
      * @var PaymentAdapter

@@ -18,7 +18,6 @@ use Magento\Sales\Model\Order\Invoice\Total\Shipping;
 use Magento\Sales\Model\OrderFactory;
 use Magento\Sales\Model\ResourceModel\Order\Invoice\Item\CollectionFactory;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
@@ -27,7 +26,6 @@ use PHPUnit\Framework\Attributes\DataProvider;
  */
 class ShippingTest extends TestCase
 {
-    use MockCreationTrait;
 
     /**
      * @var Shipping

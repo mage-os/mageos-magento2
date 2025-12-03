@@ -15,13 +15,10 @@ use Magento\Sales\Model\ResourceModel\Order\Collection;
 use Magento\Sales\Model\ResourceModel\Order\CollectionFactory;
 use Magento\Store\Model\StoresConfig;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class CleanExpiredOrdersTest extends TestCase
 {
-    use MockCreationTrait;
-
     /**
      * @var MockObject
      */

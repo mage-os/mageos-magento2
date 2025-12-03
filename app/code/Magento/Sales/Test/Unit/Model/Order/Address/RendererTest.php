@@ -20,7 +20,6 @@ use Magento\Sales\Model\Order\Address\Renderer as OrderAddressRenderer;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Store\Model\Store;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -28,8 +27,6 @@ use PHPUnit\Framework\TestCase;
  */
 class RendererTest extends TestCase
 {
-    use MockCreationTrait;
-
     /**
      * @var OrderAddressRenderer
      */

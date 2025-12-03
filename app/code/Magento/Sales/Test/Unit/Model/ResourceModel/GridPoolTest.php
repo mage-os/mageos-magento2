@@ -10,12 +10,10 @@ namespace Magento\Sales\Test\Unit\Model\ResourceModel;
 use Magento\Sales\Model\ResourceModel\Grid;
 use Magento\Sales\Model\ResourceModel\GridPool;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class GridPoolTest extends TestCase
 {
-    use MockCreationTrait;
 
     /**
      * @var GridPool

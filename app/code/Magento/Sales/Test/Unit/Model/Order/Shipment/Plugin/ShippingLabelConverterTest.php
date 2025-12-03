@@ -12,7 +12,6 @@ use Magento\Sales\Api\Data\ShipmentSearchResultInterface;
 use Magento\Sales\Api\ShipmentRepositoryInterface;
 use Magento\Sales\Plugin\ShippingLabelConverter;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -20,7 +19,6 @@ use PHPUnit\Framework\TestCase;
  */
 class ShippingLabelConverterTest extends TestCase
 {
-    use MockCreationTrait;
 
     /**
      * @var ShippingLabelConverter

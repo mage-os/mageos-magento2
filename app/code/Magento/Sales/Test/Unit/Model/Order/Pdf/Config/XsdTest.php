@@ -11,7 +11,6 @@ use Magento\Framework\Config\Dom;
 use Magento\Framework\Config\Dom\UrnResolver;
 use Magento\Framework\Config\ValidationStateInterface;
 use PHPUnit\Framework\AssertionFailedError;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
@@ -20,7 +19,6 @@ use PHPUnit\Framework\Attributes\DataProvider;
  */
 class XsdTest extends TestCase
 {
-    use MockCreationTrait;
 
     /**
      * @var string

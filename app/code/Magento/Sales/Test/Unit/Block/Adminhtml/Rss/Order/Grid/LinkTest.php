@@ -13,12 +13,10 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHe
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Sales\Block\Adminhtml\Rss\Order\Grid\Link;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class LinkTest extends TestCase
 {
-    use MockCreationTrait;
 
     /**
      * @var Link

@@ -11,6 +11,7 @@ use Magento\Backend\App\Action\Context;
 use Magento\Backend\Model\Session;
 use Magento\Framework\App\ActionFlag;
 use Magento\Framework\App\Request\Http;
+use Magento\Framework\App\Response\Http as ResponseHttp;
 use Magento\Framework\App\Response\Http\FileFactory;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\Stdlib\DateTime\DateTime;
@@ -18,6 +19,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Sales\Api\InvoiceRepositoryInterface;
 use Magento\Sales\Controller\Adminhtml\Order\Invoice\PrintAction;
 use Magento\Sales\Model\Order\Invoice;
+use Magento\Sales\Model\Order\Pdf\Invoice as InvoicePdf;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
@@ -72,7 +74,7 @@ class PrintActionTest extends TestCase
         $objectManager = new ObjectManager($this);
 
         $this->requestMock = $this->createMock(Http::class);
-        $this->responseMock = $this->createMock(\Magento\Framework\App\Response\Http::class);
+        $this->responseMock = $this->createMock(ResponseHttp::class);
 
         $this->sessionMock = $this->createMock(Session::class);
 
@@ -123,7 +125,7 @@ class PrintActionTest extends TestCase
         $invoiceMock = $this->createMock(Invoice::class);
 
         $pdfMock = $this->createPartialMockWithReflection(
-            \Magento\Sales\Model\Order\Pdf\Invoice::class,
+            InvoicePdf::class,
             array_merge(['render'], ['getPdf'])
         );
         $pdfMock->expects($this->once())

@@ -11,7 +11,6 @@ use Magento\Sales\Api\Data\OrderItemInterface;
 use Magento\Sales\Block\Adminhtml\Items\Column\DefaultColumn;
 use Magento\Sales\Block\Order\Item\Renderer\DefaultRenderer;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Sales\Model\Order\Webapi\ChangeOutputArray;
@@ -21,7 +20,6 @@ use Magento\Sales\Model\Order\Webapi\ChangeOutputArray;
  */
 class ChangeOutputArrayTest extends TestCase
 {
-    use MockCreationTrait;
 
     /**
      * @var ChangeOutputArray

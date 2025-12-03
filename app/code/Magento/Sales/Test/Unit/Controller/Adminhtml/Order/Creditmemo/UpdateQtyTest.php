@@ -13,6 +13,7 @@ use Magento\Backend\Model\Session;
 use Magento\Backend\Model\View\Result\Page;
 use Magento\Framework\App\ActionFlag;
 use Magento\Framework\App\Request\Http;
+use Magento\Framework\App\Response\Http as ResponseHttp;
 use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\Controller\Result\Raw;
@@ -137,7 +138,7 @@ class UpdateQtyTest extends TestCase
             ['cancel', 'getInvoice', 'getOrder', 'getId']
         );
         $this->requestMock = $this->createMock(Http::class);
-        $this->responseMock = $this->createMock(\Magento\Framework\App\Response\Http::class);
+        $this->responseMock = $this->createMock(ResponseHttp::class);
         $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
         $this->messageManagerMock = $this->createMock(Manager::class);
         $this->sessionMock = $this->createMock(Session::class);

@@ -15,13 +15,11 @@ use Magento\Framework\View\Element\RendererList;
 use Magento\Framework\View\Layout;
 use Magento\Sales\Block\Items\AbstractItems;
 use Magento\Sales\ViewModel\ItemRendererTypeResolverInterface;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class AbstractTest extends TestCase
 {
-    use MockCreationTrait;
 
     /** @var ObjectManager  */
     protected $_objectManager;

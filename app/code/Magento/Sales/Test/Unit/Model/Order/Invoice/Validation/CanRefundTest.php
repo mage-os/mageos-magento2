@@ -17,12 +17,10 @@ use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\Order\Invoice;
 use Magento\Sales\Model\Order\Invoice\Validation\CanRefund;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class CanRefundTest extends TestCase
 {
-    use MockCreationTrait;
 
     /**
      * @var Invoice|MockObject

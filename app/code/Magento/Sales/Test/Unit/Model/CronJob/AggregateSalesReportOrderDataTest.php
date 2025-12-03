@@ -13,7 +13,6 @@ use Magento\Sales\Model\CronJob\AggregateSalesReportOrderData;
 use Magento\Sales\Model\ResourceModel\Report\Order;
 use Magento\Sales\Model\ResourceModel\Report\OrderFactory;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -21,8 +20,6 @@ use PHPUnit\Framework\TestCase;
  */
 class AggregateSalesReportOrderDataTest extends TestCase
 {
-    use MockCreationTrait;
-
     /**
      * @var ResolverInterface|MockObject
      */

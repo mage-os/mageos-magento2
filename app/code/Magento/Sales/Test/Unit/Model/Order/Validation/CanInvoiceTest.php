@@ -16,14 +16,12 @@ use Magento\Sales\Model\Order\Validation\CanInvoice;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * Test for \Magento\Sales\Model\Order\OrderValidator class
  */
 class CanInvoiceTest extends TestCase
 {
-    use MockCreationTrait;
 
     /**
      * @var CanInvoice|MockObject

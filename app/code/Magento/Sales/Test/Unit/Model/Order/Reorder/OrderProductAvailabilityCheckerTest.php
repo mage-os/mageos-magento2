@@ -14,12 +14,10 @@ use Magento\Sales\Model\Order\Item;
 use Magento\Sales\Model\Order\Reorder\OrderedProductAvailabilityChecker;
 use Magento\Sales\Model\Order\Reorder\OrderedProductAvailabilityCheckerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class OrderProductAvailabilityCheckerTest extends TestCase
 {
-    use MockCreationTrait;
 
     /**
      * @var OrderedProductAvailabilityCheckerInterface[]

@@ -14,7 +14,6 @@ use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\Order\CustomerAssignment;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
@@ -23,7 +22,6 @@ use PHPUnit\Framework\Attributes\DataProvider;
  */
 class CustomerAssigmentTest extends TestCase
 {
-    use MockCreationTrait;
 
     /**
      * @var CustomerAssignment

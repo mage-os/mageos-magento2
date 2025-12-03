@@ -80,30 +80,23 @@ class OrderRepositoryTest extends TestCase
     private $shippingAssignmentBuilder;
 
     /**
-     * Create OrderExtensionInterface mock compatible with both PHPUnit 10 and 12
+     * Create OrderExtensionInterface mock compatible with PHPUnit 12
      *
      * @return MockObject
      */
     private function createOrderExtensionMock(): MockObject
     {
-        // PHPUnit 10: Use getMockBuilder with addMethods for dynamic extension attributes
-        if (method_exists($this->getMockBuilder(OrderExtensionInterface::class), 'addMethods')) {
-            return $this->getMockBuilder(OrderExtensionInterface::class)
-                ->addMethods([
-                    'getShippingAssignments',
-                    'setShippingAssignments',
-                    'setAppliedTaxes',
-                    'setConvertingFromQuote',
-                    'setItemAppliedTaxes',
-                    'setPaymentAdditionalInfo'
-                ])
-                ->disableOriginalConstructor()
-                ->getMockForAbstractClass();
-        }
-
-        // PHPUnit 12: Use createMock for simple interface mocking
-        // Note: In PHPUnit 12, extension attributes should be properly typed in generated code
-        return $this->createMock(OrderExtensionInterface::class);
+        return $this->createPartialMockWithReflection(
+            OrderExtensionInterface::class,
+            [
+                'getShippingAssignments',
+                'setShippingAssignments',
+                'setAppliedTaxes',
+                'setConvertingFromQuote',
+                'setItemAppliedTaxes',
+                'setPaymentAdditionalInfo'
+            ]
+        );
     }
 
     /**

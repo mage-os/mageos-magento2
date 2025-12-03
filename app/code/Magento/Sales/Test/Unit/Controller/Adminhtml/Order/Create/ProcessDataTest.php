@@ -19,6 +19,7 @@ use Magento\Framework\Escaper;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
+use Magento\Quote\Model\Quote as QuoteModel;
 use Magento\Quote\Model\Quote\Address;
 use Magento\Sales\Controller\Adminhtml\Order\Create\ProcessData;
 use Magento\Sales\Model\AdminOrder\Create;
@@ -137,7 +138,7 @@ class ProcessDataTest extends TestCase
     public function testExecute($noDiscount, $couponCode)
     {
         $quote = $this->createPartialMockWithReflection(
-            \Magento\Quote\Model\Quote::class,
+            QuoteModel::class,
             array_merge(['getCouponCode'], ['isVirtual', 'getAllItems'])
         );
         $create = $this->createMock(Create::class);

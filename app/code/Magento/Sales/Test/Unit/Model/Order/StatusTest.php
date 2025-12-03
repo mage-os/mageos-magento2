@@ -13,12 +13,10 @@ use Magento\Framework\Model\Context;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Sales\Model\ResourceModel\Order\Status;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class StatusTest extends TestCase
 {
-    use MockCreationTrait;
 
     /**
      * @var Status|MockObject

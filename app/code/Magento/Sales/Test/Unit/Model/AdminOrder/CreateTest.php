@@ -17,6 +17,7 @@ use Magento\Customer\Model\Customer\Mapper;
 use Magento\Customer\Model\Metadata\Form;
 use Magento\Customer\Model\Metadata\FormFactory;
 use Magento\Framework\Api\DataObjectHelper;
+use Magento\Framework\App\Console\Request as ConsoleRequest;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Message\ManagerInterface;
@@ -255,7 +256,7 @@ class CreateTest extends TestCase
             ->willReturn($taxClassId);
         // Use concrete Request class with MockCreationTrait to add getPostValue method
         $requestMock = $this->createPartialMockWithReflection(
-            \Magento\Framework\App\Console\Request::class,
+            ConsoleRequest::class,
             ['getPostValue']
         );
         $requestMock->method('getPostValue')->willReturn(null);

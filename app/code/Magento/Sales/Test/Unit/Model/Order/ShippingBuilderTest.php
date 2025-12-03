@@ -13,12 +13,10 @@ use Magento\Sales\Api\Data\TotalInterfaceFactory;
 use Magento\Sales\Model\OrderFactory;
 use Magento\Sales\Model\Order\ShippingBuilder;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class ShippingBuilderTest extends TestCase
 {
-    use MockCreationTrait;
 
     /**
      * @var ShippingBuilder

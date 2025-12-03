@@ -19,6 +19,7 @@ use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Config;
 use Magento\Sales\Model\ResourceModel\Order\Collection;
 use Magento\Sales\Model\ResourceModel\Order\CollectionFactory;
+use Magento\Sales\Model\ResourceModel\Order\Item as OrderItem;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManager;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -180,7 +181,7 @@ class SidebarTest extends TestCase
             ->willReturn([$websiteId]);
 
         $item = $this->createPartialMockWithReflection(
-            \Magento\Sales\Model\ResourceModel\Order\Item::class,
+            OrderItem::class,
             ['getProduct']
         );
         $item->expects($this->atLeastOnce())

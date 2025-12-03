@@ -18,12 +18,10 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Sales\Block\Adminhtml\Order\View\Info;
 use Magento\Sales\Model\Order;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class InfoTest extends TestCase
 {
-    use MockCreationTrait;
 
     /**
      * @var Info

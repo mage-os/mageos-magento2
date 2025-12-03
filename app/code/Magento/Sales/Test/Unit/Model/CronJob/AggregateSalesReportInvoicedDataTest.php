@@ -13,7 +13,6 @@ use Magento\Sales\Model\CronJob\AggregateSalesReportInvoicedData;
 use Magento\Sales\Model\ResourceModel\Report\Invoiced;
 use Magento\Sales\Model\ResourceModel\Report\InvoicedFactory;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -21,8 +20,6 @@ use PHPUnit\Framework\TestCase;
  */
 class AggregateSalesReportInvoicedDataTest extends TestCase
 {
-    use MockCreationTrait;
-
     /**
      * @var ResolverInterface|MockObject
      */

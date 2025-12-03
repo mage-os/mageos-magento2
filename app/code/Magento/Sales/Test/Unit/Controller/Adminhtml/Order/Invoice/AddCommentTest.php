@@ -10,6 +10,7 @@ namespace Magento\Sales\Test\Unit\Controller\Adminhtml\Order\Invoice;
 
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\App\Request\Http;
+use Magento\Framework\App\Response\Http as ResponseHttp;
 use Magento\Framework\App\View;
 use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\Result\JsonFactory;
@@ -28,7 +29,6 @@ use Magento\Sales\Controller\Adminhtml\Order\Invoice\AddComment;
 use Magento\Sales\Model\Order\Email\Sender\InvoiceCommentSender;
 use Magento\Sales\Model\Order\Invoice;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -37,8 +37,6 @@ use PHPUnit\Framework\TestCase;
  */
 class AddCommentTest extends TestCase
 {
-    use MockCreationTrait;
-
     /**
      * @var MockObject
      */
@@ -114,7 +112,7 @@ class AddCommentTest extends TestCase
         $objectManager = new ObjectManager($this);
 
         $this->requestMock = $this->createMock(Http::class);
-        $this->responseMock = $this->createMock(\Magento\Framework\App\Response\Http::class);
+        $this->responseMock = $this->createMock(ResponseHttp::class);
         $this->viewMock = $this->createMock(View::class);
         $this->resultPageMock = $this->createMock(Page::class);
         $this->pageConfigMock = $this->createMock(Config::class);

@@ -16,6 +16,7 @@ use Magento\Backend\Model\View\Result\Redirect;
 use Magento\Backend\Model\View\Result\RedirectFactory;
 use Magento\Framework\App\ActionFlag;
 use Magento\Framework\App\Request\Http;
+use Magento\Framework\App\Response\Http as ResponseHttp;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Layout;
 use Magento\Framework\View\Page\Config;
@@ -125,7 +126,7 @@ class ViewTest extends TestCase
         $objectManager = new ObjectManager($this);
 
         $this->requestMock = $this->createMock(Http::class);
-        $this->responseMock = $this->createMock(\Magento\Framework\App\Response\Http::class);
+        $this->responseMock = $this->createMock(ResponseHttp::class);
         $this->viewMock = $this->createMock(\Magento\Framework\App\View::class);
         $this->actionFlagMock = $this->createMock(ActionFlag::class);
         $this->sessionMock = $this->createPartialMockWithReflection(

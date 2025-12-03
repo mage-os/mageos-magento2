@@ -32,7 +32,6 @@ use Magento\Sales\Model\OrderFactory;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
@@ -41,8 +40,6 @@ use PHPUnit\Framework\TestCase;
  */
 class GuestTest extends TestCase
 {
-    use MockCreationTrait;
-
     /**
      * @var Guest
      */

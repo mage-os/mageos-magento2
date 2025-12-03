@@ -11,6 +11,7 @@ use Magento\Customer\Model\Session;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\View\Element\Template\Context;
+use Magento\Framework\View\Page\Config as PageConfig;
 use Magento\Framework\View\Page\Title;
 use Magento\Sales\Block\Order\History;
 use Magento\Sales\Model\Order\Config;
@@ -18,13 +19,10 @@ use Magento\Sales\Model\ResourceModel\Order\Collection;
 use Magento\Sales\Model\ResourceModel\Order\CollectionFactory;
 use Magento\Sales\Model\ResourceModel\Order\CollectionFactoryInterface;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class HistoryTest extends TestCase
 {
-    use MockCreationTrait;
-
     /**
      * @var History
      */
@@ -61,7 +59,7 @@ class HistoryTest extends TestCase
     protected $orderConfig;
 
     /**
-     * @var \Magento\Framework\View\Page\Config|MockObject
+     * @var PageConfig|MockObject
      */
     protected $pageConfig;
 
@@ -102,7 +100,7 @@ class HistoryTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->pageConfig = $this->createMock(\Magento\Framework\View\Page\Config::class);
+        $this->pageConfig = $this->createMock(PageConfig::class);
         $this->pageTitleMock = $this->createMock(Title::class);
     }
 

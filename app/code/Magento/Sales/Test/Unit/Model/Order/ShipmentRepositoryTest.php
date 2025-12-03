@@ -19,7 +19,6 @@ use Magento\Sales\Model\Order\ShipmentRepository;
 use Magento\Sales\Model\ResourceModel\Metadata;
 use Magento\Sales\Model\ResourceModel\Order\Shipment\Collection;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
@@ -29,7 +28,6 @@ use PHPUnit\Framework\Attributes\DataProvider;
  */
 class ShipmentRepositoryTest extends TestCase
 {
-    use MockCreationTrait;
 
     /**
      * Subject of testing.

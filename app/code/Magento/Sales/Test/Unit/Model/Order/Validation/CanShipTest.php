@@ -16,14 +16,12 @@ use Magento\Sales\Model\Order\Validation\CanShip;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * Test for \Magento\Sales\Model\Order\Validation\CanShip class
  */
 class CanShipTest extends TestCase
 {
-    use MockCreationTrait;
 
     /**
      * @var CanShip|MockObject

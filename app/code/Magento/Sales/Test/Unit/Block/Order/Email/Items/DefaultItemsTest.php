@@ -97,8 +97,6 @@ class DefaultItemsTest extends TestCase
      * @param float $quantity
      */
     #[DataProvider('getItemPriceDataProvider')]
-    /**
-     * */
     public function testGetItemPrice($price, $html, $quantity)
     {
         $this->layoutMock->expects($this->once())

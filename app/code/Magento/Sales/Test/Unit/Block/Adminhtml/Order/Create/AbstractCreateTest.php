@@ -15,12 +15,10 @@ use Magento\Sales\Block\Adminhtml\Order\Create\AbstractCreate;
 use Magento\Wishlist\Model\Item;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\DataProvider;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class AbstractCreateTest extends TestCase
 {
-    use MockCreationTrait;
 
     /**
      * @var AbstractCreate|MockObject

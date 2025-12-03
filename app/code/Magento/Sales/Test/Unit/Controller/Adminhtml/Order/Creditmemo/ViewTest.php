@@ -17,6 +17,7 @@ use Magento\Backend\Model\View\Result\Redirect;
 use Magento\Backend\Model\View\Result\RedirectFactory;
 use Magento\Framework\App\ActionFlag;
 use Magento\Framework\App\Request\Http;
+use Magento\Framework\App\Response\Http as ResponseHttp;
 use Magento\Framework\Message\Manager;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
@@ -24,6 +25,7 @@ use Magento\Framework\View\Layout;
 use Magento\Framework\View\Page\Config;
 use Magento\Framework\View\Page\Title;
 use Magento\Framework\View\Result\PageFactory;
+use Magento\Sales\Block\Adminhtml\Order\Creditmemo\View as CreditmemoViewBlock;
 use Magento\Sales\Controller\Adminhtml\Order\Creditmemo\View;
 use Magento\Sales\Controller\Adminhtml\Order\CreditmemoLoader;
 use Magento\Sales\Model\Order\Creditmemo;
@@ -152,7 +154,7 @@ class ViewTest extends TestCase
             ['cancel', 'getInvoice', 'getOrder', 'getId']
         );
         $this->requestMock = $this->createMock(Http::class);
-        $this->responseMock = $this->createMock(\Magento\Framework\App\Response\Http::class);
+        $this->responseMock = $this->createMock(ResponseHttp::class);
         $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
         $this->messageManagerMock = $this->createMock(Manager::class);
         $this->sessionMock = $this->createMock(Session::class);
@@ -257,7 +259,7 @@ class ViewTest extends TestCase
     public function testExecute($invoice)
     {
         $layoutMock = $this->createMock(Layout::class);
-        $blockMock = $this->createMock(\Magento\Sales\Block\Adminhtml\Order\Creditmemo\View::class);
+        $blockMock = $this->createMock(CreditmemoViewBlock::class);
 
         $this->requestMock->expects($this->any())
             ->method('getParam')

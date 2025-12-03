@@ -19,7 +19,6 @@ use Magento\Sales\Model\Order\Invoice;
 use Magento\Sales\Model\Order\InvoiceNotifier;
 use Magento\Sales\Model\Service\InvoiceService;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -28,7 +27,6 @@ use PHPUnit\Framework\TestCase;
  */
 class InvoiceServiceTest extends TestCase
 {
-    use MockCreationTrait;
 
     /**
      * Repository

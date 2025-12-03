@@ -11,6 +11,7 @@ use Magento\Backend\App\Action\Context;
 use Magento\Backend\Model\Session;
 use Magento\Backend\Model\View\Result\Redirect;
 use Magento\Framework\App\Request\Http;
+use Magento\Framework\App\Response\Http as ResponseHttp;
 use Magento\Framework\Data\Form\FormKey\Validator;
 use Magento\Framework\DB\Transaction;
 use Magento\Framework\Message\ManagerInterface;
@@ -96,7 +97,7 @@ class SaveTest extends TestCase
         $objectManager->prepareObjectManager();
 
         $this->requestMock = $this->createMock(Http::class);
-        $this->responseMock = $this->createMock(\Magento\Framework\App\Response\Http::class);
+        $this->responseMock = $this->createMock(ResponseHttp::class);
 
         $this->resultPageFactoryMock = $this->getMockBuilder(PageFactory::class)
             ->disableOriginalConstructor()

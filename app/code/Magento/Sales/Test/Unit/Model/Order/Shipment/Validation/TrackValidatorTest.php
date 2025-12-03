@@ -12,12 +12,10 @@ use Magento\Sales\Api\Data\ShipmentInterface;
 use Magento\Sales\Api\Data\ShipmentTrackInterface;
 use Magento\Sales\Model\Order\Shipment\Validation\TrackValidator;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class TrackValidatorTest extends TestCase
 {
-    use MockCreationTrait;
 
     /**
      * @var TrackValidator

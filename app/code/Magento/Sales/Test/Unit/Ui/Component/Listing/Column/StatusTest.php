@@ -13,12 +13,10 @@ use Magento\Framework\View\Element\UiComponent\Processor;
 use Magento\Sales\Model\ResourceModel\Order\Status\Collection;
 use Magento\Sales\Model\ResourceModel\Order\Status\CollectionFactory;
 use Magento\Sales\Ui\Component\Listing\Column\Status;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class StatusTest extends TestCase
 {
-    use MockCreationTrait;
 
     public function testPrepareDataSource()
     {

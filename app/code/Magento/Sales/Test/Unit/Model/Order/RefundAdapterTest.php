@@ -13,7 +13,6 @@ use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Model\Order\Creditmemo\RefundOperation;
 use Magento\Sales\Model\Order\RefundAdapter;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -21,7 +20,6 @@ use PHPUnit\Framework\TestCase;
  */
 class RefundAdapterTest extends TestCase
 {
-    use MockCreationTrait;
 
     /**
      * @var RefundAdapter

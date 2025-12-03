@@ -33,14 +33,12 @@ use Magento\Catalog\Model\Product\Type\AbstractType;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class SaveTest extends TestCase
 {
-    use MockCreationTrait;
 
     /**
      * @var \Magento\Sales\Controller\Adminhtml\Order\Creditmemo

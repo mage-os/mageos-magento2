@@ -19,14 +19,12 @@ use Magento\Sales\Model\Order\Item;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class QuantityValidatorTest extends TestCase
 {
-    use MockCreationTrait;
 
     /**
      * @var OrderRepositoryInterface|MockObject

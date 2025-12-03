@@ -13,6 +13,7 @@ use Magento\CatalogInventory\Model\StockRegistry;
 use Magento\Framework\DataObject;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Quote\Model\Quote;
+use Magento\Quote\Model\Quote\Item as QuoteItem;
 use Magento\Sales\Model\AdminOrder\Product\Quote\Initializer;
 use Magento\Store\Model\Store;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -106,7 +107,7 @@ class InitializerTest extends TestCase
     public function testInitWithDecimalQty()
     {
         $quoteItemMock = $this->createPartialMockWithReflection(
-            \Magento\Quote\Model\Quote\Item::class,
+            QuoteItem::class,
             ['getStockId', 'getIsQtyDecimal']
         );
 
@@ -147,7 +148,7 @@ class InitializerTest extends TestCase
     public function testInitWithNonDecimalQty()
     {
         $quoteItemMock = $this->createPartialMockWithReflection(
-            \Magento\Quote\Model\Quote\Item::class,
+            QuoteItem::class,
             ['getStockId', 'getIsQtyDecimal']
         );
 

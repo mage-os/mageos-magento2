@@ -18,12 +18,10 @@ use Magento\Sales\Model\Order\Payment\Transaction;
 use Magento\Sales\Model\Order\Payment\Transaction\BuilderInterface;
 use Magento\Sales\Model\Order\Payment\Transaction\ManagerInterface as TransactionManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class ProcessInvoiceOperationTest extends TestCase
 {
-    use MockCreationTrait;
 
     /**
      * @var TransactionManagerInterface|MockObject

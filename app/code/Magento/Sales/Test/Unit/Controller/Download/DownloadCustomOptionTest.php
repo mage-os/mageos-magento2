@@ -14,6 +14,7 @@ use Magento\Framework\Controller\Result\Forward;
 use Magento\Framework\Controller\Result\ForwardFactory;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\Unserialize\Unserialize;
+use Magento\Catalog\Model\Product\Option as ProductOption;
 use Magento\Quote\Model\Quote\Item\Option;
 use Magento\Sales\Controller\Download\DownloadCustomOption;
 use Magento\Sales\Model\Download;
@@ -126,7 +127,7 @@ class DownloadCustomOptionTest extends TestCase
         );
 
         $this->productOptionMock = $this->createPartialMockWithReflection(
-            \Magento\Catalog\Model\Product\Option::class,
+            ProductOption::class,
             ['getProductId', 'load', 'getId', 'getType']
         );
 
@@ -135,7 +136,7 @@ class DownloadCustomOptionTest extends TestCase
             ->willReturnMap(
                 [
                     [Option::class, $this->itemOptionMock],
-                    [\Magento\Catalog\Model\Product\Option::class, $this->productOptionMock],
+                    [ProductOption::class, $this->productOptionMock],
                 ]
             );
 

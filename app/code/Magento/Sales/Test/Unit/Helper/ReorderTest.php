@@ -14,15 +14,13 @@ use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Helper\Reorder;
 use Magento\Sales\Model\Order;
 use Magento\Store\Model\ScopeInterface;
+use Magento\Store\Model\Store;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 class ReorderTest extends TestCase
 {
-    use MockCreationTrait;
-
     /**
      * @var Reorder
      */
@@ -34,12 +32,12 @@ class ReorderTest extends TestCase
     protected $scopeConfigMock;
 
     /**
-     * @var MockObject|\Magento\Store\Model\Store
+     * @var MockObject|Store
      */
     protected $storeParam;
 
     /**
-     * @var MockObject|\Magento\Sales\Model\Order
+     * @var MockObject|Order
      */
     protected $orderMock;
 
@@ -69,7 +67,7 @@ class ReorderTest extends TestCase
             $this->repositoryMock
         );
 
-        $this->storeParam = $this->createMock(\Magento\Store\Model\Store::class);
+        $this->storeParam = $this->createMock(Store::class);
 
         $this->orderMock = $this->createMock(Order::class);
     }

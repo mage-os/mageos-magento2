@@ -17,11 +17,9 @@ use Magento\Sales\Model\ResourceModel\Order\Relation;
 use Magento\Sales\Model\ResourceModel\Order\Status\History;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 class RelationTest extends TestCase
 {
-    use MockCreationTrait;
 
     /**
      * @var Relation

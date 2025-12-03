@@ -13,12 +13,10 @@ use Magento\Sales\Model\Order\Config;
 use Magento\Sales\Model\Order\Status\History;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class HistoryTest extends TestCase
 {
-    use MockCreationTrait;
 
     /**
      * @var ObjectManager

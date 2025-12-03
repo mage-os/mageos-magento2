@@ -21,6 +21,7 @@ use Magento\Sales\Api\CreditmemoRepositoryInterface;
 use Magento\Sales\Controller\Adminhtml\Order\Creditmemo\PrintAction;
 use Magento\Sales\Controller\Adminhtml\Order\CreditmemoLoader;
 use Magento\Sales\Model\Order\Creditmemo;
+use Magento\Sales\Model\Order\Pdf\Creditmemo as CreditmemoPdf;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
@@ -118,7 +119,7 @@ class PrintActionTest extends TestCase
             ->getMock();
         $this->creditmemoRepositoryMock = $this->createMock(CreditmemoRepositoryInterface::class);
         $this->creditmemoMock = $this->createMock(Creditmemo::class);
-        $this->creditmemoPdfMock = $this->createMock(\Magento\Sales\Model\Order\Pdf\Creditmemo::class);
+        $this->creditmemoPdfMock = $this->createMock(CreditmemoPdf::class);
         $this->pdfMock = $this->createMock(\Zend_Pdf::class);
         $this->dateTimeMock = $this->createMock(DateTime::class);
         $this->fileFactoryMock = $this->createMock(FileFactory::class);

@@ -13,7 +13,6 @@ use Magento\Sales\Model\CronJob\AggregateSalesReportRefundedData;
 use Magento\Sales\Model\ResourceModel\Report\Refunded;
 use Magento\Sales\Model\ResourceModel\Report\RefundedFactory;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -21,8 +20,6 @@ use PHPUnit\Framework\TestCase;
  */
 class AggregateSalesReportRefundedDataTest extends TestCase
 {
-    use MockCreationTrait;
-
     /**
      * @var ResolverInterface|MockObject
      */

@@ -16,6 +16,7 @@ use Magento\Backend\Model\View\Result\Redirect;
 use Magento\Backend\Model\View\Result\RedirectFactory;
 use Magento\Framework\App\ActionFlag;
 use Magento\Framework\App\Request\Http;
+use Magento\Framework\App\Response\Http as ResponseHttp;
 use Magento\Framework\DB\Transaction;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Message\Manager;
@@ -131,7 +132,7 @@ class VoidActionTest extends TestCase
             ['cancel', 'void', 'getInvoice', 'getOrder', 'getId']
         );
         $this->requestMock = $this->createMock(Http::class);
-        $this->responseMock = $this->createMock(\Magento\Framework\App\Response\Http::class);
+        $this->responseMock = $this->createMock(ResponseHttp::class);
         $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
         $this->helperMock = $this->createMock(Data::class);
         $this->messageManagerMock = $this->createMock(Manager::class);

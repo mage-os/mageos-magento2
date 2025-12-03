@@ -14,12 +14,10 @@ use Magento\Framework\View\Element\UiComponent\Processor;
 use Magento\Sales\Ui\Component\Listing\Column\Price;
 use Magento\Sales\Ui\Component\Listing\Column\PurchasedPrice;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class PurchasedPriceTest extends TestCase
 {
-    use MockCreationTrait;
 
     /**
      * @var Price

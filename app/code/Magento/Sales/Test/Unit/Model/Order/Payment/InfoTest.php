@@ -18,7 +18,6 @@ use Magento\Payment\Model\MethodInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Model\Order\Payment\Info;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Framework\Exception\LocalizedException;
@@ -29,7 +28,6 @@ use Magento\Framework\Exception\LocalizedException;
  */
 class InfoTest extends TestCase
 {
-    use MockCreationTrait;
 
     /**
      * @var Info

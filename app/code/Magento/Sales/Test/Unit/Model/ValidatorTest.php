@@ -17,7 +17,6 @@ use Magento\Sales\Model\ValidatorInterface;
 use Magento\Sales\Model\ValidatorResultInterface;
 use Magento\Sales\Model\ValidatorResultInterfaceFactory;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -25,7 +24,6 @@ use PHPUnit\Framework\TestCase;
  */
 class ValidatorTest extends TestCase
 {
-    use MockCreationTrait;
 
     /**
      * Testable Object

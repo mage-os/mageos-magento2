@@ -15,7 +15,6 @@ use Magento\Sales\Ui\Component\Listing\Column\Price;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
@@ -24,7 +23,6 @@ use PHPUnit\Framework\Attributes\DataProvider;
  */
 class PriceTest extends TestCase
 {
-    use MockCreationTrait;
 
     /**
      * @var Price

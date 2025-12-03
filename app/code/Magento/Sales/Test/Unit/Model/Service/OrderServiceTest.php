@@ -27,7 +27,6 @@ use Magento\Sales\Model\OrderMutex;
 use Magento\Sales\Model\OrderNotifier;
 use Magento\Sales\Model\Service\OrderService;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Magento\Framework\Exception\LocalizedException;
@@ -39,7 +38,6 @@ use Magento\Framework\Exception\LocalizedException;
  */
 class OrderServiceTest extends TestCase
 {
-    use MockCreationTrait;
 
     /**
      * @var OrderService

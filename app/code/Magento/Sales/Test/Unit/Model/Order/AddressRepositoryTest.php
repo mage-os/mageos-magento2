@@ -23,7 +23,6 @@ use Magento\Sales\Model\Order\AddressRepository as OrderAddressRepository;
 use Magento\Sales\Model\ResourceModel\Metadata;
 use Magento\Sales\Model\ResourceModel\Order\Address\Collection as OrderAddressCollection;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
@@ -34,7 +33,6 @@ use PHPUnit\Framework\Attributes\DataProvider;
  */
 class AddressRepositoryTest extends TestCase
 {
-    use MockCreationTrait;
 
     /**
      * Subject of testing.

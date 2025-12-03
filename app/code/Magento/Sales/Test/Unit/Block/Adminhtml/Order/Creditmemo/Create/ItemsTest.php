@@ -18,6 +18,8 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHe
 use Magento\Sales\Block\Adminhtml\Order\Creditmemo\Create\Items;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Creditmemo;
+use Magento\Sales\Model\Order\Creditmemo\Item as CreditmemoItem;
+use Magento\Sales\Model\Order\Item as OrderItem;
 use Magento\Store\Model\Store;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -59,6 +61,8 @@ class ItemsTest extends TestCase
 
     protected function setUp(): void
     {
+        $this->objectManagerHelper = new ObjectManagerHelper($this);
+        $this->objectManagerHelper->prepareObjectManager();
         $this->contextMock = $this->createMock(Context::class);
         $this->stockRegistry = $this->getMockBuilder(StockRegistry::class)
             ->disableOriginalConstructor()
@@ -85,7 +89,6 @@ class ItemsTest extends TestCase
             ->method('getScopeConfig')
             ->willReturn($this->scopeConfig);
 
-        $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->items = $this->objectManagerHelper->getObject(
             Items::class,
             [
@@ -115,7 +118,7 @@ class ItemsTest extends TestCase
 
         if ($canReturnToStock) {
             $orderItem = $this->createPartialMock(
-                \Magento\Sales\Model\Order\Item::class,
+                OrderItem::class,
                 ['getProductId', 'getStore']
             );
             $store = $this->createPartialMock(Store::class, ['getWebsiteId']);
@@ -130,7 +133,7 @@ class ItemsTest extends TestCase
                 ->willReturn($productId);
 
             $creditMemoItem = $this->createPartialMockWithReflection(
-                \Magento\Sales\Model\Order\Creditmemo\Item::class,
+                CreditmemoItem::class,
                 array_merge(['setCanReturnToStock'], ['getOrderItem'])
             );
 

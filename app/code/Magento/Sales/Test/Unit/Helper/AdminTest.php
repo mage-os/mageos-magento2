@@ -17,6 +17,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Sales\Helper\Admin;
 use Magento\Sales\Model\Config;
 use Magento\Sales\Model\Order;
+use Magento\Quote\Model\Quote\Item as QuoteItem;
 use Magento\Sales\Model\Order\Item;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
@@ -117,8 +118,8 @@ class AdminTest extends TestCase
      * @param bool $isCurrencyDifferent
      * @param bool $magentoDataObjectHasOrder
      * @param bool $strong
-     * @param string $separator     */
-
+     * @param string $separator
+     */
      #[DataProvider('displayPricesDataProvider')]
     public function testDisplayPrices(
         $expected,
@@ -163,8 +164,8 @@ class AdminTest extends TestCase
      * @param bool $isCurrencyDifferent
      * @param bool $magentoDataObjectHasOrder
      * @param bool $strong
-     * @param string $separator     */
-
+     * @param string $separator
+     */
      #[DataProvider('displayPricesDataProvider')]
     public function testDisplayPriceAttribute(
         $expected,
@@ -274,8 +275,8 @@ class AdminTest extends TestCase
     /**
      * @param string $itemKey
      * @param string $type
-     * @param int $calledTimes     */
-
+     * @param int $calledTimes
+     */
      #[DataProvider('applySalableProductTypesFilterDataProvider')]
     public function testApplySalableProductTypesFilter($itemKey, $type, $calledTimes)
     {
@@ -290,7 +291,7 @@ class AdminTest extends TestCase
         $orderMock->expects($this->any())
             ->method('getProductType')
             ->willReturn($type);
-        $quoteMock = $this->createMock(\Magento\Quote\Model\Quote\Item::class);
+        $quoteMock = $this->createMock(QuoteItem::class);
         $quoteMock->expects($this->any())
             ->method('getProductType')
             ->willReturn($type);

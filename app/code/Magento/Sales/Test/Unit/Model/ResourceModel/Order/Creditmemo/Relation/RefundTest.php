@@ -16,12 +16,10 @@ use Magento\Sales\Model\Order\Creditmemo;
 use Magento\Sales\Model\Order\Payment;
 use Magento\Sales\Model\ResourceModel\Order\Creditmemo\Relation\Refund;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 class RefundTest extends TestCase
 {
-    use MockCreationTrait;
 
     /**
      * @var Refund

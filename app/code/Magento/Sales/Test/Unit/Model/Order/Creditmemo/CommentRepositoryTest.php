@@ -18,7 +18,6 @@ use Magento\Sales\Model\Order\Creditmemo\CommentRepository;
 use Magento\Sales\Model\Order\Email\Sender\CreditmemoCommentSender;
 use Magento\Sales\Model\Spi\CreditmemoCommentResourceInterface;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
@@ -28,7 +27,6 @@ use Psr\Log\LoggerInterface;
  */
 class CommentRepositoryTest extends TestCase
 {
-    use MockCreationTrait;
 
     /**
      * @var MockObject|CreditmemoCommentResourceInterface

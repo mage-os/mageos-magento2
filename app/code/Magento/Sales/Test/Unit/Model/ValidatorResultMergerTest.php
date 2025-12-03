@@ -12,7 +12,6 @@ use Magento\Sales\Model\ValidatorResultInterface;
 use Magento\Sales\Model\ValidatorResultInterfaceFactory;
 use Magento\Sales\Model\ValidatorResultMerger;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -20,7 +19,6 @@ use PHPUnit\Framework\TestCase;
  */
 class ValidatorResultMergerTest extends TestCase
 {
-    use MockCreationTrait;
 
     /**
      * @var ValidatorResultMerger

@@ -14,13 +14,11 @@ use Magento\Sales\Model\Order\Total\AbstractTotal;
 use Magento\Sales\Model\Order\Total\Config\Base;
 use Magento\Sales\Model\Order\TotalFactory;
 use PHPUnit\Framework\MockObject\MockObject;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
 class BaseTest extends TestCase
 {
-    use MockCreationTrait;
 
     /** @var Base */
     private $object;
