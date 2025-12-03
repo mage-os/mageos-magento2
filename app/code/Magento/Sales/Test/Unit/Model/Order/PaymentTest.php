@@ -29,9 +29,11 @@ use Magento\Sales\Model\Order\Payment\Processor;
 use Magento\Sales\Model\Order\Payment\Transaction;
 use Magento\Sales\Model\Order\Payment\Transaction\Builder;
 use Magento\Sales\Model\Order\Payment\Transaction\BuilderInterface;
+use Magento\Sales\Model\Order\Payment\Transaction\Manager as TransactionManager;
 use Magento\Sales\Model\Order\Payment\Transaction\ManagerInterface;
 use Magento\Sales\Model\Order\Payment\Transaction\Repository;
 use Magento\Sales\Model\OrderRepository;
+use Magento\Sales\Model\ResourceModel\Order\Payment\Transaction as TransactionResource;
 use Magento\Sales\Model\ResourceModel\Order\Payment\Transaction\CollectionFactory;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -240,7 +242,7 @@ class PaymentTest extends TestCase
             ->getMock();
         $this->creditmemoFactoryMock = $this->createMock(CreditmemoFactory::class);
         $this->transactionManagerMock = $this->createMock(
-            \Magento\Sales\Model\Order\Payment\Transaction\Manager::class
+            TransactionManager::class
         );
         $this->transactionBuilderMock = $this->createMock(
             Builder::class
@@ -1455,7 +1457,7 @@ class PaymentTest extends TestCase
         $this->payment->setParentTransactionId($this->transactionId);
         $this->payment->setId($paymentId);
         $this->order->setId($orderId);
-        $transaction = $this->createMock(\Magento\Sales\Model\ResourceModel\Order\Payment\Transaction::class);
+        $transaction = $this->createMock(TransactionResource::class);
         $newTransactionId = $this->transactionId . '-' . Transaction::TYPE_REFUND;
         $this->transactionRepositoryMock->expects($this->once())
             ->method('getByTransactionId')

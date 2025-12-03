@@ -5,12 +5,23 @@
  */
 namespace Magento\Sales\Test\Unit\Model\Order\Pdf;
 
+use Magento\Framework\App\Area;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\Filesystem;
+use Magento\Framework\Filesystem\Directory\Write as DirectoryWrite;
+use Magento\Framework\Stdlib\StringUtils;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\View\Element\Template;
 use Magento\MediaStorage\Helper\File\Storage\Database;
+use Magento\Payment\Helper\Data as PaymentData;
+use Magento\Payment\Model\InfoInterface;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Address;
 use Magento\Sales\Model\Order\Address\Renderer;
+use Magento\Sales\Model\Order\Pdf\Config as PdfConfig;
+use Magento\Sales\Model\Order\Pdf\Shipment as ShipmentPdf;
 use Magento\Sales\Model\Order\Shipment;
+use Magento\Store\Model\App\Emulation;
 use Magento\Store\Model\ScopeInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -28,12 +39,12 @@ class ShipmentTest extends TestCase
     use MockCreationTrait;
 
     /**
-     * @var \Magento\Sales\Model\Order\Pdf\Invoice
+     * @var ShipmentPdf
      */
     protected $model;
 
     /**
-     * @var \Magento\Sales\Model\Order\Pdf\Config|MockObject
+     * @var PdfConfig|MockObject
      */
     protected $pdfConfigMock;
 
@@ -48,7 +59,7 @@ class ShipmentTest extends TestCase
     protected $scopeConfigMock;
 
     /**
-     * @var \Magento\Framework\Filesystem\Directory\Write|MockObject
+     * @var DirectoryWrite|MockObject
      */
     protected $directoryMock;
 
@@ -58,12 +69,12 @@ class ShipmentTest extends TestCase
     protected $addressRendererMock;
 
     /**
-     * @var \Magento\Payment\Helper\Data|MockObject
+     * @var PaymentData|MockObject
      */
     protected $paymentDataMock;
 
     /**
-     * @var \Magento\Store\Model\App\Emulation
+     * @var Emulation
      */
     private $appEmulation;
 
@@ -72,14 +83,14 @@ class ShipmentTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->pdfConfigMock = $this->createMock(\Magento\Sales\Model\Order\Pdf\Config::class);
-        $this->directoryMock = $this->createMock(\Magento\Framework\Filesystem\Directory\Write::class);
+        $this->pdfConfigMock = $this->createMock(PdfConfig::class);
+        $this->directoryMock = $this->createMock(DirectoryWrite::class);
         $this->directoryMock->expects($this->any())->method('getAbsolutePath')->willReturnCallback(
             function ($argument) {
                 return BP . '/' . $argument;
             }
         );
-        $filesystemMock = $this->createMock(\Magento\Framework\Filesystem::class);
+        $filesystemMock = $this->createMock(Filesystem::class);
         $filesystemMock->expects($this->any())
             ->method('getDirectoryRead')
             ->willReturn($this->directoryMock);
@@ -90,19 +101,19 @@ class ShipmentTest extends TestCase
         $this->databaseMock = $this->createMock(Database::class);
         $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
         $this->addressRendererMock = $this->createMock(Renderer::class);
-        $this->paymentDataMock = $this->createMock(\Magento\Payment\Helper\Data::class);
-        $this->appEmulation = $this->createMock(\Magento\Store\Model\App\Emulation::class);
+        $this->paymentDataMock = $this->createMock(PaymentData::class);
+        $this->appEmulation = $this->createMock(Emulation::class);
 
-        $helper = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
+        $helper = new ObjectManager($this);
         $this->model = $helper->getObject(
-            \Magento\Sales\Model\Order\Pdf\Shipment::class,
+            ShipmentPdf::class,
             [
                 'filesystem' => $filesystemMock,
                 'pdfConfig' => $this->pdfConfigMock,
                 'fileStorageDatabase' => $this->databaseMock,
                 'scopeConfig' => $this->scopeConfigMock,
                 'addressRenderer' => $this->addressRendererMock,
-                'string' => new \Magento\Framework\Stdlib\StringUtils(),
+                'string' => new StringUtils(),
                 'paymentData' => $this->paymentDataMock,
                 'appEmulation' => $this->appEmulation
             ]
@@ -122,7 +133,7 @@ class ShipmentTest extends TestCase
             ->method('startEnvironmentEmulation')
             ->with(
                 $storeId,
-                \Magento\Framework\App\Area::AREA_FRONTEND,
+                Area::AREA_FRONTEND,
                 true
             )
             ->willReturnSelf();
@@ -138,7 +149,7 @@ class ShipmentTest extends TestCase
             ->willReturn([]);
 
         $block = $this->createPartialMockWithReflection(
-            \Magento\Framework\View\Element\Template::class,
+            Template::class,
             ['setIsSecureMode', 'toPdf']
         );
         $block->expects($this->any())
@@ -168,7 +179,7 @@ class ShipmentTest extends TestCase
         $orderMock->expects($this->any())
             ->method('getIsVirtual')
             ->willReturn(true);
-        $infoMock = $this->createMock(\Magento\Payment\Model\InfoInterface::class);
+        $infoMock = $this->createMock(InfoInterface::class);
         $orderMock->expects($this->any())
             ->method('getPayment')
             ->willReturn($infoMock);

@@ -12,6 +12,7 @@ use Magento\Framework\DataObject;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Sales\Model\Order as SalesOrder;
 use Magento\Sales\Model\Order\Creditmemo;
 use Magento\Sales\Model\Order\Creditmemo\Total\Shipping;
 use Magento\Tax\Model\Calculation as TaxCalculation;
@@ -122,7 +123,7 @@ class ShippingTest extends TestCase
 
     private function getOrderMock($data)
     {
-        $orderMock = $this->createMock(\Magento\Sales\Model\Order::class);
+        $orderMock = $this->createMock(SalesOrder::class);
 
         foreach ($data as $method => $returnValue) {
             $orderMock

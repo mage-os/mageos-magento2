@@ -11,6 +11,7 @@ use Magento\Backend\Model\Session\Quote;
 use Magento\Customer\Api\Data\GroupInterface;
 use Magento\Customer\Api\GroupManagementInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Quote\Model\Quote as QuoteModel;
 use Magento\Sales\Model\CustomerGroupRetriever;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -65,7 +66,7 @@ class CustomerGroupRetrieverTest extends TestCase
     public function testGetCustomerGroupIdQuote()
     {
         $this->quoteSession->expects($this->atLeastOnce())->method('getQuoteId')->willReturn(1);
-        $quote = $this->createMock(\Magento\Quote\Model\Quote::class);
+        $quote = $this->createMock(QuoteModel::class);
         $this->quoteSession->expects($this->atLeastOnce())->method('getQuote')->willReturn($quote);
         $quote->expects($this->once())->method('getCustomerGroupId')->willReturn(2);
 

@@ -9,6 +9,7 @@ namespace Magento\Sales\Test\Unit\Model\Order\Pdf\Config;
 
 use Magento\Framework\Config\FileResolverInterface;
 use Magento\Framework\Config\ValidationStateInterface;
+use Magento\Framework\Module\Dir\Reader as ModuleReader;
 use Magento\Sales\Model\Order\Pdf\Config\Converter;
 use Magento\Sales\Model\Order\Pdf\Config\Reader;
 use Magento\Sales\Model\Order\Pdf\Config\SchemaLocator;
@@ -67,7 +68,7 @@ class ReaderTest extends TestCase
             ['convert']
         );
 
-        $moduleReader = $this->createPartialMock(\Magento\Framework\Module\Dir\Reader::class, ['getModuleDir']);
+        $moduleReader = $this->createPartialMock(ModuleReader::class, ['getModuleDir']);
 
         $moduleReader->expects(
             $this->once()

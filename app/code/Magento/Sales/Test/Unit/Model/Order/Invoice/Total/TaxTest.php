@@ -12,6 +12,7 @@ use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Invoice;
 use Magento\Sales\Model\Order\Invoice\Item;
 use Magento\Sales\Model\Order\Invoice\Total\Tax;
+use Magento\Sales\Model\Order\Item as OrderItem;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -366,8 +367,8 @@ class TaxTest extends TestCase
      */
     protected function getInvoiceItem($invoiceItemData)
     {
-        /** @var \Magento\Sales\Model\Order\Item|MockObject $orderItem */
-        $orderItem = $this->createPartialMock(\Magento\Sales\Model\Order\Item::class, [
+        /** @var OrderItem|MockObject $orderItem */
+        $orderItem = $this->createPartialMock(OrderItem::class, [
             'isDummy'
         ]);
         foreach ($invoiceItemData['order_item'] as $key => $value) {

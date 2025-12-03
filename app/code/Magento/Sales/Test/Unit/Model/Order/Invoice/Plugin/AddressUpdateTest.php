@@ -14,6 +14,7 @@ use Magento\Sales\Model\Order\Invoice;
 use Magento\Sales\Model\Order\Invoice\Plugin\AddressUpdate;
 use Magento\Sales\Model\ResourceModel\Attribute;
 use Magento\Sales\Model\ResourceModel\GridPool;
+use Magento\Sales\Model\ResourceModel\Order\Handler\Address as AddressHandler;
 use Magento\Sales\Model\ResourceModel\Order\Invoice\Collection;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -107,8 +108,8 @@ class AddressUpdateTest extends TestCase
             ->willReturn($asyncReindexEnabled);
 
         $this->model->afterProcess(
-            $this->createMock(\Magento\Sales\Model\ResourceModel\Order\Handler\Address::class),
-            $this->createMock(\Magento\Sales\Model\ResourceModel\Order\Handler\Address::class),
+            $this->createMock(AddressHandler::class),
+            $this->createMock(AddressHandler::class),
             $orderMock
         );
     }

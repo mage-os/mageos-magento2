@@ -16,8 +16,10 @@ use Magento\Customer\Api\GroupRepositoryInterface;
 use Magento\Customer\Model\Customer\Mapper;
 use Magento\Customer\Model\Metadata\Form;
 use Magento\Customer\Model\Metadata\FormFactory;
+use Magento\Catalog\Model\Product;
 use Magento\Framework\Api\DataObjectHelper;
 use Magento\Framework\App\Console\Request as ConsoleRequest;
+use Magento\Framework\DataObject;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Message\ManagerInterface;
@@ -203,15 +205,15 @@ class CreateTest extends TestCase
         $orderItemId = $productId = 1;
         $exceptionMessage = 'Exception message';
 
-        $buyRequest = $this->createMock(\Magento\Framework\DataObject::class);
+        $buyRequest = $this->createMock(DataObject::class);
 
-        $orderItem = $this->createMock(\Magento\Sales\Model\Order\Item::class);
+        $orderItem = $this->createMock(OrderItem::class);
         $orderItem->expects($this->once())->method('getId')->willReturn($orderItemId);
         $orderItem->expects($this->once())->method('getProductId')->willReturn($productId);
         $orderItem->expects($this->once())->method('getBuyRequest')->willReturn($buyRequest);
         $orderItem->expects($this->once())->method('getProductOptions')->willReturn(null);
 
-        $product = $this->createMock(\Magento\Catalog\Model\Product::class);
+        $product = $this->createMock(Product::class);
         $product->expects($this->once())->method('setStoreId')->willReturnSelf();
         $product->expects($this->once())->method('load')->willReturnSelf();
         $product->expects($this->once())->method('getId')->willReturn($productId);

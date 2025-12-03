@@ -18,6 +18,7 @@ use Magento\Framework\App\ActionFlag;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Message\Manager;
+use Magento\Framework\ObjectManager\ObjectManager as FrameworkObjectManager;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Sales\Api\InvoiceManagementInterface;
 use Magento\Sales\Api\InvoiceRepositoryInterface;
@@ -62,7 +63,7 @@ class EmailTest extends TestCase
     protected $messageManager;
 
     /**
-     * @var \Magento\Framework\ObjectManager\ObjectManager|MockObject
+     * @var FrameworkObjectManager|MockObject
      */
     protected $objectManager;
 
@@ -115,7 +116,7 @@ class EmailTest extends TestCase
         $this->context = $this->createMock(Context::class);
         $this->response = $this->createMock(ResponseInterface::class);
         $this->request = $this->createMock(RequestInterface::class);
-        $this->objectManager = $this->createMock(\Magento\Framework\ObjectManager\ObjectManager::class);
+        $this->objectManager = $this->createMock(FrameworkObjectManager::class);
         $this->messageManager = $this->createMock(Manager::class);
         $this->session = $this->createPartialMockWithReflection(Session::class, ['setIsUrlNotice']);
         $this->actionFlag = $this->createMock(ActionFlag::class);

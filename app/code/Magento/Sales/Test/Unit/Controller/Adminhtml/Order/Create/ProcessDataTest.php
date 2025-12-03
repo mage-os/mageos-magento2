@@ -17,6 +17,7 @@ use Magento\Framework\App\Request\Http;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Escaper;
 use Magento\Framework\Event\ManagerInterface;
+use Magento\Framework\Message\ManagerInterface as MessageManagerInterface;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Quote\Model\Quote as QuoteModel;
@@ -64,7 +65,7 @@ class ProcessDataTest extends TestCase
     protected $eventManager;
 
     /**
-     * @var \Magento\Framework\Message\ManagerInterface|MockObject
+     * @var MessageManagerInterface|MockObject
      */
     protected $messageManager;
 
@@ -96,7 +97,7 @@ class ProcessDataTest extends TestCase
         $context->expects($this->any())->method('getResponse')->willReturn($response);
         $context->expects($this->any())->method('getRequest')->willReturn($this->request);
 
-        $this->messageManager = $this->createMock(\Magento\Framework\Message\ManagerInterface::class);
+        $this->messageManager = $this->createMock(MessageManagerInterface::class);
         $context->expects($this->any())->method('getMessageManager')->willReturn($this->messageManager);
 
         $this->eventManager = $this->createMock(ManagerInterface::class);

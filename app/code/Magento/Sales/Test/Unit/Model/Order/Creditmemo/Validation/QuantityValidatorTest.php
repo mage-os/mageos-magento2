@@ -14,8 +14,23 @@ use Magento\Sales\Api\Data\CreditmemoItemInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\InvoiceRepositoryInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
+use Magento\Framework\Api\AttributeValueFactory;
+use Magento\Framework\Api\ExtensionAttributesFactory;
+use Magento\Framework\Data\Collection\AbstractDb;
+use Magento\Framework\Math\CalculatorFactory;
+use Magento\Framework\Model\Context as ModelContext;
+use Magento\Framework\Model\ResourceModel\AbstractResource;
+use Magento\Framework\Registry;
+use Magento\Sales\Api\OrderRepositoryInterface as SalesOrderRepositoryInterface;
+use Magento\Sales\Model\Order\Creditmemo\CommentFactory as CreditmemoCommentFactory;
+use Magento\Sales\Model\Order\Creditmemo\Config as CreditmemoConfig;
 use Magento\Sales\Model\Order\Creditmemo\Validation\QuantityValidator;
+use Magento\Sales\Model\Order\InvoiceFactory;
 use Magento\Sales\Model\Order\Item;
+use Magento\Sales\Model\OrderFactory;
+use Magento\Sales\Model\ResourceModel\Order\Creditmemo\Comment\CollectionFactory as CommentCollectionFactory;
+use Magento\Sales\Model\ResourceModel\Order\Creditmemo\Item\CollectionFactory as ItemCollectionFactory;
+use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -146,24 +161,24 @@ class QuantityValidatorTest extends TestCase
     private function getCreditMemoMockParams()
     {
         return [
-            $this->createMock(\Magento\Framework\Model\Context::class),
-            $this->createMock(\Magento\Framework\Registry::class),
-            $this->createMock(\Magento\Framework\Api\ExtensionAttributesFactory::class),
-            $this->createMock(\Magento\Framework\Api\AttributeValueFactory::class),
-            $this->createMock(\Magento\Sales\Model\Order\Creditmemo\Config::class),
-            $this->createMock(\Magento\Sales\Model\OrderFactory::class),
-            $this->createMock(\Magento\Sales\Model\ResourceModel\Order\Creditmemo\Item\CollectionFactory::class),
-            $this->createMock(\Magento\Framework\Math\CalculatorFactory::class),
-            $this->createMock(\Magento\Store\Model\StoreManagerInterface::class),
-            $this->createMock(\Magento\Sales\Model\Order\Creditmemo\CommentFactory::class),
-            $this->createMock(\Magento\Sales\Model\ResourceModel\Order\Creditmemo\Comment\CollectionFactory::class),
-            $this->createMock(\Magento\Framework\Pricing\PriceCurrencyInterface::class),
-            $this->createMock(\Magento\Framework\Model\ResourceModel\AbstractResource::class),
-            $this->createMock(\Magento\Framework\Data\Collection\AbstractDb::class),
+            $this->createMock(ModelContext::class),
+            $this->createMock(Registry::class),
+            $this->createMock(ExtensionAttributesFactory::class),
+            $this->createMock(AttributeValueFactory::class),
+            $this->createMock(CreditmemoConfig::class),
+            $this->createMock(OrderFactory::class),
+            $this->createMock(ItemCollectionFactory::class),
+            $this->createMock(CalculatorFactory::class),
+            $this->createMock(StoreManagerInterface::class),
+            $this->createMock(CreditmemoCommentFactory::class),
+            $this->createMock(CommentCollectionFactory::class),
+            $this->createMock(PriceCurrencyInterface::class),
+            $this->createMock(AbstractResource::class),
+            $this->createMock(AbstractDb::class),
             [],
-            $this->createMock(\Magento\Sales\Model\Order\InvoiceFactory::class),
+            $this->createMock(InvoiceFactory::class),
             $this->createMock(ScopeConfigInterface::class),
-            $this->createMock(\Magento\Sales\Api\OrderRepositoryInterface::class)
+            $this->createMock(SalesOrderRepositoryInterface::class)
         ];
     }
 

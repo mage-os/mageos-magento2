@@ -12,9 +12,11 @@ use Magento\Sales\Model\Convert\Order;
 use Magento\Sales\Model\Convert\OrderFactory;
 use Magento\Sales\Model\Order\Item;
 use Magento\Sales\Model\Order\Shipment;
+use Magento\Sales\Model\Order\Shipment\Item as ShipmentItem;
 use Magento\Sales\Model\Order\Shipment\Track;
 use Magento\Sales\Model\Order\Shipment\TrackFactory;
 use Magento\Sales\Model\Order\ShipmentFactory;
+use Magento\Sales\Model\Order as SalesOrder;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -94,7 +96,7 @@ class ShipmentFactoryTest extends TestCase
         $orderItem->expects($this->any())->method('getIsVirtual')->willReturn(false);
 
         $shipmentItem = $this->createPartialMock(
-            \Magento\Sales\Model\Order\Shipment\Item::class,
+            ShipmentItem::class,
             ['setQty', 'getOrderItem', 'getQty']
         );
         $shipmentItem->expects($this->once())
@@ -106,7 +108,7 @@ class ShipmentFactoryTest extends TestCase
 
         $shipmentItem->expects($this->atLeastOnce())->method('getOrderItem')->willReturn($orderItem);
 
-        $order = $this->createPartialMock(\Magento\Sales\Model\Order::class, ['getAllItems']);
+        $order = $this->createPartialMock(SalesOrder::class, ['getAllItems']);
         $order->expects($this->any())
             ->method('getAllItems')
             ->willReturn([$orderItem]);
@@ -190,7 +192,7 @@ class ShipmentFactoryTest extends TestCase
         $orderItem->expects($this->any())->method('getIsVirtual')->willReturn(false);
 
         $shipmentItem = $this->createPartialMock(
-            \Magento\Sales\Model\Order\Shipment\Item::class,
+            ShipmentItem::class,
             ['setQty', 'getOrderItem', 'getQty']
         );
         $shipmentItem->expects($this->once())
@@ -202,7 +204,7 @@ class ShipmentFactoryTest extends TestCase
 
         $shipmentItem->expects($this->atLeastOnce())->method('getOrderItem')->willReturn($orderItem);
 
-        $order = $this->createPartialMock(\Magento\Sales\Model\Order::class, ['getAllItems']);
+        $order = $this->createPartialMock(SalesOrder::class, ['getAllItems']);
         $order->expects($this->any())
             ->method('getAllItems')
             ->willReturn([$orderItem]);

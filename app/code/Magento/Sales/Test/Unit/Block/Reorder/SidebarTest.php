@@ -12,8 +12,10 @@ use Magento\CatalogInventory\Model\Stock\Item;
 use Magento\CatalogInventory\Model\StockRegistry;
 use Magento\Customer\Model\Context;
 use Magento\Customer\Model\Session;
+use Magento\Framework\App\Http\Context as HttpContext;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\View\Element\Template\Context as TemplateContext;
 use Magento\Sales\Block\Reorder\Sidebar;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Config;
@@ -40,7 +42,7 @@ class SidebarTest extends TestCase
     private $block;
 
     /**
-     * @var \Magento\Framework\View\Element\Template\Context|MockObject
+     * @var TemplateContext|MockObject
      */
     private $context;
 
@@ -60,7 +62,7 @@ class SidebarTest extends TestCase
     private $orderConfig;
 
     /**
-     * @var \Magento\Framework\App\Http\Context|MockObject
+     * @var HttpContext|MockObject
      */
     private $httpContext;
 
@@ -89,8 +91,8 @@ class SidebarTest extends TestCase
     {
         $this->markTestSkipped('MAGETWO-36789');
         $this->objectManagerHelper = new ObjectManager($this);
-        $this->context = $this->createMock(\Magento\Framework\View\Element\Template\Context::class);
-        $this->httpContext = $this->createPartialMock(\Magento\Framework\App\Http\Context::class, ['getValue']);
+        $this->context = $this->createMock(TemplateContext::class);
+        $this->httpContext = $this->createPartialMock(HttpContext::class, ['getValue']);
         $this->orderCollectionFactory = $this->createPartialMock(
             CollectionFactory::class,
             ['create']

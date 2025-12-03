@@ -26,6 +26,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 
 use PHPUnit\Framework\TestCase;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+use Magento\Sales\Model\Order as SalesOrder;
 
 /**
  *
@@ -57,7 +58,7 @@ class OrderTest extends TestCase
     protected $salesSequenceMock;
 
     /**
-     * @var \Magento\Sales\Model\Order|MockObject
+     * @var SalesOrder|MockObject
      */
     protected $orderMock;
 
@@ -107,7 +108,7 @@ class OrderTest extends TestCase
     protected function setUp(): void
     {
         $this->resourceMock = $this->createMock(ResourceConnection::class);
-        $this->orderMock = $this->createMock(\Magento\Sales\Model\Order::class);
+        $this->orderMock = $this->createMock(SalesOrder::class);
         $this->orderItemMock = $this->createPartialMockWithReflection(
             Item::class,
             ['getQuoteParentItemId', 'setTotalItemCount', 'getChildrenItems']

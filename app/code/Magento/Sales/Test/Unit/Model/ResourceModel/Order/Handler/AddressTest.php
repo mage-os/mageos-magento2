@@ -14,6 +14,7 @@ use Magento\Sales\Model\ResourceModel\Order\Handler\Address;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+use Magento\Sales\Model\Order\Address as OrderAddress;
 
 class AddressTest extends TestCase
 {
@@ -40,7 +41,7 @@ class AddressTest extends TestCase
     protected $orderMock;
 
     /**
-     * @var \Magento\Sales\Model\Order\Address|MockObject
+     * @var OrderAddress|MockObject
      */
     protected $addressMock;
 
@@ -56,7 +57,7 @@ class AddressTest extends TestCase
                 'setBillingAddressId'
             ]
         );
-        $this->addressMock = $this->createMock(\Magento\Sales\Model\Order\Address::class);
+        $this->addressMock = $this->createMock(OrderAddress::class);
         $this->addressCollectionMock = $this->createMock(
             Collection::class
         );

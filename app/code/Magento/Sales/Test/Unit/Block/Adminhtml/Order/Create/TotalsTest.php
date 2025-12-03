@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\Sales\Test\Unit\Block\Adminhtml\Order\Create;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Backend\Model\Session\Quote as SessionQuote;
 use Magento\Quote\Model\Quote;
 use Magento\Sales\Block\Adminhtml\Order\Create\Totals;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -35,7 +36,7 @@ class TotalsTest extends TestCase
     protected $quoteMock;
 
     /**
-     * @var \Magento\Backend\Model\Session\Quote|MockObject
+     * @var SessionQuote|MockObject
      */
     protected $sessionQuoteMock;
 
@@ -46,7 +47,7 @@ class TotalsTest extends TestCase
         $this->objectManager->prepareObjectManager();
 
         $this->quoteMock = $this->createPartialMock(Quote::class, ['getCustomerNoteNotify']);
-        $this->sessionQuoteMock = $this->createMock(\Magento\Backend\Model\Session\Quote::class);
+        $this->sessionQuoteMock = $this->createMock(SessionQuote::class);
 
         $this->sessionQuoteMock->expects($this->any())
             ->method('getQuote')

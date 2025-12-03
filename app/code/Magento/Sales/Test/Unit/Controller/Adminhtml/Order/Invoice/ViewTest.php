@@ -19,9 +19,11 @@ use Magento\Framework\App\Request\Http;
 use Magento\Framework\App\Response\Http as ResponseHttp;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Layout;
+use Magento\Framework\App\View as AppView;
 use Magento\Framework\View\Page\Config;
 use Magento\Framework\View\Page\Title;
 use Magento\Framework\View\Result\PageFactory;
+use Magento\Sales\Block\Adminhtml\Order\Invoice\View as InvoiceViewBlock;
 use Magento\Sales\Api\InvoiceRepositoryInterface;
 use Magento\Sales\Controller\Adminhtml\Order\Invoice\View;
 use Magento\Sales\Model\Order\Invoice;
@@ -127,7 +129,7 @@ class ViewTest extends TestCase
 
         $this->requestMock = $this->createMock(Http::class);
         $this->responseMock = $this->createMock(ResponseHttp::class);
-        $this->viewMock = $this->createMock(\Magento\Framework\App\View::class);
+        $this->viewMock = $this->createMock(AppView::class);
         $this->actionFlagMock = $this->createMock(ActionFlag::class);
         $this->sessionMock = $this->createPartialMockWithReflection(
             Session::class,
@@ -234,7 +236,7 @@ class ViewTest extends TestCase
             ->with('Magento_Sales::sales_order')
             ->willReturn([]);
 
-        $invoiceViewBlockMock = $this->getMockBuilder(\Magento\Sales\Block\Adminhtml\Order\Invoice\View::class)
+        $invoiceViewBlockMock = $this->getMockBuilder(InvoiceViewBlock::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['updateBackButtonUrl'])
             ->getMock();

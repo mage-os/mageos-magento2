@@ -20,6 +20,13 @@ use Magento\Sales\Model\Order\InvoiceNotifier;
 use Magento\Sales\Model\Service\InvoiceService;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Sales\Api\OrderRepositoryInterface;
+use Magento\Sales\Model\Convert\Order as ConvertOrder;
+use Magento\Framework\Serialize\Serializer\Json;
+use Magento\Sales\Model\Order as SalesOrder;
+use Magento\Sales\Model\Order\Invoice as InvoiceModel;
+use Magento\Framework\Data\Collection;
+use Magento\Sales\Api\Data\InvoiceInterface;
 
 /**
  *
@@ -205,9 +212,9 @@ class InvoiceServiceTest extends TestCase
 
     public function testPrepareInvoiceSetsHistoryEntityNameWhenOriginalEntityTypePresent(): void
     {
-        $orderRepository   = $this->createMock(\Magento\Sales\Api\OrderRepositoryInterface::class);
-        $orderConverter    = $this->createMock(\Magento\Sales\Model\Convert\Order::class);
-        $serializer   = $this->createMock(\Magento\Framework\Serialize\Serializer\Json::class);
+        $orderRepository   = $this->createMock(OrderRepositoryInterface::class);
+        $orderConverter    = $this->createMock(ConvertOrder::class);
+        $serializer   = $this->createMock(Json::class);
 
         $service = new InvoiceService(
             $this->repositoryMock,
@@ -220,17 +227,17 @@ class InvoiceServiceTest extends TestCase
             $serializer
         );
 
-        $order = $this->getMockBuilder(\Magento\Sales\Model\Order::class)
+        $order = $this->getMockBuilder(SalesOrder::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getAllItems', 'getEntityType', 'setHistoryEntityName', 'getInvoiceCollection'])
             ->getMock();
 
-        $invoice = $this->getMockBuilder(\Magento\Sales\Model\Order\Invoice::class)
+        $invoice = $this->getMockBuilder(InvoiceModel::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['setTotalQty', 'collectTotals'])
             ->getMock();
 
-        $invoiceCollection = $this->getMockBuilder(\Magento\Framework\Data\Collection::class)
+        $invoiceCollection = $this->getMockBuilder(Collection::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['addItem'])
             ->getMock();
@@ -254,6 +261,6 @@ class InvoiceServiceTest extends TestCase
         $invoiceCollection->expects($this->once())->method('addItem')->with($invoice);
 
         $result = $service->prepareInvoice($order, []);
-        $this->assertInstanceOf(\Magento\Sales\Api\Data\InvoiceInterface::class, $result);
+        $this->assertInstanceOf(InvoiceInterface::class, $result);
     }
 }

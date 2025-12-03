@@ -43,6 +43,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Config\Model\Config\Source\Nooptreq;
+use Magento\Sales\Model\Order\Payment as OrderPayment;
 
 /**
  * Test class for \Magento\Sales\Model\Order
@@ -1025,7 +1026,7 @@ class OrderTest extends TestCase
     protected function _prepareOrderPayment($order, $mockedMethods = [])
     {
         $payment = $this->createMock(
-            \Magento\Sales\Model\Order\Payment::class
+            OrderPayment::class
         );
         foreach ($mockedMethods as $method => $value) {
             $payment->expects($this->any())->method($method)->willReturn($value);
@@ -1211,7 +1212,7 @@ class OrderTest extends TestCase
     public function testSetPaymentWithId()
     {
         $this->order->setId(123);
-        $payment = $this->createMock(\Magento\Sales\Model\Order\Payment::class);
+        $payment = $this->createMock(OrderPayment::class);
         $this->order->setData(OrderInterface::PAYMENT, $payment);
         $this->order->setDataChanges(false);
 
@@ -1248,7 +1249,7 @@ class OrderTest extends TestCase
         $this->order->setId(123);
         $this->order->setDataChanges(false);
 
-        $payment = $this->createMock(\Magento\Sales\Model\Order\Payment::class);
+        $payment = $this->createMock(OrderPayment::class);
 
         $payment->expects($this->once())
             ->method('setOrder')
@@ -1296,7 +1297,7 @@ class OrderTest extends TestCase
 
     public function testResetOrderWillResetPayment()
     {
-        $payment = $this->createMock(\Magento\Sales\Model\Order\Payment::class);
+        $payment = $this->createMock(OrderPayment::class);
         $this->order->setData(OrderInterface::PAYMENT, $payment);
         $this->order->reset();
         $this->assertEquals(

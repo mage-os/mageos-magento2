@@ -19,6 +19,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+use Magento\Quote\Model\Quote\Address as QuoteAddress;
 
 /**
  * Tests Magento\Sales\Observer\Frontend\RestoreCustomerGroupIdTest
@@ -63,7 +64,7 @@ class RestoreCustomerGroupIdTest extends TestCase
         $shippingMock = $this->createMock(ShippingInterface::class);
         $shippingAssignmentMock->expects($this->once())->method('getShipping')->willReturn($shippingMock);
 
-        $quoteAddress = $this->createPartialMockWithReflection(\Magento\Quote\Model\Quote\Address::class, array_merge([
+        $quoteAddress = $this->createPartialMockWithReflection(QuoteAddress::class, array_merge([
                 'getPrevQuoteCustomerGroupId',
                 'unsPrevQuoteCustomerGroupId',
                 'hasPrevQuoteCustomerGroupId',

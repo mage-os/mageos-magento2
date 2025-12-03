@@ -16,6 +16,7 @@ use Magento\Sales\Model\Order\TotalFactory;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use Magento\Sales\Model\Config as SalesConfig;
 
 class BaseTest extends TestCase
 {
@@ -32,7 +33,7 @@ class BaseTest extends TestCase
     /** @var LoggerInterface|MockObject */
     private $logger;
 
-    /** @var \Magento\Sales\Model\Config|MockObject */
+    /** @var SalesConfig|MockObject */
     private $salesConfig;
 
     /** @var TotalFactory|MockObject */
@@ -42,7 +43,7 @@ class BaseTest extends TestCase
     {
         $this->configCacheType = $this->createMock(Config::class);
         $this->logger = $this->createMock(LoggerInterface::class);
-        $this->salesConfig = $this->createMock(\Magento\Sales\Model\Config::class);
+        $this->salesConfig = $this->createMock(SalesConfig::class);
         $this->orderTotalFactory = $this->createMock(TotalFactory::class);
         $this->serializer = $this->createMock(SerializerInterface::class);
 

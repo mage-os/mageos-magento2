@@ -15,6 +15,7 @@ use Magento\Sales\Model\ResourceModel\Helper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
+use Magento\Reports\Model\ResourceModel\Helper as ReportsResourceHelper;
 
 class HelperTest extends TestCase
 {
@@ -46,7 +47,7 @@ class HelperTest extends TestCase
         $objectManager = new ObjectManagerHelper($this);
         $this->appResource = $this->createMock(ResourceConnection::class);
 
-        $this->resourceHelper = $this->createMock(\Magento\Reports\Model\ResourceModel\Helper::class);
+        $this->resourceHelper = $this->createMock(ReportsResourceHelper::class);
 
         $this->connectionMock = $this->createMock(Mysql::class);
 

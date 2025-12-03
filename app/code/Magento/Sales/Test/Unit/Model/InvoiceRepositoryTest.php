@@ -15,6 +15,7 @@ use Magento\Sales\Api\Data\InvoiceSearchResultInterfaceFactory;
 use Magento\Sales\Model\Order\Invoice;
 use Magento\Sales\Model\Order\InvoiceRepository;
 use Magento\Sales\Model\ResourceModel\Metadata;
+use Magento\Sales\Model\ResourceModel\Order\Invoice as InvoiceResource;
 use Magento\Sales\Model\ResourceModel\Order\Invoice\Collection;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -151,7 +152,7 @@ class InvoiceRepositoryTest extends TestCase
             ->method('getEntityId')
             ->willReturn(1);
 
-        $mapper = $this->createMock(\Magento\Sales\Model\ResourceModel\Order\Invoice::class);
+        $mapper = $this->createMock(InvoiceResource::class);
         $mapper->expects($this->once())
             ->method('delete')
             ->with($entity);
@@ -180,7 +181,7 @@ class InvoiceRepositoryTest extends TestCase
             ->method('getNewInstance')
             ->willReturn($entity);
 
-        $mapper = $this->createMock(\Magento\Sales\Model\ResourceModel\Order\Invoice::class);
+        $mapper = $this->createMock(InvoiceResource::class);
         $mapper->expects($this->once())
             ->method('delete')
             ->with($entity);
@@ -199,7 +200,7 @@ class InvoiceRepositoryTest extends TestCase
             ->method('getEntityId')
             ->willReturn(1);
 
-        $mapper = $this->createMock(\Magento\Sales\Model\ResourceModel\Order\Invoice::class);
+        $mapper = $this->createMock(InvoiceResource::class);
         $mapper->expects($this->once())
             ->method('save')
             ->with($entity);

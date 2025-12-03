@@ -13,6 +13,7 @@ use Magento\Backend\Model\View\Result\Forward;
 use Magento\Backend\Model\View\Result\ForwardFactory;
 use Magento\Backend\Model\View\Result\Redirect;
 use Magento\Backend\Model\View\Result\RedirectFactory;
+use Magento\Framework\App\Request\Http as RequestHttp;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\Response\Http;
 use Magento\Framework\App\ResponseInterface;
@@ -41,7 +42,7 @@ class SaveTest extends TestCase
 {
 
     /**
-     * @var \Magento\Sales\Controller\Adminhtml\Order\Creditmemo
+     * @var Save
      */
     protected $_controller;
 
@@ -114,7 +115,7 @@ class SaveTest extends TestCase
         $helper->prepareObjectManager();
         $this->_responseMock = $this->createMock(Http::class);
         $this->_responseMock->headersSentThrowsException = false;
-        $this->_requestMock = $this->createMock(\Magento\Framework\App\Request\Http::class);
+        $this->_requestMock = $this->createMock(RequestHttp::class);
         $objectManager = new ObjectManager($this);
         $constructArguments = $objectManager->getConstructArguments(
             Session::class,

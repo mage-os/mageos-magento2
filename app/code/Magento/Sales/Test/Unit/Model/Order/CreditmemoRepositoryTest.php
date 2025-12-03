@@ -15,6 +15,7 @@ use Magento\Sales\Api\Data\CreditmemoSearchResultInterfaceFactory;
 use Magento\Sales\Model\Order\Creditmemo;
 use Magento\Sales\Model\Order\CreditmemoRepository;
 use Magento\Sales\Model\ResourceModel\Metadata;
+use Magento\Sales\Model\ResourceModel\Order\Creditmemo as CreditmemoResource;
 use Magento\Sales\Model\ResourceModel\Order\Creditmemo\Collection;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -152,7 +153,7 @@ class CreditmemoRepositoryTest extends TestCase
             ->method('getEntityId')
             ->willReturn(1);
 
-        $mapper = $this->createMock(\Magento\Sales\Model\ResourceModel\Order\Creditmemo::class);
+        $mapper = $this->createMock(CreditmemoResource::class);
         $mapper->expects($this->once())
             ->method('delete')
             ->with($entity);
@@ -172,7 +173,7 @@ class CreditmemoRepositoryTest extends TestCase
         $entity->expects($this->never())
             ->method('getEntityId');
 
-        $mapper = $this->createMock(\Magento\Sales\Model\ResourceModel\Order\Creditmemo::class);
+        $mapper = $this->createMock(CreditmemoResource::class);
         $mapper->expects($this->once())
             ->method('delete')
             ->willThrowException(new \Exception('error'));
@@ -191,7 +192,7 @@ class CreditmemoRepositoryTest extends TestCase
             ->method('getEntityId')
             ->willReturn(1);
 
-        $mapper = $this->createMock(\Magento\Sales\Model\ResourceModel\Order\Creditmemo::class);
+        $mapper = $this->createMock(CreditmemoResource::class);
         $mapper->expects($this->once())
             ->method('save')
             ->with($entity);
@@ -211,7 +212,7 @@ class CreditmemoRepositoryTest extends TestCase
         $entity->expects($this->never())
             ->method('getEntityId');
 
-        $mapper = $this->createMock(\Magento\Sales\Model\ResourceModel\Order\Creditmemo::class);
+        $mapper = $this->createMock(CreditmemoResource::class);
         $mapper->expects($this->once())
             ->method('save')
             ->willThrowException(new \Exception('error'));
