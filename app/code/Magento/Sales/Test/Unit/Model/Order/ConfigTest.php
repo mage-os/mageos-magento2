@@ -201,7 +201,7 @@ class ConfigTest extends TestCase
      * @param array $expectedResult
      */
 
-     #[DataProvider('getStatusesDataProvider')]
+    #[DataProvider('getStatusesDataProvider')]
     public function testGetStatuses($state, $joinLabels, $collectionData, $expectedResult)
     {
         $collectionMock = $this->createPartialMockWithReflection(

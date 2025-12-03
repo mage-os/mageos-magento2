@@ -172,7 +172,7 @@ class DownloadCustomOptionTest extends TestCase
      * @param bool $noRouteOccurs
      */
 
-     #[DataProvider('executeDataProvider')]
+    #[DataProvider('executeDataProvider')]
     public function testExecute($itemOptionValues, $productOptionValues, $noRouteOccurs)
     {
         if (!empty($itemOptionValues)) {

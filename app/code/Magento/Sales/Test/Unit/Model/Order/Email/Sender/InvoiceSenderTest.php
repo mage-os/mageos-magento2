@@ -104,7 +104,7 @@ class InvoiceSenderTest extends AbstractSenderTestCase
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
 
-     #[DataProvider('sendDataProvider')]
+    #[DataProvider('sendDataProvider')]
     public function testSend(
         int $configValue,
         ?int $forceSyncMode,
@@ -271,7 +271,7 @@ class InvoiceSenderTest extends AbstractSenderTestCase
      * @return void
      */
 
-     #[DataProvider('sendVirtualOrderDataProvider')]
+    #[DataProvider('sendVirtualOrderDataProvider')]
     public function testSendVirtualOrder(
         bool $isVirtualOrder,
         int $formatCallCount,

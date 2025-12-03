@@ -241,7 +241,7 @@ class EmailSenderTest extends TestCase
      * @throws Exception
      */
 
-     #[DataProvider('sendDataProvider')]
+    #[DataProvider('sendDataProvider')]
     public function testSend(
         int $configValue,
         bool $forceSyncMode,

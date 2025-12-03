@@ -175,9 +175,10 @@ class RefundOrderTest extends TestCase
      * @param bool $notify
      * @param bool $appendComment
      * @throws CouldNotRefundException
-     * @throws DocumentValidationException     */
+     * @throws DocumentValidationException
+     */
 
-     #[DataProvider('dataProvider')]
+    #[DataProvider('dataProvider')]
     public function testOrderCreditmemo($orderId, $notify, $appendComment)
     {
         $items = [$this->creditmemoItemCreationMock];

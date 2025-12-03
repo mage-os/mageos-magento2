@@ -97,7 +97,7 @@ class AddressTest extends TestCase
     /**
      */
 
-     #[DataProvider('regionProvider')]
+    #[DataProvider('regionProvider')]
     public function testGetRegionCodeRegion($region, $regionId)
     {
         $this->address->setData('region', $region);

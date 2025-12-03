@@ -75,9 +75,10 @@ class BuilderTest extends TestCase
      * @param bool $isTransactionExists
      *
      * @return void
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)     */
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     */
 
-     #[DataProvider('createDataProvider')]
+    #[DataProvider('createDataProvider')]
     public function testCreate(
         int $transactionId,
         int $orderId,

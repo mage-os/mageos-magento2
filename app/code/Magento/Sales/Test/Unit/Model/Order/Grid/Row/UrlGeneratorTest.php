@@ -59,9 +59,10 @@ class UrlGeneratorTest extends TestCase
 
     /**
      * @param bool $isAllowed
-     * @param null|bool $url     */
+     * @param null|bool $url
+     */
 
-     #[DataProvider('permissionProvider')]
+    #[DataProvider('permissionProvider')]
     public function testGetUrl($isAllowed, $url)
     {
         $this->authorizationMock->expects($this->once())

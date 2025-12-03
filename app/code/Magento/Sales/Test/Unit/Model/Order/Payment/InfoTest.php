@@ -85,9 +85,10 @@ class InfoTest extends TestCase
      * @param string $keyCc
      * @param string $keyCcEnc
      *
-     * @return void     */
+     * @return void
+     */
 
-     #[DataProvider('ccKeysDataProvider')]
+    #[DataProvider('ccKeysDataProvider')]
     public function testGetDataCcNumber(string $keyCc, string $keyCcEnc): void
     {
         // no data was set
@@ -263,9 +264,10 @@ class InfoTest extends TestCase
      * @param mixed $key
      * @param mixed $value
      *
-     * @return void     */
+     * @return void
+     */
 
-     #[DataProvider('additionalInformationDataProvider')]
+    #[DataProvider('additionalInformationDataProvider')]
     public function testSetAdditionalInformationMultipleTypes($key, $value = null): void
     {
         $this->info->setAdditionalInformation($key, $value);

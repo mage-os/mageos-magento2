@@ -47,7 +47,7 @@ class RestoreCustomerGroupIdTest extends TestCase
      * @param string|null $configAddressType
      */
 
-     #[DataProvider('restoreCustomerGroupIdDataProvider')]
+    #[DataProvider('restoreCustomerGroupIdDataProvider')]
     public function testExecute($configAddressType)
     {
         $eventMock = $this->createPartialMockWithReflection(Event::class, ['getShippingAssignment', 'getQuote']);

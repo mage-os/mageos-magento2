@@ -218,9 +218,10 @@ class ShippingTest extends TestCase
     }
 
     /**
-     * @param float $ratio     */
+     * @param float $ratio
+     */
 
-     #[DataProvider('collectWithSpecifiedShippingAmountDataProvider')]
+    #[DataProvider('collectWithSpecifiedShippingAmountDataProvider')]
     public function testCollectWithSpecifiedShippingAmount($ratio)
     {
         $orderShippingAmount = 10;
@@ -502,7 +503,7 @@ class ShippingTest extends TestCase
      *     * @throws LocalizedException
      */
 
-     #[DataProvider('calculationSequenceDataProvider')]
+    #[DataProvider('calculationSequenceDataProvider')]
     public function testCollectUsingShippingInclTaxAndDiscountBeforeTax(string $calculationSequence)
     {
         $this->taxConfig->expects($this->any())->method('displaySalesShippingInclTax')->willReturn(true);

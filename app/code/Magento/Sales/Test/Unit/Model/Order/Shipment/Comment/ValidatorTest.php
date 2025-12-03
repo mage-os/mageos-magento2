@@ -60,7 +60,7 @@ class ValidatorTest extends TestCase
      * @param $expectedWarnings
      */
 
-     #[DataProvider('providerCommentData')]
+    #[DataProvider('providerCommentData')]
     public function testValidate($commentDataMap, $commentData, $expectedWarnings)
     {
         $this->commentModelMock->expects($this->any())

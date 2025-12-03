@@ -127,7 +127,7 @@ class InvoiceTest extends TestCase
     /**     * @param bool $canVoid
      */
 
-     #[DataProvider('canVoidDataProvider')]
+    #[DataProvider('canVoidDataProvider')]
     public function testCanVoid($canVoid)
     {
         $this->order->expects($this->once())->method('getPayment')->willReturn($this->paymentMock);
@@ -142,7 +142,7 @@ class InvoiceTest extends TestCase
     /**     * @param bool $canVoid
      */
 
-     #[DataProvider('canVoidDataProvider')]
+    #[DataProvider('canVoidDataProvider')]
     public function testDefaultCanVoid($canVoid)
     {
         $this->model->setState(Invoice::STATE_PAID);
@@ -232,7 +232,7 @@ class InvoiceTest extends TestCase
      * @param bool $expectedResult
      */
 
-     #[DataProvider('canCaptureDataProvider')]
+    #[DataProvider('canCaptureDataProvider')]
     public function testCanCapture($state, $canPaymentCapture, $expectedResult)
     {
         $this->model->setState($state);
@@ -267,7 +267,7 @@ class InvoiceTest extends TestCase
      * @param bool $expectedResult
      */
 
-     #[DataProvider('canCancelDataProvider')]
+    #[DataProvider('canCancelDataProvider')]
     public function testCanCancel($state, $expectedResult)
     {
         $this->model->setState($state);
@@ -294,7 +294,7 @@ class InvoiceTest extends TestCase
      * @param bool $expectedResult
      */
 
-     #[DataProvider('canRefundDataProvider')]
+    #[DataProvider('canRefundDataProvider')]
     public function testCanRefund($state, $baseGrandTotal, $baseTotalRefunded, $expectedResult)
     {
         $this->model->setState($state);
@@ -365,7 +365,7 @@ class InvoiceTest extends TestCase
      * @param array $items
      */
 
-     #[DataProvider('payDataProvider')]
+    #[DataProvider('payDataProvider')]
     public function testPay(
         $totalPaid,
         $baseTotalPaid,
@@ -463,7 +463,7 @@ class InvoiceTest extends TestCase
      * @param $finalInvoiceStatus
      */
 
-     #[DataProvider('getNotOpenedInvoiceStatuses')]
+    #[DataProvider('getNotOpenedInvoiceStatuses')]
     public function testCannotCancelNotOpenedInvoice($initialInvoiceStatus, $finalInvoiceStatus)
     {
         $this->order->expects($this->never())->method('getPayment');

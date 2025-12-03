@@ -71,9 +71,10 @@ class OrderIncrementIdCheckerTest extends TestCase
      * Unit test to verify if isOrderIncrementIdUsed method works with different types increment ids.
      *
      * @param string|int $value
-     * @return void     */
+     * @return void
+     */
 
-     #[DataProvider('isOrderIncrementIdUsedDataProvider')]
+    #[DataProvider('isOrderIncrementIdUsedDataProvider')]
     public function testIsIncrementIdUsed($value): void
     {
         $expectedBind = [':increment_id' => $value];

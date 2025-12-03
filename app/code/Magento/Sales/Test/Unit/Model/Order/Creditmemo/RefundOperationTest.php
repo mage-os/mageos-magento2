@@ -110,7 +110,7 @@ class RefundOperationTest extends TestCase
      * @return void
      */
 
-     #[DataProvider('executeNotRefundedCreditmemoDataProvider')]
+    #[DataProvider('executeNotRefundedCreditmemoDataProvider')]
     public function testExecuteNotRefundedCreditmemo(int $state): void
     {
         $this->creditmemoMock->expects($this->once())
@@ -170,7 +170,7 @@ class RefundOperationTest extends TestCase
      *
      */
 
-     #[DataProvider('baseAmountsDataProvider')]
+    #[DataProvider('baseAmountsDataProvider')]
     public function testExecuteOffline(array $amounts): void
     {
         $orderId = 1;
@@ -238,7 +238,7 @@ class RefundOperationTest extends TestCase
      * @return void
      */
 
-     #[DataProvider('baseAmountsDataProvider')]
+    #[DataProvider('baseAmountsDataProvider')]
     public function testExecuteOnline(array $amounts): void
     {
         $orderId = 1;

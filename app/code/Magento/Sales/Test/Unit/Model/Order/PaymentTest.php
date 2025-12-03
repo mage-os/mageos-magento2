@@ -603,9 +603,10 @@ class PaymentTest extends TestCase
      * @param bool $isOnline
      * @param float $amount
      *
-     * @return void     */
+     * @return void
+     */
 
-     #[DataProvider('authorizeDataProvider')]
+    #[DataProvider('authorizeDataProvider')]
     public function testAuthorize(bool $isOnline, float $amount): void
     {
         $this->paymentProcessor->expects($this->once())
@@ -681,9 +682,10 @@ class PaymentTest extends TestCase
      * @param bool $isFraudDetected
      * @param mixed $status
      *
-     * @return void     */
+     * @return void
+     */
 
-     #[DataProvider('acceptPaymentFalseProvider')]
+    #[DataProvider('acceptPaymentFalseProvider')]
     public function testAcceptApprovePaymentFalse(bool $isFraudDetected, $status): void
     {
         $message = sprintf('There is no need to approve this payment. Transaction ID: "%s"', $this->transactionId);
@@ -812,9 +814,10 @@ class PaymentTest extends TestCase
      * @param bool $isFraudDetected
      * @param mixed $status
      *
-     * @return void     */
+     * @return void
+     */
 
-     #[DataProvider('acceptPaymentFalseProvider')]
+    #[DataProvider('acceptPaymentFalseProvider')]
     public function testDenyPaymentNegative(bool $isFraudDetected, $status): void
     {
         $denyPayment = false;
@@ -1044,9 +1047,10 @@ class PaymentTest extends TestCase
      * @param bool $isFraudDetected
      * @param mixed $status
      *
-     * @return void     */
+     * @return void
+     */
 
-     #[DataProvider('acceptPaymentFalseProvider')]
+    #[DataProvider('acceptPaymentFalseProvider')]
     public function testUpdateOnlineTransactionDeniedFalse(bool $isFraudDetected, $status): void
     {
         $message = sprintf('There is no update for the payment. Transaction ID: "%s"', $this->transactionId);
@@ -1595,9 +1599,10 @@ class PaymentTest extends TestCase
     }
 
     /**
-     * @return void     */
+     * @return void
+     */
 
-     #[DataProvider('boolProvider')]
+    #[DataProvider('boolProvider')]
     public function testCanRefund($canRefund): void
     {
         $this->paymentMethod->expects($this->once())

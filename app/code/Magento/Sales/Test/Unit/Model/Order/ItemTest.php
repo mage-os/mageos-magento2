@@ -139,7 +139,7 @@ class ItemTest extends TestCase
      * @param $expectedStatus
      *     */
 
-     #[DataProvider('getStatusIdDataProvider')]
+    #[DataProvider('getStatusIdDataProvider')]
     public function testGetStatusId(
         $qtyBackOrdered,
         $qtyCanceled,
@@ -214,7 +214,7 @@ class ItemTest extends TestCase
      * @param array $expectedResult
      *     */
 
-     #[DataProvider('getProductOptionsDataProvider')]
+    #[DataProvider('getProductOptionsDataProvider')]
     public function testGetProductOptions($options, $expectedResult)
     {
         if (is_string($options)) {
@@ -265,7 +265,7 @@ class ItemTest extends TestCase
      * @param float $expectedResult
      *     */
 
-     #[DataProvider('getItemQtyVariants')]
+    #[DataProvider('getItemQtyVariants')]
     public function testGetSimpleQtyToMethods(array $options, $expectedResult)
     {
         $this->model->setData($options);

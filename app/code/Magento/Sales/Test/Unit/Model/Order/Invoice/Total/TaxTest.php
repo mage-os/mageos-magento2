@@ -68,7 +68,7 @@ class TaxTest extends TestCase
      * @param array $expectedResults
      */
 
-     #[DataProvider('collectDataProvider')]
+    #[DataProvider('collectDataProvider')]
     public function testCollect($orderData, $invoiceData, $expectedResults)
     {
         $roundingDelta = [];

@@ -45,7 +45,7 @@ class AuthorizeCommandTest extends TestCase
      * @param string $expectedMessage
      *     */
 
-     #[DataProvider('commandResultDataProvider')]
+    #[DataProvider('commandResultDataProvider')]
     public function testExecute(
         $isTransactionPending,
         $isFraudDetected,

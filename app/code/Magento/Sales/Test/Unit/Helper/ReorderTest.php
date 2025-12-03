@@ -77,7 +77,7 @@ class ReorderTest extends TestCase
      *     * @return void
      */
 
-     #[DataProvider('getScopeConfigValue')]
+    #[DataProvider('getScopeConfigValue')]
     public function testIsAllowedScopeConfigReorder($scopeConfigValue)
     {
         $this->setupScopeConfigMock($scopeConfigValue);
@@ -89,7 +89,7 @@ class ReorderTest extends TestCase
      *     * @return void
      */
 
-     #[DataProvider('getScopeConfigValue')]
+    #[DataProvider('getScopeConfigValue')]
     public function testIsAllowScopeConfigReorderNotAllowWithStore($scopeConfigValue)
     {
         $this->storeParam = null;
@@ -148,7 +148,7 @@ class ReorderTest extends TestCase
      * @return void
      */
 
-     #[DataProvider('getOrderCanReorder')]
+    #[DataProvider('getOrderCanReorder')]
     public function testCanReorder($orderCanReorder)
     {
         $this->setupOrderMock(true);

@@ -120,7 +120,7 @@ class AdminTest extends TestCase
      * @param bool $strong
      * @param string $separator
      */
-     #[DataProvider('displayPricesDataProvider')]
+    #[DataProvider('displayPricesDataProvider')]
     public function testDisplayPrices(
         $expected,
         $dataObjectIsOrder,
@@ -166,7 +166,7 @@ class AdminTest extends TestCase
      * @param bool $strong
      * @param string $separator
      */
-     #[DataProvider('displayPricesDataProvider')]
+    #[DataProvider('displayPricesDataProvider')]
     public function testDisplayPriceAttribute(
         $expected,
         $dataObjectIsOrder,
@@ -277,7 +277,7 @@ class AdminTest extends TestCase
      * @param string $type
      * @param int $calledTimes
      */
-     #[DataProvider('applySalableProductTypesFilterDataProvider')]
+    #[DataProvider('applySalableProductTypesFilterDataProvider')]
     public function testApplySalableProductTypesFilter($itemKey, $type, $calledTimes)
     {
         $productMock = $this->createMock(Product::class);

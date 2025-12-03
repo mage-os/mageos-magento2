@@ -36,9 +36,10 @@ class FactoryTest extends TestCase
     /**
      * @param mixed $class
      * @param array $arguments
-     * @param string $expectedClassName     */
+     * @param string $expectedClassName
+     */
 
-     #[DataProvider('createDataProvider')]
+    #[DataProvider('createDataProvider')]
     public function testCreate($class, $arguments, $expectedClassName)
     {
         $createdModel = $this->getMockBuilder(DefaultTotal::class)

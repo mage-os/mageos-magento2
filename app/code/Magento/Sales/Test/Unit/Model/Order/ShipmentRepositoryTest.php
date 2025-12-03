@@ -84,7 +84,7 @@ class ShipmentRepositoryTest extends TestCase
      * @param int|null $entityId
      */
 
-     #[DataProvider('getDataProvider')]
+    #[DataProvider('getDataProvider')]
     public function testGet($id, $entityId)
     {
         if (!$id) {

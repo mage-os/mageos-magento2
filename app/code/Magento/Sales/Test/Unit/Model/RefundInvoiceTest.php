@@ -202,9 +202,10 @@ class RefundInvoiceTest extends TestCase
      * @param bool $notify
      * @param bool $appendComment
      * @throws CouldNotRefundException
-     * @throws DocumentValidationException     */
+     * @throws DocumentValidationException
+     */
 
-     #[DataProvider('dataProvider')]
+    #[DataProvider('dataProvider')]
     public function testOrderCreditmemo($invoiceId, $isOnline, $items, $notify, $appendComment)
     {
         $this->mockConnection($invoiceId);

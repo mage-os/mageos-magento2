@@ -77,7 +77,7 @@ class ShipmentFactoryTest extends TestCase
      * @param array|null $tracks     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
 
-     #[DataProvider('createDataProvider')]
+    #[DataProvider('createDataProvider')]
     public function testCreate($tracks)
     {
         $orderItem = $this->createPartialMock(
@@ -170,7 +170,7 @@ class ShipmentFactoryTest extends TestCase
      * @param array|null $tracks     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
 
-     #[DataProvider('createDataProvider')]
+    #[DataProvider('createDataProvider')]
     public function testCreateWithFloatQtyShipment(?array $tracks): void
     {
         $orderItem = $this->createPartialMock(

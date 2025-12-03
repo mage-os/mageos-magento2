@@ -64,7 +64,7 @@ class SalesEntityCommentValidatorTest extends TestCase
      * @return void
      */
 
-     #[DataProvider('commentDataProvider')]
+    #[DataProvider('commentDataProvider')]
     public function testIsEditCommentAllowed($userId, $userType, $commentData, $result): void
     {
         $this->userContextMock->expects($this->any())->method('getUserId')->willReturn($userId);

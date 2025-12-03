@@ -172,9 +172,10 @@ class InvoiceOrderTest extends TestCase
      * @param bool $notify
      * @param bool $appendComment
      * @throws CouldNotInvoiceException
-     * @throws DocumentValidationException     */
+     * @throws DocumentValidationException
+     */
 
-     #[DataProvider('dataProvider')]
+    #[DataProvider('dataProvider')]
     public function testOrderInvoice($orderId, $capture, $items, $notify, $appendComment)
     {
         $this->mockConnection($orderId);

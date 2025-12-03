@@ -331,7 +331,7 @@ class SaveTest extends TestCase
      * @param bool $shouldEmailBeSent
      */
 
-     #[DataProvider('executeEmailsDataProvider')]
+    #[DataProvider('executeEmailsDataProvider')]
     public function testExecuteEmails(
         $sendEmail,
         $emailEnabled,

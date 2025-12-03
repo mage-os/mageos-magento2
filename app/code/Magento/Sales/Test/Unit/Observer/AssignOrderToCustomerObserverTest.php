@@ -49,7 +49,7 @@ class AssignOrderToCustomerObserverTest extends TestCase
      * @return void
      */
 
-     #[DataProvider('getCustomerIds')]
+    #[DataProvider('getCustomerIds')]
     public function testAssignOrderToCustomerAfterGuestOrder($orderCustomerId, $customerId)
     {
         $orderId = 1;

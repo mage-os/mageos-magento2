@@ -255,7 +255,7 @@ class ViewTest extends TestCase
     /**
      */
 
-     #[DataProvider('executeDataProvider')]
+    #[DataProvider('executeDataProvider')]
     public function testExecute($invoice)
     {
         $layoutMock = $this->createMock(Layout::class);

@@ -56,7 +56,7 @@ class AddressUpdateTest extends TestCase
     /**
      */
 
-     #[DataProvider('dataProvider')]
+    #[DataProvider('dataProvider')]
     public function testAfterProcess($asyncReindexEnabled, $expectedReindexCalledCount)
     {
         $billingId = 100;

@@ -45,9 +45,10 @@ class SaleOperationTest extends TestCase
     /**
      * Tests a case when 'sale' operation is called with fraud payment.
      *
-     * @throws LocalizedException     */
+     * @throws LocalizedException
+     */
 
-     #[DataProvider('saleDataProvider')]
+    #[DataProvider('saleDataProvider')]
     public function testExecute(\Closure $invoice)
     {
         $invoice = $invoice($this);

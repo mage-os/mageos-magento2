@@ -45,7 +45,7 @@ class ValidatorTest extends TestCase
      * @param $expectedWarnings
      */
 
-     #[DataProvider('providerTrackData')]
+    #[DataProvider('providerTrackData')]
     public function testValidate($trackDataMap, $trackData, $expectedWarnings)
     {
         $this->trackModelMock->expects($this->any())

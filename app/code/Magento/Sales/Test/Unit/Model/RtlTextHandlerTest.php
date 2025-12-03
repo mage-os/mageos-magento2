@@ -32,9 +32,10 @@ class RtlTextHandlerTest extends TestCase
 
     /**
      * @param string $str
-     * @param bool $isRtl     */
+     * @param bool $isRtl
+     */
 
-     #[DataProvider('provideRtlTexts')]
+    #[DataProvider('provideRtlTexts')]
     public function testIsRtlText(string $str, bool $isRtl): void
     {
         $this->assertEquals($isRtl, $this->rtlTextHandler->isRtlText($str));
@@ -42,9 +43,10 @@ class RtlTextHandlerTest extends TestCase
 
     /**
      * @param string $str
-     * @param bool $isRtl     */
+     * @param bool $isRtl
+     */
 
-     #[DataProvider('provideRtlTexts')]
+    #[DataProvider('provideRtlTexts')]
     public function testReverseRtlText(string $str, bool $isRtl): void
     {
         $expectedStr = $isRtl ? $this->stringUtils->strrev($str) : $str;

@@ -69,7 +69,7 @@ class AsyncIndexingTest extends TestCase
      * @param string $eventName     
      * @return void
      */
-     #[DataProvider('afterSaveDataProvider')]
+    #[DataProvider('afterSaveDataProvider')]
     public function testAfterSave($value, $oldValue, $eventName)
     {
         $path = 'dev/grid/async_indexing';

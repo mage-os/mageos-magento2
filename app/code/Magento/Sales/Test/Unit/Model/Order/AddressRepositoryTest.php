@@ -131,7 +131,7 @@ class AddressRepositoryTest extends TestCase
      * @return void
      */
 
-     #[DataProvider('getDataProvider')]
+    #[DataProvider('getDataProvider')]
     public function testGet(?int $id, ?int $entityId): void
     {
         if (!$id) {
@@ -328,7 +328,7 @@ class AddressRepositoryTest extends TestCase
      * @return void
      */
 
-     #[DataProvider('dataMultiAttribute')]
+    #[DataProvider('dataMultiAttribute')]
     public function testSaveWithMultiAttribute(
         string $attributeType,
         string $attributeCode,

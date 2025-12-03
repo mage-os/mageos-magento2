@@ -208,7 +208,7 @@ class ItemTest extends TestCase
     /**
      */
 
-     #[DataProvider('calcRowTotalDataProvider')]
+    #[DataProvider('calcRowTotalDataProvider')]
     public function testCalcRowTotal($qty)
     {
         $creditmemoMock = $this->createMock(Creditmemo::class);

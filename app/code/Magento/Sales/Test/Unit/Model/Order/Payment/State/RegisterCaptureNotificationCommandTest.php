@@ -44,9 +44,10 @@ class RegisterCaptureNotificationCommandTest extends TestCase
      * @param string $expectedState
      * @param string $expectedStatus
      * @param string $expectedMessage
-     * @return void     */
+     * @return void
+     */
 
-     #[DataProvider('commandResultDataProvider')]
+    #[DataProvider('commandResultDataProvider')]
     public function testExecute(
         bool $isTransactionPending,
         bool $isFraudDetected,

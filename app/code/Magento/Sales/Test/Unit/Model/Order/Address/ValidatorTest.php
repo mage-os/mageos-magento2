@@ -79,9 +79,9 @@ class ValidatorTest extends TestCase
      * @param $addressData
      * @param $email
      * @param $addressType
-     * @param $expectedWarnings     */
-
-     #[DataProvider('providerAddressData')]
+     * @param $expectedWarnings
+     */
+    #[DataProvider('providerAddressData')]
     public function testValidate($addressData, $email, $addressType, $expectedWarnings)
     {
         $this->addressMock->expects($this->any())

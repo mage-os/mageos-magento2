@@ -45,7 +45,7 @@ class ChangeOutputArrayTest extends TestCase
 
     /**     */
 
-     #[DataProvider('negativeTotals')]
+    #[DataProvider('negativeTotals')]
     public function testNoNegativeValue($totals, $expected)
     {
         $this->priceRendererMock->expects($this->once())

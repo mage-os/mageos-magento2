@@ -46,7 +46,7 @@ class ManagerTest extends TestCase
      * @param $orderId
      */
 
-     #[DataProvider('getAuthorizationDataProvider')]
+    #[DataProvider('getAuthorizationDataProvider')]
     public function testGetAuthorizationTransaction($parentTransactionId, $paymentId, $orderId)
     {
         $transaction = $this->createMock(Transaction::class);
@@ -74,7 +74,7 @@ class ManagerTest extends TestCase
      * @param bool $expectedResult
      */
 
-     #[DataProvider('isTransactionExistsDataProvider')]
+    #[DataProvider('isTransactionExistsDataProvider')]
     public function testIsTransactionExists($transactionId, $isRepositoryReturnTransaction, $expectedResult)
     {
         $paymentId = 1;
@@ -98,7 +98,7 @@ class ManagerTest extends TestCase
      * @param string|null $expectedResult
      */
 
-     #[DataProvider('generateTransactionIdDataProvider')]
+    #[DataProvider('generateTransactionIdDataProvider')]
     public function testGenerateTransactionId(
         $transactionId,
         $parentTransactionId,

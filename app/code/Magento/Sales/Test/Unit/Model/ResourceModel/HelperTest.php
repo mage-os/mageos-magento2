@@ -65,7 +65,7 @@ class HelperTest extends TestCase
      * @param string $expectedType
      *     */
 
-     #[DataProvider('getBestsellersReportUpdateRatingPosProvider')]
+    #[DataProvider('getBestsellersReportUpdateRatingPosProvider')]
     public function testGetBestsellersReportUpdateRatingPos($aggregation, $aggregationAliases, $expectedType)
     {
         $mainTable = 'main_table';

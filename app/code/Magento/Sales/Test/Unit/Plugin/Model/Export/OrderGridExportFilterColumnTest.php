@@ -69,7 +69,7 @@ class OrderGridExportFilterColumnTest extends TestCase
      * @param array $result     * @throws Exception
      */
 
-     #[DataProvider('getColumnsDataProvider')]
+    #[DataProvider('getColumnsDataProvider')]
     public function testAfterGetHeaders(string $namespace, array $activeColumns, array $result): void
     {
         $this->contextInterfaceMock->expects($this->any())
@@ -99,7 +99,7 @@ class OrderGridExportFilterColumnTest extends TestCase
      * @param array $result     * @throws Exception
      */
 
-     #[DataProvider('getColumnsDataProvider')]
+    #[DataProvider('getColumnsDataProvider')]
     public function testAfterGetFields(string $namespace, array $activeColumns, array $result): void
     {
         $this->contextInterfaceMock->expects($this->any())

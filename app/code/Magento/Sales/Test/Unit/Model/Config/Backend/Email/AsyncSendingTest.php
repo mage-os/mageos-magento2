@@ -70,7 +70,7 @@ class AsyncSendingTest extends TestCase
      * @param string $eventName     
      * @return void
      */
-     #[DataProvider('afterSaveDataProvider')]
+    #[DataProvider('afterSaveDataProvider')]
     public function testAfterSave($value, $oldValue, $eventName)
     {
         $path = 'sales_email/general/async_sending';

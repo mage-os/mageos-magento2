@@ -272,9 +272,10 @@ class OrderStatusTest extends TestCase
      * Test caching.
      *
      * @param string $requestData
-     * @param string $result     */
+     * @param string $result
+     */
 
-     #[DataProvider('getCacheKeyDataProvider')]
+    #[DataProvider('getCacheKeyDataProvider')]
     public function testGetCacheKey($requestData, $result)
     {
         $this->requestInterface->expects($this->any())->method('getParam')

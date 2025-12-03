@@ -63,7 +63,7 @@ class DataTest extends TestCase
     /**
      * @return void
      */
-     #[DataProvider('getScopeConfigValue')]
+    #[DataProvider('getScopeConfigValue')]
     public function testCanSendNewOrderConfirmationEmail($scopeConfigValue)
     {
         $this->setupScopeConfigIsSetFlag(
@@ -77,7 +77,7 @@ class DataTest extends TestCase
     /**     
      * @return void
      */
-     #[DataProvider('getScopeConfigValue')]
+    #[DataProvider('getScopeConfigValue')]
     public function testCanSendNewOrderEmail($scopeConfigValue)
     {
         $this->setupScopeConfigIsSetFlag(
@@ -91,7 +91,7 @@ class DataTest extends TestCase
     /**     
      * @return void
      */
-     #[DataProvider('getScopeConfigValue')]
+    #[DataProvider('getScopeConfigValue')]
     public function testCanSendOrderCommentEmail($scopeConfigValue)
     {
         $this->setupScopeConfigIsSetFlag(
@@ -105,7 +105,7 @@ class DataTest extends TestCase
     /**     
      * @return void
      */
-     #[DataProvider('getScopeConfigValue')]
+    #[DataProvider('getScopeConfigValue')]
     public function testCanSendNewShipmentEmail($scopeConfigValue)
     {
         $this->setupScopeConfigIsSetFlag(
@@ -119,7 +119,7 @@ class DataTest extends TestCase
     /**     
      * @return void
      */
-     #[DataProvider('getScopeConfigValue')]
+    #[DataProvider('getScopeConfigValue')]
     public function testCanSendShipmentCommentEmail($scopeConfigValue)
     {
         $this->setupScopeConfigIsSetFlag(
@@ -133,7 +133,7 @@ class DataTest extends TestCase
     /**
      * @return void
      */
-     #[DataProvider('getScopeConfigValue')]
+    #[DataProvider('getScopeConfigValue')]
     public function testCanSendNewInvoiceEmail($scopeConfigValue)
     {
         $this->setupScopeConfigIsSetFlag(
@@ -147,7 +147,7 @@ class DataTest extends TestCase
     /**
      */
 
-     #[DataProvider('getScopeConfigValue')]
+    #[DataProvider('getScopeConfigValue')]
     public function testCanSendInvoiceCommentEmail($scopeConfigValue)
     {
         $this->setupScopeConfigIsSetFlag(
@@ -161,7 +161,7 @@ class DataTest extends TestCase
     /**     * @return void
      */
 
-     #[DataProvider('getScopeConfigValue')]
+    #[DataProvider('getScopeConfigValue')]
     public function testCanSendNewCreditmemoEmail($scopeConfigValue)
     {
         $this->setupScopeConfigIsSetFlag(
@@ -175,7 +175,7 @@ class DataTest extends TestCase
     /**     * @return void
      */
 
-     #[DataProvider('getScopeConfigValue')]
+    #[DataProvider('getScopeConfigValue')]
     public function testCanSendCreditmemoCommentEmail($scopeConfigValue)
     {
         $this->setupScopeConfigIsSetFlag(

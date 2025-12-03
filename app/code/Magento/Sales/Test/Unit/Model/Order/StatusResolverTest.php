@@ -29,7 +29,7 @@ class StatusResolverTest extends TestCase
      *
      */
 
-     #[DataProvider('statesDataProvider')]
+    #[DataProvider('statesDataProvider')]
     public function testGetOrderStatusByState($order, $expectedReturn)
     {
         $order = $order($this);

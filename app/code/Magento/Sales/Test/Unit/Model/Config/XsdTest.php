@@ -29,7 +29,7 @@ class XsdTest extends TestCase
     /**
      * @param string $xmlFile     
      */
-     #[DataProvider('validXmlFileDataProvider')]
+    #[DataProvider('validXmlFileDataProvider')]
     public function testValidXmlFile($xmlFile)
     {
         $dom = new \DOMDocument();
@@ -53,7 +53,7 @@ class XsdTest extends TestCase
      * @param array $expectedErrors
      */
 
-     #[DataProvider('invalidXmlFileDataProvider')]
+    #[DataProvider('invalidXmlFileDataProvider')]
     public function testInvalidXmlFile($xmlFile, $expectedErrors)
     {
         $dom = new \DOMDocument();

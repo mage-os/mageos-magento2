@@ -50,7 +50,7 @@ class AddVatRequestParamsOrderCommentTest extends TestCase
      * @param string $orderHistoryComment
      */
 
-     #[DataProvider('addVatRequestParamsOrderCommentDataProvider')]
+    #[DataProvider('addVatRequestParamsOrderCommentDataProvider')]
     public function testAddVatRequestParamsOrderComment(
         $configAddressType,
         $vatRequestId,

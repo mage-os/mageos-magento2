@@ -262,7 +262,7 @@ class OrderSenderTest extends AbstractSenderTestCase
      * @return void
      */
 
-     #[DataProvider('sendVirtualOrderDataProvider')]
+    #[DataProvider('sendVirtualOrderDataProvider')]
     public function testSendVirtualOrder(
         bool $isVirtualOrder,
         int $formatCallCount,

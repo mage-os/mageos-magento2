@@ -238,7 +238,7 @@ class PayOperationTest extends TestCase
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
 
-     #[DataProvider('payDataProvider')]
+    #[DataProvider('payDataProvider')]
     public function testExecute($canCapture, $isOnline, $isGateway, $isTransactionPending)
     {
         $this->invoiceMock->expects($this->any())

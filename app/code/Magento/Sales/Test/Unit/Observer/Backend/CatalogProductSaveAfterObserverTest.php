@@ -58,7 +58,7 @@ class CatalogProductSaveAfterObserverTest extends TestCase
      * @param int $productStatus
      */
 
-     #[DataProvider('statusUpdateDataProvider')]
+    #[DataProvider('statusUpdateDataProvider')]
     public function testSaveProduct($productId, $productStatus)
     {
         $productMock = $this->createPartialMock(

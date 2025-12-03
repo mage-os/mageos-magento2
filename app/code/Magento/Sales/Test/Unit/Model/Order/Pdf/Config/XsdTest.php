@@ -46,9 +46,10 @@ class XsdTest extends TestCase
 
     /**
      * @param string $fixtureXml
-     * @param array $expectedErrors     */
+     * @param array $expectedErrors
+     */
 
-     #[DataProvider('schemaByExemplarDataProvider')]
+    #[DataProvider('schemaByExemplarDataProvider')]
     public function testSchemaByExemplar($fixtureXml, array $expectedErrors)
     {
         $this->_testSchema(self::$_schemaPath, $fixtureXml, $expectedErrors);
@@ -56,9 +57,10 @@ class XsdTest extends TestCase
 
     /**
      * @param string $fixtureXml
-     * @param array $expectedErrors     */
+     * @param array $expectedErrors
+     */
 
-     #[DataProvider('fileSchemaByExemplarDataProvider')]
+    #[DataProvider('fileSchemaByExemplarDataProvider')]
     public function testFileSchemaByExemplar($fixtureXml, array $expectedErrors)
     {
         $this->_testSchema(self::$_schemaFilePath, $fixtureXml, $expectedErrors);

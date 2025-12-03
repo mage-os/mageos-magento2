@@ -53,7 +53,7 @@ class CustomerAssigmentTest extends TestCase
      *     * @param array $data
      */
 
-     #[DataProvider('executeDataProvider')]
+    #[DataProvider('executeDataProvider')]
     public function testExecute(array $data): void
     {
         $this->configureOrderMock($data);

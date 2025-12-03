@@ -69,7 +69,7 @@ class TrackTest extends TestCase
      * @param string $carrierCodeToSet
      */
 
-     #[DataProvider('isCustomDataProvider')]
+    #[DataProvider('isCustomDataProvider')]
     public function testIsCustom($expectedResult, $carrierCodeToSet)
     {
         $this->_model->setCarrierCode($carrierCodeToSet);

@@ -190,9 +190,10 @@ class ShipOrderTest extends TestCase
      * @param bool $notify
      * @param bool $appendComment
      * @throws CouldNotShipException
-     * @throws DocumentValidationException     */
+     * @throws DocumentValidationException
+     */
 
-     #[DataProvider('dataProvider')]
+    #[DataProvider('dataProvider')]
     public function testExecute($orderId, $items, $notify, $appendComment)
     {
         $this->mockConnection($orderId);

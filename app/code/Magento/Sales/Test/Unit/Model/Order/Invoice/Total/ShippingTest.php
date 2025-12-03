@@ -42,7 +42,7 @@ class ShippingTest extends TestCase
      * @param float $expectedShipping
      */
 
-     #[DataProvider('collectWithNoOrZeroPrevInvoiceDataProvider')]
+    #[DataProvider('collectWithNoOrZeroPrevInvoiceDataProvider')]
     public function testCollectWithNoOrZeroPrevInvoice(array $prevInvoicesData, $orderShipping, $expectedShipping)
     {
         $invoice = $this->createInvoiceStub($prevInvoicesData, $orderShipping);
