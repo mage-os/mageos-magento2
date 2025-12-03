@@ -86,7 +86,7 @@ class CountryInformationAcquirerTest extends WebapiAbstract
         $this->assertNotEmpty($store->getId(), 'Precondition failed: fixture store was not created.');
 
         try {
-            $result = $this->getCountryInfo(self::STORE_CODE_FROM_FIXTURE, 'AN');
+            $this->getCountryInfo(self::STORE_CODE_FROM_FIXTURE, 'AN');
         } catch (\Exception $e) {
             // Parse JSON error response if present
             $errorMessage = json_decode($e->getMessage(), true);
