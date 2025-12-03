@@ -13,6 +13,7 @@ use Magento\Framework\App\Helper\Context;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Multishipping\Helper\Data;
 use Magento\Quote\Model\Quote;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -78,17 +79,7 @@ class DataTest extends TestCase
         $this->assertEquals($maximumQty, $this->helper->getMaximumQty());
     }
 
-    /**
-     * @param bool $result
-     * @param bool $quoteHasItems
-     * @param bool $isMultiShipping
-     * @param bool $hasItemsWithDecimalQty
-     * @param bool $validateMinimumAmount
-     * @param int $itemsSummaryQty
-     * @param int $itemVirtualQty
-     * @param int $maximumQty
-     * @dataProvider isMultishippingCheckoutAvailableDataProvider
-     */
+    #[DataProvider('isMultishippingCheckoutAvailableDataProvider')]
     public function testIsMultishippingCheckoutAvailable(
         $result,
         $quoteHasItems,
@@ -160,12 +151,7 @@ class DataTest extends TestCase
         $this->assertEquals($result, $this->helper->isMultishippingCheckoutAvailable());
     }
 
-    /**
-     * Data provider
-     *
-     * @return array
-     */
-    public static function isMultishippingCheckoutAvailableDataProvider()
+    public static function isMultishippingCheckoutAvailableDataProvider(): array
     {
         return [
             [true, false, true, null, null, null, null, null],
