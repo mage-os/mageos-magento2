@@ -13,7 +13,7 @@
             <features value="Swatches"/>
             <stories value="Configurable product with multiple swatch attributes"/>
             <title value="Configurable product image display with multiple swatches on catalog, product page, and layered navigation"/>
-            <description value="Create configurable product with 3 swatch attributes (1 visual A/B/C, 2 text 1/2/3 and X/Y/Z) and verify image display on catalog page, product page with gallery, and layered navigation filtering"/>
+            <description value="Verify configurable product image display with multiple swatch attributes on catalog, product, and layered navigation pages"/>
             <severity value="MAJOR"/>
             <testCaseId value="AC-5545"/>
             <group value="swatches"/>
@@ -32,7 +32,7 @@
             <createData entity="VisualSwatchOptionC" stepKey="swatchAttributeThirdOption">
                 <requiredEntity createDataKey="createVisualSwatchAttribute"/>
             </createData>
-            <!-- Create Text Swatch Attribute 1 with 3 options -->
+            <!-- Create text swatch attribute 1 with 3 options -->
             <createData entity="TextSwatchProductAttributeForm" stepKey="createTextSwatchAttribute1"/>
             <createData entity="TextSwatchOption1" stepKey="textSwatchAttribute1FirstOption">
                 <requiredEntity createDataKey="createTextSwatchAttribute1"/>
@@ -43,7 +43,7 @@
             <createData entity="TextSwatchOption3" stepKey="textSwatchAttribute1ThirdOption">
                 <requiredEntity createDataKey="createTextSwatchAttribute1"/>
             </createData>
-            <!-- Create Text Swatch Attribute 2 with 3 options -->
+            <!-- Create text swatch attribute 2 with 3 options -->
             <createData entity="TextSwatchProductAttributeForm" stepKey="createTextSwatchAttribute2"/>
             <createData entity="TextSwatchOptionX" stepKey="textSwatchAttribute2FirstOption">
                 <requiredEntity createDataKey="createTextSwatchAttribute2"/>
@@ -54,7 +54,7 @@
             <createData entity="TextSwatchOptionZ" stepKey="textSwatchAttribute2ThirdOption">
                 <requiredEntity createDataKey="createTextSwatchAttribute2"/>
             </createData>
-            <!-- Step 2: Create Configurable Product -->
+            <!-- Step 2: Create configurable product -->
             <createData entity="ApiConfigurableProduct" stepKey="createConfigProduct">
                 <requiredEntity createDataKey="createCategory"/>
             </createData>
@@ -68,45 +68,56 @@
                 <argument name="image" value="MagentoLogo"/>
             </actionGroup>
             <!-- Generate configurations for the 3 attributes -->
+            <waitForElementClickable selector="{{AdminProductFormConfigurationsSection.createConfigurations}}" stepKey="waitForCreateConfigurationsClickable"/>
             <click selector="{{AdminProductFormConfigurationsSection.createConfigurations}}" stepKey="clickCreateConfigurations"/>
             <waitForElementVisible selector="{{AdminCreateProductConfigurationsPanel.filters}}" stepKey="waitForConfigurationModal"/>
             <!-- Select all 3 attributes -->
+            <waitForElementClickable selector="{{AdminCreateProductConfigurationsPanel.attributeCheckbox($$createVisualSwatchAttribute.attribute_code$$)}}" stepKey="waitForVisualSwatchAttrClickable"/>
             <click selector="{{AdminCreateProductConfigurationsPanel.attributeCheckbox($$createVisualSwatchAttribute.attribute_code$$)}}" stepKey="selectVisualSwatchAttr"/>
+            <waitForElementClickable selector="{{AdminCreateProductConfigurationsPanel.attributeCheckbox($$createTextSwatchAttribute1.attribute_code$$)}}" stepKey="waitForTextSwatchAttr1Clickable"/>
             <click selector="{{AdminCreateProductConfigurationsPanel.attributeCheckbox($$createTextSwatchAttribute1.attribute_code$$)}}" stepKey="selectTextSwatchAttr1"/>
+            <waitForElementClickable selector="{{AdminCreateProductConfigurationsPanel.attributeCheckbox($$createTextSwatchAttribute2.attribute_code$$)}}" stepKey="waitForTextSwatchAttr2Clickable"/>
             <click selector="{{AdminCreateProductConfigurationsPanel.attributeCheckbox($$createTextSwatchAttribute2.attribute_code$$)}}" stepKey="selectTextSwatchAttr2"/>
+            <waitForElementClickable selector="{{AdminCreateProductConfigurationsPanel.next}}" stepKey="waitForNextToSelectOptionsClickable"/>
             <click selector="{{AdminCreateProductConfigurationsPanel.next}}" stepKey="clickNextToSelectOptions"/>
             <waitForPageLoad stepKey="waitForOptionsPage"/>
             <!-- Select all options for all attributes -->
+            <waitForElementClickable selector="{{AdminCreateProductConfigurationsPanel.selectAllByAttribute($$createVisualSwatchAttribute.frontend_label[0]$$)}}" stepKey="waitForSelectAllVisualClickable"/>
             <click selector="{{AdminCreateProductConfigurationsPanel.selectAllByAttribute($$createVisualSwatchAttribute.frontend_label[0]$$)}}" stepKey="selectAllVisualOptions"/>
+            <waitForElementClickable selector="{{AdminCreateProductConfigurationsPanel.selectAllByAttribute($$createTextSwatchAttribute1.frontend_label[0]$$)}}" stepKey="waitForSelectAllText1Clickable"/>
             <click selector="{{AdminCreateProductConfigurationsPanel.selectAllByAttribute($$createTextSwatchAttribute1.frontend_label[0]$$)}}" stepKey="selectAllText1Options"/>
+            <waitForElementClickable selector="{{AdminCreateProductConfigurationsPanel.selectAllByAttribute($$createTextSwatchAttribute2.frontend_label[0]$$)}}" stepKey="waitForSelectAllText2Clickable"/>
             <click selector="{{AdminCreateProductConfigurationsPanel.selectAllByAttribute($$createTextSwatchAttribute2.frontend_label[0]$$)}}" stepKey="selectAllText2Options"/>
+            <waitForElementClickable selector="{{AdminCreateProductConfigurationsPanel.next}}" stepKey="waitForNextToImagesClickable"/>
             <click selector="{{AdminCreateProductConfigurationsPanel.next}}" stepKey="clickNextToImages"/>
             <waitForElementVisible selector="{{AdminCreateProductConfigurationsPanel.applyUniqueImagesToEachSkus}}" stepKey="waitForImagesSection"/>
             <!-- Add images to simple products -->
+            <waitForElementClickable selector="{{AdminCreateProductConfigurationsPanel.applyUniqueImagesToEachSkus}}" stepKey="waitForApplyUniqueImagesClickable"/>
             <click selector="{{AdminCreateProductConfigurationsPanel.applyUniqueImagesToEachSkus}}" stepKey="clickApplyUniqueImages"/>
             <selectOption selector="{{AdminCreateProductConfigurationsPanel.selectImagesButton}}" userInput="$$createVisualSwatchAttribute.frontend_label[0]$$" stepKey="selectAttributeForImages"/>
             <waitForPageLoad stepKey="waitForImageUploadSectionsToLoad"/>
             <!-- Upload image for option A -->
             <attachFile selector="{{AdminCreateProductConfigurationsPanel.uploadImagesButton(VisualSwatchOptionA.label)}}" userInput="{{TestImageAdobe.file}}" stepKey="uploadImageForA"/>
-            <waitForElementNotVisible selector="{{AdminCreateProductConfigurationsPanel.uploadProgressBar}}" stepKey="waitForImageUploadA"/>
             <!-- Upload image for option B -->
             <attachFile selector="{{AdminCreateProductConfigurationsPanel.uploadImagesButton(VisualSwatchOptionB.label)}}" userInput="{{AdobeSmallImage.file}}" stepKey="uploadImageForB"/>
-            <waitForElementNotVisible selector="{{AdminCreateProductConfigurationsPanel.uploadProgressBar}}" stepKey="waitForImageUploadB"/>
             <!-- Upload image for option C -->
             <attachFile selector="{{AdminCreateProductConfigurationsPanel.uploadImagesButton(VisualSwatchOptionC.label)}}" userInput="{{AdobeThumbImage.file}}" stepKey="uploadImageForC"/>
-            <waitForElementNotVisible selector="{{AdminCreateProductConfigurationsPanel.uploadProgressBar}}" stepKey="waitForImageUploadC"/>
             <!-- Apply single price -->
             <scrollTo selector="{{AdminCreateProductConfigurationsPanel.applySinglePriceToAllSkus}}" stepKey="scrollToApplyPrice"/>
+            <waitForElementClickable selector="{{AdminCreateProductConfigurationsPanel.applySinglePriceToAllSkus}}" stepKey="waitForApplySinglePriceClickable"/>
             <click selector="{{AdminCreateProductConfigurationsPanel.applySinglePriceToAllSkus}}" stepKey="clickApplySinglePrice"/>
             <waitForElementVisible selector="{{AdminCreateProductConfigurationsPanel.singlePrice}}" stepKey="waitForPriceField"/>
             <fillField selector="{{AdminCreateProductConfigurationsPanel.singlePrice}}" userInput="50" stepKey="enterPrice"/>
             <!-- Apply single quantity -->
             <scrollTo selector="{{AdminCreateProductConfigurationsPanel.applySingleQuantityToEachSkus}}" stepKey="scrollToApplyQuantity"/>
+            <waitForElementClickable selector="{{AdminCreateProductConfigurationsPanel.applySingleQuantityToEachSkus}}" stepKey="waitForApplySingleQuantityClickable"/>
             <click selector="{{AdminCreateProductConfigurationsPanel.applySingleQuantityToEachSkus}}" stepKey="clickApplySingleQuantity"/>
             <waitForElementVisible selector="{{AdminCreateProductConfigurationsPanel.quantity}}" stepKey="waitForQuantityField"/>
             <fillField selector="{{AdminCreateProductConfigurationsPanel.quantity}}" userInput="100" stepKey="enterQuantity"/>
+            <waitForElementClickable selector="{{AdminCreateProductConfigurationsPanel.next}}" stepKey="waitForNextToSummaryClickable"/>
             <click selector="{{AdminCreateProductConfigurationsPanel.next}}" stepKey="clickNextToSummary"/>
             <!-- Generate products -->
+            <waitForElementClickable selector="{{AdminCreateProductConfigurationsPanel.next}}" stepKey="waitForGenerateProductsClickable"/>
             <click selector="{{AdminCreateProductConfigurationsPanel.next}}" stepKey="clickGenerateProducts"/>
             <waitForPageLoad stepKey="waitForConfigurationsGenerated"/>
             <!-- Save product -->
@@ -114,7 +125,7 @@
         </before>
         <after>
             <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
-            <!-- Delete configurable product & its variants via API using ProductApiHelper -->
+            <!-- Delete configurable product & its variants -->
             <helper class="Magento\Catalog\Test\Mftf\Helper\ProductApiHelper" method="deleteAllProductsApi" stepKey="deleteAllProductsViaApi"/>
             <!-- Delete attributes -->
             <deleteData createDataKey="createVisualSwatchAttribute" stepKey="deleteVisualSwatchAttribute"/>
@@ -129,6 +140,7 @@
         <waitForPageLoad stepKey="waitForCategoryPageLoad"/>
         <waitForElementVisible selector="{{StorefrontCategoryMainSection.ProductItemInfo}}" stepKey="waitForProductsVisible"/>
         <!-- Step 4: Select A-2-Y options -->
+        <waitForElementClickable selector="{{StorefrontProductInfoMainSection.swatchOptionByLabel(VisualSwatchOptionA.label)}}" stepKey="waitForOptionAClickable"/>
         <click selector="{{StorefrontProductInfoMainSection.swatchOptionByLabel(VisualSwatchOptionA.label)}}" stepKey="selectOptionA"/>
         <waitForPageLoad stepKey="waitAfterSelectA"/>
         <click selector="{{StorefrontProductInfoMainSection.swatchOptionByLabel(TextSwatchOption2.label)}}" stepKey="selectOption2"/>
@@ -142,15 +154,16 @@
         <waitForPageLoad stepKey="waitAfterSelectZ"/>
         <!-- Expected Result: Base image of the A-2-Z product is displayed -->
         <waitForElementVisible selector="{{StorefrontCategoryMainSection.productImage}}" stepKey="verifyImageDisplayedForA2Z"/>
-        <!-- Step 6: Open Product page -->
+        <!-- Step 6: Open product page -->
         <click selector="{{StorefrontCategoryMainSection.specifiedProductItemInfo('$$createConfigProduct.name$$')}}" stepKey="openProductPage"/>
         <waitForPageLoad stepKey="waitForProductPage"/>
         <waitForElementVisible selector="{{StorefrontProductInfoMainSection.productName}}" stepKey="waitForProductName"/>
         <!-- Step 7: Select A-2-Y options -->
+        <waitForElementClickable selector="{{StorefrontProductInfoMainSection.swatchOptionByLabel(VisualSwatchOptionA.label)}}" stepKey="waitForOptionAClickableOnProductPage"/>
         <click selector="{{StorefrontProductInfoMainSection.swatchOptionByLabel(VisualSwatchOptionA.label)}}" stepKey="selectOptionAOnProductPage"/>
-        <waitForElementVisible selector="{{StorefrontProductInfoMainSection.swatchOptionByLabel(TextSwatchOption2.label)}}" stepKey="waitForTextSwatchesVisible"/>
+        <waitForElementClickable selector="{{StorefrontProductInfoMainSection.swatchOptionByLabel(TextSwatchOption2.label)}}" stepKey="waitForTextSwatchesVisibleOnProductPage"/>
         <click selector="{{StorefrontProductInfoMainSection.swatchOptionByLabel(TextSwatchOption2.label)}}" stepKey="selectOption2OnProductPage"/>
-        <waitForElementVisible selector="{{StorefrontProductInfoMainSection.swatchOptionByLabel(TextSwatchOptionY.label)}}" stepKey="waitForThirdSwatchVisible"/>
+        <waitForElementClickable selector="{{StorefrontProductInfoMainSection.swatchOptionByLabel(TextSwatchOptionY.label)}}" stepKey="waitForThirdSwatchVisibleOnProductPage"/>
         <click selector="{{StorefrontProductInfoMainSection.swatchOptionByLabel(TextSwatchOptionY.label)}}" stepKey="selectOptionYOnProductPage"/>
         <waitForPageLoad stepKey="waitAfterSelectYOnProductPage"/>
         <!-- Expected Result: Base image of the A-2-Y product is displayed. All images of this product are displayed in roundabout -->
@@ -168,6 +181,7 @@
         </actionGroup>
         <waitForElementVisible selector="{{StorefrontCategorySidebarSection.layeredFilterBlock}}" stepKey="waitForLayeredNavigation"/>
         <!-- Step 10: Select A-2-Y options -->
+        <waitForElementClickable selector="{{StorefrontCategorySidebarSection.filterOptionTitle('$$createVisualSwatchAttribute.frontend_label[0]$$')}}" stepKey="waitForVisualSwatchFilterClickable"/>
         <click selector="{{StorefrontCategorySidebarSection.filterOptionTitle('$$createVisualSwatchAttribute.frontend_label[0]$$')}}" stepKey="expandVisualSwatchFilter"/>
         <waitForPageLoad stepKey="waitAfterExpandVisualFilter"/>
         <click selector="{{StorefrontCategorySidebarSection.swatchVisualLayeredNav(VisualSwatchOptionA.label)}}" stepKey="selectAInLayeredNav"/>
