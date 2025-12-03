@@ -90,7 +90,6 @@
             <click selector="{{AdminCreateProductConfigurationsPanel.selectAllByAttribute($$createTextSwatchAttribute2.frontend_label[0]$$)}}" stepKey="selectAllText2Options"/>
             <waitForElementClickable selector="{{AdminCreateProductConfigurationsPanel.next}}" stepKey="waitForNextToImagesClickable"/>
             <click selector="{{AdminCreateProductConfigurationsPanel.next}}" stepKey="clickNextToImages"/>
-            <waitForElementClickable selector="{{AdminCreateProductConfigurationsPanel.applyUniqueImagesToEachSkus}}" stepKey="waitForImagesSection"/>
             <!-- Add images to simple products -->
             <waitForElementClickable selector="{{AdminCreateProductConfigurationsPanel.applyUniqueImagesToEachSkus}}" stepKey="waitForApplyUniqueImagesClickable"/>
             <click selector="{{AdminCreateProductConfigurationsPanel.applyUniqueImagesToEachSkus}}" stepKey="clickApplyUniqueImages"/>
