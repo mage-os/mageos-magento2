@@ -6,8 +6,10 @@
 namespace Magento\Sales\Controller\Adminhtml\Order;
 
 use Magento\Framework\App\Action\HttpPostActionInterface;
+use Magento\Framework\App\Action\HttpGetActionInterface;
+use Magento\Sales\Controller\Adminhtml\Order;
 
-class Email extends \Magento\Sales\Controller\Adminhtml\Order implements HttpPostActionInterface
+class Email extends Order implements HttpPostActionInterface, HttpGetActionInterface
 {
     /**
      * Authorization level of a basic admin session
