@@ -10,6 +10,7 @@ use Magento\Framework\Api\ArrayObjectSearch;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Json\EncoderInterface;
 use Magento\Framework\Locale\Bundle\DataBundle;
+use Magento\Framework\Locale\Resolver;
 use Magento\Framework\Locale\ResolverInterface;
 
 /**
@@ -468,32 +469,27 @@ class Dob extends AbstractWidget
     /**
      * Normalize the dob for a proper output on the frontend
      *
+     * Converts localized date format (with potentially localized numerals like Arabic) to standard numerals
+     *
      * @param bool|string|null $value
      * @return bool|string
      */
     private function normalizedDobOutput(bool|string|null $value): bool|string
     {
-        if ($value === false || $value === null) {
-            return false;
+        if (empty($value)) {
+            return $value;
         }
         $locale = $this->localeResolver->getLocale();
         $dateFormat = $this->getDateFormat();
-        $formatter = new \IntlDateFormatter(
-            $locale,
-            \IntlDateFormatter::SHORT,
-            \IntlDateFormatter::NONE
+        $dateTime = $this->_localeDate->date($value, $locale, false, false);
+
+        return $this->_localeDate->formatDateTime(
+            $dateTime,
+            \IntlDateFormatter::NONE,
+            \IntlDateFormatter::NONE,
+            Resolver::DEFAULT_LOCALE,
+            null,
+            $dateFormat
         );
-        $formatter->setPattern($dateFormat);
-        $timestamp = $formatter->parse($value);
-        if ($timestamp !== false) {
-            $formatterEn = new \IntlDateFormatter(
-                'en',
-                \IntlDateFormatter::SHORT,
-                \IntlDateFormatter::NONE
-            );
-            $formatterEn->setPattern($dateFormat);
-            $value = $formatterEn->format($timestamp);
-        }
-        return $value;
     }
 }
