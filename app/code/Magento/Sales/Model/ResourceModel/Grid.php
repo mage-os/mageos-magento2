@@ -147,12 +147,9 @@ class Grid extends AbstractGrid
                 $timestamps = array_column($fetchResult, 'updated_at');
                 if ($timestamps) {
                     $lastUpdatedAt = max(max($timestamps), $lastUpdatedAt);
+                    $this->lastUpdateTimeCache->save($this->gridTableName, $lastUpdatedAt);
                 }
             }
-        }
-
-        if ($lastUpdatedAt) {
-            $this->lastUpdateTimeCache->save($this->gridTableName, $lastUpdatedAt);
         }
     }
 
