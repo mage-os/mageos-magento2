@@ -550,10 +550,4 @@
         <data key="city5">29 Palms</data>
         <data key="city6">New York</data>
     </entity>
-    <entity name="CustomerForFinanceImport" type="customer" extends="Simple_US_Customer">
-        <data key="email">test@example.com</data>
-    </entity>
-    <entity name="SecondCustomerForFinanceImport" type="customer" extends="Simple_US_Customer">
-        <data key="email">roni_cost@example.com</data>
-    </entity>
 </entities>
