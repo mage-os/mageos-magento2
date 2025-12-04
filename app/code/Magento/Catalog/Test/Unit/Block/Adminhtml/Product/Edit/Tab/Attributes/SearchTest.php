@@ -130,11 +130,29 @@ class SearchTest extends TestCase
     }
 
     /**
-     * Test getSelectorOptions returns array with required structure
+     * Data provider for testing getSelectorOptions required keys
      *
+     * @return array
+     */
+    public static function selectorOptionsRequiredKeysDataProvider(): array
+    {
+        return [
+            'source key exists' => ['source'],
+            'minLength key exists' => ['minLength'],
+            'ajaxOptions key exists' => ['ajaxOptions'],
+            'template key exists' => ['template'],
+            'data key exists' => ['data']
+        ];
+    }
+
+    /**
+     * Test getSelectorOptions returns array with required key
+     *
+     * @dataProvider selectorOptionsRequiredKeysDataProvider
+     * @param string $expectedKey
      * @return void
      */
-    public function testGetSelectorOptionsReturnsArrayWithRequiredKeys(): void
+    public function testGetSelectorOptionsReturnsArrayWithRequiredKey(string $expectedKey): void
     {
         $templateId = 4;
         $groupId = 10;
@@ -175,11 +193,7 @@ class SearchTest extends TestCase
         $result = $this->block->getSelectorOptions();
 
         $this->assertIsArray($result);
-        $this->assertArrayHasKey('source', $result);
-        $this->assertArrayHasKey('minLength', $result);
-        $this->assertArrayHasKey('ajaxOptions', $result);
-        $this->assertArrayHasKey('template', $result);
-        $this->assertArrayHasKey('data', $result);
+        $this->assertArrayHasKey($expectedKey, $result);
     }
 
     /**
@@ -223,7 +237,7 @@ class SearchTest extends TestCase
 
         $result = $this->block->getSelectorOptions();
 
-        $this->assertEquals($escapedUrl, $result['source']);
+        $this->assertSame($escapedUrl, $result['source']);
     }
 
     /**
@@ -263,7 +277,7 @@ class SearchTest extends TestCase
 
         $result = $this->block->getSelectorOptions();
 
-        $this->assertEquals(0, $result['minLength']);
+        $this->assertSame(0, $result['minLength']);
     }
 
     /**
@@ -303,7 +317,7 @@ class SearchTest extends TestCase
 
         $result = $this->block->getSelectorOptions();
 
-        $this->assertEquals(['data' => ['template_id' => $templateId]], $result['ajaxOptions']);
+        $this->assertSame(['data' => ['template_id' => $templateId]], $result['ajaxOptions']);
     }
 
     /**
@@ -347,7 +361,7 @@ class SearchTest extends TestCase
 
         $result = $this->block->getSelectorOptions();
 
-        $this->assertEquals(
+        $this->assertSame(
             '[data-template-for="product-attribute-search-' . $groupId . '"]',
             $result['template']
         );
@@ -394,24 +408,55 @@ class SearchTest extends TestCase
 
         $result = $this->block->getSelectorOptions();
 
-        $this->assertEquals($suggestedAttributes, $result['data']);
+        $this->assertSame($suggestedAttributes, $result['data']);
     }
 
     /**
-     * Test getSuggestedAttributes method with label part
+     * Data provider for testing getSuggestedAttributes method
      *
+     * @return array
+     */
+    public static function suggestedAttributesDataProvider(): array
+    {
+        return [
+            'with label part' => [
+                'labelPart' => 'col',
+                'escapedLabelPart' => '%col%',
+                'templateId' => 4,
+                'expectedAttributes' => [
+                    ['id' => 1, 'label' => 'Color', 'code' => 'color'],
+                    ['id' => 2, 'label' => 'Column', 'code' => 'column']
+                ]
+            ],
+            'with empty label part' => [
+                'labelPart' => '',
+                'escapedLabelPart' => '%%',
+                'templateId' => 4,
+                'expectedAttributes' => [
+                    ['id' => 1, 'label' => 'Color', 'code' => 'color'],
+                    ['id' => 2, 'label' => 'Size', 'code' => 'size'],
+                    ['id' => 3, 'label' => 'Material', 'code' => 'material']
+                ]
+            ]
+        ];
+    }
+
+    /**
+     * Test getSuggestedAttributes method returns expected attributes
+     *
+     * @dataProvider suggestedAttributesDataProvider
+     * @param string $labelPart
+     * @param string $escapedLabelPart
+     * @param int $templateId
+     * @param array $expectedAttributes
      * @return void
      */
-    public function testGetSuggestedAttributesWithLabelPart(): void
-    {
-        $labelPart = 'col';
-        $escapedLabelPart = '%col%';
-        $templateId = 4;
-        $expectedAttributes = [
-            ['id' => 1, 'label' => 'Color', 'code' => 'color'],
-            ['id' => 2, 'label' => 'Column', 'code' => 'column']
-        ];
-
+    public function testGetSuggestedAttributesReturnsExpectedAttributes(
+        string $labelPart,
+        string $escapedLabelPart,
+        int $templateId,
+        array $expectedAttributes
+    ): void {
         // Mock resource helper
         $this->resourceHelperMock->expects($this->once())
             ->method('addLikeEscape')
@@ -424,42 +469,7 @@ class SearchTest extends TestCase
 
         $result = $this->block->getSuggestedAttributes($labelPart, $templateId);
 
-        $this->assertIsArray($result);
-        $this->assertCount(2, $result);
-        $this->assertEquals($expectedAttributes, $result);
-    }
-
-    /**
-     * Test getSuggestedAttributes method with empty label part
-     *
-     * @return void
-     */
-    public function testGetSuggestedAttributesWithEmptyLabelPart(): void
-    {
-        $labelPart = '';
-        $escapedLabelPart = '%%';
-        $templateId = 4;
-        $expectedAttributes = [
-            ['id' => 1, 'label' => 'Color', 'code' => 'color'],
-            ['id' => 2, 'label' => 'Size', 'code' => 'size'],
-            ['id' => 3, 'label' => 'Material', 'code' => 'material']
-        ];
-
-        // Mock resource helper
-        $this->resourceHelperMock->expects($this->once())
-            ->method('addLikeEscape')
-            ->with($labelPart, ['position' => 'any'])
-            ->willReturn($escapedLabelPart);
-
-        // Setup collection mock
-        $collectionMock = $this->createMock(Collection::class);
-        $this->setupCollectionMock($collectionMock, $escapedLabelPart, $templateId, $expectedAttributes);
-
-        $result = $this->block->getSuggestedAttributes($labelPart, $templateId);
-
-        $this->assertIsArray($result);
-        $this->assertCount(3, $result);
-        $this->assertEquals($expectedAttributes, $result);
+        $this->assertSame($expectedAttributes, $result);
     }
 
     /**
@@ -497,7 +507,7 @@ class SearchTest extends TestCase
 
         $this->assertIsArray($result);
         $this->assertCount(1, $result);
-        $this->assertEquals($expectedAttributes, $result);
+        $this->assertSame($expectedAttributes, $result);
     }
 
     /**
@@ -543,7 +553,7 @@ class SearchTest extends TestCase
 
         $result = $this->block->getAddAttributeUrl();
 
-        $this->assertEquals($expectedUrl, $result);
+        $this->assertSame($expectedUrl, $result);
     }
 
     /**

@@ -214,33 +214,75 @@ class TierTest extends TestCase
     }
 
     /**
-     * Test sortTierPrices sorts by website ID ascending when different
+     * Data provider for testing sortTierPrices method
      *
-     * @return void
+     * @return array
      */
-    public function testSortTierPricesSortsByWebsiteIdAscendingWhenDifferent(): void
+    public static function sortTierPricesDataProvider(): array
     {
-        $item1 = ['website_id' => 2, 'cust_group' => 0, 'price_qty' => 10];
-        $item2 = ['website_id' => 1, 'cust_group' => 0, 'price_qty' => 10];
-
-        // Use reflection to call protected method
-        $reflection = new \ReflectionClass($this->block);
-        $method = $reflection->getMethod('_sortTierPrices');
-        $method->setAccessible(true);
-        $result = $method->invoke($this->block, $item1, $item2);
-
-        $this->assertEquals(1, $result);
+        return [
+            'sorts by website ID ascending when first is larger' => [
+                'item1' => ['website_id' => 2, 'cust_group' => 0, 'price_qty' => 10],
+                'item2' => ['website_id' => 1, 'cust_group' => 0, 'price_qty' => 10],
+                'needsGroupMock' => false,
+                'expectedResult' => 1
+            ],
+            'returns negative when first website ID is smaller' => [
+                'item1' => ['website_id' => 1, 'cust_group' => 0, 'price_qty' => 10],
+                'item2' => ['website_id' => 2, 'cust_group' => 0, 'price_qty' => 10],
+                'needsGroupMock' => false,
+                'expectedResult' => -1
+            ],
+            'sorts by customer group when website IDs are equal' => [
+                'item1' => ['website_id' => 1, 'cust_group' => 2, 'price_qty' => 10],
+                'item2' => ['website_id' => 1, 'cust_group' => 1, 'price_qty' => 10],
+                'needsGroupMock' => true,
+                'expectedResult' => 1
+            ],
+            'sorts by price quantity when website and group are equal - first larger' => [
+                'item1' => ['website_id' => 1, 'cust_group' => 1, 'price_qty' => 20],
+                'item2' => ['website_id' => 1, 'cust_group' => 1, 'price_qty' => 10],
+                'needsGroupMock' => true,
+                'expectedResult' => 1
+            ],
+            'returns negative when first price quantity is smaller' => [
+                'item1' => ['website_id' => 1, 'cust_group' => 1, 'price_qty' => 5],
+                'item2' => ['website_id' => 1, 'cust_group' => 1, 'price_qty' => 10],
+                'needsGroupMock' => true,
+                'expectedResult' => -1
+            ],
+            'returns zero when all values are equal' => [
+                'item1' => ['website_id' => 1, 'cust_group' => 1, 'price_qty' => 10],
+                'item2' => ['website_id' => 1, 'cust_group' => 1, 'price_qty' => 10],
+                'needsGroupMock' => true,
+                'expectedResult' => 0
+            ]
+        ];
     }
 
     /**
-     * Test sortTierPrices returns negative when first website ID is smaller
+     * Test sortTierPrices method returns expected comparison result
      *
+     * @dataProvider sortTierPricesDataProvider
+     * @param array $item1
+     * @param array $item2
+     * @param bool $needsGroupMock
+     * @param int $expectedResult
      * @return void
      */
-    public function testSortTierPricesReturnsNegativeWhenFirstWebsiteIdIsSmaller(): void
-    {
-        $item1 = ['website_id' => 1, 'cust_group' => 0, 'price_qty' => 10];
-        $item2 = ['website_id' => 2, 'cust_group' => 0, 'price_qty' => 10];
+    public function testSortTierPricesReturnsExpectedResult(
+        array $item1,
+        array $item2,
+        bool $needsGroupMock,
+        int $expectedResult
+    ): void {
+        if ($needsGroupMock) {
+            $groupMock = $this->getMockForAbstractClass(GroupInterface::class);
+            $groupMock->method('getId')->willReturn(0);
+            $groupMock->method('getCode')->willReturn('General');
+            $this->groupManagementMock->method('getAllCustomersGroup')->willReturn($groupMock);
+            $this->moduleManagerMock->method('isEnabled')->willReturn(false);
+        }
 
         // Use reflection to call protected method
         $reflection = new \ReflectionClass($this->block);
@@ -248,111 +290,7 @@ class TierTest extends TestCase
         $method->setAccessible(true);
         $result = $method->invoke($this->block, $item1, $item2);
 
-        $this->assertEquals(-1, $result);
-    }
-
-    /**
-     * Test sortTierPrices sorts by customer group when website IDs are equal
-     *
-     * @return void
-     */
-    public function testSortTierPricesSortsByCustomerGroupWhenWebsiteIdsAreEqual(): void
-    {
-        $groupMock1 = $this->getMockForAbstractClass(GroupInterface::class);
-        $groupMock1->method('getId')->willReturn(0);
-        $groupMock1->method('getCode')->willReturn('General');
-
-        $this->groupManagementMock->method('getAllCustomersGroup')->willReturn($groupMock1);
-        $this->moduleManagerMock->method('isEnabled')->willReturn(false);
-
-        $item1 = ['website_id' => 1, 'cust_group' => 2, 'price_qty' => 10];
-        $item2 = ['website_id' => 1, 'cust_group' => 1, 'price_qty' => 10];
-
-        // Use reflection to call protected method
-        $reflection = new \ReflectionClass($this->block);
-        $method = $reflection->getMethod('_sortTierPrices');
-        $method->setAccessible(true);
-        $result = $method->invoke($this->block, $item1, $item2);
-
-        $this->assertIsInt($result);
-    }
-
-    /**
-     * Test sortTierPrices sorts by price quantity when website and group are equal
-     *
-     * @return void
-     */
-    public function testSortTierPricesSortsByPriceQuantityWhenWebsiteAndGroupAreEqual(): void
-    {
-        $groupMock = $this->getMockForAbstractClass(GroupInterface::class);
-        $groupMock->method('getId')->willReturn(0);
-        $groupMock->method('getCode')->willReturn('General');
-
-        $this->groupManagementMock->method('getAllCustomersGroup')->willReturn($groupMock);
-        $this->moduleManagerMock->method('isEnabled')->willReturn(false);
-
-        $item1 = ['website_id' => 1, 'cust_group' => 1, 'price_qty' => 20];
-        $item2 = ['website_id' => 1, 'cust_group' => 1, 'price_qty' => 10];
-
-        // Use reflection to call protected method
-        $reflection = new \ReflectionClass($this->block);
-        $method = $reflection->getMethod('_sortTierPrices');
-        $method->setAccessible(true);
-        $result = $method->invoke($this->block, $item1, $item2);
-
-        $this->assertEquals(1, $result);
-    }
-
-    /**
-     * Test sortTierPrices returns negative when first price quantity is smaller
-     *
-     * @return void
-     */
-    public function testSortTierPricesReturnsNegativeWhenFirstPriceQuantityIsSmaller(): void
-    {
-        $groupMock = $this->getMockForAbstractClass(GroupInterface::class);
-        $groupMock->method('getId')->willReturn(0);
-        $groupMock->method('getCode')->willReturn('General');
-
-        $this->groupManagementMock->method('getAllCustomersGroup')->willReturn($groupMock);
-        $this->moduleManagerMock->method('isEnabled')->willReturn(false);
-
-        $item1 = ['website_id' => 1, 'cust_group' => 1, 'price_qty' => 5];
-        $item2 = ['website_id' => 1, 'cust_group' => 1, 'price_qty' => 10];
-
-        // Use reflection to call protected method
-        $reflection = new \ReflectionClass($this->block);
-        $method = $reflection->getMethod('_sortTierPrices');
-        $method->setAccessible(true);
-        $result = $method->invoke($this->block, $item1, $item2);
-
-        $this->assertEquals(-1, $result);
-    }
-
-    /**
-     * Test sortTierPrices returns zero when all values are equal
-     *
-     * @return void
-     */
-    public function testSortTierPricesReturnsZeroWhenAllValuesAreEqual(): void
-    {
-        $groupMock = $this->getMockForAbstractClass(GroupInterface::class);
-        $groupMock->method('getId')->willReturn(0);
-        $groupMock->method('getCode')->willReturn('General');
-
-        $this->groupManagementMock->method('getAllCustomersGroup')->willReturn($groupMock);
-        $this->moduleManagerMock->method('isEnabled')->willReturn(false);
-
-        $item1 = ['website_id' => 1, 'cust_group' => 1, 'price_qty' => 10];
-        $item2 = ['website_id' => 1, 'cust_group' => 1, 'price_qty' => 10];
-
-        // Use reflection to call protected method
-        $reflection = new \ReflectionClass($this->block);
-        $method = $reflection->getMethod('_sortTierPrices');
-        $method->setAccessible(true);
-        $result = $method->invoke($this->block, $item1, $item2);
-
-        $this->assertEquals(0, $result);
+        $this->assertSame($expectedResult, $result);
     }
 
     /**
