@@ -65,7 +65,7 @@ class JwtManagementTest extends TestCase
 
     /**
      * Tests JWT decode.
-     * 
+     *
      * @param string $jwt
      * @param string $errorMessage
      */
