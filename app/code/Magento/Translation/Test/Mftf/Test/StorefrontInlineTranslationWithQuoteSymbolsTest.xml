@@ -81,7 +81,6 @@
         <resetCookie userInput="mage-translation-file-version" stepKey="resetTranslationFileVersion"/>
         <actionGroup ref="ReloadPageActionGroup" stepKey="reloadPage"/>
         <scrollToTopOfPage stepKey="scrollToTop"/>
-        <waitForPageLoad stepKey="waitForPageLoadAfterScroll"/>
         <actionGroup ref="AssertStorefrontCustomWelcomeMessageActionGroup" stepKey="verifyTranslatedWelcomeMessage"/>
         <actionGroup ref="AssertOneProductNameInMiniCartActionGroup" stepKey="seeProductInMiniCartAgain">
             <argument name="productName" value="$createProduct.name$"/>
