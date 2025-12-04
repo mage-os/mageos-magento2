@@ -70,7 +70,7 @@ class RulesApplierTest extends TestCase
     protected $childrenValidationLocator;
 
     /**
-     * RuleDiscountInterfaceFactory|MockObject
+     * @var RuleDiscountInterfaceFactory|MockObject
      */
     protected $ruleDiscountInterfaceFactoryMock;
 

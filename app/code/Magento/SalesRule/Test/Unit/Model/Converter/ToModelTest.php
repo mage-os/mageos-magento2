@@ -59,6 +59,9 @@ class ToModelTest extends TestCase
         );
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function testDataModelToArray()
     {
         $array = [

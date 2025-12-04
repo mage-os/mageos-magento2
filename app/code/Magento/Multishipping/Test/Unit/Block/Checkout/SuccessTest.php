@@ -7,7 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Multishipping\Test\Unit\Block\Checkout;
 
-use Magento\Framework\Session\SessionManagerInterface;
+use Magento\Framework\Session\Generic;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Element\Template\Context;
@@ -42,7 +42,7 @@ class SuccessTest extends TestCase
     protected function setUp(): void
     {
         $this->sessionMock = $this->createPartialMockWithReflection(
-            \Magento\Framework\Session\Generic::class,
+            Generic::class,
             ['getOrderIds']
         );
         $this->contextMock = $this->createMock(Context::class);

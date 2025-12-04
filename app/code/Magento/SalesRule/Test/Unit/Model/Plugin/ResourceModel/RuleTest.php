@@ -41,7 +41,6 @@ class RuleTest extends TestCase
         $objectManager = new ObjectManager($this);
         $this->ruleResource = $this->createMock(RuleResource::class);
         $this->genericClosure = function () {
-            return;
         };
         $this->abstractModel = $this->createMock(AbstractModel::class);
 

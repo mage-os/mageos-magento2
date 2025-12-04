@@ -27,7 +27,7 @@ class EnabledTest extends TestCase
     protected $objectManager;
 
     /**
-     * Payment config mock
+     * Mock object for payment config
      *
      * @var MockObject|Config
      */

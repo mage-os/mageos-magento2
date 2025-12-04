@@ -91,6 +91,7 @@ class DeleteByStoreTest extends TestCase
     /**
      * @throws \Exception
      * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function testExecute()
     {

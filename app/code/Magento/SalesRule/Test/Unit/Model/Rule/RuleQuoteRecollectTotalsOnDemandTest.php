@@ -43,6 +43,8 @@ class RuleQuoteRecollectTotalsOnDemandTest extends TestCase
      * Test that multiple updates query are executed on large result
      *
      * @return void
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function testExecute(): void
     {

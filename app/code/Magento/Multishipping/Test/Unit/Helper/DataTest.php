@@ -37,14 +37,14 @@ class DataTest extends TestCase
     protected $scopeConfigMock;
 
     /**
-     * Quote mock
+     * Mock object for quote model
      *
      * @var MockObject|\Magento\Quote\Model\Quote
      */
     protected $quoteMock;
 
     /**
-     * Checkout session mock
+     * Mock object for checkout session
      *
      * @var MockObject|Session
      */
