@@ -471,10 +471,10 @@ class Dob extends AbstractWidget
      *
      * Converts localized date format (with potentially localized numerals like Arabic) to standard numerals
      *
-     * @param bool|string|null $value
-     * @return bool|string
+     * @param mixed $value
+     * @return mixed
      */
-    private function normalizedDobOutput(bool|string|null $value): bool|string
+    private function normalizedDobOutput(mixed $value): mixed
     {
         if (empty($value)) {
             return $value;
