@@ -604,21 +604,23 @@ class CustomerRepository implements CustomerRepositoryInterface
                 ? $customer->getDefaultBilling()
                 : $customer->getDefaultShipping()
             );
-    
+
         if (!$defaultAddressId) {
             return true;
         }
-    
-            $customerId = (int)($customer->getId() ?? 0);
+
+        $customerId = (int)($customer->getId() ?? 0);
         if (!$customerId && $prevCustomerData) {
             $customerId = (int)($prevCustomerData->getId() ?? 0);
         }
         if ($prevCustomerData && $prevCustomerData->getAddresses()) {
             foreach ($prevCustomerData->getAddresses() as $address) {
-                if ($customerId && (int)$address->getCustomerId() !== $customerId) {
-                    $this->throwInvalidAddressException($defaultAddressType);
+                if ($defaultAddressId === (int)$address->getId()) {
+                    if ($customerId && (int)$address->getCustomerId() !== $customerId) {
+                        $this->throwInvalidAddressException($defaultAddressType);
+                    }
+                    return true;
                 }
-                return true;
             }
             $this->throwInvalidAddressException($defaultAddressType);
         }
