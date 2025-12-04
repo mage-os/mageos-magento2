@@ -41,7 +41,7 @@ use Magento\Framework\Exception\StateException;
 use Magento\Framework\Exception\InputException;
 use Magento\Framework\Data\Form\FormKey\Validator;
 use Magento\Customer\Controller\AbstractAccount;
-use Magento\Framework\Validator\Exception as ValidatorException;
+use Magento\Customer\Model\ValidatorExceptionProcessor;
 
 /**
  * Post create customer action
@@ -147,6 +147,11 @@ class CreatePost extends AbstractAccount implements CsrfAwareActionInterface, Ht
     private $formKeyValidator;
 
     /**
+     * @var ValidatorExceptionProcessor
+     */
+    private $validatorExceptionProcessor;
+
+    /**
      * @var CustomerRepository
      */
     private $customerRepository;
@@ -177,6 +182,7 @@ class CreatePost extends AbstractAccount implements CsrfAwareActionInterface, Ht
      * @param AccountRedirect $accountRedirect
      * @param CustomerRepository $customerRepository
      * @param Validator $formKeyValidator
+     * @param ValidatorExceptionProcessor|null $validatorExceptionProcessor
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
@@ -200,7 +206,8 @@ class CreatePost extends AbstractAccount implements CsrfAwareActionInterface, Ht
         DataObjectHelper $dataObjectHelper,
         AccountRedirect $accountRedirect,
         CustomerRepository $customerRepository,
-        ?Validator $formKeyValidator = null
+        ?Validator $formKeyValidator = null,
+        ?ValidatorExceptionProcessor $validatorExceptionProcessor = null
     ) {
         $this->session = $customerSession;
         $this->scopeConfig = $scopeConfig;
@@ -222,6 +229,11 @@ class CreatePost extends AbstractAccount implements CsrfAwareActionInterface, Ht
         $this->formKeyValidator = $formKeyValidator ?: ObjectManager::getInstance()->get(Validator::class);
         $this->customerRepository = $customerRepository;
         parent::__construct($context);
+        $this->validatorExceptionProcessor = $validatorExceptionProcessor
+            ?? ObjectManager::getInstance()->get(ValidatorExceptionProcessor::class);
+        if ($this->validatorExceptionProcessor !== null) {
+            $this->validatorExceptionProcessor->setMessageManager($context->getMessageManager());
+        }
     }
 
     /**
@@ -425,7 +437,11 @@ class CreatePost extends AbstractAccount implements CsrfAwareActionInterface, Ht
                 ]
             );
         } catch (InputException $e) {
-            $this->processInputException($e);
+            if ($this->validatorExceptionProcessor !== null) {
+                $this->validatorExceptionProcessor->processInputException($e);
+            } else {
+                $this->messageManager->addErrorMessage($e->getMessage());
+            }
         } catch (LocalizedException $e) {
             $this->messageManager->addErrorMessage($e->getMessage());
         } catch (\Exception $e) {
@@ -514,65 +530,6 @@ class CreatePost extends AbstractAccount implements CsrfAwareActionInterface, Ht
         }
 
         return $message;
-    }
-
-    /**
-     * Process InputException and add error messages to message manager
-     *
-     * @param InputException $exception
-     * @return void
-     */
-    private function processInputException(InputException $exception): void
-    {
-        if ($exception instanceof ValidatorException) {
-            $this->processValidatorException($exception);
-        } else {
-            $this->processStandardInputException($exception);
-        }
-    }
-
-    /**
-     * Process ValidatorException by extracting, translating and merging again individual messages
-     *
-     * @param ValidatorException $exception
-     * @return void
-     */
-    private function processValidatorException(ValidatorException $exception): void
-    {
-        $validatorMessages = $exception->getMessages();
-        if (empty($validatorMessages)) {
-            $this->messageManager->addErrorMessage($exception->getMessage());
-            return;
-        }
-
-        $translatedMessages = [];
-        foreach ($validatorMessages as $message) {
-            $messageText = $message instanceof AbstractMessage
-                ? $message->getText()
-                : (string)$message;
-            $translatedMessages[] = (string)__($messageText);
-        }
-
-        $combinedTranslatedMessage = implode(' ', $translatedMessages);
-        $this->messageManager->addErrorMessage($combinedTranslatedMessage);
-    }
-
-    /**
-     * Process standard InputException by extracting individual errors
-     *
-     * @param InputException $exception
-     * @return void
-     */
-    private function processStandardInputException(InputException $exception): void
-    {
-        $errors = $exception->getErrors();
-        if (!empty($errors)) {
-            foreach ($errors as $error) {
-                $this->messageManager->addErrorMessage($error->getMessage());
-            }
-        } else {
-            $this->messageManager->addErrorMessage($exception->getMessage());
-        }
     }
 
     /**

@@ -5,55 +5,36 @@
  */
 declare(strict_types=1);
 
-namespace Magento\Customer\Test\Unit\Controller\Account;
+namespace Magento\Customer\Test\Unit\Model;
 
-use Magento\Customer\Controller\Account\CreatePost;
+use Magento\Customer\Model\ValidatorExceptionProcessor;
 use Magento\Framework\Exception\InputException;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Message\AbstractMessage;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\Phrase;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\Validator\Exception as ValidatorException;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use ReflectionClass;
-use ReflectionMethod;
 
-/**
- * Test class for CreatePost exception handling methods
- */
-class CreatePostExceptionHandlingTest extends TestCase
+class ValidatorExceptionProcessorTest extends TestCase
 {
     /**
-     * @var CreatePost|MockObject
+     * @var ValidatorExceptionProcessor
      */
-    private $controller;
+    private $processor;
 
     /**
      * @var ManagerInterface|MockObject
      */
     private $messageManagerMock;
 
-    /**
-     * @inheritDoc
-     */
     protected function setUp(): void
     {
         $this->messageManagerMock = $this->createMock(ManagerInterface::class);
-
-        $this->controller = $this->getMockBuilder(CreatePost::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $reflection = new ReflectionClass($this->controller);
-        $messageManagerProperty = $reflection->getProperty('messageManager');
-        $messageManagerProperty->setValue($this->controller, $this->messageManagerMock);
+        $this->processor = new ValidatorExceptionProcessor($this->messageManagerMock);
     }
 
-    /**
-     * Test processValidatorException with multiple messages
-     */
     public function testProcessValidatorExceptionWithMessages(): void
     {
         $errorMessage1 = $this->createMock(AbstractMessage::class);
@@ -81,12 +62,9 @@ class CreatePostExceptionHandlingTest extends TestCase
                         str_contains($message, 'Der Nachname ist ungültig!'));
             }));
 
-        $this->invokePrivateMethod('processValidatorException', [$validatorException]);
+        $this->processor->processValidatorException($validatorException);
     }
 
-    /**
-     * Test processValidatorException with empty messages (fallback)
-     */
     public function testProcessValidatorExceptionWithEmptyMessages(): void
     {
         $validatorException = $this->getMockBuilder(ValidatorException::class)
@@ -101,12 +79,9 @@ class CreatePostExceptionHandlingTest extends TestCase
             ->method('addErrorMessage')
             ->with($this->isType('string'));
 
-        $this->invokePrivateMethod('processValidatorException', [$validatorException]);
+        $this->processor->processValidatorException($validatorException);
     }
 
-    /**
-     * Test processValidatorException with string messages (not AbstractMessage)
-     */
     public function testProcessValidatorExceptionWithStringMessages(): void
     {
         $validatorException = $this->createMock(ValidatorException::class);
@@ -118,12 +93,9 @@ class CreatePostExceptionHandlingTest extends TestCase
             ->method('addErrorMessage')
             ->with($this->isType('string'));
 
-        $this->invokePrivateMethod('processValidatorException', [$validatorException]);
+        $this->processor->processValidatorException($validatorException);
     }
 
-    /**
-     * Test processStandardInputException with errors
-     */
     public function testProcessStandardInputExceptionWithErrors(): void
     {
         $error1 = $this->getMockBuilder(LocalizedException::class)
@@ -142,16 +114,13 @@ class CreatePostExceptionHandlingTest extends TestCase
             ->method('getErrors')
             ->willReturn([$error1, $error2]);
 
-        $this->messageManagerMock->expects($this->exactly(2))
+        $this->messageManagerMock->expects($this->exactly(3))
             ->method('addErrorMessage')
             ->with($this->isType('string'));
 
-        $this->invokePrivateMethod('processStandardInputException', [$inputException]);
+        $this->processor->processStandardInputException($inputException);
     }
 
-    /**
-     * Test processStandardInputException without errors
-     */
     public function testProcessStandardInputExceptionWithoutErrors(): void
     {
         $inputException = $this->getMockBuilder(InputException::class)
@@ -166,12 +135,9 @@ class CreatePostExceptionHandlingTest extends TestCase
             ->method('addErrorMessage')
             ->with($this->isType('string'));
 
-        $this->invokePrivateMethod('processStandardInputException', [$inputException]);
+        $this->processor->processStandardInputException($inputException);
     }
 
-    /**
-     * Test processInputException routes to ValidatorException handler
-     */
     public function testProcessInputExceptionRoutesToValidatorException(): void
     {
         $validatorException = $this->getMockBuilder(ValidatorException::class)
@@ -186,12 +152,9 @@ class CreatePostExceptionHandlingTest extends TestCase
             ->method('addErrorMessage')
             ->with($this->isType('string'));
 
-        $this->invokePrivateMethod('processInputException', [$validatorException]);
+        $this->processor->processInputException($validatorException);
     }
 
-    /**
-     * Test processInputException routes to standard InputException handler
-     */
     public function testProcessInputExceptionRoutesToStandardInputException(): void
     {
         $inputException = $this->getMockBuilder(InputException::class)
@@ -206,20 +169,95 @@ class CreatePostExceptionHandlingTest extends TestCase
             ->method('addErrorMessage')
             ->with($this->isType('string'));
 
-        $this->invokePrivateMethod('processInputException', [$inputException]);
+        $this->processor->processInputException($inputException);
     }
 
-    /**
-     * Invoke a private method using reflection
-     *
-     * @param string $methodName
-     * @param array $args
-     * @return mixed
-     */
-    private function invokePrivateMethod(string $methodName, array $args)
+    public function testProcessValidatorExceptionWithMessageFormatter(): void
     {
-        $reflection = new ReflectionClass($this->controller);
-        $method = $reflection->getMethod($methodName);
-        return $method->invokeArgs($this->controller, $args);
+        $errorMessage = $this->createMock(AbstractMessage::class);
+        $errorMessage->expects($this->once())
+            ->method('getText')
+            ->willReturn('First Name is not valid!');
+
+        $validatorException = $this->createMock(ValidatorException::class);
+        $validatorException->expects($this->once())
+            ->method('getMessages')
+            ->willReturn([$errorMessage]);
+
+        $formatter = function ($message) {
+            return 'FORMATTED: ' . $message;
+        };
+
+        $this->messageManagerMock->expects($this->once())
+            ->method('addErrorMessage')
+            ->with($this->stringContains('FORMATTED:'));
+
+        $this->processor->processValidatorException($validatorException, $formatter);
+    }
+
+    public function testProcessValidatorExceptionWithAddErrorMethod(): void
+    {
+        $errorMessage = $this->createMock(AbstractMessage::class);
+        $errorMessage->expects($this->once())
+            ->method('getText')
+            ->willReturn('First Name is not valid!');
+
+        $validatorException = $this->createMock(ValidatorException::class);
+        $validatorException->expects($this->once())
+            ->method('getMessages')
+            ->willReturn([$errorMessage]);
+
+        $this->messageManagerMock->expects($this->once())
+            ->method('addError')
+            ->with($this->isType('string'));
+
+        $this->processor->processValidatorException($validatorException, null, 'addError');
+    }
+
+    public function testProcessValidatorExceptionForRestApi(): void
+    {
+        $errorMessage1 = $this->createMock(AbstractMessage::class);
+        $errorMessage1->expects($this->once())
+            ->method('getText')
+            ->willReturn('First Name is not valid!');
+
+        $errorMessage2 = $this->createMock(AbstractMessage::class);
+        $errorMessage2->expects($this->once())
+            ->method('getText')
+            ->willReturn('Last Name is not valid!');
+
+        $validatorException = $this->createMock(ValidatorException::class);
+        $validatorException->expects($this->once())
+            ->method('getMessages')
+            ->willReturn([$errorMessage1, $errorMessage2]);
+
+        $result = $this->processor->processValidatorExceptionForRestApi($validatorException);
+
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('errors', $result);
+        $this->assertArrayHasKey('mainPhrase', $result);
+        $this->assertIsArray($result['errors']);
+        $this->assertCount(2, $result['errors']);
+        $this->assertInstanceOf(Phrase::class, $result['mainPhrase']);
+    }
+
+    public function testProcessValidatorExceptionForRestApiWithEmptyMessages(): void
+    {
+        $validatorException = $this->getMockBuilder(ValidatorException::class)
+            ->setConstructorArgs([new Phrase('Combined error message')])
+            ->onlyMethods(['getMessages', 'getRawMessage'])
+            ->getMock();
+        $validatorException->expects($this->once())
+            ->method('getMessages')
+            ->willReturn([]);
+        $validatorException->expects($this->once())
+            ->method('getRawMessage')
+            ->willReturn('Combined error message');
+
+        $result = $this->processor->processValidatorExceptionForRestApi($validatorException);
+
+        $this->assertIsArray($result);
+        $this->assertNull($result['errors']);
+        $this->assertInstanceOf(Phrase::class, $result['mainPhrase']);
     }
 }
