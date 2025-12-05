@@ -55,42 +55,14 @@ trait MockCreationTrait
     }
 
     /**
-     * Convert a string matcher specification to a PHPUnit invocation matcher.
-     *
      * This is useful in data providers where you cannot call PHPUnit matcher methods
      * directly (since they are non-static). Instead, pass a string representation
-     * and convert it to the actual matcher in your test method.
-     *
-     * Supported string formats:
-     * - 'never'         → $this->never()
-     * - 'once'          → $this->once()
-     * - 'any'           → $this->any()
-     * - 'atLeastOnce'   → $this->atLeastOnce()
-     * - 'exactly_N'     → $this->exactly(N)     e.g., 'exactly_3'
-     * - 'atLeast_N'     → $this->atLeast(N)     e.g., 'atLeast_2'
-     * - 'atMost_N'      → $this->atMost(N)      e.g., 'atMost_5'
+     * and convert it to the actual matcher in your test method. Supported string formats: 
+     * 'never', 'once', 'any', 'atLeastOnce', 'exactly_N', 'atLeast_N', 'atMost_N`
      *
      * @param string $matcherSpec The string specification of the matcher
      * @return InvocationOrder The PHPUnit invocation matcher
      * @throws \InvalidArgumentException If the matcher specification is not recognized
-     *
-     * @example
-     * // In data provider:
-     * public static function dataProvider(): array
-     * {
-     *     return [
-     *         ['methodName', 'returnValue', 'once'],
-     *         ['methodName', 'returnValue', 'exactly_3'],
-     *         ['methodName', 'returnValue', 'never'],
-     *     ];
-     * }
-     *
-     * // In test method:
-     * public function testMethod(string $method, string $returnValue, string $matcherSpec): void
-     * {
-     *     $matcher = $this->createInvocationMatcher($matcherSpec);
-     *     $mock->expects($matcher)->method($method)->willReturn($returnValue);
-     * }
      */
     protected function createInvocationMatcher(string $matcherSpec): InvocationOrder
     {
