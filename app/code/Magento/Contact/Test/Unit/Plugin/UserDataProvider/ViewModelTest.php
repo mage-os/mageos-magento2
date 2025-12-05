@@ -53,8 +53,7 @@ class ViewModelTest extends TestCase
             ->with('view_model')
             ->willReturn($hasDataResult);
 
-        $expects = $setDataExpects === 1 ? $this->once() : $this->never();
-        $this->blockMock->expects($expects)
+        $this->blockMock->expects($this->$setDataExpects())
             ->method('setData')
             ->with('view_model', $this->viewModelMock);
 
@@ -66,11 +65,11 @@ class ViewModelTest extends TestCase
         return [
             'view model was not preset before' => [
                 'hasDataResult' => false,
-                'setDataExpects' => 1,
+                'setDataExpects' => 'once',
             ],
             'view model was pre-installed before' => [
                 'hasDataResult' => true,
-                'setDataExpects' => 0,
+                'setDataExpects' => 'never',
             ]
         ];
     }
