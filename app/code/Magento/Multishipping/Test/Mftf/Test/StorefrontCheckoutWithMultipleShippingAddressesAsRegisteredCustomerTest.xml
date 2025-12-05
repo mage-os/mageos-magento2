@@ -24,8 +24,6 @@
             <createData stepKey="createSimpleProduct1" entity="SimpleProduct"/>
             <createData stepKey="createSimpleProduct2" entity="SimpleProduct2"/>
             <createData stepKey="customer" entity="Simple_Customer_Multiple_Addresses"/>
-            <!-- Enable Flat Rate and Multi-shipping via CLI (per standards) -->
-            <magentoCLI command="config:set {{EnableMultiShippingCheckoutMultiple.path}} {{EnableMultiShippingCheckoutMultiple.value}}" stepKey="enableMultiShippingForTest"/>
         </before>
         <after>
             <!-- Logout from Storefront (best-effort) -->
@@ -34,7 +32,7 @@
             <deleteData stepKey="deleteCustomerEntity" createDataKey="customer"/>
             <deleteData stepKey="deleteProduct1" createDataKey="createSimpleProduct1"/>
             <deleteData stepKey="deleteProduct2" createDataKey="createSimpleProduct2"/>
-            <magentoCLI command="config:set {{DisableMultiShippingCheckoutMultiple.path}} {{DisableMultiShippingCheckoutMultiple.value}}" stepKey="disableMultiShippingPostTest"/>
+            <!-- Logout from Admin -->
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
         </after>
         <!-- Step-1: Go to Storefront as non-logged in customer -->
@@ -55,17 +53,15 @@
             <argument name="customer" value="$$customer$$"/>
         </actionGroup>
         <actionGroup ref="StorefrontClickSignOnCustomerLoginFormActionGroup" stepKey="loginFromCheckoutMethodPage"/>
-        <!-- Step-6&7: Select different addresses for items & continue to shipping information (covered inside previous step if page auto-redirects) -->
+        <!-- Steps 6, 7: Select different addresses for items and continue to shipping information (covered inside previous step if page auto-redirects) -->
         <actionGroup ref="StorefrontSelectAddressActionGroup" stepKey="selectNYAddress">
             <argument name="sequenceNumber" value="2"/>
             <argument name="option" value="{{Customer_Address.ny_address}}"/>
         </actionGroup>
         <actionGroup ref="StorefrontUpdateMultishippingItemsQuantityAndAddressesActionGroup" stepKey="clickOnUpdateQtyAndAddress"/>
-        <waitForElementClickable selector="{{AdminShipmentAddressInformationSection.goToShippingInformation}}" stepKey="waitForClickGoToShippingInformation"/>
-        <waitForPageLoad stepKey="waitForShippingPageLoad"/>
-        <click selector="{{AdminShipmentAddressInformationSection.goToShippingInformation}}" stepKey="clickGoToShippingInformation"/>
-        <waitForPageLoad after="clickGoToShippingInformation" stepKey="waitForShippingInformation"/>
-        <!-- Step-8/9: Select Flat Rate for both shipments and continue to Billing Information -->
+        <waitForPageLoad stepKey="waitForShippingInformationPageLoad"/>
+        <actionGroup ref="StorefrontNavigateToShippingInformationPageActionGroup" stepKey="navigateToShippingInformation"/>
+        <!-- Steps 8, 9: Select Flat Rate for both shipments and continue to Billing Information -->
         <actionGroup ref="StorefrontGoToBillingInformationActionGroup" stepKey="goToBillingInformation"/>
         <!-- Step-10: Select Payment method (Check/Money Order) -->
         <actionGroup ref="CheckoutSelectCheckMoneyOrderPaymentActionGroup" stepKey="selectCheckMoneyOrderPayment"/>
@@ -75,18 +71,17 @@
         <actionGroup ref="PlaceOrderActionGroup" stepKey="placeOrderForMultipleAddresses"/>
         <!-- Step-13: Validate two order numbers are shown -->
         <seeNumberOfElements selector="{{CheckoutSuccessMainSection.orderLinks}}" userInput="2" stepKey="assertTwoOrderNumbersShownOnSuccessPage"/>
-        <wait time="25" stepKey="wait1" />
+        <waitForElementVisible selector="{{StorefrontMultipleShippingMethodSection.orderId('1')}}" stepKey="waitForOrderIds"/>
         <grabTextFrom selector="{{StorefrontMultipleShippingMethodSection.orderId('1')}}" stepKey="grabFirstOrderId"/>
         <grabTextFrom selector="{{StorefrontMultipleShippingMethodSection.orderId('2')}}" stepKey="grabSecondOrderId"/>
         <!-- Step-14: Admin - verify both orders exist in the grid -->
         <actionGroup ref="AdminLoginActionGroup" stepKey="loginToAdmin"/>
         <actionGroup ref="AdminOrdersPageOpenActionGroup" stepKey="goToAdminSalesOrders"/>
-        <waitForPageLoad stepKey="waitForOrdersGridLoad"/>
         <actionGroup ref="SearchAdminDataGridByKeywordActionGroup" stepKey="assertForFirstOrder">
             <argument name="keyword" value="{$grabFirstOrderId}"/>
         </actionGroup>
         <actionGroup ref="SearchAdminDataGridByKeywordActionGroup" stepKey="assertForSecondOrder">
-            <argument name="keyword" value="{$grabFirstOrderId}"/>
+            <argument name="keyword" value="{$grabSecondOrderId}"/>
         </actionGroup>
     </test>
 </tests>
