@@ -20,9 +20,9 @@
         </annotations>
         <before>
             <!-- Deploy static content for all required locales  -->
-            <magentoCLI command="setup:static-content:deploy -f nl_NL" stepKey="deployStaticContentNL"/>
+            <!-- <magentoCLI command="setup:static-content:deploy -f nl_NL" stepKey="deployStaticContentNL"/>
             <magentoCLI command="setup:static-content:deploy -f hi_IN" stepKey="deployStaticContentHI"/>
-            <magentoCLI command="setup:static-content:deploy -f de_DE" stepKey="deployStaticContentDE"/>
+            <magentoCLI command="setup:static-content:deploy -f de_DE" stepKey="deployStaticContentDE"/> -->
             <!-- Step1: Log in to admin -->
             <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
         </before>
@@ -59,8 +59,8 @@
         <waitForPageLoad stepKey="waitForFilterUS"/>
         <generateDate date="+1 day" format="Y-m-d" stepKey="startDateUSRaw"/>
         <generateDate date="+2 day" format="Y-m-d" stepKey="endDateUSRaw"/>
-        <executeJS function="return (new Date('{$startDateUSRaw}').toLocaleDateString('en-US', {day: 'numeric', month: 'short', year: 'numeric'}))" stepKey="expectedStartDateUSGrid"/>
-        <executeJS function="return (new Date('{$endDateUSRaw}').toLocaleDateString('en-US', {day: 'numeric', month: 'short', year: 'numeric'}))" stepKey="expectedEndDateUSGrid"/>
+        <executeJS function="return (new Date('{$startDateUSRaw}T00:00:00Z').toLocaleDateString('en-US', {timeZone: 'UTC', day: 'numeric', month: 'short', year: 'numeric'}))" stepKey="expectedStartDateUSGrid"/>
+        <executeJS function="return (new Date('{$endDateUSRaw}T00:00:00Z').toLocaleDateString('en-US', {timeZone: 'UTC', day: 'numeric', month: 'short', year: 'numeric'}))" stepKey="expectedEndDateUSGrid"/>
         <grabTextFrom selector="{{AdminCartPriceRulesSection.gridStartDateByRuleName(CartPriceRuleWithMaximumQuantity1.name)}}" stepKey="actualStartDateUSGrid"/>
         <grabTextFrom selector="{{AdminCartPriceRulesSection.gridEndDateByRuleName(CartPriceRuleWithMaximumQuantity1.name)}}" stepKey="actualEndDateUSGrid"/>
         <!-- Verify start date and end date in grid -->
@@ -112,8 +112,8 @@
         <click selector="{{AdminCartPriceRulesSection.searchButton}}" stepKey="clickSearchNL"/>
         <waitForPageLoad stepKey="waitForFilterNL"/>
         <!-- Verify start date and end date in grid -->
-        <executeJS function="return (new Date('{$startDateNLRaw}').toLocaleDateString('nl-NL', {day: 'numeric', month: 'short', year: 'numeric'}))" stepKey="expectedStartDateNLGrid"/>
-        <executeJS function="return (new Date('{$endDateNLRaw}').toLocaleDateString('nl-NL', {day: 'numeric', month: 'short', year: 'numeric'}))" stepKey="expectedEndDateNLGrid"/>
+        <executeJS function="return (new Date('{$startDateNLRaw}T00:00:00Z').toLocaleDateString('nl-NL', {timeZone: 'UTC', day: 'numeric', month: 'short', year: 'numeric'}))" stepKey="expectedStartDateNLGrid"/>
+        <executeJS function="return (new Date('{$endDateNLRaw}T00:00:00Z').toLocaleDateString('nl-NL', {timeZone: 'UTC', day: 'numeric', month: 'short', year: 'numeric'}))" stepKey="expectedEndDateNLGrid"/>
         <grabTextFrom selector="{{AdminCartPriceRulesSection.gridStartDateByRuleName(CustomSalesRuleWithNoCouponCode.name)}}" stepKey="actualStartDateNLGrid"/>
         <grabTextFrom selector="{{AdminCartPriceRulesSection.gridEndDateByRuleName(CustomSalesRuleWithNoCouponCode.name)}}" stepKey="actualEndDateNLGrid"/>
         <assertStringContainsString stepKey="verifyStartDateNLInGrid">
@@ -153,8 +153,8 @@
         <click selector="{{AdminCartPriceRulesSection.searchButton}}" stepKey="clickSearchHI"/>
         <waitForPageLoad stepKey="waitForFilterHI"/>
         <!-- Verify start date and end date in grid -->
-        <executeJS function="return (new Date('{$startDateHIRaw}').toLocaleDateString('hi-IN', {day: 'numeric', month: 'short', year: 'numeric'}))" stepKey="expectedStartDateHindiGrid"/>
-        <executeJS function="return (new Date('{$endDateHIRaw}').toLocaleDateString('hi-IN', {day: 'numeric', month: 'short', year: 'numeric'}))" stepKey="expectedEndDateHindiGrid"/>
+        <executeJS function="return (new Date('{$startDateHIRaw}T00:00:00Z').toLocaleDateString('hi-IN', {timeZone: 'UTC', day: 'numeric', month: 'short', year: 'numeric'}))" stepKey="expectedStartDateHindiGrid"/>
+        <executeJS function="return (new Date('{$endDateHIRaw}T00:00:00Z').toLocaleDateString('hi-IN', {timeZone: 'UTC', day: 'numeric', month: 'short', year: 'numeric'}))" stepKey="expectedEndDateHindiGrid"/>
         <grabTextFrom selector="{{AdminCartPriceRulesSection.gridStartDateByRuleName(TestCartPriceRule.name)}}" stepKey="actualStartDateHindiGrid"/>
         <grabTextFrom selector="{{AdminCartPriceRulesSection.gridEndDateByRuleName(TestCartPriceRule.name)}}" stepKey="actualEndDateHindiGrid"/>
         <assertStringContainsString stepKey="verifyStartDateHindiInGrid">
