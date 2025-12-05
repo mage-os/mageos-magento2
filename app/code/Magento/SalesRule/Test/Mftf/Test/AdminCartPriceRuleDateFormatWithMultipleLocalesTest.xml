@@ -20,9 +20,9 @@
         </annotations>
         <before>
             <!-- Deploy static content for all required locales  -->
-            <!-- <magentoCLI command="setup:static-content:deploy -f nl_NL" stepKey="deployStaticContentNL"/>
+            <magentoCLI command="setup:static-content:deploy -f nl_NL" stepKey="deployStaticContentNL"/>
             <magentoCLI command="setup:static-content:deploy -f hi_IN" stepKey="deployStaticContentHI"/>
-            <magentoCLI command="setup:static-content:deploy -f de_DE" stepKey="deployStaticContentDE"/> -->
+            <magentoCLI command="setup:static-content:deploy -f de_DE" stepKey="deployStaticContentDE"/>
             <!-- Step1: Log in to admin -->
             <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
         </before>
