@@ -24,6 +24,8 @@ use Magento\Framework\View\Element\AbstractBlock;
 use Magento\Framework\View\Layout;
 use Magento\Framework\View\LayoutInterface;
 use Magento\GiftMessage\Model\Save as GiftMessageSave;
+use Magento\CatalogInventory\Model\Stock\Item as StockItem;
+use Magento\Quote\Model\Quote as QuoteModel;
 use Magento\Quote\Model\Quote\Address;
 use Magento\Quote\Model\Quote\Item;
 use Magento\Sales\Block\Adminhtml\Order\Create\Items\Grid;
@@ -100,7 +102,7 @@ class GridTest extends TestCase
             ->onlyMethods(['getQuote'])
             ->getMock();
 
-        $quoteMock = $this->getMockBuilder(\Magento\Quote\Model\Quote::class)
+        $quoteMock = $this->getMockBuilder(QuoteModel::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getStore'])
             ->getMock();
@@ -123,7 +125,7 @@ class GridTest extends TestCase
             ->getMock();
 
         $this->stockItemMock = $this->createPartialMock(
-            \Magento\CatalogInventory\Model\Stock\Item::class,
+            StockItem::class,
             ['getIsInStock']
         );
 
@@ -260,7 +262,7 @@ class GridTest extends TestCase
         );
         $productMock = $this->createPartialMockWithReflection(
             Product::class,
-            array_merge(['getStockItem'], ['getStatus', 'getID'])
+            ['getStockItem', 'getStatus', 'getID']
         );
 
         $checkMock = $this->createPartialMockWithReflection(DataObject::class, ['getMessage', 'getHasError']);

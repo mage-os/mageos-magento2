@@ -107,7 +107,7 @@ class CaptureOperationTest extends TestCase
         /** @var Payment|MockObject  $orderPayment | */
         $orderPayment = $this->createPartialMockWithReflection(
             Payment::class,
-            array_merge(['setCreatedInvoice'], ['getOrder', 'getMethodInstance', 'getIsFraudDetected'])
+            ['setCreatedInvoice', 'getOrder', 'getMethodInstance', 'getIsFraudDetected']
         );
         $orderPayment->expects($this->once())
             ->method('setCreatedInvoice')

@@ -68,7 +68,6 @@ class TaxTest extends TestCase
      * @param array $invoiceData
      * @param array $expectedResults
      */
-
     #[DataProvider('collectDataProvider')]
     public function testCollect($orderData, $invoiceData, $expectedResults)
     {

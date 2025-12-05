@@ -145,7 +145,6 @@ class ItemTest extends TestCase
      * @param $qtyShipped
      * @param $expectedStatus
      *     */
-
     #[DataProvider('getStatusIdDataProvider')]
     public function testGetStatusId(
         $qtyBackOrdered,
@@ -220,7 +219,6 @@ class ItemTest extends TestCase
      * @param array|string $options
      * @param array $expectedResult
      *     */
-
     #[DataProvider('getProductOptionsDataProvider')]
     public function testGetProductOptions($options, $expectedResult)
     {
@@ -271,7 +269,6 @@ class ItemTest extends TestCase
      * @param array $options
      * @param float $expectedResult
      *     */
-
     #[DataProvider('getItemQtyVariants')]
     public function testGetSimpleQtyToMethods(array $options, $expectedResult)
     {

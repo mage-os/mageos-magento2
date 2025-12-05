@@ -20,6 +20,7 @@ use Magento\Sales\Model\Order\Invoice\CommentFactory;
 use Magento\Sales\Model\Order\Payment;
 use Magento\Sales\Model\OrderFactory as SalesOrderFactory;
 use Magento\Sales\Model\ResourceModel\Order\Invoice\Collection as InvoiceCollection;
+use Magento\Sales\Model\ResourceModel\Order\Invoice\Comment\CollectionFactory as CommentCollectionFactory;
 use Magento\Sales\Model\ResourceModel\Order\Invoice\Item\CollectionFactory;
 use Magento\Sales\Model\ResourceModel\OrderFactory;
 use Magento\Store\Model\Store;
@@ -113,7 +114,7 @@ class InvoiceTest extends TestCase
             'invoiceItemCollectionFactory' => $this->createMock(CollectionFactory::class),
             'invoiceCommentFactory' => $this->createMock(CommentFactory::class),
             'commentCollectionFactory' => $this->createMock(
-                \Magento\Sales\Model\ResourceModel\Order\Invoice\Comment\CollectionFactory::class
+                CommentCollectionFactory::class
             ),
         ];
         $this->model = $this->helperManager->getObject(Invoice::class, $arguments);
@@ -124,9 +125,9 @@ class InvoiceTest extends TestCase
         );
     }
 
-    /**     * @param bool $canVoid
+    /**
+     * @param bool $canVoid
      */
-
     #[DataProvider('canVoidDataProvider')]
     public function testCanVoid($canVoid)
     {
@@ -139,9 +140,9 @@ class InvoiceTest extends TestCase
         $this->assertEquals($canVoid, $this->model->canVoid());
     }
 
-    /**     * @param bool $canVoid
+    /**
+     * @param bool $canVoid
      */
-
     #[DataProvider('canVoidDataProvider')]
     public function testDefaultCanVoid($canVoid)
     {
@@ -227,11 +228,11 @@ class InvoiceTest extends TestCase
         $this->assertEquals($address, $this->model->getShippingAddress());
     }
 
-    /**     * @param string $state
+    /**
+     * @param string $state
      * @param bool|null $canPaymentCapture
      * @param bool $expectedResult
      */
-
     #[DataProvider('canCaptureDataProvider')]
     public function testCanCapture($state, $canPaymentCapture, $expectedResult)
     {
@@ -263,10 +264,10 @@ class InvoiceTest extends TestCase
         ];
     }
 
-    /**     * @param string $state
+    /**
+     * @param string $state
      * @param bool $expectedResult
      */
-
     #[DataProvider('canCancelDataProvider')]
     public function testCanCancel($state, $expectedResult)
     {
@@ -288,12 +289,12 @@ class InvoiceTest extends TestCase
         ];
     }
 
-    /**     * @param string $state
+    /**
+     * @param string $state
      * @param float $baseGrandTotal
      * @param float $baseTotalRefunded
      * @param bool $expectedResult
      */
-
     #[DataProvider('canRefundDataProvider')]
     public function testCanRefund($state, $baseGrandTotal, $baseTotalRefunded, $expectedResult)
     {
@@ -357,14 +358,14 @@ class InvoiceTest extends TestCase
             ->with('sales_order_invoice_pay');
     }
 
-    /**     * @param float $totalPaid
+    /**
+     * @param float $totalPaid
      * @param float $baseTotalPaid
      * @param float $expectedTotal
      * @param float $expectedBaseTotal
      * @param float $expectedState
      * @param array $items
      */
-
     #[DataProvider('payDataProvider')]
     public function testPay(
         $totalPaid,
@@ -462,7 +463,6 @@ class InvoiceTest extends TestCase
      * @param $initialInvoiceStatus
      * @param $finalInvoiceStatus
      */
-
     #[DataProvider('getNotOpenedInvoiceStatuses')]
     public function testCannotCancelNotOpenedInvoice($initialInvoiceStatus, $finalInvoiceStatus)
     {

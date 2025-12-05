@@ -47,7 +47,6 @@ class SaleOperationTest extends TestCase
      *
      * @throws LocalizedException
      */
-
     #[DataProvider('saleDataProvider')]
     public function testExecute(\Closure $invoice)
     {
@@ -71,7 +70,7 @@ class SaleOperationTest extends TestCase
         /** @var Payment|MockObject  $orderPayment | */
         $orderPayment = $this->createPartialMockWithReflection(
             Payment::class,
-            array_merge(['setCreatedInvoice'], ['getOrder', 'getMethodInstance', 'getIsFraudDetected'])
+            ['setCreatedInvoice', 'getOrder', 'getMethodInstance', 'getIsFraudDetected']
         );
         $orderPayment->expects($this->once())
             ->method('setCreatedInvoice')
@@ -107,7 +106,7 @@ class SaleOperationTest extends TestCase
     {
         $invoice = $this->createPartialMockWithReflection(
             Invoice::class,
-            array_merge(['getIsPaid'], ['register', 'pay'])
+            ['getIsPaid', 'register', 'pay']
         );
         $invoice->expects($this->once())
             ->method('register');
@@ -126,7 +125,7 @@ class SaleOperationTest extends TestCase
     {
         $invoice = $this->createPartialMockWithReflection(
             Invoice::class,
-            array_merge(['getIsPaid'], ['register', 'pay'])
+            ['getIsPaid', 'register', 'pay']
         );
         $invoice->expects($this->once())
             ->method('register');

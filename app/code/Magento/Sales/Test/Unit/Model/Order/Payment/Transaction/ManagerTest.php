@@ -41,11 +41,11 @@ class ManagerTest extends TestCase
         );
     }
 
-    /**     * @param $parentTransactionId
+    /**
+     * @param $parentTransactionId
      * @param $paymentId
      * @param $orderId
      */
-
     #[DataProvider('getAuthorizationDataProvider')]
     public function testGetAuthorizationTransaction($parentTransactionId, $paymentId, $orderId)
     {
@@ -69,11 +69,11 @@ class ManagerTest extends TestCase
         );
     }
 
-    /**     * @param string|null $transactionId
+    /**
+     * @param string|null $transactionId
      * @param bool $isRepositoryReturnTransaction
      * @param bool $expectedResult
      */
-
     #[DataProvider('isTransactionExistsDataProvider')]
     public function testIsTransactionExists($transactionId, $isRepositoryReturnTransaction, $expectedResult)
     {
@@ -91,13 +91,13 @@ class ManagerTest extends TestCase
         );
     }
 
-    /**     * @param string|null $transactionId
+    /**
+     * @param string|null $transactionId
      * @param string|null $parentTransactionId
      * @param string|null $transactionBasedTxnId
      * @param string $type
      * @param string|null $expectedResult
      */
-
     #[DataProvider('generateTransactionIdDataProvider')]
     public function testGenerateTransactionId(
         $transactionId,

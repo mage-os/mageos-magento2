@@ -78,7 +78,6 @@ class ShipmentFactoryTest extends TestCase
     /**
      * @param array|null $tracks     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-
     #[DataProvider('createDataProvider')]
     public function testCreate($tracks)
     {
@@ -171,7 +170,6 @@ class ShipmentFactoryTest extends TestCase
     /**
      * @param array|null $tracks     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-
     #[DataProvider('createDataProvider')]
     public function testCreateWithFloatQtyShipment(?array $tracks): void
     {

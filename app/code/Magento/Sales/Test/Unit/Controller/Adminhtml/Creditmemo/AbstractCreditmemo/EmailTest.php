@@ -16,6 +16,7 @@ use Magento\Framework\App\ActionFlag;
 use Magento\Framework\App\Request\Http;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Message\Manager;
+use Magento\Framework\ObjectManager\ObjectManager as FrameworkObjectManager;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Sales\Api\CreditmemoManagementInterface;
 use Magento\Sales\Controller\Adminhtml\Creditmemo\AbstractCreditmemo\Email;
@@ -109,7 +110,7 @@ class EmailTest extends TestCase
 
         $this->request = $this->createMock(Http::class);
         $this->objectManager = $this->createPartialMock(
-            \Magento\Framework\ObjectManager\ObjectManager::class,
+            FrameworkObjectManager::class,
             ['create']
         );
         $this->messageManager = $this->createPartialMock(

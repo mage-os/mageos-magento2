@@ -68,7 +68,6 @@ class OrderGridExportFilterColumnTest extends TestCase
      * @param array $activeColumns
      * @param array $result     * @throws Exception
      */
-
     #[DataProvider('getColumnsDataProvider')]
     public function testAfterGetHeaders(string $namespace, array $activeColumns, array $result): void
     {
@@ -98,7 +97,6 @@ class OrderGridExportFilterColumnTest extends TestCase
      * @param array $activeColumns
      * @param array $result     * @throws Exception
      */
-
     #[DataProvider('getColumnsDataProvider')]
     public function testAfterGetFields(string $namespace, array $activeColumns, array $result): void
     {

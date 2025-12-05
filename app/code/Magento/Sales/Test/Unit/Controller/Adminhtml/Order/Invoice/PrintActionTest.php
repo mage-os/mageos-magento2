@@ -126,7 +126,7 @@ class PrintActionTest extends TestCase
 
         $pdfMock = $this->createPartialMockWithReflection(
             InvoicePdf::class,
-            array_merge(['render'], ['getPdf'])
+            ['render', 'getPdf']
         );
         $pdfMock->expects($this->once())
             ->method('getPdf')
@@ -144,7 +144,7 @@ class PrintActionTest extends TestCase
             ->method('create')
             ->willReturnCallback(fn($param) => match ([$param]) {
                 [InvoiceRepositoryInterface::class] => $invoiceRepository,
-                [\Magento\Sales\Model\Order\Pdf\Invoice::class] => $pdfMock
+                [InvoicePdf::class] => $pdfMock
             });
         $this->objectManagerMock
             ->method('get')

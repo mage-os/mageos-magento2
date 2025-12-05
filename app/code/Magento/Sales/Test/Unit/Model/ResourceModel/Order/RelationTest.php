@@ -11,6 +11,8 @@ use Magento\Sales\Api\OrderItemRepositoryInterface;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Invoice;
 use Magento\Sales\Model\Order\Item;
+use Magento\Sales\Model\Order\Payment as OrderPayment;
+use Magento\Sales\Model\Order\Status\History as StatusHistory;
 use Magento\Sales\Model\ResourceModel\Order\Handler\Address;
 use Magento\Sales\Model\ResourceModel\Order\Payment;
 use Magento\Sales\Model\ResourceModel\Order\Relation;
@@ -86,11 +88,11 @@ class RelationTest extends TestCase
         );
         $this->orderItemMock = $this->createPartialMock(Item::class, ['setOrderId', 'setOrder']);
         $this->orderPaymentMock = $this->createPartialMock(
-            \Magento\Sales\Model\Order\Payment::class,
+            OrderPayment::class,
             ['setParentId', 'setOrder']
         );
         $this->orderStatusHistoryMock = $this->createPartialMock(
-            \Magento\Sales\Model\Order\Status\History::class,
+            StatusHistory::class,
             ['setParentId', 'setOrder']
         );
         $this->orderInvoiceMock = $this->createPartialMock(Invoice::class, ['setOrder', 'save']);

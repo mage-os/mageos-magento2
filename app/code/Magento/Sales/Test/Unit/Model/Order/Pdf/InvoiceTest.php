@@ -21,6 +21,7 @@ use Magento\Sales\Model\Order\Address;
 use Magento\Sales\Model\Order\Address\Renderer;
 use Magento\Sales\Model\Order\Invoice;
 use Magento\Sales\Model\Order\Pdf\Config;
+use Magento\Sales\Model\Order\Pdf\Invoice as PdfInvoice;
 use Magento\Store\Model\App\Emulation;
 use Magento\Store\Model\ScopeInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -105,7 +106,7 @@ class InvoiceTest extends TestCase
 
         $helper = new ObjectManager($this);
         $this->model = $helper->getObject(
-            \Magento\Sales\Model\Order\Pdf\Invoice::class,
+            PdfInvoice::class,
             [
                 'filesystem' => $filesystemMock,
                 'pdfConfig' => $this->pdfConfigMock,

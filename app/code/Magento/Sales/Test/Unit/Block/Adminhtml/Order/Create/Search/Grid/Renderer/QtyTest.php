@@ -64,7 +64,7 @@ class QtyTest extends TestCase
             true
         );
         $this->rowMock->expects($this->once())->method('getTypeId')->willReturn('id');
-        $columnMock = $this->createPartialMockWithReflection(Column::class, array_merge(['getInlineCss'], ['getId']));
+        $columnMock = $this->createPartialMockWithReflection(Column::class, ['getInlineCss', 'getId']);
         $this->renderer->setColumn($columnMock);
 
         $columnMock->expects($this->once())->method('getId')->willReturn('id_name');

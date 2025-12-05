@@ -65,10 +65,10 @@ class TrackTest extends TestCase
         $this->assertEquals('test', $this->_model->getTrackNumber());
     }
 
-    /**     * @param bool $expectedResult
+    /**
+     * @param bool $expectedResult
      * @param string $carrierCodeToSet
      */
-
     #[DataProvider('isCustomDataProvider')]
     public function testIsCustom($expectedResult, $carrierCodeToSet)
     {

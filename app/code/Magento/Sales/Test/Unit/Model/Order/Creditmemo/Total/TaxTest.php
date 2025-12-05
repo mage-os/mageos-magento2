@@ -14,6 +14,7 @@ use Magento\Sales\Model\Order\Creditmemo;
 use Magento\Sales\Model\Order\Creditmemo\Item;
 use Magento\Sales\Model\Order\Creditmemo\Total\Tax;
 use Magento\Sales\Model\Order\Invoice;
+use Magento\Sales\Model\Order\Item as OrderItem;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -897,7 +898,7 @@ class TaxTest extends TestCase
     {
         /** @var \Magento\Sales\Model\Order\Item|MockObject $orderItem */
         $orderItem = $this->createPartialMock(
-            \Magento\Sales\Model\Order\Item::class,
+            OrderItem::class,
             [
                 'isDummy'
             ]

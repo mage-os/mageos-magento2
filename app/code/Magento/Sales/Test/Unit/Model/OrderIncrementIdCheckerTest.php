@@ -73,7 +73,6 @@ class OrderIncrementIdCheckerTest extends TestCase
      * @param string|int $value
      * @return void
      */
-
     #[DataProvider('isOrderIncrementIdUsedDataProvider')]
     public function testIsIncrementIdUsed($value): void
     {

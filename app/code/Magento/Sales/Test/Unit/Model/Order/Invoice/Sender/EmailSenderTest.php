@@ -22,6 +22,7 @@ use Magento\Sales\Model\Order\Email\Container\Template;
 use Magento\Sales\Model\Order\Email\Sender;
 use Magento\Sales\Model\Order\Email\SenderBuilderFactory;
 use Magento\Sales\Model\Order\Invoice\Sender\EmailSender;
+use Magento\Sales\Model\Order\Invoice as InvoiceModel;
 use Magento\Sales\Model\ResourceModel\Order\Invoice;
 use Magento\Store\Model\Store;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -148,7 +149,7 @@ class EmailSenderTest extends TestCase
         $this->loggerMock = $this->createMock(LoggerInterface::class);
 
         $this->invoiceMock = $this->createPartialMockWithReflection(
-            \Magento\Sales\Model\Order\Invoice::class,
+            InvoiceModel::class,
             ['setEmailSent', 'getId', 'setSendEmail']
         );
 
@@ -231,7 +232,6 @@ class EmailSenderTest extends TestCase
      * @return void
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-
     #[DataProvider('sendDataProvider')]
     public function testSend(
         int $configValue,

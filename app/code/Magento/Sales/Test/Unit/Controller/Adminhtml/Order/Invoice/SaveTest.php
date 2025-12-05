@@ -213,7 +213,6 @@ class SaveTest extends TestCase
      * @return void
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-
     #[DataProvider('executeEmailsDataProvider')]
     public function testExecuteEmails(
         string $sendEmail,

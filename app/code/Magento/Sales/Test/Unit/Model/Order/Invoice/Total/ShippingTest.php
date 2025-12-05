@@ -16,7 +16,9 @@ use Magento\Sales\Model\Order\Invoice;
 use Magento\Sales\Model\Order\Invoice\CommentFactory;
 use Magento\Sales\Model\Order\Invoice\Total\Shipping;
 use Magento\Sales\Model\OrderFactory;
+use Magento\Sales\Model\ResourceModel\Order\Invoice\Comment\CollectionFactory as CommentCollectionFactory;
 use Magento\Sales\Model\ResourceModel\Order\Invoice\Item\CollectionFactory;
+use Magento\Sales\Model\ResourceModel\OrderFactory as OrderResourceFactory;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -37,11 +39,11 @@ class ShippingTest extends TestCase
         $this->total = new Shipping();
     }
 
-    /**     * @param array $prevInvoicesData
+    /**
+     * @param array $prevInvoicesData
      * @param float $orderShipping
      * @param float $expectedShipping
      */
-
     #[DataProvider('collectWithNoOrZeroPrevInvoiceDataProvider')]
     public function testCollectWithNoOrZeroPrevInvoice(array $prevInvoicesData, $orderShipping, $expectedShipping)
     {
@@ -126,7 +128,7 @@ class ShippingTest extends TestCase
         $arguments = [
             'orderFactory' => $this->createMock(OrderFactory::class),
             'orderResourceFactory' => $this->createMock(
-                \Magento\Sales\Model\ResourceModel\OrderFactory::class
+                OrderResourceFactory::class
             ),
             'calculatorFactory' => $this->createMock(
                 CalculatorFactory::class
@@ -138,7 +140,7 @@ class ShippingTest extends TestCase
                 CommentFactory::class
             ),
             'commentCollectionFactory' => $this->createMock(
-                \Magento\Sales\Model\ResourceModel\Order\Invoice\Comment\CollectionFactory::class
+                CommentCollectionFactory::class
             ),
         ];
         foreach ($invoicesData as $oneInvoiceData) {

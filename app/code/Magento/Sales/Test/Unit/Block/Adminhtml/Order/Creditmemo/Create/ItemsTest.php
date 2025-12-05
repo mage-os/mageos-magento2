@@ -134,7 +134,7 @@ class ItemsTest extends TestCase
 
             $creditMemoItem = $this->createPartialMockWithReflection(
                 CreditmemoItem::class,
-                array_merge(['setCanReturnToStock'], ['getOrderItem'])
+                ['setCanReturnToStock', 'getOrderItem']
             );
 
             $creditMemo = $this->createMock(Creditmemo::class);

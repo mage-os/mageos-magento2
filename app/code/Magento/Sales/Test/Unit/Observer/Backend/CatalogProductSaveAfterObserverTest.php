@@ -57,7 +57,6 @@ class CatalogProductSaveAfterObserverTest extends TestCase
      * @param int $productId
      * @param int $productStatus
      */
-
     #[DataProvider('statusUpdateDataProvider')]
     public function testSaveProduct($productId, $productStatus)
     {

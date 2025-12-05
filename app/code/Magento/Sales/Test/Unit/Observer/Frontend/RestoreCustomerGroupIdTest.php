@@ -47,7 +47,6 @@ class RestoreCustomerGroupIdTest extends TestCase
     /**
      * @param string|null $configAddressType
      */
-
     #[DataProvider('restoreCustomerGroupIdDataProvider')]
     public function testExecute($configAddressType)
     {

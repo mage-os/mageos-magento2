@@ -38,7 +38,6 @@ class FactoryTest extends TestCase
      * @param array $arguments
      * @param string $expectedClassName
      */
-
     #[DataProvider('createDataProvider')]
     public function testCreate($class, $arguments, $expectedClassName)
     {

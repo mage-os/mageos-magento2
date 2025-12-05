@@ -204,7 +204,6 @@ class RefundInvoiceTest extends TestCase
      * @throws CouldNotRefundException
      * @throws DocumentValidationException
      */
-
     #[DataProvider('dataProvider')]
     public function testOrderCreditmemo($invoiceId, $isOnline, $items, $notify, $appendComment)
     {

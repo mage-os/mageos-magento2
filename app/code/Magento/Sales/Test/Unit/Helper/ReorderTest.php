@@ -74,9 +74,9 @@ class ReorderTest extends TestCase
 
     /**
      * Tests that the store config is checked if orders can be reordered.
-     *     * @return void
+     *
+     * @return void
      */
-
     #[DataProvider('getScopeConfigValue')]
     public function testIsAllowedScopeConfigReorder($scopeConfigValue)
     {
@@ -86,9 +86,9 @@ class ReorderTest extends TestCase
 
     /**
      * Tests that the store config is still checked with a null store.
-     *     * @return void
+     *
+     * @return void
      */
-
     #[DataProvider('getScopeConfigValue')]
     public function testIsAllowScopeConfigReorderNotAllowWithStore($scopeConfigValue)
     {
@@ -147,7 +147,6 @@ class ReorderTest extends TestCase
      * @param bool $orderCanReorder
      * @return void
      */
-
     #[DataProvider('getOrderCanReorder')]
     public function testCanReorder($orderCanReorder)
     {

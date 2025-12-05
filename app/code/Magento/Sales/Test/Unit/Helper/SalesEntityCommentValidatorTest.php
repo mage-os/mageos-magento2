@@ -57,13 +57,13 @@ class SalesEntityCommentValidatorTest extends TestCase
 
     /**
      * Tests that comment is allowed to edit
-     *     * @param $userId
+     *
+     * @param $userId
      * @param $userType
      * @param $commentData
      * @param $result
      * @return void
      */
-
     #[DataProvider('commentDataProvider')]
     public function testIsEditCommentAllowed($userId, $userType, $commentData, $result): void
     {

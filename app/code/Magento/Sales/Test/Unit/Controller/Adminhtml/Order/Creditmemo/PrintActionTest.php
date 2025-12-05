@@ -169,7 +169,7 @@ class PrintActionTest extends TestCase
             ->willReturnMap(
                 [
                     [Creditmemo::class, [], $this->creditmemoMock],
-                    [\Magento\Sales\Model\Order\Pdf\Creditmemo::class, [], $this->creditmemoPdfMock]
+                    [CreditmemoPdf::class, [], $this->creditmemoPdfMock]
                 ]
             );
         $this->creditmemoRepositoryMock->expects($this->once())

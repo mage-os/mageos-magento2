@@ -77,7 +77,6 @@ class BuilderTest extends TestCase
      * @return void
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
-
     #[DataProvider('createDataProvider')]
     public function testCreate(
         int $transactionId,

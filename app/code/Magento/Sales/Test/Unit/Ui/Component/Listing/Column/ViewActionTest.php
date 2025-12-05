@@ -47,7 +47,6 @@ class ViewActionTest extends TestCase
      * @param string $expectedUrlPath
      * @param array $expectedUrlParam
      */
-
     #[DataProvider('prepareDataSourceDataProvider')]
     public function testPrepareDataSource(
         $data,

@@ -206,9 +206,6 @@ class ItemTest extends TestCase
         $this->assertInstanceOf(Item::class, $result);
     }
 
-    /**
-     */
-
     #[DataProvider('calcRowTotalDataProvider')]
     public function testCalcRowTotal($qty)
     {

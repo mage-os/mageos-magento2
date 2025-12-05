@@ -65,7 +65,6 @@ class HelperTest extends TestCase
      * @param array $aggregationAliases
      * @param string $expectedType
      *     */
-
     #[DataProvider('getBestsellersReportUpdateRatingPosProvider')]
     public function testGetBestsellersReportUpdateRatingPos($aggregation, $aggregationAliases, $expectedType)
     {

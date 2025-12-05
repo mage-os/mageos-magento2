@@ -22,6 +22,7 @@ use Magento\Sales\Model\Order\Email\Container\CreditmemoIdentity;
 use Magento\Sales\Model\Order\Email\Container\Template;
 use Magento\Sales\Model\Order\Email\Sender;
 use Magento\Sales\Model\Order\Email\SenderBuilderFactory;
+use Magento\Sales\Model\Order\Creditmemo as CreditmemoModel;
 use Magento\Sales\Model\ResourceModel\Order\Creditmemo;
 use Magento\Store\Model\Store;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -151,7 +152,7 @@ class EmailSenderTest extends TestCase
         $this->loggerMock = $this->createMock(LoggerInterface::class);
 
         $this->creditmemoMock = $this->createPartialMockWithReflection(
-            \Magento\Sales\Model\Order\Creditmemo::class,
+            CreditmemoModel::class,
             ['setEmailSent', 'getId', 'setSendEmail']
         );
         $this->creditmemoMock->method('getId')
@@ -239,7 +240,6 @@ class EmailSenderTest extends TestCase
      * @return void
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-
     #[DataProvider('sendDataProvider')]
     public function testSend(
         int $configValue,

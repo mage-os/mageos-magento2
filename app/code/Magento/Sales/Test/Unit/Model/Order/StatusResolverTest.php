@@ -28,7 +28,6 @@ class StatusResolverTest extends TestCase
      * @param string $expectedReturn
      *
      */
-
     #[DataProvider('statesDataProvider')]
     public function testGetOrderStatusByState($order, $expectedReturn)
     {

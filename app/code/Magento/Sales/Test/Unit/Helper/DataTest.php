@@ -144,9 +144,6 @@ class DataTest extends TestCase
         $this->assertEquals($scopeConfigValue, $this->helper->canSendNewInvoiceEmail($this->storeMock));
     }
 
-    /**
-     */
-
     #[DataProvider('getScopeConfigValue')]
     public function testCanSendInvoiceCommentEmail($scopeConfigValue)
     {
@@ -158,9 +155,9 @@ class DataTest extends TestCase
         $this->assertEquals($scopeConfigValue, $this->helper->canSendInvoiceCommentEmail($this->storeMock));
     }
 
-    /**     * @return void
+    /**
+     * @return void
      */
-
     #[DataProvider('getScopeConfigValue')]
     public function testCanSendNewCreditmemoEmail($scopeConfigValue)
     {
@@ -172,9 +169,9 @@ class DataTest extends TestCase
         $this->assertEquals($scopeConfigValue, $this->helper->canSendNewCreditmemoEmail($this->storeMock));
     }
 
-    /**     * @return void
+    /**
+     * @return void
      */
-
     #[DataProvider('getScopeConfigValue')]
     public function testCanSendCreditmemoCommentEmail($scopeConfigValue)
     {

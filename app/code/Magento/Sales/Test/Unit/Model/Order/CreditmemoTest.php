@@ -21,6 +21,7 @@ use Magento\Sales\Model\Order\Creditmemo\CommentFactory;
 use Magento\Sales\Model\Order\Creditmemo\Config;
 use Magento\Sales\Model\Order\Creditmemo\Item;
 use Magento\Sales\Model\Order\Item as OrderItem;
+use Magento\Sales\Model\ResourceModel\Order\Creditmemo\Comment\CollectionFactory as CommentCollectionFactory;
 use Magento\Sales\Model\ResourceModel\Order\Creditmemo\Item\Collection as ItemCollection;
 use Magento\Sales\Model\ResourceModel\Order\Creditmemo\Item\CollectionFactory;
 use Magento\Store\Model\StoreManagerInterface;
@@ -81,7 +82,7 @@ class CreditmemoTest extends TestCase
             'storeManager' => $this->createMock(StoreManagerInterface::class),
             'commentFactory' => $this->createMock(CommentFactory::class),
             'commentCollectionFactory' => $this->createMock(
-                \Magento\Sales\Model\ResourceModel\Order\Creditmemo\Comment\CollectionFactory::class
+                CommentCollectionFactory::class
             ),
             'scopeConfig' => $this->scopeConfigMock,
             'orderRepository' => $this->orderRepository,
@@ -156,7 +157,7 @@ class CreditmemoTest extends TestCase
 
         /** @var ItemCollection|MockObject $itemCollectionMock */
         $itemCollectionMock = $this->createMock(
-            \Magento\Sales\Model\ResourceModel\Order\Creditmemo\Item\Collection::class
+            ItemCollection::class
         );
         $itemCollectionMock->expects($this->once())
             ->method('setCreditmemoFilter')
@@ -181,7 +182,7 @@ class CreditmemoTest extends TestCase
 
         /** @var ItemCollection|MockObject $itemCollectionMock */
         $itemCollectionMock = $this->createMock(
-            \Magento\Sales\Model\ResourceModel\Order\Creditmemo\Item\Collection::class
+            ItemCollection::class
         );
         $itemCollectionMock->expects($this->once())
             ->method('setCreditmemoFilter')

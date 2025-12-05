@@ -68,7 +68,6 @@ class PriceTest extends TestCase
      * @param string $currencyCode
      * @param int|null $expectedStoreId
      */
-
     #[DataProvider('prepareDataSourceDataProvider')]
     public function testPrepareDataSource(
         bool $hasCurrency,

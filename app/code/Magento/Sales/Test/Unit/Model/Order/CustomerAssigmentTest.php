@@ -50,9 +50,9 @@ class CustomerAssigmentTest extends TestCase
 
     /**
      * Tests 'execute' method.
-     *     * @param array $data
+     *
+     * @param array $data
      */
-
     #[DataProvider('executeDataProvider')]
     public function testExecute(array $data): void
     {

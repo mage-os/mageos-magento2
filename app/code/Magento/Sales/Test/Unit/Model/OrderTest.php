@@ -480,11 +480,8 @@ class OrderTest extends TestCase
 
     /**
      * @param string $status
-     *
      */
     #[DataProvider('notInvoicingStatesProvider')]
-    /**
-     */
     public function testCanNotInvoiceInSomeStates($status)
     {
         $this->item->expects($this->any())
@@ -598,8 +595,6 @@ class OrderTest extends TestCase
      *
      */
     #[DataProvider('canNotCreditMemoStatesProvider')]
-    /**
-     */
     public function testCanNotCreditMemoWithSomeStates($state)
     {
         $this->order->setData('state', $state);
@@ -948,8 +943,6 @@ class OrderTest extends TestCase
      * @param string $orderState
      */
     #[DataProvider('canVoidPaymentDataProvider')]
-    /**
-     */
     public function testCanVoidPayment($actionFlags, $orderState)
     {
         $helper = new ObjectManager($this);
@@ -1082,7 +1075,7 @@ class OrderTest extends TestCase
     {
         $itemMock = $this->createPartialMockWithReflection(
             Item::class,
-            array_merge(['filterByTypes', 'filterByParent'], ['isDeleted', 'getQtyToInvoice'])
+            ['filterByTypes', 'filterByParent', 'isDeleted', 'getQtyToInvoice']
         );
 
         $itemMock->expects($this->any())

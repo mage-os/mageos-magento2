@@ -54,9 +54,6 @@ class AddressUpdateTest extends TestCase
         );
     }
 
-    /**
-     */
-
     #[DataProvider('dataProvider')]
     public function testAfterProcess($asyncReindexEnabled, $expectedReindexCalledCount)
     {

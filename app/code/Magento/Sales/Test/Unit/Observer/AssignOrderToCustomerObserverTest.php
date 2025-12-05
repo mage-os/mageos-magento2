@@ -44,11 +44,11 @@ class AssignOrderToCustomerObserverTest extends TestCase
 
     /**
      * Test assigning order to customer after issuing guest order
-     *     * @param null|int $orderCustomerId
+     *
+     * @param null|int $orderCustomerId
      * @param null|int $customerId
      * @return void
      */
-
     #[DataProvider('getCustomerIds')]
     public function testAssignOrderToCustomerAfterGuestOrder($orderCustomerId, $customerId)
     {

@@ -15,6 +15,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHe
 use Magento\Framework\UrlInterface;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\OrderFactory;
+use Magento\Sales\Model\ResourceModel\Order\Rss\OrderStatus as OrderStatusResource;
 use Magento\Sales\Model\ResourceModel\Order\Rss\OrderStatusFactory;
 use Magento\Sales\Model\Rss\OrderStatus;
 use Magento\Sales\Model\Rss\Signature;
@@ -184,7 +185,7 @@ class OrderStatusTest extends TestCase
                 ]
             );
 
-        $resource = $this->getMockBuilder(\Magento\Sales\Model\ResourceModel\Order\Rss\OrderStatus::class)
+        $resource = $this->getMockBuilder(OrderStatusResource::class)
             ->onlyMethods(['getAllCommentCollection'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -274,7 +275,6 @@ class OrderStatusTest extends TestCase
      * @param string $requestData
      * @param string $result
      */
-
     #[DataProvider('getCacheKeyDataProvider')]
     public function testGetCacheKey($requestData, $result)
     {

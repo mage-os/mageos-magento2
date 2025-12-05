@@ -52,7 +52,6 @@ class XsdTest extends TestCase
      * @param string $xmlFile
      * @param array $expectedErrors
      */
-
     #[DataProvider('invalidXmlFileDataProvider')]
     public function testInvalidXmlFile($xmlFile, $expectedErrors)
     {

@@ -46,7 +46,6 @@ class RegisterCaptureNotificationCommandTest extends TestCase
      * @param string $expectedMessage
      * @return void
      */
-
     #[DataProvider('commandResultDataProvider')]
     public function testExecute(
         bool $isTransactionPending,
@@ -153,7 +152,7 @@ class RegisterCaptureNotificationCommandTest extends TestCase
         /** @var Order|MockObject $order */
         $order = $this->createPartialMockWithReflection(
             Order::class,
-            array_merge(['getOrderStatusByState'], ['getBaseCurrency'])
+            ['getOrderStatusByState', 'getBaseCurrency']
         );
         $order->method('getBaseCurrency')
             ->willReturn($this->getCurrency());

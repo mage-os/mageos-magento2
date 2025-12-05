@@ -31,11 +31,6 @@ class AbstractTest extends TestCase
 {
     use MockCreationTrait;
 
-    protected function setUp(): void
-    {
-        \Magento\Framework\App\ObjectManager::getInstance()->configure([]);
-    }
-
     /**
      * Test protected method to reduce testing complexity, which would be too high in case of testing a public method
      * without completing a huge refactoring of the class.
@@ -68,7 +63,7 @@ class AbstractTest extends TestCase
         // Setup total factory
         $total1 = $this->createPartialMockWithReflection(
             DefaultTotal::class,
-            array_merge(['setSource', 'setOrder'], ['canDisplay', 'getTotalsForDisplay'])
+            ['setSource', 'setOrder', 'canDisplay', 'getTotalsForDisplay']
         );
         $total1->expects($this->once())->method('setOrder')->with($order)->willReturnSelf();
         $total1->expects($this->once())->method('setSource')->with($source)->willReturnSelf();
@@ -79,7 +74,7 @@ class AbstractTest extends TestCase
 
         $total2 = $this->createPartialMockWithReflection(
             DefaultTotal::class,
-            array_merge(['setSource', 'setOrder'], ['canDisplay', 'getTotalsForDisplay'])
+            ['setSource', 'setOrder', 'canDisplay', 'getTotalsForDisplay']
         );
         $total2->expects($this->once())->method('setOrder')->with($order)->willReturnSelf();
         $total2->expects($this->once())->method('setSource')->with($source)->willReturnSelf();

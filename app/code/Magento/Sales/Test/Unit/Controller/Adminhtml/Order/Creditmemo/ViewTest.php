@@ -252,9 +252,6 @@ class ViewTest extends TestCase
         );
     }
 
-    /**
-     */
-
     #[DataProvider('executeDataProvider')]
     public function testExecute($invoice)
     {

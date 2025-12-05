@@ -16,7 +16,9 @@ use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\Data\OrderPaymentInterface;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Invoice;
+use Magento\Sales\Model\Order\Invoice\Item as InvoiceItem;
 use Magento\Sales\Model\Order\Invoice\PayOperation;
+use Magento\Sales\Model\Order\Payment;
 use PHPUnit\Framework\MockObject\MockObject;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
@@ -195,7 +197,7 @@ class PayOperationTest extends TestCase
         $this->contextMock = $this->createMock(Context::class);
 
         $this->invoiceItemMock = $this->createPartialMockWithReflection(
-            \Magento\Sales\Model\Order\Invoice\Item::class,
+            InvoiceItem::class,
             ['isDeleted', 'register', 'getQty', 'getOrderItem']
         );
         $this->invoiceItemMock->expects($this->any())
@@ -206,7 +208,7 @@ class PayOperationTest extends TestCase
             ->willReturn(1);
 
         $this->orderPaymentMock = $this->createPartialMockWithReflection(
-            \Magento\Sales\Model\Order\Payment::class,
+            Payment::class,
             ['canCapture', 'getMethodInstance', 'getIsTransactionPending']
         );
         $this->orderMock->expects($this->any())
@@ -237,7 +239,6 @@ class PayOperationTest extends TestCase
      * @return void
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-
     #[DataProvider('payDataProvider')]
     public function testExecute($canCapture, $isOnline, $isGateway, $isTransactionPending)
     {

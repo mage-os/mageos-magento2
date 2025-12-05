@@ -11,6 +11,7 @@ use Magento\Customer\Helper\Address;
 use Magento\Customer\Model\Address\AbstractAddress;
 use Magento\Framework\Event\Observer;
 use Magento\Sales\Model\Order;
+use Magento\Sales\Model\Order\Address as OrderAddress;
 use Magento\Sales\Observer\Frontend\AddVatRequestParamsOrderComment;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -49,7 +50,6 @@ class AddVatRequestParamsOrderCommentTest extends TestCase
      * @param string|int $vatRequestDate
      * @param string $orderHistoryComment
      */
-
     #[DataProvider('addVatRequestParamsOrderCommentDataProvider')]
     public function testAddVatRequestParamsOrderComment(
         $configAddressType,
@@ -62,7 +62,7 @@ class AddVatRequestParamsOrderCommentTest extends TestCase
             ->willReturn($configAddressType);
 
          $orderAddressMock = $this->createPartialMock(
-             \Magento\Sales\Model\Order\Address::class,
+             OrderAddress::class,
              ['getVatRequestId', 'getVatRequestDate']
          );
          $orderAddressMock->expects($this->any())

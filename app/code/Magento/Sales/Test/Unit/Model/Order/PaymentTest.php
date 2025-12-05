@@ -607,7 +607,6 @@ class PaymentTest extends TestCase
      *
      * @return void
      */
-
     #[DataProvider('authorizeDataProvider')]
     public function testAuthorize(bool $isOnline, float $amount): void
     {
@@ -686,7 +685,6 @@ class PaymentTest extends TestCase
      *
      * @return void
      */
-
     #[DataProvider('acceptPaymentFalseProvider')]
     public function testAcceptApprovePaymentFalse(bool $isFraudDetected, $status): void
     {
@@ -818,7 +816,6 @@ class PaymentTest extends TestCase
      *
      * @return void
      */
-
     #[DataProvider('acceptPaymentFalseProvider')]
     public function testDenyPaymentNegative(bool $isFraudDetected, $status): void
     {
@@ -1051,7 +1048,6 @@ class PaymentTest extends TestCase
      *
      * @return void
      */
-
     #[DataProvider('acceptPaymentFalseProvider')]
     public function testUpdateOnlineTransactionDeniedFalse(bool $isFraudDetected, $status): void
     {
@@ -1579,7 +1575,7 @@ class PaymentTest extends TestCase
         $this->order->expects($this->once())->method('getBaseCurrency')->willReturn($this->currencyMock);
         $parentTransaction = $this->createPartialMockWithReflection(
             Transaction::class,
-            array_merge(['loadByTxnId'], ['setOrderId', 'setPaymentId', 'getId', 'getTxnId', 'getTxnType'])
+            ['loadByTxnId', 'setOrderId', 'setPaymentId', 'getId', 'getTxnId', 'getTxnType']
         );
         //generate new transaction and check if not exists
         $this->transactionRepositoryMock->expects($this->once())
@@ -1603,7 +1599,6 @@ class PaymentTest extends TestCase
     /**
      * @return void
      */
-
     #[DataProvider('boolProvider')]
     public function testCanRefund($canRefund): void
     {

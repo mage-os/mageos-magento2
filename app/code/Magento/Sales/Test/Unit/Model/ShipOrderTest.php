@@ -192,7 +192,6 @@ class ShipOrderTest extends TestCase
      * @throws CouldNotShipException
      * @throws DocumentValidationException
      */
-
     #[DataProvider('dataProvider')]
     public function testExecute($orderId, $items, $notify, $appendComment)
     {

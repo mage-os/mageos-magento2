@@ -385,7 +385,7 @@ class CreateTest extends TestCase
         $couponCode = '123';
         $quote = $this->createPartialMockWithReflection(
             Quote::class,
-            array_merge(['setCouponCode'], ['getShippingAddress'])
+            ['setCouponCode', 'getShippingAddress']
         );
         $this->sessionQuote->method('getQuote')
             ->willReturn($quote);

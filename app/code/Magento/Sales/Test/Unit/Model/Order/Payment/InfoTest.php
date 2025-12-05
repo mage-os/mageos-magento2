@@ -87,7 +87,6 @@ class InfoTest extends TestCase
      *
      * @return void
      */
-
     #[DataProvider('ccKeysDataProvider')]
     public function testGetDataCcNumber(string $keyCc, string $keyCcEnc): void
     {
@@ -266,7 +265,6 @@ class InfoTest extends TestCase
      *
      * @return void
      */
-
     #[DataProvider('additionalInformationDataProvider')]
     public function testSetAdditionalInformationMultipleTypes($key, $value = null): void
     {

@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\Sales\Test\Unit\Model\ResourceModel\Order\Handler;
 
 use Magento\Sales\Model\Order;
+use Magento\Sales\Model\Order\Config;
 use Magento\Sales\Model\Order\Invoice;
 use Magento\Sales\Model\ResourceModel\Order\Handler\State;
 use Magento\Catalog\Model\Product\Type;
@@ -33,7 +34,7 @@ class StateTest extends TestCase
         /** @var Order|MockObject $order */
         $order = $this->createOrderMock();
 
-        $config = $this->getMockBuilder(\Magento\Sales\Model\Order\Config::class)
+        $config = $this->getMockBuilder(Config::class)
             ->onlyMethods(['getStateDefaultStatus'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -79,7 +80,7 @@ class StateTest extends TestCase
         /** @var Order|MockObject $order */
         $order = $this->createOrderMock();
 
-        $config = $this->getMockBuilder(\Magento\Sales\Model\Order\Config::class)
+        $config = $this->getMockBuilder(Config::class)
             ->onlyMethods(['getStateDefaultStatus'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -124,7 +125,7 @@ class StateTest extends TestCase
         /** @var Order|MockObject $order */
         $order = $this->createOrderMock();
 
-        $config = $this->getMockBuilder(\Magento\Sales\Model\Order\Config::class)
+        $config = $this->getMockBuilder(Config::class)
             ->onlyMethods(['getStateDefaultStatus'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -214,7 +215,7 @@ class StateTest extends TestCase
         /** @var Order|MockObject $order */
         $order = $this->createOrderMock();
 
-        $config = $this->getMockBuilder(\Magento\Sales\Model\Order\Config::class)
+        $config = $this->getMockBuilder(Config::class)
             ->onlyMethods(['getStateDefaultStatus'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -304,7 +305,7 @@ class StateTest extends TestCase
         /** @var Order|MockObject $order */
         $order = $this->createOrderMock();
 
-        $config = $this->getMockBuilder(\Magento\Sales\Model\Order\Config::class)
+        $config = $this->getMockBuilder(Config::class)
             ->onlyMethods(['getStateDefaultStatus'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -543,7 +544,7 @@ class StateTest extends TestCase
         /** @var Order|MockObject $order */
         $order = $this->createOrderMock();
 
-        $config = $this->getMockBuilder(\Magento\Sales\Model\Order\Config::class)
+        $config = $this->getMockBuilder(Config::class)
             ->onlyMethods(['getStateDefaultStatus'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -582,7 +583,7 @@ class StateTest extends TestCase
         /** @var Order|MockObject $order */
         $order = $this->createOrderMock();
 
-        $config = $this->getMockBuilder(\Magento\Sales\Model\Order\Config::class)
+        $config = $this->getMockBuilder(Config::class)
             ->onlyMethods(['getStateDefaultStatus'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -628,7 +629,7 @@ class StateTest extends TestCase
         /** @var Order|MockObject $order */
         $order = $this->createOrderMock();
 
-        $config = $this->getMockBuilder(\Magento\Sales\Model\Order\Config::class)
+        $config = $this->getMockBuilder(Config::class)
             ->onlyMethods(['getStateDefaultStatus'])
             ->disableOriginalConstructor()
             ->getMock();

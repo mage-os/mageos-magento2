@@ -109,7 +109,6 @@ class RefundOperationTest extends TestCase
      *
      * @return void
      */
-
     #[DataProvider('executeNotRefundedCreditmemoDataProvider')]
     public function testExecuteNotRefundedCreditmemo(int $state): void
     {
@@ -169,7 +168,6 @@ class RefundOperationTest extends TestCase
      * @return void
      *
      */
-
     #[DataProvider('baseAmountsDataProvider')]
     public function testExecuteOffline(array $amounts): void
     {
@@ -237,7 +235,6 @@ class RefundOperationTest extends TestCase
      *
      * @return void
      */
-
     #[DataProvider('baseAmountsDataProvider')]
     public function testExecuteOnline(array $amounts): void
     {

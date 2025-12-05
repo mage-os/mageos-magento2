@@ -69,7 +69,6 @@ class DiscountTest extends TestCase
      *
      * @param array $invoiceData     * @return void
      */
-
     #[DataProvider('collectInvoiceData')]
     public function testCollectInvoiceWithZeroGrandTotal(array $invoiceData): void
     {

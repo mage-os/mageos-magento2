@@ -221,7 +221,6 @@ class ShippingTest extends TestCase
     /**
      * @param float $ratio
      */
-
     #[DataProvider('collectWithSpecifiedShippingAmountDataProvider')]
     public function testCollectWithSpecifiedShippingAmount($ratio)
     {
@@ -501,9 +500,9 @@ class ShippingTest extends TestCase
 
     /**
      * situation: The admin user specified the desired refund amount that has taxes and discount embedded within it
-     *     * @throws LocalizedException
+     *
+     * @throws LocalizedException
      */
-
     #[DataProvider('calculationSequenceDataProvider')]
     public function testCollectUsingShippingInclTaxAndDiscountBeforeTax(string $calculationSequence)
     {

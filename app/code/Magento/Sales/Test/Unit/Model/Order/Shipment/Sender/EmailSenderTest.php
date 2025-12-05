@@ -240,7 +240,6 @@ class EmailSenderTest extends TestCase
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @throws Exception
      */
-
     #[DataProvider('sendDataProvider')]
     public function testSend(
         int $configValue,

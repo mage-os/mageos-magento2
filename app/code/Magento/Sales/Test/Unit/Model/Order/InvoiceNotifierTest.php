@@ -84,7 +84,7 @@ class InvoiceNotifierTest extends TestCase
     {
         $historyCollection = $this->createPartialMockWithReflection(
             Collection::class,
-            array_merge(['setIsCustomerNotified'], ['getUnnotifiedForInstance', 'save'])
+            ['setIsCustomerNotified', 'getUnnotifiedForInstance', 'save']
         );
         $historyItem = $this->createPartialMock(
             History::class,

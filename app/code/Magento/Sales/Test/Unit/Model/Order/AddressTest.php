@@ -94,9 +94,6 @@ class AddressTest extends TestCase
         return [ [1, null], [null, 1]];
     }
 
-    /**
-     */
-
     #[DataProvider('regionProvider')]
     public function testGetRegionCodeRegion($region, $regionId)
     {

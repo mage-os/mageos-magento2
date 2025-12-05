@@ -127,7 +127,6 @@ class AddCommentTest extends TestCase
      * @param string $expectedOrderStatus
      *
      */
-
     #[DataProvider('executeWillNotifyCustomerDataProvider')]
     public function testExecuteWillNotifyCustomer(
         array $historyData,

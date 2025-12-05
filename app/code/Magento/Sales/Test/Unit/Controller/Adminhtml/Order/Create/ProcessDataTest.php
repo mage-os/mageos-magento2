@@ -134,13 +134,12 @@ class ProcessDataTest extends TestCase
      * @param bool $noDiscount
      * @param string $couponCode
      */
-
     #[DataProvider('isApplyDiscountDataProvider')]
     public function testExecute($noDiscount, $couponCode)
     {
         $quote = $this->createPartialMockWithReflection(
             QuoteModel::class,
-            array_merge(['getCouponCode'], ['isVirtual', 'getAllItems'])
+            ['getCouponCode', 'isVirtual', 'getAllItems']
         );
         $create = $this->createMock(Create::class);
 

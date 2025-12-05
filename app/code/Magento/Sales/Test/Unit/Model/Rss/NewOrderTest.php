@@ -165,7 +165,7 @@ class NewOrderTest extends TestCase
 
         $this->eventManager->expects($this->once())->method('dispatch')->willReturnSelf();
 
-        $block = $this->createPartialMockWithReflection(Details::class, array_merge(['setOrder'], ['toHtml']));
+        $block = $this->createPartialMockWithReflection(Details::class, ['setOrder', 'toHtml']);
         $block->expects($this->once())->method('setOrder')->with($order)->willReturnSelf();
         $block->expects($this->once())->method('toHtml')->willReturn('Order Description');
 

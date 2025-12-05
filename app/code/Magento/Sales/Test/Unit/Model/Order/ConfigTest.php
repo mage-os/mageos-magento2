@@ -144,7 +144,7 @@ class ConfigTest extends TestCase
 
         $collectionMock = $this->createPartialMockWithReflection(
             Collection::class,
-            array_merge(['create'], ['joinStates'])
+            ['create', 'joinStates']
         );
         $this->orderStatusCollectionFactoryMock->expects($this->once())
             ->method('create')
@@ -180,7 +180,7 @@ class ConfigTest extends TestCase
         ];
         $collectionMock = $this->createPartialMockWithReflection(
             Collection::class,
-            array_merge(['create'], ['joinStates'])
+            ['create', 'joinStates']
         );
         $this->orderStatusCollectionFactoryMock->expects($this->once())
             ->method('create')
@@ -200,13 +200,12 @@ class ConfigTest extends TestCase
      * @param DataObject[] $collectionData
      * @param array $expectedResult
      */
-
     #[DataProvider('getStatusesDataProvider')]
     public function testGetStatuses($state, $joinLabels, $collectionData, $expectedResult)
     {
         $collectionMock = $this->createPartialMockWithReflection(
             Collection::class,
-            array_merge(['create'], ['joinStates', 'addStateFilter', 'orderByLabel'])
+            ['create', 'joinStates', 'addStateFilter', 'orderByLabel']
         );
         $this->orderStatusCollectionFactoryMock->expects($this->any())
             ->method('create')

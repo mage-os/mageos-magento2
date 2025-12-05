@@ -34,7 +34,6 @@ class RtlTextHandlerTest extends TestCase
      * @param string $str
      * @param bool $isRtl
      */
-
     #[DataProvider('provideRtlTexts')]
     public function testIsRtlText(string $str, bool $isRtl): void
     {
@@ -45,7 +44,6 @@ class RtlTextHandlerTest extends TestCase
      * @param string $str
      * @param bool $isRtl
      */
-
     #[DataProvider('provideRtlTexts')]
     public function testReverseRtlText(string $str, bool $isRtl): void
     {

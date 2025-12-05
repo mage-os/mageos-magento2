@@ -174,7 +174,6 @@ class InvoiceOrderTest extends TestCase
      * @throws CouldNotInvoiceException
      * @throws DocumentValidationException
      */
-
     #[DataProvider('dataProvider')]
     public function testOrderInvoice($orderId, $capture, $items, $notify, $appendComment)
     {

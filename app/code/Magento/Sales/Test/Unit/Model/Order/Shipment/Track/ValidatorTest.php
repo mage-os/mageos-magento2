@@ -44,7 +44,6 @@ class ValidatorTest extends TestCase
      * @param $trackData
      * @param $expectedWarnings
      */
-
     #[DataProvider('providerTrackData')]
     public function testValidate($trackDataMap, $trackData, $expectedWarnings)
     {

@@ -64,7 +64,6 @@ class UrlGeneratorTest extends TestCase
      * @param bool $isAllowed
      * @param null|bool $url
      */
-
     #[DataProvider('permissionProvider')]
     public function testGetUrl($isAllowed, $url)
     {

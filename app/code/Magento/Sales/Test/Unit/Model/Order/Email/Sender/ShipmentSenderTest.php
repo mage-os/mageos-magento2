@@ -106,7 +106,6 @@ class ShipmentSenderTest extends AbstractSenderTestCase
      * @return void
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-
     #[DataProvider('sendDataProvider')]
     public function testSend(
         int $configValue,
@@ -274,7 +273,6 @@ class ShipmentSenderTest extends AbstractSenderTestCase
      *
      * @return void
      */
-
     #[DataProvider('sendVirtualOrderDataProvider')]
     public function testSendVirtualOrder(
         bool $isVirtualOrder,

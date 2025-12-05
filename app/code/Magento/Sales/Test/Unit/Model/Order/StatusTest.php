@@ -11,6 +11,7 @@ use Magento\Framework\Event\Manager;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\Model\Context;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Sales\Model\Order\Status as OrderStatus;
 use Magento\Sales\Model\ResourceModel\Order\Status;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -52,7 +53,7 @@ class StatusTest extends TestCase
             ->willReturn($this->eventManagerMock);
 
         $this->model = $objectManager->getObject(
-            \Magento\Sales\Model\Order\Status::class,
+            OrderStatus::class,
             [
                 'context' => $this->contextMock,
                 'resource' => $this->resourceMock,
@@ -149,7 +150,7 @@ class StatusTest extends TestCase
         }
         $helper = new ObjectManager($this);
         $model = $helper->getObject(
-            \Magento\Sales\Model\Order\Status::class,
+            OrderStatus::class,
             ['resource' => $resource, 'eventDispatcher' => $eventDispatcher]
         );
         return $model;
@@ -180,7 +181,7 @@ class StatusTest extends TestCase
         $model = $this->_getPreparedModel($resource, $eventDispatcher);
         $model->setStatus($status);
         $this->assertInstanceOf(
-            \Magento\Sales\Model\Order\Status::class,
+            OrderStatus::class,
             $model->assignState($state, $visibleOnFront)
         );
     }

@@ -16,6 +16,7 @@ use Magento\Framework\View\Layout;
 use Magento\Sales\Block\Adminhtml\Items\AbstractItems;
 use Magento\Sales\Block\Adminhtml\Order\View\Items\Renderer\DefaultRenderer;
 use Magento\Sales\Model\Order\Creditmemo\Item as CreditmemoItem;
+use Magento\Sales\Model\Order\Item as OrderItem;
 use Magento\Store\Model\Store;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -148,10 +149,7 @@ class AbstractItemsTest extends TestCase
         $manageStock = $itemConfig['manage_stock'] ?? false;
         $item = $this->createPartialMockWithReflection(
             CreditmemoItem::class,
-            array_merge(
-                ['hasCanReturnToStock', 'setCanReturnToStock', 'getCanReturnToStock'],
-                ['getOrderItem']
-            )
+            ['hasCanReturnToStock', 'setCanReturnToStock', 'getCanReturnToStock', 'getOrderItem']
         );
         $dependencies = $this->prepareServiceMockDependency(
             $item,
@@ -196,7 +194,7 @@ class AbstractItemsTest extends TestCase
             ->willReturn($itemConfig['has_can_return_to_stock']);
         if (!$itemConfig['has_can_return_to_stock']) {
             $orderItem = $this->createPartialMock(
-                \Magento\Sales\Model\Order\Item::class,
+                OrderItem::class,
                 ['getProductId', 'getStore']
             );
 

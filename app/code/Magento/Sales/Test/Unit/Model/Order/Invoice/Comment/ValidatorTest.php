@@ -58,7 +58,6 @@ class ValidatorTest extends TestCase
      * @param $commentData
      * @param $expectedWarnings
      */
-
     #[DataProvider('providerCommentData')]
     public function testValidate($commentDataMap, $commentData, $expectedWarnings)
     {

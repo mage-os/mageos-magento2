@@ -136,7 +136,7 @@ class InitializerTest extends TestCase
             ->willReturn($quoteItemMock);
 
         $this->assertInstanceOf(
-            \Magento\Quote\Model\Quote\Item::class,
+            QuoteItem::class,
             $this->model->init(
                 $this->quoteMock,
                 $this->productMock,
@@ -173,7 +173,7 @@ class InitializerTest extends TestCase
             ->willReturn($quoteItemMock);
 
         $this->assertInstanceOf(
-            \Magento\Quote\Model\Quote\Item::class,
+            QuoteItem::class,
             $this->model->init(
                 $this->quoteMock,
                 $this->productMock,

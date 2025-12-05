@@ -44,7 +44,6 @@ class OrderCommandTest extends TestCase
      * @param string $expectedStatus
      * @param string $expectedMessage
      *     */
-
     #[DataProvider('commandResultDataProvider')]
     public function testExecute(
         $isTransactionPending,
