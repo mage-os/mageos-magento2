@@ -10,11 +10,6 @@ use Magento\Framework\App\Action\HttpGetActionInterface;
 use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\Controller\ResultFactory;
 
-/**
- * Class Email
- *
- * @package Magento\Shipping\Controller\Adminhtml\Order\Shipment
- */
 class Email extends Action implements HttpPostActionInterface, HttpGetActionInterface
 {
     /**

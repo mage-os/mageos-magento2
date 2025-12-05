@@ -9,11 +9,6 @@ use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\App\Action\HttpGetActionInterface;
 use Magento\Backend\App\Action;
 
-/**
- * Class Email
- *
- * @package Magento\Sales\Controller\Adminhtml\Creditmemo\AbstractCreditmemo
- */
 class Email extends Action implements HttpPostActionInterface, HttpGetActionInterface
 {
     /**
