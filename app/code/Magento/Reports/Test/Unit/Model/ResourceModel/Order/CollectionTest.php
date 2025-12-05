@@ -25,17 +25,19 @@ use Magento\Sales\Model\ResourceModel\Report\OrderFactory;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\Matcher\InvokedCount;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
-
+use PHPUnit\Framework\Attributes\DataProvider;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class CollectionTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Collection
      */
@@ -229,24 +231,18 @@ class CollectionTest extends TestCase
      * @param int $useAggregatedData
      * @param string $mainTable
      * @param int $isFilter
-     * @param InvokedCount $getIfNullSqlResult
+     * @param string $getIfNullSqlResult
      *
      * @return void
      */
     #[DataProvider('useAggregatedDataDataProvider')]
     public function testPrepareSummary($useAggregatedData, $mainTable, $isFilter, $getIfNullSqlResult): void
     {
-        // Convert string matcher to actual matcher
-        if ($getIfNullSqlResult === 'never') {
-            $getIfNullSqlResult = $this->never();
-        } elseif (str_starts_with($getIfNullSqlResult, 'exactly_')) {
-            $count = (int)str_replace('exactly_', '', $getIfNullSqlResult);
-            $getIfNullSqlResult = $this->exactly($count);
-        }
-        
         $range = '';
         $customStart = 1;
         $customEnd = 10;
+
+        $getIfNullSqlResult = $this->createInvocationMatcher($getIfNullSqlResult);
 
         $this->scopeConfigMock
             ->expects($this->once())
@@ -315,6 +311,7 @@ class CollectionTest extends TestCase
     #[DataProvider('secondPartDateRangeDataProvider')]
     public function testGetDateRangeSecondPart($range, $customStart, $customEnd, $config, $expectedYear): void
     {
+
         $this->scopeConfigMock
             ->expects($this->once())
             ->method('getValue')
@@ -355,21 +352,15 @@ class CollectionTest extends TestCase
      * @param int $isFilter
      * @param int $useAggregatedData
      * @param string $mainTable
-     * @param InvokedCount $getIfNullSqlResult
+     * @param string $getIfNullSqlResult
      *
      * @return void
      */
     #[DataProvider('totalsDataProvider')]
     public function testCalculateTotals($isFilter, $useAggregatedData, $mainTable, $getIfNullSqlResult): void
     {
-        // Convert string matcher to actual matcher
-        if ($getIfNullSqlResult === 'never') {
-            $getIfNullSqlResult = $this->never();
-        } elseif (str_starts_with($getIfNullSqlResult, 'exactly_')) {
-            $count = (int)str_replace('exactly_', '', $getIfNullSqlResult);
-            $getIfNullSqlResult = $this->exactly($count);
-        }
-        
+        $getIfNullSqlResult = $this->createInvocationMatcher($getIfNullSqlResult);
+
         $this->scopeConfigMock
             ->expects($this->once())
             ->method('getValue')
