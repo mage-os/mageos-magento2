@@ -7,32 +7,64 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Block\Adminhtml\Category;
 
+use Magento\Backend\Block\Template\Context as TemplateContext;
 use Magento\Catalog\Block\Adminhtml\Category\AssignProducts;
 use Magento\Catalog\Block\Adminhtml\Category\Tab\Product as ProductGridBlock;
 use Magento\Catalog\Model\Category;
+use Magento\Directory\Helper\Data as DirectoryHelper;
 use Magento\Framework\Json\EncoderInterface;
 use Magento\Framework\Registry;
 use Magento\Framework\View\LayoutInterface;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\Json\Helper\Data as JsonHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+
 
 /**
  * @covers \Magento\Catalog\Block\Adminhtml\Category\AssignProducts
  */
-
 class AssignProductsTest extends TestCase
 {
-    /** @var LayoutInterface|MockObject */
+    /**
+     * @var LayoutInterface|MockObject
+     */
     private $layoutMock;
 
-    /** @var Registry|MockObject */
+    /**
+     * @var Registry|MockObject
+     */
     private $registryMock;
 
-    /** @var EncoderInterface|MockObject */
+    /**
+     * @var EncoderInterface|MockObject
+     */
     private $jsonEncoderMock;
 
-    /** @var AssignProducts|MockObject */
-    private $block;
+    /**
+     * @var AssignProducts
+     */
+    private AssignProducts $block;
+
+    /**
+     * @var ObjectManager
+     */
+    private $objectManager;
+
+    /**
+     * @var TemplateContext|MockObject
+     */
+    private $contextMock;
+
+    /**
+     * @var JsonHelper|MockObject
+     */
+    private $jsonHelperMock;
+
+    /**
+     * @var DirectoryHelper|MockObject
+     */
+    private $directoryHelperMock;
 
     /**
      * Prepare SUT and collaborators for each test.
@@ -44,17 +76,25 @@ class AssignProductsTest extends TestCase
         $this->layoutMock = $this->createMock(LayoutInterface::class);
         $this->registryMock = $this->createMock(Registry::class);
         $this->jsonEncoderMock = $this->createMock(EncoderInterface::class);
+        $this->contextMock = $this->createMock(TemplateContext::class);
+        $this->contextMock->method('getLayout')->willReturn($this->layoutMock);
+        $objectManager = new ObjectManager($this);
+        $this->jsonHelperMock = $this->createMock(JsonHelper::class);
+        $this->directoryHelperMock = $this->createMock(DirectoryHelper::class);
+        $objectManager->prepareObjectManager([
+            [JsonHelper::class, $this->jsonHelperMock],
+            [DirectoryHelper::class, $this->directoryHelperMock],
+        ]);
 
-        // Create the SUT without running the parent constructor to avoid ObjectManager usage.
-        $this->block = $this->getMockBuilder(AssignProducts::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getLayout'])
-            ->getMock();
-
-        // Provide required collaborators to the SUT.
-        $this->block->method('getLayout')->willReturn($this->layoutMock);
-        $this->setProperty($this->block, 'registry', $this->registryMock);
-        $this->setProperty($this->block, 'jsonEncoder', $this->jsonEncoderMock);
+        // Create actual SUT with mocked dependencies using test ObjectManager helper.
+        $this->block = $objectManager->getObject(
+            AssignProducts::class,
+            [
+                'context' => $this->contextMock,
+                'registry' => $this->registryMock,
+                'jsonEncoder' => $this->jsonEncoderMock,
+            ]
+        );
     }
 
     /**
@@ -66,8 +106,7 @@ class AssignProductsTest extends TestCase
     {
         // Prepare the grid block returned by the layout.
         $gridBlockMock = $this->createMock(ProductGridBlock::class);
-        $this->layoutMock
-            ->expects($this->once())
+        $this->layoutMock->expects($this->once())
             ->method('createBlock')
             ->with(ProductGridBlock::class, 'category.product.grid')
             ->willReturn($gridBlockMock);
@@ -88,8 +127,7 @@ class AssignProductsTest extends TestCase
     {
         // Prepare the grid block returned by the layout.
         $gridBlockMock = $this->createMock(ProductGridBlock::class);
-        $this->layoutMock
-            ->expects($this->once())
+        $this->layoutMock->expects($this->once())
             ->method('createBlock')
             ->with(ProductGridBlock::class, 'category.product.grid')
             ->willReturn($gridBlockMock);
@@ -112,13 +150,11 @@ class AssignProductsTest extends TestCase
     {
         // Prepare the grid block and its HTML output.
         $gridBlockMock = $this->createMock(ProductGridBlock::class);
-        $this->layoutMock
-            ->method('createBlock')
+        $this->layoutMock->method('createBlock')
             ->with(ProductGridBlock::class, 'category.product.grid')
             ->willReturn($gridBlockMock);
         $expectedHtml = '<div>grid</div>';
-        $gridBlockMock
-            ->expects($this->once())
+        $gridBlockMock->expects($this->once())
             ->method('toHtml')
             ->willReturn($expectedHtml);
 
@@ -142,8 +178,7 @@ class AssignProductsTest extends TestCase
         $this->registryMock->method('registry')->with('category')->willReturn($categoryMock);
         $categoryMock->expects($this->once())->method('getProductsPosition')->willReturn($positions);
         $encoded = '{"10":1,"22":3}';
-        $this->jsonEncoderMock
-            ->expects($this->once())
+        $this->jsonEncoderMock->expects($this->once())
             ->method('encode')
             ->with($positions)
             ->willReturn($encoded);
@@ -184,8 +219,7 @@ class AssignProductsTest extends TestCase
     {
         // Prepare the category in the registry.
         $categoryMock = $this->createMock(Category::class);
-        $this->registryMock
-            ->expects($this->once())
+        $this->registryMock->expects($this->once())
             ->method('registry')
             ->with('category')
             ->willReturn($categoryMock);
@@ -205,8 +239,7 @@ class AssignProductsTest extends TestCase
     public function testGetCategoryReturnsNullWhenNotInRegistry(): void
     {
         // Prepare the registry to return null.
-        $this->registryMock
-            ->expects($this->once())
+        $this->registryMock->expects($this->once())
             ->method('registry')
             ->with('category')
             ->willReturn(null);
@@ -216,21 +249,5 @@ class AssignProductsTest extends TestCase
 
         // Verify null is returned.
         $this->assertNull($result);
-    }
-
-    /**
-     * Inject a value into a protected/private property using reflection.
-     *
-     * @param object $object
-     * @param string $property
-     * @param mixed $value
-     * @return void
-     */
-    private function setProperty(object $object, string $property, $value): void
-    {
-        $reflectionObject = new \ReflectionClass($object);
-        $prop = $reflectionObject->getProperty($property);
-        $prop->setAccessible(true);
-        $prop->setValue($object, $value);
     }
 }

@@ -7,39 +7,59 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Block\Adminhtml\Category\Form\Renderer\Fieldset;
 
+use Magento\Backend\Block\Template\Context as TemplateContext;
 use Magento\Catalog\Block\Adminhtml\Form\Renderer\Fieldset\Element;
-use PHPUnit\Framework\TestCase;
-use Magento\Framework\Data\Form\Element\AbstractElement;
-use Magento\Framework\DataObject;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
 use Magento\Store\Model\StoreManagerInterface;
+use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\MockObject\MockObject;
+use Magento\Framework\Data\Form\Element\AbstractElement;
+use Magento\Framework\DataObject;
 use Magento\Framework\Escaper;
 use Magento\Framework\Math\Random;
 use Magento\Framework\View\Helper\SecureHtmlRenderer;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
 /**
  * @covers \Magento\Catalog\Block\Adminhtml\Form\Renderer\Fieldset\Element
  */
 class ElementTest extends TestCase
 {
-    /** @var Element */
-    private $block;
+    /**
+     * @var Element
+     */
+    private Element $block;
 
-    /** @var AbstractElement */
+    /**
+     * @var AbstractElement|MockObject
+     */
     private $elementMock;
 
-    /** @var DataObject */
-    private $formDataObject;
+    /**
+     * @var DataObject
+     */
+    private DataObject $formDataObject;
 
-    /** @var Product */
+    /**
+     * @var Product|MockObject
+     */
     private $dataObjectMock;
 
-    /** @var Attribute */
+    /**
+     * @var Attribute|MockObject
+     */
     private $attributeMock;
 
-    /** @var StoreManagerInterface */
+    /**
+     * @var StoreManagerInterface|MockObject
+     */
     private $storeManagerMock;
+
+    /**
+     * @var TemplateContext|MockObject
+     */
+    private $contextMock;
 
     /**
      * Prepare SUT and collaborators.
@@ -48,11 +68,11 @@ class ElementTest extends TestCase
      */
     protected function setUp(): void
     {
+        $objectManager = new ObjectManager($this);
         // Preserve real methods on AbstractElement so magic __call and setData work
         $this->elementMock = $this->getMockBuilder(AbstractElement::class)
             ->disableOriginalConstructor()
-            ->onlyMethods([])
-            ->getMock();
+            ->getMockForAbstractClass();
 
         $this->dataObjectMock = $this->createMock(Product::class);
         $this->attributeMock = $this->createMock(Attribute::class);
@@ -79,32 +99,59 @@ class ElementTest extends TestCase
         $secureRendererMock->method('renderStyleAsTag')->willReturn('');
         $secureRendererMock->method('renderEventListenerAsTag')->willReturn('');
 
-        $abstractRef = new \ReflectionClass(AbstractElement::class);
-        $escaperProp = $abstractRef->getProperty('_escaper');
-        $escaperProp->setAccessible(true);
-        $escaperProp->setValue($this->elementMock, $escaper);
-        $randomProp = $abstractRef->getProperty('random');
-        $randomProp->setAccessible(true);
-        $randomProp->setValue($this->elementMock, $randomMock);
-        $secureRendererProp = $abstractRef->getProperty('secureRenderer');
-        $secureRendererProp->setAccessible(true);
-        $secureRendererProp->setValue($this->elementMock, $secureRendererMock);
+        // Inject required collaborators into AbstractElement using reflection helper
+        $this->setObjectProperty($this->elementMock, '_escaper', $escaper);
+        $this->setObjectProperty($this->elementMock, 'random', $randomMock);
+        $this->setObjectProperty($this->elementMock, 'secureRenderer', $secureRendererMock);
 
-        // Create block mock with real methods (no constructor side effects)
-        $this->block = $this->getMockBuilder(Element::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([])
-            ->getMock();
+        // Instantiate real SUT like AssignProductsTest using ObjectManager helper
+        $this->contextMock = $this->createMock(TemplateContext::class);
+        $this->contextMock->method('getStoreManager')->willReturn($this->storeManagerMock);
 
-        // Inject _storeManager and _element via reflection
-        $reflectionClass = new \ReflectionClass($this->block);
-        $storeProp = $reflectionClass->getProperty('_storeManager');
-        $storeProp->setAccessible(true);
-        $storeProp->setValue($this->block, $this->storeManagerMock);
+        $this->block = $objectManager->getObject(
+            Element::class,
+            ['context' => $this->contextMock]
+        );
 
-        $elementProp = $reflectionClass->getProperty('_element');
-        $elementProp->setAccessible(true);
-        $elementProp->setValue($this->block, $this->elementMock);
+        // Attach the form element to block via reflection
+        $this->setObjectProperty($this->block, '_element', $this->elementMock);
+    }
+
+    /**
+     * Set a private/protected property via reflection on an object, walking parents.
+     *
+     * @param object $object
+     * @param string $property
+     * @param mixed $value
+     * @return void
+     */
+    private function setObjectProperty(object $object, string $property, $value): void
+    {
+        $this->setObjectPropertyRecursive(new \ReflectionClass($object), $object, $property, $value);
+    }
+
+    /**
+     * Recursively set a property on the declaring class without using loops.
+     *
+     * @param \ReflectionClass $ref
+     * @param object $object
+     * @param string $property
+     * @param mixed $value
+     * @return void
+     */
+    private function setObjectPropertyRecursive(\ReflectionClass $ref, object $object, string $property, $value): void
+    {
+        if ($ref->hasProperty($property)) {
+            $refProp = $ref->getProperty($property);
+            $refProp->setAccessible(true);
+            $refProp->setValue($object, $value);
+            return;
+        }
+        $parent = $ref->getParentClass();
+        if ($parent === false) {
+            $this->fail(sprintf('Property "%s" not found on %s or its parents', $property, get_class($object)));
+        }
+        $this->setObjectPropertyRecursive($parent, $object, $property, $value);
     }
 
     /**
@@ -134,7 +181,9 @@ class ElementTest extends TestCase
      */
     public function testGetAttributeCode(): void
     {
-        $this->attributeMock->method('getAttributeCode')->willReturn('test_code');
+        $this->attributeMock->expects($this->once())
+            ->method('getAttributeCode')
+            ->willReturn('test_code');
         $this->assertSame('test_code', $this->block->getAttributeCode());
     }
 
@@ -145,7 +194,9 @@ class ElementTest extends TestCase
      */
     public function testCanDisplayUseDefaultReturnsTrue(): void
     {
-        $this->attributeMock->method('isScopeGlobal')->willReturn(false);
+        $this->attributeMock->expects($this->once())
+            ->method('isScopeGlobal')
+            ->willReturn(false);
         $this->dataObjectMock->method('getId')->willReturn(1);
         $this->dataObjectMock->method('getStoreId')->willReturn(2);
 
@@ -159,38 +210,75 @@ class ElementTest extends TestCase
      */
     public function testCanDisplayUseDefaultReturnsFalse(): void
     {
-        $this->attributeMock->method('isScopeGlobal')->willReturn(true);
+        $this->attributeMock->expects($this->once())
+            ->method('isScopeGlobal')
+            ->willReturn(true);
         $this->assertFalse($this->block->canDisplayUseDefault());
     }
 
     /**
-     * Test usedDefault returns true when no store value flag is set.
+     * Data provider for usedDefault scenarios.
      *
-     * @return void
+     * @return array
      */
-    public function testUsedDefaultReturnsTrueWhenNoStoreValueFlag(): void
+    public static function usedDefaultDataProvider(): array
     {
-        $this->attributeMock->method('getAttributeCode')->willReturn('test_code');
-        $this->dataObjectMock->method('getAttributeDefaultValue')->willReturn('default');
-        $this->dataObjectMock->method('getExistsStoreValueFlag')->willReturn(false);
-
-        $this->assertTrue($this->block->usedDefault());
+        return [
+            'no store value flag' => [
+                'existsStoreValueFlag' => false,
+                'storeId' => 1,
+                'elementValue' => 'anything',
+                'defaultValue' => 'default',
+                'expected' => true,
+            ],
+            'store value exists equals default' => [
+                'existsStoreValueFlag' => true,
+                'storeId' => 2,
+                'elementValue' => 'default',
+                'defaultValue' => 'default',
+                'expected' => false,
+            ],
+            'store value exists not equal default' => [
+                'existsStoreValueFlag' => true,
+                'storeId' => 2,
+                'elementValue' => 'custom',
+                'defaultValue' => 'default',
+                'expected' => false,
+            ],
+        ];
     }
 
     /**
-     * Test usedDefault returns false when value equals default for non-default store.
-     *
+     * Test usedDefault returns true when no store value flag is set.
+     * @dataProvider usedDefaultDataProvider
+     * @param bool $existsStoreValueFlag
+     * @param int|null $storeId
+     * @param mixed $elementValue
+     * @param mixed $defaultValue
+     * @param bool $expected
      * @return void
      */
-    public function testUsedDefaultReturnsFalseWhenValueEqualsDefault(): void
+    public function testUsedDefaultReturnsTrueWhenNoStoreValueFlag(
+        bool $existsStoreValueFlag,
+        ?int $storeId,
+        mixed $elementValue,
+        mixed $defaultValue,
+        bool $expected
+    ): void
     {
-        $this->attributeMock->method('getAttributeCode')->willReturn('test_code');
-        $this->dataObjectMock->method('getAttributeDefaultValue')->willReturn('default');
-        $this->dataObjectMock->method('getExistsStoreValueFlag')->willReturn(true);
-        $this->dataObjectMock->method('getStoreId')->willReturn(2);
-        $this->elementMock->setData('value', 'default');
+        $this->attributeMock->expects($this->once())
+            ->method('getAttributeCode')
+            ->willReturn('test_code');
+        $this->dataObjectMock->method('getAttributeDefaultValue')->willReturn($defaultValue);
+        $this->dataObjectMock->method('getExistsStoreValueFlag')->willReturn($existsStoreValueFlag);
+        if ($storeId !== null) {
+            $this->dataObjectMock->method('getStoreId')->willReturn($storeId);
+        }
+        if ($elementValue !== null) {
+            $this->elementMock->setData('value', $elementValue);
+        }
 
-        $this->assertFalse($this->block->usedDefault());
+        $this->assertSame($expected, $this->block->usedDefault());
     }
 
     /**
@@ -200,7 +288,9 @@ class ElementTest extends TestCase
      */
     public function testCheckFieldDisableDisablesElement(): void
     {
-        $this->attributeMock->method('isScopeGlobal')->willReturn(false);
+        $this->attributeMock->expects($this->once())
+            ->method('isScopeGlobal')
+            ->willReturn(false);
         $this->dataObjectMock->method('getId')->willReturn(1);
         $this->dataObjectMock->method('getStoreId')->willReturn(2);
         $this->attributeMock->method('getAttributeCode')->willReturn('test_code');
@@ -211,29 +301,132 @@ class ElementTest extends TestCase
         $this->assertTrue((bool)$this->elementMock->getData('disabled'));
     }
 
-    /**
-     * Test getScopeLabel returns [GLOBAL] when attribute is global.
-     *
-     * @return void
-     */
-    public function testGetScopeLabelGlobal(): void
-    {
-        $this->storeManagerMock->method('isSingleStoreMode')->willReturn(false);
-        $this->attributeMock->method('getFrontendInput')->willReturn('text');
-        $this->attributeMock->method('isScopeGlobal')->willReturn(true);
 
-        $this->assertSame('[GLOBAL]', (string)$this->block->getScopeLabel());
+    /**
+     * Data provider for getScopeLabel scenarios.
+     *
+     * @return array
+     */
+    public static function getScopeLabelDataProvider(): array
+    {
+        return [
+            'single store mode -> empty' => [
+                'isSingleStoreMode' => true,
+                'attributePresent'  => true,
+                'frontendInput'     => 'text',
+                'isGlobal'          => null,
+                'isWebsite'         => null,
+                'isStore'           => null,
+                'expected'          => '',
+            ],
+            'no attribute -> empty' => [
+                'isSingleStoreMode' => false,
+                'attributePresent'  => false,
+                'frontendInput'     => null,
+                'isGlobal'          => null,
+                'isWebsite'         => null,
+                'isStore'           => null,
+                'expected'          => '',
+            ],
+            'frontend is gallery -> empty' => [
+                'isSingleStoreMode' => false,
+                'attributePresent'  => true,
+                'frontendInput'     => 'gallery',
+                'isGlobal'          => null,
+                'isWebsite'         => null,
+                'isStore'           => null,
+                'expected'          => '',
+            ],
+            'global scope -> [GLOBAL]' => [
+                'isSingleStoreMode' => false,
+                'attributePresent'  => true,
+                'frontendInput'     => 'text',
+                'isGlobal'          => true,
+                'isWebsite'         => false,
+                'isStore'           => false,
+                'expected'          => '[GLOBAL]',
+            ],
+            'website scope -> [WEBSITE]' => [
+                'isSingleStoreMode' => false,
+                'attributePresent'  => true,
+                'frontendInput'     => 'text',
+                'isGlobal'          => false,
+                'isWebsite'         => true,
+                'isStore'           => false,
+                'expected'          => '[WEBSITE]',
+            ],
+            'store scope -> [STORE VIEW]' => [
+                'isSingleStoreMode' => false,
+                'attributePresent'  => true,
+                'frontendInput'     => 'text',
+                'isGlobal'          => false,
+                'isWebsite'         => false,
+                'isStore'           => true,
+                'expected'          => '[STORE VIEW]',
+            ],
+        ];
     }
 
     /**
-     * Test getScopeLabel returns empty string in single store mode.
+     * Validate getScopeLabel returns correct label across scenarios.
      *
-     * @return void
+     * @dataProvider getScopeLabelDataProvider
      */
-    public function testGetScopeLabelReturnsEmptyForSingleStoreMode(): void
-    {
-        $this->storeManagerMock->method('isSingleStoreMode')->willReturn(true);
-        $this->assertSame('', (string)$this->block->getScopeLabel());
+    public function testGetScopeLabelScenarios(
+        bool $isSingleStoreMode,
+        bool $attributePresent,
+        ?string $frontendInput,
+        ?bool $isGlobal,
+        ?bool $isWebsite,
+        ?bool $isStore,
+        string $expected
+    ): void {
+        // Case 1: No attribute -> element has null attribute, label must be empty.
+        if ($attributePresent === false) {
+            $this->elementMock->setData('entity_attribute', null);
+            $this->assertSame($expected, (string) $this->block->getScopeLabel());
+            return;
+        }
+
+        // Make the attribute available to the block through the element.
+        $this->elementMock->setData('entity_attribute', $this->attributeMock);
+
+        // Case 2: Single store mode -> empty.
+        $this->storeManagerMock
+            ->method('isSingleStoreMode')
+            ->willReturn($isSingleStoreMode);
+
+        if ($isSingleStoreMode) {
+            $this->assertSame($expected, (string) $this->block->getScopeLabel());
+            return;
+        }
+
+        // Case 3: Gallery input -> empty.
+        $this->attributeMock
+            ->method('getFrontendInput')
+            ->willReturn($frontendInput);
+
+        if ($frontendInput === 'gallery') {
+            $this->assertSame($expected, (string) $this->block->getScopeLabel());
+            return;
+        }
+
+        // Case 4: Scope flags — provide deterministic booleans.
+        // Null means "unspecified"; we treat it as false to avoid ambiguity.
+        $this->attributeMock
+            ->method('isScopeGlobal')
+            ->willReturn((bool) $isGlobal);
+
+        $this->attributeMock
+            ->method('isScopeWebsite')
+            ->willReturn((bool) $isWebsite);
+
+        $this->attributeMock
+            ->method('isScopeStore')
+            ->willReturn((bool) $isStore);
+
+        // Single assertion for the final label.
+        $this->assertSame($expected, (string) $this->block->getScopeLabel());
     }
 
     /**
