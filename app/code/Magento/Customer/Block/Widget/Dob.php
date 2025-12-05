@@ -482,14 +482,14 @@ class Dob extends AbstractWidget
         $locale = $this->localeResolver->getLocale();
         $dateFormat = $this->getDateFormat();
         $dateTime = $this->_localeDate->date($value, $locale, false, false);
-
-        return $this->_localeDate->formatDateTime(
-            $dateTime,
-            \IntlDateFormatter::NONE,
-            \IntlDateFormatter::NONE,
+        $formatter = new \IntlDateFormatter(
             Resolver::DEFAULT_LOCALE,
+            \IntlDateFormatter::NONE,
+            \IntlDateFormatter::NONE,
+            $dateTime->getTimezone(),
             null,
             $dateFormat
         );
+        return $formatter->format($dateTime);
     }
 }
