@@ -248,6 +248,103 @@ class VaultTest extends TestCase
         $model->capture($paymentModel, 0);
     }
 
+    public function testCaptureSuccess()
+    {
+        $customerId = 1;
+        $publicHash = 'token_public_hash';
+        $vaultProviderCode = 'vault_provider_code';
+        $amount = 10.01;
+
+        $paymentModel = $this->getMockBuilder(Payment::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $extensionAttributes = $this->getMockBuilder(OrderPaymentExtensionInterface::class)
+            ->addMethods(['setVaultPaymentToken', 'getVaultPaymentToken'])
+            ->getMockForAbstractClass();
+
+        $commandManagerPool = $this->getMockForAbstractClass(CommandManagerPoolInterface::class);
+        $commandManager = $this->getMockForAbstractClass(CommandManagerInterface::class);
+
+        $tokenManagement = $this->getMockForAbstractClass(PaymentTokenManagementInterface::class);
+        $token = $this->getMockForAbstractClass(PaymentTokenInterface::class);
+
+        $tokenDetails = [
+            'cc_last4' => '1111',
+            'cc_type' => 'VI',
+            'cc_exp_year' => '2020',
+            'cc_exp_month' => '01',
+        ];
+
+        $extensionAttributes->method('getVaultPaymentToken')
+            ->willReturn($token);
+
+        $token->expects(static::atLeastOnce())
+            ->method('getTokenDetails')
+            ->willReturn(json_encode($tokenDetails));
+
+        $this->jsonSerializer->expects(static::once())
+            ->method('unserialize')
+            ->with(json_encode($tokenDetails))
+            ->willReturn($tokenDetails);
+
+        $paymentModel->expects(static::once())
+            ->method('getAdditionalInformation')
+            ->willReturn(
+                [
+                    PaymentTokenInterface::CUSTOMER_ID => $customerId,
+                    PaymentTokenInterface::PUBLIC_HASH => $publicHash
+                ]
+            );
+        $paymentModel->expects(static::once())
+            ->method('getAuthorizationTransaction')
+            ->willReturn(null);
+        $tokenManagement->expects(static::once())
+            ->method('getByPublicHash')
+            ->with($publicHash, $customerId)
+            ->willReturn($token);
+        $paymentModel->method('getExtensionAttributes')
+            ->willReturn($extensionAttributes);
+        $extensionAttributes->expects(static::once())
+            ->method('setVaultPaymentToken')
+            ->with($token);
+        $paymentModel->expects(static::once())
+            ->method('addData')
+            ->with($tokenDetails);
+
+        $this->vaultProvider->expects(static::atLeastOnce())
+            ->method('getCode')
+            ->willReturn($vaultProviderCode);
+        $commandManagerPool->expects(static::once())
+            ->method('get')
+            ->with($vaultProviderCode)
+            ->willReturn($commandManager);
+        $commandManager->expects(static::once())
+            ->method('executeByCode')
+            ->with(
+                VaultPaymentInterface::VAULT_SALE_COMMAND,
+                $paymentModel,
+                [
+                    'amount' => $amount
+                ]
+            );
+
+        $paymentModel->expects(static::once())
+            ->method('setMethod')
+            ->with($vaultProviderCode);
+
+        /** @var Vault $model */
+        $model = $this->objectManager->getObject(
+            Vault::class,
+            [
+                'tokenManagement' => $tokenManagement,
+                'commandManagerPool' => $commandManagerPool,
+                'vaultProvider' => $this->vaultProvider,
+                'jsonSerializer' => $this->jsonSerializer,
+            ]
+        );
+        $model->capture($paymentModel, $amount);
+    }
+
     /**
      * @covers       \Magento\Vault\Model\Method\Vault::isAvailable
      */
