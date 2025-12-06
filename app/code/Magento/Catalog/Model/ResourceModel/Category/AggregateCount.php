@@ -55,7 +55,7 @@ class AggregateCount
         string $table,
         $categoryId
     ): int {
-        // Use raw SQL so staging preview modifiers (created_in/updated_in) are not applied.
+        // staging preview modifiers (created_in/updated_in) are not applied.
         $sql = sprintf(
             'SELECT COUNT(*) FROM %s WHERE entity_id = ?',
             $connection->quoteIdentifier($table)
