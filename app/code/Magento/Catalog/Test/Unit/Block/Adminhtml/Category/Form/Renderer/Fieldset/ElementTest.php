@@ -264,7 +264,8 @@ class ElementTest extends TestCase
         ?int $storeId,
         mixed $elementValue,
         mixed $defaultValue,
-        bool $expected): void
+        bool $expected
+    ): void
     {
         $this->attributeMock->expects($this->once())
             ->method('getAttributeCode')
