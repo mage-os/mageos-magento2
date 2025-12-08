@@ -40,6 +40,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * Unit Test class for Product View Block
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @covers \Magento\Catalog\Block\Product\View
  */
 class ViewTest extends TestCase
 {

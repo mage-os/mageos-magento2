@@ -21,6 +21,9 @@ use Magento\Framework\View\Element\Template\Context;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \Magento\Catalog\Block\Product\Price
+ */
 class PriceTest extends TestCase
 {
     /**
