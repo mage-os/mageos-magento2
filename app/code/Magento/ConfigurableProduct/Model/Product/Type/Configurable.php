@@ -842,7 +842,7 @@ class Configurable extends \Magento\Catalog\Model\Product\Type\AbstractType impl
      * @param array $attributesInfo
      * @return void
      */
-    private function addAttributesToFilter($collection, array $attributesInfo): void
+    private function addAttributesToFilter(Collection $collection, array $attributesInfo): void
     {
         foreach ($attributesInfo as $attributeId => $attributeValue) {
             $collection->addAttributeToFilter($attributeId, $attributeValue);

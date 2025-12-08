@@ -9,8 +9,8 @@ namespace Magento\ConfigurableProduct\Block\Adminhtml\Product\Composite\Fieldset
 
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
+use Magento\Catalog\Test\Fixture\PriceScope as PriceScopeFixture;
 use Magento\Catalog\Test\Fixture\Product as ProductFixture;
-use Magento\Catalog\Test\Fixture\Attribute as AttributeFixture;
 use Magento\ConfigurableProduct\Test\Fixture\Attribute as ConfigurableAttributeFixture;
 use Magento\ConfigurableProduct\Test\Fixture\Product as ConfigurableProductFixture;
 use Magento\Directory\Model\Currency;
@@ -120,14 +120,7 @@ class ConfigurableTest extends TestCase
             ['store_group_id' => '$store_2.id$', 'code' => 'store_view_2_euro'],
             as: 'store_view_2'
         ),
-        DataFixture(
-            AttributeFixture::class,
-            [
-                'attribute_code' => 'price',
-                'scope' => 'website',
-                '_update' => true
-            ]
-        ),
+        DataFixture(PriceScopeFixture::class, ['scope' => 'website']),
         DataFixture(
             ProductFixture::class,
             [

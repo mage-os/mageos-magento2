@@ -29,6 +29,8 @@ use Magento\TestFramework\Fixture\Data\ProcessorInterface;
 /**
  * Product fixture
  *
+ * Usage examples:
+ *
  * 1. Create a product with default data
  * <pre>
  *  #[

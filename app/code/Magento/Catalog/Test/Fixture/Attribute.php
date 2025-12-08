@@ -23,6 +23,8 @@ use Magento\TestFramework\Fixture\Data\ProcessorInterface;
 /**
  * Product attribute fixture
  *
+ * Usage examples:
+ *
  * 1. Create an attribute with default data
  * <pre>
  *  #[
@@ -33,19 +35,6 @@ use Magento\TestFramework\Fixture\Data\ProcessorInterface;
  * <pre>
  *  #[
  *      DataFixture(AttributeFixture::class, ['is_filterable' => true], 'attribute')
- *  ]
- * </pre>
- * 3. Update an existing attribute
- * <pre>
- *  #[
- *      DataFixture(
- *          AttributeFixture::class,
- *          [
- *              'attribute_code' => 'price',
- *              'scope' => 'website',
- *              '_update' => true
- *          ]
- *     )
  *  ]
  * </pre>
  */
@@ -124,7 +113,6 @@ class Attribute implements RevertibleDataFixtureInterface
      * @param array $data Parameters. Same format as Attribute::DEFAULT_DATA.
      *
      * Additional fields:
-     *  - `_update`: boolean - whether to update attribute instead of creating a new one
      *  - `_set_id`: int - attribute set ID to assign the attribute to
      *  - `_group_id`: int - attribute group ID to assign the attribute to
      *  - `_sort_order`: int - sort order within the attribute group
@@ -137,13 +125,9 @@ class Attribute implements RevertibleDataFixtureInterface
         $attributeSetData = $this->prepareAttributeSetData(
             array_intersect_key($data, self::DEFAULT_ATTRIBUTE_SET_DATA)
         );
-        if (!empty($data['_update'])) {
-            $attribute = $this->productAttributeRepository->get($data['attribute_code']);
-            unset($attributeData['_update'], $attributeData['attribute_code']);
-        } else {
-            $attribute = $this->attributeFactory->create();
-            $attributeData = $this->prepareData($attributeData);
-        }
+        
+        $attribute = $this->attributeFactory->create();
+        $attributeData = $this->prepareData($attributeData);
 
         $this->dataObjectHelper->populateWithArray(
             $attribute,
@@ -157,15 +141,12 @@ class Attribute implements RevertibleDataFixtureInterface
         }
         $attribute = $this->productAttributeRepository->save($attribute);
 
-        // Do not assign attribute if both set_id and group_id are not provided during update
-        if (empty($data['_update']) || isset($data['_set_id'], $data['_group_id'])) {
-            $this->productAttributeManagement->assign(
-                $attributeSetData['_set_id'],
-                $attributeSetData['_group_id'],
-                $attribute->getAttributeCode(),
-                $attributeSetData['_sort_order']
-            );
-        }
+        $this->productAttributeManagement->assign(
+            $attributeSetData['_set_id'],
+            $attributeSetData['_group_id'],
+            $attribute->getAttributeCode(),
+            $attributeSetData['_sort_order']
+        );
 
         return $attribute;
     }
@@ -175,9 +156,6 @@ class Attribute implements RevertibleDataFixtureInterface
      */
     public function revert(DataObject $data): void
     {
-        if (!$data->getIsUserDefined()) {
-            return;
-        }
         $service = $this->serviceFactory->create(ProductAttributeRepositoryInterface::class, 'deleteById');
         $service->execute(
             [
