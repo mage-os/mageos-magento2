@@ -13,12 +13,15 @@ use Magento\Framework\View\Element\Block\ArgumentInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * Unit test for the ViewModelPlugin class
  */
 class ViewModelTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var ArgumentInterface|MockObject
      */
@@ -53,7 +56,9 @@ class ViewModelTest extends TestCase
             ->with('view_model')
             ->willReturn($hasDataResult);
 
-        $this->blockMock->expects($this->$setDataExpects())
+        $invocationMatcher = $this->createInvocationMatcher($setDataExpects);
+
+        $this->blockMock->expects($invocationMatcher)
             ->method('setData')
             ->with('view_model', $this->viewModelMock);
 
