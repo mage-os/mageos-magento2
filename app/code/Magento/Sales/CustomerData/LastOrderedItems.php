@@ -20,7 +20,6 @@ use Magento\Sales\Model\Order\Item;
 use Magento\Sales\Model\ResourceModel\Order\Collection;
 use Magento\Sales\Model\ResourceModel\Order\CollectionFactoryInterface;
 use Magento\Store\Model\StoreManagerInterface;
-use Psr\Log\LoggerInterface;
 
 /**
  * Returns information for "Recently Ordered" widget.
@@ -76,18 +75,12 @@ class LastOrderedItems implements SectionSourceInterface
     private $productRepository;
 
     /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
      * @param CollectionFactoryInterface $orderCollectionFactory
      * @param Config $orderConfig
      * @param Session $customerSession
      * @param StockRegistryInterface $stockRegistry
      * @param StoreManagerInterface $storeManager
      * @param ProductRepositoryInterface $productRepository
-     * @param LoggerInterface $logger
      */
     public function __construct(
         CollectionFactoryInterface $orderCollectionFactory,
@@ -95,8 +88,7 @@ class LastOrderedItems implements SectionSourceInterface
         Session $customerSession,
         StockRegistryInterface $stockRegistry,
         StoreManagerInterface $storeManager,
-        ProductRepositoryInterface $productRepository,
-        LoggerInterface $logger
+        ProductRepositoryInterface $productRepository
     ) {
         $this->_orderCollectionFactory = $orderCollectionFactory;
         $this->_orderConfig = $orderConfig;
@@ -104,7 +96,6 @@ class LastOrderedItems implements SectionSourceInterface
         $this->stockRegistry = $stockRegistry;
         $this->_storeManager = $storeManager;
         $this->productRepository = $productRepository;
-        $this->logger = $logger;
     }
 
     /**
@@ -149,7 +140,6 @@ class LastOrderedItems implements SectionSourceInterface
                         $this->_storeManager->getStore()->getId()
                     );
                 } catch (NoSuchEntityException $noEntityException) {
-                    $this->logger->critical($noEntityException);
                     continue;
                 }
                 if (in_array($website, $product->getWebsiteIds())) {

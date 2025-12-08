@@ -24,7 +24,6 @@ use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Psr\Log\LoggerInterface;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -77,11 +76,6 @@ class LastOrderedItemsTest extends TestCase
     private $section;
 
     /**
-     * @var LoggerInterface|MockObject
-     */
-    private $loggerMock;
-
-    /**
      * @inheritDoc
      */
     protected function setUp(): void
@@ -107,8 +101,6 @@ class LastOrderedItemsTest extends TestCase
             ->getMock();
         $this->productRepositoryMock = $this->getMockBuilder(ProductRepositoryInterface::class)
             ->getMockForAbstractClass();
-        $this->loggerMock = $this->getMockBuilder(LoggerInterface::class)
-            ->getMockForAbstractClass();
 
         $this->section = new LastOrderedItems(
             $this->orderCollectionFactoryMock,
@@ -116,8 +108,7 @@ class LastOrderedItemsTest extends TestCase
             $this->customerSessionMock,
             $this->stockRegistryMock,
             $this->storeManagerMock,
-            $this->productRepositoryMock,
-            $this->loggerMock
+            $this->productRepositoryMock
         );
     }
 
@@ -267,7 +258,6 @@ class LastOrderedItemsTest extends TestCase
             ->method('getById')
             ->with($productId, false, $storeId)
             ->willThrowException($exception);
-        $this->loggerMock->expects($this->once())->method('critical')->with($exception);
 
         $this->assertEquals(['items' => []], $this->section->getSectionData());
     }
