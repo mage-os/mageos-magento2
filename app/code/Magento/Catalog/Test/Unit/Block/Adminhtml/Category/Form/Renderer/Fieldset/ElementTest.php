@@ -23,6 +23,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
 /**
  * @covers \Magento\Catalog\Block\Adminhtml\Form\Renderer\Fieldset\Element
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class ElementTest extends TestCase
 {
