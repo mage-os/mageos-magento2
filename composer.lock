@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1f5629e86566ddbd43379a53897d7156",
+    "content-hash": "06d14f6c8965e0d61642cfa5ed0233e0",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -11947,29 +11947,30 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/pdepend/pdepend.git",
-                "reference": "04632709b73ef136bcc5b5b32708bc130df0ca2e"
+                "reference": "e2be111bb7e474bdc882d0a46b666e10a9528f4d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pdepend/pdepend/zipball/04632709b73ef136bcc5b5b32708bc130df0ca2e",
-                "reference": "04632709b73ef136bcc5b5b32708bc130df0ca2e",
+                "url": "https://api.github.com/repos/pdepend/pdepend/zipball/e2be111bb7e474bdc882d0a46b666e10a9528f4d",
+                "reference": "e2be111bb7e474bdc882d0a46b666e10a9528f4d",
                 "shasum": ""
             },
             "require": {
                 "php": ">=8.1",
                 "php-64bit": "*",
-                "symfony/config": "^5.4 || ^6.0 || ^7.0",
-                "symfony/dependency-injection": "^5.4 || ^6.0 || ^7.0",
-                "symfony/filesystem": "^5.4 || ^6.0 || ^7.0",
-                "symfony/polyfill-mbstring": "^1.19"
+                "symfony/config": "^5.4 || ^6.0 || ^7.0 || ^8.0",
+                "symfony/dependency-injection": "^5.4 || ^6.0 || ^7.0 || ^8.0",
+                "symfony/filesystem": "^5.4 || ^6.0 || ^7.0 || ^8.0",
+                "symfony/polyfill-mbstring": "^1.19",
+                "symfony/yaml": "^5.4 || ^6.0 || ^7.0 || ^8.0"
             },
             "require-dev": {
                 "brianium/paratest": "^7.3",
                 "easy-doc/easy-doc": "0.0.0 || ^1.2.3",
                 "friendsofphp/php-cs-fixer": "^3.57",
                 "gregwar/rst": "^1.0.6",
-                "phpstan/phpstan": "~2.1.0",
-                "phpunit/phpunit": "^10.5.20,<10.5.32",
+                "phpstan/phpstan": "~2.1.32",
+                "phpunit/phpunit": "^10.5.20,<10.5.32 || ^11.0.0",
                 "squizlabs/php_codesniffer": "^3.8.0"
             },
             "bin": [
@@ -12007,7 +12008,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-03-18T18:57:34+00:00"
+            "time": "2025-12-06T17:47:53+00:00"
         },
         {
             "name": "phar-io/manifest",
@@ -12292,18 +12293,18 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpmd/phpmd.git",
-                "reference": "3a8f6ed5293a244cdf4ec3a4f1ebc32db1dadf27"
+                "reference": "548d7f950e996858b602a865b33547e71c766ae5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpmd/phpmd/zipball/3a8f6ed5293a244cdf4ec3a4f1ebc32db1dadf27",
-                "reference": "3a8f6ed5293a244cdf4ec3a4f1ebc32db1dadf27",
+                "url": "https://api.github.com/repos/phpmd/phpmd/zipball/548d7f950e996858b602a865b33547e71c766ae5",
+                "reference": "548d7f950e996858b602a865b33547e71c766ae5",
                 "shasum": ""
             },
             "require": {
                 "composer/xdebug-handler": "^3.0",
                 "ext-xml": "*",
-                "pdepend/pdepend": "3.x-dev#5fddc0476146acf1455bd4cccf83f20439a0335b",
+                "pdepend/pdepend": "3.x-dev#e2be111bb7e474bdc882d0a46b666e10a9528f4d",
                 "php": "^8.1"
             },
             "require-dev": {
@@ -12314,8 +12315,8 @@
                 "friendsofphp/php-cs-fixer": "^3.57",
                 "gregwar/rst": "^1.0",
                 "mikey179/vfsstream": "^1.6.8",
-                "phpstan/phpstan": "~2.1.0",
-                "phpunit/phpunit": "^10.5.20,<10.5.32",
+                "phpstan/phpstan": "~2.1.31",
+                "phpunit/phpunit": "^10.5.20,<10.5.32|^11.0.0",
                 "squizlabs/php_codesniffer": "^3.8.0"
             },
             "bin": [
@@ -12371,7 +12372,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-04-07T18:47:38+00:00"
+            "time": "2025-12-07T10:56:53+00:00"
         },
         {
             "name": "phpstan/phpstan",

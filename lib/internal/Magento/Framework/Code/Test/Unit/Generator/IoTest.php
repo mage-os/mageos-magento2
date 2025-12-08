@@ -18,13 +18,13 @@ class IoTest extends TestCase
     /**#@+
      * Source and result class parameters
      */
-    const GENERATION_DIRECTORY = 'generation_directory';
+    public const GENERATION_DIRECTORY = 'generation_directory';
 
-    const CLASS_NAME = 'class_name';
+    public const CLASS_NAME = 'class_name';
 
-    const CLASS_FILE_NAME = 'class/file/name';
+    public const CLASS_FILE_NAME = 'class/file/name';
 
-    const FILE_CONTENT = "content";
+    public const FILE_CONTENT = "content";
 
     /**#@-*/
 
