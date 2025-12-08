@@ -14,7 +14,6 @@ use Magento\Tax\Model\Calculation\AbstractCalculator;
 use Magento\Tax\Model\Calculation\CalculatorFactory;
 use Magento\Tax\Model\Calculation\RowBaseCalculator;
 use Magento\Tax\Model\Calculation\TotalBaseCalculator;
-
 use Magento\Tax\Model\Calculation\UnitBaseCalculator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -126,7 +125,7 @@ class CalculatorFactoryTest extends TestCase
 
     protected function getMockForAddress()
     {
-        $address = $this->createMock(\Magento\Customer\Api\Data\AddressInterface::class);
+        $address = $this->createMock(CustomerAddress::class);
 
         return $address;
     }

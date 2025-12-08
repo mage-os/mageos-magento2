@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Integration\Test\Unit\Model\ResourceModel\Oauth;
 
+use \Magento\Integration\Model\ResourceModel\Oauth\Consumer as ConsumerResourceModel;
 use Magento\Framework\App\ObjectManager as AppObjectManager;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
@@ -21,7 +22,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Unit test for \Magento\Integration\Model\ResourceModel\Oauth\Consumer
+ * Unit test for ConsumerResourceModel
  */
 class ConsumerTest extends TestCase
 {
@@ -43,7 +44,7 @@ class ConsumerTest extends TestCase
     protected $consumerMock;
 
     /**
-     * @var \Magento\Integration\Model\ResourceModel\Oauth\Consumer
+     * @var ConsumerResourceModel
      */
     protected $consumerResource;
 
@@ -66,7 +67,7 @@ class ConsumerTest extends TestCase
         $objectManagerMock = $this->createMock(ObjectManagerInterface::class);
         AppObjectManager::setInstance($objectManagerMock);
 
-        $this->consumerResource = new \Magento\Integration\Model\ResourceModel\Oauth\Consumer(
+        $this->consumerResource = new ConsumerResourceModel(
             $contextMock,
             new DateTime()
         );
@@ -76,7 +77,7 @@ class ConsumerTest extends TestCase
     {
         $this->connectionMock->expects($this->exactly(2))->method('delete');
         $this->assertInstanceOf(
-            \Magento\Integration\Model\ResourceModel\Oauth\Consumer::class,
+            ConsumerResourceModel::class,
             $this->consumerResource->_afterDelete($this->consumerMock)
         );
     }

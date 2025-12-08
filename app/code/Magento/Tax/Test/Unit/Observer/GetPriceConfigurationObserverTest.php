@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\Tax\Test\Unit\Observer;
 
 use Magento\Bundle\Model\ResourceModel\Selection\Collection;
+use Magento\Bundle\Model\Product\Type as BundleProductType;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Type;
 use Magento\Catalog\Pricing\Price\BasePrice;
@@ -130,7 +131,7 @@ class GetPriceConfigurationObserverTest extends TestCase
         );
 
         $product = $this->createPartialMockWithReflection(
-            \Magento\Bundle\Model\Product\Type::class,
+            BundleProductType::class,
             ['getTypeInstance', 'getTypeId', 'getStoreId', 'getId', 'getSelectionsCollection']
         );
         $product->expects($this->any())

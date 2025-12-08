@@ -25,7 +25,7 @@ use PHPUnit\Framework\TestCase;
 
 class CustomerTest extends TestCase
 {
-    use MockCreationTrait;
+    // use MockCreationTrait;
 
     /**
      * @var TaxClassRepositoryInterface|MockObject
