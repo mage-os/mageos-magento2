@@ -6,6 +6,9 @@
 
 namespace Magento\Reports\Block\Adminhtml\Sales\Invoiced;
 
+use Magento\Reports\Block\Adminhtml\Grid\Column\Renderer\Currency;
+use Magento\Reports\Block\Adminhtml\Sales\Grid\Column\Renderer\Date;
+
 /**
  * Adminhtml invoiced report grid block
  *
@@ -52,7 +55,7 @@ class Grid extends \Magento\Reports\Block\Adminhtml\Grid\AbstractGrid
                 'index' => 'period',
                 'sortable' => false,
                 'period_type' => $this->getPeriodType(),
-                'renderer' => \Magento\Reports\Block\Adminhtml\Sales\Grid\Column\Renderer\Date::class,
+                'renderer' => Date::class,
                 'totals_label' => __('Total'),
                 'html_decorators' => ['nobr'],
                 'header_css_class' => 'col-period',
@@ -101,7 +104,8 @@ class Grid extends \Magento\Reports\Block\Adminhtml\Grid\AbstractGrid
                 'sortable' => false,
                 'rate' => $rate,
                 'header_css_class' => 'col-total-invoiced',
-                'column_css_class' => 'col-total-invoiced'
+                'column_css_class' => 'col-total-invoiced',
+                'renderer' => Currency::class
             ]
         );
 
@@ -116,7 +120,8 @@ class Grid extends \Magento\Reports\Block\Adminhtml\Grid\AbstractGrid
                 'sortable' => false,
                 'rate' => $rate,
                 'header_css_class' => 'col-total-invoiced-paid',
-                'column_css_class' => 'col-total-invoiced-paid'
+                'column_css_class' => 'col-total-invoiced-paid',
+                'renderer' => Currency::class
             ]
         );
 
@@ -131,7 +136,8 @@ class Grid extends \Magento\Reports\Block\Adminhtml\Grid\AbstractGrid
                 'sortable' => false,
                 'rate' => $rate,
                 'header_css_class' => 'col-total-invoiced-not-paid',
-                'column_css_class' => 'col-total-invoiced-not-paid'
+                'column_css_class' => 'col-total-invoiced-not-paid',
+                'renderer' => Currency::class
             ]
         );
 
