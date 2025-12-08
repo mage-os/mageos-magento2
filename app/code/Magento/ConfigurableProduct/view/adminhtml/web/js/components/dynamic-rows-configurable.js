@@ -227,11 +227,10 @@ define([
                 elemsCount,
                 tmpData,
                 path,
-                attributeCodes = this.source.get('data.attribute_codes');
+                attributeCodes = this.source.get('data.attribute_codes'),
+                productType = this.getProductTypeFromUrl();
 
             this.isEmpty(data.length === 0);
-
-            var productType = this.getProductTypeFromUrl();
 
             if (productType === 'configurable') {
                 this.isShowAddProductButton(
