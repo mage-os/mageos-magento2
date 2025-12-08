@@ -48,8 +48,8 @@
         <actionGroup ref="ClickPlaceOrderActionGroup" stepKey="placeOrder"/>
         <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber22}}" stepKey="grabOrderNumber"/>
         <!--Step 2: Navigate to admin, open order and verify order is in pending state -->
-        <actionGroup ref="OpenOrderByIdActionGroup" stepKey="openOrder">
-            <argument name="orderId" value="{$grabOrderNumber}"/>
+        <actionGroup ref="AdminOpenOrderByEntityIdActionGroup" stepKey="openOrder">
+            <argument name="entityId" value="{$grabOrderNumber}"/>
         </actionGroup>
         <actionGroup ref="AdminOrderViewCheckStatusActionGroup" stepKey="assertPending">
             <argument name="status" value="Pending"/>
@@ -58,10 +58,9 @@
         <actionGroup ref="StartCreateInvoiceFromOrderPageActionGroup" stepKey="startInvoice"/>
         <actionGroup ref="SubmitInvoiceActionGroup" stepKey="submitInvoice"/>
         <!-- Step 4: Create partial credit memo  for refund of qty 5 -->
-        <actionGroup ref="AdminStartCreateCreditMemoFromOrderPageActionGroup" stepKey="startCreditMemo"/>
-        <fillField selector="{{AdminCreditMemoItemsSection.itemQtyToRefund('1')}}" userInput="5" stepKey="fillQtyToRefund"/>
-        <click selector="{{AdminCreditMemoItemsSection.updateQty}}" stepKey="updateQtyToRefund"/>
-        <waitForPageLoad stepKey="waitForQtyUpdated"/>
+        <actionGroup ref="AdminCreateCreditMemoWithUpdateQtyActionGroup" stepKey="createCreditMemoWithPartialQty">
+            <argument name="productQty" value="5"/>
+        </actionGroup>
         <actionGroup ref="SubmitCreditMemoActionGroup" stepKey="submitCreditMemo"/>
         <!-- Step 5: Create shipment for remaining 5 -->
         <actionGroup ref="GoToShipmentIntoOrderActionGroup" stepKey="goToShipment"/>
