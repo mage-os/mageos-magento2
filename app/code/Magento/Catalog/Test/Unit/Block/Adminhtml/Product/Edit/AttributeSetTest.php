@@ -22,6 +22,8 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Unit test for AttributeSet block.
+ *
+ * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\AttributeSet
  */
 class AttributeSetTest extends TestCase
 {
@@ -99,6 +101,24 @@ class AttributeSetTest extends TestCase
         $jsonHelper = $this->createMock(JsonHelper::class);
 
         $block = new AttributeSet($context, $registry, [], $jsonHelper);
+
+        $this->assertInstanceOf(AttributeSet::class, $block);
+    }
+
+    /**
+     * Test constructor creates JsonHelper via ObjectManager when not provided (null).
+     *
+     * @return void
+     */
+    public function testConstructorWithoutJsonHelperUsesObjectManager(): void
+    {
+        $objectManagerHelper = new ObjectManager($this);
+        $objectManagerHelper->prepareObjectManager();
+
+        $context = $this->createMock(Context::class);
+        $registry = $this->createMock(Registry::class);
+
+        $block = new AttributeSet($context, $registry, [], null);
 
         $this->assertInstanceOf(AttributeSet::class, $block);
     }
@@ -212,7 +232,7 @@ class AttributeSetTest extends TestCase
     }
 
     /**
-     * Test getSelectorOptions returns complete structure.
+     * Test getSelectorOptions returns complete structure with correct types.
      *
      * @return void
      */
@@ -235,5 +255,103 @@ class AttributeSetTest extends TestCase
         $this->assertIsBool($options['showRecent']);
         $this->assertIsString($options['storageKey']);
         $this->assertIsInt($options['minLength']);
+    }
+
+    /**
+     * Test getSelectorOptions throws Error when product is null.
+     *
+     * @return void
+     */
+    public function testGetSelectorOptionsThrowsErrorWhenProductNull(): void
+    {
+        $registry = $this->createMock(Registry::class);
+        $registry->method('registry')->with('product')->willReturn(null);
+
+        $context = $this->createMock(Context::class);
+        $context->method('getUrlBuilder')->willReturn($this->urlBuilder);
+        $context->method('getEscaper')->willReturn($this->escaper);
+
+        $block = new AttributeSet($context, $registry, ['jsonHelper' => $this->jsonHelper]);
+
+        $this->urlBuilder->method('getUrl')->willReturn('http://test.com');
+        $this->escaper->method('escapeUrl')->willReturnArgument(0);
+
+        $this->expectException(\Error::class);
+        $this->expectExceptionMessage('Call to a member function getAttributeSetId() on null');
+        $block->getSelectorOptions();
+    }
+
+    /**
+     * Test getSelectorOptions handles NULL attribute set ID.
+     *
+     * @return void
+     */
+    public function testGetSelectorOptionsWithNullAttributeSetId(): void
+    {
+        $this->product->method('getAttributeSetId')->willReturn(null);
+        $this->urlBuilder->method('getUrl')->willReturn('http://test.com');
+        $this->escaper->method('escapeUrl')->willReturnArgument(0);
+        $this->escaper->method('escapeHtml')->willReturnCallback(function ($value) {
+            return $value === null ? '' : (string)$value;
+        });
+
+        $options = $this->block->getSelectorOptions();
+
+        $this->assertArrayHasKey('currentlySelected', $options);
+        $this->assertSame('', $options['currentlySelected']);
+    }
+
+    /**
+     * Test getSelectorOptions handles zero attribute set ID.
+     *
+     * @return void
+     */
+    public function testGetSelectorOptionsWithZeroAttributeSetId(): void
+    {
+        $this->product->method('getAttributeSetId')->willReturn(0);
+        $this->urlBuilder->method('getUrl')->willReturn('http://test.com');
+        $this->escaper->method('escapeUrl')->willReturnArgument(0);
+        $this->escaper->method('escapeHtml')->willReturnCallback(function ($value) {
+            return (string)$value;
+        });
+
+        $options = $this->block->getSelectorOptions();
+
+        $this->assertArrayHasKey('currentlySelected', $options);
+        $this->assertSame('0', $options['currentlySelected']);
+    }
+
+    /**
+     * Test getSelectorOptions XSS escaping verifies htmlspecialchars behavior.
+     *
+     * @return void
+     */
+    public function testGetSelectorOptionsXssEscapingWithHtmlspecialchars(): void
+    {
+        // @codingStandardsIgnoreStart
+        // phpcs:disable Magento2.Templates.InlineJs
+        $maliciousInput = '<script type="text/x-magento-init">alert("xss")</script>';
+        // phpcs:enable Magento2.Templates.InlineJs
+        // @codingStandardsIgnoreEnd
+
+        $this->product->method('getAttributeSetId')->willReturn($maliciousInput);
+        $this->urlBuilder->method('getUrl')->willReturn('http://test.com');
+        $this->escaper->method('escapeUrl')->willReturnArgument(0);
+        $this->escaper->method('escapeHtml')->willReturnCallback(function ($value) {
+            return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
+        });
+
+        $options = $this->block->getSelectorOptions();
+
+        $escapedValue = $options['currentlySelected'];
+
+        $this->assertStringNotContainsString('<script', $escapedValue);
+        $this->assertStringNotContainsString('>', $escapedValue);
+        $this->assertStringContainsString('&lt;', $escapedValue);
+        $this->assertStringContainsString('&gt;', $escapedValue);
+        $this->assertSame(
+            htmlspecialchars($maliciousInput, ENT_QUOTES, 'UTF-8'),
+            $escapedValue
+        );
     }
 }

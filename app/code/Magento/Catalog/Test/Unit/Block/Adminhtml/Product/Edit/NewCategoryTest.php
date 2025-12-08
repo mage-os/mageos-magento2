@@ -19,6 +19,7 @@ use Magento\Framework\Data\Form\Element\Select;
 use Magento\Framework\Data\Form\Element\Text;
 use Magento\Framework\Data\FormFactory;
 use Magento\Framework\Json\EncoderInterface;
+use Magento\Framework\Phrase;
 use Magento\Framework\Registry;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\UrlInterface;
@@ -30,6 +31,7 @@ use ReflectionClass;
 /**
  * Unit test for NewCategory block.
  *
+ * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\NewCategory
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class NewCategoryTest extends TestCase
@@ -152,21 +154,26 @@ class NewCategoryTest extends TestCase
                 function ($id, $type, $config) use ($nameField, $parentField) {
                     if ($id === 'new_category_name') {
                         $this->assertSame('text', $type);
-                        $this->assertSame('Category Name', $config['label']->getText());
-                        $this->assertSame('Category Name', $config['title']->getText());
+                        $this->assertInstanceOf(Phrase::class, $config['label']);
+                        $this->assertSame('Category Name', (string)$config['label']);
+                        $this->assertInstanceOf(Phrase::class, $config['title']);
+                        $this->assertSame('Category Name', (string)$config['title']);
                         $this->assertTrue($config['required']);
                         $this->assertSame('new_category_name', $config['name']);
                         return $nameField;
                     }
                     if ($id === 'new_category_parent') {
                         $this->assertSame('select', $type);
-                        $this->assertSame('Parent Category', $config['label']->getText());
-                        $this->assertSame('Parent Category', $config['title']->getText());
+                        $this->assertInstanceOf(Phrase::class, $config['label']);
+                        $this->assertSame('Parent Category', (string)$config['label']);
+                        $this->assertInstanceOf(Phrase::class, $config['title']);
+                        $this->assertSame('Parent Category', (string)$config['title']);
                         $this->assertTrue($config['required']);
                         $this->assertSame([2 => 'Default Category'], $config['options']);
                         $this->assertSame('validate-parent-category', $config['class']);
                         $this->assertSame('new_category_parent', $config['name']);
-                        $this->assertNotEmpty($config['note']);
+                        $this->assertInstanceOf(Phrase::class, $config['note']);
+                        $this->assertNotEmpty((string)$config['note']);
                         return $parentField;
                     }
                     return null;
@@ -183,72 +190,68 @@ class NewCategoryTest extends TestCase
     }
 
     /**
-     * Test _getParentCategoryOptions returns correct options when 2 categories exist.
+     * Test _getParentCategoryOptions returns correct options based on category count.
      *
+     * @param array $categoryData Array of [id => name] pairs
+     * @param array $expectedResult Expected result from _getParentCategoryOptions
      * @return void
+     * @dataProvider parentCategoryOptionsDataProvider
      */
-    public function testGetParentCategoryOptionsWithTwoCategories(): void
+    public function testGetParentCategoryOptions(array $categoryData, array $expectedResult): void
     {
-        $category1 = $this->createMock(Category::class);
-        $category1->method('getEntityId')->willReturn(1);
-        $category1->method('getName')->willReturn('Root');
+        $categories = [];
+        foreach ($categoryData as $id => $name) {
+            $category = $this->createMock(Category::class);
+            $category->method('getEntityId')->willReturn($id);
+            $category->method('getName')->willReturn($name);
+            $categories[$id] = $category;
+        }
 
-        $category2 = $this->createMock(Category::class);
-        $category2->method('getEntityId')->willReturn(2);
-        $category2->method('getName')->willReturn('Default Category');
-
-        $this->setupCategoryCollectionMock([
-            1 => $category1,
-            2 => $category2
-        ]);
+        $this->setupCategoryCollectionMock($categories);
 
         $result = $this->invokeGetParentCategoryOptions();
 
-        $this->assertSame([2 => 'Default Category'], $result);
+        if (empty($expectedResult)) {
+            $this->assertEmpty($result);
+        } else {
+            $this->assertSame($expectedResult, $result);
+        }
     }
 
     /**
-     * Test _getParentCategoryOptions returns empty array when not 2 categories.
+     * Data provider for testGetParentCategoryOptions.
      *
-     * @return void
+     * @return array
      */
-    public function testGetParentCategoryOptionsWithNotTwoCategories(): void
+    public static function parentCategoryOptionsDataProvider(): array
     {
-        $category1 = $this->createMock(Category::class);
-        $category1->method('getEntityId')->willReturn(1);
-        $category1->method('getName')->willReturn('Root');
-
-        $category2 = $this->createMock(Category::class);
-        $category2->method('getEntityId')->willReturn(2);
-        $category2->method('getName')->willReturn('Default Category');
-
-        $category3 = $this->createMock(Category::class);
-        $category3->method('getEntityId')->willReturn(3);
-        $category3->method('getName')->willReturn('Custom Category');
-
-        $this->setupCategoryCollectionMock([
-            1 => $category1,
-            2 => $category2,
-            3 => $category3
-        ]);
-
-        $result = $this->invokeGetParentCategoryOptions();
-
-        $this->assertEmpty($result);
-    }
-
-    /**
-     * Test _getParentCategoryOptions returns empty array when no categories.
-     *
-     * @return void
-     */
-    public function testGetParentCategoryOptionsWithNoCategories(): void
-    {
-        $this->setupCategoryCollectionMock([]);
-
-        $result = $this->invokeGetParentCategoryOptions();
-
-        $this->assertEmpty($result);
+        return [
+            'two_categories_returns_second' => [
+                'categoryData' => [
+                    1 => 'Root',
+                    2 => 'Default Category'
+                ],
+                'expectedResult' => [2 => 'Default Category']
+            ],
+            'three_categories_returns_empty' => [
+                'categoryData' => [
+                    1 => 'Root',
+                    2 => 'Default Category',
+                    3 => 'Custom Category'
+                ],
+                'expectedResult' => []
+            ],
+            'one_category_returns_empty' => [
+                'categoryData' => [
+                    1 => 'Root'
+                ],
+                'expectedResult' => []
+            ],
+            'no_categories_returns_empty' => [
+                'categoryData' => [],
+                'expectedResult' => []
+            ]
+        ];
     }
 
     /**
@@ -279,10 +282,19 @@ class NewCategoryTest extends TestCase
     {
         $suggestUrl = 'http://example.com/admin/catalog/category/suggestCategories';
         $saveUrl = 'http://example.com/admin/catalog/category/save';
-        $encodedOptions = '{"suggestOptions":{"source":"'
-            . $suggestUrl . '","valueField":"#new_category_parent","className":"category-select",
-            "multiselect":true,"showAll":true},"saveCategoryUrl":"'
-            . $saveUrl . '"}';
+
+        $expectedOptionsArray = [
+            'suggestOptions' => [
+                'source' => $suggestUrl,
+                'valueField' => '#new_category_parent',
+                'className' => 'category-select',
+                'multiselect' => true,
+                'showAll' => true,
+            ],
+            'saveCategoryUrl' => $saveUrl,
+        ];
+
+        $encodedOptions = json_encode($expectedOptionsArray);
 
         $this->urlBuilder->expects($this->exactly(2))
             ->method('getUrl')
@@ -298,16 +310,7 @@ class NewCategoryTest extends TestCase
 
         $this->jsonEncoder->expects($this->once())
             ->method('encode')
-            ->with([
-                'suggestOptions' => [
-                    'source' => $suggestUrl,
-                    'valueField' => '#new_category_parent',
-                    'className' => 'category-select',
-                    'multiselect' => true,
-                    'showAll' => true,
-                ],
-                'saveCategoryUrl' => $saveUrl,
-            ])
+            ->with($expectedOptionsArray)
             ->willReturn($encodedOptions);
 
         // @codingStandardsIgnoreStart

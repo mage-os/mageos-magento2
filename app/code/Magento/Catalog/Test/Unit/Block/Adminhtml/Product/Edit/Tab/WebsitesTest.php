@@ -12,6 +12,7 @@ use Magento\Backend\Block\Widget\Form\Element\ElementCreator;
 use Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Websites;
 use Magento\Catalog\Model\Product;
 use Magento\Framework\Escaper;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Filesystem\Directory\ReadInterface as DirectoryHelper;
 use Magento\Framework\Json\Helper\Data as JsonHelper;
 use Magento\Framework\Registry;
@@ -33,6 +34,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * Unit test for Websites tab block.
  *
+ * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Websites
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class WebsitesTest extends TestCase
@@ -127,6 +129,112 @@ class WebsitesTest extends TestCase
     }
 
     /**
+     * Test getProduct returns null when registry has no product.
+     *
+     * @return void
+     */
+    public function testGetProductReturnsNullWhenRegistryEmpty(): void
+    {
+        $registry = $this->createMock(Registry::class);
+        $registry->method('registry')->with('product')->willReturn(null);
+
+        $context = $this->createMock(Context::class);
+        $context->method('getStoreManager')->willReturn($this->storeManager);
+        $context->method('getEscaper')->willReturn($this->escaper);
+
+        $block = new Websites(
+            $context,
+            $this->websiteFactory,
+            $this->groupFactory,
+            $this->storeFactory,
+            $registry
+        );
+
+        $this->assertNull($block->getProduct());
+    }
+
+    /**
+     * Test getStoreId throws Error when product is null.
+     *
+     * @return void
+     */
+    public function testGetStoreIdThrowsErrorWhenProductNull(): void
+    {
+        $registry = $this->createMock(Registry::class);
+        $registry->method('registry')->with('product')->willReturn(null);
+
+        $context = $this->createMock(Context::class);
+        $context->method('getStoreManager')->willReturn($this->storeManager);
+        $context->method('getEscaper')->willReturn($this->escaper);
+
+        $block = new Websites(
+            $context,
+            $this->websiteFactory,
+            $this->groupFactory,
+            $this->storeFactory,
+            $registry
+        );
+
+        $this->expectException(\Error::class);
+        $this->expectExceptionMessage('Call to a member function getStoreId() on null');
+        $block->getStoreId();
+    }
+
+    /**
+     * Test getProductId throws Error when product is null.
+     *
+     * @return void
+     */
+    public function testGetProductIdThrowsErrorWhenProductNull(): void
+    {
+        $registry = $this->createMock(Registry::class);
+        $registry->method('registry')->with('product')->willReturn(null);
+
+        $context = $this->createMock(Context::class);
+        $context->method('getStoreManager')->willReturn($this->storeManager);
+        $context->method('getEscaper')->willReturn($this->escaper);
+
+        $block = new Websites(
+            $context,
+            $this->websiteFactory,
+            $this->groupFactory,
+            $this->storeFactory,
+            $registry
+        );
+
+        $this->expectException(\Error::class);
+        $this->expectExceptionMessage('Call to a member function getId() on null');
+        $block->getProductId();
+    }
+
+    /**
+     * Test getWebsites throws Error when product is null.
+     *
+     * @return void
+     */
+    public function testGetWebsitesThrowsErrorWhenProductNull(): void
+    {
+        $registry = $this->createMock(Registry::class);
+        $registry->method('registry')->with('product')->willReturn(null);
+
+        $context = $this->createMock(Context::class);
+        $context->method('getStoreManager')->willReturn($this->storeManager);
+        $context->method('getEscaper')->willReturn($this->escaper);
+
+        $block = new Websites(
+            $context,
+            $this->websiteFactory,
+            $this->groupFactory,
+            $this->storeFactory,
+            $registry
+        );
+
+        $this->expectException(\Error::class);
+        $this->expectExceptionMessage('Call to a member function getWebsiteIds() on null');
+        $block->getWebsites();
+    }
+
+    /**
      * Test getStoreId returns correct store ID.
      *
      * @return void
@@ -149,6 +257,28 @@ class WebsitesTest extends TestCase
     }
 
     /**
+     * Test getProductId returns null for new product (no ID yet).
+     *
+     * @return void
+     */
+    public function testGetProductIdReturnsNullForNewProduct(): void
+    {
+        $this->product->method('getId')->willReturn(null);
+        $this->assertNull($this->block->getProductId());
+    }
+
+    /**
+     * Test getProductId returns zero when product ID is zero.
+     *
+     * @return void
+     */
+    public function testGetProductIdReturnsZero(): void
+    {
+        $this->product->method('getId')->willReturn(0);
+        $this->assertSame(0, $this->block->getProductId());
+    }
+
+    /**
      * Test getWebsites returns correct website IDs.
      *
      * @return void
@@ -158,6 +288,18 @@ class WebsitesTest extends TestCase
         $websiteIds = [1, 2, 3];
         $this->product->method('getWebsiteIds')->willReturn($websiteIds);
         $this->assertSame($websiteIds, $this->block->getWebsites());
+    }
+
+    /**
+     * Test getWebsites returns empty array when product has no websites.
+     *
+     * @return void
+     */
+    public function testGetWebsitesReturnsEmptyArray(): void
+    {
+        $this->product->method('getWebsiteIds')->willReturn([]);
+        $this->assertSame([], $this->block->getWebsites());
+        $this->assertEmpty($this->block->getWebsites());
     }
 
     /**
@@ -227,6 +369,23 @@ class WebsitesTest extends TestCase
         $this->storeManager->method('getStore')->with(1)->willReturn($store);
 
         $this->assertSame('Main Store', $this->block->getStoreName(1));
+    }
+
+    /**
+     * Test getStoreName throws exception for invalid store ID.
+     *
+     * @return void
+     */
+    public function testGetStoreNameThrowsExceptionForInvalidStore(): void
+    {
+        $this->storeManager->method('getStore')
+            ->with(99999)
+            ->willThrowException(new NoSuchEntityException(
+                __('The store that was requested wasn\'t found.')
+            ));
+
+        $this->expectException(NoSuchEntityException::class);
+        $this->block->getStoreName(99999);
     }
 
     /**
