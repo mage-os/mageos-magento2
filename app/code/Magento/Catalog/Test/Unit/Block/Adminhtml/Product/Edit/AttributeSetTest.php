@@ -191,12 +191,8 @@ class AttributeSetTest extends TestCase
     {
         $this->product->method('getAttributeSetId')->willReturn(1);
 
-        // @codingStandardsIgnoreStart
-        // phpcs:disable Magento2.Templates.InlineJs
-        $rawUrl = 'http://example.com/admin/catalog?test=1&special=<script type="text/x-magento-init">';
-        $escapedUrl = 'http://example.com/admin/catalog?test=1&amp;special=&lt;script type=&quot;text/x-magento-init&quot;&gt;';
-        // phpcs:enable Magento2.Templates.InlineJs
-        // @codingStandardsIgnoreEnd
+        $rawUrl = 'http://example.com/admin/catalog?test=1&special=<script type="text/x-magento-init"></script>';
+        $escapedUrl = 'http://example.com/admin/catalog?test=1&amp;special=&lt;script type=&quot;text/x-magento-init&quot;&gt;&lt;/script&gt;';
 
         $this->urlBuilder->method('getUrl')->willReturn($rawUrl);
         $this->escaper->method('escapeUrl')->with($rawUrl)->willReturn($escapedUrl);
@@ -214,12 +210,8 @@ class AttributeSetTest extends TestCase
      */
     public function testGetSelectorOptionsEscapesAttributeSetId(): void
     {
-        // @codingStandardsIgnoreStart
-        // phpcs:disable Magento2.Templates.InlineJs
         $attributeSetId = '<script type="text/x-magento-init">alert("xss")</script>';
-        $escapedAttributeSetId = '&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;';
-        // phpcs:enable Magento2.Templates.InlineJs
-        // @codingStandardsIgnoreEnd
+        $escapedAttributeSetId = '&lt;script type=&quot;text/x-magento-init&quot;&gt;alert(&quot;xss&quot;)&lt;/script&gt;';
 
         $this->product->method('getAttributeSetId')->willReturn($attributeSetId);
         $this->urlBuilder->method('getUrl')->willReturn('http://example.com/admin/url');
@@ -328,11 +320,7 @@ class AttributeSetTest extends TestCase
      */
     public function testGetSelectorOptionsXssEscapingWithHtmlspecialchars(): void
     {
-        // @codingStandardsIgnoreStart
-        // phpcs:disable Magento2.Templates.InlineJs
         $maliciousInput = '<script type="text/x-magento-init">alert("xss")</script>';
-        // phpcs:enable Magento2.Templates.InlineJs
-        // @codingStandardsIgnoreEnd
 
         $this->product->method('getAttributeSetId')->willReturn($maliciousInput);
         $this->urlBuilder->method('getUrl')->willReturn('http://test.com');

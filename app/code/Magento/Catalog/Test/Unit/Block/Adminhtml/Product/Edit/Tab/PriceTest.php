@@ -195,7 +195,7 @@ class PriceTest extends TestCase
 
         $fieldset->expects($this->exactly(2))
             ->method('addField')
-            ->willReturnCallback(function ($id, $type, $config) use ($defaultPriceField, $tierPriceField) {
+            ->willReturnCallback(function ($id, $_type, $config) use ($defaultPriceField, $tierPriceField) {
                 if ($id === 'default_price') {
                     $this->assertNull($config['value']);
                     return $defaultPriceField;
@@ -243,7 +243,7 @@ class PriceTest extends TestCase
 
         $fieldset->expects($this->exactly(2))
             ->method('addField')
-            ->willReturnCallback(function ($id, $type, $config) use ($defaultPriceField, $tierPriceField) {
+            ->willReturnCallback(function ($id, $_type, $config) use ($defaultPriceField, $tierPriceField) {
                 if ($id === 'default_price') {
                     $this->assertSame(0.00, $config['value']);
                     return $defaultPriceField;
