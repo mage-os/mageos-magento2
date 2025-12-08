@@ -80,7 +80,7 @@ class IoTest extends TestCase
     }
 
     /**
-     * @dataProvider testWriteResultFileAlreadyExistsDataProvider
+     * @dataProvider writeResultFileAlreadyExistsDataProvider
      */
     public function testWriteResultFileAlreadyExists($resultFileName, $fileExists, $exceptionDuringRename, $success)
     {
@@ -119,7 +119,7 @@ class IoTest extends TestCase
     /**
      * @return array
      */
-    public static function testWriteResultFileAlreadyExistsDataProvider()
+    public static function writeResultFileAlreadyExistsDataProvider()
     {
         return [
             'Writing file succeeds: writeResultFile succeeds' => [
