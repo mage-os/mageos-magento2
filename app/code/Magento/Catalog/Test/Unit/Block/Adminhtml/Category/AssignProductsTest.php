@@ -20,7 +20,6 @@ use Magento\Framework\Json\Helper\Data as JsonHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-
 /**
  * @covers \Magento\Catalog\Block\Adminhtml\Category\AssignProducts
  */
@@ -45,11 +44,6 @@ class AssignProductsTest extends TestCase
      * @var AssignProducts
      */
     private AssignProducts $block;
-
-    /**
-     * @var ObjectManager
-     */
-    private $objectManager;
 
     /**
      * @var TemplateContext|MockObject

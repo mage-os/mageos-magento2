@@ -258,14 +258,7 @@ class ElementTest extends TestCase
      * @param bool $expected
      * @return void
      */
-    public function testUsedDefaultReturnsTrueWhenNoStoreValueFlag(
-        bool $existsStoreValueFlag,
-        ?int $storeId,
-        mixed $elementValue,
-        mixed $defaultValue,
-        bool $expected
-    ): void
-    {
+    public function testUsedDefaultReturnsTrueWhenNoStoreValueFlag(bool $existsStoreValueFlag, ?int $storeId, mixed $elementValue, mixed $defaultValue, bool $expected): void {
         $this->attributeMock->expects($this->once())
             ->method('getAttributeCode')
             ->willReturn('test_code');
@@ -300,7 +293,6 @@ class ElementTest extends TestCase
         $this->block->checkFieldDisable();
         $this->assertTrue((bool)$this->elementMock->getData('disabled'));
     }
-
 
     /**
      * Data provider for getScopeLabel scenarios.
