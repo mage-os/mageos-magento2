@@ -7,8 +7,9 @@ define([
     'underscore',
     'uiRegistry',
     'Magento_Ui/js/dynamic-rows/dynamic-rows',
-    'jquery'
-], function (_, registry, dynamicRows, $) {
+    'jquery',
+    'mageUtils'
+], function (_, registry, dynamicRows, $, utils) {
     'use strict';
 
     return dynamicRows.extend({
@@ -62,6 +63,28 @@ define([
                 .changeVisibility(this.isEmpty());
 
             return this;
+        },
+
+        /**
+         * Get product type from URL
+         *
+         * @returns {String|null}
+         */
+        getProductTypeFromUrl: function () {
+            var urlParams = utils.getUrlParameters(window.location.href),
+                urlPath = window.location.pathname;
+
+            if (urlPath.indexOf('/type/configurable') !== -1) {
+                return 'configurable';
+            }
+
+            // Check for type in URL parameters
+            if (urlParams.type) {
+                return urlParams.type;
+            }
+
+            // For existing products, try to get from source
+            return this.source.get('data.product.type_id') || null;
         },
 
         /**
@@ -207,9 +230,18 @@ define([
                 attributeCodes = this.source.get('data.attribute_codes');
 
             this.isEmpty(data.length === 0);
-            this.isShowAddProductButton(
-                (!attributeCodes || data.length > 0 ? data.length : attributeCodes.length) > 0
-            );
+
+            var productType = this.getProductTypeFromUrl();
+
+            if (productType === 'configurable') {
+                this.isShowAddProductButton(
+                    attributeCodes || attributeCodes.length > 0
+                );
+            } else {
+                this.isShowAddProductButton(
+                    (!attributeCodes || data.length > 0 ? data.length : attributeCodes.length) > 0
+                );
+            }
 
             tmpData = data.slice(this.pageSize * (this.currentPage() - 1),
                                  this.pageSize * (this.currentPage() - 1) + parseInt(this.pageSize, 10));
