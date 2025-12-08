@@ -19,7 +19,7 @@
             <group value="importExport"/>
         </annotations>
         <before>
-            <!--Step 1: Two simple products are created -->
+            <!-- Step 1: Two simple products are created -->
             <createData entity="SimpleProduct2" stepKey="createSimpleProduct1">
                 <field key="name">Simple Product 1</field>
                 <field key="sku">simple1</field>
@@ -28,11 +28,11 @@
                 <field key="name">Simple Product 2</field>
                 <field key="sku">simple2</field>
             </createData>
-            <!-- Step 2: Create Attribute Set -->
+            <!-- Step 2: Create attribute set -->
             <createData entity="CatalogAttributeSet" stepKey="createAttributeSet">
                 <field key="attribute_set_name">set1</field>
             </createData>
-            <!-- Login as Admin -->
+            <!-- Login as admin -->
             <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
         </before>
         <after>
@@ -41,25 +41,36 @@
             <deleteData createDataKey="createSimpleProduct2" stepKey="deleteSimpleProduct2"/>
             <!-- Delete created attribute set -->
             <deleteData createDataKey="createAttributeSet" stepKey="deleteAttributeSet"/>
-            <!-- Logout from Admin -->
+            <!-- Logout from admin -->
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
         </after>
-        <!-- Step 1,2: Go to System -> Import and select Products entity type -->
+        <!-- Step 1, 2: Go to System > Import and select products entity type -->
         <actionGroup ref="AdminNavigateToImportPageActionGroup" stepKey="navigateToImportPage"/>
-        <!-- Fill form and upload CSV file with Add/Update behavior -->
+        <!-- Fill form and upload CSV file with add/update behavior -->
         <actionGroup ref="AdminFillImportFormActionGroup" stepKey="fillImportForm">
             <argument name="importFile" value="import_change_attribute_set.csv"/>
         </actionGroup>
-        <!-- Click Check Data -->
+        <!-- Click check data -->
         <actionGroup ref="AdminClickCheckDataImportActionGroup" stepKey="clickCheckData"/>
-        <!-- Verify file is valid - Expected: File is valid! To start import process press "Import" button -->
+        <!-- Verify file is valid - expected: File is valid! To start import process press "Import" button -->
         <waitForElementVisible selector="{{AdminImportValidationMessagesSection.success}}" stepKey="waitForValidationSuccess"/>
         <waitForText selector="{{AdminImportValidationMessagesSection.success}}" userInput="{{ImportCommonMessages.validFile}}" stepKey="seeFileIsValidMessage"/>
-        <!-- Step 3: Click Import button -->
+        <!-- Step 3: Click import button -->
         <actionGroup ref="AdminClickImportActionGroup" stepKey="clickImport"/>
-        <!-- Verify import success - Expected: Import successfully done -->
-        <waitForElementVisible selector="{{AdminImportValidationMessagesSection.messageByType('success')}}" stepKey="waitForImportSuccess"/>
-        <waitForText selector="{{AdminImportValidationMessagesSection.messageByType('success')}}" userInput="{{ImportCommonMessages.success}}" stepKey="seeImportSuccessMessage"/>
+        <!-- Verify import success - expected: Import successfully done -->
+        <waitForElementVisible selector="{{AdminImportValidationMessagesSection.success}}" stepKey="waitForImportSuccess"/>
+        <waitForText selector="{{AdminImportValidationMessagesSection.success}}" userInput="{{ImportCommonMessages.success}}" stepKey="seeImportSuccessMessage"/>
+        <!-- Step 4: Go to product grid page and verify column Attribute Set is filled with value "set1" for createSimpleProduct1 and createSimpleProduct2 -->
+        <actionGroup ref="AdminOpenProductIndexPageActionGroup" stepKey="openProductIndexPageAfterImport"/>
+        <actionGroup ref="FilterProductGridBySkuActionGroup" stepKey="filterProduct1AfterImport">
+            <argument name="product" value="$$createSimpleProduct1$$"/>
+        </actionGroup>
+        <waitForText selector="{{AdminProductGridSection.productGridCell('1', 'Attribute Set')}}" userInput="set1" stepKey="seeSet1AttributeSetForProduct1InGrid"/>
+        <actionGroup ref="AdminClearFiltersActionGroup" stepKey="clearFiltersAfterProduct1"/>
+        <actionGroup ref="FilterProductGridBySkuActionGroup" stepKey="filterProduct2AfterImport">
+            <argument name="product" value="$$createSimpleProduct2$$"/>
+        </actionGroup>
+        <waitForText selector="{{AdminProductGridSection.productGridCell('1', 'Attribute Set')}}" userInput="set1" stepKey="seeSet1AttributeSetForProduct2InGrid"/>
         <!-- Step 5: Open simple1 and verify Attribute Set is "set1" -->
         <actionGroup ref="AdminProductPageOpenByIdActionGroup" stepKey="openProduct1EditPage">
             <argument name="productId" value="$$createSimpleProduct1.id$$"/>
