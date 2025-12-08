@@ -265,8 +265,7 @@ class ElementTest extends TestCase
         mixed $elementValue,
         mixed $defaultValue,
         bool $expected
-    ): void
-    {
+    ): void {
         $this->attributeMock->expects($this->once())
             ->method('getAttributeCode')
             ->willReturn('test_code');
