@@ -550,4 +550,7 @@
         <data key="city5">29 Palms</data>
         <data key="city6">New York</data>
     </entity>
+    <entity name="CustomerEmailWithSwissDomain">
+        <data key="email">max@möstermann.swiss</data>
+    </entity>
 </entities>
