@@ -15,6 +15,8 @@ use Magento\Persistent\Helper\Data;
 use Magento\Persistent\Helper\Session;
 use Magento\Persistent\Model\QuoteManager;
 use Magento\Persistent\Observer\CheckExpirePersistentQuoteObserver;
+use Magento\Customer\Model\Session as CustomerSession;
+use Magento\Checkout\Model\Session as CheckoutSession;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Model\Quote;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -92,17 +94,15 @@ class CheckExpirePersistentQuoteObserverTest extends TestCase
     protected function setUp(): void
     {
         $this->sessionMock = $this->createMock(Session::class);
-        $this->customerSessionMock = $this->createMock(\Magento\Customer\Model\Session::class);
+        $this->customerSessionMock = $this->createMock(CustomerSession::class);
         $this->persistentHelperMock = $this->createMock(Data::class);
-        // Use createPartialMockWithReflection for methods not in the class - PHPUnit 12 compatible
         $this->observerMock = $this->createPartialMockWithReflection(
             Observer::class,
             ['getControllerAction']
         );
         $this->quoteManagerMock = $this->createMock(QuoteManager::class);
         $this->eventManagerMock = $this->createMock(ManagerInterface::class);
-        $this->checkoutSessionMock = $this->createMock(\Magento\Checkout\Model\Session::class);
-        // Use createPartialMockWithReflection - include ALL interface methods + custom methods - PHPUnit 12 compatible
+        $this->checkoutSessionMock = $this->createMock(CheckoutSession::class);
         $this->requestMock = $this->createPartialMockWithReflection(
             RequestInterface::class,
             [
@@ -123,7 +123,6 @@ class CheckExpirePersistentQuoteObserverTest extends TestCase
             $this->requestMock,
             $this->quoteRepositoryMock
         );
-        // Use createPartialMockWithReflection - PHPUnit 12 compatible
         $this->quoteMock = $this->createPartialMockWithReflection(
             Quote::class,
             ['getIsPersistent', 'getCustomerIsGuest']
@@ -203,7 +202,6 @@ class CheckExpirePersistentQuoteObserverTest extends TestCase
             ->expects($this->atLeastOnce())
             ->method('getQuoteId')
             ->willReturn(10);
-        // Use dynamic method calls for expectations - PHPUnit 12 compatible
         $this->eventManagerMock->expects($this->{$dispatchCounter}())->method('dispatch');
         $this->quoteManagerMock->expects($this->{$expireCounter}())->method('expire');
         $this->customerSessionMock

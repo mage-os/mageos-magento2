@@ -8,6 +8,8 @@ declare(strict_types=1);
 namespace Magento\Persistent\Test\Unit\Model\Checkout;
 
 use Magento\Checkout\Model\DefaultConfigProvider;
+use Magento\Customer\Model\Session as CustomerSession;
+use Magento\Checkout\Model\Session as CheckoutSession;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Persistent\Helper\Data;
 use Magento\Persistent\Helper\Session;
@@ -62,12 +64,12 @@ class ConfigProviderPluginTest extends TestCase
     {
         $this->persistentHelperMock = $this->createMock(Data::class);
         $this->persistentSessionMock = $this->createMock(Session::class);
-        $this->checkoutSessionMock = $this->createMock(\Magento\Checkout\Model\Session::class);
+        $this->checkoutSessionMock = $this->createMock(CheckoutSession::class);
         $this->maskFactoryMock = $this->createPartialMock(
             QuoteIdMaskFactory::class,
             ['create']
         );
-        $this->customerSessionMock = $this->createMock(\Magento\Customer\Model\Session::class);
+        $this->customerSessionMock = $this->createMock(CustomerSession::class);
         $this->subjectMock = $this->createMock(DefaultConfigProvider::class);
 
         $this->plugin = new ConfigProviderPlugin(

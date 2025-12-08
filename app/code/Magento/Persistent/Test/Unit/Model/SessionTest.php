@@ -107,7 +107,7 @@ class SessionTest extends TestCase
     }
 
     /**
-     * @covers \Magento\Persistent\Model\Session::removePersistentCookie
+     * @covers Session::removePersistentCookie
      */
     public function testAfterDeleteCommit()
     {

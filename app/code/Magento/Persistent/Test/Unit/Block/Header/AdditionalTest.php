@@ -14,10 +14,13 @@ use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Persistent\Block\Header\Additional;
 use Magento\Persistent\Helper\Data;
 use Magento\Persistent\Helper\Session;
+use Magento\Persistent\Model\Session as PersistentSession;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 /**
+ * Test for Additional block
+ *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class AdditionalTest extends TestCase
@@ -27,40 +30,39 @@ class AdditionalTest extends TestCase
     /**
      * @var View|MockObject
      */
-    protected $customerViewHelperMock;
+    private View|MockObject $customerViewHelperMock;
 
     /**
      * @var Session|MockObject
      */
-    protected $persistentSessionHelperMock;
+    private Session|MockObject $persistentSessionHelperMock;
 
     /**
      * Customer repository
      *
      * @var CustomerRepositoryInterface|MockObject
      */
-    protected $customerRepositoryMock;
+    private CustomerRepositoryInterface|MockObject $customerRepositoryMock;
 
     /**
      * @var Json|MockObject
      */
-    private $jsonSerializerMock;
+    private Json|MockObject $jsonSerializerMock;
 
     /**
      * @var Data|MockObject
      */
-    private $persistentHelperMock;
+    private Data|MockObject $persistentHelperMock;
 
     /**
-     * @var Additional
+     * @var Additional|MockObject
      */
-    protected $additional;
+    private Additional|MockObject $additional;
 
     /**
      * Set up
      *
      * @return void
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     protected function setUp(): void
     {
@@ -69,9 +71,7 @@ class AdditionalTest extends TestCase
             Session::class,
             ['getSession']
         );
-        // Use createMock() for interfaces - PHPUnit 12 compatible
         $this->customerRepositoryMock = $this->createMock(CustomerRepositoryInterface::class);
-
         $this->jsonSerializerMock = $this->createPartialMock(
             Json::class,
             ['serialize']
@@ -81,31 +81,28 @@ class AdditionalTest extends TestCase
             ['getLifeTime']
         );
 
-        // Create mock of Additional class and use reflection to set properties
-        $this->additional = $this->createPartialMock(Additional::class, []);
-        
-        // Use reflection to set protected properties
+        // Create a partial mock of Additional class without invoking constructor
+        // This avoids ObjectManager::getInstance() calls in parent constructors
+        $this->additional = $this->getMockBuilder(Additional::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods([])
+            ->getMock();
+
         $reflection = new \ReflectionClass(Additional::class);
-        
+
         $customerViewHelperProperty = $reflection->getProperty('_customerViewHelper');
-        $customerViewHelperProperty->setAccessible(true);
         $customerViewHelperProperty->setValue($this->additional, $this->customerViewHelperMock);
-        
+
         $persistentSessionHelperProperty = $reflection->getProperty('_persistentSessionHelper');
-        $persistentSessionHelperProperty->setAccessible(true);
         $persistentSessionHelperProperty->setValue($this->additional, $this->persistentSessionHelperMock);
-        
+
         $customerRepositoryProperty = $reflection->getProperty('customerRepository');
-        $customerRepositoryProperty->setAccessible(true);
         $customerRepositoryProperty->setValue($this->additional, $this->customerRepositoryMock);
-        
-        // Use reflection to set private properties
+
         $jsonSerializerProperty = $reflection->getProperty('jsonSerializer');
-        $jsonSerializerProperty->setAccessible(true);
         $jsonSerializerProperty->setValue($this->additional, $this->jsonSerializerMock);
-        
+
         $persistentHelperProperty = $reflection->getProperty('persistentHelper');
-        $persistentHelperProperty->setAccessible(true);
         $persistentHelperProperty->setValue($this->additional, $this->persistentHelperMock);
     }
 
@@ -117,10 +114,9 @@ class AdditionalTest extends TestCase
     public function testGetCustomerId(): void
     {
         $customerId = 1;
-        /** @var \Magento\Persistent\Model\Session|MockObject $sessionMock */
-        // Use createPartialMockWithReflection for methods not in the class - PHPUnit 12 compatible
+        // Use createPartialMockWithReflection for magic method getCustomerId() - PHPUnit 12 compatible
         $sessionMock = $this->createPartialMockWithReflection(
-            \Magento\Persistent\Model\Session::class,
+            PersistentSession::class,
             ['getCustomerId']
         );
         $sessionMock->expects($this->once())

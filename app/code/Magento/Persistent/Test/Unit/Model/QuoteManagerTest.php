@@ -15,6 +15,8 @@ use Magento\Eav\Model\Entity\Collection\AbstractCollection;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Persistent\Helper\Data;
 use Magento\Persistent\Model\QuoteManager;
+use Magento\Persistent\Model\Session as PersistentSession;
+use Magento\Persistent\Helper\Session as PersistentSessionHelper;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\Data\CartExtensionFactory;
 use Magento\Quote\Api\Data\CartExtensionInterface;
@@ -39,7 +41,7 @@ class QuoteManagerTest extends TestCase
     protected $model;
 
     /**
-     * @var \Magento\Persistent\Helper\Session|MockObject
+     * @var PersistentSessionHelper|MockObject
      */
     protected $persistentSessionMock;
 
@@ -93,10 +95,9 @@ class QuoteManagerTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->persistentSessionMock = $this->createMock(\Magento\Persistent\Helper\Session::class);
-        // Use createPartialMockWithReflection for methods not in the class - PHPUnit 12 compatible
+        $this->persistentSessionMock = $this->createMock(PersistentSessionHelper::class);
         $this->sessionMock = $this->createPartialMockWithReflection(
-            \Magento\Persistent\Model\Session::class,
+            PersistentSession::class,
             [
                 'setLoadInactive',
                 'setCustomerData',

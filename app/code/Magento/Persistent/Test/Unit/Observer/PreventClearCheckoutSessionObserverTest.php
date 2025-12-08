@@ -12,6 +12,7 @@ use Magento\Framework\Event;
 use Magento\Framework\Event\Observer;
 use Magento\Persistent\Controller\Index;
 use Magento\Persistent\Helper\Data;
+use Magento\Persistent\Helper\Session as PersistentSessionHelper;
 use Magento\Persistent\Observer\PreventClearCheckoutSessionObserver;
 use PHPUnit\Framework\MockObject\MockObject;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
@@ -65,10 +66,9 @@ class PreventClearCheckoutSessionObserverTest extends TestCase
     protected function setUp(): void
     {
         $this->customerSessionMock = $this->createMock(Session::class);
-        $this->sessionHelperMock = $this->createMock(\Magento\Persistent\Helper\Session::class);
+        $this->sessionHelperMock = $this->createMock(PersistentSessionHelper::class);
         $this->helperMock = $this->createMock(Data::class);
         $this->observerMock = $this->createMock(Observer::class);
-        // Use createPartialMockWithReflection - PHPUnit 12 compatible
         $this->eventMock = $this->createPartialMockWithReflection(
             Event::class,
             ['getControllerAction', 'dispatch']

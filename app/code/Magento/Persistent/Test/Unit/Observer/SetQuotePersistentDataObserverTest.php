@@ -13,6 +13,7 @@ use Magento\Persistent\Helper\Data;
 use Magento\Persistent\Helper\Session;
 use Magento\Persistent\Model\QuoteManager;
 use Magento\Persistent\Observer\SetQuotePersistentDataObserver;
+use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Quote\Model\Quote;
 use PHPUnit\Framework\MockObject\MockObject;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
@@ -75,12 +76,11 @@ class SetQuotePersistentDataObserverTest extends TestCase
         );
         $this->helperMock = $this->createMock(Data::class);
         $this->sessionHelperMock = $this->createMock(Session::class);
-        // Use createPartialMockWithReflection - PHPUnit 12 compatible
         $this->eventManagerMock = $this->createPartialMockWithReflection(
             Event::class,
             ['getQuote']
         );
-        $this->customerSessionMock = $this->createMock(\Magento\Customer\Model\Session::class);
+        $this->customerSessionMock = $this->createMock(CustomerSession::class);
         $this->observerMock = $this->createMock(Observer::class);
         $this->quoteManagerMock = $this->createMock(QuoteManager::class);
         $this->model = new SetQuotePersistentDataObserver(

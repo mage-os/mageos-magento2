@@ -12,6 +12,7 @@ use Magento\Backend\Helper\Data;
 use Magento\Backend\Model\Session;
 use Magento\Backup\Controller\Adminhtml\Index\Create;
 use Magento\Backup\Model\Backup;
+use Magento\Backup\Helper\Data as BackupHelperData;
 use Magento\Framework\App\MaintenanceMode;
 use Magento\Framework\App\Request\Http;
 use Magento\Framework\App\RequestInterface;
@@ -69,7 +70,7 @@ class CreateTest extends TestCase
     private $dataBackendHelperMock;
 
     /**
-     * @var \Magento\Backup\Helper\Data|MockObject
+     * @var BackupHelperData|MockObject
      */
     private $dataBackupHelperMock;
 
@@ -125,7 +126,7 @@ class CreateTest extends TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['getUrl'])
             ->getMock();
-        $this->dataBackupHelperMock = $this->getMockBuilder(\Magento\Backup\Helper\Data::class)
+        $this->dataBackupHelperMock = $this->getMockBuilder(BackupHelperData::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getExtensionByType', 'getBackupsDir'])
             ->getMock();
@@ -244,7 +245,7 @@ class CreateTest extends TestCase
             ->willReturnSelf();
         $this->objectManagerMock->expects($this->any())
             ->method('get')
-            ->with(\Magento\Backup\Helper\Data::class)
+            ->with(BackupHelperData::class)
             ->willReturn($this->dataBackupHelperMock);
         $this->dataBackupHelperMock->expects($this->any())
             ->method('getExtensionByType')

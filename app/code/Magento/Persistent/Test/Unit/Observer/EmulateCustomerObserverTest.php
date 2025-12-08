@@ -15,6 +15,8 @@ use Magento\Customer\Model\Session;
 use Magento\Framework\Event\Observer;
 use Magento\Persistent\Helper\Data;
 use Magento\Persistent\Observer\EmulateCustomerObserver;
+use Magento\Persistent\Model\Session as PersistentSession;
+use Magento\Persistent\Helper\Session as PersistentSessionHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
@@ -64,7 +66,6 @@ class EmulateCustomerObserverTest extends TestCase
         $this->customerRepositoryMock = $this->createMock(
             CustomerRepositoryInterface::class
         );
-        // Use createPartialMockWithReflection - PHPUnit 12 compatible
         $this->customerSessionMock = $this->createPartialMockWithReflection(
             Session::class,
             [
@@ -72,7 +73,7 @@ class EmulateCustomerObserverTest extends TestCase
                 'setCustomerId', 'setCustomerGroupId', 'isLoggedIn'
             ]
         );
-        $this->sessionHelperMock = $this->createMock(\Magento\Persistent\Helper\Session::class);
+        $this->sessionHelperMock = $this->createMock(PersistentSessionHelper::class);
         $this->helperMock = $this->createMock(Data::class);
         $this->observerMock = $this->createMock(Observer::class);
         $this->addressRepositoryMock = $this->createMock(AddressRepositoryInterface::class);
@@ -116,17 +117,14 @@ class EmulateCustomerObserverTest extends TestCase
         $countryId = 3;
         $regionId = 4;
         $postcode = 90210;
-        // Use createPartialMockWithReflection - PHPUnit 12 compatible
         $sessionMock = $this->createPartialMockWithReflection(
-            \Magento\Persistent\Model\Session::class,
+            PersistentSession::class,
             ['getCustomerId']
         );
-        // Use createPartialMockWithReflection - PHPUnit 12 compatible
         $defaultShippingAddressMock = $this->createPartialMockWithReflection(
             Address::class,
             ['getCountryId', 'getPostcode', 'getRegion', 'getRegionId']
         );
-        // Use createPartialMockWithReflection - PHPUnit 12 compatible
         $defaultBillingAddressMock = $this->createPartialMockWithReflection(
             Address::class,
             ['getCountryId', 'getPostcode', 'getRegion', 'getRegionId']

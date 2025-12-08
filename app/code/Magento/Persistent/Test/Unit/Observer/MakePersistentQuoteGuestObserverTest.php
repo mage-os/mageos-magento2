@@ -14,6 +14,7 @@ use Magento\Persistent\Controller\Index;
 use Magento\Persistent\Helper\Data;
 use Magento\Persistent\Helper\Session;
 use Magento\Persistent\Observer\MakePersistentQuoteGuestObserver;
+use Magento\Customer\Model\Session as CustomerSession;
 use PHPUnit\Framework\MockObject\MockObject;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
@@ -72,9 +73,8 @@ class MakePersistentQuoteGuestObserverTest extends TestCase
         $this->observerMock = $this->createMock(Observer::class);
         $this->sessionHelperMock = $this->createMock(Session::class);
         $this->helperMock = $this->createMock(Data::class);
-        $this->customerSessionMock = $this->createMock(\Magento\Customer\Model\Session::class);
+        $this->customerSessionMock = $this->createMock(CustomerSession::class);
         $this->checkoutSession = $this->createMock(CheckoutSession::class);
-        // Use createPartialMockWithReflection - PHPUnit 12 compatible
         $this->eventManagerMock = $this->createPartialMockWithReflection(
             Event::class,
             ['getControllerAction']

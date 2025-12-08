@@ -10,6 +10,7 @@ namespace Magento\Persistent\Test\Unit\Observer;
 use Magento\Framework\App\Request\Http;
 use Magento\Framework\Event;
 use Magento\Framework\Event\Observer;
+use Magento\Checkout\Model\Session as CheckoutSession;
 use Magento\Persistent\Helper\Data;
 use Magento\Persistent\Helper\Session;
 use Magento\Persistent\Observer\SetRememberMeCheckedStatusObserver;
@@ -62,13 +63,11 @@ class SetRememberMeCheckedStatusObserverTest extends TestCase
         $this->requestMock = $this->createMock(Http::class);
         $this->helperMock = $this->createMock(Data::class);
         $this->sessionHelperMock = $this->createMock(Session::class);
-        // Use createPartialMockWithReflection - PHPUnit 12 compatible
         $this->checkoutSessionMock = $this->createPartialMockWithReflection(
-            \Magento\Checkout\Model\Session::class,
+            CheckoutSession::class,
             ['setRememberMeChecked']
         );
         $this->observerMock = $this->createMock(Observer::class);
-        // Use createPartialMockWithReflection - PHPUnit 12 compatible
         $this->eventManagerMock = $this->createPartialMockWithReflection(
             Event::class,
             ['getRequest']
