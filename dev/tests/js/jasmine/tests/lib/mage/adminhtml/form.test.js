@@ -1,5 +1,5 @@
 /**
- * Copyright 2014 Adobe
+ * Copyright 2025 Adobe
  * All Rights Reserved.
  */
 
@@ -47,6 +47,33 @@ define([
             if (window.Event) {
                 window.Event.observe = function () {};
             }
+            // Stub Prototype's $ to return a fake target implementing up().select() chain
+            var originalDollar = window.$;
+            var fakeTarget = {
+                id: 'test_input_dependent',
+                type: 'input',
+                tagName: 'INPUT',
+                getAttribute: function () {
+                    return null;
+                },
+                show: function () {},
+                hide: function () {},
+                up: function () {
+                    return {
+                        show: function () {},
+                        hide: function () {},
+                        select: function () {
+                            return [cssDisabled, normalInput];
+                        }
+                    };
+                }
+            };
+            window.$ = function (id) {
+                if (id === 'test_input_dependent') {
+                    return fakeTarget;
+                }
+                return document.getElementById(id);
+            };
             /* eslint-disable no-new */
             new window.FormElementDependenceController({
                 'test_input_dependent': {
@@ -65,6 +92,9 @@ define([
             // Cleanup
             if (window.Event && originalObserve) {
                 window.Event.observe = originalObserve;
+            }
+            if (originalDollar) {
+                window.$ = originalDollar;
             }
             document.body.removeChild(container);
             document.body.removeChild(source);
