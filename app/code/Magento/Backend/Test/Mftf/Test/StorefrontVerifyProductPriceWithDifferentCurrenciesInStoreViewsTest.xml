@@ -12,10 +12,10 @@
             <features value="Checkout"/>
             <stories value="Shopping Cart Price Display"/>
             <title value="Verify product price displays correctly in shopping cart with different currencies in different store views"/>
-            <description value="Verify product price is correctly converted and displayed in shopping cart when switching between store views with different currencies (USD and EUR)"/>
+            <description value="Verify price conversion in cart for USD and EUR views when switching between store views"/>
             <severity value="MINOR"/>
             <testCaseId value="AC-15943"/>
-            <group value="multi_currency"/>
+            <group value="Checkout"/>
         </annotations>
         <before>
             <!-- Step 1: Login to Admin Panel -->
