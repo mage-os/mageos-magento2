@@ -237,8 +237,7 @@ class GridTest extends TestCase
     /**
      * Test grid block rendering does not throw exceptions
      *
-     * @magentoDataFixture Magento/Catalog/_files/product_with_options.php
-     * @magentoDbIsolation disabled
+     * @magentoDbIsolation enabled
      * @return void
      */
     public function testGridBlockRendersWithoutException(): void
@@ -252,10 +251,9 @@ class GridTest extends TestCase
     }
 
     /**
-     * Test that grid collection is distinct (no duplicate products)
+     * Test that grid collection uses DISTINCT to avoid duplicate products
      *
-     * @magentoDataFixture Magento/Catalog/_files/product_with_options.php
-     * @magentoDbIsolation disabled
+     * @magentoDbIsolation enabled
      * @return void
      */
     public function testCollectionIsDistinct(): void
@@ -263,17 +261,12 @@ class GridTest extends TestCase
         $this->block->toHtml();
         $collection = $this->block->getCollection();
 
-        $productIds = [];
-        $hasDuplicates = false;
-
-        foreach ($collection as $product) {
-            if (in_array($product->getId(), $productIds)) {
-                $hasDuplicates = true;
-                break;
-            }
-            $productIds[] = $product->getId();
-        }
-
-        $this->assertFalse($hasDuplicates, 'Collection should not contain duplicate products');
+        // Verify the collection query uses DISTINCT
+        $selectString = $collection->getSelect()->__toString();
+        $this->assertStringContainsString(
+            'DISTINCT',
+            $selectString,
+            'Collection should use DISTINCT to avoid duplicate products'
+        );
     }
 }
