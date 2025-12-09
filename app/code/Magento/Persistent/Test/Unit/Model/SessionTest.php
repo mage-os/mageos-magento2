@@ -107,7 +107,7 @@ class SessionTest extends TestCase
     }
 
     /**
-     * @covers Session::removePersistentCookie
+     * Test afterDeleteCommit removes persistent cookie
      */
     public function testAfterDeleteCommit()
     {
