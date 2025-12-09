@@ -62,7 +62,6 @@ class Grid extends \Magento\Reports\Block\Adminhtml\Grid\AbstractGrid
                 'column_css_class' => 'col-period'
             ]
         );
-
         $this->addColumn(
             'orders_count',
             [
@@ -75,7 +74,6 @@ class Grid extends \Magento\Reports\Block\Adminhtml\Grid\AbstractGrid
                 'column_css_class' => 'col-qty'
             ]
         );
-
         $this->addColumn(
             'orders_invoiced',
             [
@@ -88,7 +86,6 @@ class Grid extends \Magento\Reports\Block\Adminhtml\Grid\AbstractGrid
                 'column_css_class' => 'col-invoiced'
             ]
         );
-
         $this->setStoreIds($this->_getStoreIds());
         $currencyCode = $this->getCurrentCurrencyCode();
         $rate = $this->getRate($currencyCode);
@@ -108,7 +105,6 @@ class Grid extends \Magento\Reports\Block\Adminhtml\Grid\AbstractGrid
                 'renderer' => Currency::class
             ]
         );
-
         $this->addColumn(
             'invoiced_captured',
             [
@@ -124,7 +120,6 @@ class Grid extends \Magento\Reports\Block\Adminhtml\Grid\AbstractGrid
                 'renderer' => Currency::class
             ]
         );
-
         $this->addColumn(
             'invoiced_not_captured',
             [
