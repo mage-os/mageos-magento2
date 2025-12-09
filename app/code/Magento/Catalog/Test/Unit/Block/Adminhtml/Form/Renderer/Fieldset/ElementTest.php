@@ -5,21 +5,21 @@
  */
 declare(strict_types=1);
 
-namespace Magento\Catalog\Test\Unit\Block\Adminhtml\Category\Form\Renderer\Fieldset;
+namespace Magento\Catalog\Test\Unit\Block\Adminhtml\Form\Renderer\Fieldset;
 
 use Magento\Backend\Block\Template\Context as TemplateContext;
 use Magento\Catalog\Block\Adminhtml\Form\Renderer\Fieldset\Element;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
-use Magento\Store\Model\StoreManagerInterface;
-use PHPUnit\Framework\TestCase;
-use PHPUnit\Framework\MockObject\MockObject;
 use Magento\Framework\Data\Form\Element\AbstractElement;
 use Magento\Framework\DataObject;
 use Magento\Framework\Escaper;
 use Magento\Framework\Math\Random;
-use Magento\Framework\View\Helper\SecureHtmlRenderer;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\View\Helper\SecureHtmlRenderer;
+use Magento\Store\Model\StoreManagerInterface;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \Magento\Catalog\Block\Adminhtml\Form\Renderer\Fieldset\Element
@@ -225,21 +225,21 @@ class ElementTest extends TestCase
     public static function usedDefaultDataProvider(): array
     {
         return [
-            'no store value flag' => [
+            'no_store_value_flag' => [
                 'existsStoreValueFlag' => false,
                 'storeId' => 1,
                 'elementValue' => 'anything',
                 'defaultValue' => 'default',
                 'expected' => true,
             ],
-            'store value exists equals default' => [
+            'store_value_exists_equals_default' => [
                 'existsStoreValueFlag' => true,
                 'storeId' => 2,
                 'elementValue' => 'default',
                 'defaultValue' => 'default',
                 'expected' => false,
             ],
-            'store value exists not equal default' => [
+            'store_value_exists_not_equal_default' => [
                 'existsStoreValueFlag' => true,
                 'storeId' => 2,
                 'elementValue' => 'custom',
@@ -309,7 +309,7 @@ class ElementTest extends TestCase
     public static function getScopeLabelDataProvider(): array
     {
         return [
-            'single store mode -> empty' => [
+            'single_store_mode_->_empty' => [
                 'isSingleStoreMode' => true,
                 'attributePresent'  => true,
                 'frontendInput'     => 'text',
@@ -318,7 +318,7 @@ class ElementTest extends TestCase
                 'isStore'           => null,
                 'expected'          => '',
             ],
-            'no attribute -> empty' => [
+            'no_attribute_->_empty' => [
                 'isSingleStoreMode' => false,
                 'attributePresent'  => false,
                 'frontendInput'     => null,
@@ -327,7 +327,7 @@ class ElementTest extends TestCase
                 'isStore'           => null,
                 'expected'          => '',
             ],
-            'frontend is gallery -> empty' => [
+            'frontend_is_gallery_->_empty' => [
                 'isSingleStoreMode' => false,
                 'attributePresent'  => true,
                 'frontendInput'     => 'gallery',
@@ -336,7 +336,7 @@ class ElementTest extends TestCase
                 'isStore'           => null,
                 'expected'          => '',
             ],
-            'global scope -> [GLOBAL]' => [
+            'global_scope_->_[GLOBAL]' => [
                 'isSingleStoreMode' => false,
                 'attributePresent'  => true,
                 'frontendInput'     => 'text',
@@ -345,7 +345,7 @@ class ElementTest extends TestCase
                 'isStore'           => false,
                 'expected'          => '[GLOBAL]',
             ],
-            'website scope -> [WEBSITE]' => [
+            'website_scope_->_[WEBSITE]' => [
                 'isSingleStoreMode' => false,
                 'attributePresent'  => true,
                 'frontendInput'     => 'text',
@@ -354,7 +354,7 @@ class ElementTest extends TestCase
                 'isStore'           => false,
                 'expected'          => '[WEBSITE]',
             ],
-            'store scope -> [STORE VIEW]' => [
+            'store_scope_->_[STORE_VIEW]' => [
                 'isSingleStoreMode' => false,
                 'attributePresent'  => true,
                 'frontendInput'     => 'text',
