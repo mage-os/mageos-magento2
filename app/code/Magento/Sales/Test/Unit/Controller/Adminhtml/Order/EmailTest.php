@@ -286,4 +286,117 @@ class EmailTest extends TestCase
             $this->orderEmail->execute()
         );
     }
+
+    /**
+     * Test LocalizedException is caught and proper error message is displayed
+     *
+     * @return void
+     */
+    public function testEmailWithLocalizedException(): void
+    {
+        $orderId = 10000031;
+        $exceptionMessage = 'Localized exception message';
+
+        $store = $this->createMock(Store::class);
+        $store->method('getConfig')->willReturnMap([
+            ['sales_email/order/enabled', 1],
+            ['sales_email/general/async_sending', 0],
+        ]);
+        $this->orderMock->method('getStore')->willReturn($store);
+
+        $this->request->expects($this->once())
+            ->method('getParam')
+            ->with('order_id')
+            ->willReturn($orderId);
+
+        $this->orderRepositoryMock->expects($this->once())
+            ->method('get')
+            ->with($orderId)
+            ->willReturn($this->orderMock);
+
+        $this->orderMock->expects($this->atLeastOnce())
+            ->method('getEntityId')
+            ->willReturn($orderId);
+
+        // Simulate LocalizedException being thrown during notify
+        $this->orderManagementMock->expects($this->once())
+            ->method('notify')
+            ->with($orderId)
+            ->willThrowException(
+                new \Magento\Framework\Exception\LocalizedException(__($exceptionMessage))
+            );
+
+        // Verify the exception message is added as error
+        $this->messageManager->expects($this->once())
+            ->method('addErrorMessage')
+            ->with($exceptionMessage);
+
+        $this->resultRedirect->expects($this->once())
+            ->method('setPath')
+            ->with('sales/order/view', ['order_id' => $orderId])
+            ->willReturnSelf();
+
+        $this->assertInstanceOf(
+            Redirect::class,
+            $this->orderEmail->execute()
+        );
+    }
+
+    /**
+     * Test generic Exception is caught, generic error message is displayed, and exception is logged
+     *
+     * @return void
+     */
+    public function testEmailWithGenericException(): void
+    {
+        $orderId = 10000031;
+        $exception = new \Exception('Some unexpected error');
+
+        $store = $this->createMock(Store::class);
+        $store->method('getConfig')->willReturnMap([
+            ['sales_email/order/enabled', 1],
+            ['sales_email/general/async_sending', 0],
+        ]);
+        $this->orderMock->method('getStore')->willReturn($store);
+
+        $this->request->expects($this->once())
+            ->method('getParam')
+            ->with('order_id')
+            ->willReturn($orderId);
+
+        $this->orderRepositoryMock->expects($this->once())
+            ->method('get')
+            ->with($orderId)
+            ->willReturn($this->orderMock);
+
+        $this->orderMock->expects($this->atLeastOnce())
+            ->method('getEntityId')
+            ->willReturn($orderId);
+
+        // Simulate generic Exception being thrown during notify
+        $this->orderManagementMock->expects($this->once())
+            ->method('notify')
+            ->with($orderId)
+            ->willThrowException($exception);
+
+        // Verify generic error message is added
+        $this->messageManager->expects($this->once())
+            ->method('addErrorMessage')
+            ->with('We can\'t send the email order right now.');
+
+        // Verify the exception is logged
+        $this->loggerMock->expects($this->once())
+            ->method('critical')
+            ->with($exception);
+
+        $this->resultRedirect->expects($this->once())
+            ->method('setPath')
+            ->with('sales/order/view', ['order_id' => $orderId])
+            ->willReturnSelf();
+
+        $this->assertInstanceOf(
+            Redirect::class,
+            $this->orderEmail->execute()
+        );
+    }
 }

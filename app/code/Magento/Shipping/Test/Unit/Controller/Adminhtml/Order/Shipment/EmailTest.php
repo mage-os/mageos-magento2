@@ -331,4 +331,111 @@ class EmailTest extends TestCase
             ->method('setPath')
             ->with($path, ['shipment_id' => $arguments['shipment_id']]);
     }
+
+    /**
+     * Test LocalizedException is caught and proper error message is displayed
+     *
+     * @return void
+     */
+    public function testEmailWithLocalizedException(): void
+    {
+        $shipmentId = 1000012;
+        $orderId = 10003;
+        $tracking = [];
+        $shipment = ['items' => []];
+        $exceptionMessage = 'Localized exception message';
+
+        $this->request->expects($this->any())
+            ->method('getParam')
+            ->willReturnMap(
+                [
+                    ['order_id', null, $orderId],
+                    ['shipment_id', null, $shipmentId],
+                    ['shipment', null, $shipment],
+                    ['tracking', null, $tracking]
+                ]
+            );
+
+        $this->shipmentLoader->expects($this->once())
+            ->method('setShipmentId')
+            ->with($shipmentId);
+        $this->shipmentLoader->expects($this->once())
+            ->method('setOrderId')
+            ->with($orderId);
+        $this->shipmentLoader->expects($this->once())
+            ->method('setShipment')
+            ->with($shipment);
+        $this->shipmentLoader->expects($this->once())
+            ->method('setTracking')
+            ->with($tracking);
+
+        // Simulate LocalizedException being thrown
+        $this->shipmentLoader->expects($this->once())
+            ->method('load')
+            ->willThrowException(new \Magento\Framework\Exception\LocalizedException(__($exceptionMessage)));
+
+        // Verify the exception message is added as error
+        $this->messageManager->expects($this->once())
+            ->method('addError')
+            ->with($exceptionMessage);
+
+        $path = '*/*/view';
+        $arguments = ['shipment_id' => $shipmentId];
+        $this->prepareRedirect($path, $arguments);
+
+        $this->shipmentEmail->execute();
+    }
+
+    /**
+     * Test generic Exception is caught and generic error message is displayed
+     *
+     * @return void
+     */
+    public function testEmailWithGenericException(): void
+    {
+        $shipmentId = 1000012;
+        $orderId = 10003;
+        $tracking = [];
+        $shipment = ['items' => []];
+
+        $this->request->expects($this->any())
+            ->method('getParam')
+            ->willReturnMap(
+                [
+                    ['order_id', null, $orderId],
+                    ['shipment_id', null, $shipmentId],
+                    ['shipment', null, $shipment],
+                    ['tracking', null, $tracking]
+                ]
+            );
+
+        $this->shipmentLoader->expects($this->once())
+            ->method('setShipmentId')
+            ->with($shipmentId);
+        $this->shipmentLoader->expects($this->once())
+            ->method('setOrderId')
+            ->with($orderId);
+        $this->shipmentLoader->expects($this->once())
+            ->method('setShipment')
+            ->with($shipment);
+        $this->shipmentLoader->expects($this->once())
+            ->method('setTracking')
+            ->with($tracking);
+
+        // Simulate generic Exception being thrown
+        $this->shipmentLoader->expects($this->once())
+            ->method('load')
+            ->willThrowException(new \Exception('Some error occurred'));
+
+        // Verify generic error message is added
+        $this->messageManager->expects($this->once())
+            ->method('addError')
+            ->with('Cannot send shipment information.');
+
+        $path = '*/*/view';
+        $arguments = ['shipment_id' => $shipmentId];
+        $this->prepareRedirect($path, $arguments);
+
+        $this->shipmentEmail->execute();
+    }
 }
