@@ -191,10 +191,9 @@ class AttributeSetTest extends TestCase
     {
         $this->product->method('getAttributeSetId')->willReturn(1);
 
-        $rawUrl = 'http://example.com/admin/catalog?test=1&special='
-            . '<script type="text/x-magento-init">test</script>';
+        $rawUrl = 'http://example.com/admin/catalog?test=1&special=<div onclick="alert(1)">';
         $escapedUrl = 'http://example.com/admin/catalog?test=1&amp;special='
-            . '&lt;script type=&quot;text/x-magento-init&quot;&gt;test&lt;/script&gt;';
+            . '&lt;div onclick=&quot;alert(1)&quot;&gt;';
 
         $this->urlBuilder->method('getUrl')->willReturn($rawUrl);
         $this->escaper->method('escapeUrl')->with($rawUrl)->willReturn($escapedUrl);
@@ -212,9 +211,8 @@ class AttributeSetTest extends TestCase
      */
     public function testGetSelectorOptionsEscapesAttributeSetId(): void
     {
-        $attributeSetId = '<script type="text/x-magento-init">alert("xss")</script>';
-        $escapedAttributeSetId = '&lt;script type=&quot;text/x-magento-init&quot;&gt;'
-            . 'alert(&quot;xss&quot;)&lt;/script&gt;';
+        $attributeSetId = '<img src="x" onerror="alert(\'xss\')">';
+        $escapedAttributeSetId = '&lt;img src=&quot;x&quot; onerror=&quot;alert(&#039;xss&#039;)&quot;&gt;';
 
         $this->product->method('getAttributeSetId')->willReturn($attributeSetId);
         $this->urlBuilder->method('getUrl')->willReturn('http://example.com/admin/url');
@@ -323,7 +321,7 @@ class AttributeSetTest extends TestCase
      */
     public function testGetSelectorOptionsXssEscapingWithHtmlspecialchars(): void
     {
-        $maliciousInput = '<script type="text/x-magento-init">alert("xss")</script>';
+        $maliciousInput = '<img src="x" onerror="alert(\'xss\')">';
 
         $this->product->method('getAttributeSetId')->willReturn($maliciousInput);
         $this->urlBuilder->method('getUrl')->willReturn('http://test.com');
@@ -336,7 +334,7 @@ class AttributeSetTest extends TestCase
 
         $escapedValue = $options['currentlySelected'];
 
-        $this->assertStringNotContainsString('<script', $escapedValue);
+        $this->assertStringNotContainsString('<img', $escapedValue);
         $this->assertStringNotContainsString('>', $escapedValue);
         $this->assertStringContainsString('&lt;', $escapedValue);
         $this->assertStringContainsString('&gt;', $escapedValue);
