@@ -23,12 +23,12 @@ use Magento\CatalogInventory\Api\StockStatusCriteriaInterface;
 use Magento\CatalogInventory\Api\StockStatusCriteriaInterfaceFactory;
 use Magento\CatalogInventory\Api\StockStatusRepositoryInterface;
 use Magento\CatalogInventory\Model\ResourceModel\Stock\Collection;
-use Magento\CatalogInventory\Test\Unit\Helper\CollectionTestHelper;
-use Magento\CatalogInventory\Test\Unit\Helper\StockItemCollectionTestHelper;
-use Magento\CatalogInventory\Test\Unit\Helper\StockStatusCollectionTestHelper;
+use Magento\CatalogInventory\Model\ResourceModel\Stock\Item\Collection as StockItemCollection;
+use Magento\CatalogInventory\Model\ResourceModel\Stock\Status\Collection as StockStatusCollection;
 use Magento\CatalogInventory\Model\Spi\StockRegistryProviderInterface;
 use Magento\CatalogInventory\Model\StockRegistryProvider;
 use Magento\CatalogInventory\Model\StockRegistryStorage;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -40,6 +40,8 @@ use PHPUnit\Framework\TestCase;
  */
 class StockRegistryProviderTest extends TestCase
 {
+    use MockCreationTrait;
+
     /** @var ObjectManagerHelper */
     protected $objectManagerHelper;
 
@@ -165,21 +167,11 @@ class StockRegistryProviderTest extends TestCase
         );
         $this->stockStatusFactory->method('create')->willReturn($this->stockStatus);
 
-        $this->stockRepository = $this->getMockBuilder(StockRepositoryInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->stockRepository = $this->createMock(StockRepositoryInterface::class);
 
-        $this->stockItemRepository = $this->getMockBuilder(
-            StockItemRepositoryInterface::class
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->stockItemRepository = $this->createMock(StockItemRepositoryInterface::class);
 
-        $this->stockStatusRepository = $this->getMockBuilder(
-            StockStatusRepositoryInterface::class
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->stockStatusRepository = $this->createMock(StockStatusRepositoryInterface::class);
 
         $this->stockCriteriaFactory = $this->createPartialMock(
             StockCriteriaInterfaceFactory::class,
@@ -226,7 +218,21 @@ class StockRegistryProviderTest extends TestCase
         $this->stockCriteriaFactory->expects($this->once())->method('create')->willReturn($this->stockCriteria);
         $this->stockCriteria->expects($this->once())->method('setScopeFilter')->willReturn(null);
         // Create CollectionTestHelper extending Collection with dynamic methods
-        $stockCollection = new CollectionTestHelper();
+        $stockCollection = $this->createPartialMockWithReflection(
+            Collection::class,
+            ['getItems', 'setItems', 'getSize', 'setSize']
+        );
+        
+        // Implement stateful behavior for getItems/setItems
+        $items = [];
+        $stockCollection->method('setItems')->willReturnCallback(function ($value) use (&$items, $stockCollection) {
+            $items = $value;
+            return $stockCollection;
+        });
+        $stockCollection->method('getItems')->willReturnCallback(function () use (&$items) {
+            return $items;
+        });
+        
         $stockCollection->setItems([$this->stock]);
         $this->stockRepository->expects($this->once())->method('getList')->willReturn($stockCollection);
         $this->stock->expects($this->once())->method('getStockId')->willReturn(true);
@@ -238,7 +244,23 @@ class StockRegistryProviderTest extends TestCase
         $this->stockItemCriteriaFactory->expects($this->once())->method('create')->willReturn($this->stockItemCriteria);
         $this->stockItemCriteria->expects($this->once())->method('setProductsFilter')->willReturn(null);
         // Create StockItemCollectionTestHelper extending Stock\Item\Collection with dynamic methods
-        $stockItemCollection = new StockItemCollectionTestHelper();
+        $stockItemCollection = $this->createPartialMockWithReflection(
+            StockItemCollection::class,
+            ['addFieldToFilter', 'getFirstItem', 'getItems', 'setItems']
+        );
+        
+        // Implement stateful behavior for getItems/setItems
+        $items = [];
+        $stockItemCollection->method('setItems')->willReturnCallback(
+            function ($value) use (&$items, $stockItemCollection) {
+                $items = $value;
+                return $stockItemCollection;
+            }
+        );
+        $stockItemCollection->method('getItems')->willReturnCallback(function () use (&$items) {
+            return $items;
+        });
+        
         $stockItemCollection->setItems([$this->stockItem]);
         $this->stockItemRepository->expects($this->once())->method('getList')->willReturn($stockItemCollection);
         $this->stockItem->expects($this->once())->method('getItemId')->willReturn(true);
@@ -256,7 +278,23 @@ class StockRegistryProviderTest extends TestCase
         $this->stockStatusCriteria->expects($this->once())->method('setScopeFilter')->willReturn(null);
         $this->stockStatusCriteria->expects($this->once())->method('setProductsFilter')->willReturn(null);
         // Create StockStatusCollectionTestHelper extending Stock\Status\Collection with dynamic methods
-        $stockStatusCollection = new StockStatusCollectionTestHelper();
+        $stockStatusCollection = $this->createPartialMockWithReflection(
+            StockStatusCollection::class,
+            ['addFieldToFilter', 'getFirstItem', 'getItems', 'setItems']
+        );
+        
+        // Implement stateful behavior for getItems/setItems
+        $items = [];
+        $stockStatusCollection->method('setItems')->willReturnCallback(
+            function ($value) use (&$items, $stockStatusCollection) {
+                $items = $value;
+                return $stockStatusCollection;
+            }
+        );
+        $stockStatusCollection->method('getItems')->willReturnCallback(function () use (&$items) {
+            return $items;
+        });
+        
         $stockStatusCollection->setItems([$this->stockStatus]);
         $this->stockStatusRepository->expects($this->once())->method('getList')->willReturn($stockStatusCollection);
         $this->stockStatus->expects($this->once())->method('getProductId')->willReturn($this->productId);

@@ -10,19 +10,21 @@ namespace Magento\CatalogInventory\Test\Unit\Model\Indexer\Stock;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\Product;
-use Magento\CatalogInventory\Test\Unit\Helper\StockConfigurationInterfaceTestHelper;
 use Magento\CatalogInventory\Api\StockConfigurationInterface;
+use Magento\CatalogInventory\Model\Configuration;
 use Magento\CatalogInventory\Model\Indexer\Stock\CacheCleaner;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Select;
+use Magento\Framework\EntityManager\EntityMetadata;
 use Magento\Framework\EntityManager\MetadataPool;
+use Magento\Framework\EntityManager\Sequence\SequenceFactory;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\Indexer\CacheContext;
-use Magento\Framework\EntityManager\Test\Unit\Helper\MetadataPoolTestHelper;
-
+use Magento\Framework\ObjectManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * Test for CacheCleaner
@@ -35,6 +37,8 @@ use PHPUnit\Framework\TestCase;
  */
 class CacheCleanerTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var CacheCleaner
      */
@@ -83,7 +87,10 @@ class CacheCleanerTest extends TestCase
         $this->connectionMock = $this->getMockBuilder(AdapterInterface::class)
             ->getMock();
         // Use StockConfigurationInterfaceTestHelper implementing StockConfigurationInterface with dynamic methods
-        $this->stockConfigurationMock = new StockConfigurationInterfaceTestHelper();
+        $this->stockConfigurationMock = $this->createPartialMockWithReflection(
+            Configuration::class,
+            ['getStockThresholdQty']
+        );
         $this->cacheContextMock = $this->getMockBuilder(CacheContext::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -91,14 +98,26 @@ class CacheCleanerTest extends TestCase
             ->getMock();
 
         // Create minimal ObjectManager mock and set it up first
-        $objectManagerMock = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
+        $objectManagerMock = $this->createMock(ObjectManagerInterface::class);
         \Magento\Framework\App\ObjectManager::setInstance($objectManagerMock);
 
         // Create minimal mocks for MetadataPool constructor
-        $sequenceFactoryMock = $this->createMock(\Magento\Framework\EntityManager\Sequence\SequenceFactory::class);
+        $sequenceFactoryMock = $this->createMock(SequenceFactory::class);
         
         // Use MetadataPoolTestHelper extending MetadataPool with dynamic methods
-        $this->metadataPoolMock = new MetadataPoolTestHelper($objectManagerMock, $sequenceFactoryMock);
+        $this->metadataPoolMock = $this->createPartialMockWithReflection(
+            MetadataPool::class,
+            ['getMetadata', 'getHydrator']
+        );
+        
+        // Create metadata mock that returns linkField
+        $metadataMock = $this->createPartialMockWithReflection(
+            EntityMetadata::class,
+            ['getLinkField']
+        );
+        $metadataMock->method('getLinkField')->willReturn('row_id');
+        $this->metadataPoolMock->method('getMetadata')->willReturn($metadataMock);
+        
         $this->selectMock = $this->getMockBuilder(Select::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -149,9 +168,6 @@ class CacheCleanerTest extends TestCase
                     ['product_id' => $productId, 'stock_status' => $stockStatusAfter, 'qty' => $qtyAfter],
                 ]
             );
-        $this->connectionMock->expects($this->exactly(3))
-            ->method('select')
-            ->willReturn($this->selectMock);
         $this->selectMock->expects($this->exactly(7))
             ->method('where')
             ->willReturnCallback(function ($arg1, $arg2, $arg3) {
@@ -174,8 +190,7 @@ class CacheCleanerTest extends TestCase
         $this->connectionMock->expects($this->exactly(1))
             ->method('fetchCol')
             ->willReturn([$categoryId]);
-        // Use setter instead of expects for the anonymous class
-        $this->stockConfigurationMock->setStockThresholdQty($stockThresholdQty);
+        $this->stockConfigurationMock->method('getStockThresholdQty')->willReturn($stockThresholdQty);
         $this->cacheContextMock->expects($this->exactly(2))
             ->method('registerEntities')
             ->willReturnCallback(function ($arg1, $arg2) use ($productId, $categoryId) {
@@ -188,9 +203,6 @@ class CacheCleanerTest extends TestCase
         $this->eventManagerMock->expects($this->exactly(2))
             ->method('dispatch')
             ->with('clean_cache_by_tags', ['object' => $this->cacheContextMock]);
-        // Use setters instead of expects for the anonymous class
-        $this->metadataPoolMock->setLinkField('row_id');
-        $this->metadataPoolMock->setMetadata($this->metadataPoolMock);
 
         $callback = function () {
         };
@@ -240,15 +252,11 @@ class CacheCleanerTest extends TestCase
                     ['product_id' => $productId, 'stock_status' => $stockStatusAfter, 'qty' => $qtyAfter],
                 ]
             );
-        // Use setter instead of expects for the anonymous class
-        $this->stockConfigurationMock->setStockThresholdQty($stockThresholdQty);
+        $this->stockConfigurationMock->method('getStockThresholdQty')->willReturn($stockThresholdQty);
         $this->cacheContextMock->expects($this->never())
             ->method('registerEntities');
         $this->eventManagerMock->expects($this->never())
             ->method('dispatch');
-        // Use setters instead of expects for the anonymous class
-        $this->metadataPoolMock->setLinkField('row_id');
-        $this->metadataPoolMock->setMetadata($this->metadataPoolMock);
 
         $callback = function () {
         };

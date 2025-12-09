@@ -13,9 +13,9 @@ use Magento\CatalogInventory\Observer\SubtractQuoteInventoryObserver;
 use Magento\Framework\Event;
 use Magento\Framework\Event\Observer;
 use Magento\Quote\Model\Quote;
-use Magento\Quote\Test\Unit\Helper\QuoteTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -23,6 +23,8 @@ use PHPUnit\Framework\TestCase;
  */
 class CheckoutAllSubmitAfterObserverTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var CheckoutAllSubmitAfterObserver
      */
@@ -76,8 +78,10 @@ class CheckoutAllSubmitAfterObserverTest extends TestCase
 
     public function testCheckoutAllSubmitAfter()
     {
-        // Create QuoteTestHelper for Quote with getInventoryProcessed method
-        $quote = new QuoteTestHelper();
+        $quote = $this->createPartialMockWithReflection(
+            Quote::class,
+            ['getAllVisibleItems', 'setAllVisibleItems', 'getAllItems', 'setAllItems']
+        );
 
         // Use setter instead of expects for the anonymous class
         $quote->setInventoryProcessed(false);

@@ -10,17 +10,16 @@ namespace Magento\CatalogRule\Test\Unit\Plugin\Indexer;
 
 use Magento\Catalog\Model\Category;
 use Magento\CatalogRule\Model\Indexer\Product\ProductRuleProcessor;
+use Magento\CatalogRule\Plugin\Indexer\Category as CategoryPlugin;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Magento\Catalog\Test\Unit\Helper\CategoryTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @SuppressWarnings(PHPMD.UnusedLocalVariable)
- */
 class CategoryTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var ProductRuleProcessor|MockObject
      */
@@ -32,7 +31,7 @@ class CategoryTest extends TestCase
     protected $subject;
 
     /**
-     * @var \Magento\CatalogRule\Plugin\Indexer\Category
+     * @var CategoryPlugin
      */
     protected $plugin;
 
@@ -41,10 +40,13 @@ class CategoryTest extends TestCase
         $this->productRuleProcessor = $this->createMock(
             ProductRuleProcessor::class
         );
-        $this->subject = new CategoryTestHelper();
+        $this->subject = $this->createPartialMockWithReflection(
+            Category::class,
+            ['getChangedProductIds', '__wakeUp']
+        );
 
         $this->plugin = (new ObjectManager($this))->getObject(
-            \Magento\CatalogRule\Plugin\Indexer\Category::class,
+            CategoryPlugin::class,
             [
                 'productRuleProcessor' => $this->productRuleProcessor,
             ]
@@ -53,7 +55,9 @@ class CategoryTest extends TestCase
 
     public function testAfterSaveWithoutAffectedProductIds()
     {
-        $this->subject->setChangedProductIds([]);
+        $this->subject->expects($this->any())
+            ->method('getChangedProductIds')
+            ->willReturn([]);
 
         $this->productRuleProcessor->expects($this->never())
             ->method('reindexList');
@@ -65,7 +69,9 @@ class CategoryTest extends TestCase
     {
         $productIds = [1, 2, 3];
 
-        $this->subject->setChangedProductIds($productIds);
+        $this->subject->expects($this->any())
+            ->method('getChangedProductIds')
+            ->willReturn($productIds);
 
         $this->productRuleProcessor->expects($this->once())
             ->method('reindexList')

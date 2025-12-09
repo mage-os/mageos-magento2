@@ -9,7 +9,6 @@ namespace Magento\CatalogInventory\Test\Unit\Api;
 
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ProductFactory;
-use Magento\CatalogInventory\Test\Unit\Helper\StockItemInterfaceTestHelper;
 use Magento\CatalogInventory\Api\Data\StockInterface;
 use Magento\CatalogInventory\Api\Data\StockItemInterface;
 use Magento\CatalogInventory\Api\Data\StockStatusInterface;
@@ -20,15 +19,16 @@ use Magento\CatalogInventory\Model\StockRegistry;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+use Magento\CatalogInventory\Model\Stock\Item;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @SuppressWarnings(PHPMD.UnusedLocalVariable)
- * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
- * @SuppressWarnings(PHPMD.TooManyFields)
  */
 class StockRegistryTest extends TestCase
 {
+    use MockCreationTrait;
+    
     /** @var ObjectManagerHelper */
     protected $objectManagerHelper;
 
@@ -82,12 +82,18 @@ class StockRegistryTest extends TestCase
 
         $this->product = $this->createPartialMock(Product::class, ['__wakeup', 'getIdBySku']);
         $this->product->method('getIdBySku')->willReturn(self::PRODUCT_ID);
-        //getIdBySku
+        
         $this->productFactory = $this->createPartialMock(ProductFactory::class, ['create']);
         $this->productFactory->method('create')->willReturn($this->product);
 
         $this->stock = $this->createMock(StockInterface::class);
-        $this->stockItem = new StockItemInterfaceTestHelper();
+        
+        // Use concrete Item class instead of interface for proper type support
+        $this->stockItem = $this->createPartialMockWithReflection(
+            Item::class,
+            ['getData', 'addData', 'getWebsiteId','setProductId', 'getItemId']
+        );
+        
         $this->stockStatus = $this->createMock(StockStatusInterface::class);
 
         $this->stockRegistryProvider = $this->createMock(StockRegistryProviderInterface::class);
@@ -150,13 +156,23 @@ class StockRegistryTest extends TestCase
     public function testUpdateStockItemBySku()
     {
         $itemId = 1;
-        $this->stockItem->setProductId(self::PRODUCT_ID);
-        $this->stockItem->setData([]);
-        $this->stockItem->addData([]);
-        $this->stockItem->setItemId($itemId);
+        $testData = ['test_key' => 'test_value'];
+        
+        // Configure the input stock item (passed to the method)
+        $inputStockItem = $this->createPartialMockWithReflection(
+            Item::class,
+            ['getWebsiteId', 'getData']
+        );
+        $inputStockItem->method('getWebsiteId')->willReturn(null);
+        $inputStockItem->method('getData')->willReturn($testData);
+        
+        // Configure $this->stockItem (returned by getStockItem and save)
+        $this->stockItem->method('getItemId')->willReturn($itemId);
+        $this->stockItem->method('getData')->willReturn($testData);
+        
         $this->assertEquals(
             $itemId,
-            $this->stockRegistry->updateStockItemBySku(self::PRODUCT_SKU, $this->stockItem)
+            $this->stockRegistry->updateStockItemBySku(self::PRODUCT_SKU, $inputStockItem)
         );
     }
 }

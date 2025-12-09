@@ -14,13 +14,11 @@ use Magento\CatalogRule\Observer\RulePricesStorage;
 use Magento\Framework\Event;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Ui\Component\Form\Element\DataType\Date;
-use Magento\CatalogRule\Test\Unit\Helper\RulePricesStorageTestHelper;
-use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
-use Magento\Framework\Stdlib\Test\Unit\Helper\DateTimeTestHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -29,12 +27,11 @@ use PHPUnit\Framework\TestCase;
  *
  * Test class for Observer for applying catalog rules on product for admin area
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @SuppressWarnings(PHPMD.UnusedLocalVariable)
- * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
- * @SuppressWarnings(PHPMD.TooManyFields)
  */
 class ProcessAdminFinalPriceObserverTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var ProcessAdminFinalPriceObserver
      */
@@ -72,17 +69,20 @@ class ProcessAdminFinalPriceObserverTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->observerMock = $this
-            ->getMockBuilder(Observer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->eventMock = new Event();
-        $this->rulePricesStorageMock = new RulePricesStorageTestHelper();
+        $this->observerMock = $this->createMock(Observer::class);
+        $this->eventMock = $this->createPartialMockWithReflection(
+            Event::class,
+            ['getProduct']
+        );
+        $this->rulePricesStorageMock = $this->createPartialMockWithReflection(
+            RulePricesStorage::class,
+            ['getWebsiteId', 'getCustomerGroupId', 'getRulePrice', 'setRulePrice']
+        );
         $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
-        $this->resourceRuleFactoryMock = $this->getMockBuilder(RuleFactory::class)
-            ->onlyMethods(['create'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->resourceRuleFactoryMock = $this->createPartialMock(
+            RuleFactory::class,
+            ['create']
+        );
         $this->localeDateMock = $this->createMock(TimezoneInterface::class);
         $objectManagerHelper = new ObjectManager($this);
         $this->observer = $objectManagerHelper->getObject(
@@ -112,14 +112,30 @@ class ProcessAdminFinalPriceObserverTest extends TestCase
             ->method('getEvent')
             ->willReturn($this->eventMock);
 
-        $productMock = new ProductTestHelper();
-        $dateMock = new DateTimeTestHelper();
+        $productMock = $this->createPartialMockWithReflection(
+            Product::class,
+            [
+                'getWebsiteId',
+                'getCustomerGroupId',
+                'getStoreId',
+                'getId',
+                'getData',
+                'setFinalPrice'
+            ]
+        );
+        $dateMock = $this->createPartialMockWithReflection(
+            Date::class,
+            ['format']
+        );
 
         $this->localeDateMock->expects($this->once())
             ->method('scopeDate')
             ->with($storeId)
             ->willReturn($dateMock);
-        $dateMock->setFormatValue($date);
+        $dateMock->expects($this->once())
+            ->method('format')
+            ->with($localeDateFormat)
+            ->willReturn($date);
         $storeMock->expects($this->once())
             ->method('getWebsiteId')
             ->willReturn($wId);
@@ -127,16 +143,35 @@ class ProcessAdminFinalPriceObserverTest extends TestCase
             ->method('getStore')
             ->with($storeId)
             ->willReturn($storeMock);
-        $productMock->setStoreId($storeId);
-        $productMock->setCustomerGroupId($gId);
-        $productMock->setId($pId);
-        $productMock->setData('final_price', $finalPrice);
-        $this->rulePricesStorageMock->setCustomerGroupId($gId);
+        $productMock->expects($this->once())
+            ->method('getStoreId')
+            ->willReturn($storeId);
+        $productMock->expects($this->any())
+            ->method('getCustomerGroupId')
+            ->willReturn($gId);
+        $productMock->expects($this->once())
+            ->method('getId')
+            ->willReturn($pId);
+        $productMock->expects($this->once())
+            ->method('getData')
+            ->with('final_price')
+            ->willReturn($finalPrice);
+        $this->rulePricesStorageMock->expects($this->any())
+            ->method('getCustomerGroupId')
+            ->willReturn($gId);
         $this->resourceRuleFactoryMock->expects($this->once())
             ->method('create')
             ->willReturn($this->rulePricesStorageMock);
-        $this->rulePricesStorageMock->setRulePrice($pId, $rulePrice);
-        $this->eventMock->setProduct($productMock);
+        $this->rulePricesStorageMock->expects($this->any())
+            ->method('getRulePrice')
+            ->willReturn($rulePrice);
+        $this->rulePricesStorageMock->expects($this->once())
+            ->method('setRulePrice')
+            ->willReturnSelf();
+        $this->eventMock
+            ->expects($this->atLeastOnce())
+            ->method('getProduct')
+            ->willReturn($productMock);
         $this->assertEquals($this->observer, $this->observer->execute($this->observerMock));
     }
 }

@@ -14,7 +14,7 @@ use Magento\CatalogInventory\Api\Data\StockItemInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(\Magento\CatalogInventory\Model\Product\QuantityValidator::class)]
+#[CoversClass(QuantityValidator::class)]
 class QuantityValidatorTest extends TestCase
 {
     private const PRODUCT_ID = 42;

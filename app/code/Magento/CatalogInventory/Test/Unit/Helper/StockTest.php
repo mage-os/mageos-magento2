@@ -9,7 +9,6 @@ namespace Magento\CatalogInventory\Test\Unit\Helper;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Product;
-use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use Magento\Catalog\Model\ResourceModel\Collection\AbstractCollection;
 use Magento\Catalog\Model\ResourceModel\Product\Link\Product\Collection;
 use Magento\CatalogInventory\Api\Data\StockStatusInterface;
@@ -23,6 +22,7 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -30,6 +30,8 @@ use PHPUnit\Framework\TestCase;
  */
 class StockTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Stock
      */
@@ -107,7 +109,10 @@ class StockTest extends TestCase
         $this->stockRegistryProviderMock->method('getStockStatus')->willReturn($stockStatusMock);
         $this->stockConfiguration->expects($this->once())->method('getDefaultScopeId')->willReturn($websiteId);
 
-        $productMock = new ProductTestHelper();
+        $productMock = $this->createPartialMockWithReflection(
+            Product::class,
+            ['getId', 'setIsSalable']
+        );
         
         $productMock->setIsSalable($status);
         $this->assertNull($this->stock->assignStatusToProduct($productMock));
@@ -119,7 +124,10 @@ class StockTest extends TestCase
         $productId = 2;
         $status = 'test';
 
-        $productMock = new ProductTestHelper();
+        $productMock = $this->createPartialMockWithReflection(
+            Product::class,
+            ['getId', 'setIsSalable']
+        );
         
         $productMock->setIsSalable($status);
         $productMock->setId($productId);

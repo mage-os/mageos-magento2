@@ -7,27 +7,25 @@ declare(strict_types=1);
 
 namespace Magento\CatalogRule\Test\Unit\Model\Indexer;
 
-use PHPUnit\Framework\Attributes\DataProvider;
-use Magento\Framework\Api\ExtensionAttributesInterface;
 use Magento\Catalog\Model\ResourceModel\Indexer\ActiveTableSwitcher;
 use Magento\CatalogRule\Model\Indexer\DynamicBatchSizeCalculator;
 use Magento\CatalogRule\Model\Indexer\IndexerTableSwapperInterface;
 use Magento\CatalogRule\Model\Indexer\ReindexRuleProduct;
 use Magento\CatalogRule\Model\Rule;
+use Magento\Framework\Api\ExtensionAttributesInterface;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Store\Model\ScopeInterface;
-use Magento\Framework\Api\Test\Unit\Helper\ExtensionAttributesInterfaceTestHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @SuppressWarnings(PHPMD.UnusedLocalVariable)
- */
 class ReindexRuleProductTest extends TestCase
 {
+    use MockCreationTrait;
+
     private const ADMIN_WEBSITE_ID = 0;
 
     /**
@@ -243,10 +241,14 @@ class ReindexRuleProductTest extends TestCase
         $this->prepareResourceMock();
         $this->prepareRuleMock($websitesIds, $productIds, [10, 20]);
 
-        $extensionAttributes = new ExtensionAttributesInterfaceTestHelper();
+        $extensionAttributes = $this->createPartialMockWithReflection(
+            ExtensionAttributesInterface::class,
+            ['getExtensionAttributes', 'getExcludeWebsiteIds']
+        );
         $this->ruleMock->expects(self::once())->method('getExtensionAttributes')
             ->willReturn($extensionAttributes);
-        $extensionAttributes->setExcludeWebsiteIds([10 => [1, 2]]);
+        $extensionAttributes->expects(self::exactly(2))->method('getExcludeWebsiteIds')
+            ->willReturn([10 => [1, 2]]);
 
         $this->localeDateMock->method('getConfigTimezone')
             ->willReturnMap([

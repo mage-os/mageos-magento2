@@ -11,6 +11,7 @@ use Magento\CatalogRule\Model\Indexer\IndexerTableSwapper;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Ddl\Table;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -19,6 +20,8 @@ use PHPUnit\Framework\TestCase;
  */
 class IndexerTableSwapperTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var ResourceConnection|MockObject
      */
@@ -126,8 +129,8 @@ class IndexerTableSwapperTest extends TestCase
     public function testSwapIndexTables(): void
     {
         $model = $this->getMockBuilder(IndexerTableSwapper::class)
-            ->onlyMethods(['getWorkingTableName'])
             ->setConstructorArgs([$this->resourceConnectionMock])
+            ->onlyMethods(['getWorkingTableName'])
             ->getMock();
         $originalTableName = 'catalogrule_product';
         $temporaryOriginalTableName = 'catalogrule_product9604';

@@ -10,6 +10,7 @@ namespace Magento\CatalogRule\Test\Unit\Model\Indexer;
 use Magento\CatalogRule\Model\Indexer\CatalogRuleInsertBatchSizeCalculator;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\Indexer\BatchSizeManagementInterface;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -18,6 +19,8 @@ use PHPUnit\Framework\TestCase;
  */
 class CatalogRuleInsertBatchSizeCalculatorTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var BatchSizeManagementInterface|MockObject
      */
@@ -38,8 +41,8 @@ class CatalogRuleInsertBatchSizeCalculatorTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->batchSizeManagementMock = $this->getMockForAbstractClass(BatchSizeManagementInterface::class);
-        $this->connectionMock = $this->getMockForAbstractClass(AdapterInterface::class);
+        $this->batchSizeManagementMock = $this->createMock(BatchSizeManagementInterface::class);
+        $this->connectionMock = $this->createMock(AdapterInterface::class);
     }
 
     public function testGetInsertBatchSizeWithDefaultBatchSize(): void

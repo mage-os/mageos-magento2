@@ -7,13 +7,22 @@ declare(strict_types=1);
 
 namespace Magento\CatalogInventory\Test\Unit\Model\Adminhtml\Stock;
 
+use Magento\CatalogInventory\Api\StockConfigurationInterface;
+use Magento\CatalogInventory\Api\StockItemRepositoryInterface;
+use Magento\CatalogInventory\Api\StockRegistryInterface;
 use Magento\CatalogInventory\Model\Adminhtml\Stock\Item;
 use Magento\Customer\Api\Data\GroupInterface;
 use Magento\Customer\Api\GroupManagementInterface;
-use Magento\Framework\Model\ResourceModel\AbstractResource;
-use Magento\Framework\Model\Test\Unit\Helper\AbstractResourceTestHelper;
+use Magento\Customer\Model\Session;
+use Magento\Framework\Api\AttributeValueFactory;
+use Magento\Framework\Api\ExtensionAttributesFactory;
+use Magento\Framework\Model\Context;
+use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
+use Magento\Framework\Registry;
+use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -21,6 +30,8 @@ use PHPUnit\Framework\TestCase;
  */
 class ItemTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Item|MockObject
      */
@@ -32,7 +43,10 @@ class ItemTest extends TestCase
     protected function setUp(): void
     {
         // Create AbstractResourceTestHelper for AbstractResource
-        $resourceMock = new AbstractResourceTestHelper();
+        $resourceMock = $this->createPartialMockWithReflection(
+            AbstractDb::class,
+            ['getConnection', 'getIdFieldName', '_construct']
+        );
 
         $groupManagement = $this->createMock(GroupManagementInterface::class);
 
@@ -43,15 +57,15 @@ class ItemTest extends TestCase
         $groupManagement->method('getAllCustomersGroup')->willReturn($allGroup);
 
         // Create all required mocks for the Item constructor
-        $contextMock = $this->createMock(\Magento\Framework\Model\Context::class);
-        $registryMock = $this->createMock(\Magento\Framework\Registry::class);
-        $extensionFactoryMock = $this->createMock(\Magento\Framework\Api\ExtensionAttributesFactory::class);
-        $customAttributeFactoryMock = $this->createMock(\Magento\Framework\Api\AttributeValueFactory::class);
-        $customerSessionMock = $this->createMock(\Magento\Customer\Model\Session::class);
-        $storeManagerMock = $this->createMock(\Magento\Store\Model\StoreManagerInterface::class);
-        $stockConfigurationMock = $this->createMock(\Magento\CatalogInventory\Api\StockConfigurationInterface::class);
-        $stockRegistryMock = $this->createMock(\Magento\CatalogInventory\Api\StockRegistryInterface::class);
-        $stockItemRepositoryMock = $this->createMock(\Magento\CatalogInventory\Api\StockItemRepositoryInterface::class);
+        $contextMock = $this->createMock(Context::class);
+        $registryMock = $this->createMock(Registry::class);
+        $extensionFactoryMock = $this->createMock(ExtensionAttributesFactory::class);
+        $customAttributeFactoryMock = $this->createMock(AttributeValueFactory::class);
+        $customerSessionMock = $this->createMock(Session::class);
+        $storeManagerMock = $this->createMock(StoreManagerInterface::class);
+        $stockConfigurationMock = $this->createMock(StockConfigurationInterface::class);
+        $stockRegistryMock = $this->createMock(StockRegistryInterface::class);
+        $stockItemRepositoryMock = $this->createMock(StockItemRepositoryInterface::class);
 
         // Direct instantiation instead of ObjectManagerHelper
         $this->_model = new Item(

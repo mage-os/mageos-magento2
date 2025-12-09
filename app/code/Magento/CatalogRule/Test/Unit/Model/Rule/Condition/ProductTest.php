@@ -7,25 +7,22 @@ declare(strict_types=1);
 
 namespace Magento\CatalogRule\Test\Unit\Model\Rule\Condition;
 
-use PHPUnit\Framework\Attributes\DataProvider;
+use Magento\Catalog\Model\Product as ProductModel;
 use Magento\Catalog\Model\ProductCategoryList;
 use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
+use Magento\Catalog\Model\ResourceModel\Product as ProductResource;
 use Magento\CatalogRule\Model\Rule\Condition\Product;
 use Magento\Eav\Model\Config;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
-use Magento\Catalog\Test\Unit\Helper\AttributeTestHelper;
-use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @SuppressWarnings(PHPMD.UnusedLocalVariable)
- * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
- * @SuppressWarnings(PHPMD.TooManyFields)
- */
 class ProductTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Product
      */
@@ -42,12 +39,12 @@ class ProductTest extends TestCase
     protected $config;
 
     /**
-     * @var \Magento\Catalog\Model\Product|MockObject
+     * @var ProductModel|MockObject
      */
     protected $productModel;
 
     /**
-     * @var \Magento\Catalog\Model\ResourceModel\Product|MockObject
+     * @var ProductResource|MockObject
      */
     protected $productResource;
 
@@ -67,35 +64,59 @@ class ProductTest extends TestCase
     protected function setUp(): void
     {
         $this->config = $this->createPartialMock(Config::class, ['getAttribute']);
-        
-        $this->productCategoryList = $this->getMockBuilder(ProductCategoryList::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->productModel = $this->createPartialMockWithReflection(
+            ProductModel::class,
+            [
+                'addAttributeToSelect',
+                'getAttributesByCode',
+                '__wakeup',
+                'hasData',
+                'getData',
+                'getId',
+                'getStoreId',
+                'getResource'
+            ]
+        );
 
-        $this->productResource = $this->getMockBuilder(\Magento\Catalog\Model\ResourceModel\Product::class)
-            ->onlyMethods(
-                [
-                    'loadAllAttributes',
-                    'getAttributesByCode',
-                    'getAttribute',
-                    'getConnection',
-                    'getTable'
-                ]
-            )
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->productCategoryList = $this->createMock(ProductCategoryList::class);
 
-        $this->productModel = new ProductTestHelper($this->productResource);
+        $this->productResource = $this->createPartialMock(
+            ProductResource::class,
+            [
+                'loadAllAttributes',
+                'getAttributesByCode',
+                'getAttribute',
+                'getConnection',
+                'getTable'
+            ]
+        );
 
-        $this->eavAttributeResource = new AttributeTestHelper();
-
+        $this->eavAttributeResource = $this->createPartialMockWithReflection(
+            Attribute::class,
+            [
+                'getFrontendLabel',
+                'getAttributesByCode',
+                '__wakeup',
+                'isAllowedForRuleCondition',
+                'getDataUsingMethod',
+                'getAttributeCode',
+                'isScopeGlobal',
+                'getBackendType',
+                'getFrontendInput'
+            ]
+        );
 
         $this->productResource->expects($this->any())->method('loadAllAttributes')->willReturnSelf();
-        $this->productResource->method('getAttributesByCode')->willReturn([$this->eavAttributeResource]);
-        $this->eavAttributeResource->setScopeGlobal(false);
-        $this->eavAttributeResource->setAttributesByCode(false);
-        $this->eavAttributeResource->setAttributeCode('1');
-        $this->eavAttributeResource->setFrontendLabel('attribute_label');
+        $this->productResource->expects($this->any())->method('getAttributesByCode')
+            ->willReturn([$this->eavAttributeResource]);
+        $this->eavAttributeResource->expects($this->any())->method('isAllowedForRuleCondition')
+            ->willReturn(false);
+        $this->eavAttributeResource->expects($this->any())->method('getAttributesByCode')
+            ->willReturn(false);
+        $this->eavAttributeResource->expects($this->any())->method('getAttributeCode')
+            ->willReturn('1');
+        $this->eavAttributeResource->expects($this->any())->method('getFrontendLabel')
+            ->willReturn('attribute_label');
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->product = $this->objectManagerHelper->getObject(
@@ -140,24 +161,37 @@ class ProductTest extends TestCase
         $this->product->setData('value_parsed', $parsedValue);
         $this->product->setData('operator', $operator);
 
-        $this->config->method('getAttribute')->willReturn($this->eavAttributeResource);
+        $this->config->expects($this->any())->method('getAttribute')
+            ->willReturn($this->eavAttributeResource);
 
-        $this->eavAttributeResource->setScopeGlobal(false);
-        // Set the method value based on the input
-        if ($input['method'] === 'getBackendType') {
-            $this->eavAttributeResource->setBackendType($input['type']);
-        } elseif ($input['method'] === 'getFrontendInput') {
-            $this->eavAttributeResource->setFrontendInput($input['type']);
-        }
+        $this->eavAttributeResource->expects($this->any())->method('isScopeGlobal')
+            ->willReturn(false);
+        $this->eavAttributeResource->expects($this->any())->method($input['method'])
+            ->willReturn($input['type']);
 
-        // Set the data values for consecutive calls like the original mock
-        $this->productModel->setDataValues([
-            ['1' => ['1' => $attributeValue]],  // First call
-            $newValue,                          // Second call
-            $newValue                           // Third call
-        ]);
+        $this->productModel->expects($this->any())->method('hasData')
+            ->willReturn(true);
+        
+        $callCount = 0;
+        $this->productModel
+            ->method('getData')
+            ->willReturnCallback(function () use (&$callCount, $attributeValue, $newValue) {
+                $callCount++;
+                if ($callCount === 1) {
+                    return ['1' => ['1' => $attributeValue]];
+                }
+                return $newValue;
+            });
+        
+        $this->productModel->expects($this->any())->method('getId')
+            ->willReturn('1');
+        $this->productModel->expects($this->once())->method('getStoreId')
+            ->willReturn('1');
+        $this->productModel->expects($this->any())->method('getResource')
+            ->willReturn($this->productResource);
 
-        $this->productResource->method('getAttribute')->willReturn($this->eavAttributeResource);
+        $this->productResource->expects($this->any())->method('getAttribute')
+            ->willReturn($this->eavAttributeResource);
 
         $this->product->collectValidatedAttributes($this->productModel);
         $this->assertTrue($this->product->validate($this->productModel));
@@ -172,8 +206,10 @@ class ProductTest extends TestCase
         $this->product->setData('value_parsed', '1');
         $this->product->setData('operator', '!=');
 
-        // Set the data directly on the TestHelper class
-        $this->productModel->setAttributesByCode(['color' => null]);
+        $this->productModel->expects($this->once())
+            ->method('getData')
+            ->with('color')
+            ->willReturn(null);
         $this->assertFalse($this->product->validate($this->productModel));
     }
 

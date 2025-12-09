@@ -7,18 +7,19 @@ declare(strict_types=1);
 
 namespace Magento\CatalogInventory\Test\Unit\Model\Spi;
 
-use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ProductFactory;
-use Magento\CatalogInventory\Test\Unit\Helper\StockItemInterfaceTestHelper;
 use Magento\CatalogInventory\Api\Data\StockItemInterface;
 use Magento\CatalogInventory\Model\Spi\StockStateProviderInterface;
+use Magento\CatalogInventory\Model\Stock\Item as StockItem;
 use Magento\CatalogInventory\Model\StockStateProvider;
 use Magento\Framework\DataObject;
 use Magento\Framework\DataObject\Factory;
 use Magento\Framework\Locale\FormatInterface;
 use Magento\Framework\Math\Division;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -26,12 +27,10 @@ use PHPUnit\Framework\TestCase;
  * Unit tests for \Magento\CatalogInventory\Model\StockStateProvider class.
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @SuppressWarnings(PHPMD.UnusedLocalVariable)
- * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
- * @SuppressWarnings(PHPMD.TooManyFields)
  */
 class StockStateProviderTest extends TestCase
 {
+    use MockCreationTrait;
     /** @var ObjectManagerHelper */
     protected $objectManagerHelper;
 
@@ -46,7 +45,7 @@ class StockStateProviderTest extends TestCase
     protected $productFactory;
 
     /**
-     * @var Product|MockObject
+     * @var \Magento\Catalog\Model\Product|MockObject
      */
     protected $product;
 
@@ -138,18 +137,20 @@ class StockStateProviderTest extends TestCase
         $this->mathDivision = $this->createPartialMock(Division::class, ['getExactDivision']);
 
         $this->localeFormat = $this->createMock(FormatInterface::class);
-        $this->localeFormat->method('getNumber')->willReturn($this->qty);
+        $this->localeFormat->expects($this->any())
+            ->method('getNumber')
+            ->willReturn($this->qty);
 
         $this->object = $this->objectManagerHelper->getObject(DataObject::class);
         $this->objectFactory = $this->createPartialMock(Factory::class, ['create']);
-        $this->objectFactory->method('create')->willReturn($this->object);
+        $this->objectFactory->expects($this->any())->method('create')->willReturn($this->object);
 
         $this->product = $this->createPartialMock(
             Product::class,
             ['load', 'isComposite', '__wakeup', 'isSaleable']
         );
         $this->productFactory = $this->createPartialMock(ProductFactory::class, ['create']);
-        $this->productFactory->method('create')->willReturn($this->product);
+        $this->productFactory->expects($this->any())->method('create')->willReturn($this->product);
 
         $this->stockStateProvider = $this->objectManagerHelper->getObject(
             StockStateProvider::class,
@@ -353,27 +354,32 @@ class StockStateProviderTest extends TestCase
 
     protected function getStockItemClassMock($variation)
     {
-        // Create StockItemInterfaceTestHelper implementing StockItemInterface with dynamic methods
-        $stockItem = new StockItemInterfaceTestHelper();
+        $stockItem = $this->createPartialMockWithReflection(
+            StockItem::class,
+            array_merge($this->stockAddItemMethods, $this->stockItemMethods)
+        );
+        $stockItem->expects($this->any())->method('getSuppressCheckQtyIncrements')->willReturn(
+            $variation['values']['_suppress_check_qty_increments_']
+        );
+        $stockItem->expects($this->any())->method('getIsSaleable')->willReturn(
+            $variation['values']['_is_saleable_']
+        );
+        $stockItem->expects($this->any())->method('getOrderedItems')->willReturn(
+            $variation['values']['_ordered_items_']
+        );
 
-        // Configure the anonymous class with variation data
-        $stockItem->setSuppressCheckQtyIncrements($variation['values']['_suppress_check_qty_increments_']);
-        $stockItem->setIsSaleable($variation['values']['_is_saleable_']);
-        $stockItem->setOrderedItems($variation['values']['_ordered_items_']);
-        $stockItem->setProductName($variation['values']['_product_']);
-        $stockItem->setIsChildItem(false);
-        $stockItem->setHasStockQty(true);
-        $stockItem->setStockQty($variation['values']['_stock_qty_']);
+        $stockItem->expects($this->any())->method('getProductName')->willReturn($variation['values']['_product_']);
+        $stockItem->expects($this->any())->method('getIsChildItem')->willReturn(false);
+        $stockItem->expects($this->any())->method('hasStockQty')->willReturn(false);
+        $stockItem->expects($this->any())->method('setStockQty')->willReturnSelf();
+        $stockItem->expects($this->any())->method('setOrderedItems')->willReturnSelf();
+        $stockItem->expects($this->any())->method('getData')
+            ->with('stock_qty')
+            ->willReturn($variation['values']['_stock_qty_']);
 
-        // Set values for stockItemMethods
         foreach ($this->stockItemMethods as $method) {
             $value = isset($variation['values'][$method]) ? $variation['values'][$method] : null;
-            $stockItem->setData($method, $value);
-        }
-        
-        // Ensure getQty returns the correct value for getStockQty test
-        if (isset($variation['values']['getQty'])) {
-            $stockItem->setQty($variation['values']['getQty']);
+            $stockItem->expects($this->any())->method($method)->willReturn($value);
         }
 
         return $stockItem;
@@ -553,15 +559,16 @@ class StockStateProviderTest extends TestCase
     {
         $qty = 1;
         $qtyIncrements = 5;
-        
-        // Create StockItemInterfaceTestHelper implementing StockItemInterface with dynamic methods
-        $stockItem = new StockItemInterfaceTestHelper();
-        $stockItem->setSuppressCheckQtyIncrements(false);
-        $stockItem->setQtyIncrements($qtyIncrements);
-        $stockItem->setIsChildItem($isChildItem);
-        $stockItem->setProductName('Simple Product');
-        
-        $this->mathDivision->method('getExactDivision')->willReturn(1);
+        $stockItem = $this->createPartialMockWithReflection(
+            StockItem::class,
+            array_merge($this->stockAddItemMethods, $this->stockItemMethods)
+        );
+        $stockItem->expects($this->any())->method('getSuppressCheckQtyIncrements')->willReturn(false);
+        $stockItem->expects($this->any())->method('getQtyIncrements')->willReturn($qtyIncrements);
+        $stockItem->expects($this->any())->method('getIsChildItem')->willReturn($isChildItem);
+        $stockItem->expects($this->any())->method('getProductName')->willReturn('Simple Product');
+        $this->mathDivision->expects($this->any())->method('getExactDivision')->willReturn(1);
+
         $result = $this->stockStateProvider->checkQtyIncrements($stockItem, $qty);
         $this->assertTrue($result->getHasError());
         $this->assertEquals($expectedMsg, $result->getMessage()->render());

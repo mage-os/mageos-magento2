@@ -63,7 +63,7 @@ class ConfigurationTest extends TestCase
     {
         $additionalOptionResult = ['additional_option' => 1];
 
-        $itemMock = $this->createMock(ItemInterface::class);
+        $itemMock = $this->getMockForAbstractClass(ItemInterface::class);
         $optionMock = $this->createMock(
             OptionInterface::class
         );

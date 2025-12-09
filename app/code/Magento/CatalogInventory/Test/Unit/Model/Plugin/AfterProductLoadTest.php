@@ -11,12 +11,12 @@ use Magento\Catalog\Api\Data\ProductExtensionFactory;
 use Magento\Catalog\Api\Data\ProductExtensionInterface;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Model\Product;
-use Magento\Catalog\Test\Unit\Helper\ProductExtensionInterfaceTestHelper;
 use Magento\CatalogInventory\Api\Data\StockItemInterface;
 use Magento\CatalogInventory\Api\StockRegistryInterface;
 use Magento\CatalogInventory\Model\Plugin\AfterProductLoad;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -24,6 +24,8 @@ use PHPUnit\Framework\TestCase;
  */
 class AfterProductLoadTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var AfterProductLoad
      */
@@ -61,14 +63,29 @@ class AfterProductLoadTest extends TestCase
             ->willReturn($this->stockItemMock);
 
         // Use ProductExtensionInterfaceTestHelper implementing ProductExtensionInterface with dynamic methods
-        $this->productExtensionMock = new ProductExtensionInterfaceTestHelper();
+        $this->productExtensionMock = $this->createPartialMockWithReflection(
+            ProductExtensionInterface::class,
+            ['getStockItem', 'setStockItem']
+        );
+        
+        // Implement stateful behavior for setStockItem/getStockItem
+        $stockItem = null;
+        $productExtensionMock = $this->productExtensionMock;
+        
+        $this->productExtensionMock->method('setStockItem')->willReturnCallback(
+            function ($val) use (&$stockItem, $productExtensionMock) {
+                $stockItem = $val;
+                return $productExtensionMock;
+            }
+        );
+        $this->productExtensionMock->method('getStockItem')->willReturnCallback(function () use (&$stockItem) {
+            return $stockItem;
+        });
         
         // Use setter method instead of expects for anonymous class
         $this->productExtensionMock->setStockItem($this->stockItemMock);
 
-        $this->productMock = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->productMock = $this->createMock(Product::class);
         $this->productMock->expects($this->once())
             ->method('setExtensionAttributes')
             ->with($this->productExtensionMock)

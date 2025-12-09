@@ -7,14 +7,15 @@ declare(strict_types=1);
 
 namespace Magento\CatalogInventory\Test\Unit\Block;
 
-use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Product;
-use Magento\CatalogInventory\Test\Unit\Helper\StockItemInterfaceTestHelper;
 use Magento\CatalogInventory\Api\Data\StockItemInterface;
 use Magento\CatalogInventory\Api\StockRegistryInterface;
 use Magento\CatalogInventory\Block\Qtyincrements;
+use Magento\CatalogInventory\Model\Stock\Item;
 use Magento\Framework\Registry;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Store\Model\Store;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -26,6 +27,8 @@ use PHPUnit\Framework\TestCase;
  */
 class QtyincrementsTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Qtyincrements
      */
@@ -58,7 +61,24 @@ class QtyincrementsTest extends TestCase
         $this->registryMock = $this->createMock(Registry::class);
         
         // Create StockItemInterfaceTestHelper for StockItemInterface
-        $this->stockItem = new StockItemInterfaceTestHelper();
+        $this->stockItem = $this->createPartialMockWithReflection(
+            Item::class,
+            ['getStockItem', 'getQtyIncrements', 'setQtyIncrements']
+        );
+        
+        // Implement stateful behavior for QtyIncrements
+        $qtyIncrements = null;
+        $stockItemMock = $this->stockItem;
+        
+        $this->stockItem->method('setQtyIncrements')->willReturnCallback(
+            function ($val) use (&$qtyIncrements, $stockItemMock) {
+                $qtyIncrements = $val;
+                return $stockItemMock;
+            }
+        );
+        $this->stockItem->method('getQtyIncrements')->willReturnCallback(function () use (&$qtyIncrements) {
+            return $qtyIncrements;
+        });
         
         $this->stockRegistry = $this->createMock(StockRegistryInterface::class);
         $this->stockRegistry->method('getStockItem')->willReturn($this->stockItem);

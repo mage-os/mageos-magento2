@@ -11,27 +11,24 @@ use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Configuration\Item\Option;
 use Magento\Catalog\Model\Product\Type\AbstractType;
 use Magento\Catalog\Model\ProductTypes\ConfigInterface;
-use Magento\CatalogInventory\Test\Unit\Helper\StockItemInterfaceTestHelper;
 use Magento\CatalogInventory\Api\StockStateInterface;
 use Magento\CatalogInventory\Model\Quote\Item\QuantityValidator\Initializer\StockItem;
 use Magento\CatalogInventory\Model\Quote\Item\QuantityValidator\QuoteItemQtyList;
 use Magento\CatalogInventory\Model\Stock\Item;
 use Magento\CatalogInventory\Model\StockStateProvider;
 use Magento\Framework\DataObject;
-use Magento\Quote\Test\Unit\Helper\QuoteItemTestHelper;
-
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Model\Store;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @SuppressWarnings(PHPMD.UnusedLocalVariable)
- * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
- * @SuppressWarnings(PHPMD.TooManyFields)
  */
 class StockItemTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var StockItem
      */
@@ -62,31 +59,23 @@ class StockItemTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->quoteItemQtyList = $this
-            ->getMockBuilder(QuoteItemQtyList::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->quoteItemQtyList = $this->createMock(QuoteItemQtyList::class);
 
-        $this->typeConfig = $this
-            ->getMockBuilder(ConfigInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->typeConfig = $this->createMock(ConfigInterface::class);
 
-        $this->stockStateMock = $this->getMockBuilder(StockStateInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $objectManagerHelper = new ObjectManager($this);
+        $this->stockStateMock = $this->createMock(StockStateInterface::class);
 
-        $this->stockStateProviderMock = $this
-            ->getMockBuilder(StockStateProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->stockStateProviderMock = $this->createMock(StockStateProvider::class);
 
-        // Direct instantiation instead of ObjectManagerHelper
-        $this->model = new StockItem(
-            $this->typeConfig,
-            $this->quoteItemQtyList,
-            $this->stockStateMock,
-            $this->stockStateProviderMock
+        $this->model = $objectManagerHelper->getObject(
+            StockItem::class,
+            [
+                'quoteItemQtyList' => $this->quoteItemQtyList,
+                'typeConfig' => $this->typeConfig,
+                'stockState' => $this->stockStateMock,
+                'stockStateProvider' => $this->stockStateProviderMock
+            ]
         );
     }
 
@@ -100,39 +89,39 @@ class StockItemTest extends TestCase
         $parentItemQty = 3;
         $websiteId = 1;
 
-        // Create StockItemInterfaceTestHelper for Item with required methods
-        $stockItem = new StockItemInterfaceTestHelper();
-        // Create QuoteItemTestHelper for Quote\Item with required methods
-        $quoteItem = new QuoteItemTestHelper();
-        // Create QuoteItemTestHelper for parent Quote\Item with required methods
-        $parentItem = new QuoteItemTestHelper();
-        $product = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $parentProduct = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $productTypeInstance = $this->getMockBuilder(AbstractType::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $storeMock = $this->getMockBuilder(Store::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $storeMock->method('getWebsiteId')->willReturn($websiteId);
-        $productTypeCustomOption = $this->getMockBuilder(
-            Option::class
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
-        $result = new DataObject();
+        $stockItem = $this->createPartialMockWithReflection(
+            Item::class,
+            ['checkQuoteItemQty', 'setProductName', 'setIsChildItem', 'hasIsChildItem', 'unsIsChildItem', '__wakeup']
+        );
+        $quoteItem = $this->createPartialMockWithReflection(
+            \Magento\Quote\Model\Quote\Item::class,
+            ['setIsQtyDecimal', 'setUseOldQty', 'setBackorders', 'setStockStateResult', 'getParentItem',
+             'getProduct', 'getId', 'getQuoteId', 'setData', 'setMessage', '__wakeup']
+        );
+        $parentItem = $this->createPartialMockWithReflection(
+            \Magento\Quote\Model\Quote\Item::class,
+            ['setIsQtyDecimal', 'getQty', 'getProduct', '__wakeup']
+        );
+        $product = $this->createMock(Product::class);
+        $parentProduct = $this->createMock(Product::class);
+        $productTypeInstance = $this->createMock(AbstractType::class);
+        $storeMock = $this->createMock(Store::class);
+        $storeMock->expects($this->any())
+            ->method('getWebsiteId')
+            ->willReturn($websiteId);
+        $productTypeCustomOption = $this->createMock(Option::class);
+        $result = $this->createPartialMockWithReflection(
+            DataObject::class,
+            ['getItemIsQtyDecimal', 'getHasQtyOptionUpdate', 'getOrigQty',
+             'getItemUseOldQty', 'getMessage', 'getItemBackorders']
+        );
 
-        // Use setters for anonymous classes instead of expects
-        $quoteItem->setParentItem($parentItem);
-        $parentItem->setQty($parentItemQty);
-        $quoteItem->setProduct($product);
-        $product->method('getId')->willReturn('product_id');
-        $quoteItem->setId('quote_item_id');
-        $quoteItem->setQuoteId('quote_id');
+        $quoteItem->expects($this->any())->method('getParentItem')->willReturn($parentItem);
+        $parentItem->expects($this->once())->method('getQty')->willReturn($parentItemQty);
+        $quoteItem->expects($this->any())->method('getProduct')->willReturn($product);
+        $product->expects($this->any())->method('getId')->willReturn('product_id');
+        $quoteItem->expects($this->once())->method('getId')->willReturn('quote_item_id');
+        $quoteItem->expects($this->once())->method('getQuoteId')->willReturn('quote_id');
         $this->quoteItemQtyList->expects($this->any())
             ->method('getQty')
             ->with('product_id', 'quote_item_id', 'quote_id', 0)
@@ -154,33 +143,33 @@ class StockItemTest extends TestCase
             ->with('option_value')
             ->willReturn(true);
         $product->expects($this->once())->method('getName')->willReturn('product_name');
-        $product->method('getStore')->willReturn($storeMock);
-        // Use setters for anonymous classes instead of expects
-        $stockItem->setProductName('product_name');
-        $stockItem->setIsChildItem(true);
-        $stockItem->setHasIsChildItem(true);
-        $stockItem->unsIsChildItem();
-        // Use setters for anonymous classes instead of expects
-        $result->setItemIsQtyDecimal(true);
-        $quoteItem->setIsQtyDecimal(true);
-        $parentItem->setIsQtyDecimal(true);
-        $parentItem->setProduct($parentProduct);
-        $result->setHasQtyOptionUpdate(true);
+        $product->expects($this->any())
+            ->method('getStore')
+            ->willReturn($storeMock);
+        $stockItem->expects($this->once())->method('setProductName')->with('product_name')->willReturnSelf();
+        $stockItem->expects($this->once())->method('setIsChildItem')->with(true)->willReturnSelf();
+        $stockItem->expects($this->once())->method('hasIsChildItem')->willReturn(true);
+        $stockItem->expects($this->once())->method('unsIsChildItem');
+        $result->expects($this->exactly(3))->method('getItemIsQtyDecimal')->willReturn(true);
+        $quoteItem->expects($this->once())->method('setIsQtyDecimal')->with(true)->willReturnSelf();
+        $parentItem->expects($this->once())->method('setIsQtyDecimal')->with(true)->willReturnSelf();
+        $parentItem->expects($this->any())->method('getProduct')->willReturn($parentProduct);
+        $result->expects($this->once())->method('getHasQtyOptionUpdate')->willReturn(true);
         $parentProduct->expects($this->once())
             ->method('getTypeInstance')
             ->willReturn($productTypeInstance);
         $productTypeInstance->expects($this->once())
             ->method('getForceChildItemQtyChanges')
             ->with($product)->willReturn(true);
-        $result->setOrigQty('orig_qty');
-        $quoteItem->setData('qty', 'orig_qty');
-        $result->setItemUseOldQty('item');
-        $quoteItem->setUseOldQty('item');
-        $result->setMessage('message');
-        $quoteItem->setMessage('message');
-        $result->setItemBackorders('backorders');
-        $quoteItem->setBackorders('backorders');
-        $quoteItem->setStockStateResult($result);
+        $result->expects($this->once())->method('getOrigQty')->willReturn('orig_qty');
+        $quoteItem->expects($this->once())->method('setData')->with('qty', 'orig_qty')->willReturnSelf();
+        $result->expects($this->exactly(2))->method('getItemUseOldQty')->willReturn('item');
+        $quoteItem->expects($this->once())->method('setUseOldQty')->with('item')->willReturnSelf();
+        $result->expects($this->exactly(2))->method('getMessage')->willReturn('message');
+        $quoteItem->expects($this->once())->method('setMessage')->with('message')->willReturnSelf();
+        $result->expects($this->exactly(2))->method('getItemBackorders')->willReturn('backorders');
+        $quoteItem->expects($this->once())->method('setBackorders')->with('backorders')->willReturnSelf();
+        $quoteItem->expects($this->once())->method('setStockStateResult')->with($result)->willReturnSelf();
 
         $this->model->initialize($stockItem, $quoteItem, $qty);
     }
@@ -194,31 +183,35 @@ class StockItemTest extends TestCase
         $websiteId = 1;
         $productId = 1;
 
-        // Create StockItemInterfaceTestHelper for Item with required methods (second test)
-        $stockItem = new StockItemInterfaceTestHelper();
-        $storeMock = $this->getMockBuilder(Store::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $storeMock->method('getWebsiteId')->willReturn($websiteId);
-        // Create QuoteItemTestHelper for Quote\Item with required methods (second test)
-        $quoteItem = new QuoteItemTestHelper();
-        $product = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $productTypeCustomOption = $this->getMockBuilder(
-            Option::class
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
-        $result = new DataObject();
-        $product->method('getStore')->willReturn($storeMock);
-        $product->method('getId')->willReturn($productId);
-        // Use setters for anonymous classes instead of expects
-        $quoteItem->setParentItem(false);
-        $quoteItem->setQtyToAdd(false);
-        $quoteItem->setProduct($product);
-        $quoteItem->setId('quote_item_id');
-        $quoteItem->setQuoteId('quote_id');
+        $stockItem = $this->createPartialMockWithReflection(
+            Item::class,
+            ['checkQuoteItemQty', 'setProductName', 'setIsChildItem', 'hasIsChildItem', '__wakeup']
+        );
+        $storeMock = $this->createMock(Store::class);
+        $storeMock->expects($this->any())
+            ->method('getWebsiteId')
+            ->willReturn($websiteId);
+        $quoteItem = $this->createPartialMockWithReflection(
+            \Magento\Quote\Model\Quote\Item::class,
+            ['getQtyToAdd', 'getProduct', 'getParentItem', 'getId', 'getQuoteId', '__wakeup']
+        );
+        $product = $this->createMock(Product::class);
+        $productTypeCustomOption = $this->createMock(Option::class);
+        $result = $this->createPartialMockWithReflection(
+            DataObject::class,
+            ['getItemIsQtyDecimal', 'getHasQtyOptionUpdate', 'getItemUseOldQty', 'getMessage', 'getItemBackorders']
+        );
+        $product->expects($this->any())
+            ->method('getStore')
+            ->willReturn($storeMock);
+        $product->expects($this->any())
+            ->method('getId')
+            ->willReturn($productId);
+        $quoteItem->expects($this->once())->method('getParentItem')->willReturn(false);
+        $quoteItem->expects($this->once())->method('getQtyToAdd')->willReturn(false);
+        $quoteItem->expects($this->any())->method('getProduct')->willReturn($product);
+        $quoteItem->expects($this->once())->method('getId')->willReturn('quote_item_id');
+        $quoteItem->expects($this->once())->method('getQuoteId')->willReturn('quote_id');
         $this->quoteItemQtyList->expects($this->any())
             ->method('getQty')
             ->with($productId, 'quote_item_id', 'quote_id', $qty)
@@ -240,15 +233,14 @@ class StockItemTest extends TestCase
             ->with('option_value')
             ->willReturn(true);
         $product->expects($this->once())->method('getName')->willReturn('product_name');
-        // Use setters for anonymous classes instead of expects
-        $stockItem->setProductName('product_name');
-        $stockItem->setIsChildItem(true);
-        $stockItem->setHasIsChildItem(false);
-        $result->setItemIsQtyDecimal(null);
-        $result->setHasQtyOptionUpdate(false);
-        $result->setItemUseOldQty(null);
-        $result->setMessage(null);
-        $result->setItemBackorders(null);
+        $stockItem->expects($this->once())->method('setProductName')->with('product_name')->willReturnSelf();
+        $stockItem->expects($this->once())->method('setIsChildItem')->with(true)->willReturnSelf();
+        $stockItem->expects($this->once())->method('hasIsChildItem')->willReturn(false);
+        $result->expects($this->once())->method('getItemIsQtyDecimal')->willReturn(null);
+        $result->expects($this->once())->method('getHasQtyOptionUpdate')->willReturn(false);
+        $result->expects($this->once())->method('getItemUseOldQty')->willReturn(null);
+        $result->expects($this->once())->method('getMessage')->willReturn(null);
+        $result->expects($this->exactly(1))->method('getItemBackorders')->willReturn(null);
 
         $this->model->initialize($stockItem, $quoteItem, $qty);
     }

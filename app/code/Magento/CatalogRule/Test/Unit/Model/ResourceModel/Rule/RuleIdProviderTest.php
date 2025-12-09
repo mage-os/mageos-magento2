@@ -11,6 +11,7 @@ use Magento\CatalogRule\Model\ResourceModel\Rule\RuleIdProvider;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Select;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -19,6 +20,8 @@ use PHPUnit\Framework\TestCase;
  */
 class RuleIdProviderTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var ResourceConnection|MockObject
      */
@@ -45,7 +48,7 @@ class RuleIdProviderTest extends TestCase
     protected function setUp(): void
     {
         $this->resourceConnectionMock = $this->createMock(ResourceConnection::class);
-        $this->connectionMock = $this->getMockForAbstractClass(AdapterInterface::class);
+        $this->connectionMock = $this->createMock(AdapterInterface::class);
         $this->selectMock = $this->createMock(Select::class);
 
         $this->resourceConnectionMock->method('getConnection')

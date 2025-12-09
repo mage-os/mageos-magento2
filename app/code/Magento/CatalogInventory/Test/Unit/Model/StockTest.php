@@ -7,7 +7,6 @@ declare(strict_types=1);
 
 namespace Magento\CatalogInventory\Test\Unit\Model;
 
-use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\CatalogInventory\Model\Stock;
 use Magento\Framework\Api\AttributeValueFactory;
 use Magento\Framework\Api\ExtensionAttributesFactory;
@@ -15,8 +14,10 @@ use Magento\Framework\Data\Collection\AbstractDb;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\Model\Context;
 use Magento\Framework\Model\ResourceModel\AbstractResource;
+use Magento\Framework\Model\ResourceModel\Db\AbstractDb as DbAbstractDb;
 use Magento\Framework\Registry;
-use Magento\Framework\Model\Test\Unit\Helper\AbstractResourceTestHelper;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -26,6 +27,8 @@ use PHPUnit\Framework\TestCase;
  */
 class StockTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Context
      */
@@ -93,7 +96,8 @@ class StockTest extends TestCase
             ->getMock();
 
         // Create AbstractResourceTestHelper extending AbstractResource with dynamic methods
-        $this->resource = new AbstractResourceTestHelper();
+        $this->resource = $this->createPartialMockWithReflection(DbAbstractDb::class, ['getIdFieldName', '_construct']);
+        $this->resource->method('getIdFieldName')->willReturn('stock_id');
 
         $this->resourceCollection = $this->getMockBuilder(AbstractDb::class)
             ->disableOriginalConstructor()

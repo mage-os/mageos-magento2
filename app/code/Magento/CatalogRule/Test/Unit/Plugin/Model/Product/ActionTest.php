@@ -8,14 +8,17 @@ declare(strict_types=1);
 
 namespace Magento\CatalogRule\Test\Unit\Plugin\Model\Product;
 
+use Magento\Catalog\Model\Product\Action as ProductAction;
 use Magento\CatalogRule\Model\Indexer\Product\ProductRuleProcessor;
 use Magento\CatalogRule\Plugin\Model\Product\Action;
-use Magento\Catalog\Test\Unit\Helper\ProductActionTestHelper;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class ActionTest extends TestCase
 {
+    use MockCreationTrait;
+
     /** @var Action */
     protected $action;
 
@@ -34,11 +37,19 @@ class ActionTest extends TestCase
 
     public function testAfterUpdateAttributes()
     {
-        $subject = $this->createMock(\Magento\Catalog\Model\Product\Action::class);
+        $subject = $this->createMock(ProductAction::class);
 
-        $result = new ProductActionTestHelper();
+        $result = $this->createPartialMockWithReflection(
+            ProductAction::class,
+            ['getAttributesData', 'getProductIds']
+        );
 
-        $result->setAttributesData([]);
+        $result->expects($this->once())
+            ->method('getAttributesData')
+            ->willReturn([]);
+
+        $result->expects($this->never())
+            ->method('getProductIds');
 
         $this->productRuleProcessor->expects($this->never())
             ->method('reindexList');
@@ -49,12 +60,20 @@ class ActionTest extends TestCase
     public function testAfterUpdateAttributesWithPrice()
     {
         $productIds = [1, 2, 3];
-        $subject = $this->createMock(\Magento\Catalog\Model\Product\Action::class);
+        $subject = $this->createMock(ProductAction::class);
 
-        $result = new ProductActionTestHelper();
+        $result = $this->createPartialMockWithReflection(
+            ProductAction::class,
+            ['getAttributesData', 'getProductIds']
+        );
 
-        $result->setAttributesData(['price' => 100]);
-        $result->setProductIds($productIds);
+        $result->expects($this->once())
+            ->method('getAttributesData')
+            ->willReturn(['price' => 100]);
+
+        $result->expects($this->once())
+            ->method('getProductIds')
+            ->willReturn($productIds);
 
         $this->productRuleProcessor->expects($this->once())
             ->method('reindexList')

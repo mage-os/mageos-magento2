@@ -7,7 +7,6 @@ declare(strict_types=1);
 
 namespace Magento\CatalogInventory\Test\Unit\Model\Quote\Item\QuantityValidator\Initializer;
 
-use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Bundle\Model\Product\Type;
 use Magento\Catalog\Model\Product;
 use Magento\CatalogInventory\Api\Data\StockStatusInterface;
@@ -24,26 +23,23 @@ use Magento\Framework\DataObject;
 use Magento\Framework\Event;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Item;
 use Magento\Quote\Model\Quote\Item\Option as OptionItem;
-use Magento\Quote\Test\Unit\Helper\QuoteTestHelper;
-use Magento\Quote\Test\Unit\Helper\QuoteItemTestHelper;
-use Magento\Quote\Test\Unit\Helper\OptionItemTestHelper;
-use Magento\CatalogInventory\Test\Unit\Helper\StockItemInterfaceTestHelper;
 use Magento\Store\Model\Store;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.TooManyFields)
- * @SuppressWarnings(PHPMD.UnusedLocalVariable)
- * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  */
 class QuantityValidatorTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var QuantityValidator
      */
@@ -153,20 +149,35 @@ class QuantityValidatorTest extends TestCase
             ]
         );
         $this->observerMock = $this->createMock(Observer::class);
-        // Use Event with dynamic methods via __call magic method
-        $this->eventMock = new Event();
-        $this->quoteMock = new QuoteTestHelper();
+        $this->eventMock = $this->createPartialMockWithReflection(
+            Event::class,
+            ['getItem']
+        );
+        $this->quoteMock = $this->createPartialMockWithReflection(
+            Quote::class,
+            ['getHasError', 'getIsSuperMode', 'getQuote', 'getItemsCollection',
+             'removeErrorInfosByParams', 'addErrorInfo']
+        );
         $this->storeMock = $this->createMock(Store::class);
-        $this->quoteItemMock = new QuoteItemTestHelper();
+        $this->quoteItemMock = $this->createPartialMockWithReflection(
+            Item::class,
+            ['getProductId', 'getHasError', 'getStockStateResult', 'getQuote', 'getQty',
+             'getProduct', 'getParentItem', 'addErrorInfo', 'setData', 'getQtyOptions', 'getItemId']
+        );
         $this->parentItemMock = $this->createPartialMock(Item::class, ['getProduct', 'getId', 'getStore']);
         $this->productMock = $this->createMock(Product::class);
         $this->stockItemMock = $this->createMock(StockMock::class);
-        // Use StockItemInterfaceTestHelper extending Stock\Item with dynamic methods
-        $this->parentStockItemMock = new StockItemInterfaceTestHelper();
+        $this->parentStockItemMock = $this->createPartialMockWithReflection(
+            StockMock::class,
+            ['getStockStatus', 'getIsInStock']
+        );
 
         $this->typeInstanceMock = $this->createMock(Type::class);
 
-        $this->resultMock = new DataObject();
+        $this->resultMock = $this->createPartialMockWithReflection(
+            DataObject::class,
+            ['checkQtyIncrements', 'getMessage', 'getQuoteMessage', 'getHasError', 'getQuoteMessageIndex']
+        );
     }
 
     /**
@@ -190,9 +201,21 @@ class QuantityValidatorTest extends TestCase
             ->method('getStockStatus')
             ->willReturn(0);
 
-        // Note: addErrorInfo is now a direct method call on anonymous class, no expects() needed
-        // Note: addErrorInfo is now a direct method call on anonymous class, no expects() needed
-        // The method will be called during validation
+        $this->quoteItemMock->expects($this->once())
+            ->method('addErrorInfo')
+            ->with(
+                'cataloginventory',
+                Data::ERROR_QTY,
+                __('This product is out of stock.')
+            );
+        $this->quoteMock->expects($this->once())
+            ->method('addErrorInfo')
+            ->with(
+                'stock',
+                'cataloginventory',
+                Data::ERROR_QTY,
+                __('Some of the products are out of stock.')
+            );
         $this->quantityValidator->validate($this->observerMock);
     }
 
@@ -206,7 +229,9 @@ class QuantityValidatorTest extends TestCase
     {
         $this->createInitialStub(1);
 
-        $this->quoteItemMock->setParentItem($this->parentItemMock);
+        $this->quoteItemMock->expects($this->any())
+            ->method('getParentItem')
+            ->willReturn($this->parentItemMock);
 
         $this->stockRegistryMock
             ->method('getStockItem')
@@ -215,12 +240,29 @@ class QuantityValidatorTest extends TestCase
             ->method('getStockStatus')
             ->willReturnOnConsecutiveCalls($this->stockStatusMock, $this->parentStockItemMock);
 
-        $this->parentStockItemMock->setStockStatus(0);
+        $this->parentStockItemMock->expects($this->once())
+            ->method('getStockStatus')
+            ->willReturn(0);
 
         $this->stockStatusMock->expects($this->atLeastOnce())
             ->method('getStockStatus')
             ->willReturn(1);
 
+        $this->quoteItemMock->expects($this->once())
+            ->method('addErrorInfo')
+            ->with(
+                'cataloginventory',
+                Data::ERROR_QTY,
+                __('This product is out of stock.')
+            );
+        $this->quoteMock->expects($this->once())
+            ->method('addErrorInfo')
+            ->with(
+                'stock',
+                'cataloginventory',
+                Data::ERROR_QTY,
+                __('Some of the products are out of stock.')
+            );
         $this->quantityValidator->validate($this->observerMock);
     }
 
@@ -232,10 +274,15 @@ class QuantityValidatorTest extends TestCase
      */
     public function testValidateWithOptions(): void
     {
-        // Create anonymous class for Option Item with dynamic methods
-        $optionMock = new OptionItemTestHelper();
-        $optionMock->setStockStateResult($this->resultMock);
-        $optionMock->setProduct($this->productMock);
+        $optionMock = $this->createPartialMockWithReflection(
+            OptionItem::class,
+            ['getProduct', 'setHasError', 'getStockStateResult']
+        );
+        $optionMock->expects($this->any())
+            ->method('getStockStateResult')
+            ->willReturn($this->resultMock);
+        $optionMock->method('getProduct')
+            ->willReturn($this->productMock);
         $this->stockRegistryMock
             ->method('getStockItem')
             ->willReturnOnConsecutiveCalls($this->stockItemMock);
@@ -246,13 +293,20 @@ class QuantityValidatorTest extends TestCase
         $this->createInitialStub(1);
         $this->setUpStubForQuantity(1, true);
         $this->setUpStubForRemoveError();
-        $this->parentStockItemMock->setStockStatus(1);
+        $this->parentStockItemMock->expects($this->any())
+            ->method('getStockStatus')
+            ->willReturn(1);
         $this->stockStatusMock->expects($this->once())
             ->method('getStockStatus')
             ->willReturn(1);
-        $this->quoteItemMock->setQtyOptions($options);
-        $this->optionInitializer->method('initialize')->willReturn($this->resultMock);
-        // Note: setHasError is now a direct method call on anonymous class, no expects() needed
+        $this->quoteItemMock->expects($this->any())
+            ->method('getQtyOptions')
+            ->willReturn($options);
+        $this->optionInitializer->expects($this->any())
+            ->method('initialize')
+            ->willReturn($this->resultMock);
+        $optionMock->expects($this->never())
+            ->method('setHasError');
         $this->quantityValidator->validate($this->observerMock);
     }
 
@@ -268,27 +322,39 @@ class QuantityValidatorTest extends TestCase
     #[DataProvider('validateWithOptionsDataProvider')]
     public function testValidateWithOptionsAndError(int $quantity, int $productStatus, int $productStockStatus): void
     {
-        // Create anonymous class for Option Item with dynamic methods
-        $optionMock = new OptionItemTestHelper();
+        $optionMock = $this->createPartialMockWithReflection(
+            OptionItem::class,
+            ['getProduct', 'setHasError', 'getStockStateResult']
+        );
         $this->stockRegistryMock
             ->method('getStockItem')
             ->willReturnOnConsecutiveCalls($this->stockItemMock);
         $this->stockRegistryMock
             ->method('getStockStatus')
             ->willReturnOnConsecutiveCalls($this->stockStatusMock);
-        $optionMock->setStockStateResult($this->resultMock);
-        $optionMock->setProduct($this->productMock);
+        $optionMock->expects($this->any())
+            ->method('getStockStateResult')
+            ->willReturn($this->resultMock);
+        $optionMock->method('getProduct')
+            ->willReturn($this->productMock);
         $options = [$optionMock];
         $this->createInitialStub($quantity);
         $this->setUpStubForQuantity($quantity, true);
         $this->setUpStubForRemoveError();
-        $this->parentStockItemMock->setStockStatus($productStatus);
+        $this->parentStockItemMock->expects($this->any())
+            ->method('getStockStatus')
+            ->willReturn($productStatus);
         $this->stockStatusMock->expects($this->once())
             ->method('getStockStatus')
             ->willReturn($productStockStatus);
-        $this->quoteItemMock->setQtyOptions($options);
-        $this->optionInitializer->method('initialize')->willReturn($this->resultMock);
-        // Note: setHasError is now a direct method call on anonymous class, no expects() needed
+        $this->quoteItemMock->expects($this->any())
+            ->method('getQtyOptions')
+            ->willReturn($options);
+        $this->optionInitializer->expects($this->any())
+            ->method('initialize')
+            ->willReturn($this->resultMock);
+        $optionMock->expects($this->never())
+            ->method('setHasError');
         $this->quantityValidator->validate($this->observerMock);
     }
 
@@ -316,13 +382,19 @@ class QuantityValidatorTest extends TestCase
      */
     public function testValidateAndRemoveErrorsFromQuote(): void
     {
-        // Create anonymous class for Option Item with dynamic methods
-        $optionMock = new OptionItemTestHelper();
-        $quoteItem = $this->createMock(Item::class);
-        $quoteItem->method('getItemId')->willReturn(4);
-        $quoteItem->method('getErrorInfos')->willReturn([['code' => 2]]);
-        $optionMock->setStockStateResult($this->resultMock);
-        $optionMock->setProduct($this->productMock);
+        $optionMock = $this->createPartialMockWithReflection(
+            OptionItem::class,
+            ['getProduct', 'setHasError', 'getStockStateResult']
+        );
+        $quoteItem = $this->createPartialMock(
+            Item::class,
+            ['getItemId', 'getErrorInfos']
+        );
+        $optionMock->expects($this->any())
+            ->method('getStockStateResult')
+            ->willReturn($this->resultMock);
+        $optionMock->method('getProduct')
+            ->willReturn($this->productMock);
         $this->stockRegistryMock
             ->method('getStockItem')
             ->willReturnOnConsecutiveCalls($this->stockItemMock);
@@ -332,19 +404,28 @@ class QuantityValidatorTest extends TestCase
         $options = [$optionMock];
         $this->createInitialStub(1);
         $this->setUpStubForQuantity(1, true);
-        $this->parentStockItemMock->setStockStatus(1);
+        $this->parentStockItemMock->expects($this->any())
+            ->method('getStockStatus')
+            ->willReturn(1);
         $this->stockStatusMock->expects($this->once())
             ->method('getStockStatus')
             ->willReturn(1);
-        $this->quoteItemMock->setQtyOptions($options);
-        $this->optionInitializer->method('initialize')->willReturn($this->resultMock);
-        // Note: setHasError is now a direct method call on anonymous class, no expects() needed
-        $this->quoteMock->setHasError(true);
-        $this->quoteMock->setItemsCollection([$quoteItem]);
-        $quoteItem->method('getItemId')->willReturn(4);
-        $quoteItem->method('getErrorInfos')->willReturn([['code' => 2]]);
-        $this->quoteItemMock->setItemId(3);
-        // Note: removeErrorInfosByParams is now a direct method call on anonymous class, no expects() needed
+        $this->quoteItemMock->expects($this->any())
+            ->method('getQtyOptions')
+            ->willReturn($options);
+        $this->optionInitializer->expects($this->any())
+            ->method('initialize')
+            ->willReturn($this->resultMock);
+        $optionMock->expects($this->never())
+            ->method('setHasError');
+        $this->quoteMock->expects($this->any())->method('getHasError')->willReturn(true);
+        $this->quoteMock->expects($this->any())->method('getItemsCollection')->willReturn([$quoteItem]);
+        $quoteItem->expects($this->any())->method('getItemId')->willReturn(4);
+        $quoteItem->expects($this->any())->method('getErrorInfos')->willReturn([['code' => 2]]);
+        $this->quoteItemMock->expects($this->any())->method('getItemId')->willReturn(3);
+        $this->quoteMock->expects($this->any())->method('removeErrorInfosByParams')
+            ->with(null, ['origin' => 'cataloginventory', 'code' => 1])
+            ->willReturnSelf();
         $this->quantityValidator->validate($this->observerMock);
     }
 
@@ -358,7 +439,9 @@ class QuantityValidatorTest extends TestCase
     {
         $this->createInitialStub(1);
         $this->setUpStubForRemoveError();
-        $this->quoteItemMock->setQtyOptions(null);
+        $this->quoteItemMock->expects($this->any())
+            ->method('getQtyOptions')
+            ->willReturn(null);
         $this->stockRegistryMock
             ->method('getStockItem')
             ->willReturnOnConsecutiveCalls($this->stockItemMock);
@@ -367,8 +450,16 @@ class QuantityValidatorTest extends TestCase
             ->willReturnCallback(function () use (&$callCount) {
                 return $callCount++ === 0 ? $this->stockStatusMock : null;
             });
-        $this->quoteItemMock->setParentItem($this->parentItemMock);
-        $this->stockStatusMock->method('getStockStatus')->willReturn(1);
+        $this->quoteItemMock->expects($this->any())
+            ->method('getParentItem')
+            ->willReturn($this->parentItemMock);
+        $this->stockStatusMock->expects($this->any())
+            ->method('getStockStatus')
+            ->willReturn(1);
+        $this->quoteItemMock->expects($this->any())
+            ->method('addErrorInfo');
+        $this->quoteMock->expects($this->any())
+            ->method('addErrorInfo');
         $this->quantityValidator->validate($this->observerMock);
     }
 
@@ -397,20 +488,40 @@ class QuantityValidatorTest extends TestCase
     public function testValidateOutStockWithAlreadyErrorInQuoteItem(): void
     {
         $this->createInitialStub(1);
-        $resultMock = new DataObject();
-        $resultMock->setHasError(true);
+        $resultMock = $this->createPartialMockWithReflection(
+            DataObject::class,
+            ['checkQtyIncrements', 'getMessage', 'getQuoteMessage', 'getHasError']
+        );
+        $resultMock->method('getHasError')
+            ->willReturn(true);
         $this->stockRegistryMock->method('getStockItem')
             ->willReturn($this->stockItemMock);
-        $this->quoteItemMock->setParentItem($this->parentItemMock);
-        $this->quoteItemMock->setStockStateResult($resultMock);
+        $this->quoteItemMock->method('getParentItem')
+            ->willReturn($this->parentItemMock);
+        $this->quoteItemMock->method('getStockStateResult')
+            ->willReturn($resultMock);
         $this->stockRegistryMock
             ->method('getStockStatus')
             ->willReturnOnConsecutiveCalls($this->stockStatusMock, $this->parentStockItemMock);
-        $this->parentStockItemMock->setStockStatus(0);
+        $this->parentStockItemMock->method('getStockStatus')
+            ->willReturn(0);
         $this->stockStatusMock->expects($this->atLeastOnce())
             ->method('getStockStatus')
             ->willReturn(1);
-
+        $this->quoteItemMock->expects($this->once())
+            ->method('addErrorInfo')
+            ->with(
+                null,
+                Data::ERROR_QTY,
+            );
+        $this->quoteMock->expects($this->once())
+            ->method('addErrorInfo')
+            ->with(
+                'stock',
+                'cataloginventory',
+                Data::ERROR_QTY,
+                __('Some of the products are out of stock.')
+            );
         $this->quantityValidator->validate($this->observerMock);
     }
 
@@ -422,15 +533,32 @@ class QuantityValidatorTest extends TestCase
      */
     private function setUpStubForQuantity($qty, $hasError): void
     {
-        $this->productMock->method('getTypeInstance')->willReturn($this->typeInstanceMock);
-        $this->typeInstanceMock->method('prepareQuoteItemQty')->willReturn($qty);
-        // Note: setData is now a direct method call on anonymous class, no expects() needed
-        $this->productMock->method('getId')->willReturn(1);
-        $this->stockState->method('checkQtyIncrements')->willReturn($this->resultMock);
-        $this->resultMock->setHasError($hasError);
-        $this->resultMock->setMessage('');
-        $this->resultMock->setQuoteMessage('');
-        $this->resultMock->setQuoteMessageIndex('');
+        $this->productMock->expects($this->any())
+            ->method('getTypeInstance')
+            ->willReturn($this->typeInstanceMock);
+        $this->typeInstanceMock->expects($this->any())
+            ->method('prepareQuoteItemQty')
+            ->willReturn($qty);
+        $this->quoteItemMock->expects($this->any())
+            ->method('setData');
+        $this->productMock->expects($this->any())
+            ->method('getId')
+            ->willReturn(1);
+        $this->stockState->expects($this->any())
+            ->method('checkQtyIncrements')
+            ->willReturn($this->resultMock);
+        $this->resultMock->expects($this->any())
+            ->method('getHasError')
+            ->willReturn($hasError);
+        $this->resultMock->expects($this->any())
+            ->method('getMessage')
+            ->willReturn('');
+        $this->resultMock->expects($this->any())
+            ->method('getQuoteMessage')
+            ->willReturn('');
+        $this->resultMock->expects($this->any())
+            ->method('getQuoteMessageIndex')
+            ->willReturn('');
     }
 
     /**
@@ -438,23 +566,59 @@ class QuantityValidatorTest extends TestCase
      */
     private function createInitialStub($qty): void
     {
-        $this->storeMock->method('getWebsiteId')->willReturn(1);
-        $this->quoteMock->setIsSuperMode(0);
-        $this->productMock->method('getId')->willReturn(1);
-        $this->productMock->method('getStore')->willReturn($this->storeMock);
-        $this->quoteItemMock->setProductId(1);
-        $this->quoteItemMock->setQuote($this->quoteMock);
-        $this->quoteItemMock->setQty($qty);
-        $this->quoteItemMock->setProduct($this->productMock);
-        $this->eventMock->setItem($this->quoteItemMock);
-        $this->observerMock->method('getEvent')->willReturn($this->eventMock);
-        $this->parentItemMock->method('getProduct')->willReturn($this->productMock);
-        $this->parentStockItemMock->setIsInStock(false);
-        $this->storeMock->method('getWebsiteId')->willReturn(1);
-        $this->quoteItemMock->setQuote($this->quoteMock);
-        $this->quoteMock->setQuote($this->quoteMock);
+        $this->storeMock->expects($this->any())
+            ->method('getWebsiteId')
+            ->willReturn(1);
+        $this->quoteMock->expects($this->any())
+            ->method('getIsSuperMode')
+            ->willReturn(0);
+        $this->productMock->expects($this->any())
+            ->method('getId')
+            ->willReturn(1);
+        $this->productMock->expects($this->any())
+            ->method('getStore')
+            ->willReturn($this->storeMock);
+        $this->quoteItemMock->expects($this->any())
+            ->method('getProductId')
+            ->willReturn(1);
+        $this->quoteItemMock->expects($this->any())
+            ->method('getQuote')
+            ->willReturn($this->quoteMock);
+        $this->quoteItemMock->expects($this->any())
+            ->method('getQty')
+            ->willReturn($qty);
+        $this->quoteItemMock->expects($this->any())
+            ->method('getProduct')
+            ->willReturn($this->productMock);
+        $this->eventMock->expects($this->any())
+            ->method('getItem')
+            ->willReturn($this->quoteItemMock);
+        $this->observerMock->expects($this->any())
+            ->method('getEvent')
+            ->willReturn($this->eventMock);
+        $this->parentItemMock->expects($this->any())
+            ->method('getProduct')
+            ->willReturn($this->productMock);
+        $this->parentStockItemMock->expects($this->any())
+            ->method('getIsInStock')
+            ->willReturn(false);
+        $this->storeMock->expects($this->any())
+            ->method('getWebsiteId')
+            ->willReturn(1);
+        $this->quoteItemMock->expects($this->any())
+            ->method('getQuote')
+            ->willReturn($this->quoteMock);
+        $this->quoteMock->expects($this->any())
+            ->method('getQuote')
+            ->willReturn($this->quoteMock);
+        $this->quoteItemMock->expects($this->any())
+            ->method('addErrorInfo');
+        $this->quoteMock->expects($this->any())
+            ->method('addErrorInfo');
         $this->setUpStubForQuantity(0, false);
-        $this->stockItemInitializer->method('initialize')->willReturn($this->resultMock);
+        $this->stockItemInitializer->expects($this->any())
+            ->method('initialize')
+            ->willReturn($this->resultMock);
     }
 
     /**
@@ -463,8 +627,14 @@ class QuantityValidatorTest extends TestCase
     private function setUpStubForRemoveError(): void
     {
         $quoteItems = [$this->quoteItemMock];
-        $this->quoteItemMock->setHasError(false);
-        $this->quoteMock->setItemsCollection($quoteItems);
-        $this->quoteMock->setHasError(false);
+        $this->quoteItemMock->expects($this->any())
+            ->method('getHasError')
+            ->willReturn(false);
+        $this->quoteMock->expects($this->any())
+            ->method('getItemsCollection')
+            ->willReturn($quoteItems);
+        $this->quoteMock->expects($this->any())
+            ->method('getHasError')
+            ->willReturn(false);
     }
 }

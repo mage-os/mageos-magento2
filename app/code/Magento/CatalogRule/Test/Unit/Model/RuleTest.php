@@ -7,11 +7,11 @@ declare(strict_types=1);
 
 namespace Magento\CatalogRule\Test\Unit\Model;
 
-use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
 use Magento\CatalogRule\Api\Data\RuleInterface;
 use Magento\CatalogRule\Model\Indexer\Rule\RuleProductProcessor;
+use Magento\CatalogRule\Model\ResourceModel\Rule as RuleResourceModel;
 use Magento\CatalogRule\Model\Rule;
 use Magento\CatalogRule\Model\Rule\Condition\CombineFactory;
 use Magento\Framework\Api\AttributeValueFactory;
@@ -20,21 +20,23 @@ use Magento\Framework\DataObject;
 use Magento\Framework\Indexer\IndexerInterface;
 use Magento\Framework\Model\ResourceModel\Iterator;
 use Magento\Framework\Serialize\Serializer\Json;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Rule\Model\Condition\Combine;
 use Magento\Store\Model\Store;
-use Magento\Catalog\Test\Unit\Helper\CombineTestHelper;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Store\Model\Website;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @SuppressWarnings(PHPMD.UnusedLocalVariable)
  */
 class RuleTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Rule
      */
@@ -86,7 +88,7 @@ class RuleTest extends TestCase
     private $resourceIterator;
 
     /**
-     * @var \Magento\CatalogRule\Model\ResourceModel\Rule|MockObject
+     * @var RuleResourceModel|MockObject
      */
     private $ruleResourceModel;
 
@@ -117,7 +119,10 @@ class RuleTest extends TestCase
                 'setData'
             ]
         );
-        $this->condition = new CombineTestHelper();
+        $this->condition = $this->createPartialMockWithReflection(
+            Combine::class,
+            ['setRule', 'validate']
+        );
         $this->websiteModel = $this->createPartialMock(
             Website::class,
             [
@@ -140,7 +145,7 @@ class RuleTest extends TestCase
             ['walk']
         );
 
-        $this->ruleResourceModel = $this->createMock(\Magento\CatalogRule\Model\ResourceModel\Rule::class);
+        $this->ruleResourceModel = $this->createMock(RuleResourceModel::class);
 
         $extensionFactoryMock = $this->createMock(ExtensionAttributesFactory::class);
         $attributeValueFactoryMock = $this->createMock(AttributeValueFactory::class);
@@ -425,7 +430,7 @@ class RuleTest extends TestCase
         $this->rule->isObjectNew($isObjectNew);
         $indexer = $this->createMock(IndexerInterface::class);
         $indexer->expects($this->any())->method('invalidate');
-        $this->ruleProductProcessor->method('getIndexer')->willReturn($indexer);
+        $this->ruleProductProcessor->expects($this->any())->method('getIndexer')->willReturn($indexer);
 
         foreach ($dataArray as $data) {
             $this->rule->setData($data);

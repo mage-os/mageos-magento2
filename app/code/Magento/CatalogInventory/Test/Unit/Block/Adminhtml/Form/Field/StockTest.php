@@ -8,12 +8,17 @@ declare(strict_types=1);
 namespace Magento\CatalogInventory\Test\Unit\Block\Adminhtml\Form\Field;
 
 use Magento\CatalogInventory\Block\Adminhtml\Form\Field\Stock;
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Data\Form\Element\AbstractElement;
 use Magento\Framework\Data\Form\Element\CollectionFactory;
 use Magento\Framework\Data\Form\Element\Factory;
 use Magento\Framework\Data\Form\Element\Text;
 use Magento\Framework\Data\Form\Element\TextFactory;
-use Magento\Framework\Data\Test\Unit\Helper\TextTestHelper;
+use Magento\Framework\Escaper;
+use Magento\Framework\ObjectManagerInterface;
+use Magento\Framework\Registry;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+use Magento\Framework\View\Helper\SecureHtmlRenderer;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -23,6 +28,8 @@ use PHPUnit\Framework\TestCase;
  */
 class StockTest extends TestCase
 {
+    use MockCreationTrait;
+
     public const ATTRIBUTE_NAME = 'quantity_and_stock_status';
 
     /**
@@ -53,32 +60,72 @@ class StockTest extends TestCase
     protected function setUp(): void
     {
         // Create minimal ObjectManager mock and set it up first
-        $objectManagerMock = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
-        \Magento\Framework\App\ObjectManager::setInstance($objectManagerMock);
+        $objectManagerMock = $this->createMock(ObjectManagerInterface::class);
+        ObjectManager::setInstance($objectManagerMock);
         
         $this->_factoryElementMock = $this->createMock(Factory::class);
         $this->_collectionFactoryMock = $this->createMock(
             CollectionFactory::class
         );
-        $escaperMock = $this->createMock(\Magento\Framework\Escaper::class);
-        $secureHtmlRendererMock = $this->createMock(\Magento\Framework\View\Helper\SecureHtmlRenderer::class);
+        $escaperMock = $this->createMock(Escaper::class);
+        $secureHtmlRendererMock = $this->createMock(SecureHtmlRenderer::class);
         
         // Configure ObjectManager mock to return the appropriate mocks when requested
         $objectManagerMock->method('get')
             ->willReturnMap([
-                [\Magento\Framework\Escaper::class, $escaperMock],
-                [\Magento\Framework\View\Helper\SecureHtmlRenderer::class, $secureHtmlRendererMock]
+                [Escaper::class, $escaperMock],
+                [SecureHtmlRenderer::class, $secureHtmlRendererMock]
             ]);
         
-        $this->_qtyMock = new TextTestHelper(
-            $this->_factoryElementMock,
-            $this->_collectionFactoryMock,
-            $escaperMock
+        $this->_qtyMock = $this->createPartialMockWithReflection(
+            Text::class,
+            ['setId', 'getId', 'setName', 'getName', 'setLabel', 'getLabel', 'setValue', 'getValue']
         );
+        
+        // Implement stateful behavior for setName/getName, setValue/getValue, setId/getId, setLabel/getLabel
+        $name = null;
+        $value = null;
+        $id = null;
+        $label = null;
+        
+        $qtyMock = $this->_qtyMock;
+        
+        $this->_qtyMock->method('setName')->willReturnCallback(function ($val) use (&$name, $qtyMock) {
+            $name = $val;
+            return $qtyMock;
+        });
+        
+        $this->_qtyMock->method('getName')->willReturnCallback(function () use (&$name) {
+            return $name;
+        });
+        
+        $this->_qtyMock->method('setValue')->willReturnCallback(function ($val) use (&$value, $qtyMock) {
+            $value = $val;
+            return $qtyMock;
+        });
+        $this->_qtyMock->method('getValue')->willReturnCallback(function () use (&$value) {
+            return $value;
+        });
+        
+        $this->_qtyMock->method('setId')->willReturnCallback(function ($val) use (&$id, $qtyMock) {
+            $id = $val;
+            return $qtyMock;
+        });
+        $this->_qtyMock->method('getId')->willReturnCallback(function () use (&$id) {
+            return $id;
+        });
+        
+        $this->_qtyMock->method('setLabel')->willReturnCallback(function ($val) use (&$label, $qtyMock) {
+            $label = $val;
+            return $qtyMock;
+        });
+        $this->_qtyMock->method('getLabel')->willReturnCallback(function () use (&$label) {
+            return $label;
+        });
         
         $this->_factoryTextMock = $this->createMock(TextFactory::class);
 
-        $coreRegistryMock = $this->createMock(\Magento\Framework\Registry::class);
+        $coreRegistryMock = $this->createMock(Registry::class);
         
         // Instantiate Stock block directly with mocks
         $this->_block = new Stock(
@@ -93,7 +140,7 @@ class StockTest extends TestCase
 
     public function testSetForm()
     {
-        $escaperMock = $this->createMock(\Magento\Framework\Escaper::class);
+        $escaperMock = $this->createMock(Escaper::class);
         $formElement = new Text(
             $this->_factoryElementMock,
             $this->_collectionFactoryMock,

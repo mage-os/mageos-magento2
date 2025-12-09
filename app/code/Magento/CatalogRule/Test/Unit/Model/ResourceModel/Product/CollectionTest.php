@@ -14,6 +14,8 @@ use Magento\Eav\Model\Config as EavConfig;
 use Magento\Eav\Model\Entity\AbstractEntity;
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
 use Magento\Framework\DB\Adapter\AdapterInterface;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -24,6 +26,8 @@ use PHPUnit\Framework\TestCase;
  */
 class CollectionTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Collection
      */
@@ -56,17 +60,17 @@ class CollectionTest extends TestCase
     {
         $this->batchSizeCalculatorMock = $this->createMock(DynamicBatchSizeCalculator::class);
         $this->entityMock = $this->createMock(AbstractEntity::class);
-        $this->attributeMock = $this->getMockBuilder(AbstractAttribute::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getId', 'getBackend', 'getEntity'])
-            ->getMock();
-        $this->connectionMock = $this->getMockForAbstractClass(AdapterInterface::class);
+        $this->attributeMock = $this->createPartialMock(
+            AbstractAttribute::class,
+            ['getId', 'getBackend', 'getEntity']
+        );
+        $this->connectionMock = $this->createMock(AdapterInterface::class);
 
         // Create actual collection instance with mocked dependencies
-        $this->collection = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getEntity', 'getConnection', 'getMainTable'])
-            ->getMock();
+        $this->collection = $this->createPartialMock(
+            Collection::class,
+            ['getEntity', 'getConnection', 'getMainTable']
+        );
 
         $this->collection->method('getEntity')
             ->willReturn($this->entityMock);
@@ -185,18 +189,18 @@ class CollectionTest extends TestCase
     {
         $attributeCode1 = 'test_attribute_1';
         $attributeId1 = 123;
-        $attribute1Mock = $this->getMockBuilder(AbstractAttribute::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getId', 'getBackend', 'getEntity'])
-            ->getMock();
+        $attribute1Mock = $this->createPartialMock(
+            AbstractAttribute::class,
+            ['getId', 'getBackend', 'getEntity']
+        );
         $attribute1Mock->method('getId')->willReturn($attributeId1);
 
         $attributeCode2 = 'test_attribute_2';
         $attributeId2 = 456;
-        $attribute2Mock = $this->getMockBuilder(AbstractAttribute::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getId', 'getBackend', 'getEntity'])
-            ->getMock();
+        $attribute2Mock = $this->createPartialMock(
+            AbstractAttribute::class,
+            ['getId', 'getBackend', 'getEntity']
+        );
         $attribute2Mock->method('getId')->willReturn($attributeId2);
 
         $this->entityMock->method('getAttribute')
@@ -285,11 +289,11 @@ class CollectionTest extends TestCase
     /**
      * Test getAllAttributeValues works with various batch sizes
      *
-     * @dataProvider batchSizeProvider
      * @param int $batchSize
      * @param int $maxBatches
      * @return void
      */
+    #[DataProvider('batchSizeProvider')]
     public function testGetAllAttributeValuesWorksWithVariousBatchSizes(int $batchSize, int $maxBatches): void
     {
         $attributeCode = 'test_attribute';
@@ -320,7 +324,7 @@ class CollectionTest extends TestCase
      *
      * @return array
      */
-    public function batchSizeProvider(): array
+    public static function batchSizeProvider(): array
     {
         return [
             'small_batch' => [500, 2],
@@ -355,10 +359,10 @@ class CollectionTest extends TestCase
 
         $result1 = $this->collection->getAllAttributeValues($attributeCode);
 
-        $collection2 = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getEntity', 'getConnection', 'getMainTable'])
-            ->getMock();
+        $collection2 = $this->createPartialMock(
+            Collection::class,
+            ['getEntity', 'getConnection', 'getMainTable']
+        );
 
         $collection2->method('getEntity')
             ->willReturn($this->entityMock);

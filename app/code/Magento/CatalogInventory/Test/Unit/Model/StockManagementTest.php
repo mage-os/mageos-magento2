@@ -7,30 +7,29 @@ declare(strict_types=1);
 
 namespace Magento\CatalogInventory\Test\Unit\Model;
 
-use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Api\ProductRepositoryInterface;
-use Magento\CatalogInventory\Test\Unit\Helper\StockItemInterfaceTestHelper;
 use Magento\CatalogInventory\Api\Data\StockItemInterface;
 use Magento\CatalogInventory\Api\StockConfigurationInterface;
 use Magento\CatalogInventory\Model\ResourceModel\QtyCounterInterface;
 use Magento\CatalogInventory\Model\ResourceModel\Stock as ResourceStock;
 use Magento\CatalogInventory\Model\Spi\StockRegistryProviderInterface;
+use Magento\CatalogInventory\Model\Stock\Item;
 use Magento\CatalogInventory\Model\StockManagement;
 use Magento\CatalogInventory\Model\StockRegistryStorage;
 use Magento\CatalogInventory\Model\StockState;
+use Magento\CatalogInventory\Model\StockStateException;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Test for \Magento\CatalogInventory\Model\StockManagement
- *
- * @SuppressWarnings(PHPMD.UnusedLocalVariable)
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
- * @SuppressWarnings(PHPMD.TooManyFields)
  */
 class StockManagementTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * @var StockManagement|MockObject
      */
@@ -83,59 +82,56 @@ class StockManagementTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->stockResourceMock = $this->getMockBuilder(ResourceStock::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->stockRegistryProviderMock = $this->getMockBuilder(StockRegistryProviderInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->stockStateMock = $this->getMockBuilder(StockState::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->stockConfigurationMock = $this->getMockBuilder(StockConfigurationInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->stockResourceMock = $this->createMock(ResourceStock::class);
+        $this->stockRegistryProviderMock = $this->createMock(StockRegistryProviderInterface::class);
+        $this->stockStateMock = $this->createMock(StockState::class);
+        $this->stockConfigurationMock = $this->createMock(StockConfigurationInterface::class);
         $this->productRepositoryMock = $this->createMock(ProductRepositoryInterface::class);
-        $this->qtyCounterMock = $this->getMockBuilder(QtyCounterInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->stockRegistryStorageMock = $this->getMockBuilder(StockRegistryStorage::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        // Create StockItemInterfaceTestHelper implementing StockItemInterface with dynamic methods
-        $this->stockItemInterfaceMock = new StockItemInterfaceTestHelper();
-        $this->stockManagement = $this->getMockBuilder(StockManagement::class)
-            ->onlyMethods(['getResource', 'canSubtractQty'])
-            ->setConstructorArgs(
-                [
-                    'stockResource' => $this->stockResourceMock,
-                    'stockRegistryProvider' => $this->stockRegistryProviderMock,
-                    'stockState' => $this->stockStateMock,
-                    'stockConfiguration' => $this->stockConfigurationMock,
-                    'productRepository' => $this->productRepositoryMock,
-                    'qtyCounter' => $this->qtyCounterMock,
-                    'stockRegistryStorage' => $this->stockRegistryStorageMock,
-                ]
-            )->getMock();
+        $this->qtyCounterMock = $this->createMock(QtyCounterInterface::class);
+        $this->stockRegistryStorageMock = $this->createMock(StockRegistryStorage::class);
+        $this->stockItemInterfaceMock = $this->createPartialMockWithReflection(
+            Item::class,
+            ['hasAdminArea', 'getWebsiteId', 'getItemId']
+        );
+        
+        // Use getMockBuilder for partial mock with constructor args
+        $mockBuilder = $this->getMockBuilder(StockManagement::class);
+        $mockBuilder->onlyMethods(['getResource', 'canSubtractQty']);
+        $mockBuilder->setConstructorArgs([
+            $this->stockResourceMock,
+            $this->stockRegistryProviderMock,
+            $this->stockStateMock,
+            $this->stockConfigurationMock,
+            $this->productRepositoryMock,
+            $this->qtyCounterMock,
+            $this->stockRegistryStorageMock,
+        ]);
+        $this->stockManagement = $mockBuilder->getMock();
 
         $this->stockConfigurationMock
             ->expects($this->once())
             ->method('getDefaultScopeId')
             ->willReturn($this->websiteId);
         $this->stockManagement
-            ->method('getResource')->willReturn($this->stockResourceMock);
+            ->expects($this->any())
+            ->method('getResource')
+            ->willReturn($this->stockResourceMock);
         $this->stockRegistryProviderMock
-            ->method('getStockItem')->willReturn($this->stockItemInterfaceMock);
-        $this->stockItemInterfaceMock->setHasAdminArea(false);
+            ->expects($this->any())
+            ->method('getStockItem')
+            ->willReturn($this->stockItemInterfaceMock);
+        $this->stockItemInterfaceMock
+            ->method('hasAdminArea')
+            ->willReturn(false);
     }
 
     /**
-     *
      * @param array $items
      * @param array $lockedItems
      * @param bool $canSubtract
      * @param bool $isQty
      * @param bool $verifyStock
+     *
      * @return void
      */
     #[DataProvider('productsWithCorrectQtyDataProvider')]
@@ -153,18 +149,28 @@ class StockManagementTest extends TestCase
             ->expects($this->once())
             ->method('lockProductsStock')
             ->willReturn([$lockedItems]);
-        $this->stockItemInterfaceMock->setItemId($lockedItems['product_id']);
+        $this->stockItemInterfaceMock
+            ->method('getItemId')
+            ->willReturn($lockedItems['product_id']);
         $this->stockManagement
-            ->method('canSubtractQty')->willReturn($canSubtract);
+            ->expects($this->any())
+            ->method('canSubtractQty')
+            ->willReturn($canSubtract);
         $this->stockConfigurationMock
-            ->method('isQty')->willReturn($isQty);
-        $this->stockItemInterfaceMock->setWebsiteId($this->websiteId);
+            ->method('isQty')
+            ->willReturn($isQty);
+        $this->stockItemInterfaceMock
+            ->method('getWebsiteId')
+            ->willReturn($this->websiteId);
         $this->stockStateMock
-            ->method('checkQty')->willReturn(true);
+            ->method('checkQty')
+            ->willReturn(true);
         $this->stockStateMock
-            ->method('verifyStock')->willReturn($verifyStock);
+            ->method('verifyStock')
+            ->willReturn($verifyStock);
         $this->stockStateMock
-            ->method('verifyNotification')->willReturn(false);
+            ->method('verifyNotification')
+            ->willReturn(false);
         $this->stockResourceMock
             ->expects($this->once())
             ->method('commit');
@@ -173,15 +179,15 @@ class StockManagementTest extends TestCase
     }
 
     /**
-     *
      * @param array $items
      * @param array $lockedItems
+     *
      * @return void
      */
     #[DataProvider('productsWithIncorrectQtyDataProvider')]
     public function testRegisterProductsSaleException(array $items, array $lockedItems)
     {
-        $this->expectException('Magento\CatalogInventory\Model\StockStateException');
+        $this->expectException(StockStateException::class);
         $this->expectExceptionMessage('Some of the products are out of stock.');
         $this->stockResourceMock
             ->expects($this->once())
@@ -190,13 +196,19 @@ class StockManagementTest extends TestCase
             ->expects($this->once())
             ->method('lockProductsStock')
             ->willReturn([$lockedItems]);
-        $this->stockItemInterfaceMock->setItemId($lockedItems['product_id']);
+        $this->stockItemInterfaceMock
+            ->method('getItemId')
+            ->willReturn($lockedItems['product_id']);
         $this->stockManagement
-            ->method('canSubtractQty')->willReturn(true);
+            ->expects($this->any())
+            ->method('canSubtractQty')
+            ->willReturn(true);
         $this->stockConfigurationMock
-            ->method('isQty')->willReturn(true);
+            ->method('isQty')
+            ->willReturn(true);
         $this->stockStateMock
-            ->method('checkQty')->willReturn(false);
+            ->method('checkQty')
+            ->willReturn(false);
         $this->stockResourceMock
             ->expects($this->once())
             ->method('commit');

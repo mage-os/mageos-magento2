@@ -10,7 +10,6 @@ namespace Magento\CatalogInventory\Test\Unit\Model\Stock;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Product;
-use Magento\Catalog\Test\Unit\Helper\ProductTestHelper;
 use Magento\CatalogInventory\Api\StockConfigurationInterface;
 use Magento\CatalogInventory\Api\StockItemRepositoryInterface;
 use Magento\CatalogInventory\Model\ResourceModel\Stock\Item\Collection;
@@ -25,6 +24,7 @@ use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -34,6 +34,8 @@ use PHPUnit\Framework\TestCase;
  */
 class ItemTest extends TestCase
 {
+    use MockCreationTrait;
+
     /** @var ObjectManagerHelper */
     protected $objectManagerHelper;
 
@@ -169,21 +171,25 @@ class ItemTest extends TestCase
 
     public function testSetProduct()
     {
-        // Create ProductTestHelper extending Product with dynamic methods
-        $product = new ProductTestHelper();
         $productId = 2;
         $productName = 'Some Name';
         $storeId = 3;
         $typeId = 'simple';
         $status = 1;
         $isChangedWebsites = false;
-        // Use direct method calls instead of expects() syntax
-        $product->setId($productId);
-        $product->setName($productName);
-        $product->setStoreId($storeId);
-        $product->setTypeId($typeId);
-        $product->setStatusChanged($status);
-        $product->setIsChangedWebsites($isChangedWebsites);
+        
+        // Create ProductTestHelper extending Product with dynamic methods
+        $product = $this->createPartialMockWithReflection(
+            Product::class,
+            ['getIsChangedWebsites','getId', 'getName', 'getStoreId', 'getTypeId', 'dataHasChangedFor', '__wakeup']
+        );
+        
+        // Configure the mock to return expected values
+        $product->expects($this->any())->method('getId')->willReturn($productId);
+        $product->expects($this->any())->method('getName')->willReturn($productName);
+        $product->expects($this->any())->method('getTypeId')->willReturn($typeId);
+        $product->expects($this->any())->method('dataHasChangedFor')->with('status')->willReturn($status);
+        $product->expects($this->any())->method('getIsChangedWebsites')->willReturn($isChangedWebsites);
 
         $this->assertSame($this->item, $this->item->setProduct($product));
         $this->assertSame(
