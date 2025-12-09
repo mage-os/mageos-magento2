@@ -37,9 +37,8 @@
         <!-- Open account information tab -->
         <actionGroup ref="AdminOpenAccountInformationTabFromCustomerEditPageActionGroup" stepKey="openAccountInformationTab"/>
         <!-- Step 3,4: Update email to internationalized address and save -->
+        <waitForElementVisible selector="{{AdminCustomerAccountInformationSection.email}}" stepKey="waitToUpdateEmail"/>
         <fillField selector="{{AdminCustomerAccountInformationSection.email}}" userInput="{{CustomerEmailWithSwissDomain.email}}" stepKey="updateEmail"/>
-        <waitForElementClickable selector="{{AdminCustomerAccountInformationSection.saveCustomer}}" stepKey="waitToSaveCustomer"/>
-        <click selector="{{AdminCustomerAccountInformationSection.saveCustomer}}" stepKey="saveCustomer"/>
-        <waitForElementVisible selector="{{AdminMessagesSection.success}}" stepKey="seeSuccessMessage"/>
+        <actionGroup ref="AdminSaveCustomerAndAssertSuccessMessage" stepKey="saveCustomer"/>
     </test>
 </tests>
