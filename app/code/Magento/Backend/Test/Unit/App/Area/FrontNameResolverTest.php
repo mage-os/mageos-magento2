@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2013 Adobe
+ * Copyright 2015 Adobe
  * All Rights Reserved.
  */
 declare(strict_types=1);
@@ -17,6 +17,7 @@ use Magento\Framework\App\Request\Http;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\Store;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class FrontNameResolverTest extends TestCase
@@ -115,8 +116,8 @@ class FrontNameResolverTest extends TestCase
      * @param bool $expectedValue
      *
      * @return void
-     * @dataProvider hostsDataProvider
      */
+    #[DataProvider('hostsDataProvider')]
     public function testIsHostBackend(
         string $url,
         ?string $host,
