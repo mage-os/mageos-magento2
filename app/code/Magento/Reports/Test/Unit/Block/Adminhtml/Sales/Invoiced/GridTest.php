@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\Reports\Block\Adminhtml\Sales\Invoiced;
+namespace Magento\Reports\Test\Unit\Block\Adminhtml\Sales\Invoiced;
 
 use Magento\Backend\Block\Template\Context;
 use Magento\Directory\Model\Currency;
@@ -15,7 +15,6 @@ use Magento\Framework\DB\Select;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Math\Random;
-use Magento\Framework\Phrase;
 use Magento\Framework\Test\Unit\Helper\RequestInterfaceTestHelper;
 use Magento\Framework\UrlInterface;
 use Magento\Framework\View\Element\AbstractBlock;
@@ -24,11 +23,15 @@ use Magento\Reports\Block\Adminhtml\Sales\Grid\Column\Renderer\Date;
 use Magento\Reports\Helper\Data;
 use Magento\Reports\Model\Grouped\CollectionFactory;
 use Magento\Reports\Model\ResourceModel\Report\Collection\Factory;
+use Magento\Reports\Block\Adminhtml\Sales\Invoiced\Grid;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class GridTest extends TestCase
 {
 
@@ -153,7 +156,64 @@ class GridTest extends TestCase
             ->onlyMethods(['setData'])
             ->getMock();
 
-        $expectedData = [
+        $expectedData = $this->getColumnData($currencyCode, $rate);
+        $callIndex = 0;
+        $extendedBlock
+            ->method('setData')
+            ->willReturnCallback(function (array $data) use (&$callIndex, $expectedData, $extendedBlock) {
+                if (!isset($expectedData[$callIndex])) {
+                    return $extendedBlock;
+                }
+                $expected = $this->normalizeDataArray($expectedData[$callIndex]);
+                $actual = $this->normalizeDataArray($data);
+
+                self::assertSame(
+                    $expected,
+                    $actual,
+                    sprintf('Unexpected data passed to setData() at call #%d', $callIndex + 1)
+                );
+
+                $callIndex++;
+
+                return $extendedBlock;
+            });
+
+        $extendedBlock->method('setId')->willReturnSelf();
+        $extendedBlock->method('setGrid')->willReturnSelf();
+        $this->layout->method('createBlock')->willReturn($extendedBlock);
+        $block->method('getChildBlock')->willReturn($extendedBlock);
+        $block->method('getChildNames')->willReturn([]);
+
+        $this->storeManager->method('getStores')->willReturn([]);
+        $store = $this->createMock(\Magento\Store\Model\Store::class);
+        $store->method('getBaseCurrencyCode')->willReturn($currencyCode);
+        $currency = $this->createMock(Currency::class);
+        $currency->method('getRate')->willReturn($rate);
+        $store->method('getBaseCurrency')->willReturn($currency);
+        $this->storeManager->method('getStore')->willReturn($store);
+
+        $collection = $this->createMock(AbstractDb::class);
+        $select = $this->createMock(Select::class);
+        $collection->method('getSelect')->willReturn($select);
+        $collection
+            ->method('getIterator')
+            ->willReturn(new \ArrayIterator([new DataObject([])]));
+
+        $this->invoicedGrid->setTotals(new DataObject());
+        $this->invoicedGrid->setCollection($collection);
+        $this->invoicedGrid->getXml();
+    }
+
+    /**
+     * Invoice grid column data
+     *
+     * @param string $currencyCode
+     * @param float $rate
+     * @return array[]
+     */
+    private function getColumnData(string $currencyCode, float $rate): array
+    {
+        return [
             [
                 'header' => __('Interval'),
                 'index' => 'period',
@@ -218,58 +278,8 @@ class GridTest extends TestCase
                 'header_css_class' => 'col-total-invoiced-not-paid',
                 'column_css_class' => 'col-total-invoiced-not-paid',
                 'renderer' => \Magento\Reports\Block\Adminhtml\Grid\Column\Renderer\Currency::class
-            ],
-            [
-                'label' => __('Reset Filter'),
-                'onclick' => 'testJsObject.resetFilter()',
-                'class' => 'action-reset action-tertiary'
             ]
         ];
-        $callIndex = 0;
-        $extendedBlock
-            ->method('setData')
-            ->willReturnCallback(function (array $data) use (&$callIndex, $expectedData, $extendedBlock) {
-                if (!isset($expectedData[$callIndex])) {
-                    return $extendedBlock;
-                }
-                $expected = $this->normalizeDataArray($expectedData[$callIndex]);
-                $actual   = $this->normalizeDataArray($data);
-
-                self::assertSame(
-                    $expected,
-                    $actual,
-                    sprintf('Unexpected data passed to setData() at call #%d', $callIndex + 1)
-                );
-
-                $callIndex++;
-
-                return $extendedBlock;
-            });
-
-        $extendedBlock->method('setId')->willReturnSelf();
-        $extendedBlock->method('setGrid')->willReturnSelf();
-        $this->layout->method('createBlock')->willReturn($extendedBlock);
-        $block->method('getChildBlock')->willReturn($extendedBlock);
-        $block->method('getChildNames')->willReturn([]);
-
-        $this->storeManager->method('getStores')->willReturn([]);
-        $store = $this->createMock(\Magento\Store\Model\Store::class);
-        $store->method('getBaseCurrencyCode')->willReturn($currencyCode);
-        $currency = $this->createMock(Currency::class);
-        $currency->method('getRate')->willReturn($rate);
-        $store->method('getBaseCurrency')->willReturn($currency);
-        $this->storeManager->method('getStore')->willReturn($store);
-
-        $collection = $this->createMock(AbstractDb::class);
-        $select = $this->createMock(Select::class);
-        $collection->method('getSelect')->willReturn($select);
-        $collection
-            ->method('getIterator')
-            ->willReturn(new \ArrayIterator([new DataObject([])]));
-
-        $this->invoicedGrid->setTotals(new DataObject());
-        $this->invoicedGrid->setCollection($collection);
-        $this->invoicedGrid->getXml();
     }
 
     /**
@@ -281,7 +291,7 @@ class GridTest extends TestCase
     private function normalizeDataArray(array $data): array
     {
         array_walk_recursive($data, function (&$value) {
-            if ($value instanceof Phrase) {
+            if (is_object($value)) {
                 $value = (string)$value;
             }
         });
