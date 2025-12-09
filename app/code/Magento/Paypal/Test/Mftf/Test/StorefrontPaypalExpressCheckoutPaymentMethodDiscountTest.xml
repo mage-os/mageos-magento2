@@ -25,6 +25,8 @@
             <createData entity="SimpleProduct" stepKey="createProduct"/>
             <!-- US Customer is created -->
             <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+            <!-- Delete cart price rule for free shipping -->
+            <actionGroup ref="AdminCartPriceRuleDeleteAllActionGroup" stepKey="deleteAllCartPriceRules"/>
             <!-- Create new cart price rule -->
             <createData entity="SalesRuleDiscountOnPayPalExpressCheckoutAsPaymentMethod" stepKey="createCartPriceRule"/>
             <!-- Admin login -->
