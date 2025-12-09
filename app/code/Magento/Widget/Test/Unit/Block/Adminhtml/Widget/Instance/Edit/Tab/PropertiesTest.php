@@ -11,6 +11,9 @@ use Magento\Framework\Registry;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Widget\Block\Adminhtml\Widget\Instance\Edit\Tab\Properties;
 use Magento\Widget\Model\Widget\Instance;
+use Magento\Framework\Json\Helper\Data;
+use Magento\Directory\Helper\Data as DirectoryHelper;
+use Magento\Backend\Block\Widget\Form\Element\ElementCreator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -38,32 +41,16 @@ class PropertiesTest extends TestCase
         
         $objects = [
             [
-                \Magento\Framework\View\Element\Template\Context::class,
-                $this->createMock(\Magento\Framework\View\Element\Template\Context::class)
+                Data::class,
+                $this->createMock(Data::class)
             ],
             [
-                \Magento\Framework\App\ObjectManager::class,
-                $this->createMock(\Magento\Framework\App\ObjectManager::class)
+                DirectoryHelper::class,
+                $this->createMock(DirectoryHelper::class)
             ],
             [
-                \Magento\Framework\View\Element\BlockFactory::class,
-                $this->createMock(\Magento\Framework\View\Element\BlockFactory::class)
-            ],
-            [
-                \Magento\Backend\Block\Template::class,
-                $this->createMock(\Magento\Backend\Block\Template::class)
-            ],
-            [
-                \Magento\Backend\Block\Widget\Form::class,
-                $this->createMock(\Magento\Backend\Block\Widget\Form::class)
-            ],
-            [
-                \Magento\Backend\Block\Widget\Form\Generic::class,
-                $this->createMock(\Magento\Backend\Block\Widget\Form\Generic::class)
-            ],
-            [
-                \Magento\Widget\Block\Adminhtml\Widget\Options::class,
-                $this->createMock(\Magento\Widget\Block\Adminhtml\Widget\Options::class)
+                ElementCreator::class,
+                $this->createMock(ElementCreator::class)
             ]
         ];
         $objectManager->prepareObjectManager($objects);

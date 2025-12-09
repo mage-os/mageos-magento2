@@ -73,7 +73,7 @@ class CollectionTest extends AbstractTestCase
         )->with(
             ['link' => 'layout_link'],
             'link.layout_update_id = main_table.layout_update_id',
-            $this->isType('array')
+            $this->isArray()
         );
 
         $collection = $this->getCollection($select);
