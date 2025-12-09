@@ -21,6 +21,8 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Unit test for Available sortby helper
+ *
+ * @covers \Magento\Catalog\Block\Adminhtml\Category\Helper\Sortby\Available
  */
 class AvailableTest extends TestCase
 {
@@ -73,6 +75,7 @@ class AvailableTest extends TestCase
         $this->factoryElementMock = $this->createMock(Factory::class);
         $this->factoryCollectionMock = $this->createMock(CollectionFactory::class);
         $this->escaperMock = $this->createMock(Escaper::class);
+        $this->escaperMock->method('escapeHtml')->willReturnArgument(0);
         $this->secureRendererMock = $this->createMock(SecureHtmlRenderer::class);
         $this->secureRendererMock->method('renderTag')
             ->willReturnCallback(
@@ -90,6 +93,8 @@ class AvailableTest extends TestCase
                 }
             );
         $this->randomMock = $this->createMock(Random::class);
+        $this->randomMock->method('getRandomString')->willReturn('test123456');
+        
         $this->formMock = $this->getMockBuilder(Form::class)
             ->disableOriginalConstructor()
             ->addMethods(['getHtmlIdPrefix', 'getFieldNameSuffix', 'getHtmlIdSuffix'])
@@ -101,16 +106,13 @@ class AvailableTest extends TestCase
         $this->formMock->method('getHtmlIdSuffix')->willReturn('');
         $this->formMock->method('addSuffixToName')->willReturnArgument(0);
 
-        $this->model = $this->objectManager->getObject(
-            Available::class,
-            [
-                'factoryElement' => $this->factoryElementMock,
-                'factoryCollection' => $this->factoryCollectionMock,
-                'escaper' => $this->escaperMock,
-                'data' => ['html_id' => 'default_test_id'],
-                'secureRenderer' => $this->secureRendererMock,
-                'random' => $this->randomMock
-            ]
+        $this->model = new Available(
+            $this->factoryElementMock,
+            $this->factoryCollectionMock,
+            $this->escaperMock,
+            [],
+            $this->secureRendererMock,
+            $this->randomMock
         );
 
         $this->model->setForm($this->formMock);
@@ -123,7 +125,6 @@ class AvailableTest extends TestCase
      */
     public function testGetElementHtmlWithValue(): void
     {
-        $this->escaperMock->method('escapeHtml')->willReturnArgument(0);
         $this->model->setData('html_id', 'test_element');
         $this->model->setData('id', 'test_id');
         $this->model->setData('name', 'test_name');
@@ -143,7 +144,6 @@ class AvailableTest extends TestCase
      */
     public function testGetElementHtmlWithoutValue(): void
     {
-        $this->escaperMock->method('escapeHtml')->willReturnArgument(0);
         $this->model->setData('html_id', 'test_element');
         $this->model->setData('id', 'test_id');
         $this->model->setData('name', 'test_name');
@@ -162,7 +162,6 @@ class AvailableTest extends TestCase
      */
     public function testGetElementHtmlWithDisabledElement(): void
     {
-        $this->escaperMock->method('escapeHtml')->willReturnArgument(0);
         $this->model->setData('html_id', 'test_element');
         $this->model->setData('id', 'test_id');
         $this->model->setData('name', 'test_name');
@@ -181,7 +180,6 @@ class AvailableTest extends TestCase
      */
     public function testGetElementHtmlWithReadonlyElement(): void
     {
-        $this->escaperMock->method('escapeHtml')->willReturnArgument(0);
         $this->model->setData('html_id', 'test_element');
         $this->model->setData('id', 'test_id');
         $this->model->setData('name', 'test_name');
@@ -210,13 +208,58 @@ class AvailableTest extends TestCase
      */
     public function testGetToggleCode(): void
     {
+        $this->model->setData('html_id', 'default_test_id');
         $result = $this->model->getToggleCode();
 
         $this->assertIsString($result);
         $this->assertStringContainsString('toggleValueElements', $result);
-        $this->assertStringContainsString('use_config_', $result);
+        $this->assertStringContainsString('use_config_default_test_id', $result);
         $this->assertStringContainsString('parentNode.parentNode', $result);
         $this->assertStringContainsString('this.checked', $result);
         $this->assertStringContainsString('if (!this.checked)', $result);
+    }
+
+    /**
+     * Test getToggleCode with different HTML IDs
+     *
+     * @param string $htmlId
+     * @param string $expectedId
+     * @return void
+     * @dataProvider toggleCodeDataProvider
+     */
+    public function testGetToggleCodeWithDifferentIds(string $htmlId, string $expectedId): void
+    {
+        // Create new instance with specific html_id
+        $model = new Available(
+            $this->factoryElementMock,
+            $this->factoryCollectionMock,
+            $this->escaperMock,
+            ['html_id' => $htmlId],
+            $this->secureRendererMock,
+            $this->randomMock
+        );
+        $model->setForm($this->formMock);
+        
+        $result = $model->getToggleCode();
+
+        $this->assertIsString($result);
+        $this->assertStringContainsString('toggleValueElements', $result);
+        $this->assertStringContainsString($expectedId, $result);
+        $this->assertStringContainsString('parentNode.parentNode', $result);
+    }
+
+    /**
+     * Data provider for testGetToggleCodeWithDifferentIds
+     *
+     * @return array
+     */
+    public static function toggleCodeDataProvider(): array
+    {
+        return [
+            'simple_id' => ['test_element', 'use_config_test_element'],
+            'with_underscore' => ['category_sortby', 'use_config_category_sortby'],
+            'with_numbers' => ['sortby_123', 'use_config_sortby_123'],
+            'complex_id' => ['default_category_sortby_config', 'use_config_default_category_sortby_config']
+        ];
     }
 }

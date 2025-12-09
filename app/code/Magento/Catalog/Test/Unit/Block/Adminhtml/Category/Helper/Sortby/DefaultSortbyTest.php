@@ -21,6 +21,8 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Unit test for DefaultSortby helper
+ *
+ * @covers \Magento\Catalog\Block\Adminhtml\Category\Helper\Sortby\DefaultSortby
  */
 class DefaultSortbyTest extends TestCase
 {
@@ -91,6 +93,8 @@ class DefaultSortbyTest extends TestCase
                 }
             );
         $this->randomMock = $this->createMock(Random::class);
+        $this->randomMock->method('getRandomString')->willReturn('test123456');
+        
         $this->formMock = $this->getMockBuilder(Form::class)
             ->disableOriginalConstructor()
             ->addMethods(['getHtmlIdPrefix', 'getFieldNameSuffix', 'getHtmlIdSuffix'])
@@ -102,16 +106,13 @@ class DefaultSortbyTest extends TestCase
         $this->formMock->method('getHtmlIdSuffix')->willReturn('');
         $this->formMock->method('addSuffixToName')->willReturnArgument(0);
 
-        $this->model = $this->objectManager->getObject(
-            DefaultSortby::class,
-            [
-                'factoryElement' => $this->factoryElementMock,
-                'factoryCollection' => $this->factoryCollectionMock,
-                'escaper' => $this->escaperMock,
-                'data' => ['html_id' => 'default_test_id'],
-                'secureRenderer' => $this->secureRendererMock,
-                'random' => $this->randomMock
-            ]
+        $this->model = new DefaultSortby(
+            $this->factoryElementMock,
+            $this->factoryCollectionMock,
+            $this->escaperMock,
+            ['html_id' => 'default_test_id'],
+            $this->secureRendererMock,
+            $this->randomMock
         );
 
         $this->model->setForm($this->formMock);
@@ -225,9 +226,53 @@ class DefaultSortbyTest extends TestCase
 
         $this->assertIsString($result);
         $this->assertStringContainsString('toggleValueElements', $result);
-        $this->assertStringContainsString('use_config_', $result);
+        $this->assertStringContainsString('use_config_default_test_id', $result);
         $this->assertStringContainsString('parentNode.parentNode', $result);
         $this->assertStringContainsString('this.checked', $result);
         $this->assertStringContainsString('if (!this.checked)', $result);
+    }
+
+    /**
+     * Test getToggleCode with different HTML IDs
+     *
+     * @param string $htmlId
+     * @param string $expectedId
+     * @return void
+     * @dataProvider toggleCodeDataProvider
+     */
+    public function testGetToggleCodeWithDifferentIds(string $htmlId, string $expectedId): void
+    {
+        // Create new instance with specific html_id
+        $model = new DefaultSortby(
+            $this->factoryElementMock,
+            $this->factoryCollectionMock,
+            $this->escaperMock,
+            ['html_id' => $htmlId],
+            $this->secureRendererMock,
+            $this->randomMock
+        );
+        $model->setForm($this->formMock);
+        
+        $result = $model->getToggleCode();
+
+        $this->assertIsString($result);
+        $this->assertStringContainsString('toggleValueElements', $result);
+        $this->assertStringContainsString($expectedId, $result);
+        $this->assertStringContainsString('parentNode.parentNode', $result);
+    }
+
+    /**
+     * Data provider for testGetToggleCodeWithDifferentIds
+     *
+     * @return array
+     */
+    public static function toggleCodeDataProvider(): array
+    {
+        return [
+            'simple_id' => ['test_element', 'use_config_test_element'],
+            'with_underscore' => ['category_sortby', 'use_config_category_sortby'],
+            'with_numbers' => ['sortby_123', 'use_config_sortby_123'],
+            'complex_id' => ['default_category_sortby_config', 'use_config_default_category_sortby_config']
+        ];
     }
 }
