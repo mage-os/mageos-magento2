@@ -32,6 +32,7 @@ use ReflectionClass;
  *
  * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Price
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class PriceTest extends TestCase
 {

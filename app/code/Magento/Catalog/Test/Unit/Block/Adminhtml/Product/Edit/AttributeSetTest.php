@@ -191,8 +191,10 @@ class AttributeSetTest extends TestCase
     {
         $this->product->method('getAttributeSetId')->willReturn(1);
 
-        $rawUrl = 'http://example.com/admin/catalog?test=1&special=<script type="text/x-magento-init"></script>';
-        $escapedUrl = 'http://example.com/admin/catalog?test=1&amp;special=&lt;script type=&quot;text/x-magento-init&quot;&gt;&lt;/script&gt;';
+        $rawUrl = 'http://example.com/admin/catalog?test=1&special='
+            . '<script type="text/x-magento-init">test</script>';
+        $escapedUrl = 'http://example.com/admin/catalog?test=1&amp;special='
+            . '&lt;script type=&quot;text/x-magento-init&quot;&gt;test&lt;/script&gt;';
 
         $this->urlBuilder->method('getUrl')->willReturn($rawUrl);
         $this->escaper->method('escapeUrl')->with($rawUrl)->willReturn($escapedUrl);
@@ -211,7 +213,8 @@ class AttributeSetTest extends TestCase
     public function testGetSelectorOptionsEscapesAttributeSetId(): void
     {
         $attributeSetId = '<script type="text/x-magento-init">alert("xss")</script>';
-        $escapedAttributeSetId = '&lt;script type=&quot;text/x-magento-init&quot;&gt;alert(&quot;xss&quot;)&lt;/script&gt;';
+        $escapedAttributeSetId = '&lt;script type=&quot;text/x-magento-init&quot;&gt;'
+            . 'alert(&quot;xss&quot;)&lt;/script&gt;';
 
         $this->product->method('getAttributeSetId')->willReturn($attributeSetId);
         $this->urlBuilder->method('getUrl')->willReturn('http://example.com/admin/url');
