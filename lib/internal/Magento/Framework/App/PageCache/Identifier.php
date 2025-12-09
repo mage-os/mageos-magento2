@@ -106,14 +106,22 @@ class Identifier implements IdentifierInterface
         if (empty($url)) {
             return [$url, ''];
         }
+
         $baseUrl = strtok($url, '?');
-        $query = $this->request->getUri()->getQueryAsArray();
-        if (!empty($query)) {
-            ksort($query);
-            $query = http_build_query($query);
+        $queryString = parse_url($url, PHP_URL_QUERY) ?? '';
+
+        $queryArray = [];
+        if ($queryString !== '') {
+            parse_str($queryString, $queryArray);
+        }
+
+        if (!empty($queryArray)) {
+            ksort($queryArray);
+            $query = http_build_query($queryArray);
         } else {
             $query = '';
         }
+
         return [$baseUrl, $query];
     }
 }
