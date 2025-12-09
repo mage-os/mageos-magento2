@@ -92,7 +92,6 @@ class PersistentTest extends TestCase
     {
         $this->persistentSessionHelperMock->method('isPersistent')->willReturn(true);
 
-        // Use createPartialMockWithReflection for methods not in the class - PHPUnit 12 compatible
         $persistentSessionMock = $this->createPartialMockWithReflection(
             PersistentSession::class,
             ['getCustomerId']
@@ -110,7 +109,6 @@ class PersistentTest extends TestCase
     {
         $this->persistentSessionHelperMock->method('isPersistent')->willReturn(true);
 
-        // Use createPartialMockWithReflection for methods not in the class - PHPUnit 12 compatible
         $persistentSessionMock = $this->createPartialMockWithReflection(
             PersistentSession::class,
             ['getCustomerId']

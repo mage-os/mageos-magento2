@@ -57,7 +57,6 @@ class ConvertCustomerCartToGuestTest extends TestCase
     public function testBeforeSubmit(): void
     {
         $quoteManagementMock = $this->createMock(QuoteManagement::class);
-        // Use createPartialMockWithReflection for methods not in the class - PHPUnit 12 compatible
         $quoteMock = $this->createPartialMockWithReflection(
             Quote::class,
             ['getIsPersistent', 'getCustomerId', 'getCustomerIsGuest']
@@ -77,7 +76,6 @@ class ConvertCustomerCartToGuestTest extends TestCase
     public function testBeforeSubmitQuoteIsNotPersistent(): void
     {
         $quoteManagementMock = $this->createMock(QuoteManagement::class);
-        // Use createPartialMockWithReflection for methods not in the class - PHPUnit 12 compatible
         $quoteMock = $this->createPartialMockWithReflection(
             Quote::class,
             ['getIsPersistent']
@@ -93,7 +91,6 @@ class ConvertCustomerCartToGuestTest extends TestCase
     public function testBeforeSubmitQuoteWithoutCustomerId(): void
     {
         $quoteManagementMock = $this->createMock(QuoteManagement::class);
-        // Use createPartialMockWithReflection for methods not in the class - PHPUnit 12 compatible
         $quoteMock = $this->createPartialMockWithReflection(
             Quote::class,
             ['getIsPersistent', 'getCustomerId']
@@ -110,7 +107,6 @@ class ConvertCustomerCartToGuestTest extends TestCase
     public function testBeforeSubmitQuoteIsGuest(): void
     {
         $quoteManagementMock = $this->createMock(QuoteManagement::class);
-        // Use createPartialMockWithReflection for methods not in the class - PHPUnit 12 compatible
         $quoteMock = $this->createPartialMockWithReflection(
             Quote::class,
             ['getIsPersistent', 'getCustomerId', 'getCustomerIsGuest']

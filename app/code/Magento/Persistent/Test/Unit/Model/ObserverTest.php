@@ -74,7 +74,6 @@ class ObserverTest extends TestCase
             ->getMock();
         // Use createMock() for interfaces - PHPUnit 12 compatible
         $this->layoutMock = $this->createMock(LayoutInterface::class);
-        // Use createPartialMockWithReflection for methods not in the class - PHPUnit 12 compatible
         $this->sessionMock = $this->createPartialMockWithReflection(
             Session::class,
             ['getCustomerId']
@@ -97,7 +96,6 @@ class ObserverTest extends TestCase
     public function testEmulateWelcomeBlock(): void
     {
         $welcomeMessage =  __('&nbsp;');
-        // Use createPartialMockWithReflection for methods not in the class - PHPUnit 12 compatible
         $block = $this->createPartialMockWithReflection(
             AbstractBlock::class,
             ['setWelcome']

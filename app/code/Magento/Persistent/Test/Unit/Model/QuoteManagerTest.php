@@ -113,9 +113,7 @@ class QuoteManagerTest extends TestCase
         $this->abstractCollectionMock =
             $this->createMock(AbstractCollection::class);
 
-        // Use createMock() for interfaces - PHPUnit 12 compatible
         $this->quoteRepositoryMock = $this->createMock(CartRepositoryInterface::class);
-        // Use createPartialMockWithReflection for methods not in the class - PHPUnit 12 compatible
         $this->quoteMock = $this->createPartialMockWithReflection(
             Quote::class,
             [
@@ -408,7 +406,6 @@ class QuoteManagerTest extends TestCase
      */
     private function getExtensionAttributesMock(): MockObject
     {
-        // Use createPartialMockWithReflection for extension interface methods - PHPUnit 12 compatible
         return $this->createPartialMockWithReflection(
             CartExtensionInterface::class,
             ['setShippingAssignments', 'getShippingAssignments']

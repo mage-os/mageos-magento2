@@ -121,7 +121,6 @@ class ConfigProviderPluginTest extends TestCase
         $this->persistentSessionMock->expects($this->once())->method('isPersistent')->willReturn(true);
         $this->customerSessionMock->expects($this->once())->method('isLoggedIn')->willReturn(false);
 
-        // Use createPartialMockWithReflection for methods not in the class - PHPUnit 12 compatible
         $quoteMaskMock = $this->createPartialMockWithReflection(
             QuoteIdMask::class,
             ['getMaskedId', 'load']

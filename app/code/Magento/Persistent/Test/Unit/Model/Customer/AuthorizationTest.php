@@ -54,7 +54,6 @@ class AuthorizationTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        // Use createPartialMockWithReflection for methods not in the class - PHPUnit 12 compatible
         $this->customerSessionMock = $this->createPartialMockWithReflection(
             CustomerSession::class,
             ['getIsCustomerEmulated', 'getCustomerId']

@@ -119,7 +119,6 @@ class RemoveGuestPersistenceOnEmptyCartObserverTest extends TestCase
         $this->persistentHelperMock->expects($this->once())->method('isPersistent')->willReturn(true);
         $this->customerSessionMock->expects($this->once())->method('isLoggedIn')->willReturn(false);
         $this->persistentDataMock->expects($this->once())->method('isShoppingCartPersist')->willReturn(true);
-        // Use createPartialMockWithReflection - PHPUnit 12 compatible
         $sessionMock = $this->createPartialMockWithReflection(
             PersistentSession::class,
             ['getCustomerId']
@@ -155,7 +154,6 @@ class RemoveGuestPersistenceOnEmptyCartObserverTest extends TestCase
         $this->persistentHelperMock->expects($this->once())->method('isPersistent')->willReturn(true);
         $this->customerSessionMock->expects($this->once())->method('isLoggedIn')->willReturn(false);
         $this->persistentDataMock->expects($this->once())->method('isShoppingCartPersist')->willReturn(true);
-        // Use createPartialMockWithReflection - PHPUnit 12 compatible
         $sessionMock = $this->createPartialMockWithReflection(
             PersistentSession::class,
             ['getCustomerId']

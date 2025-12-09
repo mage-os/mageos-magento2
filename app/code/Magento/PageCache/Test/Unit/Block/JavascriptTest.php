@@ -64,7 +64,6 @@ class JavascriptTest extends TestCase
         $this->contextMock = $this->getMockBuilder(Context::class)
             ->disableOriginalConstructor()
             ->getMock();
-        // Use createPartialMockWithReflection - include ALL interface methods + custom - PHPUnit 12 compatible
         $this->requestMock = $this->createPartialMockWithReflection(
             RequestInterface::class,
             [

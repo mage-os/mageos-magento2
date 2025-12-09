@@ -69,7 +69,6 @@ class SetQuotePersistentDataObserverTest extends TestCase
 
     protected function setUp(): void
     {
-        // Use createPartialMockWithReflection - PHPUnit 12 compatible
         $this->quoteMock = $this->createPartialMockWithReflection(
             Quote::class,
             ['setIsPersistent', 'setIsActive']

@@ -48,9 +48,7 @@ class DepersonalizePluginTest extends TestCase
      */
     protected function setUp(): void
     {
-        // Use createMock() for interfaces - PHPUnit 12 compatible
         $this->layoutMock = $this->createMock(LayoutInterface::class);
-        // Use createPartialMockWithReflection for methods not in the class - PHPUnit 12 compatible
         $this->persistentSessionMock = $this->createPartialMockWithReflection(
             PersistentSession::class,
             ['setCustomerId']
