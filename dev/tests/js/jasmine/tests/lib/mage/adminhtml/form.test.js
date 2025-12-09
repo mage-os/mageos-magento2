@@ -23,35 +23,30 @@ define([
         });
 
         it('should not enable inputs that have the disabled CSS class when dependencies are satisfied', function () {
-            // Container that will be traversed with levels_up = 1
-            var container = document.createElement('div');
-            document.body.appendChild(container);
+            var container = document.createElement('div'),
+                target = document.createElement('input'),
+                cssDisabled = document.createElement('input'),
+                normalInput = document.createElement('input'),
+                source = document.createElement('input'),
+                originalObserve = window.Event && window.Event.observe;
 
-            // Target element (idTo) inside the container
-            var target = document.createElement('input');
+            document.body.appendChild(container);
             target.id = 'test_input_dependent';
             container.appendChild(target);
-
-            // Sibling input that carries CSS class "disabled" and is disabled initially
-            var cssDisabled = document.createElement('input');
             cssDisabled.id = 'css_disabled_input';
             cssDisabled.className = 'disabled';
             cssDisabled.disabled = true;
             container.appendChild(cssDisabled);
-
-            // Another sibling input which is disabled initially but should be enabled after dependencies are met
-            var normalInput = document.createElement('input');
             normalInput.id = 'normal_input';
             normalInput.disabled = true;
             container.appendChild(normalInput);
-
-            // Dependency source element that satisfies the map
-            var source = document.createElement('input');
             source.id = 'dep_source';
             source.value = '1';
             document.body.appendChild(source);
 
-            // Initialize controller with dependency that evaluates to true (shouldShowUp = true)
+            if (window.Event) {
+                window.Event.observe = function () {};
+            }
             /* eslint-disable no-new */
             new window.FormElementDependenceController({
                 'test_input_dependent': {
@@ -68,6 +63,9 @@ define([
             expect(normalInput.disabled).toBe(false);
 
             // Cleanup
+            if (window.Event && originalObserve) {
+                window.Event.observe = originalObserve;
+            }
             document.body.removeChild(container);
             document.body.removeChild(source);
         });
