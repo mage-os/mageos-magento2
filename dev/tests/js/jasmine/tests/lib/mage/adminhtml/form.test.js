@@ -28,7 +28,27 @@ define([
                 cssDisabled = document.createElement('input'),
                 normalInput = document.createElement('input'),
                 source = document.createElement('input'),
-                originalObserve = window.Event && window.Event.observe;
+                originalObserve = window.Event && window.Event.observe,
+                originalDollar = window.$,
+                fakeTarget = {
+                    id: 'test_input_dependent',
+                    type: 'input',
+                    tagName: 'INPUT',
+                    getAttribute: function () {
+                        return null;
+                    },
+                    show: function () {},
+                    hide: function () {},
+                    up: function () {
+                        return {
+                            show: function () {},
+                            hide: function () {},
+                            select: function () {
+                                return [cssDisabled, normalInput];
+                            }
+                        };
+                    }
+                };
 
             document.body.appendChild(container);
             target.id = 'test_input_dependent';
@@ -47,32 +67,12 @@ define([
             if (window.Event) {
                 window.Event.observe = function () {};
             }
-            // Stub Prototype's $ to return a fake target implementing up().select() chain
-            var originalDollar = window.$;
-            var fakeTarget = {
-                id: 'test_input_dependent',
-                type: 'input',
-                tagName: 'INPUT',
-                getAttribute: function () {
-                    return null;
-                },
-                show: function () {},
-                hide: function () {},
-                up: function () {
-                    return {
-                        show: function () {},
-                        hide: function () {},
-                        select: function () {
-                            return [cssDisabled, normalInput];
-                        }
-                    };
-                }
-            };
-            window.$ = function (id) {
-                if (id === 'test_input_dependent') {
+
+            window.$ = function (elemId) {
+                if (elemId === 'test_input_dependent') {
                     return fakeTarget;
                 }
-                return document.getElementById(id);
+                return document.getElementById(elemId);
             };
             /* eslint-disable no-new */
             new window.FormElementDependenceController({
