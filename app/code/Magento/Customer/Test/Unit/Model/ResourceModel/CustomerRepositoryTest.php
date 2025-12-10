@@ -141,16 +141,6 @@ class CustomerRepositoryTest extends TestCase
     private $model;
 
     /**
-     * @var DelegatedStorage|MockObject
-     */
-    private $delegatedStorage;
-
-    /**
-     * @var GroupRepositoryInterface|MockObject
-     */
-    private $groupRepository;
-
-    /**
      * @inheritDoc
      */
     protected function setUp(): void
