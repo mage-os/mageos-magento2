@@ -92,9 +92,9 @@ class BuilderTest extends TestCase
          $parentTransactionId = '12';
          $shouldCloseParentTransaction = true;
          $parentTransactionIsClosed = false;
-         if ($document) {
-             $document = $this->expectDocument($transactionId);
-         }
+        if ($document) {
+            $document = $this->expectDocument($transactionId);
+        }
          $parentTransaction = $this->expectTransaction($orderId, $paymentId);
          $transaction = $this->expectTransaction($orderId, $paymentId);
          $transaction->expects($this->atLeastOnce())->method('getTxnId')->willReturn($transactionId);
@@ -107,52 +107,52 @@ class BuilderTest extends TestCase
             ->withAnyParameters()
             ->willReturnSelf();
 
-         if ($isTransactionExists) {
-             $this->repositoryMock->method('getByTransactionId')
-             ->willReturnCallback(function (
-                 $arg1,
-                 $arg2,
-                 $arg3
-             ) use (
-                 $transactionId,
-                 $paymentId,
-                 $orderId,
-                 $parentTransactionId,
-                 $parentTransaction,
-                 $transaction
-             ) {
+        if ($isTransactionExists) {
+            $this->repositoryMock->method('getByTransactionId')
+            ->willReturnCallback(function (
+                $arg1,
+                $arg2,
+                $arg3
+            ) use (
+                $transactionId,
+                $paymentId,
+                $orderId,
+                $parentTransactionId,
+                $parentTransaction,
+                $transaction
+            ) {
                 if ($arg1 == $transactionId && $arg2 == $paymentId && $arg3 ==  $orderId) {
                     return $transaction;
                 } elseif ($arg1 == $parentTransactionId && $arg2 == $paymentId && $arg3 ==  $orderId) {
                     return $parentTransaction;
                 }
-             });
-         } else {
-             $this->repositoryMock->method('getByTransactionId')
-                ->willReturnCallback(function (
-                    $arg1,
-                    $arg2,
-                    $arg3
-                ) use (
-                    $transactionId,
-                    $paymentId,
-                    $orderId,
-                    $parentTransactionId,
-                    $parentTransaction
-                ) {
-                    if ($arg1 == $transactionId && $arg2 == $paymentId && $arg3 ==  $orderId) {
-                        return false;
-                    } elseif ($arg1 == $parentTransactionId && $arg2 == $paymentId && $arg3 ==  $orderId) {
-                        return $parentTransaction;
-                    }
-                });
+            });
+        } else {
+            $this->repositoryMock->method('getByTransactionId')
+               ->willReturnCallback(function (
+                   $arg1,
+                   $arg2,
+                   $arg3
+               ) use (
+                   $transactionId,
+                   $paymentId,
+                   $orderId,
+                   $parentTransactionId,
+                   $parentTransaction
+               ) {
+                if ($arg1 == $transactionId && $arg2 == $paymentId && $arg3 ==  $orderId) {
+                    return false;
+                } elseif ($arg1 == $parentTransactionId && $arg2 == $paymentId && $arg3 ==  $orderId) {
+                    return $parentTransaction;
+                }
+               });
 
-             $this->repositoryMock->method('create')
-                ->willReturn($transaction);
-             $transaction->expects($this->once())->method('setTxnId')
-                ->with($transactionId)
-                ->willReturn($transaction);
-         }
+            $this->repositoryMock->method('create')
+               ->willReturn($transaction);
+            $transaction->expects($this->once())->method('setTxnId')
+               ->with($transactionId)
+               ->willReturn($transaction);
+        }
          $this->expectSetPaymentObject($transaction, $type, $failSafe);
          $this->expectsIsPaymentTransactionClosed($isPaymentTransactionClosed, $transaction);
          $this->expectsIsPaymentTransactionClosed($isPaymentTransactionClosed, $transaction);
@@ -164,17 +164,17 @@ class BuilderTest extends TestCase
              $parentTransaction,
              $parentTransactionIsClosed
          );
-         if ($additionalInfo) {
-             $transaction->expects($this->exactly(count($additionalInfo)))->method('setAdditionalInformation');
-         }
+        if ($additionalInfo) {
+            $transaction->expects($this->exactly(count($additionalInfo)))->method('setAdditionalInformation');
+        }
          $builder = $this->builder->setPayment($this->paymentMock)
             ->setOrder($this->orderMock)
             ->setAdditionalInformation($additionalInfo)
             ->setFailSafe($failSafe)
             ->setTransactionId($transactionId);
-         if ($document) {
-             $builder->setSalesDocument($document);
-         }
+        if ($document) {
+            $builder->setSalesDocument($document);
+        }
          $this->assertSame($transaction, $builder->build($type));
     }
 

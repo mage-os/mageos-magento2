@@ -316,10 +316,10 @@ class SaveTest extends TestCase
          $this->salesData->expects($this->any())
             ->method('canSendNewInvoiceEmail')
             ->willReturn($emailEnabled);
-         if ($shouldEmailBeSent) {
-             $this->invoiceSender->expects($this->once())
-                ->method('send');
-         }
+        if ($shouldEmailBeSent) {
+            $this->invoiceSender->expects($this->once())
+               ->method('send');
+        }
 
          $this->assertEquals($redirectMock, $this->controller->execute());
     }

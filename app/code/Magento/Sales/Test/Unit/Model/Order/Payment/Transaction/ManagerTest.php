@@ -114,11 +114,11 @@ class ManagerTest extends TestCase
          );
          $payment->expects($this->atLeastOnce())->method('getTransactionId')->willReturn($transactionId);
 
-         if (!$parentTransactionId && !$transactionId && $transactionBasedTxnId) {
-             $transactionBasedOn = $this->createMock(Transaction::class);
-             $transactionBasedOn->expects($this->once())->method('getTxnId')->willReturn($transactionBasedTxnId);
-             $payment->expects($this->once())->method("setParentTransactionId")->with($transactionBasedTxnId);
-         }
+        if (!$parentTransactionId && !$transactionId && $transactionBasedTxnId) {
+            $transactionBasedOn = $this->createMock(Transaction::class);
+            $transactionBasedOn->expects($this->once())->method('getTxnId')->willReturn($transactionBasedTxnId);
+            $payment->expects($this->once())->method("setParentTransactionId")->with($transactionBasedTxnId);
+        }
          $payment->expects($this->exactly(2))->method('getParentTransactionId')->willReturnOnConsecutiveCalls(
              $parentTransactionId,
              $transactionBasedOn ? $transactionBasedTxnId : $parentTransactionId

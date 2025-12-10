@@ -401,10 +401,10 @@ class SaveTest extends TestCase
          $this->salesData->expects($this->any())
             ->method('canSendNewCreditmemoEmail')
             ->willReturn($emailEnabled);
-         if ($shouldEmailBeSent) {
-             $this->creditmemoSender->expects($this->once())
-                ->method('send');
-         }
+        if ($shouldEmailBeSent) {
+            $this->creditmemoSender->expects($this->once())
+               ->method('send');
+        }
          $this->assertEquals($this->resultRedirectMock, $this->_controller->execute());
     }
 

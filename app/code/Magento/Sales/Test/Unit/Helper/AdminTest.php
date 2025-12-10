@@ -140,16 +140,16 @@ class AdminTest extends TestCase
             ->method('format')
             ->willReturn('storeFormattedPrice');
          $dataObject = $this->orderMock;
-         if (!$dataObjectIsOrder) {
-             $returnRes = false;
-             if ($magentoDataObjectHasOrder) {
-                 $returnRes = $this->orderMock;
-             }
-             $this->magentoObjectMock->expects($this->once())
-                ->method('getOrder')
-                ->willReturn($returnRes);
-             $dataObject = $this->magentoObjectMock;
-         }
+        if (!$dataObjectIsOrder) {
+            $returnRes = false;
+            if ($magentoDataObjectHasOrder) {
+                $returnRes = $this->orderMock;
+            }
+            $this->magentoObjectMock->expects($this->once())
+               ->method('getOrder')
+               ->willReturn($returnRes);
+            $dataObject = $this->magentoObjectMock;
+        }
          $basePrice = 10.00;
          $price = 15.00;
          $this->assertEquals(
@@ -186,19 +186,19 @@ class AdminTest extends TestCase
             ->method('format')
             ->willReturn('storeFormattedPrice');
          $dataObject = $this->orderMock;
-         if (!$dataObjectIsOrder) {
-             $returnRes = false;
-             if ($magentoDataObjectHasOrder) {
-                 $returnRes = $this->orderMock;
-             }
-             $this->magentoObjectMock->expects($this->once())
-                ->method('getOrder')
-                ->willReturn($returnRes);
-             $this->magentoObjectMock->expects($this->any())
-                ->method('getData')
-                ->willReturn('data');
-             $dataObject = $this->magentoObjectMock;
-         }
+        if (!$dataObjectIsOrder) {
+            $returnRes = false;
+            if ($magentoDataObjectHasOrder) {
+                $returnRes = $this->orderMock;
+            }
+            $this->magentoObjectMock->expects($this->once())
+               ->method('getOrder')
+               ->willReturn($returnRes);
+            $this->magentoObjectMock->expects($this->any())
+               ->method('getData')
+               ->willReturn('data');
+            $dataObject = $this->magentoObjectMock;
+        }
          $this->assertEquals(
              $expected,
              $this->adminHelper->displayPriceAttribute($dataObject, 'code', $strong, $separator)

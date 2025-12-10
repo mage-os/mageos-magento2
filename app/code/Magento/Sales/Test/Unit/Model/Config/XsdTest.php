@@ -27,7 +27,7 @@ class XsdTest extends TestCase
     }
 
     /**
-     * @param string $xmlFile     
+     * @param string $xmlFile
      */
     #[DataProvider('validXmlFileDataProvider')]
     public function testValidXmlFile($xmlFile)

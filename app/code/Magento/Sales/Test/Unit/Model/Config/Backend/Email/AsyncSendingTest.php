@@ -67,7 +67,7 @@ class AsyncSendingTest extends TestCase
     /**
      * @param int $value
      * @param int $oldValue
-     * @param string $eventName     
+     * @param string $eventName
      * @return void
      */
     #[DataProvider('afterSaveDataProvider')]

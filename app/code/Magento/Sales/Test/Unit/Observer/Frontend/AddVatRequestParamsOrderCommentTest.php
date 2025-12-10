@@ -79,14 +79,14 @@ class AddVatRequestParamsOrderCommentTest extends TestCase
          $orderMock->expects($this->any())
             ->method('getShippingAddress')
             ->willReturn($orderAddressMock);
-         if ($orderHistoryComment === null) {
-             $orderMock->expects($this->never())
-                ->method('addStatusHistoryComment');
-         } else {
-             $orderMock->expects($this->once())
-                ->method('addStatusHistoryComment')
-                ->with($orderHistoryComment, false);
-         }
+        if ($orderHistoryComment === null) {
+            $orderMock->expects($this->never())
+               ->method('addStatusHistoryComment');
+        } else {
+            $orderMock->expects($this->once())
+               ->method('addStatusHistoryComment')
+               ->with($orderHistoryComment, false);
+        }
          $observer = $this->createPartialMockWithReflection(Observer::class, ['getOrder']);
          $observer->expects($this->once())
             ->method('getOrder')
