@@ -57,7 +57,7 @@ trait MockCreationTrait
     /**
      * This is useful in data providers where you cannot call PHPUnit matcher methods
      * directly (since they are non-static). Instead, pass a string representation
-     * and convert it to the actual matcher in your test method. Supported string formats:
+     * and convert it to the actual matcher in your test method. Supported string formats: 
      * 'never', 'once', 'any', 'atLeastOnce', 'exactly_N', 'atLeast_N', 'atMost_N`
      *
      * @param string $matcherSpec The string specification of the matcher
