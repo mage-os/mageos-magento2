@@ -167,7 +167,6 @@ class AlertsTest extends TestCase
         ];
     }
 
-
     /**
      * @return array
      */
