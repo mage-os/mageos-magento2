@@ -125,7 +125,6 @@ class AttributesTest extends TestCase
             ->method('dispatch')
             ->with('adminhtml_catalog_product_edit_element_types')
             ->willReturnCallback(function ($eventName, $data) use ($customTypes) {
-                unset($eventName);
                 $data['response']->setTypes($customTypes);
             });
 
