@@ -23,7 +23,7 @@ use PHPUnit\Framework\TestCase;
  */
 class FaultTest extends TestCase
 {
-    const WSDL_URL = 'http://host.com/?wsdl&services=customerV1';
+    private const WSDL_URL = 'http://host.com/?wsdl&services=customerV1';
 
     /**
      * @var MockObject
