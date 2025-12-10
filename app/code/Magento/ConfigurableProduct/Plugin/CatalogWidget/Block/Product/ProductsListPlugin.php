@@ -77,6 +77,7 @@ class ProductsListPlugin
 
     /**
      * Adds configurable products to the item list if child products are already part of the collection
+     *
      * Configurable products are only added if the child products are not visible individually
      *
      * @param ProductsList $subject
@@ -151,16 +152,18 @@ class ProductsListPlugin
             return $result;
         }
 
+        $visibleCatalogIds = $this->catalogProductVisibility->getVisibleInCatalogIds();
         $configurableProductCollection = $this->productCollectionFactory->create();
-        $configurableProductCollection->setVisibility($this->catalogProductVisibility->getVisibleInCatalogIds());
+        $configurableProductCollection->setVisibility($visibleCatalogIds);
         $configurableProductCollection->addIdFilter($productIds);
 
         $configurableEntityIds = $configurableProductCollection->getAllIds();
         if (empty($configurableEntityIds)) {
             return $result;
         }
+
         $filteredCollection = $subject->getBaseCollection();
-        $filteredCollection->setVisibility($this->catalogProductVisibility->getVisibleInCatalogIds());
+        $filteredCollection->setVisibility($visibleCatalogIds);
         $filteredCollection->getSelect()->orWhere('e.entity_id IN (?)', $configurableEntityIds);
 
         return $filteredCollection;
