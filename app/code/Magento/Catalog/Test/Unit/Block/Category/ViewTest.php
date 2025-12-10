@@ -26,7 +26,10 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 /**
+ * Unit test for Category View Block
+ *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @covers View
  */
 class ViewTest extends TestCase
 {
@@ -50,6 +53,11 @@ class ViewTest extends TestCase
      */
     private $catalogData;
 
+    /**
+     * Set up the test environment
+     *
+     * @return void
+     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -72,18 +80,25 @@ class ViewTest extends TestCase
         );
     }
 
+    /**
+     * Unit test for getIdentities() method
+     *
+     * @covers \Magento\Catalog\Block\Category\View::getIdentities()
+     * @return void
+     */
     public function testGetIdentities()
     {
         $categoryTag = ['catalog_category_1'];
         $currentCategoryMock = $this->createMock(Category::class);
         $currentCategoryMock->expects($this->once())->method('getIdentities')->willReturn($categoryTag);
         $this->block->setCurrentCategory($currentCategoryMock);
-        $this->assertEquals($categoryTag, $this->block->getIdentities());
+        $this->assertSame($categoryTag, $this->block->getIdentities());
     }
 
     /**
      * Test breadcrumbs generation
      *
+     * @covers \Magento\Catalog\Block\Category\View::_prepareLayout()
      * @return void
      */
     public function testBreadcrumbs()
@@ -122,7 +137,8 @@ class ViewTest extends TestCase
             ->method('getBreadcrumbPath')
             ->willReturn([['label' => 'label1'], ['label' => 'label2']]);
 
-        $this->block->setLayout($layoutMock);
+        $result = $this->block->setLayout($layoutMock);
+        $this->assertSame($result, $this->block);
     }
 
     /**
@@ -160,14 +176,21 @@ class ViewTest extends TestCase
         $category->expects($this->once())
             ->method('getMetaDescription')
             ->willReturn('Meta description');
+        $this->config->expects($this->once())
+            ->method('setDescription')
+            ->with('Meta description');
         $category->expects($this->once())
             ->method('getMetaKeywords')
             ->willReturn('Keyword-1');
+        $this->config->expects($this->once())
+            ->method('setKeywords')
+            ->with('Keyword-1');
         $layoutMock->expects($this->once())
             ->method('getBlock')
             ->willReturn($abstractBlockMock);
 
-        $this->block->setLayout($layoutMock);
+        $result = $this->block->setLayout($layoutMock);
+        $this->assertSame($result, $this->block);
     }
 
     /**
@@ -260,8 +283,8 @@ class ViewTest extends TestCase
     /**
      * Unit test for isProductMode()
      *
-     * @dataProvider productModeDataProvider1
      * @covers \Magento\Catalog\Block\Category\View::isProductMode()
+     * @dataProvider isProductModeDataProvider
      * @param string $mode
      * @param bool $expectedResult
      * @return void
@@ -277,8 +300,8 @@ class ViewTest extends TestCase
     /**
      * Unit test for isMixedMode()
      *
-     * @dataProvider productModeDataProvider2
      * @covers \Magento\Catalog\Block\Category\View::isMixedMode()
+     * @dataProvider isMixedModeDataProvider
      * @param string $mode
      * @param bool $expectedResult
      * @return void
@@ -296,7 +319,7 @@ class ViewTest extends TestCase
      *
      * @return array
      */
-    public static function productModeDataProvider1(): array
+    public static function isProductModeDataProvider(): array
     {
         return [
             'mode_products_only' => [Category::DM_PRODUCT, true],
@@ -310,7 +333,7 @@ class ViewTest extends TestCase
      *
      * @return array
      */
-    public static function productModeDataProvider2(): array
+    public static function isMixedModeDataProvider(): array
     {
         return [
             'mode_products_only' => [Category::DM_PRODUCT, false],
@@ -378,8 +401,8 @@ class ViewTest extends TestCase
     /**
      * Test isContentMode() returns expected result, when category display mode is set to different values
      *
-     * @dataProvider displayModeDataProvider
      * @covers \Magento\Catalog\Block\Category\View::isContentMode()
+     * @dataProvider displayModeDataProvider
      * @param string $mode
      * @param bool $expectedResult
      * @return void
@@ -415,8 +438,8 @@ class ViewTest extends TestCase
      * Test isContentMode() returns expected result for different combinations of
      * anchor/non-anchor category with/without applied filters
      *
-     * @dataProvider pageAnchorDataProvider
      * @covers \Magento\Catalog\Block\Category\View::isContentMode()
+     * @dataProvider pageAnchorDataProvider
      * @param bool $isAnchor
      * @param bool $hasFilter
      * @param bool $hasState
@@ -470,11 +493,9 @@ class ViewTest extends TestCase
     public static function pageAnchorDataProvider(): array
     {
         return [
-            'non_anchor'                            => [false, false, false, true],
-            'anchor_without_filters_and_state'      => [true, false, false, true],
-            'anchor_with_filters_and_without_state' => [true, true, false, true],
-            'anchor_without_filters_and_with_state' => [true, true, false, true],
-            'anchor_with_filters_and_state'         => [true, true, true, false],
+            'non_anchor'                       => [false, false, false, true],
+            'anchor_without_filters_and_state' => [true, false, false, true],
+            'anchor_with_filters_and_state'    => [true, true, true, false],
         ];
     }
 

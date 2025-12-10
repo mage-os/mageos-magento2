@@ -10,6 +10,7 @@ namespace Magento\Catalog\Test\Unit\Block\Product\Widget;
 use Magento\Catalog\Block\Product\Context as ProductBlockContext;
 use Magento\Catalog\Block\Product\Widget\Html\Pager;
 use Magento\Catalog\Block\Product\Widget\NewWidget;
+use Magento\Catalog\Model\Config as CatalogModelConfig;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ResourceModel\Product\Collection;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
@@ -26,13 +27,16 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHe
 use Magento\Framework\View\Design\ThemeInterface;
 use Magento\Framework\View\DesignInterface;
 use Magento\Framework\View\Layout;
-use Magento\Framework\View\LayoutInterface;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 /**
+ * Unit test for NewWidget block
+ *
+ * @covers \Magento\Catalog\Block\Product\Widget\NewWidget
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class NewWidgetTest extends TestCase
@@ -43,41 +47,57 @@ class NewWidgetTest extends TestCase
     private NewWidget $block;
 
     /**
-     * @var LayoutInterface|MockObject
+     * @var Layout|MockObject
      */
-    protected $layout;
+    private $layout;
 
     /**
      * @var RequestInterface|MockObject
      */
-    protected $requestMock;
-
-    /** @var \Magento\Backend\Block\Context|MockObject */
-    protected $context;
-
-    /** @var ObjectManagerHelper */
-    protected $objectManager;
-
-    /** @var Manager|MockObject */
-    protected $eventManager;
-
-    /** @var Config|MockObject */
-    protected $scopeConfig;
-
-    /** @var State|MockObject */
-    protected $cacheState;
-
-    /** @var \Magento\Catalog\Model\Config|MockObject */
-    protected $catalogConfig;
-
-    /** @var Timezone|MockObject */
-    protected $localDate;
-
-    /** @var Collection|MockObject */
-    protected $productCollection;
+    private $requestMock;
 
     /**
-     * @inheritdoc
+     * @var ProductBlockContext|MockObject
+     */
+    private $context;
+
+    /**
+     * @var ObjectManagerHelper
+     */
+    private $objectManager;
+
+    /**
+     * @var Manager|MockObject
+     */
+    private $eventManager;
+
+    /**
+     * @var Config|MockObject
+     */
+    private $scopeConfig;
+
+    /**
+     * @var State|MockObject
+     */
+    private $cacheState;
+
+    /**
+     * @var CatalogModelConfig|MockObject
+     */
+    private $catalogConfig;
+
+    /**
+     * @var Timezone|MockObject
+     */
+    private $localDate;
+
+    /**
+     * @var Collection|MockObject
+     */
+    private $productCollection;
+
+    /**
+     * @inheritDoc
      */
     protected function setUp(): void
     {
@@ -86,7 +106,7 @@ class NewWidgetTest extends TestCase
         $this->scopeConfig = $this->createMock(Config::class);
         $this->cacheState = $this->createPartialMock(State::class, ['isEnabled']);
         $this->localDate = $this->createMock(Timezone::class);
-        $this->catalogConfig = $this->getMockBuilder(\Magento\Catalog\Model\Config::class)
+        $this->catalogConfig = $this->getMockBuilder(CatalogModelConfig::class)
             ->onlyMethods(['getProductAttributes'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -123,9 +143,14 @@ class NewWidgetTest extends TestCase
     }
 
     /**
+     * Unit test for getProductPriceHtml()
+     *
+     * @covers \Magento\Catalog\Block\Product\Widget\NewWidget::getProductPriceHtml()
      * @dataProvider getProductPriceHtmlDataProvider
+     * @param array $args
+     * @return void
      */
-    public function testGetProductPriceHtml($args)
+    public function testGetProductPriceHtml(array $args): void
     {
         $id = 6;
         $expectedHtml = '
@@ -136,6 +161,8 @@ class NewWidgetTest extends TestCase
         </div>';
         $type = 'widget-new-list';
         $productMock = $this->createPartialMock(Product::class, ['getId']);
+        $priceBoxMock = $this->createPartialMock(Render::class, ['render']);
+
         $productMock->expects($this->any())
             ->method('getId')
             ->willReturn($id);
@@ -146,13 +173,10 @@ class NewWidgetTest extends TestCase
             'zone' => Render::ZONE_ITEM_LIST,
         ];
 
-        $priceBoxMock = $this->createPartialMock(Render::class, ['render']);
-
         $this->layout->expects($this->once())
             ->method('getBlock')
             ->with('product.price.render.default')
             ->willReturn($priceBoxMock);
-
         $priceBoxMock->expects($this->once())
             ->method('render')
             ->with('final_price', $productMock, $arguments)
@@ -167,7 +191,7 @@ class NewWidgetTest extends TestCase
      *
      * @return array
      */
-    public static function getProductPriceHtmlDataProvider()
+    public static function getProductPriceHtmlDataProvider(): array
     {
         return [
             'without-arguments' => [
@@ -185,11 +209,15 @@ class NewWidgetTest extends TestCase
     }
 
     /**
+     * Unit test for getCurrentPage() using data provider
+     *
+     * @covers \Magento\Catalog\Block\Product\Widget\NewWidget::getCurrentPage()
+     * @dataProvider getCurrentPageDataProvider
      * @param int $pageNumber
      * @param int $expectedResult
-     * @dataProvider getCurrentPageDataProvider
+     * @return void
      */
-    public function testGetCurrentPage($pageNumber, $expectedResult)
+    public function testGetCurrentPage(int $pageNumber, int $expectedResult): void
     {
         $this->block->setData('page_var_name', 'page_number');
 
@@ -202,6 +230,8 @@ class NewWidgetTest extends TestCase
     }
 
     /**
+     * Data provider for testGetCurrentPage()
+     *
      * @return array
      */
     public static function getCurrentPageDataProvider(): array
@@ -219,13 +249,24 @@ class NewWidgetTest extends TestCase
                 'pageNumber' => 10,
                 'expectedResult' => 10,
             ],
+            'page_zero' => [
+                'pageNumber' => 0,
+                'expectedResult' => 0,
+            ],
+            'negative_page' => [
+                'pageNumber' => -5,
+                'expectedResult' => 5
+            ],
         ];
     }
 
     /**
      * Unit test for getDisplayType()
+     *
+     * @covers \Magento\Catalog\Block\Product\Widget\NewWidget::getDisplayType()
+     * @return void
      */
-    public function testGetDisplayType()
+    public function testGetDisplayType(): void
     {
         $this->assertSame(NewWidget::DISPLAY_TYPE_ALL_PRODUCTS, $this->block->getDisplayType());
         $this->block->setData('display_type', NewWidget::DISPLAY_TYPE_NEW_PRODUCTS);
@@ -234,15 +275,24 @@ class NewWidgetTest extends TestCase
 
     /**
      * Unit test for showPager()
+     *
+     * @covers \Magento\Catalog\Block\Product\Widget\NewWidget::showPager()
+     * @return void
      */
-    public function testShowPager()
+    public function testShowPager(): void
     {
         $this->assertFalse($this->block->showPager());
         $this->block->setData('show_pager', 10);
         $this->assertTrue($this->block->showPager());
     }
 
-    public function testGetProductsCount()
+    /**
+     * Unit test for getProductsCount()
+     *
+     * @covers \Magento\Catalog\Block\Product\Widget\NewWidget::getProductsCount()
+     * @return void
+     */
+    public function testGetProductsCount(): void
     {
         $this->assertSame(10, $this->block->getProductsCount());
         $this->block->setProductsCount(2);
@@ -250,9 +300,11 @@ class NewWidgetTest extends TestCase
     }
 
     /**
+     * Helper function for product collection tests
+     *
      * @return void
      */
-    protected function generalGetProductCollection()
+    protected function generalGetProductCollection(): void
     {
         $this->eventManager->expects($this->exactly(2))->method('dispatch')
             ->willReturn(true);
@@ -305,13 +357,20 @@ class NewWidgetTest extends TestCase
     }
 
     /**
+     * Helper function to start test for getProductCollection
+     *
      * @param string $displayType
      * @param bool $pagerEnable
      * @param int $productsCount
-     * @param int $productsPerPage
+     * @param int|null $productsPerPage
+     * @return void
      */
-    protected function startTestGetProductCollection($displayType, $pagerEnable, $productsCount, $productsPerPage)
-    {
+    protected function startTestGetProductCollection(
+        string $displayType,
+        bool   $pagerEnable,
+        int    $productsCount,
+        ?int   $productsPerPage
+    ): void {
         $productCollectionFactory = $this->createPartialMock(
             CollectionFactory::class,
             ['create']
@@ -343,14 +402,20 @@ class NewWidgetTest extends TestCase
      * Test protected `_getProductCollection` and `getPageSize` methods via public `toHtml` method,
      * for display_type == DISPLAY_TYPE_NEW_PRODUCTS.
      *
+     * @covers \Magento\Catalog\Block\Product\Widget\NewWidget::_getProductCollection
      * @param bool $pagerEnable
      * @param int $productsCount
-     * @param int $productsPerPage
+     * @param int|null $productsPerPage
      * @param int $expectedPageSize
+     * @return void
      * @dataProvider getProductCollectionDataProvider
      */
-    public function testGetProductNewCollection($pagerEnable, $productsCount, $productsPerPage, $expectedPageSize)
-    {
+    public function testGetProductNewCollection(
+        bool $pagerEnable,
+        int  $productsCount,
+        ?int $productsPerPage,
+        int  $expectedPageSize
+    ): void {
         $this->generalGetProductCollection();
 
         $this->productCollection->expects($this->exactly(2))->method('setPageSize')
@@ -374,14 +439,19 @@ class NewWidgetTest extends TestCase
      * Test protected `_getProductCollection` and `getPageSize` methods via public `toHtml` method,
      * for display_type == DISPLAY_TYPE_ALL_PRODUCTS.
      *
+     * @covers \Magento\Catalog\Block\Product\Widget\NewWidget::_getProductCollection
      * @param bool $pagerEnable
      * @param int $productsCount
-     * @param int $productsPerPage
+     * @param int|null $productsPerPage
      * @param int $expectedPageSize
      * @dataProvider getProductCollectionDataProvider
      */
-    public function testGetProductAllCollection($pagerEnable, $productsCount, $productsPerPage, $expectedPageSize)
-    {
+    public function testGetProductAllCollection(
+        bool $pagerEnable,
+        int  $productsCount,
+        ?int $productsPerPage,
+        int  $expectedPageSize
+    ): void {
         $this->generalGetProductCollection();
 
         $this->productCollection->expects($this->atLeastOnce())->method('setPageSize')->with($expectedPageSize)
@@ -396,6 +466,8 @@ class NewWidgetTest extends TestCase
     }
 
     /**
+     * Data provider for testGetProductNewCollection() and testGetProductAllCollection()
+     *
      * @return array
      */
     public static function getProductCollectionDataProvider(): array
@@ -481,8 +553,11 @@ class NewWidgetTest extends TestCase
 
     /**
      * Unit test for getPagerHtml()
+     *
+     * @covers \Magento\Catalog\Block\Product\Widget\NewWidget::getPagerHtml()
+     * @return void
      */
-    public function testGetPagerHtml()
+    public function testGetPagerHtml(): void
     {
         $pagerMock = $this->getMockBuilder(Pager::class)
             ->disableOriginalConstructor()
@@ -509,8 +584,11 @@ class NewWidgetTest extends TestCase
 
     /**
      * Unit test for getPagerHtml() when show_pager is false
+     *
+     * @covers \Magento\Catalog\Block\Product\Widget\NewWidget::getPagerHtml()
+     * @return void
      */
-    public function testGetPagerHtmlWhenShowPagerFalse()
+    public function testGetPagerHtmlWhenShowPagerFalse(): void
     {
         $this->block->setData('show_pager', false);
         $this->assertEmpty($this->block->getPagerHtml());
@@ -518,8 +596,11 @@ class NewWidgetTest extends TestCase
 
     /**
      * Unit test for getCacheKeyInfo()
+     *
+     * @covers \Magento\Catalog\Block\Product\Widget\NewWidget::getCacheKeyInfo()
+     * @return void
      */
-    public function testGetCacheKeyInfo()
+    public function testGetCacheKeyInfo(): void
     {
         $serializer = $this->createMock(Json::class);
         $httpContext = $this->createMock(Context::class);
@@ -555,7 +636,7 @@ class NewWidgetTest extends TestCase
             ]
         );
 
-        $ref = new \ReflectionClass($block);
+        $ref = new ReflectionClass($block);
         $prop = $ref->getProperty('_storeManager');
         $prop->setAccessible(true);
         $prop->setValue($block, $storeManager);
@@ -578,6 +659,7 @@ class NewWidgetTest extends TestCase
     /**
      * Unit test for getProductsPerPage() using data provider
      *
+     * @covers \Magento\Catalog\Block\Product\Widget\NewWidget::getProductsPerPage()
      * @dataProvider getProductsPerPageDataProvider
      * @param int|null $productsPerPage
      * @param int $expectedResult
