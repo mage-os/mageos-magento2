@@ -29,7 +29,7 @@ use PHPUnit\Framework\TestCase;
  * Unit test for Category View Block
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @covers View
+ * @covers \Magento\Catalog\Block\Category\View
  */
 class ViewTest extends TestCase
 {

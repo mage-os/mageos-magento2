@@ -22,7 +22,7 @@ use ReflectionProperty;
 /**
  * Unit test coverage file
  *
- * @covers Pager
+ * @covers \Magento\Catalog\Block\Product\Widget\Html\Pager
  */
 class PagerTest extends TestCase
 {
