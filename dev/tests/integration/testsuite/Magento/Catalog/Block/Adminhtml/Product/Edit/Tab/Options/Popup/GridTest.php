@@ -19,6 +19,7 @@ use PHPUnit\Framework\TestCase;
  * Integration tests for the admin product grid in custom options popup
  *
  * @see \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Options\Popup\Grid
+ * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Options\Popup\Grid
  * @magentoAppArea adminhtml
  */
 class GridTest extends TestCase
@@ -48,6 +49,7 @@ class GridTest extends TestCase
         $this->objectManager = Bootstrap::getObjectManager();
         $this->layout = $this->objectManager->get(LayoutInterface::class);
         $this->block = $this->layout->createBlock(Grid::class);
+        $this->block->toHtml();
     }
 
     /**
@@ -90,9 +92,6 @@ class GridTest extends TestCase
      */
     public function testPrepareColumnsRemovesSpecificColumns(): void
     {
-        // Trigger column preparation
-        $this->block->toHtml();
-
         // Verify that action, status, and visibility columns are removed
         // getColumn returns false when column doesn't exist
         $this->assertFalse(
@@ -131,9 +130,6 @@ class GridTest extends TestCase
      */
     public function testPrepareMassactionAddsImportAction(): void
     {
-        // Trigger block preparation
-        $this->block->toHtml();
-
         $massactionBlock = $this->block->getMassactionBlock();
 
         $this->assertNotNull($massactionBlock, 'Massaction block should exist');
@@ -153,9 +149,6 @@ class GridTest extends TestCase
      */
     public function testPrepareCollectionJoinsWithOptionsTable(): void
     {
-        // Trigger block preparation which calls _prepareCollection
-        $this->block->toHtml();
-
         $collection = $this->block->getCollection();
 
         $this->assertNotNull($collection, 'Collection should be set');
@@ -178,24 +171,29 @@ class GridTest extends TestCase
     public function testPrepareCollectionAppliesCurrentProductFilter(): void
     {
         $testProductId = 999;
-
-        // Simulate request with current_product_id parameter
         $request = $this->objectManager->get(\Magento\Framework\App\RequestInterface::class);
-        $request->setParam('current_product_id', $testProductId);
 
-        // Create a new block instance with the updated request
-        $blockWithRequest = $this->layout->createBlock(Grid::class);
-        $blockWithRequest->toHtml();
+        try {
+            // Simulate request with current_product_id parameter
+            $request->setParam('current_product_id', $testProductId);
 
-        $collection = $blockWithRequest->getCollection();
+            // Create a new block instance with the updated request
+            $blockWithRequest = $this->layout->createBlock(Grid::class);
+            $blockWithRequest->toHtml();
 
-        // Verify the WHERE clause excludes the current product
-        $selectString = $collection->getSelect()->__toString();
-        $this->assertStringContainsString(
-            (string)$testProductId,
-            $selectString,
-            'Collection should filter out current product ID'
-        );
+            $collection = $blockWithRequest->getCollection();
+
+            // Verify the WHERE clause excludes the current product
+            $selectString = $collection->getSelect()->__toString();
+            $this->assertMatchesRegularExpression(
+                '/e\.entity_id\s*!=\s*[\'"]?999[\'"]?/i',
+                $selectString,
+                'Collection should have WHERE clause excluding current product ID'
+            );
+        } finally {
+            // Clean up request parameter to avoid affecting other tests
+            $request->setParam('current_product_id', null);
+        }
     }
 
     /**
@@ -223,8 +221,6 @@ class GridTest extends TestCase
      */
     public function testMassactionFormFieldName(): void
     {
-        $this->block->toHtml();
-
         $massactionBlock = $this->block->getMassactionBlock();
 
         $this->assertEquals(
@@ -235,19 +231,17 @@ class GridTest extends TestCase
     }
 
     /**
-     * Test grid block rendering does not throw exceptions
+     * Test grid block is properly initialized after rendering
      *
      * @magentoDbIsolation enabled
      * @return void
      */
-    public function testGridBlockRendersWithoutException(): void
+    public function testGridBlockIsProperlyInitialized(): void
     {
-        // This should not throw any exception
-        $html = $this->block->toHtml();
-
-        // Verify that HTML is generated
-        $this->assertIsString($html);
-        $this->assertNotEmpty($html);
+        // Verify block is properly initialized (toHtml already called in setUp)
+        $this->assertNotNull($this->block->getCollection(), 'Collection should be initialized');
+        $this->assertNotNull($this->block->getMassactionBlock(), 'Massaction block should be initialized');
+        $this->assertNotEmpty($this->block->getGridUrl(), 'Grid URL should be set');
     }
 
     /**
@@ -258,7 +252,6 @@ class GridTest extends TestCase
      */
     public function testCollectionIsDistinct(): void
     {
-        $this->block->toHtml();
         $collection = $this->block->getCollection();
 
         // Verify the collection query uses DISTINCT
