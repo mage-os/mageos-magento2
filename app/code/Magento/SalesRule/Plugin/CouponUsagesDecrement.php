@@ -54,6 +54,9 @@ class CouponUsagesDecrement
         }
 
         $order = $this->orderRepository->get($orderId);
+        if ($order->getDiscountInvoiced() != 0) {
+            return $result;
+        }
         $this->updateCouponUsages->execute($order, false);
 
         return $result;

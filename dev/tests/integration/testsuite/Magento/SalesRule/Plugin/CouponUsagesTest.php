@@ -20,6 +20,9 @@ use Magento\TestFramework\MessageQueue\PreconditionFailedException;
 use Magento\TestFramework\MessageQueue\PublisherConsumerController;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Sales\Api\InvoiceManagementInterface;
+use Magento\Framework\DB\Transaction;
 
 /**
  * Test increasing coupon usages after order placing and decreasing after order cancellation.
@@ -108,7 +111,7 @@ class CouponUsagesTest extends TestCase
     }
 
     /**
-     * Test increasing coupon usages after after order placing and decreasing after order cancellation.
+     * Test increasing coupon usages after order placing and decreasing after order cancellation.
      *
      * @magentoDataFixture Magento/SalesRule/_files/coupons_limited_order.php
      * @magentoDbIsolation disabled
@@ -166,12 +169,9 @@ class CouponUsagesTest extends TestCase
      */
     public function testQuoteSubmitFailure(array $mockObjects)
     {
-        if(!empty($mockObjects['orderManagement']))
-        {
+        if (!empty($mockObjects['orderManagement'])) {
             $mockObjects['orderManagement'] = $mockObjects['orderManagement']($this);
-        }
-        else if(!empty($mockObjects['submitQuoteValidator']))
-        {
+        } elseif (!empty($mockObjects['submitQuoteValidator'])) {
             $mockObjects['submitQuoteValidator'] = $mockObjects['submitQuoteValidator']($this);
         }
 
@@ -209,36 +209,26 @@ class CouponUsagesTest extends TestCase
         }
     }
 
-    private function getMockForOrderManageClass()
-    {
-        $orderManagement = $this->createMock(OrderManagementInterface::class);
-        $orderManagement->expects($this->once())
-            ->method('place')
-            ->willThrowException(new \Exception());
-
-        return $orderManagement;
-    }
-
-    private function getSubmitQuoteValidatorClass()
-    {
-        $submitQuoteValidator = $this->createMock(SubmitQuoteValidator::class);
-        $submitQuoteValidator->expects($this->once())
-            ->method('validateQuote')
-            ->willThrowException(new \Exception());
-
-        return $submitQuoteValidator;
-    }
-
     /**
      * @return array
      */
     public static function quoteSubmitFailureDataProvider(): array
     {
-        /** @var OrderManagementInterface|MockObject $orderManagement */
-        $orderManagement = static fn (self $testCase) => $testCase->getMockForOrderManageClass();
+        $orderManagement = static function (self $testCase) {
+            $mock = $testCase->createMock(OrderManagementInterface::class);
+            $mock->expects($testCase->once())
+                ->method('place')
+                ->willThrowException(new \Exception());
+            return $mock;
+        };
 
-        /** @var OrderManagementInterface|MockObject $orderManagement */
-        $submitQuoteValidator = static fn (self $testCase) => $testCase->getSubmitQuoteValidatorClass();
+        $submitQuoteValidator = static function (self $testCase) {
+            $mock = $testCase->createMock(SubmitQuoteValidator::class);
+            $mock->expects($testCase->once())
+                ->method('validateQuote')
+                ->willThrowException(new \Exception());
+            return $mock;
+        };
 
         return [
             'order placing failure' => [
@@ -248,5 +238,60 @@ class CouponUsagesTest extends TestCase
                 ['submitQuoteValidator' => $submitQuoteValidator]
             ],
         ];
+    }
+
+    /**
+     * Test that coupon usage is NOT decremented when order is partially invoiced and then cancelled
+     *
+     * @magentoDataFixture Magento/SalesRule/_files/coupons_limited_order_once.php
+     * @magentoDbIsolation disabled
+     * @throws LocalizedException
+     */
+    public function testCancelOrderAfterPartialInvoice()
+    {
+        $customerId = 1;
+        $couponCode = 'test_once_usage';
+        $reservedOrderId = 'test_quote_two_products';
+        /** @var Coupon $coupon */
+        $coupon = $this->objectManager->create(Coupon::class);
+        $coupon->loadByCode($couponCode);
+        /** @var Quote $quote */
+        $quote = $this->objectManager->create(Quote::class);
+        $quote->load($reservedOrderId, 'reserved_order_id');
+        $order = $this->quoteManagement->submit($quote);
+        sleep(30);
+        $this->usage->loadByCustomerCoupon($this->couponUsage, $customerId, $coupon->getId());
+        $coupon->loadByCode($couponCode);
+        self::assertEquals(1, $coupon->getTimesUsed());
+        self::assertEquals(1, $this->couponUsage->getTimesUsed());
+
+        /** @var InvoiceManagementInterface $invoiceService */
+        $invoiceService = $this->objectManager->get(InvoiceManagementInterface::class);
+        $orderItems = $order->getAllItems();
+        $firstItem = reset($orderItems);
+        $invoiceItems = [$firstItem->getId() => $firstItem->getQtyOrdered()];
+        $invoice = $invoiceService->prepareInvoice($order, $invoiceItems);
+        $invoice->register();
+        $order->setIsInProcess(true);
+        /** @var Transaction $transactionSave */
+        $transactionSave = $this->objectManager->create(Transaction::class);
+        $transactionSave->addObject($invoice)
+            ->addObject($order)
+            ->save();
+        self::assertGreaterThan(
+            0,
+            abs($invoice->getDiscountAmount()),
+            'Invoice should have discount amount applied'
+        );
+        self::assertGreaterThan(
+            0,
+            abs($order->getDiscountInvoiced()),
+            'Order should have invoiced discount amount'
+        );
+        $this->orderService->cancel($order->getId());
+        $this->usage->loadByCustomerCoupon($this->couponUsage, $customerId, $coupon->getId());
+        $coupon->loadByCode($couponCode);
+        self::assertEquals(1, $coupon->getTimesUsed());
+        self::assertEquals(1, $this->couponUsage->getTimesUsed());
     }
 }
