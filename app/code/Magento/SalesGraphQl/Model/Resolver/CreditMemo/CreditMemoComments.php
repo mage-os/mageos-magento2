@@ -37,8 +37,8 @@ class CreditMemoComments implements ResolverInterface
         Field $field,
         $context,
         ResolveInfo $info,
-        array $value = null,
-        array $args = null
+        ?array $value = null,
+        ?array $args = null
     ) {
         if (!(($value['model'] ?? null) instanceof CreditmemoInterface)) {
             throw new LocalizedException(__('"model" value should be specified'));
@@ -53,7 +53,7 @@ class CreditMemoComments implements ResolverInterface
                 $comments[] = [
                     'message' => $comment->getComment(),
                     'timestamp' => $this->timezone->date($comment->getCreatedAt())
-                        ->format(DateTime::DATETIME_PHP_FORMAT)
+                        ->format(DateTime::DATETIME_SLASH_PHP_FORMAT)
                 ];
             }
         }

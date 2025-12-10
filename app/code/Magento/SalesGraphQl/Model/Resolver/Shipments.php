@@ -34,7 +34,7 @@ class Shipments implements ResolverInterface
     /**
      * @inheritDoc
      */
-    public function resolve(Field $field, $context, ResolveInfo $info, array $value = null, array $args = null)
+    public function resolve(Field $field, $context, ResolveInfo $info, ?array $value = null, ?array $args = null)
     {
         if (!isset($value['model']) && !($value['model'] instanceof Order)) {
             throw new LocalizedException(__('"model" value should be specified'));
@@ -75,7 +75,7 @@ class Shipments implements ResolverInterface
             if ($comment->getIsVisibleOnFront()) {
                 $comments[] = [
                     'timestamp' => $this->timezone->date($comment->getCreatedAt())
-                        ->format(DateTime::DATETIME_PHP_FORMAT),
+                        ->format(DateTime::DATETIME_SLASH_PHP_FORMAT),
                     'message' => $comment->getComment()
                 ];
             }

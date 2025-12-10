@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2013 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -27,6 +27,7 @@ use PHPUnit\Framework\TestCase;
 use Magento\ImportExport\Model\Import;
 use Magento\ImportExport\Model\Import\AbstractSource;
 use Magento\ImportExport\Model\Import\ErrorProcessing\ProcessingErrorAggregatorInterface;
+use Magento\Framework\Event\ManagerInterface as EventManagerInterface;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -82,6 +83,11 @@ class ValidateTest extends TestCase
      * @var AbstractSourceMock|MockObject
      */
     private $abstractSourceMock;
+
+    /**
+     * @var EventManagerInterface|MockObject
+     */
+    private $eventManagerMock;
 
     protected function setUp(): void
     {
@@ -146,6 +152,13 @@ class ValidateTest extends TestCase
         $this->abstractSourceMock = $this->getMockBuilder(AbstractSource::class)
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
+
+        $this->eventManagerMock = $this->getMockBuilder(EventManagerInterface::class)
+            ->getMockForAbstractClass();
+
+        $this->contextMock->expects($this->any())
+            ->method('getEventManager')
+            ->willReturn($this->eventManagerMock);
 
         $this->validate = new Validate(
             $this->contextMock,
@@ -307,6 +320,12 @@ class ValidateTest extends TestCase
                 ['show', 'import_validation_container'],
                 ['value', Import::FIELD_IMPORT_IDS, [1, 2, 3]]
             );
+        $resultBlock->expects($this->once())
+            ->method('addAction')
+            ->willReturn(
+                ['show', 'import_validation_container'],
+                ['value', '_import_history_id', 1]
+            );
         $this->importMock->expects($this->exactly(3))
             ->method('getProcessedRowsCount')
             ->willReturn(2);
@@ -330,6 +349,10 @@ class ValidateTest extends TestCase
         $errorAggregatorMock->expects($this->once())
             ->method('getAllErrors')
             ->willReturn($errorAggregatorMock);
+
+        $this->eventManagerMock->expects($this->once())
+            ->method('dispatch')
+            ->with('log_admin_import');
 
         $this->resultFactoryMock->expects($this->any())
             ->method('create')

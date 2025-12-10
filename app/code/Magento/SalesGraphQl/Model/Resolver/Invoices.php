@@ -38,8 +38,8 @@ class Invoices implements ResolverInterface
         Field $field,
         $context,
         ResolveInfo $info,
-        array $value = null,
-        array $args = null
+        ?array $value = null,
+        ?array $args = null
     ) {
         if (!(($value['model'] ?? null) instanceof OrderInterface)) {
             throw new LocalizedException(__('"model" value should be specified'));
@@ -74,7 +74,7 @@ class Invoices implements ResolverInterface
             if ($comment->getIsVisibleOnFront()) {
                 $comments[] = [
                     'timestamp' => $this->timezone->date($comment->getCreatedAt())
-                        ->format(DateTime::DATETIME_PHP_FORMAT),
+                        ->format(DateTime::DATETIME_SLASH_PHP_FORMAT),
                     'message' => $comment->getComment()
                 ];
             }
