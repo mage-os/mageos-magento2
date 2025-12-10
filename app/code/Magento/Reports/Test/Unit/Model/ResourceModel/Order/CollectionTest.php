@@ -31,6 +31,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
