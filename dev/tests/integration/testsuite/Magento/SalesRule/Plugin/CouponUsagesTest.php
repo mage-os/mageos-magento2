@@ -5,24 +5,38 @@
  */
 namespace Magento\SalesRule\Plugin;
 
+use Magento\Catalog\Test\Fixture\Product as ProductFixture;
+use Magento\Checkout\Test\Fixture\SetBillingAddress;
+use Magento\Checkout\Test\Fixture\SetDeliveryMethod;
+use Magento\Checkout\Test\Fixture\SetPaymentMethod;
+use Magento\Checkout\Test\Fixture\SetShippingAddress;
+use Magento\Customer\Test\Fixture\Customer;
 use Magento\Framework\DataObject;
+use Magento\Framework\DB\Transaction;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\MessageQueue\ConsumerFactory;
 use Magento\Framework\ObjectManagerInterface;
+use Magento\Quote\Api\CouponManagementInterface;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\QuoteManagement;
 use Magento\Quote\Model\SubmitQuoteValidator;
+use Magento\Quote\Test\Fixture\AddProductToCart;
+use Magento\Quote\Test\Fixture\CustomerCart;
+use Magento\Sales\Api\InvoiceManagementInterface;
 use Magento\Sales\Api\OrderManagementInterface;
 use Magento\Sales\Model\Service\OrderService;
 use Magento\SalesRule\Model\Coupon;
 use Magento\SalesRule\Model\ResourceModel\Coupon\Usage;
+use Magento\SalesRule\Test\Fixture\Rule as SalesRuleFixture;
+use Magento\TestFramework\Fixture\DataFixture;
+use Magento\TestFramework\Fixture\DataFixtureStorage;
+use Magento\TestFramework\Fixture\DataFixtureStorageManager;
 use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestFramework\MessageQueue\EnvironmentPreconditionException;
 use Magento\TestFramework\MessageQueue\PreconditionFailedException;
 use Magento\TestFramework\MessageQueue\PublisherConsumerController;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Magento\Framework\Exception\LocalizedException;
-use Magento\Sales\Api\InvoiceManagementInterface;
-use Magento\Framework\DB\Transaction;
 
 /**
  * Test increasing coupon usages after order placing and decreasing after order cancellation.
@@ -70,6 +84,26 @@ class CouponUsagesTest extends TestCase
     private $orderService;
 
     /**
+     * @var DataFixtureStorage
+     */
+    private $fixtures;
+
+    /**
+     * @var CouponManagementInterface
+     */
+    private $couponManagement;
+
+    /**
+     * @var OrderManagementInterface
+     */
+    private $orderManagement;
+
+    /**
+     * @var ConsumerFactory
+     */
+    private $consumerFactory;
+
+    /**
      * @inheritdoc
      */
     protected function setUp(): void
@@ -79,6 +113,10 @@ class CouponUsagesTest extends TestCase
         $this->couponUsage = $this->objectManager->create(DataObject::class);
         $this->quoteManagement = $this->objectManager->get(QuoteManagement::class);
         $this->orderService = $this->objectManager->get(OrderService::class);
+        $this->fixtures = $this->objectManager->get(DataFixtureStorageManager::class)->getStorage();
+        $this->couponManagement = $this->objectManager->get(CouponManagementInterface::class);
+        $this->orderManagement = $this->objectManager->get(OrderManagementInterface::class);
+        $this->consumerFactory = $this->objectManager->get(ConsumerFactory::class);
 
         $this->publisherConsumerController = Bootstrap::getObjectManager()->create(
             PublisherConsumerController::class,
@@ -243,23 +281,49 @@ class CouponUsagesTest extends TestCase
     /**
      * Test that coupon usage is NOT decremented when order is partially invoiced and then cancelled
      *
-     * @magentoDataFixture Magento/SalesRule/_files/coupons_limited_order_once.php
      * @magentoDbIsolation disabled
      * @throws LocalizedException
      */
+    #[
+        DataFixture(ProductFixture::class, ['price' => 10, 'sku' => 'simple-product-1'], 'product1'),
+        DataFixture(ProductFixture::class, ['price' => 20, 'sku' => 'simple-product-2'], 'product2'),
+        DataFixture(
+            SalesRuleFixture::class,
+            [
+                'coupon_code' => 'test_once_usage',
+                'simple_action' => 'by_percent',
+                'discount_amount' => 10,
+                'uses_per_coupon' => 1,
+                'uses_per_customer' => 1
+            ],
+            'salesrule'
+        ),
+        DataFixture(Customer::class, as: 'customer'),
+        DataFixture(CustomerCart::class, ['customer_id' => '$customer.id$'], 'cart'),
+        DataFixture(AddProductToCart::class, ['cart_id' => '$cart.id$', 'product_id' => '$product1.id$', 'qty' => 2]),
+        DataFixture(AddProductToCart::class, ['cart_id' => '$cart.id$', 'product_id' => '$product2.id$', 'qty' => 1]),
+        DataFixture(SetBillingAddress::class, ['cart_id' => '$cart.id$']),
+        DataFixture(SetShippingAddress::class, ['cart_id' => '$cart.id$']),
+        DataFixture(SetDeliveryMethod::class, ['cart_id' => '$cart.id$']),
+        DataFixture(SetPaymentMethod::class, ['cart_id' => '$cart.id$']),
+    ]
     public function testCancelOrderAfterPartialInvoice()
     {
-        $customerId = 1;
         $couponCode = 'test_once_usage';
-        $reservedOrderId = 'test_quote_two_products';
+        $cart = $this->fixtures->get('cart');
+        $customer = $this->fixtures->get('customer');
+        $customerId = $customer->getId();
+        $this->couponManagement->set($cart->getId(), $couponCode);
+
         /** @var Coupon $coupon */
         $coupon = $this->objectManager->create(Coupon::class);
         $coupon->loadByCode($couponCode);
-        /** @var Quote $quote */
-        $quote = $this->objectManager->create(Quote::class);
-        $quote->load($reservedOrderId, 'reserved_order_id');
-        $order = $this->quoteManagement->submit($quote);
-        sleep(30);
+
+        $orderId = $this->quoteManagement->placeOrder($cart->getId());
+        $orderRepository = $this->objectManager->get(\Magento\Sales\Api\OrderRepositoryInterface::class);
+        $order = $orderRepository->get($orderId);
+        $consumer = $this->consumerFactory->get('sales.rule.update.coupon.usage');
+        $consumer->process(1);
         $this->usage->loadByCustomerCoupon($this->couponUsage, $customerId, $coupon->getId());
         $coupon->loadByCode($couponCode);
         self::assertEquals(1, $coupon->getTimesUsed());
@@ -272,7 +336,6 @@ class CouponUsagesTest extends TestCase
         $invoiceItems = [$firstItem->getId() => $firstItem->getQtyOrdered()];
         $invoice = $invoiceService->prepareInvoice($order, $invoiceItems);
         $invoice->register();
-        $order->setIsInProcess(true);
         /** @var Transaction $transactionSave */
         $transactionSave = $this->objectManager->create(Transaction::class);
         $transactionSave->addObject($invoice)
@@ -283,12 +346,15 @@ class CouponUsagesTest extends TestCase
             abs($invoice->getDiscountAmount()),
             'Invoice should have discount amount applied'
         );
+        $order = $orderRepository->get($orderId);
         self::assertGreaterThan(
             0,
             abs($order->getDiscountInvoiced()),
             'Order should have invoiced discount amount'
         );
-        $this->orderService->cancel($order->getId());
+
+        $this->orderManagement->cancel($orderId);
+        $consumer->process(1);
         $this->usage->loadByCustomerCoupon($this->couponUsage, $customerId, $coupon->getId());
         $coupon->loadByCode($couponCode);
         self::assertEquals(1, $coupon->getTimesUsed());
