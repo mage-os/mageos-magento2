@@ -27,17 +27,17 @@ class GridTest extends TestCase
     /**
      * @var ObjectManager
      */
-    private $objectManager;
+    private ObjectManager $objectManager;
 
     /**
      * @var Grid
      */
-    private $block;
+    private Grid $block;
 
     /**
      * @var LayoutInterface
      */
-    private $layout;
+    private LayoutInterface $layout;
 
     /**
      * @inheritdoc
@@ -56,6 +56,7 @@ class GridTest extends TestCase
      * Test that getRowUrl returns null to disable JS click events
      *
      * @return void
+     * @covers ::getRowUrl
      */
     public function testGetRowUrlReturnsNull(): void
     {
@@ -73,6 +74,7 @@ class GridTest extends TestCase
      * Test that getRowUrl returns null for DataObject
      *
      * @return void
+     * @covers ::getRowUrl
      */
     public function testGetRowUrlReturnsNullForDataObject(): void
     {
@@ -89,6 +91,7 @@ class GridTest extends TestCase
      *
      * @magentoDbIsolation enabled
      * @return void
+     * @covers ::_prepareColumns
      */
     public function testPrepareColumnsRemovesSpecificColumns(): void
     {
@@ -127,6 +130,7 @@ class GridTest extends TestCase
      *
      * @magentoDbIsolation enabled
      * @return void
+     * @covers ::_prepareMassaction
      */
     public function testPrepareMassactionAddsImportAction(): void
     {
@@ -146,6 +150,7 @@ class GridTest extends TestCase
      *
      * @magentoDbIsolation enabled
      * @return void
+     * @covers ::_prepareCollection
      */
     public function testPrepareCollectionJoinsWithOptionsTable(): void
     {
@@ -167,6 +172,7 @@ class GridTest extends TestCase
      *
      * @magentoDbIsolation enabled
      * @return void
+     * @covers ::_prepareCollection
      */
     public function testPrepareCollectionAppliesCurrentProductFilter(): void
     {
@@ -200,6 +206,7 @@ class GridTest extends TestCase
      * Test that getGridUrl returns the correct URL for AJAX updates
      *
      * @return void
+     * @covers ::getGridUrl
      */
     public function testGetGridUrlReturnsCorrectUrl(): void
     {
@@ -218,6 +225,7 @@ class GridTest extends TestCase
      *
      * @magentoDbIsolation enabled
      * @return void
+     * @covers ::_prepareMassaction
      */
     public function testMassactionFormFieldName(): void
     {
@@ -235,6 +243,9 @@ class GridTest extends TestCase
      *
      * @magentoDbIsolation enabled
      * @return void
+     * @covers ::_prepareCollection
+     * @covers ::_prepareMassaction
+     * @covers ::getGridUrl
      */
     public function testGridBlockIsProperlyInitialized(): void
     {
@@ -249,6 +260,7 @@ class GridTest extends TestCase
      *
      * @magentoDbIsolation enabled
      * @return void
+     * @covers ::_prepareCollection
      */
     public function testCollectionIsDistinct(): void
     {
