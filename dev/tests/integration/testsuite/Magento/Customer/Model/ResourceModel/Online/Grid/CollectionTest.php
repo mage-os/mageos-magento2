@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2025
+ * Copyright 2025 Adobe
  * All Rights Reserved.
  */
 namespace Magento\Customer\Model\ResourceModel\Online\Grid;
