@@ -62,12 +62,6 @@ class AdditionalTest extends TestCase
     /**
      * Set up
      *
-     * PHPUnit 12 Migration Notes:
-     * - MockCreationTrait is used for mocking methods that don't exist in a class (e.g., magic methods)
-     * - For property injection when constructor cannot be called (due to ObjectManager dependencies),
-     *   use ReflectionProperty::setValue() directly (PHP 8.1+ doesn't require setAccessible())
-     * - This approach is PHP 8.5 compatible as setAccessible() is not needed for setValue()
-     *
      * @return void
      */
     protected function setUp(): void
@@ -94,9 +88,6 @@ class AdditionalTest extends TestCase
             ->onlyMethods([])
             ->getMock();
 
-        // Set dependencies via reflection - PHP 8.1+ compatible (no setAccessible needed for setValue)
-        // Note: MockCreationTrait::createPartialMockWithReflection is for MOCKING METHODS,
-        // not for setting properties. For property injection, use ReflectionProperty directly.
         $reflection = new \ReflectionClass(Additional::class);
 
         $customerViewHelperProperty = $reflection->getProperty('_customerViewHelper');

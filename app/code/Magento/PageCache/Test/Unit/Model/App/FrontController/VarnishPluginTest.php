@@ -75,12 +75,10 @@ class VarnishPluginTest extends TestCase
         $this->stateMock = $this->getMockBuilder(AppState::class)
             ->disableOriginalConstructor()
             ->getMock();
-        // Use createMock() for interfaces - PHPUnit 12 compatible
         $this->frontControllerMock = $this->createMock(FrontControllerInterface::class);
         $this->responseMock = $this->getMockBuilder(ResponseHttp::class)
             ->disableOriginalConstructor()
             ->getMock();
-        // Use createMock() for interfaces - PHPUnit 12 compatible
         $this->resultMock = $this->createMock(ResultInterface::class);
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);

@@ -60,7 +60,6 @@ class PersistentTest extends TestCase
     {
         $this->persistentSessionHelperMock = $this->createMock(Session::class);
         $this->customerViewHelperMock = $this->createMock(View::class);
-        // Use createMock() for interfaces - PHPUnit 12 compatible
         $this->customerRepositoryMock = $this->createMock(CustomerRepositoryInterface::class);
 
         $objectManager = new ObjectManagerHelper($this);
@@ -116,7 +115,6 @@ class PersistentTest extends TestCase
         $persistentSessionMock->method('getCustomerId')->willReturn(self::STUB_CUSTOMER_ID);
         $this->persistentSessionHelperMock->method('getSession')->willReturn($persistentSessionMock);
 
-        // Use createMock() for interfaces - PHPUnit 12 compatible
         $customerMock = $this->createMock(CustomerInterface::class);
         $this->customerRepositoryMock->method('getById')->with(self::STUB_CUSTOMER_ID)->willReturn($customerMock);
         $this->customerViewHelperMock->method('getCustomerName')->with($customerMock)

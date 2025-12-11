@@ -64,7 +64,6 @@ class ObserverTest extends TestCase
         $this->persistentSessionMock = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
             ->getMock();
-        // Use createMock() for interfaces - PHPUnit 12 compatible
         $this->customerRepositoryMock = $this->createMock(CustomerRepositoryInterface::class);
         $this->customerViewHelperMock = $this->getMockBuilder(View::class)
             ->disableOriginalConstructor()
@@ -72,7 +71,6 @@ class ObserverTest extends TestCase
         $this->escaperMock = $this->getMockBuilder(Escaper::class)
             ->disableOriginalConstructor()
             ->getMock();
-        // Use createMock() for interfaces - PHPUnit 12 compatible
         $this->layoutMock = $this->createMock(LayoutInterface::class);
         $this->sessionMock = $this->createPartialMockWithReflection(
             Session::class,

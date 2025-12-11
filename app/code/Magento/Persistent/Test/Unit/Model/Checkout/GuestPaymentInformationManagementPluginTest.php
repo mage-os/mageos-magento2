@@ -96,7 +96,6 @@ class GuestPaymentInformationManagementPluginTest extends TestCase
         /**
          * @var PaymentInterface|MockObject $paymentInterfaceMock
          */
-        // Use createMock() for interfaces - PHPUnit 12 compatible
         $paymentInterfaceMock = $this->createMock(PaymentInterface::class);
 
         $this->persistentHelperMock->expects($this->once())->method('isShoppingCartPersist')->willReturn(true);
@@ -129,7 +128,6 @@ class GuestPaymentInformationManagementPluginTest extends TestCase
         /**
          * @var PaymentInterface|MockObject $paymentInterfaceMock
          */
-        // Use createMock() for interfaces - PHPUnit 12 compatible
         $paymentInterfaceMock = $this->createMock(PaymentInterface::class);
 
         $this->persistentHelperMock->expects($this->once())->method('isShoppingCartPersist')->willReturn(false);
@@ -154,7 +152,6 @@ class GuestPaymentInformationManagementPluginTest extends TestCase
         /**
          * @var PaymentInterface|MockObject $paymentInterfaceMock
          */
-        // Use createMock() for interfaces - PHPUnit 12 compatible
         $paymentInterfaceMock = $this->createMock(PaymentInterface::class);
 
         $this->persistentSessionMock->expects($this->once())->method('isPersistent')->willReturn(false);
@@ -177,7 +174,6 @@ class GuestPaymentInformationManagementPluginTest extends TestCase
         /**
          * @var PaymentInterface|MockObject $paymentInterfaceMock
          */
-        // Use createMock() for interfaces - PHPUnit 12 compatible
         $paymentInterfaceMock = $this->createMock(PaymentInterface::class);
 
         $this->persistentSessionMock->expects($this->once())->method('isPersistent')->willReturn(true);
@@ -201,7 +197,6 @@ class GuestPaymentInformationManagementPluginTest extends TestCase
         /**
          * @var PaymentInterface|MockObject $paymentInterfaceMock
          */
-        // Use createMock() for interfaces - PHPUnit 12 compatible
         $paymentInterfaceMock = $this->createMock(PaymentInterface::class);
 
         $this->persistentHelperMock->expects($this->once())->method('isShoppingCartPersist')->willReturn(true);

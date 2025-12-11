@@ -50,7 +50,6 @@ class CustomerAuthenticatedEventObserverTest extends TestCase
         $this->customerSessionMock = $this->createMock(Session::class);
         $this->observerMock = $this->createMock(Observer::class);
         $this->quoteManagerMock = $this->createMock(QuoteManager::class);
-        // Use createMock() for interfaces - PHPUnit 12 compatible
         $this->requestMock = $this->createMock(RequestInterface::class);
         $this->model = new CustomerAuthenticatedEventObserver(
             $this->customerSessionMock,

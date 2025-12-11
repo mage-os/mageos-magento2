@@ -50,7 +50,6 @@ class SessionTest extends TestCase
     protected function setUp(): void
     {
         $helper = new ObjectManager($this);
-        // Use createMock() for interfaces - PHPUnit 12 compatible
         $this->configMock = $this->createMock(ConfigInterface::class);
         $this->cookieManagerMock = $this->createMock(CookieManagerInterface::class);
         $this->cookieMetadataFactoryMock = $this->getMockBuilder(
@@ -58,8 +57,6 @@ class SessionTest extends TestCase
         )->disableOriginalConstructor()
             ->getMock();
 
-        // Use createPartialMock for abstract classes with specific methods - PHPUnit 12 compatible
-        // Include _construct abstract method to avoid "contains 1 abstract method" error
         $resourceMock = $this->createPartialMock(
             AbstractDb::class,
             [

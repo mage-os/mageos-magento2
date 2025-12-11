@@ -74,10 +74,8 @@ class JavascriptTest extends TestCase
                 'getControllerName', 'getRequestUri', 'setRequestUri', 'getRouteName'
             ]
         );
-        // Use createMock() for interfaces - PHPUnit 12 compatible
         $this->layoutMock = $this->createMock(LayoutInterface::class);
         $this->layoutUpdateMock = $this->createMock(ProcessorInterface::class);
-        // Use createMock() for interfaces - PHPUnit 12 compatible
         $this->urlBuilderMock = $this->createMock(UrlInterface::class);
         $this->contextMock->expects($this->any())
             ->method('getRequest')

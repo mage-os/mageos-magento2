@@ -163,7 +163,7 @@ class SetCheckoutSessionPersistentDataObserverTest extends TestCase
             ->willReturn($this->persistentSessionMock);
         $this->customerRepositoryMock->expects($this->once())
             ->method('getById')
-            ->willReturn(true); //?
+            ->willReturn(true);
         $this->checkoutSessionMock->expects($this->never())
             ->method('setLoadInactive');
         $this->checkoutSessionMock->expects($this->once())

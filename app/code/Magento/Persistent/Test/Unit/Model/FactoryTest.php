@@ -30,7 +30,6 @@ class FactoryTest extends TestCase
     {
         $helper = new ObjectManager($this);
 
-        // Use createMock() for interfaces - PHPUnit 12 compatible
         $this->_objectManagerMock = $this->createMock(ObjectManagerInterface::class);
         $this->_factory = $helper->getObject(
             Factory::class,
@@ -41,8 +40,6 @@ class FactoryTest extends TestCase
     public function testCreate()
     {
         $className = Session::class;
-
-        // Use an actual class that exists for PHPUnit 12 compatibility
         $classMock = $this->createMock(Session::class);
         $this->_objectManagerMock->expects(
             $this->once()
@@ -62,8 +59,6 @@ class FactoryTest extends TestCase
     {
         $className = Session::class;
         $data = ['param1', 'param2'];
-
-        // Use an actual class that exists for PHPUnit 12 compatibility
         $classMock = $this->createMock(Session::class);
         $this->_objectManagerMock->expects(
             $this->once()

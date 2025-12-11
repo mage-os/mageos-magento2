@@ -84,7 +84,6 @@ class RenderTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        // Use createMock() for interfaces - PHPUnit 12 compatible
         $this->layoutProcessorMock = $this->createMock(ProcessorInterface::class);
         $this->layoutCacheKeyMock = $this->createMock(LayoutCacheKeyInterface::class);
 
@@ -111,8 +110,7 @@ class RenderTest extends TestCase
         $contextMock->expects($this->any())->method('getRequest')->willReturn($this->requestMock);
         $contextMock->expects($this->any())->method('getResponse')->willReturn($this->responseMock);
         $contextMock->expects($this->any())->method('getView')->willReturn($this->viewMock);
-
-        // Use createMock() for interfaces - PHPUnit 12 compatible
+        
         $this->translateInline = $this->createMock(InlineInterface::class);
 
         $regexFactoryMock = $this->getMockBuilder(RegexFactory::class)

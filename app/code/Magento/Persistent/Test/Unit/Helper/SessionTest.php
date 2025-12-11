@@ -73,7 +73,6 @@ class SessionTest extends TestCase
         $this->checkoutSession = $this->getMockBuilder(CheckoutSession::class)
             ->disableOriginalConstructor()
             ->getMock();
-        // Use createMock() for interfaces - PHPUnit 12 compatible
         $this->scopeConfig = $this->createMock(ScopeConfigInterface::class);
         $this->sessionFactory = $this->getMockBuilder(SessionFactory::class)
             ->disableOriginalConstructor()

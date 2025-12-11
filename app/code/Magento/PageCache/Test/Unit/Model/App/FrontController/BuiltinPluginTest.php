@@ -79,7 +79,6 @@ class BuiltinPluginTest extends TestCase
         $this->versionMock = $this->createMock(Version::class);
         $this->kernelMock = $this->createMock(Kernel::class);
         $this->stateMock = $this->createMock(State::class);
-        // Use createMock() for interfaces - PHPUnit 12 compatible
         $this->frontControllerMock = $this->createMock(FrontControllerInterface::class);
         $this->requestMock = $this->createMock(RequestInterface::class);
         $this->responseMock = $this->createMock(Http::class);
