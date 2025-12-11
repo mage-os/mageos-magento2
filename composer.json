@@ -80,6 +80,7 @@
         "phpseclib/phpseclib": "^3.0",
         "psr/log": "^2 || ^3",
         "ramsey/uuid": "^4.2",
+        "spomky-labs/aes-key-wrap": "^7.0",
         "stomp-php/stomp-php": "^5.1",
         "symfony/console": "^7.4",
         "symfony/intl": "^7.4",
