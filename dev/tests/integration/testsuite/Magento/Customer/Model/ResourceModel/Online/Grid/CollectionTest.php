@@ -3,6 +3,8 @@
  * Copyright 2025 Adobe
  * All Rights Reserved.
  */
+declare(strict_types=1);
+
 namespace Magento\Customer\Model\ResourceModel\Online\Grid;
 
 use Magento\Customer\Test\Fixture\Customer;
