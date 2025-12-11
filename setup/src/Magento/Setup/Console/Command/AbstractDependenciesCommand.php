@@ -33,6 +33,10 @@ abstract class AbstractDependenciesCommand extends Command
     public const INPUT_KEY_OUTPUT = 'output';
 
     /**
+     *
+     * Magento object manager.
+     * Responsible for creating and managing application objects
+     *
      * @var ObjectManager
      */
     private $objectManager;

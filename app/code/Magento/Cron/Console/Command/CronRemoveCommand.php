@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2016 Adobe
+ * Copyright 2024 Adobe
  * All Rights Reserved.
  */
 namespace Magento\Cron\Console\Command;

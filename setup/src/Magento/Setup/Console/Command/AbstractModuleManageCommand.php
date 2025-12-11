@@ -180,8 +180,8 @@ abstract class AbstractModuleManageCommand extends AbstractModuleCommand
      * Get deployment config
      *
      * @return DeploymentConfig
-     * @deprecated 2.0.6
-     * @see MAGETWO-71174
+     * @deprecated 2.0.6 Use dependency injection instead of this method for accessing DeploymentConfig
+     * @see DeploymentConfig Should be injected via constructor dependency injection
      */
     private function getDeploymentConfig()
     {
@@ -192,11 +192,11 @@ abstract class AbstractModuleManageCommand extends AbstractModuleCommand
     }
 
     /**
-     * Get deployment config
+     * Get generated files service
      *
      * @return GeneratedFiles
-     * @deprecated 2.1.0
-     * @see MAGETWO-71174
+     * @deprecated 2.1.0 Use dependency injection instead of this method for accessing GeneratedFiles
+     * @see GeneratedFiles Should be injected via constructor dependency injection
      */
     private function getGeneratedFiles()
     {

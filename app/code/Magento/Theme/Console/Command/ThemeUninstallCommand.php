@@ -76,31 +76,35 @@ class ThemeUninstallCommand extends Command
     private $cleanupFiles;
 
     /**
+     * Factory for creating backup and rollback operations
+     *
      * @var BackupRollbackFactory
      */
     private $backupRollbackFactory;
 
     /**
+     * Service for validating theme configurations and dependencies
+     *
      * @var ThemeValidator
      */
     private $themeValidator;
 
     /**
-     * Holds information about the theme packag.
+     * Service for retrieving theme package information and names
      *
      * @var ThemePackageInfo
      */
     private $themePackageInfo;
 
     /**
-     * ThemeUninstaller instance responsible for uninstalling themes.
+     * Service for performing theme uninstallation operations
      *
      * @var ThemeUninstaller
      */
     private $themeUninstaller;
 
     /**
-     * Theme Dependency Checker to check theme dependency
+     * Checks theme dependencies
      *
      * @var ThemeDependencyChecker
      */

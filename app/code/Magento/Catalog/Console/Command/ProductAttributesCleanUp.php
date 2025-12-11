@@ -11,7 +11,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Magento\Catalog\Api\Data\ProductInterface;
 
 /**
- * Class for ProductAttributesCleanUp
+ * Console command for cleaning up unused product attributes from database tables
+ *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class ProductAttributesCleanUp extends \Symfony\Component\Console\Command\Command
@@ -113,7 +114,7 @@ class ProductAttributesCleanUp extends \Symfony\Component\Console\Command\Comman
     }
 
     /**
-     * This getAttributeTables function retrieves a list of tables related to product attributes
+     * Get list of product attribute table names
      *
      * @return array
      * @throws \Magento\Framework\Exception\LocalizedException
@@ -136,7 +137,7 @@ class ProductAttributesCleanUp extends \Symfony\Component\Console\Command\Comman
     }
 
     /**
-     * Function to get affectedattributeids
+     * Get attribute value IDs that should be removed from the specified attribute table
      *
      * @param AdapterInterface $connection
      * @param string $attributeTableName

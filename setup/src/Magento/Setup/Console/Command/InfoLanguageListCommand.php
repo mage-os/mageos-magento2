@@ -45,7 +45,7 @@ class InfoLanguageListCommand extends Command
     /**
      * @inheritdoc
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName(self::NAME)
             ->setDescription('Displays the list of available language locales');

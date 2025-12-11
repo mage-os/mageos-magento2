@@ -22,7 +22,7 @@ class WebsiteListCommand extends Command
      */
     private $manager;
 
-    /***
+    /**
      * @param \Magento\Store\Api\WebsiteRepositoryInterface $websiteManagement
      */
     public function __construct(

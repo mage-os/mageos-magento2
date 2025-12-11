@@ -465,7 +465,7 @@ class MagentoStyle extends OutputStyle implements MagentoStyleInterface
     /**
      * @inheritdoc
      */
-    public function newLine($count = 1): void
+    public function newLine(int $count = 1): void
     {
         parent::newLine($count);
         $this->bufferedOutput->write(str_repeat(PHP_EOL, $count));

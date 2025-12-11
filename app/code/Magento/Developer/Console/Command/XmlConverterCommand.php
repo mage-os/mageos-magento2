@@ -123,7 +123,7 @@ class XmlConverterCommand extends Command
             $result = $this->formatter->format($transformedDoc);
 
             if ($input->getOption(self::OVERWRITE_OPTION)) {
-                //phpcs:ignore
+                // phpcs:ignore Magento2.Functions.DiscouragedFunction
                 file_put_contents($input->getArgument(self::XML_FILE_ARGUMENT), $result);
                 $output->writeln("<info>You saved converted XML into $xmlFile</info>");
             } else {

@@ -30,7 +30,7 @@ class DevTestsRunCommand extends Command
     public const INPUT_OPT_COMMAND_ARGUMENTS_SHORT = 'c';
 
     /**
-     * command name
+     * Command name identifier for the development tests runner
      */
     public const COMMAND_NAME = 'dev:tests:run';
 
@@ -90,7 +90,8 @@ class DevTestsRunCommand extends Command
             );
             return 1;
         }
-        // phpcs:ignore
+
+        // phpcs:ignore Magento2.Security.IncludeFile
         $vendorDir = require BP . '/app/etc/vendor_path.php';
 
         $failures = [];

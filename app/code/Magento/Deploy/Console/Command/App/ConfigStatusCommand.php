@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2017 Adobe
+ * Copyright 2024 Adobe
  * All Rights Reserved.
  */
 namespace Magento\Deploy\Console\Command\App;
