@@ -322,8 +322,7 @@ class CouponUsagesTest extends TestCase
         $orderId = $this->quoteManagement->placeOrder($cart->getId());
         $orderRepository = $this->objectManager->get(\Magento\Sales\Api\OrderRepositoryInterface::class);
         $order = $orderRepository->get($orderId);
-        $consumer = $this->consumerFactory->get('sales.rule.update.coupon.usage');
-        $consumer->process(1);
+        sleep(30);
         $this->usage->loadByCustomerCoupon($this->couponUsage, $customerId, $coupon->getId());
         $coupon->loadByCode($couponCode);
         self::assertEquals(1, $coupon->getTimesUsed());
@@ -354,7 +353,7 @@ class CouponUsagesTest extends TestCase
         );
 
         $this->orderManagement->cancel($orderId);
-        $consumer->process(1);
+        sleep(30);
         $this->usage->loadByCustomerCoupon($this->couponUsage, $customerId, $coupon->getId());
         $coupon->loadByCode($couponCode);
         self::assertEquals(1, $coupon->getTimesUsed());
