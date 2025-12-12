@@ -94,7 +94,7 @@ class RegularPriceTest extends TestCase
      *
      * @return array
      */
-    public static function testGetValueDataProvider()
+    public static function getValueDataProvider()
     {
         return [
             'With price' => [100.00],
