@@ -116,9 +116,9 @@ class AbstractGroupTest extends TestCase
             ->method('getStoreManager')
             ->willReturn($this->storeManagerMock);
 
-        // Create concrete implementation of abstract class for testing using ObjectManager
-        $this->block = $this->objectManager->getObject(
-            ConcreteAbstractGroup::class,
+        // Create mock for abstract class for testing
+        $this->block = $this->getMockForAbstractClass(
+            AbstractGroup::class,
             [
                 'context' => $this->contextMock,
                 'groupRepository' => $this->groupRepositoryMock,
