@@ -13,7 +13,6 @@ use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
 use Magento\Catalog\Model\ResourceModel\Product\Attribute\Collection;
 use Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory;
-use Magento\Directory\Helper\Data as DirectoryHelper;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\DB\Helper;
 use Magento\Framework\Escaper;
@@ -27,6 +26,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * Unit test for Search block
  *
+ * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Attributes\Search
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class SearchTest extends TestCase
@@ -34,54 +34,60 @@ class SearchTest extends TestCase
     /**
      * @var Search
      */
-    private $block;
+    private Search $block;
 
     /**
      * @var Context|MockObject
      */
-    private $contextMock;
+    private MockObject $contextMock;
 
     /**
      * @var Helper|MockObject
      */
-    private $resourceHelperMock;
+    private MockObject $resourceHelperMock;
 
     /**
      * @var CollectionFactory|MockObject
      */
-    private $collectionFactoryMock;
+    private MockObject $collectionFactoryMock;
 
     /**
      * @var Registry|MockObject
      */
-    private $registryMock;
+    private MockObject $registryMock;
 
     /**
      * @var JsonHelper|MockObject
      */
-    private $jsonHelperMock;
+    private MockObject $jsonHelperMock;
 
     /**
      * @var UrlInterface|MockObject
      */
-    private $urlBuilderMock;
+    private MockObject $urlBuilderMock;
 
     /**
      * @var RequestInterface|MockObject
      */
-    private $requestMock;
+    private MockObject $requestMock;
 
     /**
      * @var Escaper|MockObject
      */
-    private $escaperMock;
+    private MockObject $escaperMock;
+
+    /**
+     * @var ObjectManager
+     */
+    private ObjectManager $objectManager;
 
     /**
      * @inheritdoc
      */
     protected function setUp(): void
     {
-        $objectManager = new ObjectManager($this);
+        $this->objectManager = new ObjectManager($this);
+        $this->objectManager->prepareObjectManager();
 
         $this->contextMock = $this->createMock(Context::class);
         $this->resourceHelperMock = $this->createMock(Helper::class);
@@ -104,20 +110,7 @@ class SearchTest extends TestCase
             ->method('getEscaper')
             ->willReturn($this->escaperMock);
 
-        // Prepare ObjectManager to handle JsonHelper and DirectoryHelper fallback
-        $objects = [
-            [
-                JsonHelper::class,
-                $this->jsonHelperMock
-            ],
-            [
-                DirectoryHelper::class,
-                $this->createMock(DirectoryHelper::class)
-            ]
-        ];
-        $objectManager->prepareObjectManager($objects);
-
-        $this->block = $objectManager->getObject(
+        $this->block = $this->objectManager->getObject(
             Search::class,
             [
                 'context' => $this->contextMock,
@@ -148,6 +141,7 @@ class SearchTest extends TestCase
     /**
      * Test getSelectorOptions returns array with required key
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Attributes\Search::getSelectorOptions
      * @dataProvider selectorOptionsRequiredKeysDataProvider
      * @param string $expectedKey
      * @return void
@@ -161,32 +155,10 @@ class SearchTest extends TestCase
             ['id' => 2, 'label' => 'Size', 'code' => 'size']
         ];
 
-        // Mock product
-        $productMock = $this->createMock(Product::class);
-        $productMock->expects($this->once())
-            ->method('getAttributeSetId')
-            ->willReturn($templateId);
-
-        // Mock registry
-        $this->registryMock->expects($this->once())
-            ->method('registry')
-            ->with('product')
-            ->willReturn($productMock);
-
-        // Mock URL builder
-        $this->urlBuilderMock->expects($this->once())
-            ->method('getUrl')
-            ->willReturn('http://example.com/catalog/product/suggestAttributes');
-
-        // Mock escaper
-        $this->escaperMock->expects($this->once())
-            ->method('escapeUrl')
-            ->willReturn('http://example.com/catalog/product/suggestAttributes');
-
-        // Set group ID
+        $this->setupProductRegistryMock($templateId);
+        $this->setupUrlMocks('http://example.com/catalog/product/suggestAttributes');
         $this->block->setGroupId($groupId);
 
-        // Mock getSuggestedAttributes
         $collectionMock = $this->createMock(Collection::class);
         $this->setupCollectionMock($collectionMock, '', $templateId, $suggestedAttributes);
 
@@ -199,6 +171,7 @@ class SearchTest extends TestCase
     /**
      * Test getSelectorOptions returns correct source URL
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Attributes\Search::getSelectorOptions
      * @return void
      */
     public function testGetSelectorOptionsReturnsCorrectSourceUrl(): void
@@ -207,31 +180,18 @@ class SearchTest extends TestCase
         $expectedUrl = 'http://example.com/catalog/product/suggestAttributes';
         $escapedUrl = 'http://example.com/catalog/product/suggestAttributes';
 
-        // Mock product
-        $productMock = $this->createMock(Product::class);
-        $productMock->expects($this->once())
-            ->method('getAttributeSetId')
-            ->willReturn($templateId);
+        $this->setupProductRegistryMock($templateId);
 
-        // Mock registry
-        $this->registryMock->expects($this->once())
-            ->method('registry')
-            ->with('product')
-            ->willReturn($productMock);
-
-        // Mock URL builder
         $this->urlBuilderMock->expects($this->once())
             ->method('getUrl')
             ->with('catalog/product/suggestAttributes')
             ->willReturn($expectedUrl);
 
-        // Mock escaper
         $this->escaperMock->expects($this->once())
             ->method('escapeUrl')
             ->with($expectedUrl)
             ->willReturn($escapedUrl);
 
-        // Mock getSuggestedAttributes
         $collectionMock = $this->createMock(Collection::class);
         $this->setupCollectionMock($collectionMock, '', $templateId, []);
 
@@ -243,35 +203,16 @@ class SearchTest extends TestCase
     /**
      * Test getSelectorOptions returns correct min length
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Attributes\Search::getSelectorOptions
      * @return void
      */
     public function testGetSelectorOptionsReturnsCorrectMinLength(): void
     {
         $templateId = 4;
 
-        // Mock product
-        $productMock = $this->createMock(Product::class);
-        $productMock->expects($this->once())
-            ->method('getAttributeSetId')
-            ->willReturn($templateId);
+        $this->setupProductRegistryMock($templateId);
+        $this->setupUrlMocks();
 
-        // Mock registry
-        $this->registryMock->expects($this->once())
-            ->method('registry')
-            ->with('product')
-            ->willReturn($productMock);
-
-        // Mock URL builder
-        $this->urlBuilderMock->expects($this->once())
-            ->method('getUrl')
-            ->willReturn('http://example.com/url');
-
-        // Mock escaper
-        $this->escaperMock->expects($this->once())
-            ->method('escapeUrl')
-            ->willReturn('http://example.com/url');
-
-        // Mock getSuggestedAttributes
         $collectionMock = $this->createMock(Collection::class);
         $this->setupCollectionMock($collectionMock, '', $templateId, []);
 
@@ -283,35 +224,16 @@ class SearchTest extends TestCase
     /**
      * Test getSelectorOptions returns correct AJAX options with template ID
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Attributes\Search::getSelectorOptions
      * @return void
      */
     public function testGetSelectorOptionsReturnsCorrectAjaxOptions(): void
     {
         $templateId = 4;
 
-        // Mock product
-        $productMock = $this->createMock(Product::class);
-        $productMock->expects($this->once())
-            ->method('getAttributeSetId')
-            ->willReturn($templateId);
+        $this->setupProductRegistryMock($templateId);
+        $this->setupUrlMocks();
 
-        // Mock registry
-        $this->registryMock->expects($this->once())
-            ->method('registry')
-            ->with('product')
-            ->willReturn($productMock);
-
-        // Mock URL builder
-        $this->urlBuilderMock->expects($this->once())
-            ->method('getUrl')
-            ->willReturn('http://example.com/url');
-
-        // Mock escaper
-        $this->escaperMock->expects($this->once())
-            ->method('escapeUrl')
-            ->willReturn('http://example.com/url');
-
-        // Mock getSuggestedAttributes
         $collectionMock = $this->createMock(Collection::class);
         $this->setupCollectionMock($collectionMock, '', $templateId, []);
 
@@ -323,6 +245,7 @@ class SearchTest extends TestCase
     /**
      * Test getSelectorOptions returns correct template selector
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Attributes\Search::getSelectorOptions
      * @return void
      */
     public function testGetSelectorOptionsReturnsCorrectTemplateSelector(): void
@@ -330,32 +253,10 @@ class SearchTest extends TestCase
         $templateId = 4;
         $groupId = 10;
 
-        // Mock product
-        $productMock = $this->createMock(Product::class);
-        $productMock->expects($this->once())
-            ->method('getAttributeSetId')
-            ->willReturn($templateId);
-
-        // Mock registry
-        $this->registryMock->expects($this->once())
-            ->method('registry')
-            ->with('product')
-            ->willReturn($productMock);
-
-        // Mock URL builder
-        $this->urlBuilderMock->expects($this->once())
-            ->method('getUrl')
-            ->willReturn('http://example.com/url');
-
-        // Mock escaper
-        $this->escaperMock->expects($this->once())
-            ->method('escapeUrl')
-            ->willReturn('http://example.com/url');
-
-        // Set group ID
+        $this->setupProductRegistryMock($templateId);
+        $this->setupUrlMocks();
         $this->block->setGroupId($groupId);
 
-        // Mock getSuggestedAttributes
         $collectionMock = $this->createMock(Collection::class);
         $this->setupCollectionMock($collectionMock, '', $templateId, []);
 
@@ -370,6 +271,7 @@ class SearchTest extends TestCase
     /**
      * Test getSelectorOptions returns suggested attributes data
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Attributes\Search::getSelectorOptions
      * @return void
      */
     public function testGetSelectorOptionsReturnsSuggestedAttributesData(): void
@@ -380,29 +282,9 @@ class SearchTest extends TestCase
             ['id' => 2, 'label' => 'Size', 'code' => 'size']
         ];
 
-        // Mock product
-        $productMock = $this->createMock(Product::class);
-        $productMock->expects($this->once())
-            ->method('getAttributeSetId')
-            ->willReturn($templateId);
+        $this->setupProductRegistryMock($templateId);
+        $this->setupUrlMocks();
 
-        // Mock registry
-        $this->registryMock->expects($this->once())
-            ->method('registry')
-            ->with('product')
-            ->willReturn($productMock);
-
-        // Mock URL builder
-        $this->urlBuilderMock->expects($this->once())
-            ->method('getUrl')
-            ->willReturn('http://example.com/url');
-
-        // Mock escaper
-        $this->escaperMock->expects($this->once())
-            ->method('escapeUrl')
-            ->willReturn('http://example.com/url');
-
-        // Mock getSuggestedAttributes
         $collectionMock = $this->createMock(Collection::class);
         $this->setupCollectionMock($collectionMock, '', $templateId, $suggestedAttributes);
 
@@ -444,6 +326,7 @@ class SearchTest extends TestCase
     /**
      * Test getSuggestedAttributes method returns expected attributes
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Attributes\Search::getSuggestedAttributes
      * @dataProvider suggestedAttributesDataProvider
      * @param string $labelPart
      * @param string $escapedLabelPart
@@ -475,6 +358,7 @@ class SearchTest extends TestCase
     /**
      * Test getSuggestedAttributes method without template ID uses request parameter
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Attributes\Search::getSuggestedAttributes
      * @return void
      */
     public function testGetSuggestedAttributesWithoutTemplateIdUsesRequestParam(): void
@@ -513,6 +397,7 @@ class SearchTest extends TestCase
     /**
      * Test getSuggestedAttributes method returns empty array when no attributes found
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Attributes\Search::getSuggestedAttributes
      * @return void
      */
     public function testGetSuggestedAttributesReturnsEmptyArrayWhenNoAttributesFound(): void
@@ -540,6 +425,7 @@ class SearchTest extends TestCase
     /**
      * Test getAddAttributeUrl method
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Attributes\Search::getAddAttributeUrl
      * @return void
      */
     public function testGetAddAttributeUrl(): void
@@ -554,6 +440,42 @@ class SearchTest extends TestCase
         $result = $this->block->getAddAttributeUrl();
 
         $this->assertSame($expectedUrl, $result);
+    }
+
+    /**
+     * Setup product and registry mocks for getSelectorOptions tests
+     *
+     * @param int $templateId
+     * @return void
+     */
+    private function setupProductRegistryMock(int $templateId): void
+    {
+        $productMock = $this->createMock(Product::class);
+        $productMock->expects($this->once())
+            ->method('getAttributeSetId')
+            ->willReturn($templateId);
+
+        $this->registryMock->expects($this->once())
+            ->method('registry')
+            ->with('product')
+            ->willReturn($productMock);
+    }
+
+    /**
+     * Setup URL builder and escaper mocks for getSelectorOptions tests
+     *
+     * @param string $url
+     * @return void
+     */
+    private function setupUrlMocks(string $url = 'http://example.com/url'): void
+    {
+        $this->urlBuilderMock->expects($this->once())
+            ->method('getUrl')
+            ->willReturn($url);
+
+        $this->escaperMock->expects($this->once())
+            ->method('escapeUrl')
+            ->willReturn($url);
     }
 
     /**

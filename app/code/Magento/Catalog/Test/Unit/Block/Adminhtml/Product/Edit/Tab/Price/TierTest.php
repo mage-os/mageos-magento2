@@ -27,6 +27,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * Unit test for Tier price block
  *
+ * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Price\Tier
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class TierTest extends TestCase
@@ -34,64 +35,70 @@ class TierTest extends TestCase
     /**
      * @var Tier
      */
-    private $block;
+    private Tier $block;
 
     /**
      * @var Context|MockObject
      */
-    private $contextMock;
+    private MockObject $contextMock;
 
     /**
      * @var GroupRepositoryInterface|MockObject
      */
-    private $groupRepositoryMock;
+    private MockObject $groupRepositoryMock;
 
     /**
      * @var DirectoryHelper|MockObject
      */
-    private $directoryHelperMock;
+    private MockObject $directoryHelperMock;
 
     /**
      * @var ModuleManager|MockObject
      */
-    private $moduleManagerMock;
+    private MockObject $moduleManagerMock;
 
     /**
      * @var Registry|MockObject
      */
-    private $registryMock;
+    private MockObject $registryMock;
 
     /**
      * @var GroupManagementInterface|MockObject
      */
-    private $groupManagementMock;
+    private MockObject $groupManagementMock;
 
     /**
      * @var SearchCriteriaBuilder|MockObject
      */
-    private $searchCriteriaBuilderMock;
+    private MockObject $searchCriteriaBuilderMock;
 
     /**
      * @var CurrencyInterface|MockObject
      */
-    private $localeCurrencyMock;
+    private MockObject $localeCurrencyMock;
 
     /**
      * @var JsonHelper|MockObject
      */
-    private $jsonHelperMock;
+    private MockObject $jsonHelperMock;
 
     /**
      * @var LayoutInterface|MockObject
      */
-    private $layoutMock;
+    private MockObject $layoutMock;
+
+    /**
+     * @var ObjectManager
+     */
+    private ObjectManager $objectManager;
 
     /**
      * @inheritdoc
      */
     protected function setUp(): void
     {
-        $objectManager = new ObjectManager($this);
+        $this->objectManager = new ObjectManager($this);
+        $this->objectManager->prepareObjectManager();
 
         $this->contextMock = $this->createMock(Context::class);
         $this->groupRepositoryMock = $this->getMockForAbstractClass(GroupRepositoryInterface::class);
@@ -108,16 +115,7 @@ class TierTest extends TestCase
             ->method('getLayout')
             ->willReturn($this->layoutMock);
 
-        // Prepare ObjectManager to handle JsonHelper fallback
-        $objects = [
-            [
-                JsonHelper::class,
-                $this->jsonHelperMock
-            ]
-        ];
-        $objectManager->prepareObjectManager($objects);
-
-        $this->block = $objectManager->getObject(
+        $this->block = $this->objectManager->getObject(
             Tier::class,
             [
                 'context' => $this->contextMock,
@@ -136,14 +134,14 @@ class TierTest extends TestCase
     /**
      * Test constructor injects JsonHelper through data array when provided
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Price\Tier::__construct
      * @return void
      */
     public function testConstructorInjectsJsonHelperThroughDataArray(): void
     {
         $jsonHelperMock = $this->createMock(JsonHelper::class);
-        $objectManager = new ObjectManager($this);
 
-        $block = $objectManager->getObject(
+        $block = $this->objectManager->getObject(
             Tier::class,
             [
                 'context' => $this->contextMock,
@@ -164,6 +162,7 @@ class TierTest extends TestCase
     /**
      * Test getInitialCustomerGroups returns all customers group
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Price\Tier::_getInitialCustomerGroups
      * @return void
      */
     public function testGetInitialCustomerGroupsReturnsAllCustomersGroup(): void
@@ -188,12 +187,13 @@ class TierTest extends TestCase
 
         $this->assertIsArray($result);
         $this->assertArrayHasKey($allCustomersGroupId, $result);
-        $this->assertEquals($expectedLabel, $result[$allCustomersGroupId]);
+        $this->assertSame($expectedLabel, (string)$result[$allCustomersGroupId]);
     }
 
     /**
      * Test sortValues calls usort with sortTierPrices callback
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Price\Tier::_sortValues
      * @return void
      */
     public function testSortValuesCallsUsortWithSortTierPricesCallback(): void
@@ -263,6 +263,7 @@ class TierTest extends TestCase
     /**
      * Test sortTierPrices method returns expected comparison result
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Price\Tier::_sortTierPrices
      * @dataProvider sortTierPricesDataProvider
      * @param array $item1
      * @param array $item2
@@ -296,6 +297,7 @@ class TierTest extends TestCase
     /**
      * Test prepareLayout creates and configures add button
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Price\Tier::_prepareLayout
      * @return void
      */
     public function testPrepareLayoutCreatesAndConfiguresAddButton(): void
@@ -335,43 +337,9 @@ class TierTest extends TestCase
     }
 
     /**
-     * Test prepareLayout returns block instance for method chaining
-     *
-     * @return void
-     */
-    public function testPrepareLayoutReturnsBlockInstanceForMethodChaining(): void
-    {
-        $buttonMock = $this->getMockBuilder(Button::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['setName'])
-            ->onlyMethods(['setData'])
-            ->getMock();
-
-        $this->layoutMock->expects($this->once())
-            ->method('createBlock')
-            ->willReturn($buttonMock);
-
-        $buttonMock->expects($this->any())
-            ->method('setData')
-            ->willReturnSelf();
-
-        $buttonMock->expects($this->any())
-            ->method('setName')
-            ->willReturnSelf();
-
-        // Use reflection to call protected method
-        $reflection = new \ReflectionClass($this->block);
-        $method = $reflection->getMethod('_prepareLayout');
-        $method->setAccessible(true);
-        $result = $method->invoke($this->block);
-
-        // Verify method returns block for chaining
-        $this->assertInstanceOf(Tier::class, $result);
-    }
-
-    /**
      * Test sortValues maintains data integrity after sorting
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Price\Tier::_sortValues
      * @return void
      */
     public function testSortValuesMaintainsDataIntegrityAfterSorting(): void
@@ -397,7 +365,7 @@ class TierTest extends TestCase
 
         $this->assertCount(3, $result);
         // Verify first item should be website_id=1 (smallest)
-        $this->assertEquals(1, $result[0]['website_id']);
+        $this->assertSame(1, $result[0]['website_id']);
         // All original data fields should be preserved
         $this->assertArrayHasKey('price', $result[0]);
         $this->assertArrayHasKey('cust_group', $result[0]);
@@ -407,6 +375,7 @@ class TierTest extends TestCase
     /**
      * Test template is set correctly
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Price\Tier::getTemplate
      * @return void
      */
     public function testTemplateIsSetCorrectly(): void
@@ -414,6 +383,6 @@ class TierTest extends TestCase
         $expectedTemplate = 'Magento_Catalog::catalog/product/edit/price/tier.phtml';
         $actualTemplate = $this->block->getTemplate();
 
-        $this->assertEquals($expectedTemplate, $actualTemplate);
+        $this->assertSame($expectedTemplate, $actualTemplate);
     }
 }

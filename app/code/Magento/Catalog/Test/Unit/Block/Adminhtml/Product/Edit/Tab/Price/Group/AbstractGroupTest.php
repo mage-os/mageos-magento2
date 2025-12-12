@@ -18,97 +18,89 @@ use Magento\Customer\Api\GroupRepositoryInterface;
 use Magento\Directory\Helper\Data as DirectoryHelper;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Api\SearchCriteriaInterface;
-use Magento\Framework\Currency;
 use Magento\Framework\Currency as FrameworkCurrency;
 use Magento\Framework\Data\Form\Element\AbstractElement;
-use Magento\Framework\Json\Helper\Data as JsonHelper;
 use Magento\Framework\Locale\CurrencyInterface;
 use Magento\Framework\Module\Manager as ModuleManager;
 use Magento\Framework\Registry;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Store\Model\Website;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Unit test for AbstractGroup price block
  *
+ * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Price\Group\AbstractGroup
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.TooManyFields)
  */
 class AbstractGroupTest extends TestCase
 {
     /**
-     * @var AbstractGroup|MockObject
+     * @var AbstractGroup
      */
-    private $block;
+    private AbstractGroup $block;
 
     /**
      * @var Context|MockObject
      */
-    private $contextMock;
+    private MockObject $contextMock;
 
     /**
      * @var GroupRepositoryInterface|MockObject
      */
-    private $groupRepositoryMock;
+    private MockObject $groupRepositoryMock;
 
     /**
      * @var DirectoryHelper|MockObject
      */
-    private $directoryHelperMock;
+    private MockObject $directoryHelperMock;
 
     /**
      * @var ModuleManager|MockObject
      */
-    private $moduleManagerMock;
+    private MockObject $moduleManagerMock;
 
     /**
      * @var Registry|MockObject
      */
-    private $registryMock;
+    private MockObject $registryMock;
 
     /**
      * @var GroupManagementInterface|MockObject
      */
-    private $groupManagementMock;
+    private MockObject $groupManagementMock;
 
     /**
      * @var SearchCriteriaBuilder|MockObject
      */
-    private $searchCriteriaBuilderMock;
+    private MockObject $searchCriteriaBuilderMock;
 
     /**
      * @var CurrencyInterface|MockObject
      */
-    private $localeCurrencyMock;
+    private MockObject $localeCurrencyMock;
 
     /**
      * @var StoreManagerInterface|MockObject
      */
-    private $storeManagerMock;
+    private MockObject $storeManagerMock;
+
+    /**
+     * @var ObjectManager
+     */
+    private ObjectManager $objectManager;
 
     /**
      * @inheritdoc
      */
     protected function setUp(): void
     {
-        $objectManager = new ObjectManager($this);
-
-        // Prepare ObjectManager to handle JsonHelper and DirectoryHelper fallback
-        $objects = [
-            [
-                JsonHelper::class,
-                $this->createMock(JsonHelper::class)
-            ],
-            [
-                DirectoryHelper::class,
-                $this->createMock(DirectoryHelper::class)
-            ]
-        ];
-        $objectManager->prepareObjectManager($objects);
+        $this->objectManager = new ObjectManager($this);
+        $this->objectManager->prepareObjectManager();
 
         $this->contextMock = $this->createMock(Context::class);
         $this->groupRepositoryMock = $this->getMockForAbstractClass(GroupRepositoryInterface::class);
@@ -124,23 +116,26 @@ class AbstractGroupTest extends TestCase
             ->method('getStoreManager')
             ->willReturn($this->storeManagerMock);
 
-        // Create anonymous class extending AbstractGroup for testing
-        $this->block = new class(
-            $this->contextMock,
-            $this->groupRepositoryMock,
-            $this->directoryHelperMock,
-            $this->moduleManagerMock,
-            $this->registryMock,
-            $this->groupManagementMock,
-            $this->searchCriteriaBuilderMock,
-            $this->localeCurrencyMock
-        ) extends AbstractGroup {
-        };
+        // Create concrete implementation of abstract class for testing using ObjectManager
+        $this->block = $this->objectManager->getObject(
+            ConcreteAbstractGroup::class,
+            [
+                'context' => $this->contextMock,
+                'groupRepository' => $this->groupRepositoryMock,
+                'directoryHelper' => $this->directoryHelperMock,
+                'moduleManager' => $this->moduleManagerMock,
+                'registry' => $this->registryMock,
+                'groupManagement' => $this->groupManagementMock,
+                'searchCriteriaBuilder' => $this->searchCriteriaBuilderMock,
+                'localeCurrency' => $this->localeCurrencyMock
+            ]
+        );
     }
 
     /**
      * Test getProduct returns product from registry
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Price\Group\AbstractGroup::getProduct
      * @return void
      */
     public function testGetProductReturnsProductFromRegistry(): void
@@ -160,6 +155,7 @@ class AbstractGroupTest extends TestCase
     /**
      * Test render calls setElement and returns HTML
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Price\Group\AbstractGroup::render
      * @return void
      */
     public function testRenderCallsSetElementAndReturnsHtml(): void
@@ -184,12 +180,14 @@ class AbstractGroupTest extends TestCase
 
         $result = $blockMock->render($elementMock);
 
-        $this->assertEquals('<html>', $result);
+        $this->assertSame('<html>', $result);
     }
 
     /**
      * Test setElement sets element property
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Price\Group\AbstractGroup::setElement
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Price\Group\AbstractGroup::getElement
      * @return void
      */
     public function testSetElementSetsElementProperty(): void
@@ -205,24 +203,9 @@ class AbstractGroupTest extends TestCase
     }
 
     /**
-     * Test setElement returns self for method chaining
-     *
-     * @return void
-     */
-    public function testSetElementReturnsSelfForMethodChaining(): void
-    {
-        $elementMock = $this->getMockBuilder(AbstractElement::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $result = $this->block->setElement($elementMock);
-
-        $this->assertSame($this->block, $result);
-    }
-
-    /**
      * Test getElement returns set element
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Price\Group\AbstractGroup::getElement
      * @return void
      */
     public function testGetElementReturnsSetElement(): void
@@ -241,6 +224,7 @@ class AbstractGroupTest extends TestCase
     /**
      * Test getCustomerGroups returns empty array when Customer module is disabled
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Price\Group\AbstractGroup::getCustomerGroups
      * @return void
      */
     public function testGetCustomerGroupsReturnsEmptyArrayWhenCustomerModuleDisabled(): void
@@ -259,6 +243,7 @@ class AbstractGroupTest extends TestCase
     /**
      * Test getCustomerGroups returns groups when Customer module is enabled
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Price\Group\AbstractGroup::getCustomerGroups
      * @return void
      */
     public function testGetCustomerGroupsReturnsGroupsWhenCustomerModuleEnabled(): void
@@ -297,13 +282,14 @@ class AbstractGroupTest extends TestCase
         $this->assertIsArray($result);
         $this->assertArrayHasKey(1, $result);
         $this->assertArrayHasKey(2, $result);
-        $this->assertEquals('General', $result[1]);
-        $this->assertEquals('Wholesale', $result[2]);
+        $this->assertSame('General', $result[1]);
+        $this->assertSame('Wholesale', $result[2]);
     }
 
     /**
      * Test getCustomerGroups with specific group ID returns group name
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Price\Group\AbstractGroup::getCustomerGroups
      * @return void
      */
     public function testGetCustomerGroupsWithGroupIdReturnsGroupName(): void
@@ -334,12 +320,13 @@ class AbstractGroupTest extends TestCase
 
         $result = $this->block->getCustomerGroups($groupId);
 
-        $this->assertEquals('General', $result);
+        $this->assertSame('General', $result);
     }
 
     /**
      * Test getCustomerGroups with non-existent group ID returns empty array
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Price\Group\AbstractGroup::getCustomerGroups
      * @return void
      */
     public function testGetCustomerGroupsWithNonExistentGroupIdReturnsEmptyArray(): void
@@ -373,6 +360,7 @@ class AbstractGroupTest extends TestCase
     /**
      * Test getWebsiteCount returns count of websites
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Price\Group\AbstractGroup::getWebsiteCount
      * @return void
      */
     public function testGetWebsiteCountReturnsCountOfWebsites(): void
@@ -394,12 +382,13 @@ class AbstractGroupTest extends TestCase
 
         $result = $blockMock->getWebsiteCount();
 
-        $this->assertEquals(3, $result);
+        $this->assertSame(3, $result);
     }
 
     /**
      * Test isMultiWebsites returns false when single store mode
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Price\Group\AbstractGroup::isMultiWebsites
      * @return void
      */
     public function testIsMultiWebsitesReturnsFalseWhenSingleStoreMode(): void
@@ -416,6 +405,7 @@ class AbstractGroupTest extends TestCase
     /**
      * Test isMultiWebsites returns true when not single store mode
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Price\Group\AbstractGroup::isMultiWebsites
      * @return void
      */
     public function testIsMultiWebsitesReturnsTrueWhenNotSingleStoreMode(): void
@@ -432,6 +422,7 @@ class AbstractGroupTest extends TestCase
     /**
      * Test getDefaultCustomerGroup returns all customers group ID
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Price\Group\AbstractGroup::getDefaultCustomerGroup
      * @return void
      */
     public function testGetDefaultCustomerGroupReturnsAllCustomersGroupId(): void
@@ -448,12 +439,13 @@ class AbstractGroupTest extends TestCase
 
         $result = $this->block->getDefaultCustomerGroup();
 
-        $this->assertEquals($allCustomersGroupId, $result);
+        $this->assertSame($allCustomersGroupId, $result);
     }
 
     /**
      * Test getPriceColumnHeader returns custom header when set
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Price\Group\AbstractGroup::getPriceColumnHeader
      * @return void
      */
     public function testGetPriceColumnHeaderReturnsCustomHeaderWhenSet(): void
@@ -465,12 +457,13 @@ class AbstractGroupTest extends TestCase
 
         $result = $this->block->getPriceColumnHeader($defaultHeader);
 
-        $this->assertEquals($customHeader, $result);
+        $this->assertSame($customHeader, $result);
     }
 
     /**
      * Test getPriceColumnHeader returns default when custom not set
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Price\Group\AbstractGroup::getPriceColumnHeader
      * @return void
      */
     public function testGetPriceColumnHeaderReturnsDefaultWhenCustomNotSet(): void
@@ -479,12 +472,13 @@ class AbstractGroupTest extends TestCase
 
         $result = $this->block->getPriceColumnHeader($defaultHeader);
 
-        $this->assertEquals($defaultHeader, $result);
+        $this->assertSame($defaultHeader, $result);
     }
 
     /**
      * Test getPriceValidation returns custom validation when set
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Price\Group\AbstractGroup::getPriceValidation
      * @return void
      */
     public function testGetPriceValidationReturnsCustomValidationWhenSet(): void
@@ -496,12 +490,13 @@ class AbstractGroupTest extends TestCase
 
         $result = $this->block->getPriceValidation($defaultValidation);
 
-        $this->assertEquals($customValidation, $result);
+        $this->assertSame($customValidation, $result);
     }
 
     /**
      * Test getPriceValidation returns default when custom not set
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Price\Group\AbstractGroup::getPriceValidation
      * @return void
      */
     public function testGetPriceValidationReturnsDefaultWhenCustomNotSet(): void
@@ -510,12 +505,13 @@ class AbstractGroupTest extends TestCase
 
         $result = $this->block->getPriceValidation($defaultValidation);
 
-        $this->assertEquals($defaultValidation, $result);
+        $this->assertSame($defaultValidation, $result);
     }
 
     /**
      * Test getAttribute returns entity attribute from element
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Price\Group\AbstractGroup::getAttribute
      * @return void
      */
     public function testGetAttributeReturnsEntityAttributeFromElement(): void
@@ -538,26 +534,42 @@ class AbstractGroupTest extends TestCase
     }
 
     /**
-     * Test isScopeGlobal returns true when attribute scope is global
+     * Setup element mock with entity attribute for scope tests
      *
-     * @return void
+     * @param bool $isScopeGlobal
+     * @param array $additionalMethods
+     * @return MockObject
      */
-    public function testIsScopeGlobalReturnsTrueWhenAttributeScopeIsGlobal(): void
+    private function setupElementWithAttribute(bool $isScopeGlobal, array $additionalMethods = []): MockObject
     {
         $attributeMock = $this->createMock(Attribute::class);
-        $attributeMock->expects($this->once())
+        $attributeMock->expects($this->any())
             ->method('isScopeGlobal')
-            ->willReturn(true);
+            ->willReturn($isScopeGlobal);
 
+        $methods = array_merge(['getEntityAttribute'], $additionalMethods);
         $elementMock = $this->getMockBuilder(AbstractElement::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getEntityAttribute'])
+            ->addMethods($methods)
             ->getMock();
-        $elementMock->expects($this->once())
+        $elementMock->expects($this->any())
             ->method('getEntityAttribute')
             ->willReturn($attributeMock);
 
         $this->block->setElement($elementMock);
+
+        return $elementMock;
+    }
+
+    /**
+     * Test isScopeGlobal returns true when attribute scope is global
+     *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Price\Group\AbstractGroup::isScopeGlobal
+     * @return void
+     */
+    public function testIsScopeGlobalReturnsTrueWhenAttributeScopeIsGlobal(): void
+    {
+        $this->setupElementWithAttribute(true);
 
         $result = $this->block->isScopeGlobal();
 
@@ -567,24 +579,12 @@ class AbstractGroupTest extends TestCase
     /**
      * Test isScopeGlobal returns false when attribute scope is not global
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Price\Group\AbstractGroup::isScopeGlobal
      * @return void
      */
     public function testIsScopeGlobalReturnsFalseWhenAttributeScopeIsNotGlobal(): void
     {
-        $attributeMock = $this->createMock(Attribute::class);
-        $attributeMock->expects($this->once())
-            ->method('isScopeGlobal')
-            ->willReturn(false);
-
-        $elementMock = $this->getMockBuilder(AbstractElement::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getEntityAttribute'])
-            ->getMock();
-        $elementMock->expects($this->once())
-            ->method('getEntityAttribute')
-            ->willReturn($attributeMock);
-
-        $this->block->setElement($elementMock);
+        $this->setupElementWithAttribute(false);
 
         $result = $this->block->isScopeGlobal();
 
@@ -594,6 +594,7 @@ class AbstractGroupTest extends TestCase
     /**
      * Test getAddButtonHtml returns child HTML
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Price\Group\AbstractGroup::getAddButtonHtml
      * @return void
      */
     public function testGetAddButtonHtmlReturnsChildHtml(): void
@@ -612,30 +613,18 @@ class AbstractGroupTest extends TestCase
 
         $result = $blockMock->getAddButtonHtml();
 
-        $this->assertEquals($expectedHtml, $result);
+        $this->assertSame($expectedHtml, $result);
     }
 
     /**
      * Test isShowWebsiteColumn returns false when scope is global
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Price\Group\AbstractGroup::isShowWebsiteColumn
      * @return void
      */
     public function testIsShowWebsiteColumnReturnsFalseWhenScopeIsGlobal(): void
     {
-        $attributeMock = $this->createMock(Attribute::class);
-        $attributeMock->expects($this->once())
-            ->method('isScopeGlobal')
-            ->willReturn(true);
-
-        $elementMock = $this->getMockBuilder(AbstractElement::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getEntityAttribute'])
-            ->getMock();
-        $elementMock->expects($this->once())
-            ->method('getEntityAttribute')
-            ->willReturn($attributeMock);
-
-        $this->block->setElement($elementMock);
+        $this->setupElementWithAttribute(true);
 
         $result = $this->block->isShowWebsiteColumn();
 
@@ -645,28 +634,16 @@ class AbstractGroupTest extends TestCase
     /**
      * Test isShowWebsiteColumn returns false when single store mode
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Price\Group\AbstractGroup::isShowWebsiteColumn
      * @return void
      */
     public function testIsShowWebsiteColumnReturnsFalseWhenSingleStoreMode(): void
     {
-        $attributeMock = $this->createMock(Attribute::class);
-        $attributeMock->expects($this->once())
-            ->method('isScopeGlobal')
-            ->willReturn(false);
-
-        $elementMock = $this->getMockBuilder(AbstractElement::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getEntityAttribute'])
-            ->getMock();
-        $elementMock->expects($this->once())
-            ->method('getEntityAttribute')
-            ->willReturn($attributeMock);
+        $this->setupElementWithAttribute(false);
 
         $this->storeManagerMock->expects($this->once())
             ->method('isSingleStoreMode')
             ->willReturn(true);
-
-        $this->block->setElement($elementMock);
 
         $result = $this->block->isShowWebsiteColumn();
 
@@ -676,28 +653,16 @@ class AbstractGroupTest extends TestCase
     /**
      * Test isShowWebsiteColumn returns true when not global and not single store
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Price\Group\AbstractGroup::isShowWebsiteColumn
      * @return void
      */
     public function testIsShowWebsiteColumnReturnsTrueWhenNotGlobalAndNotSingleStore(): void
     {
-        $attributeMock = $this->createMock(Attribute::class);
-        $attributeMock->expects($this->once())
-            ->method('isScopeGlobal')
-            ->willReturn(false);
-
-        $elementMock = $this->getMockBuilder(AbstractElement::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getEntityAttribute'])
-            ->getMock();
-        $elementMock->expects($this->once())
-            ->method('getEntityAttribute')
-            ->willReturn($attributeMock);
+        $this->setupElementWithAttribute(false);
 
         $this->storeManagerMock->expects($this->once())
             ->method('isSingleStoreMode')
             ->willReturn(false);
-
-        $this->block->setElement($elementMock);
 
         $result = $this->block->isShowWebsiteColumn();
 
@@ -707,24 +672,12 @@ class AbstractGroupTest extends TestCase
     /**
      * Test isAllowChangeWebsite returns false when website column not shown
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Price\Group\AbstractGroup::isAllowChangeWebsite
      * @return void
      */
     public function testIsAllowChangeWebsiteReturnsFalseWhenWebsiteColumnNotShown(): void
     {
-        $attributeMock = $this->createMock(Attribute::class);
-        $attributeMock->expects($this->once())
-            ->method('isScopeGlobal')
-            ->willReturn(true);
-
-        $elementMock = $this->getMockBuilder(AbstractElement::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getEntityAttribute'])
-            ->getMock();
-        $elementMock->expects($this->once())
-            ->method('getEntityAttribute')
-            ->willReturn($attributeMock);
-
-        $this->block->setElement($elementMock);
+        $this->setupElementWithAttribute(true);
 
         $result = $this->block->isAllowChangeWebsite();
 
@@ -734,6 +687,7 @@ class AbstractGroupTest extends TestCase
     /**
      * Test isAllowChangeWebsite returns false when product has store ID
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Price\Group\AbstractGroup::isAllowChangeWebsite
      * @return void
      */
     public function testIsAllowChangeWebsiteReturnsFalseWhenProductHasStoreId(): void
@@ -744,18 +698,7 @@ class AbstractGroupTest extends TestCase
             ->method('getStoreId')
             ->willReturn($storeId);
 
-        $attributeMock = $this->createMock(Attribute::class);
-        $attributeMock->expects($this->once())
-            ->method('isScopeGlobal')
-            ->willReturn(false);
-
-        $elementMock = $this->getMockBuilder(AbstractElement::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getEntityAttribute'])
-            ->getMock();
-        $elementMock->expects($this->once())
-            ->method('getEntityAttribute')
-            ->willReturn($attributeMock);
+        $this->setupElementWithAttribute(false);
 
         $this->storeManagerMock->expects($this->once())
             ->method('isSingleStoreMode')
@@ -765,8 +708,6 @@ class AbstractGroupTest extends TestCase
             ->method('registry')
             ->with('product')
             ->willReturn($productMock);
-
-        $this->block->setElement($elementMock);
 
         $result = $this->block->isAllowChangeWebsite();
 
@@ -776,6 +717,7 @@ class AbstractGroupTest extends TestCase
     /**
      * Test isAllowChangeWebsite returns true when conditions met
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Price\Group\AbstractGroup::isAllowChangeWebsite
      * @return void
      */
     public function testIsAllowChangeWebsiteReturnsTrueWhenConditionsMet(): void
@@ -785,18 +727,7 @@ class AbstractGroupTest extends TestCase
             ->method('getStoreId')
             ->willReturn(null);
 
-        $attributeMock = $this->createMock(Attribute::class);
-        $attributeMock->expects($this->once())
-            ->method('isScopeGlobal')
-            ->willReturn(false);
-
-        $elementMock = $this->getMockBuilder(AbstractElement::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getEntityAttribute'])
-            ->getMock();
-        $elementMock->expects($this->once())
-            ->method('getEntityAttribute')
-            ->willReturn($attributeMock);
+        $this->setupElementWithAttribute(false);
 
         $this->storeManagerMock->expects($this->once())
             ->method('isSingleStoreMode')
@@ -807,8 +738,6 @@ class AbstractGroupTest extends TestCase
             ->with('product')
             ->willReturn($productMock);
 
-        $this->block->setElement($elementMock);
-
         $result = $this->block->isAllowChangeWebsite();
 
         $this->assertTrue($result);
@@ -817,6 +746,7 @@ class AbstractGroupTest extends TestCase
     /**
      * Test getDefaultWebsite returns store website ID when conditions met
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Price\Group\AbstractGroup::getDefaultWebsite
      * @return void
      */
     public function testGetDefaultWebsiteReturnsStoreWebsiteIdWhenConditionsMet(): void
@@ -834,18 +764,7 @@ class AbstractGroupTest extends TestCase
             ->method('getStoreId')
             ->willReturn($storeId);
 
-        $attributeMock = $this->createMock(Attribute::class);
-        $attributeMock->expects($this->any())
-            ->method('isScopeGlobal')
-            ->willReturn(false);
-
-        $elementMock = $this->getMockBuilder(AbstractElement::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getEntityAttribute'])
-            ->getMock();
-        $elementMock->expects($this->any())
-            ->method('getEntityAttribute')
-            ->willReturn($attributeMock);
+        $this->setupElementWithAttribute(false);
 
         $this->storeManagerMock->expects($this->any())
             ->method('isSingleStoreMode')
@@ -861,43 +780,30 @@ class AbstractGroupTest extends TestCase
             ->with('product')
             ->willReturn($productMock);
 
-        $this->block->setElement($elementMock);
-
         $result = $this->block->getDefaultWebsite();
 
-        $this->assertEquals($websiteId, $result);
+        $this->assertSame($websiteId, $result);
     }
 
     /**
      * Test getDefaultWebsite returns zero when not showing website column
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Price\Group\AbstractGroup::getDefaultWebsite
      * @return void
      */
     public function testGetDefaultWebsiteReturnsZeroWhenNotShowingWebsiteColumn(): void
     {
-        $attributeMock = $this->createMock(Attribute::class);
-        $attributeMock->expects($this->once())
-            ->method('isScopeGlobal')
-            ->willReturn(true);
-
-        $elementMock = $this->getMockBuilder(AbstractElement::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getEntityAttribute'])
-            ->getMock();
-        $elementMock->expects($this->once())
-            ->method('getEntityAttribute')
-            ->willReturn($attributeMock);
-
-        $this->block->setElement($elementMock);
+        $this->setupElementWithAttribute(true);
 
         $result = $this->block->getDefaultWebsite();
 
-        $this->assertEquals(0, $result);
+        $this->assertSame(0, $result);
     }
 
     /**
      * Test getDefaultWebsite returns zero when change website is allowed
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Price\Group\AbstractGroup::getDefaultWebsite
      * @return void
      */
     public function testGetDefaultWebsiteReturnsZeroWhenChangeWebsiteAllowed(): void
@@ -907,18 +813,7 @@ class AbstractGroupTest extends TestCase
             ->method('getStoreId')
             ->willReturn(null);
 
-        $attributeMock = $this->createMock(Attribute::class);
-        $attributeMock->expects($this->any())
-            ->method('isScopeGlobal')
-            ->willReturn(false);
-
-        $elementMock = $this->getMockBuilder(AbstractElement::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getEntityAttribute'])
-            ->getMock();
-        $elementMock->expects($this->any())
-            ->method('getEntityAttribute')
-            ->willReturn($attributeMock);
+        $this->setupElementWithAttribute(false);
 
         $this->storeManagerMock->expects($this->any())
             ->method('isSingleStoreMode')
@@ -929,16 +824,15 @@ class AbstractGroupTest extends TestCase
             ->with('product')
             ->willReturn($productMock);
 
-        $this->block->setElement($elementMock);
-
         $result = $this->block->getDefaultWebsite();
 
-        $this->assertEquals(0, $result);
+        $this->assertSame(0, $result);
     }
 
     /**
      * Test getWebsites returns cached websites when already loaded
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Price\Group\AbstractGroup::getWebsites
      * @return void
      */
     public function testGetWebsitesReturnsCachedWebsitesWhenAlreadyLoaded(): void
@@ -962,41 +856,30 @@ class AbstractGroupTest extends TestCase
     /**
      * Test getWebsites returns only all websites when scope is global
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Price\Group\AbstractGroup::getWebsites
      * @return void
      */
     public function testGetWebsitesReturnsOnlyAllWebsitesWhenScopeIsGlobal(): void
     {
         $baseCurrency = 'USD';
 
-        $attributeMock = $this->createMock(Attribute::class);
-        $attributeMock->expects($this->any())
-            ->method('isScopeGlobal')
-            ->willReturn(true);
-
-        $elementMock = $this->getMockBuilder(AbstractElement::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getEntityAttribute'])
-            ->getMock();
-        $elementMock->expects($this->any())
-            ->method('getEntityAttribute')
-            ->willReturn($attributeMock);
+        $this->setupElementWithAttribute(true);
 
         $this->directoryHelperMock->expects($this->once())
             ->method('getBaseCurrencyCode')
             ->willReturn($baseCurrency);
 
-        $this->block->setElement($elementMock);
-
         $result = $this->block->getWebsites();
 
         $this->assertCount(1, $result);
         $this->assertArrayHasKey(0, $result);
-        $this->assertEquals($baseCurrency, $result[0]['currency']);
+        $this->assertSame($baseCurrency, $result[0]['currency']);
     }
 
     /**
      * Test getValues returns formatted price values
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Price\Group\AbstractGroup::getValues
      * @return void
      */
     public function testGetValuesReturnsFormattedPriceValues(): void
@@ -1023,30 +906,16 @@ class AbstractGroupTest extends TestCase
             ->method('getBaseCurrencyCode')
             ->willReturn($baseCurrency);
 
-        // Mock isScopeGlobal to make isShowWebsiteColumn return false
-        $attributeMock = $this->createMock(Attribute::class);
-        $attributeMock->expects($this->any())
-            ->method('isScopeGlobal')
-            ->willReturn(true);
-
-        $elementMock = $this->getMockBuilder(AbstractElement::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getValue', 'getEntityAttribute'])
-            ->getMock();
+        $elementMock = $this->setupElementWithAttribute(true, ['getValue']);
         $elementMock->expects($this->once())
             ->method('getValue')
             ->willReturn($priceData);
-        $elementMock->expects($this->any())
-            ->method('getEntityAttribute')
-            ->willReturn($attributeMock);
-
-        $this->block->setElement($elementMock);
 
         $result = $this->block->getValues();
 
         $this->assertCount(2, $result);
-        $this->assertEquals($formattedPrice1, $result[0]['price']);
-        $this->assertEquals($formattedPrice2, $result[1]['price']);
+        $this->assertSame($formattedPrice1, $result[0]['price']);
+        $this->assertSame($formattedPrice2, $result[1]['price']);
         $this->assertFalse($result[0]['readonly']);
         $this->assertFalse($result[1]['readonly']);
     }
@@ -1054,6 +923,7 @@ class AbstractGroupTest extends TestCase
     /**
      * Test getValues returns empty array when element value is not array
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Price\Group\AbstractGroup::getValues
      * @return void
      */
     public function testGetValuesReturnsEmptyArrayWhenElementValueIsNotArray(): void
@@ -1092,6 +962,7 @@ class AbstractGroupTest extends TestCase
     /**
      * Test getValues sets readonly flag correctly
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Price\Group\AbstractGroup::getValues
      * @return void
      */
     public function testGetValuesSetsReadonlyFlagCorrectly(): void
@@ -1120,18 +991,7 @@ class AbstractGroupTest extends TestCase
             ->method('getStoreId')
             ->willReturn(1);
 
-        $attributeMock = $this->createMock(Attribute::class);
-        $attributeMock->expects($this->any())
-            ->method('isScopeGlobal')
-            ->willReturn(false);
-
-        $elementMock = $this->getMockBuilder(AbstractElement::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getEntityAttribute', 'getValue'])
-            ->getMock();
-        $elementMock->expects($this->any())
-            ->method('getEntityAttribute')
-            ->willReturn($attributeMock);
+        $elementMock = $this->setupElementWithAttribute(false, ['getValue']);
         $elementMock->expects($this->once())
             ->method('getValue')
             ->willReturn($priceData);
@@ -1143,8 +1003,6 @@ class AbstractGroupTest extends TestCase
         $this->registryMock->expects($this->any())
             ->method('registry')
             ->willReturn($productMock);
-
-        $this->block->setElement($elementMock);
 
         $result = $this->block->getValues();
 
