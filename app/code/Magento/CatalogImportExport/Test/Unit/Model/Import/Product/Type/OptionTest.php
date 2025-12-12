@@ -451,12 +451,10 @@ class OptionTest extends AbstractImportTestCase
             ['getErrorAggregator']
         );
         $this->productEntity->method('getErrorAggregator')->willReturn($this->getErrorAggregatorObject());
-        // Use ObjectManager to set metadataPool through constructor or setter
-        $this->objectManagerHelper->setBackwardCompatibleProperty(
-            $this->productEntity,
-            'metadataPool',
-            $this->metadataPoolMock
-        );
+        // Use reflection to set metadataPool property
+        $reflection = new \ReflectionClass(Product::class);
+        $reflectionProperty = $reflection->getProperty('metadataPool');
+        $reflectionProperty->setValue($this->productEntity, $this->metadataPoolMock);
 
         $productModelMock = new DataObject(['product_entities_info' => $products]);
 
@@ -1155,11 +1153,9 @@ class OptionTest extends AbstractImportTestCase
 
         /** @var Product $productEntityMock */
         $productEntityMock = $this->createMock(Product::class);
-        $this->objectManagerHelper->setBackwardCompatibleProperty(
-            $productEntityMock,
-            'metadataPool',
-            $this->metadataPoolMock
-        );
+        $reflection = new \ReflectionClass(Product::class);
+        $reflectionProperty = $reflection->getProperty('metadataPool');
+        $reflectionProperty->setValue($productEntityMock, $this->metadataPoolMock);
 
         /** @var Option $model */
         $model = $this->objectManagerHelper->getObject(
@@ -1177,11 +1173,9 @@ class OptionTest extends AbstractImportTestCase
                 ]
             ]
         );
-        $this->objectManagerHelper->setBackwardCompatibleProperty(
-            $model,
-            'metadataPool',
-            $this->metadataPoolMock
-        );
+        $reflection = new \ReflectionClass(Option::class);
+        $reflectionProperty = $reflection->getProperty('metadataPool');
+        $reflectionProperty->setValue($model, $this->metadataPoolMock);
 
         $this->assertTrue($model->importData());
     }
@@ -1211,7 +1205,9 @@ class OptionTest extends AbstractImportTestCase
      */
     protected function setPropertyValue(&$object, $property, $value)
     {
-        $this->objectManagerHelper->setBackwardCompatibleProperty($object, $property, $value);
+        $reflection = new \ReflectionClass(get_class($object));
+        $reflectionProperty = $reflection->getProperty($property);
+        $reflectionProperty->setValue($object, $value);
         return $object;
     }
 
@@ -1224,6 +1220,8 @@ class OptionTest extends AbstractImportTestCase
      */
     protected function getPropertyValue(&$object, $property)
     {
-        return $this->objectManagerHelper->getBackwardCompatibleProperty($object, $property);
+        $reflection = new \ReflectionClass(get_class($object));
+        $reflectionProperty = $reflection->getProperty($property);
+        return $reflectionProperty->getValue($object);
     }
 }
