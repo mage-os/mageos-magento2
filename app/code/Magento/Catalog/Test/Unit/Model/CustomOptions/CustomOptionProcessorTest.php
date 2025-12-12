@@ -20,6 +20,7 @@ use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Quote\Api\Data\CartItemInterface;
 use Magento\Quote\Api\Data\ProductOptionExtensionFactory;
 use Magento\Quote\Api\Data\ProductOptionExtensionInterface;
+use Magento\Quote\Model\Quote\Item;
 use Magento\Quote\Model\Quote\Item\Option;
 use Magento\Quote\Model\Quote\ProductOption;
 use Magento\Quote\Model\Quote\ProductOptionFactory;
@@ -30,7 +31,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-#[CoversClass(\Magento\Catalog\Model\CustomOptions\CustomOptionProcessor::class)]
+#[CoversClass(CustomOptionProcessor::class)]
 class CustomOptionProcessorTest extends TestCase
 {
     use MockCreationTrait;
@@ -82,7 +83,7 @@ class CustomOptionProcessorTest extends TestCase
         $this->extensionFactory = $this->createPartialMock(ProductOptionExtensionFactory::class, ['create']);
         $this->customOptionFactory = $this->createPartialMock(CustomOptionFactory::class, ['create']);
         $this->cartItem = $this->createPartialMock(
-            \Magento\Quote\Model\Quote\Item::class,
+            Item::class,
             ['getOptionByCode', 'getProductOption', 'setProductOption']
         );
         $this->extensibleAttribute = $this->createPartialMockWithReflection(

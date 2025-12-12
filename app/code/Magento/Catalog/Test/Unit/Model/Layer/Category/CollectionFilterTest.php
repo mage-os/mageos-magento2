@@ -16,7 +16,7 @@ use Magento\Catalog\Model\ResourceModel\Product\Collection;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(\Magento\Catalog\Model\Layer\Category\CollectionFilter::class)]
+#[CoversClass(CollectionFilter::class)]
 class CollectionFilterTest extends TestCase
 {
     /**

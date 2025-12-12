@@ -10,6 +10,7 @@ namespace Magento\Catalog\Test\Unit\Model\Product\CopyConstructor;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\CopyConstructor\Related;
 use Magento\Catalog\Model\Product\Link;
+use Magento\Catalog\Model\ResourceModel\Product\Link as ProductLink;
 use Magento\Catalog\Model\ResourceModel\Product\Link\Collection;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -21,7 +22,7 @@ class RelatedTest extends TestCase
 
     use MockCreationTrait;
     /**
-     * @var \\Magento\Catalog\Model\Product\CopyConstructor\Related
+     * @var Related
      */
     protected $_model;
 
@@ -78,7 +79,7 @@ class RelatedTest extends TestCase
         $this->_linkMock->expects($this->once())->method('getAttributes')->willReturn($attributes);
 
         $productLinkMock = $this->createPartialMockWithReflection(
-            \Magento\Catalog\Model\ResourceModel\Product\Link::class,
+            ProductLink::class,
             ['getLinkedProductId', 'toArray']
         );
 

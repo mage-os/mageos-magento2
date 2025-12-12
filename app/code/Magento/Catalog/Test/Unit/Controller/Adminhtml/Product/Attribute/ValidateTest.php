@@ -9,6 +9,7 @@ namespace Magento\Catalog\Test\Unit\Controller\Adminhtml\Product\Attribute;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Controller\Adminhtml\Product\Attribute\Validate;
+use Magento\Catalog\Model\Product\Url;
 use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
 use Magento\Catalog\Test\Unit\Controller\Adminhtml\Product\AttributeTest;
 use Magento\Eav\Model\Entity\Attribute\Set as AttributeSet;
@@ -96,7 +97,7 @@ class ValidateTest extends AttributeTest
         $this->layoutMock = $this->createMock(LayoutInterface::class);
         $this->formDataSerializerMock = $this->createMock(FormData::class);
         $this->attributeCodeValidatorMock = $this->createMock(AttributeCodeValidator::class);
-        $this->urlMock = $this->createMock(\Magento\Catalog\Model\Product\Url::class);
+        $this->urlMock = $this->createMock(Url::class);
 
         $this->contextMock->method('getObjectManager')->willReturn($this->objectManagerMock);
     }
@@ -293,11 +294,9 @@ class ValidateTest extends AttributeTest
             ->with('test_attribute_code')
             ->willReturn(true);
 
-        $this->objectManagerMock->expects($this->exactly(1))
+        $this->objectManagerMock->expects($this->once())
             ->method('create')
-            ->willReturnMap([
-                [Attribute::class, [], $this->attributeMock],
-            ]);
+            ->willReturn($this->attributeMock);
 
         $this->attributeMock->expects($this->once())
             ->method('loadByCode')

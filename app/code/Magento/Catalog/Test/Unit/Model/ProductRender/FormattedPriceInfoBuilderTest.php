@@ -10,7 +10,9 @@ namespace Magento\Catalog\Test\Unit\Model\ProductRender;
 use Magento\Catalog\Api\Data\ProductRender\FormattedPriceInfoInterface;
 use Magento\Catalog\Api\Data\ProductRender\FormattedPriceInfoInterfaceFactory;
 use Magento\Catalog\Api\Data\ProductRender\PriceInfoInterface;
+use Magento\Catalog\Model\ProductRender\FormattedPriceInfo;
 use Magento\Catalog\Model\ProductRender\FormattedPriceInfoBuilder;
+use Magento\Catalog\Model\ProductRender\PriceInfo;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -49,9 +51,9 @@ class FormattedPriceInfoBuilderTest extends TestCase
         $storeCurrencyCode = 'USD';
 
         $formattedPriceInfoInterfaceMock = $this->createMock(
-            \Magento\Catalog\Model\ProductRender\FormattedPriceInfo::class
+            FormattedPriceInfo::class
         );
-        $priceInfoMock = $this->createPartialMock(\Magento\Catalog\Model\ProductRender\PriceInfo::class, []);
+        $priceInfoMock = $this->createPartialMock(PriceInfo::class, []);
         $priceInfoMock->setData('key', '1233123');
         $this->priceCurrencyMock->expects($this->atLeastOnce())
             ->method('format')

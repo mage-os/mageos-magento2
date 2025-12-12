@@ -102,91 +102,8 @@ class TierPriceTest extends TestCase
     protected function setUp(): void
     {
         $this->priceInfo = $this->createMock(Base::class);
-        
-        $productData = [
-            'priceInfo' => null,
-            'data' => [],
-            'hasCustomerGroupId' => false,
-            'customerGroupId' => null,
-            'resource' => null
-        ];
-        
-        $this->product = $this->createPartialMockWithReflection(
-            Product::class,
-            ['setPriceInfo', 'getPriceInfo', 'setData', 'getData', 'setHasCustomerGroupId',
-             'hasCustomerGroupId', 'setCustomerGroupId', 'getCustomerGroupId', 'setResource', 'getResource']
-        );
-        
-        $this->product->method('setPriceInfo')->willReturnCallback(
-            function ($priceInfo) use (&$productData) {
-                $productData['priceInfo'] = $priceInfo;
-            }
-        );
-        
-        $this->product->method('getPriceInfo')->willReturnCallback(
-            function () use (&$productData) {
-                return $productData['priceInfo'];
-            }
-        );
-        
-        $this->product->method('setData')->willReturnCallback(
-            function ($key, $value = null) use (&$productData) {
-                if (is_array($key)) {
-                    $productData['data'] = array_merge($productData['data'], $key);
-                } else {
-                    $productData['data'][$key] = $value;
-                }
-                return $this->product;
-            }
-        );
-        
-        $this->product->method('getData')->willReturnCallback(
-            function ($key = null) use (&$productData) {
-                if ($key === null) {
-                    return $productData['data'];
-                }
-                return $productData['data'][$key] ?? null;
-            }
-        );
-        
-        $this->product->method('setHasCustomerGroupId')->willReturnCallback(
-            function ($value) use (&$productData) {
-                $productData['hasCustomerGroupId'] = $value;
-            }
-        );
-        
-        $this->product->method('hasCustomerGroupId')->willReturnCallback(
-            function () use (&$productData) {
-                return $productData['hasCustomerGroupId'];
-            }
-        );
-        
-        $this->product->method('setCustomerGroupId')->willReturnCallback(
-            function ($value) use (&$productData) {
-                $productData['customerGroupId'] = $value;
-            }
-        );
-        
-        $this->product->method('getCustomerGroupId')->willReturnCallback(
-            function () use (&$productData) {
-                return $productData['customerGroupId'];
-            }
-        );
-        
-        $this->product->method('setResource')->willReturnCallback(
-            function ($resource) use (&$productData) {
-                $productData['resource'] = $resource;
-                return $this->product;
-            }
-        );
-        
-        $this->product->method('getResource')->willReturnCallback(
-            function () use (&$productData) {
-                return $productData['resource'];
-            }
-        );
-        
-        $this->product->setPriceInfo($this->priceInfo);
+        $this->product = $this->createPartialMock(Product::class, ['getPriceInfo']);
+        $this->product->method('getPriceInfo')->willReturn($this->priceInfo);
         $this->customerGroupRetriever = $this->createMock(RetrieverInterface::class);
         $this->session = $this->createMock(Session::class);
         $this->session->method('getCustomerGroupId')->willReturn(self::$customerGroup);
@@ -300,9 +217,6 @@ class TierPriceTest extends TestCase
      */
     public function testGetterStoredTierPrices()
     {
-        $this->product->setHasCustomerGroupId(true);
-        $this->product->setCustomerGroupId(self::$customerGroup);
-
         $backendMock = $this->createMock(AbstractBackend::class);
 
         $attributeMock = $this->createMock(AbstractAttribute::class);
@@ -312,10 +226,14 @@ class TierPriceTest extends TestCase
         $productResource->expects($this->once())->method('getAttribute')->with(TierPrice::PRICE_CODE)
             ->willReturn($attributeMock);
 
-        $this->product->setResource($productResource);
+        $product = $this->createPartialMock(Product::class, ['getPriceInfo', 'getResource']);
+        $product->method('getPriceInfo')->willReturn($this->priceInfo);
+        $product->method('getResource')->willReturn($productResource);
+        $product->setHasCustomerGroupId(true);
+        $product->setCustomerGroupId(self::$customerGroup);
 
         $tierPrice = new TierPrice(
-            $this->product,
+            $product,
             $this->quantity,
             $this->calculator,
             $this->priceCurrencyMock,

@@ -20,7 +20,7 @@ use Magento\Store\Model\Store;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(\Magento\Catalog\Cron\DeleteOutdatedPriceValues::class)]
+#[CoversClass(DeleteOutdatedPriceValues::class)]
 class DeleteOutdatedPriceValuesTest extends TestCase
 {
     /**

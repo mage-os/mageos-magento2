@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\GroupedProduct\Test\Unit\Ui\DataProvider\Product\Form\Modifier;
 
 use Magento\Catalog\Test\Unit\Ui\DataProvider\Product\Form\Modifier\AbstractModifierTestCase;
+use Magento\Framework\Stdlib\ArrayManager;
 use Magento\GroupedProduct\Ui\DataProvider\Product\Form\Modifier\CustomOptions as CustomOptionsModifier;
 
 class CustomOptionsTest extends AbstractModifierTestCase
@@ -20,11 +21,12 @@ class CustomOptionsTest extends AbstractModifierTestCase
         parent::setUp();
 
         // Recreate arrayManagerMock to allow tracking of findPath calls
-        $this->arrayManagerMock = $this->createMock(\Magento\Framework\Stdlib\ArrayManager::class);
+        $this->arrayManagerMock = $this->createMock(ArrayManager::class);
         
         // Only configure the methods actually used by CustomOptions
         $this->arrayManagerMock->method('remove')
             ->willReturnCallback(function ($path, $data) {
+                unset($path); // Mark as intentionally unused
                 return $data;
             });
     }

@@ -22,6 +22,7 @@ use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Framework\View\Result\PageFactory;
+use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 
@@ -109,7 +110,7 @@ class ValidateTest extends ProductTestCase
         $this->resultJsonFactory = $this->createPartialMock(JsonFactory::class, ['create']);
         $this->resultJsonFactory->method('create')->willReturn($this->resultJson);
 
-        $storeMock = $this->createMock(\Magento\Store\Model\Store::class);
+        $storeMock = $this->createMock(Store::class);
         $storeMock->method('getCode')->willReturn('default');
         
         $storeManagerInterfaceMock = $this->createMock(StoreManagerInterface::class);

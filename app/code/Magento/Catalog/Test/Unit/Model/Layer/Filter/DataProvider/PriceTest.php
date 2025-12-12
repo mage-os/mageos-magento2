@@ -11,6 +11,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\Layer;
 use Magento\Catalog\Model\Layer\Filter\DataProvider\Price;
+use Magento\Catalog\Model\ResourceModel\Layer\Filter\Price as PriceResource;
 use Magento\Catalog\Model\ResourceModel\Product\Collection;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Registry;
@@ -39,7 +40,7 @@ class PriceTest extends TestCase
     /** @var ScopeConfigInterface|MockObject */
     private $scopeConfig;
 
-    /** @var \Magento\Catalog\Model\ResourceModel\Layer\Filter\Price|MockObject */
+    /** @var PriceResource|MockObject */
     private $resource;
 
     /**
@@ -55,7 +56,7 @@ class PriceTest extends TestCase
         $this->coreRegistry = $this->createPartialMock(Registry::class, ['registry']);
         $this->scopeConfig = $this->createMock(ScopeConfigInterface::class);
         $this->resource = $this->createPartialMock(
-            \Magento\Catalog\Model\ResourceModel\Layer\Filter\Price::class,
+            PriceResource::class,
             ['getCount']
         );
         $objectManagerHelper = new ObjectManagerHelper($this);

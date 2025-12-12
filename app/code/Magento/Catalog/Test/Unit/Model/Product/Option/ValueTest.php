@@ -10,6 +10,7 @@ namespace Magento\Catalog\Test\Unit\Model\Product\Option;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Option;
 use Magento\Catalog\Model\Product\Option\Value;
+use Magento\Catalog\Model\ResourceModel\Product\Option\Value as OptionValue;
 use Magento\Catalog\Model\ResourceModel\Product\Option\Value\Collection;
 use Magento\Catalog\Model\ResourceModel\Product\Option\Value\CollectionFactory;
 use Magento\Framework\Pricing\Price\PriceInterface;
@@ -190,12 +191,12 @@ class ValueTest extends TestCase
     }
 
     /**
-     * @return \Magento\Catalog\Model\ResourceModel\Product\Option\Value
+     * @return OptionValue
      */
     private function getMockedResource()
     {
         $mock = $this->createPartialMock(
-            \Magento\Catalog\Model\ResourceModel\Product\Option\Value::class,
+            OptionValue::class,
             [
                 'duplicate', 'getIdFieldName', 'deleteValues', 'deleteValue', 'beginTransaction',
                 'delete', 'commit', 'save', 'addCommitCallback'

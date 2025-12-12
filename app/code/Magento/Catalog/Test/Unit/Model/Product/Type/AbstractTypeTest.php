@@ -7,13 +7,14 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Model\Product\Type;
 
-use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Entity\Attribute;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Attribute\Source\Status;
 use Magento\Catalog\Model\Product\Type\Simple;
+use Magento\Catalog\Model\ResourceModel\Product as ProductResource;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -36,7 +37,7 @@ class AbstractTypeTest extends TestCase
     private $product;
 
     /**
-     * @var \Magento\Catalog\Model\ResourceModel\Product|MockObject
+     * @var ProductResource|MockObject
      */
     private $productResource;
 
@@ -52,93 +53,36 @@ class AbstractTypeTest extends TestCase
 
         $this->product = $this->createPartialMockWithReflection(
             Product::class,
-            [
-                'setStatus', 'getStatus', 'setData', 'getData', 'setResource',
-                'getResource', 'setHasOptions', 'getHasOptions'
-            ]
+            ['getHasOptions', '__sleep', 'getResource', 'getStatus']
         );
-        $productData = [];
-        $this->product->method('setStatus')->willReturnCallback(function ($v) use (&$productData) {
-            $productData['status'] = $v;
-            return $this->product;
-        });
-        $this->product->method('getStatus')->willReturnCallback(function () use (&$productData) {
-            return $productData['status'] ?? null;
-        });
-        $this->product->method('setData')->willReturnCallback(function ($key, $value = null) use (&$productData) {
-            if (is_array($key)) {
-                $productData = array_merge($productData, $key);
-            } else {
-                $productData[$key] = $value;
-            }
-            return $this->product;
-        });
-        $this->product->method('getData')->willReturnCallback(function ($key = null) use (&$productData) {
-            if ($key === null) {
-                return $productData;
-            }
-            return $productData[$key] ?? null;
-        });
-        $this->product->method('setHasOptions')->willReturnCallback(function ($v) use (&$productData) {
-            $productData['has_options'] = $v;
-            return $this->product;
-        });
-        $this->product->method('getHasOptions')->willReturnCallback(function () use (&$productData) {
-            return $productData['has_options'] ?? null;
-        });
-        
-        $this->productResource = $this->createMock(\Magento\Catalog\Model\ResourceModel\Product::class);
-        $this->product->method('setResource')->willReturnCallback(function ($v) use (&$productData) {
-            $productData['resource'] = $v;
-            return $this->product;
-        });
-        $this->product->method('getResource')->willReturnCallback(function () use (&$productData) {
-            return $productData['resource'] ?? $this->productResource;
-        });
+        $this->productResource = $this->createPartialMock(
+            ProductResource::class,
+            ['getSortedAttributes', 'loadAllAttributes']
+        );
 
-        $this->product->setResource($this->productResource);
+        $this->product->method('getResource')->willReturn($this->productResource);
 
         $this->attribute = $this->createPartialMockWithReflection(
             Attribute::class,
-            ['setId', 'getId', 'setSortPath', 'getSortPath', 'setGroupSortPath', 'getGroupSortPath']
+            ['getGroupSortPath', 'getSortPath']
         );
-        $attributeData = [];
-        $this->attribute->method('setId')->willReturnCallback(function ($v) use (&$attributeData) {
-            $attributeData['id'] = $v;
-            return $this->attribute;
-        });
-        $this->attribute->method('getId')->willReturnCallback(function () use (&$attributeData) {
-            return $attributeData['id'] ?? null;
-        });
-        $this->attribute->method('setSortPath')->willReturnCallback(function ($v) use (&$attributeData) {
-            $attributeData['sort_path'] = $v;
-            return $this->attribute;
-        });
-        $this->attribute->method('getSortPath')->willReturnCallback(function () use (&$attributeData) {
-            return $attributeData['sort_path'] ?? null;
-        });
-        $this->attribute->method('setGroupSortPath')->willReturnCallback(function ($v) use (&$attributeData) {
-            $attributeData['group_sort_path'] = $v;
-            return $this->attribute;
-        });
-        $this->attribute->method('getGroupSortPath')->willReturnCallback(function () use (&$attributeData) {
-            return $attributeData['group_sort_path'] ?? null;
-        });
     }
 
     public function testIsSalable()
     {
-        $this->product->setStatus(Status::STATUS_ENABLED);
+        $this->product->method('getStatus')->willReturn(
+            Status::STATUS_ENABLED
+        );
         $this->product->setData('is_salable', 3);
         $this->assertTrue($this->model->isSalable($this->product));
     }
 
     public function testGetAttributeById()
     {
-        $this->productResource->method('loadAllAttributes')->willReturn(
+        $this->productResource->expects($this->any())->method('loadAllAttributes')->willReturn(
             $this->productResource
         );
-        $this->productResource->method('getSortedAttributes')->willReturn(
+        $this->productResource->expects($this->any())->method('getSortedAttributes')->willReturn(
             [$this->attribute]
         );
         $this->attribute->setId(1);
@@ -150,45 +94,13 @@ class AbstractTypeTest extends TestCase
     #[DataProvider('attributeCompareProvider')]
     public function testAttributesCompare($attr1, $attr2, $expectedResult)
     {
-        $attribute = $this->createPartialMockWithReflection(
-            Attribute::class,
-            ['setId', 'getId', 'setSortPath', 'getSortPath', 'setGroupSortPath', 'getGroupSortPath']
-        );
-        $attributeData = ['sort_path' => 1, 'group_sort_path' => $attr1];
-        $attribute->method('setSortPath')->willReturnCallback(function ($v) use (&$attributeData, $attribute) {
-            $attributeData['sort_path'] = $v;
-            return $attribute;
-        });
-        $attribute->method('getSortPath')->willReturnCallback(function () use (&$attributeData) {
-            return $attributeData['sort_path'] ?? null;
-        });
-        $attribute->method('setGroupSortPath')->willReturnCallback(function ($v) use (&$attributeData, $attribute) {
-            $attributeData['group_sort_path'] = $v;
-            return $attribute;
-        });
-        $attribute->method('getGroupSortPath')->willReturnCallback(function () use (&$attributeData) {
-            return $attributeData['group_sort_path'] ?? null;
-        });
+        $attribute = $this->attribute;
+        $attribute->expects($this->any())->method('getSortPath')->willReturn(1);
 
-        $attribute2 = $this->createPartialMockWithReflection(
-            Attribute::class,
-            ['setId', 'getId', 'setSortPath', 'getSortPath', 'setGroupSortPath', 'getGroupSortPath']
-        );
-        $attribute2Data = ['sort_path' => 1, 'group_sort_path' => $attr2];
-        $attribute2->method('setSortPath')->willReturnCallback(function ($v) use (&$attribute2Data, $attribute2) {
-            $attribute2Data['sort_path'] = $v;
-            return $attribute2;
-        });
-        $attribute2->method('getSortPath')->willReturnCallback(function () use (&$attribute2Data) {
-            return $attribute2Data['sort_path'] ?? null;
-        });
-        $attribute2->method('setGroupSortPath')->willReturnCallback(function ($v) use (&$attribute2Data, $attribute2) {
-            $attribute2Data['group_sort_path'] = $v;
-            return $attribute2;
-        });
-        $attribute2->method('getGroupSortPath')->willReturnCallback(function () use (&$attribute2Data) {
-            return $attribute2Data['group_sort_path'] ?? null;
-        });
+        $attribute2 = clone $attribute;
+
+        $attribute->expects($this->any())->method('getGroupSortPath')->willReturn($attr1);
+        $attribute2->expects($this->any())->method('getGroupSortPath')->willReturn($attr2);
 
         $this->assertEquals($expectedResult, $this->model->attributesCompare($attribute, $attribute2));
     }
@@ -218,7 +130,7 @@ class AbstractTypeTest extends TestCase
 
     public function testHasOptions()
     {
-        $this->product->setHasOptions(true);
+        $this->product->expects($this->once())->method('getHasOptions')->willReturn(true);
         $this->assertTrue($this->model->hasOptions($this->product));
     }
 }

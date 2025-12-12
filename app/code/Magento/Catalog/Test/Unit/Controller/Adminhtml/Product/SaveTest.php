@@ -22,6 +22,7 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Framework\View\Result\PageFactory;
+use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 
@@ -101,7 +102,7 @@ class SaveTest extends ProductTestCase
         $storeManagerInterfaceMock = $this->createMock(StoreManagerInterface::class);
         
         // Create a Store mock with getCode method
-        $storeMock = $this->createPartialMock(\Magento\Store\Model\Store::class, ['getCode']);
+        $storeMock = $this->createPartialMock(Store::class, ['getCode']);
         $storeMock->method('getCode')->willReturn('default');
         
         $storeManagerInterfaceMock->method('getStore')->willReturn($storeMock);

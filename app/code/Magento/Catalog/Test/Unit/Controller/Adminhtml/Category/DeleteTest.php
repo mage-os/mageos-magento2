@@ -20,6 +20,7 @@ use Magento\Cms\Model\Wysiwyg\Config;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Event\ManagerInterface;
+use Magento\Framework\Message\ManagerInterface as MessageManagerInterface;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Store\Model\StoreManagerInterface;
@@ -86,7 +87,7 @@ class DeleteTest extends TestCase
         $this->authStorage->method('prolong')->willReturnSelf();
         $eventManager = $this->createMock(ManagerInterface::class);
         $response = $this->createMock(ResponseInterface::class);
-        $messageManager = $this->createMock(\Magento\Framework\Message\ManagerInterface::class);
+        $messageManager = $this->createMock(MessageManagerInterface::class);
         $this->categoryRepository = $this->createMock(CategoryRepositoryInterface::class);
         $context->method('getRequest')->willReturn($this->request);
         $context->method('getResponse')->willReturn($response);

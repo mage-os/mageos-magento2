@@ -7,25 +7,31 @@ declare(strict_types=1);
 
 namespace Magento\CatalogImportExport\Test\Unit\Model\Import\Product;
 
-use Magento\Tax\Model\ResourceModel\TaxClass\CollectionFactory;
-use Magento\Tax\Model\ClassModelFactory;
 use Magento\CatalogImportExport\Model\Import\Product\TaxClassProcessor;
 use Magento\CatalogImportExport\Model\Import\Product\Type\AbstractType;
-
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Tax\Model\ClassModel;
+use Magento\Tax\Model\ClassModelFactory;
 use Magento\Tax\Model\ResourceModel\TaxClass\Collection;
+use Magento\Tax\Model\ResourceModel\TaxClass\CollectionFactory;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class TaxClassProcessorTest extends TestCase
 {
-    const TEST_TAX_CLASS_NAME = 'className';
+    public const TEST_TAX_CLASS_NAME = 'className';
 
-    const TEST_TAX_CLASS_ID = 1;
+    public const TEST_TAX_CLASS_ID = 1;
 
-    const TEST_JUST_CREATED_TAX_CLASS_ID = 2;
+    public const TEST_JUST_CREATED_TAX_CLASS_ID = 2;
 
+    /**
+     * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
+     */
+    protected $objectManager;
 
+    /** @var ObjectManagerHelper */
+    protected $objectManagerHelper;
 
     /**
      * @var TaxClassProcessor|MockObject
@@ -39,23 +45,18 @@ class TaxClassProcessorTest extends TestCase
 
     protected function setUp(): void
     {
-        // Create minimal ObjectManager mock
-        $objectManagerMock = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
-        \Magento\Framework\App\ObjectManager::setInstance($objectManagerMock);
+        $this->objectManager = new ObjectManagerHelper($this);
+        $this->objectManagerHelper = new ObjectManagerHelper($this);
 
         $taxClass = $this->createMock(ClassModel::class);
         $taxClass->method('getClassName')->willReturn(self::TEST_TAX_CLASS_NAME);
         $taxClass->method('getId')->willReturn(self::TEST_TAX_CLASS_ID);
 
-        $taxClassCollection = $this->createPartialMock(
-            Collection::class,
-            ['getIterator', 'addFieldToFilter', 'getSize', 'getFirstItem']
-        );
-        $taxClassCollection->method('getIterator')
-            ->willReturn(new \ArrayIterator([$taxClass]));
-        $taxClassCollection->method('addFieldToFilter')->willReturnSelf();
-        $taxClassCollection->method('getSize')->willReturn(1);
-        $taxClassCollection->method('getFirstItem')->willReturn($taxClass);
+        $taxClassCollection =
+            $this->objectManagerHelper->getCollectionMock(
+                Collection::class,
+                [$taxClass]
+            );
 
         $taxClassCollectionFactory = $this->createPartialMock(
             CollectionFactory::class,

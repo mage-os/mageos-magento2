@@ -11,6 +11,7 @@ use Magento\Catalog\Model\Indexer\Product\Flat\Processor;
 use Magento\Catalog\Model\Indexer\Product\Flat\State;
 use Magento\CatalogImportExport\Model\Indexer\Product\Flat\Plugin\Import;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\ImportExport\Model\Import as ImportExportImport;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -32,7 +33,7 @@ class ImportTest extends TestCase
     private $flatStateMock;
 
     /**
-     * @var \Magento\ImportExport\Model\Import|MockObject
+     * @var ImportExportImport|MockObject
      */
     private $subjectMock;
 
@@ -45,7 +46,7 @@ class ImportTest extends TestCase
 
         $this->flatStateMock = $this->createPartialMock(State::class, ['isFlatEnabled']);
 
-        $this->subjectMock = $this->createMock(\Magento\ImportExport\Model\Import::class);
+        $this->subjectMock = $this->createMock(ImportExportImport::class);
 
         $this->model = (new ObjectManager($this))->getObject(
             Import::class,

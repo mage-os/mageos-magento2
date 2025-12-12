@@ -13,7 +13,7 @@ use Magento\Catalog\Helper\Product\Flat\Indexer;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(\Magento\Catalog\Cron\DeleteAbandonedStoreFlatTables::class)]
+#[CoversClass(DeleteAbandonedStoreFlatTables::class)]
 class DeleteAbandonedStoreFlatTablesTest extends TestCase
 {
     /**

@@ -185,10 +185,6 @@ class AttributeTest extends TestCase
             AbstractResource::class,
             ['_construct', 'getConnection', 'getIdFieldName', 'saveInSetIncluding']
         );
-        $this->resourceMock->method('getConnection')->willReturn(null);
-        $this->resourceMock->method('getIdFieldName')->willReturn('id');
-        $this->resourceMock->method('saveInSetIncluding')->willReturnSelf();
-        
         $this->cacheManager = $this->createMock(CacheInterface::class);
         $this->eventDispatcher = $this->createMock(ManagerInterface::class);
         $this->contextMock

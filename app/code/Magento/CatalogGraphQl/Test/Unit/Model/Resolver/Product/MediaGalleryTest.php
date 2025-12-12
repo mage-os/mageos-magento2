@@ -17,7 +17,6 @@ use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Magento\Framework\GraphQl\Config\Element\Field;
-use ReflectionClass;
 
 class MediaGalleryTest extends TestCase
 {
@@ -67,12 +66,7 @@ class MediaGalleryTest extends TestCase
         // Create a mock for Entry with getExtensionAttributes method
         $existingEntryMock = $this->createPartialMock(Entry::class, ['getExtensionAttributes']);
         $existingEntryMock->method('getExtensionAttributes')->willReturn(false);
-        
-        // Use reflection to set the internal data array
-        $reflection = new ReflectionClass($existingEntryMock);
-        $dataProperty = $reflection->getProperty('_data');
-        $dataProperty->setAccessible(true);
-        $dataProperty->setValue($existingEntryMock, $expected);
+        $existingEntryMock->setData($expected);
         
         $this->productMock->method('getName')->willReturn($productName);
         $this->productMock->method('getMediaGalleryEntries')->willReturn([$existingEntryMock]);

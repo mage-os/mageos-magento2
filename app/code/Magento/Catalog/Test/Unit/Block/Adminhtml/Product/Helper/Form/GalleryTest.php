@@ -13,14 +13,12 @@ use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
 use Magento\Framework\App\Request\DataPersistorInterface;
 use Magento\Framework\Data\Form;
 use Magento\Framework\Registry;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class GalleryTest extends TestCase
 {
-    use MockCreationTrait;
     /**
      * @var Registry|MockObject
      */

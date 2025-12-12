@@ -12,6 +12,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Api\Data\ProductAttributeInterface;
 use Magento\Catalog\Api\ProductAttributeGroupRepositoryInterface;
 use Magento\Catalog\Api\ProductAttributeRepositoryInterface;
+use Magento\Catalog\Model\Attribute\ScopeOverriddenValue;
 use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
 use Magento\Catalog\Model\ResourceModel\Eav\Attribute as EavAttribute;
 use Magento\Catalog\Model\ResourceModel\Eav\AttributeFactory as EavAttributeFactory;
@@ -40,6 +41,7 @@ use Magento\Framework\Stdlib\ArrayManager;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Api\Data\StoreInterface;
+use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Ui\DataProvider\EavValidationRules;
 use Magento\Ui\DataProvider\Mapper\FormElement as FormElementMapper;
@@ -268,9 +270,7 @@ class EavTest extends AbstractModifierTestCase
             ['create']
         );
         $this->eventManagerMock = $this->createMock(ManagerInterface::class);
-        $this->scopeOverriddenValueMock = $this->createMock(
-            \Magento\Catalog\Model\Attribute\ScopeOverriddenValue::class
-        );
+        $this->scopeOverriddenValueMock = $this->createMock(ScopeOverriddenValue::class);
 
         $this->eavAttributeFactoryMock->expects($this->any())
             ->method('create')
@@ -298,7 +298,7 @@ class EavTest extends AbstractModifierTestCase
         $this->entityTypeMock->method('getAttributeCollection')->willReturn($this->attributeCollectionMock);
         $this->productMock->setAttributes([$this->attributeMock]);
         $this->storeMock = $this->createPartialMock(
-            \Magento\Store\Model\Store::class,
+            Store::class,
             ['load', 'getConfig', 'getBaseCurrencyCode', 'getId']
         );
         $this->storeMock->method('load')->willReturnSelf();

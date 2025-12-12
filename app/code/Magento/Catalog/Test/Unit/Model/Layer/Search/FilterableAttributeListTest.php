@@ -17,7 +17,7 @@ use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(\Magento\Catalog\Model\Layer\Search\FilterableAttributeList::class)]
+#[CoversClass(FilterableAttributeList::class)]
 class FilterableAttributeListTest extends TestCase
 {
     /**

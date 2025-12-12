@@ -10,6 +10,7 @@ namespace Magento\Catalog\Test\Unit\Model\Product\CopyConstructor;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\CopyConstructor\CrossSell;
 use Magento\Catalog\Model\Product\Link;
+use Magento\Catalog\Model\ResourceModel\Product\Link as ProductLink;
 use Magento\Catalog\Model\ResourceModel\Product\Link\Collection;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
@@ -77,7 +78,7 @@ class CrossSellTest extends TestCase
         $this->_linkMock->expects($this->once())->method('getAttributes')->willReturn($attributes);
 
         $productLinkMock = $this->createPartialMockWithReflection(
-            \Magento\Catalog\Model\ResourceModel\Product\Link::class,
+            ProductLink::class,
             ['getLinkedProductId', 'toArray']
         );
 

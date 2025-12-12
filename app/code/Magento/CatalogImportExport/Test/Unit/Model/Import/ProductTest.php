@@ -61,10 +61,14 @@ use Magento\Framework\Stdlib\DateTime;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\Framework\Stdlib\StringUtils;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Catalog\Helper\Data as CatalogHelper;
+use Magento\ImportExport\Helper\Data as ImportExportHelper;
 use Magento\ImportExport\Model\Import;
+use Magento\ImportExport\Model\Import\Config as ImportConfig;
 use Magento\ImportExport\Model\Import\ErrorProcessing\ProcessingError;
 use Magento\ImportExport\Model\Import\ErrorProcessing\ProcessingErrorAggregatorInterface;
 use Magento\ImportExport\Model\ResourceModel\Helper;
+use Magento\ImportExport\Model\ResourceModel\Import\Data as ImportData;
 use Magento\ImportExport\Test\Unit\Model\Import\AbstractImportTestCase;
 use phpseclib3\Exception\NoKeyLoadedException;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -345,8 +349,8 @@ class ProductTest extends AbstractImportTestCase
 
         /* For parent object construct */
         $this->jsonHelper = $this->createMock(Data::class);
-        $this->importExportData = $this->createMock(\Magento\ImportExport\Helper\Data::class);
-        $this->_dataSourceModel = $this->createMock(\Magento\ImportExport\Model\ResourceModel\Import\Data::class);
+        $this->importExportData = $this->createMock(ImportExportHelper::class);
+        $this->_dataSourceModel = $this->createMock(ImportData::class);
         $this->config = $this->createMock(Config::class);
         $this->resource = $this->createMock(ResourceConnection::class);
         $this->resourceHelper = $this->createMock(Helper::class);
@@ -357,8 +361,8 @@ class ProductTest extends AbstractImportTestCase
         $this->stockRegistry = $this->createMock(StockRegistryInterface::class);
         $this->stockConfiguration = $this->createMock(StockConfigurationInterface::class);
         $this->stockStateProvider = $this->createMock(StockStateProviderInterface::class);
-        $this->_catalogData = $this->createMock(\Magento\Catalog\Helper\Data::class);
-        $this->_importConfig = $this->createMock(\Magento\ImportExport\Model\Import\Config::class);
+        $this->_catalogData = $this->createMock(CatalogHelper::class);
+        $this->_importConfig = $this->createMock(ImportConfig::class);
         $this->_resourceFactory = $this->createPartialMock(
             ResourceModelFactory::class,
             ['create']

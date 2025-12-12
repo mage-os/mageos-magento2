@@ -15,6 +15,7 @@ use Magento\Catalog\Model\Indexer\Product\Price\Processor;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Action;
 use Magento\Catalog\Model\Product\Attribute\Source\Status;
+use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
 use Magento\Catalog\Test\Unit\Controller\Adminhtml\ProductTestCase;
 use Magento\Framework\Controller\ResultFactory;
@@ -49,7 +50,7 @@ class MassStatusTest extends ProductTestCase
     private $productBuilderMock;
 
     /**
-     * @var \Magento\Catalog\Model\ResourceModel\Product\Collection|MockObject
+     * @var ProductCollection|MockObject
      */
     private $productCollectionMock;
 
@@ -81,7 +82,7 @@ class MassStatusTest extends ProductTestCase
             ->willReturn($this->resultRedirectMock);
 
         $this->productCollectionMock = $this->createPartialMock(
-            \Magento\Catalog\Model\ResourceModel\Product\Collection::class,
+            ProductCollection::class,
             ['getAllIds', 'getResource']
         );
         $this->filterMock = $this->createPartialMock(Filter::class, ['getCollection']);

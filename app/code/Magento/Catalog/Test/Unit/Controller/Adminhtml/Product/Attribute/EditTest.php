@@ -18,6 +18,7 @@ use Magento\Framework\App\RequestInterface;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\Registry;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\View\Layout as ViewLayout;
 use Magento\Framework\View\Page\Config;
 use Magento\Framework\View\Page\Title;
 use Magento\Framework\View\Result\Layout;
@@ -125,7 +126,7 @@ class EditTest extends TestCase
 
         $this->pageTitle = $this->createMock(Title::class);
 
-        $this->layout = $this->createMock(\Magento\Framework\View\Layout::class);
+        $this->layout = $this->createMock(ViewLayout::class);
 
         $this->session = $this->createMock(Session::class);
 

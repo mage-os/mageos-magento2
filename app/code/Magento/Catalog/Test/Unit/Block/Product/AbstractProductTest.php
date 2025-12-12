@@ -9,6 +9,7 @@ namespace Magento\Catalog\Test\Unit\Block\Product;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
+use Magento\Catalog\Block\Product\AbstractProduct;
 use Magento\Catalog\Block\Product\Context;
 use Magento\Catalog\Block\Product\Image;
 use Magento\Catalog\Block\Product\ImageBuilder;
@@ -27,7 +28,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-#[CoversClass(\Magento\Catalog\Block\Product\AbstractProduct::class)]
+#[CoversClass(AbstractProduct::class)]
 class AbstractProductTest extends TestCase
 {
     /**

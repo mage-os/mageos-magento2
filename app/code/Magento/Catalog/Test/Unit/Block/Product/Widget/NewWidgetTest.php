@@ -10,6 +10,7 @@ namespace Magento\Catalog\Test\Unit\Block\Product\Widget;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Block\Product\Context as ProductBlockContext;
 use Magento\Catalog\Block\Product\Widget\NewWidget;
+use Magento\Catalog\Model\Config as CatalogConfig;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ResourceModel\Product\Collection;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
@@ -60,7 +61,7 @@ class NewWidgetTest extends TestCase
     /** @var State|MockObject */
     protected $cacheState;
 
-    /** @var \Magento\Catalog\Model\Config|MockObject */
+    /** @var CatalogConfig|MockObject */
     protected $catalogConfig;
 
     /** @var Timezone|MockObject */
@@ -79,7 +80,7 @@ class NewWidgetTest extends TestCase
         $this->scopeConfig = $this->createMock(Config::class);
         $this->cacheState = $this->createPartialMock(State::class, ['isEnabled']);
         $this->localDate = $this->createMock(Timezone::class);
-        $this->catalogConfig = $this->createPartialMock(\Magento\Catalog\Model\Config::class, ['getProductAttributes']);
+        $this->catalogConfig = $this->createPartialMock(CatalogConfig::class, ['getProductAttributes']);
         $this->layout = $this->createMock(Layout::class);
         $this->requestMock = $this->createMock(RequestInterface::class);
 

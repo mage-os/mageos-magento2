@@ -12,6 +12,7 @@ use Magento\Catalog\Model\Product\Visibility;
 use Magento\Catalog\Model\ProductFactory;
 use Magento\Catalog\Model\ResourceModel\Product\Collection;
 use Magento\Catalog\Model\Rss\Product\NewProducts;
+use Magento\Framework\Stdlib\DateTime;
 use Magento\Framework\Stdlib\DateTime\Timezone;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
@@ -75,7 +76,7 @@ class NewProductsTest extends TestCase
         $dateObject = $this->createMock(\DateTime::class);
         $dateObject->expects($this->any())
             ->method('setTime')->willReturnSelf();
-        $dateObject->method('format')->willReturn(date(\Magento\Framework\Stdlib\DateTime::DATETIME_INTERNAL_FORMAT));
+        $dateObject->method('format')->willReturn(date(DateTime::DATETIME_INTERNAL_FORMAT));
 
         $this->timezone->expects($this->exactly(2))
             ->method('date')

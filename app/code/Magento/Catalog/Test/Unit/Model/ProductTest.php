@@ -17,12 +17,23 @@ use Magento\Catalog\Api\ProductLinkRepositoryInterface;
 use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\FilterProductCustomAttribute;
 use Magento\Catalog\Model\Indexer\Product\Flat\Processor;
+use Magento\Catalog\Api\Data\ProductLinkExtensionFactory;
+use Magento\Catalog\Api\Data\ProductLinkInterface;
+use Magento\Catalog\Api\Data\ProductLinkInterfaceFactory;
+use Magento\Catalog\Helper\Product as HelperProduct;
+use Magento\Catalog\Model\Indexer\Product\Category as CategoryIndexer;
+use Magento\Catalog\Model\Indexer\Product\Eav\Processor as EavProcessor;
+use Magento\Catalog\Model\Indexer\Product\Price\Processor as PriceProcessor;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Attribute\Backend\Media\EntryConverterPool;
 use Magento\Catalog\Model\Product\Attribute\Backend\Media\ImageEntryConverter;
 use Magento\Catalog\Model\Product\Attribute\Source\Status;
+use Magento\Catalog\Model\Product\Configuration\Item\OptionFactory as ItemOptionFactory;
 use Magento\Catalog\Model\Product\Image\Cache;
 use Magento\Catalog\Model\Product\Image\CacheFactory;
+use Magento\Catalog\Model\Product\Link as ProductLink;
+use Magento\Catalog\Model\Product\LinkTypeProvider;
+use Magento\Catalog\Model\Product\Media\Config as MediaConfig;
 use Magento\Catalog\Model\Product\Option;
 use Magento\Catalog\Model\Product\OptionFactory;
 use Magento\Catalog\Model\Product\Type;
@@ -30,8 +41,13 @@ use Magento\Catalog\Model\Product\Type\AbstractType;
 use Magento\Catalog\Model\Product\Type\Price;
 use Magento\Catalog\Model\Product\Type\Simple;
 use Magento\Catalog\Model\Product\Type\Virtual;
+use Magento\Catalog\Model\Product\Url as ProductUrl;
+use Magento\Catalog\Model\Product\Visibility;
+use Magento\Catalog\Model\ProductLink\CollectionProvider as ProductLinkCollectionProvider;
 use Magento\Catalog\Model\ProductLink\Link;
 use Magento\Catalog\Model\ResourceModel\Product as ProductResourceMOdel;
+use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
+use Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface;
 use Magento\CatalogInventory\Api\Data\StockItemInterface;
 use Magento\CatalogInventory\Api\Data\StockItemInterfaceFactory;
 use Magento\Eav\Model\Config;
@@ -90,7 +106,7 @@ class ProductTest extends TestCase
     protected $objectManagerHelper;
 
     /**
-     * @var \Magento\Catalog\Model\Product
+     * @var Product
      */
     protected $model;
 
@@ -115,7 +131,7 @@ class ProductTest extends TestCase
     protected $productFlatProcessor;
 
     /**
-     * @var \Magento\Catalog\Model\Indexer\Product\Price\Processor|MockObject
+     * @var PriceProcessor|MockObject
      */
     protected $productPriceProcessor;
 
@@ -175,7 +191,7 @@ class ProductTest extends TestCase
     private $categoryRepository;
 
     /**
-     * @var \Magento\Catalog\Helper\Product|MockObject
+     * @var HelperProduct|MockObject
      */
     private $_catalogProduct;
 
@@ -295,9 +311,7 @@ class ProductTest extends TestCase
 
         $this->_priceInfoMock = $this->createMock(Base::class);
         $this->productTypeInstanceMock = $this->createMock(Type::class);
-        $this->productPriceProcessor = $this->createMock(
-            \Magento\Catalog\Model\Indexer\Product\Price\Processor::class
-        );
+        $this->productPriceProcessor = $this->createMock(PriceProcessor::class);
 
         $this->appStateMock = $this->createPartialMock(
             State::class,
@@ -349,7 +363,7 @@ class ProductTest extends TestCase
         $this->categoryRepository = $this->createMock(CategoryRepositoryInterface::class);
 
         $this->_catalogProduct = $this->createPartialMock(
-            \Magento\Catalog\Helper\Product::class,
+            HelperProduct::class,
             ['isDataForProductCategoryIndexerWasChanged', 'isDataForPriceIndexerWasChanged']
         );
 
@@ -378,7 +392,7 @@ class ProductTest extends TestCase
         $this->extensionAttributesFactory = $this->createMock(ExtensionAttributesFactory::class);
         $this->filesystemMock = $this->createMock(Filesystem::class);
         $this->collectionFactoryMock = $this->createPartialMock(CollectionFactory::class, ['create']);
-        $this->mediaConfig = $this->createMock(\Magento\Catalog\Model\Product\Media\Config::class);
+        $this->mediaConfig = $this->createMock(MediaConfig::class);
         $this->eavConfig = $this->createMock(Config::class);
 
         $this->productExtAttributes = $this->createPartialMockWithReflection(
@@ -398,41 +412,41 @@ class ProductTest extends TestCase
                 return $attributes;
             });
 
-        $this->model = new \Magento\Catalog\Model\Product(
+        $this->model = new Product(
             $contextMock,
             $this->registry,
             $this->extensionAttributesFactory,
             $this->attributeValueFactory,
             $this->storeManager,
             $this->metadataServiceMock,
-            $this->createMock(\Magento\Catalog\Model\Product\Url::class),
-            $this->createMock(\Magento\Catalog\Model\Product\Link::class),
-            $this->createMock(\Magento\Catalog\Model\Product\Configuration\Item\OptionFactory::class),
+            $this->createMock(ProductUrl::class),
+            $this->createMock(ProductLink::class),
+            $this->createMock(ItemOptionFactory::class),
             $this->stockItemFactoryMock,
             $optionFactory,
-            $this->createMock(\Magento\Catalog\Model\Product\Visibility::class),
+            $this->createMock(Visibility::class),
             $this->createMock(Status::class),
             $this->mediaConfig,
             $this->productTypeInstanceMock,
             $this->moduleManager,
             $this->_catalogProduct,
             $this->resource,
-            $this->createMock(\Magento\Catalog\Model\ResourceModel\Product\Collection::class),
+            $this->createMock(ProductCollection::class),
             $this->collectionFactoryMock,
             $this->filesystemMock,
             $this->indexerRegistryMock,
             $this->productFlatProcessor,
             $this->productPriceProcessor,
-            $this->createMock(\Magento\Catalog\Model\Indexer\Product\Eav\Processor::class),
+            $this->createMock(EavProcessor::class),
             $this->categoryRepository,
             $this->imageCacheFactory,
-            $this->createMock(\Magento\Catalog\Model\ProductLink\CollectionProvider::class),
-            $this->createMock(\Magento\Catalog\Model\Product\LinkTypeProvider::class),
-            $this->createMock(\Magento\Catalog\Api\Data\ProductLinkInterfaceFactory::class),
-            $this->createMock(\Magento\Catalog\Api\Data\ProductLinkExtensionFactory::class),
+            $this->createMock(ProductLinkCollectionProvider::class),
+            $this->createMock(LinkTypeProvider::class),
+            $this->createMock(ProductLinkInterfaceFactory::class),
+            $this->createMock(ProductLinkExtensionFactory::class),
             $this->mediaGalleryEntryConverterPoolMock,
             $this->dataObjectHelperMock,
-            $this->createMock(\Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface::class),
+            $this->createMock(JoinProcessorInterface::class),
             ['id' => 1],
             $this->eavConfig,
             $this->filterCustomAttribute
@@ -539,7 +553,7 @@ class ProductTest extends TestCase
         $productIdCached
     ): void {
         $product = $this->createPartialMock(
-            \Magento\Catalog\Model\Product::class,
+            Product::class,
             [
                 '_getResource',
                 'setCategoryCollection',
@@ -714,7 +728,7 @@ class ProductTest extends TestCase
         if ($productChanged) {
             $this->indexerRegistryMock->expects($this->exactly($productFlatCount))
                 ->method('get')
-                ->with(\Magento\Catalog\Model\Indexer\Product\Category::INDEXER_ID)
+                ->with(CategoryIndexer::INDEXER_ID)
                 ->willReturn($this->categoryIndexerMock);
             $this->categoryIndexerMock->method('isScheduled')->willReturn($isScheduled);
             $this->categoryIndexerMock->expects($this->exactly($categoryIndexerCount))->method('reindexRow');
@@ -744,41 +758,41 @@ class ProductTest extends TestCase
         // Configure the catalog product helper mock to return false for price indexer check
         $this->_catalogProduct->method('isDataForPriceIndexerWasChanged')->willReturn(false);
             
-        $this->model = new \Magento\Catalog\Model\Product(
-            $this->createMock(\Magento\Framework\Model\Context::class),
+        $this->model = new Product(
+            $this->createMock(Context::class),
             $this->registry,
             $this->extensionAttributesFactory,
             $this->attributeValueFactory,
             $this->storeManager,
             $this->metadataServiceMock,
-            $this->createMock(\Magento\Catalog\Model\Product\Url::class),
-            $this->createMock(\Magento\Catalog\Model\Product\Link::class),
-            $this->createMock(\Magento\Catalog\Model\Product\Configuration\Item\OptionFactory::class),
+            $this->createMock(ProductUrl::class),
+            $this->createMock(ProductLink::class),
+            $this->createMock(ItemOptionFactory::class),
             $this->stockItemFactoryMock,
-            $this->createMock(\Magento\Catalog\Model\Product\OptionFactory::class),
-            $this->createMock(\Magento\Catalog\Model\Product\Visibility::class),
-            $this->createMock(\Magento\Catalog\Model\Product\Attribute\Source\Status::class),
-            $this->createMock(\Magento\Catalog\Model\Product\Media\Config::class),
+            $this->createMock(OptionFactory::class),
+            $this->createMock(Visibility::class),
+            $this->createMock(Status::class),
+            $this->createMock(MediaConfig::class),
             $this->productTypeInstanceMock,
             $this->moduleManager,
             $this->_catalogProduct,
             $this->resource,
-            $this->createMock(\Magento\Catalog\Model\ResourceModel\Product\Collection::class),
+            $this->createMock(ProductCollection::class),
             $this->collectionFactoryMock,
             $this->filesystemMock,
             $this->indexerRegistryMock,
             $this->productFlatProcessor,
             $this->productPriceProcessor,
-            $this->createMock(\Magento\Catalog\Model\Indexer\Product\Eav\Processor::class),
+            $this->createMock(EavProcessor::class),
             $this->categoryRepository,
             $this->imageCacheFactory,
-            $this->createMock(\Magento\Catalog\Model\ProductLink\CollectionProvider::class),
-            $this->createMock(\Magento\Catalog\Model\Product\LinkTypeProvider::class),
-            $this->createMock(\Magento\Catalog\Api\Data\ProductLinkInterfaceFactory::class),
-            $this->createMock(\Magento\Catalog\Api\Data\ProductLinkExtensionFactory::class),
+            $this->createMock(ProductLinkCollectionProvider::class),
+            $this->createMock(LinkTypeProvider::class),
+            $this->createMock(ProductLinkInterfaceFactory::class),
+            $this->createMock(ProductLinkExtensionFactory::class),
             $this->mediaGalleryEntryConverterPoolMock,
             $this->dataObjectHelperMock,
-            $this->createMock(\Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface::class),
+            $this->createMock(JoinProcessorInterface::class),
             ['id' => 1],
             $this->eavConfig,
             $this->filterCustomAttribute
@@ -1277,7 +1291,7 @@ class ProductTest extends TestCase
     {
         $this->indexerRegistryMock->expects($this->once())
             ->method('get')
-            ->with(\Magento\Catalog\Model\Indexer\Product\Category::INDEXER_ID)
+            ->with(CategoryIndexer::INDEXER_ID)
             ->willReturn($this->categoryIndexerMock);
     }
 
@@ -1288,7 +1302,7 @@ class ProductTest extends TestCase
      */
     public function testGetProductLinks(): void
     {
-        $outputRelatedLink = $this->createMock(\Magento\Catalog\Api\Data\ProductLinkInterface::class);
+        $outputRelatedLink = $this->createMock(ProductLinkInterface::class);
         $outputRelatedLink->setSku("Simple Product 1");
         $outputRelatedLink->setLinkType("related");
         $outputRelatedLink->setLinkedProductSku("Simple Product 2");
@@ -1314,7 +1328,7 @@ class ProductTest extends TestCase
      */
     public function testSetProductLinks(): void
     {
-        $link = $this->createMock(\Magento\Catalog\Api\Data\ProductLinkInterface::class);
+        $link = $this->createMock(ProductLinkInterface::class);
         $link->setSku("Simple Product 1");
         $link->setLinkType("upsell");
         $link->setLinkedProductSku("Simple Product 2");

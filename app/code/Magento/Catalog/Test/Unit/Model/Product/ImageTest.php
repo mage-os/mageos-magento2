@@ -18,6 +18,7 @@ use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Directory\Write;
 use Magento\Framework\Filesystem\Directory\WriteInterface;
+use Magento\Framework\Image as FrameworkImage;
 use Magento\Framework\Image\Factory;
 use Magento\Framework\Model\Context;
 use Magento\Framework\Serialize\SerializerInterface;
@@ -304,7 +305,7 @@ class ImageTest extends TestCase
      */
     public function testSetGetImageProcessor(): void
     {
-        $imageProcessor = $this->createMock(\Magento\Framework\Image::class);
+        $imageProcessor = $this->createMock(FrameworkImage::class);
         $result = $this->image->setImageProcessor($imageProcessor);
         $this->assertSame($this->image, $result);
         $this->assertSame($imageProcessor, $this->image->getImageProcessor());
@@ -317,7 +318,7 @@ class ImageTest extends TestCase
     {
         $this->image->setWidth(100);
         $this->image->setHeight(100);
-        $imageProcessor = $this->createMock(\Magento\Framework\Image::class);
+        $imageProcessor = $this->createMock(FrameworkImage::class);
         $imageProcessor->expects($this->once())->method('resize')
             ->with($this->image->getWidth(), $this->image->getHeight())->willReturn(true);
         $this->image->setImageProcessor($imageProcessor);
@@ -330,7 +331,7 @@ class ImageTest extends TestCase
      */
     public function testRotate(): void
     {
-        $imageProcessor = $this->createMock(\Magento\Framework\Image::class);
+        $imageProcessor = $this->createMock(FrameworkImage::class);
         $imageProcessor->expects($this->once())->method('rotate')->with(90)->willReturn(true);
         $this->image->setImageProcessor($imageProcessor);
         $result = $this->image->rotate(90);
@@ -371,7 +372,7 @@ class ImageTest extends TestCase
             ->willReturn($absolutePath);
 
         $imageProcessor = $this->createPartialMock(
-            \Magento\Framework\Image::class,
+            FrameworkImage::class,
             [
                 'keepAspectRatio', 'keepFrame', 'keepTransparency', 'constrainOnly', 'backgroundColor', 'quality',
                 'setWatermarkPosition', 'setWatermarkImageOpacity', 'setWatermarkWidth', 'setWatermarkHeight',
@@ -404,7 +405,7 @@ class ImageTest extends TestCase
      */
     public function testSaveFile(): void
     {
-        $imageProcessor = $this->createMock(\Magento\Framework\Image::class);
+        $imageProcessor = $this->createMock(FrameworkImage::class);
         $this->image->setImageProcessor($imageProcessor);
         $this->coreFileHelper->expects($this->once())->method('saveFile')->willReturn(true);
 
@@ -416,7 +417,7 @@ class ImageTest extends TestCase
      */
     public function testSaveFileNoSelection(): void
     {
-        $imageProcessor = $this->createMock(\Magento\Framework\Image::class);
+        $imageProcessor = $this->createMock(FrameworkImage::class);
         $this->image->setImageProcessor($imageProcessor);
         $this->assertSame($this->image, $this->image->saveFile());
     }
@@ -512,7 +513,7 @@ class ImageTest extends TestCase
      */
     public function testGetImageProcessor(): void
     {
-        $imageProcessor = $this->createMock(\Magento\Framework\Image::class);
+        $imageProcessor = $this->createMock(FrameworkImage::class);
         $this->factory->expects($this->once())->method('create')->willReturn($imageProcessor);
         $this->assertSame($imageProcessor, $this->image->getImageProcessor());
     }

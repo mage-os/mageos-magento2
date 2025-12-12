@@ -22,6 +22,7 @@ use Magento\Framework\Event\Manager;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\View\Layout;
+use Magento\Framework\View\Result\Layout as ResultLayout;
 use Magento\Framework\Session\Storage;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -114,7 +115,7 @@ class ShowUpdateResultTest extends TestCase
     public function testExecute()
     {
         $productCompositeHelper = $this->createMock(Composite::class);
-        $layoutResult = $this->createMock(\Magento\Framework\View\Result\Layout::class);
+        $layoutResult = $this->createMock(ResultLayout::class);
         $compositeProductResult = new DataObject();
         
         $productCompositeHelper->expects($this->once())

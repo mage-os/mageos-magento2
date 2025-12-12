@@ -16,6 +16,7 @@ use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Select;
 use Magento\Framework\EntityManager\EntityMetadataInterface;
 use Magento\Framework\EntityManager\MetadataPool;
+use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Framework\Session\SessionManagerInterface;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Store\Api\Data\StoreInterface;
@@ -45,9 +46,9 @@ class SpecialPriceBulkResolverTest extends TestCase
     private SpecialPriceBulkResolver $specialPriceBulkResolver;
 
     /**
-     * @var SessionManagerInterface|MockObject
+     * @var CustomerSession|MockObject
      */
-    private SessionManagerInterface $customerSession;
+    private CustomerSession $customerSession;
 
     /**
      * @var StoreManagerInterface|MockObject
@@ -62,30 +63,7 @@ class SpecialPriceBulkResolverTest extends TestCase
         $this->resource = $this->createMock(ResourceConnection::class);
         $this->metadataPool = $this->createMock(MetadataPool::class);
         $this->storeManager = $this->createMock(StoreManagerInterface::class);
-        $this->customerSession = $this->createPartialMockWithReflection(
-            SessionManagerInterface::class,
-            ['start', 'writeClose', 'isSessionExists', 'getSessionId', 'getName', 'setName',
-             'destroy', 'clearStorage', 'getCookieDomain', 'getCookiePath', 'getCookieLifetime',
-             'setSessionId', 'regenerateId', 'expireSessionCookie', 'getSessionIdForHost',
-             'isValidForHost', 'isValidForPath', 'getCustomerGroupId']
-        );
-        $this->customerSession->method('start')->willReturn(null);
-        $this->customerSession->method('writeClose')->willReturn(null);
-        $this->customerSession->method('isSessionExists')->willReturn(false);
-        $this->customerSession->method('getSessionId')->willReturn(null);
-        $this->customerSession->method('getName')->willReturn(null);
-        $this->customerSession->method('setName')->willReturnSelf();
-        $this->customerSession->method('destroy')->willReturn(null);
-        $this->customerSession->method('clearStorage')->willReturn(null);
-        $this->customerSession->method('getCookieDomain')->willReturn(null);
-        $this->customerSession->method('getCookiePath')->willReturn(null);
-        $this->customerSession->method('getCookieLifetime')->willReturn(null);
-        $this->customerSession->method('setSessionId')->willReturnSelf();
-        $this->customerSession->method('regenerateId')->willReturn(null);
-        $this->customerSession->method('expireSessionCookie')->willReturn(null);
-        $this->customerSession->method('getSessionIdForHost')->willReturn(null);
-        $this->customerSession->method('isValidForHost')->willReturn(false);
-        $this->customerSession->method('isValidForPath')->willReturn(false);
+        $this->customerSession = $this->createPartialMock(CustomerSession::class, ['getCustomerGroupId']);
 
         $this->specialPriceBulkResolver = new SpecialPriceBulkResolver(
             $this->resource,

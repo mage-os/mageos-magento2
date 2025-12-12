@@ -20,11 +20,13 @@ use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\Event\ManagerInterface;
+use Magento\Framework\Message\ManagerInterface as MessageManagerInterface;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Model\StoreManager;
 use Magento\Framework\View\LayoutFactory;
+use Magento\Framework\View\Page\Config as PageConfig;
 use Magento\Framework\View\Page\Title;
 use Magento\Framework\View\Result\Page as ResultPage;
 use Magento\Framework\View\Result\PageFactory;
@@ -167,8 +169,8 @@ class EditTest extends TestCase
             ['create']
         );
 
-        $pageConfig = $this->createPartialMock(\Magento\Framework\View\Page\Config::class, ['getTitle']);
-        $pageTitle = $this->createPartialMock(\Magento\Framework\View\Page\Title::class, ['prepend', 'set']);
+        $pageConfig = $this->createPartialMock(PageConfig::class, ['getTitle']);
+        $pageTitle = $this->createPartialMock(Title::class, ['prepend', 'set']);
         $pageTitle->method('prepend')->willReturnSelf();
         $pageTitle->method('set')->willReturnSelf();
         $pageConfig->method('getTitle')->willReturn($pageTitle);
@@ -220,7 +222,7 @@ class EditTest extends TestCase
         $this->requestMock->method('getQuery')->willReturn(null);
         $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
         $this->eventManagerMock = $this->createMock(ManagerInterface::class);
-        $this->messageManagerMock = $this->createMock(\Magento\Framework\Message\ManagerInterface::class);
+        $this->messageManagerMock = $this->createMock(MessageManagerInterface::class);
         $this->titleMock = $this->createMock(Title::class);
         $this->sessionMock = $this->createPartialMockWithReflection(Session::class, ['getCategoryData']);
         $this->sessionMock->method('getCategoryData')->willReturn(null);

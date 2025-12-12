@@ -17,6 +17,7 @@ use Magento\CatalogInventory\Api\StockConfigurationInterface;
 use Magento\CatalogInventory\Api\StockRegistryInterface;
 use Magento\CatalogInventory\Model\Source\Backorders;
 use Magento\CatalogInventory\Model\Source\Stock;
+use Magento\CatalogInventory\Model\Stock\Item as StockItem;
 use Magento\Directory\Helper\Data as DirectoryHelper;
 use Magento\Framework\Json\Helper\Data as JsonHelper;
 use Magento\Framework\Module\Manager;
@@ -246,25 +247,10 @@ class InventoryTest extends TestCase
                 ->willReturn('default-result');
         }
 
-        // Create stock item mock with all required interface methods
-        $allMethods = [
-            'getItemId', 'setItemId', 'getProductId', 'setProductId', 'getStockId', 'setStockId',
-            'getQty', 'setQty', 'getIsInStock', 'setIsInStock', 'getIsQtyDecimal', 'setIsQtyDecimal',
-            'getShowDefaultNotificationMessage', 'getUseConfigMinQty', 'setUseConfigMinQty',
-            'getMinQty', 'setMinQty', 'getUseConfigMinSaleQty', 'setUseConfigMinSaleQty',
-            'getMinSaleQty', 'setMinSaleQty', 'getUseConfigMaxSaleQty', 'setUseConfigMaxSaleQty',
-            'getMaxSaleQty', 'setMaxSaleQty', 'getUseConfigBackorders', 'setUseConfigBackorders',
-            'getBackorders', 'setBackorders', 'getUseConfigNotifyStockQty', 'setUseConfigNotifyStockQty',
-            'getNotifyStockQty', 'setNotifyStockQty', 'getUseConfigQtyIncrements', 'setUseConfigQtyIncrements',
-            'getQtyIncrements', 'setQtyIncrements', 'getUseConfigEnableQtyInc', 'setUseConfigEnableQtyInc',
-            'getEnableQtyIncrements', 'setEnableQtyIncrements', 'getUseConfigManageStock', 'setUseConfigManageStock',
-            'getManageStock', 'setManageStock', 'getLowStockDate', 'setLowStockDate',
-            'getIsDecimalDivided', 'setIsDecimalDivided', 'getStockStatusChangedAuto', 'setStockStatusChangedAuto',
-            'getExtensionAttributes', 'setExtensionAttributes'
-        ];
+        $allMethods = array_merge(['getStockId', 'getItemId'], $methods);
         $stockItemMock = $this->createPartialMockWithReflection(
-            StockItemInterface::class,
-            array_unique(array_merge($allMethods, $methods))
+            StockItem::class,
+            $allMethods
         );
         $stockItemMock->method('getStockId')->willReturn($stockId);
         $stockItemMock->method('getItemId')->willReturn($stockId); // Need this for getFieldValue logic
@@ -326,25 +312,10 @@ class InventoryTest extends TestCase
                 ->willReturn('default-result');
         }
 
-        // Create stock item mock with all required interface methods
-        $allMethods = [
-            'getItemId', 'setItemId', 'getProductId', 'setProductId', 'getStockId', 'setStockId',
-            'getQty', 'setQty', 'getIsInStock', 'setIsInStock', 'getIsQtyDecimal', 'setIsQtyDecimal',
-            'getShowDefaultNotificationMessage', 'getUseConfigMinQty', 'setUseConfigMinQty',
-            'getMinQty', 'setMinQty', 'getUseConfigMinSaleQty', 'setUseConfigMinSaleQty',
-            'getMinSaleQty', 'setMinSaleQty', 'getUseConfigMaxSaleQty', 'setUseConfigMaxSaleQty',
-            'getMaxSaleQty', 'setMaxSaleQty', 'getUseConfigBackorders', 'setUseConfigBackorders',
-            'getBackorders', 'setBackorders', 'getUseConfigNotifyStockQty', 'setUseConfigNotifyStockQty',
-            'getNotifyStockQty', 'setNotifyStockQty', 'getUseConfigQtyIncrements', 'setUseConfigQtyIncrements',
-            'getQtyIncrements', 'setQtyIncrements', 'getUseConfigEnableQtyInc', 'setUseConfigEnableQtyInc',
-            'getEnableQtyIncrements', 'setEnableQtyIncrements', 'getUseConfigManageStock', 'setUseConfigManageStock',
-            'getManageStock', 'setManageStock', 'getLowStockDate', 'setLowStockDate',
-            'getIsDecimalDivided', 'setIsDecimalDivided', 'getStockStatusChangedAuto', 'setStockStatusChangedAuto',
-            'getExtensionAttributes', 'setExtensionAttributes'
-        ];
+        $allMethods = array_merge(['getStockId', 'getItemId'], $methods);
         $stockItemMock = $this->createPartialMockWithReflection(
-            StockItemInterface::class,
-            array_unique(array_merge($allMethods, $methods))
+            StockItem::class,
+            $allMethods
         );
         $stockItemMock->method('getStockId')->willReturn($stockId);
         $stockItemMock->method('getItemId')->willReturn($stockId); // Need this for getFieldValue logic

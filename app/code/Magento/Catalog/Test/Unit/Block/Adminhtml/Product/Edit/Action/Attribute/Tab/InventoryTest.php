@@ -11,7 +11,9 @@ use Magento\Backend\Block\Template\Context;
 use Magento\Catalog\Block\Adminhtml\Product\Edit\Action\Attribute\Tab\Inventory;
 use Magento\CatalogInventory\Api\StockConfigurationInterface;
 use Magento\CatalogInventory\Model\Source\Backorders;
+use Magento\Directory\Helper\Data as DirectoryHelper;
 use Magento\Framework\App\RequestInterface;
+use Magento\Framework\Json\Helper\Data as JsonHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -55,12 +57,12 @@ class InventoryTest extends TestCase
         // Prepare ObjectManager with required dependencies
         $objects = [
             [
-                \Magento\Framework\Json\Helper\Data::class,
-                $this->createMock(\Magento\Framework\Json\Helper\Data::class)
+                JsonHelper::class,
+                $this->createMock(JsonHelper::class)
             ],
             [
-                \Magento\Directory\Helper\Data::class,
-                $this->createMock(\Magento\Directory\Helper\Data::class)
+                DirectoryHelper::class,
+                $this->createMock(DirectoryHelper::class)
             ]
         ];
         $objectManager->prepareObjectManager($objects);

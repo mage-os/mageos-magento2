@@ -22,6 +22,7 @@ use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\DataObject;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\Message\Collection;
+use Magento\Framework\Message\ManagerInterface as MessageManagerInterface;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\Registry;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
@@ -124,7 +125,7 @@ class SaveTest extends TestCase
         $this->requestMock = $this->createMock(RequestInterface::class);
         $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
         $this->eventManagerMock = $this->createMock(ManagerInterface::class);
-        $this->messageManagerMock = $this->createMock(\Magento\Framework\Message\ManagerInterface::class);
+        $this->messageManagerMock = $this->createMock(MessageManagerInterface::class);
 
         $this->save = $this->objectManager->getObject(
             Save::class,

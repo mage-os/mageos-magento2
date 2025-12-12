@@ -7,15 +7,21 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Block\Adminhtml\Product\Composite\Fieldset;
 
-use Magento\Catalog\Model\Product\Option\ValueFactory;
 use Magento\Catalog\Block\Adminhtml\Product\Composite\Fieldset\Options;
+use Magento\Catalog\Helper\Data as CatalogHelper;
 use Magento\Catalog\Model\CategoryFactory;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Configuration\Item\OptionFactory;
+use Magento\Catalog\Model\Product\Option as ProductOption;
+use Magento\Catalog\Model\Product\Option\ValueFactory;
 use Magento\Catalog\Model\ProductFactory;
 use Magento\Catalog\Model\ResourceModel\Product\Option;
 use Magento\CatalogInventory\Api\Data\StockItemInterfaceFactory;
 use Magento\Framework\Data\CollectionFactory;
+use Magento\Framework\Json\EncoderInterface;
+use Magento\Framework\Pricing\Helper\Data as PricingHelper;
+use Magento\Framework\Registry;
+use Magento\Framework\Stdlib\ArrayUtils;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Element\Template\Context;
@@ -63,8 +69,11 @@ class OptionsTest extends TestCase
             Context::class,
             ['layout' => $layout]
         );
-        $option = $this->createPartialMock(\Magento\Catalog\Model\Product\Option::class, ['getGroupByType']);
-        $option->method('getGroupByType')->willReturn('date');
+        $optionFactoryMock = $this->createPartialMock(ValueFactory::class, ['create']);
+        $option = $this->_objectHelper->getObject(
+            ProductOption::class,
+            ['resource' => $this->_optionResource, 'optionValueFactory' => $optionFactoryMock]
+        );
         
         $dateBlock = $this->createPartialMockWithReflection(
             Text::class,
@@ -81,12 +90,12 @@ class OptionsTest extends TestCase
             Options::class,
             [
                 'context' => $context,
-                'pricingHelper' => $this->createMock(\Magento\Framework\Pricing\Helper\Data::class),
-                'catalogData' => $this->createMock(\Magento\Catalog\Helper\Data::class),
-                'jsonEncoder' => $this->createMock(\Magento\Framework\Json\EncoderInterface::class),
+                'pricingHelper' => $this->createMock(PricingHelper::class),
+                'catalogData' => $this->createMock(CatalogHelper::class),
+                'jsonEncoder' => $this->createMock(EncoderInterface::class),
                 'option' => $option,
-                'registry' => $this->createMock(\Magento\Framework\Registry::class),
-                'arrayUtils' => $this->createMock(\Magento\Framework\Stdlib\ArrayUtils::class)
+                'registry' => $this->createMock(Registry::class),
+                'arrayUtils' => $this->createMock(ArrayUtils::class)
             ]
         );
 
@@ -114,9 +123,11 @@ class OptionsTest extends TestCase
             )
         );
 
-        $option = $this->createPartialMock(\Magento\Catalog\Model\Product\Option::class, ['getGroupByType', 'getType']);
-        $option->method('getGroupByType')->willReturn('date');
-        $option->method('getType')->willReturn('date');
+        $option = $this->_objectHelper->getObject(
+            ProductOption::class,
+            ['resource' => $this->_optionResource, 'optionValueFactory' => $optionFactoryMock]
+        );
+        $option->setType('date');
         $this->assertEquals('html', $this->_optionsBlock->getOptionHtml($option));
     }
 }

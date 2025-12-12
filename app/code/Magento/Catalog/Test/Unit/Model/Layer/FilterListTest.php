@@ -21,7 +21,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * Check whenever the given filters list matches the expected result
  */
-#[CoversClass(\Magento\Catalog\Model\Layer\FilterList::class)]
+#[CoversClass(FilterList::class)]
 class FilterListTest extends TestCase
 {
     /**

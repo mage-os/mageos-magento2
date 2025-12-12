@@ -136,29 +136,19 @@ class AttributeTest extends TestCase
 
         $backendTableName = 'weee_tax';
 
-        $attributeModel = $this->createPartialMock(
+        $attributeModel = $this->createPartialMockWithReflection(
             Attribute::class,
-            ['getEntityAttribute', 'getConnection', 'getTable']
+            ['getEntityAttribute', 'getConnection', 'getTable'],
+            [
+                $this->contextMock,
+                $this->storeManagerMock,
+                $this->eavEntityTypeMock,
+                $this->eavConfigMock,
+                $this->lockValidatorMock,
+                null,
+                $this->removeProductAttributeDataMock
+            ]
         );
-        // Inject dependencies manually since we're not using a full constructor
-        $reflection = new \ReflectionClass($attributeModel);
-        $property = $reflection->getProperty('_storeManager');
-        $property->setAccessible(true);
-        $property->setValue($attributeModel, $this->storeManagerMock);
-        
-        $eavConfigProperty = $reflection->getProperty('_eavConfig');
-        $eavConfigProperty->setAccessible(true);
-        $eavConfigProperty->setValue($attributeModel, $this->eavConfigMock);
-        
-        $lockValidatorProperty = $reflection->getProperty('attrLockValidator');
-        $lockValidatorProperty->setAccessible(true);
-        $lockValidatorProperty->setValue($attributeModel, $this->lockValidatorMock);
-        
-        // Access parent class property to avoid dynamic property issues in PHP 8.4
-        $parentReflection = new \ReflectionClass(get_parent_class($attributeModel));
-        $removeDataProperty = $parentReflection->getProperty('removeProductAttributeData');
-        $removeDataProperty->setAccessible(true);
-        $removeDataProperty->setValue($attributeModel, $this->removeProductAttributeDataMock);
         
         $attributeModel->expects($this->any())
             ->method('getEntityAttribute')

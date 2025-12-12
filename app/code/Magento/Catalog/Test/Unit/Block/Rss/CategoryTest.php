@@ -11,6 +11,7 @@ use Magento\Catalog\Api\CategoryRepositoryInterface;
 use Magento\Catalog\Block\Rss\Category;
 use Magento\Catalog\Helper\Data;
 use Magento\Catalog\Helper\Image;
+use Magento\Catalog\Model\Category as CategoryModel;
 use Magento\Catalog\Model\CategoryFactory;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ResourceModel\Category\Collection;
@@ -266,7 +267,7 @@ class CategoryTest extends TestCase
             ->willReturn(true);
 
         $category = $this->createPartialMock(
-            \Magento\Catalog\Model\Category::class,
+            CategoryModel::class,
             ['__sleep', 'getTreeModel', 'getResourceCollection', 'getId', 'getName']
         );
 

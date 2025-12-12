@@ -275,57 +275,13 @@ class ProductRepositoryTest extends TestCase
         $this->imageProcessor = $this->createMock(ImageProcessorInterface::class);
 
         $this->storeManager = $this->createMock(StoreManagerInterface::class);
-        
         $this->productExtension = $this->createPartialMockWithReflection(
             ProductExtensionInterface::class,
-            [
-                'getWebsiteIds', 'setWebsiteIds', 'getCategoryLinks', 'setCategoryLinks',
-                'getStockItem', 'setStockItem', 'getDownloadableProductLinks', 'setDownloadableProductLinks',
-                'getDownloadableProductSamples', 'setDownloadableProductSamples',
-                'getConfigurableProductOptions', 'setConfigurableProductOptions',
-                'getConfigurableProductLinks', 'setConfigurableProductLinks',
-                'getBundleProductOptions', 'setBundleProductOptions',
-                'getGiftcardAmounts', 'setGiftcardAmounts', 'getDiscounts', 'setDiscounts',
-                '__toArray'
-            ]
+            ['__toArray']
         );
-        $data = [];
-        $this->productExtension->method('getWebsiteIds')->willReturnCallback(function () use (&$data) {
-            return $data['website_ids'] ?? null;
-        });
-        $this->productExtension->method('setWebsiteIds')->willReturnCallback(function ($v) use (&$data) {
-            $data['website_ids'] = $v;
-            return $this->productExtension;
-        });
-        $this->productExtension->method('getCategoryLinks')->willReturnCallback(function () use (&$data) {
-            return $data['category_links'] ?? null;
-        });
-        $this->productExtension->method('setCategoryLinks')->willReturnCallback(function ($v) use (&$data) {
-            $data['category_links'] = $v;
-            return $this->productExtension;
-        });
-        $this->productExtension->method('getStockItem')->willReturnCallback(function () use (&$data) {
-            return $data['stock_item'] ?? null;
-        });
-        $this->productExtension->method('setStockItem')->willReturnCallback(function ($v) use (&$data) {
-            $data['stock_item'] = $v;
-            return $this->productExtension;
-        });
-        $this->productExtension->method('getDownloadableProductLinks')->willReturn(null);
-        $this->productExtension->method('setDownloadableProductLinks')->willReturnSelf();
-        $this->productExtension->method('getDownloadableProductSamples')->willReturn(null);
-        $this->productExtension->method('setDownloadableProductSamples')->willReturnSelf();
-        $this->productExtension->method('getConfigurableProductOptions')->willReturn(null);
-        $this->productExtension->method('setConfigurableProductOptions')->willReturnSelf();
-        $this->productExtension->method('getConfigurableProductLinks')->willReturn(null);
-        $this->productExtension->method('setConfigurableProductLinks')->willReturnSelf();
-        $this->productExtension->method('getBundleProductOptions')->willReturn(null);
-        $this->productExtension->method('setBundleProductOptions')->willReturnSelf();
-        $this->productExtension->method('getGiftcardAmounts')->willReturn(null);
-        $this->productExtension->method('setGiftcardAmounts')->willReturnSelf();
-        $this->productExtension->method('getDiscounts')->willReturn(null);
-        $this->productExtension->method('setDiscounts')->willReturnSelf();
-        $this->productExtension->method('__toArray')->willReturn([]);
+        $this->productExtension
+            ->method('__toArray')
+            ->willReturn([]);
         
         $this->product
             ->method('getExtensionAttributes')
@@ -985,13 +941,6 @@ class ProductRepositoryTest extends TestCase
      */
     public static function cacheKeyDataProvider(): array
     {
-        // There is no use of below object
-//        $anyObject = $this->getMockBuilder(\stdClass::class)->addMethods(['getId'])
-//            ->disableOriginalConstructor()
-//            ->getMock();
-//        $anyObject->expects($this->any())
-//            ->method('getId')
-//            ->willReturn(123);
 
         return [
             [

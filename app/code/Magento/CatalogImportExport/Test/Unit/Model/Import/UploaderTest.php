@@ -274,7 +274,6 @@ class UploaderTest extends TestCase
         $reflection = new \ReflectionClass($readFactory);
         if ($reflection->hasProperty('driverPool')) {
             $property = $reflection->getProperty('driverPool');
-            $property->setAccessible(true);
             $property->setValue($readFactory, $driverPool);
         }
 

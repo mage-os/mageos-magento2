@@ -16,6 +16,8 @@ use Magento\Catalog\Model\Entity\Attribute;
 use Magento\Catalog\Model\Product\Attribute\Frontend\Inputtype\Presentation;
 use Magento\Catalog\Model\Product\AttributeSet\Build;
 use Magento\Catalog\Model\Product\AttributeSet\BuildFactory;
+use Magento\Catalog\Model\Product\Url;
+use Magento\Catalog\Model\ResourceModel\Eav\Attribute as ResourceAttribute;
 use Magento\Catalog\Model\ResourceModel\Eav\AttributeFactory;
 use Magento\Catalog\Test\Unit\Controller\Adminhtml\Product\AttributeTest;
 use Magento\Eav\Api\Data\AttributeSetInterface;
@@ -551,10 +553,10 @@ class SaveTest extends AttributeTest
             ->willReturn(null);
 
         // Prepare Action->_objectManager to control generateCode formatting
-        $urlMock = $this->createPartialMock(\Magento\Catalog\Model\Product\Url::class, ['formatUrlKey']);
+        $urlMock = $this->createPartialMock(Url::class, ['formatUrlKey']);
         $urlMock->method('formatUrlKey')->with('My Label')->willReturn('my label');
-        $omInterface = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
-        $omInterface->method('create')->with(\Magento\Catalog\Model\Product\Url::class)->willReturn($urlMock);
+        $omInterface = $this->createMock(ObjectManagerInterface::class);
+        $omInterface->method('create')->with(Url::class)->willReturn($urlMock);
 
         $model = $this->getModel();
         $this->objectManager->setBackwardCompatibleProperty(
@@ -959,7 +961,7 @@ class SaveTest extends AttributeTest
     private function createAttributeFactoryForGroupCollectionTest()
     {
         $attributeModel = $this->createPartialMock(
-            \Magento\Catalog\Model\ResourceModel\Eav\Attribute::class,
+            ResourceAttribute::class,
             [
                 'getDefaultValueByInput',
                 'getBackendType',

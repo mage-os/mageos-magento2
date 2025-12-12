@@ -9,6 +9,7 @@ namespace Magento\Catalog\Test\Unit\Helper;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Helper\Product;
+use Magento\Catalog\Model\Product as ProductModel;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\TestCase;
 
@@ -47,7 +48,7 @@ class ProductTest extends TestCase
 
     protected function getMockForCatalogProduct($method)
     {
-        $product = $this->createMock(\Magento\Catalog\Model\Product::class);
+        $product = $this->createMock(ProductModel::class);
         if ($method!=null) {
             $product->expects(
                 $this->once()

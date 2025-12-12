@@ -8,17 +8,19 @@ declare(strict_types=1);
 namespace Magento\Catalog\Test\Unit\Block\Adminhtml\Product\Helper\Form;
 
 use Magento\Catalog\Block\Adminhtml\Product\Helper\Form\Weight;
+use Magento\Directory\Helper\Data;
+use Magento\Framework\App\ObjectManager as AppObjectManager;
 use Magento\Framework\Data\Form;
 use Magento\Framework\Data\Form\Element\CollectionFactory;
 use Magento\Framework\Data\Form\Element\Factory;
 use Magento\Framework\Data\Form\Element\Radios;
+use Magento\Framework\Escaper;
 use Magento\Framework\Locale\Format;
 use Magento\Framework\Math\Random;
+use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Helper\SecureHtmlRenderer;
-use Magento\Framework\Escaper;
-use Magento\Directory\Helper\Data;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -68,8 +70,8 @@ class WeightTest extends TestCase
     protected function setUp(): void
     {
         // Create minimal ObjectManager mock
-        $objectManagerMock = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
-        \Magento\Framework\App\ObjectManager::setInstance($objectManagerMock);
+        $objectManagerMock = $this->createMock(ObjectManagerInterface::class);
+        AppObjectManager::setInstance($objectManagerMock);
 
         $this->weightSwitcher = $this->createPartialMock(Radios::class, ['__call']);
         $this->weightSwitcher->method('__call')->willReturnSelf();

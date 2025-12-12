@@ -17,6 +17,7 @@ use Magento\Catalog\Model\ResourceModel\Product\Attribute\Backend\GroupPrice\Abs
 use Magento\Catalog\Model\ResourceModel\Product\Collection;
 use Magento\Catalog\Model\ResourceModel\Product\Collection\ProductLimitation;
 use Magento\Catalog\Model\ResourceModel\Product\Collection\ProductLimitationFactory;
+use Magento\Catalog\Model\ResourceModel\Eav\Attribute as EavAttribute;
 use Magento\Catalog\Model\ResourceModel\Product\Gallery;
 use Magento\Catalog\Model\ResourceModel\Url;
 use Magento\Customer\Api\GroupManagementInterface;
@@ -24,6 +25,7 @@ use Magento\Customer\Model\Session;
 use Magento\Eav\Model\Config;
 use Magento\Eav\Model\Entity\AbstractEntity;
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
+use Magento\Eav\Model\EntityFactory as EavEntityFactory;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\Data\Collection\Db\FetchStrategyInterface;
@@ -119,7 +121,7 @@ class CollectionTest extends TestCase
         $eventManager = $this->createMock(ManagerInterface::class);
         $eavConfig = $this->createMock(Config::class);
         $resource = $this->createMock(ResourceConnection::class);
-        $eavEntityFactory = $this->createMock(\Magento\Eav\Model\EntityFactory::class);
+        $eavEntityFactory = $this->createMock(EavEntityFactory::class);
         $resourceHelper = $this->createMock(Helper::class);
         $universalFactory = $this->createMock(UniversalFactory::class);
         
@@ -271,7 +273,7 @@ class CollectionTest extends TestCase
     {
         $customerGroupId = 2;
         $itemMock = $this->createPartialMock(Product::class, ['getData']);
-        $attributeMock = $this->createPartialMock(\Magento\Catalog\Model\ResourceModel\Eav\Attribute::class, ['getBackend', 'isScopeGlobal']);
+        $attributeMock = $this->createPartialMock(EavAttribute::class, ['getBackend', 'isScopeGlobal']);
         $backend = $this->createMock(Tierprice::class);
         $resource = $this->createMock(AbstractGroupPrice::class);
         $select = $this->createMock(Select::class);
@@ -315,7 +317,7 @@ class CollectionTest extends TestCase
     public function testAddTierPriceData()
     {
         $itemMock = $this->createPartialMock(Product::class, ['getData']);
-        $attributeMock = $this->createPartialMock(\Magento\Catalog\Model\ResourceModel\Eav\Attribute::class, ['getBackend', 'isScopeGlobal']);
+        $attributeMock = $this->createPartialMock(EavAttribute::class, ['getBackend', 'isScopeGlobal']);
         $backend = $this->createMock(Tierprice::class);
         $resource = $this->createMock(AbstractGroupPrice::class);
         $select = $this->createMock(Select::class);

@@ -13,6 +13,7 @@ use Magento\Catalog\Model\Product\Compare\ItemFactory;
 use Magento\Catalog\Model\Product\Compare\ListCompare;
 use Magento\Catalog\Model\ResourceModel\Product\Compare\Item;
 use Magento\Catalog\Model\ResourceModel\Product\Compare\Item\CollectionFactory;
+use Magento\Catalog\Model\Session as CatalogSession;
 use Magento\Customer\Model\Session;
 use Magento\Customer\Model\Visitor;
 use Magento\Framework\App\Action\Context;
@@ -56,7 +57,7 @@ class IndexTest extends TestCase
     /** @var ListCompare|MockObject */
     protected $listCompareMock;
 
-    /** @var \Magento\Catalog\Model\Session|MockObject */
+    /** @var CatalogSession|MockObject */
     protected $catalogSession;
 
     /** @var StoreManagerInterface|MockObject */
@@ -111,7 +112,7 @@ class IndexTest extends TestCase
         $this->visitorMock = $this->createMock(Visitor::class);
         $this->listCompareMock = $this->createMock(ListCompare::class);
         $this->catalogSession = $this->createPartialMockWithReflection(
-            \Magento\Catalog\Model\Session::class,
+            CatalogSession::class,
             ['setBeforeCompareUrl', 'getBeforeCompareUrl']
         );
         $this->catalogSession->method('setBeforeCompareUrl')->willReturnSelf();

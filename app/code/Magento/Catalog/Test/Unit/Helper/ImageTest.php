@@ -8,9 +8,11 @@ declare(strict_types=1);
 namespace Magento\Catalog\Test\Unit\Helper;
 
 use PHPUnit\Framework\Attributes\DataProvider;
+use Magento\Catalog\Block\Product\ImageFactory;
 use Magento\Catalog\Helper\Image;
 use Magento\Catalog\Model\Config\CatalogMediaConfig;
 use Magento\Catalog\Model\Product;
+use Magento\Catalog\Model\Product\Image as ProductImage;
 use Magento\Catalog\Model\Product\ImageFactory as ProductImageFactory;
 use Magento\Catalog\Model\View\Asset\PlaceholderFactory;
 use Magento\Framework\App\Config\ScopeConfigInterface;
@@ -38,7 +40,7 @@ class ImageTest extends TestCase
     protected $context;
 
     /**
-     * @var \Magento\Catalog\Block\Product\ImageFactory|MockObject
+     * @var ImageFactory|MockObject
      */
     protected $imageFactory;
 
@@ -58,7 +60,7 @@ class ImageTest extends TestCase
     protected $viewConfig;
 
     /**
-     * @var \Magento\Catalog\Model\Product\Image|MockObject
+     * @var ProductImage|MockObject
      */
     protected $image;
 
@@ -114,7 +116,7 @@ class ImageTest extends TestCase
     {
         $this->imageFactory = $this->createPartialMock(ProductImageFactory::class, ['create']);
 
-        $this->image = $this->createMock(\Magento\Catalog\Model\Product\Image::class);
+        $this->image = $this->createMock(ProductImage::class);
         $this->imageFactory->method('create')->willReturn($this->image);
     }
 

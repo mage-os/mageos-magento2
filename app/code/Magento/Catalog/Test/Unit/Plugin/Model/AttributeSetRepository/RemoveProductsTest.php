@@ -12,6 +12,7 @@ use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
 use Magento\Catalog\Plugin\Model\AttributeSetRepository\RemoveProducts;
 use Magento\Eav\Api\AttributeSetRepositoryInterface;
 use Magento\Eav\Api\Data\AttributeSetInterface;
+use Magento\Eav\Model\Entity\Attribute\Set as AttributeSet;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -70,26 +71,11 @@ class RemoveProductsTest extends TestCase
         /** @var AttributeSetRepositoryInterface|MockObject $attributeSetRepository */
         $attributeSetRepository = $this->createMock(AttributeSetRepositoryInterface::class);
 
-        /** @var AttributeSetInterface|MockObject $attributeSet */
-        $attributeSet = $this->createPartialMockWithReflection(
-            AttributeSetInterface::class,
-            ['getAttributeSetId', 'setAttributeSetId', 'getAttributeSetName', 'setAttributeSetName',
-             'getSortOrder', 'setSortOrder', 'getEntityTypeId', 'setEntityTypeId',
-             'getExtensionAttributes', 'setExtensionAttributes', 'getId']
-        );
-        $attributeSet->method('getAttributeSetId')->willReturn($attributeSetId);
+        /** @var AttributeSet|MockObject $attributeSet */
+        $attributeSet = $this->createPartialMock(AttributeSet::class, ['getId']);
         $attributeSet->expects(self::once())
             ->method('getId')
             ->willReturn($attributeSetId);
-        $attributeSet->method('setAttributeSetId')->willReturnSelf();
-        $attributeSet->method('getAttributeSetName')->willReturn(null);
-        $attributeSet->method('setAttributeSetName')->willReturnSelf();
-        $attributeSet->method('getSortOrder')->willReturn(null);
-        $attributeSet->method('setSortOrder')->willReturnSelf();
-        $attributeSet->method('getEntityTypeId')->willReturn(null);
-        $attributeSet->method('setEntityTypeId')->willReturnSelf();
-        $attributeSet->method('getExtensionAttributes')->willReturn(null);
-        $attributeSet->method('setExtensionAttributes')->willReturnSelf();
 
         self::assertTrue($this->testSubject->afterDelete($attributeSetRepository, true, $attributeSet));
     }

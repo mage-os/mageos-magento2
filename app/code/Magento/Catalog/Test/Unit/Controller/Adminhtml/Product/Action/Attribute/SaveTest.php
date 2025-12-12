@@ -10,6 +10,7 @@ namespace Magento\Catalog\Test\Unit\Controller\Adminhtml\Product\Action\Attribut
 use Magento\Backend\App\Action\Context;
 use Magento\Catalog\Controller\Adminhtml\Product\Action\Attribute\Save;
 use Magento\Catalog\Helper\Product\Edit\Action\Attribute as AttributeHelper;
+use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ProductFactory;
 use Magento\Eav\Model\Config as EavConfig;
 use Magento\Framework\App\RequestInterface;
@@ -79,7 +80,7 @@ class SaveTest extends TestCase
         $productFactory = $this->createMock(ProductFactory::class);
         $dateTimeFilter = $this->createMock(DateTimeFilter::class);
 
-        $product = $this->createPartialMock(\Magento\Catalog\Model\Product::class, ['setData', 'getSpecialToDate']);
+        $product = $this->createPartialMock(Product::class, ['setData', 'getSpecialToDate']);
         $product->method('setData')->with([
             'special_from_date' => '2025-09-10 00:00:00',
             'special_to_date' => '2025-09-01 00:00:00',
@@ -143,7 +144,7 @@ class SaveTest extends TestCase
         $productFactory = $this->createMock(ProductFactory::class);
         $dateTimeFilter = $this->createMock(DateTimeFilter::class);
 
-        $product = $this->createPartialMock(\Magento\Catalog\Model\Product::class, ['setData', 'getSpecialToDate']);
+        $product = $this->createPartialMock(Product::class, ['setData', 'getSpecialToDate']);
         $product->method('setData')->with([
             'special_from_date' => '2025-09-01 00:00:00',
             'special_to_date' => '2025-09-10 00:00:00',

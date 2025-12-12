@@ -8,12 +8,14 @@ declare(strict_types=1);
 namespace Magento\Catalog\Test\Unit\Model\Layer\Filter;
 
 use Magento\Catalog\Model\Layer;
+use Magento\Catalog\Model\Layer\Filter\Attribute as FilterAttribute;
 use Magento\Catalog\Model\Layer\Filter\Item;
 use Magento\Catalog\Model\Layer\Filter\Item\DataBuilder;
 use Magento\Catalog\Model\Layer\Filter\ItemFactory;
 use Magento\Catalog\Model\Layer\State;
 use Magento\Catalog\Model\ResourceModel\Layer\Filter\Attribute;
 use Magento\Catalog\Model\ResourceModel\Layer\Filter\AttributeFactory;
+use Magento\Eav\Model\Entity\Attribute as EntityAttribute;
 use Magento\Eav\Model\Entity\Attribute\Frontend\AbstractFrontend;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Filter\StripTags;
@@ -36,7 +38,7 @@ class AttributeTest extends TestCase
     private $filterAttribute;
 
     /**
-     * @var \Magento\Catalog\Model\Layer\Filter\Attribute
+     * @var FilterAttribute
      */
     private $target;
 
@@ -51,7 +53,7 @@ class AttributeTest extends TestCase
     private $state;
 
     /**
-     * @var \Magento\Eav\Model\Entity\Attribute|MockObject
+     * @var EntityAttribute|MockObject
      */
     private $attribute;
 
@@ -117,7 +119,7 @@ class AttributeTest extends TestCase
 
         $this->frontend = $this->createPartialMock(AbstractFrontend::class, ['getOption', 'getSelectOptions']);
         $this->attribute = $this->createPartialMock(
-            \Magento\Eav\Model\Entity\Attribute::class,
+            EntityAttribute::class,
             ['getAttributeCode', 'getFrontend']
         );
         $this->attribute->expects($this->atLeastOnce())
@@ -142,7 +144,7 @@ class AttributeTest extends TestCase
 
         $objectManagerHelper = new ObjectManagerHelper($this);
         $this->target = $objectManagerHelper->getObject(
-            \Magento\Catalog\Model\Layer\Filter\Attribute::class,
+            FilterAttribute::class,
             [
                 'filterItemFactory' => $this->filterItemFactory,
                 'storeManager' => $this->storeManager,

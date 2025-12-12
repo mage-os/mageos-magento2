@@ -14,7 +14,7 @@ use Magento\Customer\Model\ResourceModel\Visitor;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(\Magento\Catalog\Model\Plugin\Log::class)]
+#[CoversClass(Log::class)]
 class LogTest extends TestCase
 {
     /**

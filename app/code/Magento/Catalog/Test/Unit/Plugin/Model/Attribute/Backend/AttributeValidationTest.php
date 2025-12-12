@@ -110,27 +110,8 @@ class AttributeValidationTest extends TestCase
             return $storeId;
         });
         
-        $this->storeManagerMock = $this->createPartialMockWithReflection(
-            StoreManagerInterface::class,
-            [
-                'setStore', 'getStore', 'setIsSingleStoreModeAllowed', 'hasSingleStore',
-                'isSingleStoreMode', 'getStores', 'getWebsite', 'getWebsites',
-                'reinitStores', 'getDefaultStoreView', 'getGroup', 'getGroups', 'setCurrentStore'
-            ]
-        );
-        $this->storeManagerMock->method('setStore')->willReturnSelf();
+        $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
         $this->storeManagerMock->method('getStore')->willReturn($this->storeMock);
-        $this->storeManagerMock->method('setIsSingleStoreModeAllowed')->willReturnSelf();
-        $this->storeManagerMock->method('hasSingleStore')->willReturn(false);
-        $this->storeManagerMock->method('isSingleStoreMode')->willReturn(false);
-        $this->storeManagerMock->method('getStores')->willReturn([]);
-        $this->storeManagerMock->method('getWebsite')->willReturn(null);
-        $this->storeManagerMock->method('getWebsites')->willReturn([]);
-        $this->storeManagerMock->method('reinitStores')->willReturn(null);
-        $this->storeManagerMock->method('getDefaultStoreView')->willReturn(null);
-        $this->storeManagerMock->method('getGroup')->willReturn(null);
-        $this->storeManagerMock->method('getGroups')->willReturn([]);
-        $this->storeManagerMock->method('setCurrentStore')->willReturnSelf();
 
         $this->entityMock = $this->createMock(DataObject::class);
 

@@ -122,39 +122,9 @@ class FinalPriceBoxTest extends TestCase
         $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
         \Magento\Framework\App\ObjectManager::setInstance($this->objectManagerMock);
         
-        $productData = ['priceInfo' => null, 'canShowPrice' => true];
-        
-        $this->product = $this->createPartialMockWithReflection(
-            Product::class,
-            ['setPriceInfo', 'getPriceInfo', 'setCanShowPrice', 'getCanShowPrice', 'getId']
-        );
-        
-        $this->product->method('setPriceInfo')->willReturnCallback(
-            function ($priceInfo) use (&$productData) {
-                $productData['priceInfo'] = $priceInfo;
-            }
-        );
-        
-        $this->product->method('getPriceInfo')->willReturnCallback(
-            function () use (&$productData) {
-                return $productData['priceInfo'];
-            }
-        );
-        
-        $this->product->method('setCanShowPrice')->willReturnCallback(
-            function ($canShow) use (&$productData) {
-                $productData['canShowPrice'] = $canShow;
-            }
-        );
-        
-        $this->product->method('getCanShowPrice')->willReturnCallback(
-            function () use (&$productData) {
-                return $productData['canShowPrice'];
-            }
-        );
-        
         $this->priceInfo = $this->createMock(PriceInfoInterface::class);
-        $this->product->setPriceInfo($this->priceInfo);
+        $this->product = $this->createPartialMock(Product::class, ['getPriceInfo', 'getId']);
+        $this->product->method('getPriceInfo')->willReturn($this->priceInfo);
 
         $eventManager = $this->createMock(ManagerStub::class);
         $this->layout = $this->createMock(Layout::class);
@@ -171,44 +141,8 @@ class FinalPriceBoxTest extends TestCase
         $urlBuilder = $this->createMock(UrlInterface::class);
 
         $store = $this->createMock(StoreInterface::class);
-        
-        $storeManagerData = ['store' => null];
-        
-        $storeManager = $this->createPartialMockWithReflection(
-            StoreManagerInterface::class,
-            [
-                'setStore', 'getStore', 'isSingleStoreMode', 'getWebsites',
-                'setIsSingleStoreModeAllowed', 'hasSingleStore', 'getStores',
-                'getWebsite', 'getDefaultStoreView', 'getGroup', 'getGroups',
-                'setCurrentStore', 'reinitStores'
-            ]
-        );
-        
-        $storeManager->method('setStore')->willReturnCallback(
-            function ($storeValue) use (&$storeManagerData) {
-                $storeManagerData['store'] = $storeValue;
-            }
-        );
-        
-        $storeManager->method('getStore')->willReturnCallback(
-            function () use (&$storeManagerData) {
-                return $storeManagerData['store'];
-            }
-        );
-        
-        $storeManager->method('setIsSingleStoreModeAllowed')->willReturn(null);
-        $storeManager->method('hasSingleStore')->willReturn(false);
-        $storeManager->method('isSingleStoreMode')->willReturn(false);
-        $storeManager->method('getStores')->willReturn([]);
-        $storeManager->method('getWebsite')->willReturn(null);
-        $storeManager->method('getWebsites')->willReturn([]);
-        $storeManager->method('getDefaultStoreView')->willReturn(null);
-        $storeManager->method('getGroup')->willReturn(null);
-        $storeManager->method('getGroups')->willReturn([]);
-        $storeManager->method('setCurrentStore')->willReturn(null);
-        $storeManager->method('reinitStores')->willReturn(null);
-        
-        $storeManager->setStore($store);
+        $storeManager = $this->createMock(StoreManagerInterface::class);
+        $storeManager->method('getStore')->willReturn($store);
 
         $scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
         $context = $this->createMock(Context::class);

@@ -17,12 +17,12 @@ use Magento\Catalog\Helper\Product\View as ViewHelper;
 use Magento\Catalog\Model\Design;
 use Magento\Catalog\Model\ProductRepository;
 use Magento\Framework\App\Action\Context;
+use Magento\Framework\App\Request\Http;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Controller\Result\ForwardFactory;
 use Magento\Framework\DataObject;
 use Magento\Framework\Json\Helper\Data;
 use Magento\Framework\ObjectManager\ObjectManager;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\View\Result\Page;
 use Magento\Framework\View\Result\PageFactory;
 use Magento\Store\Model\Store;
@@ -38,7 +38,6 @@ use Psr\Log\LoggerInterface;
  */
 class ViewTest extends TestCase
 {
-    use MockCreationTrait;
     /**
      * @var View
      */
@@ -105,24 +104,10 @@ class ViewTest extends TestCase
     protected function setUp(): void
     {
         $contextMock = $this->createMock(Context::class);
-        $this->requestMock = $this->createPartialMockWithReflection(
-            RequestInterface::class,
-            [
-                'getParam', 'setParam', 'setParams', 'getParams', 'isPost',
-                'getModuleName', 'setModuleName', 'getActionName', 'setActionName',
-                'getCookie', 'getDistroBaseUrl', 'getRequestUri', 'getScheme', 'isSecure'
-            ]
+        $this->requestMock = $this->createPartialMock(
+            Http::class,
+            ['getParam', 'isPost']
         );
-        $this->requestMock->method('getModuleName')->willReturn('catalog');
-        $this->requestMock->method('setModuleName')->willReturnSelf();
-        $this->requestMock->method('getActionName')->willReturn('product');
-        $this->requestMock->method('setActionName')->willReturnSelf();
-        $this->requestMock->method('isPost')->willReturn(false);
-        $this->requestMock->method('getCookie')->willReturn(null);
-        $this->requestMock->method('getDistroBaseUrl')->willReturn('');
-        $this->requestMock->method('getRequestUri')->willReturn('/');
-        $this->requestMock->method('getScheme')->willReturn('http');
-        $this->requestMock->method('isSecure')->willReturn(false);
         $contextMock->method('getRequest')->willReturn($this->requestMock);
         $objectManagerMock = $this->createMock(ObjectManager::class);
         $this->helperProduct = $this->createMock(Product::class);
@@ -173,6 +158,7 @@ class ViewTest extends TestCase
     public function testExecute(): void
     {
         $themeId = 3;
+        $this->requestMock->method('isPost')->willReturn(false);
         $this->productRepositoryMock->method('getById')
             ->willReturn($this->productInterfaceMock);
         $dataObjectMock = $this->createPartialMock(DataObject::class, []);
@@ -202,7 +188,7 @@ class ViewTest extends TestCase
             ->willReturn($this->productInterfaceMock);
         $this->productRepositoryMock->method('getById')
             ->willReturn($this->productInterfaceMock);
-        $dataObjectMock = $this->createPartialMock(\Magento\Framework\DataObject::class, []);
+        $dataObjectMock = $this->createPartialMock(DataObject::class, []);
         $dataObjectMock->setData('custom_design', null);
         $this->catalogDesignMock->method('getDesignSettings')->willReturn($dataObjectMock);
         $pageMock = $this->createMock(Page::class);

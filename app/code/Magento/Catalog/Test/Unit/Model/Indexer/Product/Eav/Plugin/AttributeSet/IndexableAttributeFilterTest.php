@@ -10,6 +10,7 @@ namespace Magento\Catalog\Test\Unit\Model\Indexer\Product\Eav\Plugin\AttributeSe
 use Magento\Catalog\Model\Indexer\Product\Eav\Plugin\AttributeSet\IndexableAttributeFilter;
 use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
 use Magento\Catalog\Model\ResourceModel\Eav\AttributeFactory;
+use Magento\Eav\Model\Entity\Attribute as EntityAttribute;
 use Magento\Eav\Model\Entity\Attribute\Group;
 use Magento\Eav\Model\Entity\Attribute\Set;
 use PHPUnit\Framework\TestCase;
@@ -35,7 +36,7 @@ class IndexableAttributeFilterTest extends TestCase
             ->willReturn($catalogResourceMock);
 
         $attributeMock1 = $this->createPartialMock(
-            \Magento\Eav\Model\Entity\Attribute::class,
+            EntityAttribute::class,
             ['getId', 'getAttributeId', 'getAttributeCode', 'load']
         );
         $attributeMock1->method('getAttributeCode')->willReturn('indexable_attribute');
@@ -44,7 +45,7 @@ class IndexableAttributeFilterTest extends TestCase
             ->willReturnSelf();
 
         $attributeMock2 = $this->createPartialMock(
-            \Magento\Eav\Model\Entity\Attribute::class,
+            EntityAttribute::class,
             ['getId', 'getAttributeId', 'getAttributeCode', 'load']
         );
         $attributeMock2->method('getAttributeCode')->willReturn('non_indexable_attribute');

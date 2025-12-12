@@ -14,7 +14,7 @@ use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\ReservedAttributeList;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(\Magento\Catalog\Model\Product\ReservedAttributeList::class)]
+#[CoversClass(ReservedAttributeList::class)]
 class ReservedAttributeListTest extends TestCase
 {
     /**

@@ -13,6 +13,8 @@ use Magento\Catalog\Model\Product\Link;
 use Magento\Catalog\Model\Product\Link\SaveHandler;
 use Magento\Catalog\Model\ResourceModel\Product\Link\Collection;
 use Magento\Catalog\Model\ResourceModel\Product\Link\CollectionFactory;
+use Magento\Catalog\Model\ResourceModel\Product\Link\Product\Collection as ProductCollection;
+use Magento\Catalog\Model\ResourceModel\Product\Link\Product\CollectionFactory as ProductCollectionFactory;
 use Magento\Framework\Model\ResourceModel\AbstractResource;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
@@ -52,12 +54,12 @@ class LinkTest extends TestCase
         $linkCollectionFactory = $this->createPartialMock(CollectionFactory::class, ['create']);
         $linkCollectionFactory->method('create')->willReturn($linkCollection);
         $this->productCollection = $this->createPartialMock(
-            \Magento\Catalog\Model\ResourceModel\Product\Link\Product\Collection::class,
+            ProductCollection::class,
             ['setLinkModel']
         );
         $this->productCollection->expects($this->any())->method('setLinkModel')->willReturnSelf();
         $productCollectionFactory = $this->createPartialMock(
-            \Magento\Catalog\Model\ResourceModel\Product\Link\Product\CollectionFactory::class,
+            ProductCollectionFactory::class,
             ['create']
         );
         $productCollectionFactory->method('create')->willReturn($this->productCollection);
@@ -138,7 +140,7 @@ class LinkTest extends TestCase
     public function testGetProductCollection()
     {
         $this->assertInstanceOf(
-            \Magento\Catalog\Model\ResourceModel\Product\Link\Product\Collection::class,
+            ProductCollection::class,
             $this->model->getProductCollection()
         );
     }

@@ -15,7 +15,7 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(\Magento\Catalog\Controller\Adminhtml\Product\Initialization\StockDataFilter::class)]
+#[CoversClass(StockDataFilter::class)]
 class StockDataFilterTest extends TestCase
 {
     /**

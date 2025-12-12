@@ -10,6 +10,7 @@ namespace Magento\Catalog\Test\Unit\Block\Adminhtml\Rss;
 use Magento\Backend\Block\Context;
 use Magento\Catalog\Block\Adminhtml\Rss\NotifyStock;
 use Magento\Catalog\Model\Product;
+use Magento\Catalog\Model\Rss\Product\NotifyStock as RssNotifyStock;
 use Magento\Framework\App\Rss\UrlBuilderInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Framework\UrlInterface;
@@ -34,7 +35,7 @@ class NotifyStockTest extends TestCase
     protected $context;
 
     /**
-     * @var \Magento\Catalog\Model\Rss\Product\NotifyStock|MockObject
+     * @var RssNotifyStock|MockObject
      */
     protected $rssModel;
 
@@ -69,7 +70,7 @@ class NotifyStockTest extends TestCase
     protected function setUp(): void
     {
         $this->rssModel = $this->createPartialMock(
-            \Magento\Catalog\Model\Rss\Product\NotifyStock::class,
+            RssNotifyStock::class,
             ['getProductsCollection']
         );
         $this->rssUrlBuilder = $this->createMock(UrlBuilderInterface::class);

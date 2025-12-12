@@ -27,6 +27,7 @@ use Magento\Catalog\Model\Product\Option;
 use Magento\Catalog\Model\ProductLink\Link as ProductLink;
 use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
 use Magento\Eav\Model\Entity\Attribute\Backend\DefaultBackend;
+use Magento\Framework\App\Request\Http;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Locale\Format;
 use Magento\Framework\Locale\FormatInterface;
@@ -133,7 +134,7 @@ class HelperTest extends TestCase
             ['create']
         );
         $this->productRepositoryMock = $this->createMock(ProductRepository::class);
-        $this->requestMock = $this->createMock(\Magento\Framework\App\Request\Http::class);
+        $this->requestMock = $this->createMock(Http::class);
         $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
         $this->stockFilterMock = $this->createMock(StockDataFilter::class);
 

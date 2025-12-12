@@ -18,7 +18,7 @@ use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(\Magento\CatalogSearch\Model\Layer\Search\StateKey::class)]
+#[CoversClass(StateKey::class)]
 class StateKeyTest extends TestCase
 {
     /**

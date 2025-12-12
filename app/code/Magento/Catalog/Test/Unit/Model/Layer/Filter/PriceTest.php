@@ -14,6 +14,8 @@ use Magento\Catalog\Model\Layer\Filter\DataProvider\PriceFactory;
 use Magento\Catalog\Model\Layer\Filter\Dynamic\AlgorithmFactory;
 use Magento\Catalog\Model\Layer\Filter\Dynamic\Auto;
 use Magento\Catalog\Model\Layer\Filter\Item;
+use Magento\Catalog\Model\Layer\Filter\Price as FilterPrice;
+use Magento\Catalog\Model\ResourceModel\Layer\Filter\Price as PriceResource;
 use Magento\Catalog\Model\Layer\Filter\Item\DataBuilder;
 use Magento\Catalog\Model\Layer\Filter\ItemFactory;
 use Magento\Catalog\Model\Layer\State;
@@ -39,7 +41,7 @@ class PriceTest extends TestCase
     private $itemDataBuilder;
 
     /**
-     * @var \Magento\Catalog\Model\ResourceModel\Layer\Filter\Price|MockObject
+     * @var PriceResource|MockObject
      */
     private $resource;
 
@@ -59,7 +61,7 @@ class PriceTest extends TestCase
     private $dataProvider;
 
     /**
-     * @var \Magento\Catalog\Model\Layer\Filter\Price
+     * @var FilterPrice
      */
     private $target;
 
@@ -94,7 +96,7 @@ class PriceTest extends TestCase
         $dataProviderFactory = $this->createPartialMock(PriceFactory::class, ['create']);
 
         $this->resource = $this->createPartialMock(
-            \Magento\Catalog\Model\ResourceModel\Layer\Filter\Price::class,
+            PriceResource::class,
             ['applyPriceRange']
         );
 
@@ -176,7 +178,7 @@ class PriceTest extends TestCase
 
         $objectManagerHelper = new ObjectManagerHelper($this);
         $this->target = $objectManagerHelper->getObject(
-            \Magento\Catalog\Model\Layer\Filter\Price::class,
+            FilterPrice::class,
             [
                 'dataProviderFactory' => $dataProviderFactory,
                 'layer' => $this->layer,

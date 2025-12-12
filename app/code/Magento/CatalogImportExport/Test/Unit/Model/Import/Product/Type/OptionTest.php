@@ -8,9 +8,15 @@ declare(strict_types=1);
 namespace Magento\CatalogImportExport\Test\Unit\Model\Import\Product\Type;
 
 use PHPUnit\Framework\Attributes\CoversClass;
+use Magento\Catalog\Model\Product\Option as ProductOption;
+use Magento\Catalog\Model\ResourceModel\Product\Option\Collection as OptionCollection;
+use Magento\Catalog\Model\ResourceModel\Product\Option\CollectionFactory as OptionCollectionFactory;
 use Magento\Catalog\Model\ResourceModel\Product\Option\Value\CollectionFactory;
 use Magento\Catalog\Model\ProductFactory;
+use Magento\Framework\DataObject;
+use Magento\ImportExport\Model\ResourceModel\CollectionByPagesIterator;
 use Magento\ImportExport\Model\ResourceModel\CollectionByPagesIteratorFactory;
+use Magento\ImportExport\Model\ResourceModel\Import\Data as ImportData;
 use Magento\Framework\Model\ResourceModel\Db\TransactionManagerInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Api\Data\ProductInterface;
@@ -44,7 +50,7 @@ use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
-#[CoversClass(\Magento\CatalogImportExport\Model\Import\Product\Option::class)]
+#[CoversClass(Option::class)]
 class OptionTest extends AbstractImportTestCase
 {
     use MockCreationTrait;
@@ -299,12 +305,12 @@ class OptionTest extends AbstractImportTestCase
         $this->skuStorageMock = $this->createMock(SkuStorage::class);
 
         $modelClassArgs = [
-            $this->createMock(\Magento\ImportExport\Model\ResourceModel\Import\Data::class),
+            $this->createMock(ImportData::class),
             $this->createMock(ResourceConnection::class),
             $this->createMock(Helper::class),
             $this->createMock(StoreManagerInterface::class),
             $this->createMock(ProductFactory::class),
-            $this->createMock(\Magento\Catalog\Model\ResourceModel\Product\Option\CollectionFactory::class),
+            $this->createMock(OptionCollectionFactory::class),
             $this->createMock(CollectionByPagesIteratorFactory::class),
             $catalogDataMock,
             $scopeConfig,
@@ -320,59 +326,13 @@ class OptionTest extends AbstractImportTestCase
 
         $modelClassName = Option::class;
         $this->model = new $modelClassName(...array_values($modelClassArgs));
-        // Create model mock with rewritten _getMultiRowFormat method to support test data with the old format.
-        $this->modelMock = $this->createPartialMock($modelClassName, ['_getMultiRowFormat']);
-        // Set constructor dependencies via reflection
-        $reflection = new \ReflectionClass(Option::class);
-
-        // Map from constructor arg names to actual property names
-        $propertyMapping = [
-            'option_collection' => '_optionCollection',
-            'collection_by_pages_iterator' => '_byPagesIterator',
-            'data_source_model' => '_dataSourceModel',
-            'product_model' => '_productModel',
-            'product_entity' => '_productEntity',
-            'page_size' => '_pageSize',
-            'stores' => '_storeCodeToId'
-        ];
-
-        foreach ($modelClassArgs as $argKey => $argValue) {
-            if (is_string($argKey)) {
-                // Use mapping if available, otherwise use argKey as-is
-                $propertyName = $propertyMapping[$argKey] ?? $argKey;
-                if ($reflection->hasProperty($propertyName)) {
-                    $property = $reflection->getProperty($propertyName);
-                    $property->setAccessible(true);
-                    $property->setValue($this->modelMock, $argValue);
-                }
-            } elseif (is_array($argValue)) {
-                // Handle the $data array parameter (contains option_collection, etc.)
-                foreach ($argValue as $dataKey => $dataValue) {
-                    if (is_string($dataKey)) {
-                        $propertyName = $propertyMapping[$dataKey] ?? null;
-                        if ($propertyName && $reflection->hasProperty($propertyName)) {
-                            $property = $reflection->getProperty($propertyName);
-                            $property->setAccessible(true);
-                            $property->setValue($this->modelMock, $dataValue);
-                        }
-                    }
-                }
-            }
-        }
-
-        $reflectionProperty = $reflection->getProperty('metadataPool');
-        $reflectionProperty->setAccessible(true);
-        $reflectionProperty->setValue($this->modelMock, $this->metadataPoolMock);
-
-        // Set _productEntity property via reflection (needed for validateRow tests)
-        $productEntityProperty = $reflection->getProperty('_productEntity');
-        $productEntityProperty->setAccessible(true);
-        $productEntityProperty->setValue($this->modelMock, $this->productEntity);
-
-        // Set skuStorage property via reflection (needed for validateRow tests)
-        $skuStorageProperty = $reflection->getProperty('skuStorage');
-        $skuStorageProperty->setAccessible(true);
-        $skuStorageProperty->setValue($this->modelMock, $this->skuStorageMock);
+        
+        // Create model mock with constructor args using MockCreationTrait
+        $this->modelMock = $this->createPartialMockWithReflection(
+            $modelClassName,
+            ['_getMultiRowFormat'],
+            array_values($modelClassArgs)
+        );
     }
 
     /**
@@ -451,12 +411,14 @@ class OptionTest extends AbstractImportTestCase
      *
      * @return array
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     protected function _getSourceDataMocks(bool $addExpectations, bool $doubleOptions): array
     {
         $csvData = $this->_loadCsvFile();
 
-        $dataSourceModel = $this->createMock(\Magento\ImportExport\Model\ResourceModel\Import\Data::class);
+        $dataSourceModel = $this->createMock(ImportData::class);
         
         if ($addExpectations) {
             $dataSourceModel->method('getNextUniqueBunch')
@@ -489,12 +451,14 @@ class OptionTest extends AbstractImportTestCase
             ['getErrorAggregator']
         );
         $this->productEntity->method('getErrorAggregator')->willReturn($this->getErrorAggregatorObject());
-        $reflection = new \ReflectionClass(Product::class);
-        $reflectionProperty = $reflection->getProperty('metadataPool');
-        $reflectionProperty->setAccessible(true);
-        $reflectionProperty->setValue($this->productEntity, $this->metadataPoolMock);
+        // Use ObjectManager to set metadataPool through constructor or setter
+        $this->objectManagerHelper->setBackwardCompatibleProperty(
+            $this->productEntity,
+            'metadataPool',
+            $this->metadataPoolMock
+        );
 
-        $productModelMock = new \Magento\Framework\DataObject(['product_entities_info' => $products]);
+        $productModelMock = new DataObject(['product_entities_info' => $products]);
 
         $this->skuStorageMock->method('get')->willReturnCallback(function ($sku) use ($products) {
             $skuLowered = strtolower($sku);
@@ -513,7 +477,7 @@ class OptionTest extends AbstractImportTestCase
         $select->expects($this->any())->method('where')->willReturnSelf();
 
         $optionCollection = $this->createPartialMockWithReflection(
-            \Magento\Catalog\Model\ResourceModel\Product\Option\Collection::class,
+            OptionCollection::class,
             ['getSelect', 'addProductToFilter', 'reset', 'getIterator', 'setNewEmptyItem']
         );
         $optionCollection->method('getSelect')->willReturn($select);
@@ -535,7 +499,7 @@ class OptionTest extends AbstractImportTestCase
         $optionItems = [];
         foreach ($optionsData as $data) {
             $option = $this->createPartialMockWithReflection(
-                \Magento\Catalog\Model\Product\Option::class,
+                ProductOption::class,
                 ['getId', 'getProductId', 'getType', 'getTitle']
             );
             if (isset($data['id'])) {
@@ -554,7 +518,7 @@ class OptionTest extends AbstractImportTestCase
         }
         $optionCollection->method('getIterator')->willReturn(new \ArrayIterator($optionItems));
 
-        $collectionIterator = $this->createMock(\Magento\ImportExport\Model\ResourceModel\CollectionByPagesIterator::class);
+        $collectionIterator = $this->createMock(CollectionByPagesIterator::class);
         $collectionIterator->method('iterate')->willReturnCallback([$this, 'iterate']);
 
         $data = [
@@ -588,14 +552,14 @@ class OptionTest extends AbstractImportTestCase
     }
 
     /**
-     * Get new object mock for \Magento\Catalog\Model\Product\Option
+     * Get new object mock for ProductOption
      *
-     * @return \Magento\Catalog\Model\Product\Option|MockObject
+     * @return ProductOption|MockObject
      */
     public function getNewOptionMock(): MockObject
     {
         // Only mock __wakeup - all other methods (get*/set*) work via magic __call method
-        return $this->createPartialMock(\Magento\Catalog\Model\Product\Option::class, ['__wakeup']);
+        return $this->createPartialMock(ProductOption::class, ['__wakeup']);
     }
 
     /**
@@ -832,13 +796,6 @@ class OptionTest extends AbstractImportTestCase
         $behavior = null,
         $numberOfValidations = 1
     ): void {
-        if ($this->dataName() === 'ambiguity_several_db_rows') {
-            $this->markTestSkipped(
-                'Test requires complex scenario that conflicts with validation logic order. '
-                . 'PHPUnit 12 migration revealed this pre-existing test design issue.'
-            );
-        }
-
         $this->_testStores = ['admin' => 0];
         $this->setUp();
         if ($behavior) {
@@ -873,7 +830,6 @@ class OptionTest extends AbstractImportTestCase
     {
         $reflection = new \ReflectionClass(Option::class);
         $reflectionMethod = $reflection->getMethod('_parseCustomOptions');
-        $reflectionMethod->setAccessible(true);
         $result = $reflectionMethod->invoke($this->model, $rowData);
         $this->assertEquals($responseData, $result);
     }
@@ -1182,7 +1138,7 @@ class OptionTest extends AbstractImportTestCase
      */
     public function testParseRequiredData(): void
     {
-        $modelData = $this->createMock(\Magento\ImportExport\Model\ResourceModel\Import\Data::class);
+        $modelData = $this->createMock(ImportData::class);
         $modelData->method('getNextUniqueBunch')->willReturnOnConsecutiveCalls(
             [
                 [
@@ -1195,14 +1151,15 @@ class OptionTest extends AbstractImportTestCase
             []  // Additional calls return empty
         );
 
-        $productModel = new \Magento\Framework\DataObject(['product_entities_info' => []]);
+        $productModel = new DataObject(['product_entities_info' => []]);
 
         /** @var Product $productEntityMock */
         $productEntityMock = $this->createMock(Product::class);
-        $reflection = new \ReflectionClass(Product::class);
-        $reflectionProperty = $reflection->getProperty('metadataPool');
-        $reflectionProperty->setAccessible(true);
-        $reflectionProperty->setValue($productEntityMock, $this->metadataPoolMock);
+        $this->objectManagerHelper->setBackwardCompatibleProperty(
+            $productEntityMock,
+            'metadataPool',
+            $this->metadataPoolMock
+        );
 
         /** @var Option $model */
         $model = $this->objectManagerHelper->getObject(
@@ -1220,10 +1177,11 @@ class OptionTest extends AbstractImportTestCase
                 ]
             ]
         );
-        $reflection = new \ReflectionClass(Option::class);
-        $reflectionProperty = $reflection->getProperty('metadataPool');
-        $reflectionProperty->setAccessible(true);
-        $reflectionProperty->setValue($model, $this->metadataPoolMock);
+        $this->objectManagerHelper->setBackwardCompatibleProperty(
+            $model,
+            'metadataPool',
+            $this->metadataPoolMock
+        );
 
         $this->assertTrue($model->importData());
     }
@@ -1253,11 +1211,7 @@ class OptionTest extends AbstractImportTestCase
      */
     protected function setPropertyValue(&$object, $property, $value)
     {
-        $reflection = new \ReflectionClass(get_class($object));
-        $reflectionProperty = $reflection->getProperty($property);
-        $reflectionProperty->setAccessible(true);
-        $reflectionProperty->setValue($object, $value);
-
+        $this->objectManagerHelper->setBackwardCompatibleProperty($object, $property, $value);
         return $object;
     }
 
@@ -1270,10 +1224,6 @@ class OptionTest extends AbstractImportTestCase
      */
     protected function getPropertyValue(&$object, $property)
     {
-        $reflection = new \ReflectionClass(get_class($object));
-        $reflectionProperty = $reflection->getProperty($property);
-        $reflectionProperty->setAccessible(true);
-
-        return $reflectionProperty->getValue($object);
+        return $this->objectManagerHelper->getBackwardCompatibleProperty($object, $property);
     }
 }

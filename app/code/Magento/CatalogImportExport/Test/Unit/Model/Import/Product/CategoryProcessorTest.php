@@ -7,16 +7,16 @@ declare(strict_types=1);
 
 namespace Magento\CatalogImportExport\Test\Unit\Model\Import\Product;
 
-use Magento\Catalog\Model\ResourceModel\Category\CollectionFactory;
-use Magento\Catalog\Model\CategoryFactory;
-use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Category;
+use Magento\Catalog\Model\CategoryFactory;
 use Magento\Catalog\Model\ResourceModel\Category\Collection;
+use Magento\Catalog\Model\ResourceModel\Category\CollectionFactory;
 use Magento\CatalogImportExport\Model\Import\Product\CategoryProcessor;
 use Magento\CatalogImportExport\Model\Import\Product\Type\AbstractType;
 use Magento\Framework\Exception\AlreadyExistsException;
-
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Store\Model\Store;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -28,7 +28,13 @@ class CategoryProcessorTest extends TestCase
 
     public const CHILD_CATEGORY_NAME = 'Child';
 
+    /**
+     * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
+     */
+    protected $objectManager;
 
+    /** @var ObjectManagerHelper */
+    protected $objectManagerHelper;
 
     /**
      * @var CategoryProcessor|MockObject
@@ -52,9 +58,8 @@ class CategoryProcessorTest extends TestCase
 
     protected function setUp(): void
     {
-        // Create minimal ObjectManager mock
-        $objectManagerMock = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
-        \Magento\Framework\App\ObjectManager::setInstance($objectManagerMock);
+        $this->objectManager = new ObjectManagerHelper($this);
+        $this->objectManagerHelper = new ObjectManagerHelper($this);
 
         $this->childCategory = $this->createMock(Category::class);
         $this->childCategory->method('getId')->willReturn(self::CHILD_CATEGORY_ID);
@@ -69,29 +74,28 @@ class CategoryProcessorTest extends TestCase
         $this->parentCategory->method('getName')->willReturn('Parent');
         $this->parentCategory->method('getPath')->willReturn(self::PARENT_CATEGORY_ID);
 
-        $categoryCollection = $this->createPartialMock(
-            Collection::class,
-            ['getIterator', 'addAttributeToSelect', 'addFieldToFilter', 'addIdFilter', 'getSize', 'count', 'getItemById']
-        );
-        $categoryCollection->method('getIterator')
-            ->willReturn(new \ArrayIterator([$this->parentCategory, $this->childCategory]));
+        $categoryCollection =
+            $this->objectManagerHelper->getCollectionMock(
+                Collection::class,
+                [
+                    self::PARENT_CATEGORY_ID => $this->parentCategory,
+                    self::CHILD_CATEGORY_ID => $this->childCategory,
+                ]
+            );
+        $map = [
+            [self::PARENT_CATEGORY_ID, $this->parentCategory],
+            [self::CHILD_CATEGORY_ID, $this->childCategory],
+        ];
+        $categoryCollection->expects($this->any())
+            ->method('getItemById')
+            ->willReturnMap($map);
         $categoryCollection->expects($this->exactly(3))
             ->method('addAttributeToSelect')
-            ->willReturnSelf();
-        $categoryCollection->method('addFieldToFilter')->willReturnSelf();
-        $categoryCollection->method('addIdFilter')->willReturnSelf();
-        $categoryCollection->method('getSize')->willReturn(2);
-        $categoryCollection->method('count')->willReturn(2);
-        $parentCategory = $this->parentCategory;
-        $childCategory = $this->childCategory;
-        $categoryCollection->method('getItemById')->willReturnCallback(function($id) use ($parentCategory, $childCategory) {
-            if ($id == self::PARENT_CATEGORY_ID) {
-                return $parentCategory;
-            } elseif ($id == self::CHILD_CATEGORY_ID) {
-                return $childCategory;
-            }
-            return null;
-        });
+            ->willReturnCallback(fn($param) => match ([$param]) {
+                ['name'] => $categoryCollection,
+                ['url_key'] => $categoryCollection,
+                ['url_path'] => $categoryCollection
+            });
 
         $categoryColFactory = $this->createPartialMock(
             CollectionFactory::class,
@@ -190,7 +194,6 @@ class CategoryProcessorTest extends TestCase
     {
         $reflection = new \ReflectionClass(get_class($object));
         $reflectionProperty = $reflection->getProperty($property);
-        $reflectionProperty->setAccessible(true);
         $reflectionProperty->setValue($object, $value);
         return $object;
     }
@@ -206,7 +209,6 @@ class CategoryProcessorTest extends TestCase
 
         $reflection = new \ReflectionClass($this->categoryProcessor);
         $createCategoryReflection = $reflection->getMethod('createCategory');
-        $createCategoryReflection->setAccessible(true);
         $createCategoryReflection->invokeArgs($this->categoryProcessor, ['testCategory', 2]);
     }
 }

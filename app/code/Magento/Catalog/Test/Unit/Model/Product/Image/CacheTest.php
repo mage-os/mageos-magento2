@@ -12,6 +12,7 @@ use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Image\Cache;
 use Magento\Framework\App\Area;
 use Magento\Framework\Config\View;
+use Magento\Framework\Data\Collection as DataCollection;
 use Magento\Framework\DataObject;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\ConfigInterface;
@@ -61,7 +62,7 @@ class CacheTest extends TestCase
     protected $imageHelper;
 
     /**
-     * @var \Magento\Framework\Data\Collection|MockObject
+     * @var DataCollection|MockObject
      */
     protected $mediaGalleryCollection;
 
@@ -77,7 +78,7 @@ class CacheTest extends TestCase
 
         $this->imageHelper = $this->createMock(Image::class);
 
-        $this->mediaGalleryCollection = $this->createMock(\Magento\Framework\Data\Collection::class);
+        $this->mediaGalleryCollection = $this->createMock(DataCollection::class);
 
         $this->objectManager = new ObjectManager($this);
         $this->model = $this->objectManager->getObject(

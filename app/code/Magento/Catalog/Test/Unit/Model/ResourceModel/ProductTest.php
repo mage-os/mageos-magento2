@@ -39,6 +39,8 @@ class ProductTest extends TestCase
 
     protected function setUp(): void
     {
+        $objectManager = new ObjectManager($this);
+
         $this->setFactoryMock = $this->createPartialMock(
             SetFactory::class,
             ['create']
@@ -48,17 +50,13 @@ class ProductTest extends TestCase
             ['create']
         );
 
-        $this->model = $this->createPartialMock(Product::class, []);
-        
-        $reflection = new \ReflectionClass($this->model);
-        
-        $setFactoryProperty = $reflection->getProperty('setFactory');
-        $setFactoryProperty->setAccessible(true);
-        $setFactoryProperty->setValue($this->model, $this->setFactoryMock);
-        
-        $typeFactoryProperty = $reflection->getProperty('typeFactory');
-        $typeFactoryProperty->setAccessible(true);
-        $typeFactoryProperty->setValue($this->model, $this->typeFactoryMock);
+        $this->model = $objectManager->getObject(
+            Product::class,
+            [
+                'setFactory' => $this->setFactoryMock,
+                'typeFactory' => $this->typeFactoryMock,
+            ]
+        );
     }
 
     public function testValidateWrongAttributeSet()

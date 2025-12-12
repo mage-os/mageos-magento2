@@ -7,7 +7,9 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Model\Rss;
 
+use Magento\Catalog\Model\Category as CategoryModel;
 use Magento\Catalog\Model\Layer;
+use Magento\Catalog\Model\Layer\Category as LayerCategory;
 use Magento\Catalog\Model\Layer\Resolver;
 use Magento\Catalog\Model\Product\Visibility;
 use Magento\Catalog\Model\ResourceModel\Collection\AbstractCollection;
@@ -33,7 +35,7 @@ class CategoryTest extends TestCase
     protected $objectManagerHelper;
 
     /**
-     * @var \Magento\Catalog\Model\Layer\Category|MockObject
+     * @var LayerCategory|MockObject
      */
     protected $categoryLayer;
 
@@ -50,7 +52,7 @@ class CategoryTest extends TestCase
     protected function setUp(): void
     {
         $this->categoryLayer = $this->createPartialMockWithReflection(
-            \Magento\Catalog\Model\Layer\Category::class,
+            LayerCategory::class,
             ['setCurrentCategory', 'prepareProductCollection', 'getProductCollection', 'getCurrentCategory', 'setStore']
         );
         $this->collectionFactory = $this->createPartialMock(
@@ -106,7 +108,10 @@ class CategoryTest extends TestCase
                 'addCountToCategories',
             ]
         );
-        $resourceCollection = $this->createPartialMockWithReflection(\Magento\Catalog\Model\ResourceModel\Product\Collection::class, ['addAttributeToSelect', 'addAttributeToFilter', 'addIdFilter', 'load']);
+        $resourceCollection = $this->createPartialMockWithReflection(
+            Collection::class,
+            ['addAttributeToSelect', 'addAttributeToFilter', 'addIdFilter', 'load']
+        );
         $resourceCollection->expects($this->exactly(3))
             ->method('addAttributeToSelect')->willReturnSelf();
         $resourceCollection->expects($this->once())
@@ -138,7 +143,7 @@ class CategoryTest extends TestCase
             ->method('create')
             ->willReturn($products);
         $category = $this->createPartialMock(
-            \Magento\Catalog\Model\Category::class,
+            CategoryModel::class,
             [
                 'getResourceCollection',
                 'getChildren',
