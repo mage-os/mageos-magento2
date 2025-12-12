@@ -87,7 +87,7 @@
         </actionGroup>
         <!-- Step 3: Fill comment field and assert 'Notify Customer by Email' is not shown -->
         <waitForElementVisible selector="{{AdminSalesOrderCommentsSection.historyComment}}" stepKey="waitForCommentField"/>
-        <fillField selector="{{AdminSalesOrderCommentsSection.historyComment}}" userInput="{{AdminOrderEmailsSendMessage.emailSuccessMessage}}" stepKey="fillOrderComment"/>
+        <fillField selector="{{AdminSalesOrderCommentsSection.historyComment}}" userInput="{{OrderInvoiceComment.sent}}" stepKey="fillOrderComment"/>
         <waitForElementNotVisible selector="{{AdminShipmentMainActionsSection.notifyCustomerByEmail}}" stepKey="assertNotifyCheckboxNotVisible"/>
     </test>
 </tests>
