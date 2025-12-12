@@ -73,7 +73,7 @@ class RegularPriceTest extends TestCase
      *
      * @param float|bool $price
      */
-    #[DataProvider('testGetValueDataProvider')]
+    #[DataProvider('getValueDataProvider')]
     public function testGetValue($price)
     {
         $convertedPrice = 85;
