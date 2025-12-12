@@ -51,6 +51,9 @@ class JweBuilderFactory
      */
     public function create(): JWEBuilder
     {
-        return new JWEBuilder($this->algoManager);
+        return new JWEBuilder(
+            $this->algoManager,
+            $this->contentAlgoManager
+        );
     }
 }

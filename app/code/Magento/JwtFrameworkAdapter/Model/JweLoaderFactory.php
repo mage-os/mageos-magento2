@@ -55,7 +55,8 @@ class JweLoaderFactory
         return new JWELoader(
             $this->serializers,
             new JWEDecrypter(
-                $this->algoManager
+                $this->algoManager,
+                $this->contentAlgoManager
             ),
             null
         );

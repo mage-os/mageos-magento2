@@ -21,6 +21,7 @@ use Magento\Framework\Validator\Url as UrlValidator;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class InstallStoreConfigurationCommand extends AbstractSetupCommand
 {
