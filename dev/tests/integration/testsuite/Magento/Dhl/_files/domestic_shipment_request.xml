@@ -15,7 +15,7 @@
             <Password>some password</Password>
         </ServiceHeader>
         <MetaData>
-            <SoftwareName>Magento</SoftwareName>
+            <SoftwareName>Mage-OS</SoftwareName>
             <SoftwareVersion>1.0.0+no-v</SoftwareVersion>
         </MetaData>
     </Request>
