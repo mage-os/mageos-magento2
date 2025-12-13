@@ -13,6 +13,7 @@ use Magento\Framework\App\CacheInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\ProductMetadataInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -35,10 +36,10 @@ class CanViewNotificationTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->cacheStorageMock = $this->getMockBuilder(CacheInterface::class)
-            ->getMockForAbstractClass();
+        $this->cacheStorageMock = $this->createMock(CacheInterface::class);
+        $this->logMock = $this->createMock(Log::class);
         $this->viewerLoggerMock = $this->createMock(Logger::class);
-        $this->productMetadataMock = $this->getMockForAbstractClass(ProductMetadataInterface::class);
+        $this->productMetadataMock = $this->createMock(ProductMetadataInterface::class);
         $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
         $objectManager = new ObjectManager($this);
         $this->canViewNotification = $objectManager->getObject(
@@ -56,8 +57,8 @@ class CanViewNotificationTest extends TestCase
      * @param $expected
      * @param $cacheResponse
      * @param $logExists
-     * @dataProvider isVisibleProvider
      */
+    #[DataProvider('isVisibleProvider')]
     public function testIsVisibleLoadDataFromLog($expected, $cacheResponse, $logExists, $configEnabled)
     {
         $this->cacheStorageMock->expects($this->once())
