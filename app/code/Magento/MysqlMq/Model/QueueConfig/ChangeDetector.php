@@ -15,14 +15,21 @@ use Magento\Framework\MessageQueue\Topology\Config\CompositeReader;
  */
 class ChangeDetector
 {
+    /**
+     * Constructor
+     *
+     * @param CompositeReader $topologyConfigReader
+     * @param ResourceConnection $resourceConnection
+     */
     public function __construct(
         private readonly CompositeReader    $topologyConfigReader,
         private readonly ResourceConnection $resourceConnection
     ) {
-
     }
 
     /**
+     * Check if there are changes between queue configuration and database state
+     *
      * @return bool
      */
     public function hasChanges(): bool
@@ -34,6 +41,8 @@ class ChangeDetector
     }
 
     /**
+     * Retrieve queue names from the database
+     *
      * @return array
      */
     private function getQueuesFromDatabase(): array
@@ -46,6 +55,8 @@ class ChangeDetector
     }
 
     /**
+     * Retrieve queue names from the configuration
+     *
      * @return array
      */
     private function getQueuesFromConfig(): array
@@ -56,7 +67,9 @@ class ChangeDetector
         foreach ($config as $exchangeName => $exchangeData) {
             if (isset($exchangeData['bindings']) && is_array($exchangeData['bindings'])) {
                 foreach ($exchangeData['bindings'] as $binding) {
-                    if (isset($binding['destination'], $binding['destinationType']) && $binding['destinationType'] === 'queue') {
+                    if (isset($binding['destination'], $binding['destinationType'])
+                        && $binding['destinationType'] === 'queue'
+                    ) {
                         $queues[] = $binding['destination'];
                     }
                 }
@@ -66,7 +79,9 @@ class ChangeDetector
         return array_unique($queues);
     }
 
-    /***
+    /**
+     * Check if there are queues in config that are missing from database
+     *
      * @param array $databaseQueues
      * @param array $configQueues
      * @return bool
