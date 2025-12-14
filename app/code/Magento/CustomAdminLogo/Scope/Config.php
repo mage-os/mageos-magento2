@@ -15,19 +15,17 @@ class Config
     private const XML_PATH_LOGIN_LOGO = 'admin/e119_admin_logos/login';
     private const XML_PATH_MENU_LOGO = 'admin/e119_admin_logos/menu';
 
-    /** @var ScopeConfigInterface */
-    private ScopeConfigInterface $scopeConfig;
-
     /**
      * @param ScopeConfigInterface $scopeConfig
      */
     public function __construct(
-        ScopeConfigInterface $scopeConfig
+        private readonly ScopeConfigInterface $scopeConfig
     ) {
-        $this->scopeConfig = $scopeConfig;
     }
 
     /**
+     * Get admin login logo file from configuration
+     *
      * @return string|null
      */
     public function getAdminLoginLogoFileName(): ?string
@@ -36,6 +34,8 @@ class Config
     }
 
     /**
+     * Get admin menu logo file from configuration
+     *
      * @return string|null
      */
     public function getAdminMenuLogoFileName(): ?string

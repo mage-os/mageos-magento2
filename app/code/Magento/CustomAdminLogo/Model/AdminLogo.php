@@ -25,9 +25,12 @@ class AdminLogo
         private readonly Config $moduleConfig,
         private readonly FileDriver $fileDriver,
         private readonly UrlInterface $urlBuilder
-    ) {}
+    ) {
+    }
 
     /**
+     * Get custom admin login logo src
+     *
      * @return string|null
      */
     public function getCustomAdminLoginLogoSrc(): ?string
@@ -43,6 +46,8 @@ class AdminLogo
     }
 
     /**
+     * Get custom admin menu logo src
+     *
      * @return string|null
      */
     public function getCustomAdminMenuLogoSrc(): ?string

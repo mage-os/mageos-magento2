@@ -21,9 +21,12 @@ class AdminLogo implements ArgumentInterface
     public function __construct(
         private readonly AdminLogoModel $adminLogo,
         private readonly RequestInterface $request
-    ) {}
+    ) {
+    }
 
     /**
+     * Get admin logo model
+     *
      * @return AdminLogoModel
      */
     public function getAdminLogoModel(): AdminLogoModel
@@ -32,6 +35,8 @@ class AdminLogo implements ArgumentInterface
     }
 
     /**
+     * Is admin login page
+     *
      * @return bool
      */
     public function isAdminLoginPage(): bool
