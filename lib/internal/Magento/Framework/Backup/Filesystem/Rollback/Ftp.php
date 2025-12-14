@@ -16,6 +16,7 @@ use Magento\Framework\Phrase;
  * Rollback worker for rolling back via ftp
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @deprecated
  */
 class Ftp extends AbstractRollback
 {

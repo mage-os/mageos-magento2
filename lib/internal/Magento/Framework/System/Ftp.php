@@ -8,6 +8,8 @@ namespace Magento\Framework\System;
 
 /**
  * Class to work with remote FTP server
+ * 
+ * @deprecated
  */
 class Ftp
 {

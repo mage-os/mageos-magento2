@@ -20,6 +20,7 @@ use Magento\Framework\Phrase;
 /**
  * Class to work with filesystem backups
  *
+ * @deprecated
  * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Filesystem extends AbstractBackup

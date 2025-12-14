@@ -11,6 +11,8 @@ use Magento\Framework\Exception\LocalizedException;
 
 /**
  * FTP client
+ * 
+ * @deprecated
  */
 class Ftp extends AbstractIo
 {

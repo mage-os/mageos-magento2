@@ -13,6 +13,7 @@ use Magento\Framework\Filesystem;
 /**
  * Backup rollback controller.
  *
+ * @deprecated
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Rollback extends \Magento\Backup\Controller\Adminhtml\Index implements HttpPostActionInterface
