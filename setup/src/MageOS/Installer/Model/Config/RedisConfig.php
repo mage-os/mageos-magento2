@@ -62,10 +62,46 @@ class RedisConfig
         $output->writeln(' <info>✓</info>');
         $primaryRedis = $detected[0];
         $output->writeln(sprintf(
-            '<info>✓ Found Redis on %s:%d</info>',
+            '<info>✓ Detected Redis on %s:%d</info>',
             $primaryRedis['host'],
             $primaryRedis['port']
         ));
+
+        // Ask if user wants to use Redis for all purposes
+        $output->writeln('');
+        $useAllQuestion = new ConfirmationQuestion(
+            '? Use Redis for sessions, cache, and FPC? [<comment>Y/n</comment>]: ',
+            true
+        );
+        $useAll = $questionHelper->ask($input, $output, $useAllQuestion);
+
+        if ($useAll) {
+            $output->writeln('<info>✓ Using Redis for all caching purposes (sessions: db0, cache: db1, FPC: db2)</info>');
+            return [
+                'session' => [
+                    'enabled' => true,
+                    'host' => $primaryRedis['host'],
+                    'port' => $primaryRedis['port'],
+                    'database' => 0
+                ],
+                'cache' => [
+                    'enabled' => true,
+                    'host' => $primaryRedis['host'],
+                    'port' => $primaryRedis['port'],
+                    'database' => 1
+                ],
+                'fpc' => [
+                    'enabled' => true,
+                    'host' => $primaryRedis['host'],
+                    'port' => $primaryRedis['port'],
+                    'database' => 2
+                ]
+            ];
+        }
+
+        // User wants to configure individually
+        $output->writeln('<comment>ℹ️  Configure Redis individually:</comment>');
+        $output->writeln('');
 
         // Session storage
         $sessionConfig = $this->collectSessionConfig($input, $output, $questionHelper, $primaryRedis);

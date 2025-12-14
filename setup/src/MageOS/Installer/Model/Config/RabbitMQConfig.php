@@ -46,29 +46,73 @@ class RabbitMQConfig
         if (!$detected) {
             $output->writeln(' <comment>⚠️</comment>');
             $output->writeln('<comment>⚠️  RabbitMQ not detected on localhost:5672</comment>');
-        } else {
-            $output->writeln(' <info>✓</info>');
-            $output->writeln(sprintf(
-                '<info>✓ Found RabbitMQ on %s:%d</info>',
-                $detected['host'],
-                $detected['port']
-            ));
+
+            // Ask if user wants to configure manually
+            $output->writeln('');
+            $enableQuestion = new ConfirmationQuestion(
+                '? Configure RabbitMQ manually? [<comment>y/N</comment>]: ',
+                false
+            );
+            $enabled = $questionHelper->ask($input, $output, $enableQuestion);
+
+            if (!$enabled) {
+                $output->writeln('<comment>ℹ️  Skipping RabbitMQ configuration</comment>');
+                return null;
+            }
+
+            // Collect manual configuration
+            return $this->collectManualConfig($input, $output, $questionHelper, null);
         }
 
-        // Ask if user wants to configure RabbitMQ
+        $output->writeln(' <info>✓</info>');
+        $output->writeln(sprintf(
+            '<info>✓ Detected RabbitMQ on %s:%d</info>',
+            $detected['host'],
+            $detected['port']
+        ));
+
+        // Ask if user wants to use detected RabbitMQ with defaults
         $output->writeln('');
-        $enableQuestion = new ConfirmationQuestion(
-            '? Configure RabbitMQ? [<comment>y/N</comment>]: ',
-            false
+        $useDetectedQuestion = new ConfirmationQuestion(
+            '? Use detected RabbitMQ with default credentials (guest/guest)? [<comment>Y/n</comment>]: ',
+            true
         );
-        $enabled = $questionHelper->ask($input, $output, $enableQuestion);
+        $useDetected = $questionHelper->ask($input, $output, $useDetectedQuestion);
 
-        if (!$enabled) {
-            $output->writeln('<comment>ℹ️  Skipping RabbitMQ configuration</comment>');
-            return null;
+        if ($useDetected) {
+            $output->writeln('<info>✓ Using RabbitMQ with default credentials</info>');
+            return [
+                'enabled' => true,
+                'host' => $detected['host'],
+                'port' => $detected['port'],
+                'user' => 'guest',
+                'password' => 'guest',
+                'virtualhost' => '/'
+            ];
         }
 
-        // Collect configuration
+        // User wants to configure manually
+        $output->writeln('<comment>ℹ️  Configure manually:</comment>');
+        $output->writeln('');
+
+        return $this->collectManualConfig($input, $output, $questionHelper, $detected);
+    }
+
+    /**
+     * Collect RabbitMQ configuration manually
+     *
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @param QuestionHelper $questionHelper
+     * @param array{host: string, port: int}|null $detected
+     * @return array{enabled: bool, host: string, port: int, user: string, password: string, virtualhost: string}
+     */
+    private function collectManualConfig(
+        InputInterface $input,
+        OutputInterface $output,
+        QuestionHelper $questionHelper,
+        ?array $detected
+    ): array {
         $defaultHost = $detected['host'] ?? 'localhost';
         $defaultPort = $detected['port'] ?? 5672;
 
