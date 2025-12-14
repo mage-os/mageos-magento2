@@ -121,11 +121,11 @@ final class TestDataBuilder
     public static function validRedisConfig(): RedisConfiguration
     {
         return new RedisConfiguration(
+            session: true,
+            cache: true,
+            fpc: true,
             host: 'localhost',
             port: 6379,
-            useForSession: true,
-            useForCache: true,
-            useForFPC: true,
             sessionDb: 0,
             cacheDb: 1,
             fpcDb: 2
@@ -153,7 +153,8 @@ final class TestDataBuilder
     public static function validLoggingConfig(): LoggingConfiguration
     {
         return new LoggingConfiguration(
-            handlers: ['system' => 'file']
+            debugMode: false,
+            logLevel: 'error'
         );
     }
 
@@ -173,8 +174,8 @@ final class TestDataBuilder
     public static function validThemeConfig(): ThemeConfiguration
     {
         return new ThemeConfiguration(
-            hyvaTheme: 'default',
-            additionalThemes: []
+            install: true,
+            theme: 'hyva-default'
         );
     }
 
@@ -184,7 +185,7 @@ final class TestDataBuilder
     public static function validCronConfig(): CronConfiguration
     {
         return new CronConfiguration(
-            enabled: true
+            configure: true
         );
     }
 
@@ -194,12 +195,13 @@ final class TestDataBuilder
     public static function validEmailConfig(): EmailConfiguration
     {
         return new EmailConfiguration(
-            type: 'smtp',
-            smtpHost: 'smtp.example.com',
-            smtpPort: 587,
-            smtpUsername: 'user@example.com',
-            smtpPassword: 'EmailP@ss123',
-            smtpSecurity: 'tls'
+            configure: true,
+            transport: 'smtp',
+            host: 'smtp.example.com',
+            port: 587,
+            auth: 'login',
+            username: 'user@example.com',
+            password: 'EmailP@ss123'
         );
     }
 
@@ -209,19 +211,19 @@ final class TestDataBuilder
     public static function validInstallationContext(): InstallationContext
     {
         $context = new InstallationContext();
-        $context->environment = self::validEnvironmentConfig();
-        $context->database = self::validDatabaseConfig();
-        $context->admin = self::validAdminConfig();
-        $context->store = self::validStoreConfig();
-        $context->backend = self::validBackendConfig();
-        $context->searchEngine = self::validSearchEngineConfig();
-        $context->redis = self::validRedisConfig();
-        $context->rabbitMQ = self::validRabbitMQConfig();
-        $context->logging = self::validLoggingConfig();
-        $context->sampleData = self::validSampleDataConfig();
-        $context->theme = self::validThemeConfig();
-        $context->cron = self::validCronConfig();
-        $context->email = self::validEmailConfig();
+        $context->setEnvironment(self::validEnvironmentConfig());
+        $context->setDatabase(self::validDatabaseConfig());
+        $context->setAdmin(self::validAdminConfig());
+        $context->setStore(self::validStoreConfig());
+        $context->setBackend(self::validBackendConfig());
+        $context->setSearchEngine(self::validSearchEngineConfig());
+        $context->setRedis(self::validRedisConfig());
+        $context->setRabbitMQ(self::validRabbitMQConfig());
+        $context->setLogging(self::validLoggingConfig());
+        $context->setSampleData(self::validSampleDataConfig());
+        $context->setTheme(self::validThemeConfig());
+        $context->setCron(self::validCronConfig());
+        $context->setEmail(self::validEmailConfig());
 
         return $context;
     }
@@ -232,9 +234,9 @@ final class TestDataBuilder
     public static function minimalInstallationContext(): InstallationContext
     {
         $context = new InstallationContext();
-        $context->database = self::minimalDatabaseConfig();
-        $context->admin = self::validAdminConfig();
-        $context->store = self::validStoreConfig();
+        $context->setDatabase(self::minimalDatabaseConfig());
+        $context->setAdmin(self::validAdminConfig());
+        $context->setStore(self::validStoreConfig());
 
         return $context;
     }
