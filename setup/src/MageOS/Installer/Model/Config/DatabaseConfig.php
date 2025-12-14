@@ -51,8 +51,24 @@ class DatabaseConfig
                 }
 
                 // Detect database
+                $output->write('<comment>🔄 Detecting MySQL/MariaDB...</comment>');
                 $detected = $this->databaseDetector->detect();
-                $defaultHost = $detected ? $detected['host'] : 'localhost';
+
+                if ($detected) {
+                    $output->writeln(' <info>✓</info>');
+                    $output->writeln(sprintf(
+                        '<info>✓ Detected database on %s:%d</info>',
+                        $detected['host'],
+                        $detected['port']
+                    ));
+                    $defaultHost = $detected['host'];
+                } else {
+                    $output->writeln(' <comment>⚠️</comment>');
+                    $output->writeln('<comment>⚠️  No database detected on common ports</comment>');
+                    $defaultHost = 'localhost';
+                }
+
+                $output->writeln('');
 
                 // Database host
                 $hostQuestion = new Question(
