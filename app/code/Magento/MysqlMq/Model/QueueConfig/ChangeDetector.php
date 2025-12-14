@@ -9,11 +9,12 @@ namespace Magento\MysqlMq\Model\QueueConfig;
 
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\MessageQueue\Topology\Config\CompositeReader;
+use Magento\MessageQueue\Model\QueueConfig\ChangeDetectorInterface;
 
 /**
  * Detects changes between queue configuration and database state.
  */
-class ChangeDetector
+class ChangeDetector implements ChangeDetectorInterface
 {
     /**
      * Constructor
