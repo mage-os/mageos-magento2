@@ -15,7 +15,14 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class ThemeRegistrationStatusCommandTest extends TestCase
 {
+    /**
+     * @var RegistrationDetector|MockObject
+     */
     private RegistrationDetector|MockObject $registrationDetector;
+
+    /**
+     * @var CommandTester
+     */
     private CommandTester $tester;
 
     protected function setUp(): void

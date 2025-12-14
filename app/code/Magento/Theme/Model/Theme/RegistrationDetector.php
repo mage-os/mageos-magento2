@@ -16,18 +16,31 @@ use Magento\Theme\Model\Theme\Data\Collection;
  */
 class RegistrationDetector
 {
+    /**
+     * Constructor
+     *
+     * @param CollectionFactory $collectionFactory
+     * @param Collection $filesystemCollection
+     */
     public function __construct(
         private CollectionFactory $collectionFactory,
         private Collection        $filesystemCollection
     ) {
     }
 
+    /**
+     * Check if there are any unregistered themes
+     *
+     * @return bool
+     */
     public function hasUnregisteredTheme(): bool
     {
         return !empty($this->getMissingThemes());
     }
 
     /**
+     * Get list of themes that exist on filesystem but not in database
+     *
      * @return string[]
      */
     public function getMissingThemes(): array
@@ -38,6 +51,11 @@ class RegistrationDetector
         return array_diff($filesystemThemes, $databaseThemes);
     }
 
+    /**
+     * Get registered theme paths from database
+     *
+     * @return array
+     */
     private function getRegisteredThemePaths(): array
     {
         $collection = $this->collectionFactory->create()
@@ -50,6 +68,11 @@ class RegistrationDetector
         return $paths;
     }
 
+    /**
+     * Get theme paths from filesystem
+     *
+     * @return array
+     */
     private function getFilesystemThemePaths(): array
     {
         $this->filesystemCollection->clear();

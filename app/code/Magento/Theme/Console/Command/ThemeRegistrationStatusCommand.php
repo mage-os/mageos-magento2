@@ -26,6 +26,11 @@ class ThemeRegistrationStatusCommand extends Command
 
     public const EXIT_CODE_THEME_UPDATE_REQUIRED = 2;
 
+    /**
+     * Constructor
+     *
+     * @param RegistrationDetector $registrationDetector
+     */
     public function __construct(
         private RegistrationDetector $registrationDetector
     ) {
@@ -34,7 +39,7 @@ class ThemeRegistrationStatusCommand extends Command
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function configure()
     {
@@ -44,7 +49,11 @@ class ThemeRegistrationStatusCommand extends Command
     }
 
     /**
-     * {@inheritdoc}
+     * Execute the command
+     *
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

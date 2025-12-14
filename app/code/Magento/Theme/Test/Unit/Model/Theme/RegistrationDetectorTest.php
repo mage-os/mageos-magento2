@@ -17,8 +17,19 @@ use PHPUnit\Framework\TestCase;
 
 class RegistrationDetectorTest extends TestCase
 {
+    /**
+     * @var CollectionFactory|MockObject
+     */
     private CollectionFactory|MockObject $collectionFactory;
+
+    /**
+     * @var FilesystemCollection|MockObject
+     */
     private FilesystemCollection|MockObject $filesystemCollection;
+
+    /**
+     * @var RegistrationDetector
+     */
     private RegistrationDetector $registrationDetector;
 
     protected function setUp(): void
