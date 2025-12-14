@@ -10,6 +10,7 @@ use MageOS\Installer\Model\Checker\PermissionChecker;
 use MageOS\Installer\Model\Config\AdminConfig;
 use MageOS\Installer\Model\Config\BackendConfig;
 use MageOS\Installer\Model\Config\DatabaseConfig;
+use MageOS\Installer\Model\Config\EnvironmentConfig;
 use MageOS\Installer\Model\Config\LoggingConfig;
 use MageOS\Installer\Model\Config\RabbitMQConfig;
 use MageOS\Installer\Model\Config\RedisConfig;
@@ -35,6 +36,7 @@ class InstallCommand extends Command
     public const NAME = 'install';
 
     public function __construct(
+        private readonly EnvironmentConfig $environmentConfig,
         private readonly DatabaseConfig $databaseConfig,
         private readonly AdminConfig $adminConfig,
         private readonly StoreConfig $storeConfig,
@@ -84,6 +86,7 @@ class InstallCommand extends Command
 
             if ($savedConfig) {
                 // Use saved configuration
+                $envConfig = $savedConfig['environment'];
                 $dbConfig = $savedConfig['database'];
                 $adminConfig = $savedConfig['admin'];
                 $storeConfig = $savedConfig['store'];
@@ -102,6 +105,9 @@ class InstallCommand extends Command
                 $searchConfig = $this->validateAndFixSearchConfig($input, $output, $searchConfig, $baseDir);
             } else {
                 // Collect fresh configuration
+                // Environment type (Development vs Production) - FIRST!
+                $envConfig = $this->environmentConfig->collect($input, $output, $this->getHelper('question'));
+
                 // Stage 1 - Core + Basic Services
                 $dbConfig = $this->databaseConfig->collect($input, $output, $this->getHelper('question'));
                 $adminConfig = $this->adminConfig->collect($input, $output, $this->getHelper('question'));
@@ -126,6 +132,7 @@ class InstallCommand extends Command
             // Show configuration summary
             $this->displaySummary(
                 $output,
+                $envConfig,
                 $dbConfig,
                 $adminConfig,
                 $storeConfig,
@@ -150,7 +157,7 @@ class InstallCommand extends Command
             }
 
             // Save configuration before installation (for resume capability)
-            $this->saveConfiguration($output, $baseDir, $dbConfig, $adminConfig, $storeConfig, $backendConfig, $searchConfig, $redisConfig, $rabbitMqConfig, $loggingConfig, $sampleDataConfig, $themeConfig);
+            $this->saveConfiguration($output, $baseDir, $envConfig, $dbConfig, $adminConfig, $storeConfig, $backendConfig, $searchConfig, $redisConfig, $rabbitMqConfig, $loggingConfig, $sampleDataConfig, $themeConfig);
 
             // Install theme FIRST (before Magento installation)
             if ($themeConfig['install']) {
@@ -161,6 +168,7 @@ class InstallCommand extends Command
             $this->runInstallation(
                 $input,
                 $output,
+                $envConfig,
                 $dbConfig,
                 $adminConfig,
                 $storeConfig,
@@ -226,6 +234,7 @@ class InstallCommand extends Command
      * Display configuration summary
      *
      * @param OutputInterface $output
+     * @param array<string, mixed> $envConfig
      * @param array<string, mixed> $dbConfig
      * @param array<string, mixed> $adminConfig
      * @param array<string, mixed> $storeConfig
@@ -240,6 +249,7 @@ class InstallCommand extends Command
      */
     private function displaySummary(
         OutputInterface $output,
+        array $envConfig,
         array $dbConfig,
         array $adminConfig,
         array $storeConfig,
@@ -254,6 +264,10 @@ class InstallCommand extends Command
         $output->writeln('');
         $output->writeln('<fg=cyan>🎯 Configuration complete! Here\'s what will be installed:</>');
         $output->writeln('');
+        $output->writeln(sprintf('  <info>Environment:</info> %s (mode: %s)',
+            ucfirst($envConfig['type']),
+            $envConfig['mageMode']
+        ));
         $output->writeln(sprintf('  <info>Database:</info> %s@%s/%s',
             $dbConfig['user'],
             $dbConfig['host'],
@@ -336,6 +350,7 @@ class InstallCommand extends Command
      *
      * @param InputInterface $input
      * @param OutputInterface $output
+     * @param array<string, mixed> $envConfig
      * @param array<string, mixed> $dbConfig
      * @param array<string, mixed> $adminConfig
      * @param array<string, mixed> $storeConfig
@@ -353,6 +368,7 @@ class InstallCommand extends Command
     private function runInstallation(
         InputInterface $input,
         OutputInterface $output,
+        array $envConfig,
         array $dbConfig,
         array $adminConfig,
         array $storeConfig,
@@ -390,6 +406,11 @@ class InstallCommand extends Command
             '--search-engine' => $searchConfig['engine'],
             '--cleanup-database' => true
         ];
+
+        // Set Magento mode based on environment
+        if (isset($envConfig['mageMode'])) {
+            $arguments['--mode'] = $envConfig['mageMode'];
+        }
 
         // Add search engine parameters (different for Elasticsearch vs OpenSearch)
         $isOpenSearch = $searchConfig['engine'] === 'opensearch';
@@ -674,6 +695,7 @@ class InstallCommand extends Command
      *
      * @param OutputInterface $output
      * @param string $baseDir
+     * @param array<string, mixed> $envConfig
      * @param array<string, mixed> $dbConfig
      * @param array<string, mixed> $adminConfig
      * @param array<string, mixed> $storeConfig
@@ -689,6 +711,7 @@ class InstallCommand extends Command
     private function saveConfiguration(
         OutputInterface $output,
         string $baseDir,
+        array $envConfig,
         array $dbConfig,
         array $adminConfig,
         array $storeConfig,
@@ -702,6 +725,7 @@ class InstallCommand extends Command
     ): void {
         $config = [
             '_created_at' => date('Y-m-d H:i:s'),
+            'environment' => $envConfig,
             'database' => $dbConfig,
             'admin' => $adminConfig,
             'store' => $storeConfig,
