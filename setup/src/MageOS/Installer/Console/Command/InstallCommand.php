@@ -24,7 +24,6 @@ use MageOS\Installer\Model\Writer\EnvConfigWriter;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
@@ -63,12 +62,10 @@ class InstallCommand extends Command
     {
         $this->setName('install')
             ->setDescription('Interactive Mage-OS installation wizard')
-            ->setHelp('This command guides you through the Mage-OS installation process step by step.')
-            ->addOption(
-                'verbose',
-                'v',
-                InputOption::VALUE_NONE,
-                'Show the underlying setup:install command being executed'
+            ->setHelp(
+                'This command guides you through the Mage-OS installation process step by step.' . PHP_EOL .
+                PHP_EOL .
+                'Use -vvv flag to see the underlying setup:install command being executed.'
             );
     }
 
@@ -416,8 +413,8 @@ class InstallCommand extends Command
         $setupInput = new ArrayInput($arguments);
         $setupInput->setInteractive(false);
 
-        // Show command if verbose mode is enabled
-        if ($input->getOption('verbose')) {
+        // Show command if -vvv flag is used
+        if ($output->isDebug()) {
             $this->displaySetupInstallCommand($output, $arguments);
         }
 
