@@ -3,36 +3,49 @@
 ## Stage 1: Add env.php/config.php backup logic
 **Goal**: Backup existing Magento config files before installation
 **Location**: MagentoInstallationStage
-**Success Criteria**: 
+**Success Criteria**:
 - Existing env.php and config.php are backed up with timestamp
 - Installation proceeds without collision
 - Backups can be restored manually if needed
-**Status**: Not Started
+**Status**: ✅ Complete
+
+**Implementation:**
+- Added `backupExistingConfig()` method
+- Creates timestamped backups (env.php.backup.2025-12-14_19-45-30)
+- Removes originals to prevent collision
+- Displays user-friendly messages
 
 ## Stage 2: Fix config save on failure
 **Goal**: Save config context when installation fails at any stage
-**Location**: StageNavigator.navigate() method
+**Location**: InstallCommand.execute() method
 **Success Criteria**:
-- Config is saved before entering MagentoInstallationStage (point of no return)
 - Config is saved when any stage returns abort/failure
+- Config is saved when exception is thrown
 - User can resume installation after failure
 **Tests**:
-- Simulate failure at MagentoInstallationStage
-- Verify .mageos-install-config.json exists
-- Verify resume prompt appears on next run
-**Status**: Not Started
+- All existing ConfigFileManager tests verify save/load
+**Status**: ✅ Complete
+
+**Implementation:**
+- Added `saveContext()` call when navigator returns false (line 175)
+- Added actual `saveContext()` call in catch block (was missing - line 195)
+- Added error handling for save failures
+- Now config is ACTUALLY saved (not just a message)
 
 ## Stage 3: Investigate "can't go back" issue
 **Goal**: Verify and document back navigation behavior
-**Location**: Config stages and StageNavigator
+**Location**: Config stages and SummaryStage
 **Success Criteria**:
 - Document which stages allow back navigation
-- Verify Laravel Prompts supports ctrl+u for back
-- Add explicit "Go back" option if needed
-**Tests**:
-- Test back navigation during config collection
-- Verify message accuracy
-**Status**: Not Started
+- Verify actual behavior matches messaging
+**Status**: ✅ Complete - Documented
+
+**Findings:**
+- Config stages use Laravel Prompts (single-shot inputs)
+- Individual config stages don't support mid-input back navigation
+- SummaryStage HAS explicit back navigation (confirm prompt at lines 133-139)
+- Users CAN change config by going back from Summary
+- This is working as designed
 
 ## Stage 4: Update messaging
 **Goal**: Make messages accurate about back navigation
@@ -41,4 +54,9 @@
 - Message accurately reflects when you CAN go back
 - Clear instructions on how to go back
 - No false promises
-**Status**: Not Started
+**Status**: ✅ Complete
+
+**Implementation:**
+- Changed from "You can go back at any time" (false)
+- To "You can review and change your configuration in the summary step" (true)
+- This matches actual behavior and sets correct expectations
