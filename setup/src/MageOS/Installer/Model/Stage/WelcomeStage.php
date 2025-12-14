@@ -64,8 +64,8 @@ class WelcomeStage extends AbstractStage
         $output->writeln('  • Optional services (Redis, RabbitMQ, etc.)');
         $output->writeln('  • Theme installation');
         $output->writeln('');
-        $output->writeln('<fg=yellow>💡 You can go back at any time to change your answers.</>');
-        $output->writeln('<fg=yellow>💡 Your configuration will be saved if installation fails.</>');
+        $output->writeln('<fg=yellow>💡 You can review and change your configuration in the summary step.</>');
+        $output->writeln('<fg=yellow>💡 Your configuration will be saved if installation fails so you can resume.</>');
         $output->writeln('');
 
         // Simple confirmation to start

@@ -79,6 +79,9 @@ class MagentoInstallationStage extends AbstractStage
             return StageResult::abort('Installation cancelled by user');
         }
 
+        // Backup existing env.php and config.php if they exist
+        $this->backupExistingConfig($output);
+
         // Build setup:install arguments
         $arguments = $this->buildSetupInstallArguments($context);
 
@@ -157,5 +160,37 @@ class MagentoInstallationStage extends AbstractStage
         }
 
         return $arguments;
+    }
+
+    /**
+     * Backup existing env.php and config.php files
+     *
+     * @param OutputInterface $output
+     * @return void
+     */
+    private function backupExistingConfig(OutputInterface $output): void
+    {
+        $etcDir = BP . '/app/etc';
+        $timestamp = date('Y-m-d_H-i-s');
+
+        $filesToBackup = [
+            'env.php' => "env.php.backup.{$timestamp}",
+            'config.php' => "config.php.backup.{$timestamp}"
+        ];
+
+        foreach ($filesToBackup as $file => $backupName) {
+            $filePath = "{$etcDir}/{$file}";
+            $backupPath = "{$etcDir}/{$backupName}";
+
+            if (file_exists($filePath)) {
+                if (copy($filePath, $backupPath)) {
+                    $output->writeln("<comment>📦 Backed up existing {$file} to {$backupName}</comment>");
+                    // Remove the original to prevent collision
+                    unlink($filePath);
+                } else {
+                    $output->writeln("<comment>⚠️  Could not backup {$file} - proceeding anyway</comment>");
+                }
+            }
+        }
     }
 }

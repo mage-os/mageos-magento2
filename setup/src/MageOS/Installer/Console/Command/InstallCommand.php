@@ -171,8 +171,11 @@ class InstallCommand extends Command
             $success = $navigator->navigate($context, $output);
 
             if (!$success) {
+                // Save config so user can resume
+                $this->configFileManager->saveContext($baseDir, $context);
                 $output->writeln('');
                 $output->writeln('<comment>Installation cancelled.</comment>');
+                $output->writeln('<comment>💡 Your configuration has been saved. Run "bin/magento install" to resume.</comment>');
                 return Command::FAILURE;
             }
 
@@ -185,6 +188,17 @@ class InstallCommand extends Command
 
             return Command::SUCCESS;
         } catch (\Exception $e) {
+            // Actually save the config (this was missing!)
+            try {
+                $baseDir = BP;
+                if (isset($context)) {
+                    $this->configFileManager->saveContext($baseDir, $context);
+                }
+            } catch (\Exception $saveException) {
+                // If save fails, at least tell the user
+                $output->writeln('<comment>⚠️  Could not save configuration: ' . $saveException->getMessage() . '</comment>');
+            }
+
             $output->writeln('');
             $output->writeln('<error>Installation failed: ' . $e->getMessage() . '</error>');
             $output->writeln('');
