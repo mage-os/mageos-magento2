@@ -121,7 +121,7 @@ class InstallCommand extends Command
 
                 // Stage 2 - Redis, RabbitMQ, Logging, Sample Data
                 $redisConfig = $this->redisConfig->collect($input, $output, $this->getHelper('question'));
-                $rabbitMqConfig = $this->rabbitMQConfig->collect($input, $output, $this->getHelper('question'));
+                $rabbitMqConfig = $this->rabbitMQConfig->collect();
                 $loggingConfig = $this->loggingConfig->collect();
                 $sampleDataConfig = $this->sampleDataConfig->collect();
 
