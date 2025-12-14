@@ -24,6 +24,7 @@ use MageOS\Installer\Model\Writer\EnvConfigWriter;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
@@ -62,7 +63,13 @@ class InstallCommand extends Command
     {
         $this->setName('install')
             ->setDescription('Interactive Mage-OS installation wizard')
-            ->setHelp('This command guides you through the Mage-OS installation process step by step.');
+            ->setHelp('This command guides you through the Mage-OS installation process step by step.')
+            ->addOption(
+                'verbose',
+                'v',
+                InputOption::VALUE_NONE,
+                'Show the underlying setup:install command being executed'
+            );
     }
 
     /**
@@ -384,9 +391,13 @@ class InstallCommand extends Command
             '--timezone' => $storeConfig['timezone'],
             '--use-rewrites' => $storeConfig['useRewrites'] ? '1' : '0',
             '--search-engine' => $searchConfig['engine'],
-            '--elasticsearch-host' => sprintf('%s:%d', $searchConfig['host'], $searchConfig['port']),
             '--cleanup-database' => true
         ];
+
+        // Add search engine parameters (different for Elasticsearch vs OpenSearch)
+        $isOpenSearch = $searchConfig['engine'] === 'opensearch';
+        $hostKey = $isOpenSearch ? '--opensearch-host' : '--elasticsearch-host';
+        $arguments[$hostKey] = sprintf('%s:%d', $searchConfig['host'], $searchConfig['port']);
 
         // Add optional parameters
         if (!empty($dbConfig['prefix'])) {
@@ -394,7 +405,8 @@ class InstallCommand extends Command
         }
 
         if (!empty($searchConfig['prefix'])) {
-            $arguments['--elasticsearch-index-prefix'] = $searchConfig['prefix'];
+            $prefixKey = $isOpenSearch ? '--opensearch-index-prefix' : '--elasticsearch-index-prefix';
+            $arguments[$prefixKey] = $searchConfig['prefix'];
         }
 
         // Get setup:install command
@@ -403,6 +415,11 @@ class InstallCommand extends Command
         // Create input for setup:install
         $setupInput = new ArrayInput($arguments);
         $setupInput->setInteractive(false);
+
+        // Show command if verbose mode is enabled
+        if ($input->getOption('verbose')) {
+            $this->displaySetupInstallCommand($output, $arguments);
+        }
 
         // Run setup:install
         $output->writeln('<comment>🔄 Installing Magento core...</comment>');
@@ -809,5 +826,63 @@ class InstallCommand extends Command
         $output->writeln('<comment>Please reconfigure the search engine:</comment>');
 
         return $this->searchEngineConfig->collect($input, $output, $this->getHelper('question'));
+    }
+
+    /**
+     * Display the setup:install command for debugging
+     *
+     * @param OutputInterface $output
+     * @param array<string, mixed> $arguments
+     * @return void
+     */
+    private function displaySetupInstallCommand(OutputInterface $output, array $arguments): void
+    {
+        $output->writeln('');
+        $output->writeln('<fg=yellow>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</>');
+        $output->writeln('<fg=yellow>Verbose Mode: Underlying setup:install command</>');
+        $output->writeln('<fg=yellow>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</>');
+        $output->writeln('');
+
+        // Build the command string (copy-paste ready)
+        $commandParts = ['bin/magento setup:install'];
+
+        foreach ($arguments as $key => $value) {
+            if ($key === 'command') {
+                continue; // Skip the 'command' key
+            }
+
+            // Handle boolean values
+            if (is_bool($value)) {
+                if ($value) {
+                    $commandParts[] = $key;
+                }
+                continue;
+            }
+
+            // Escape values with spaces or special characters
+            $escapedValue = $value;
+            if (is_string($value) && (str_contains($value, ' ') || str_contains($value, '$'))) {
+                $escapedValue = "'" . str_replace("'", "\\'", $value) . "'";
+            }
+
+            // Mask password for security
+            if (str_contains($key, 'password')) {
+                $escapedValue = '********';
+            }
+
+            $commandParts[] = sprintf('%s=%s', $key, $escapedValue);
+        }
+
+        // Format for readability
+        $output->writeln('<comment>$ ' . $commandParts[0] . ' \\</comment>');
+        for ($i = 1; $i < count($commandParts); $i++) {
+            $isLast = $i === count($commandParts) - 1;
+            $separator = $isLast ? '' : ' \\';
+            $output->writeln(sprintf('<comment>    %s%s</comment>', $commandParts[$i], $separator));
+        }
+
+        $output->writeln('');
+        $output->writeln('<fg=yellow>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</>');
+        $output->writeln('');
     }
 }
