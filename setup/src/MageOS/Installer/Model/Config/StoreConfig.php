@@ -174,53 +174,64 @@ class StoreConfig
     ): string {
         $locales = $this->lists->getLocaleList();
 
-        // Most common locales
+        // Most common locales (small curated list)
         $commonLocales = [
             'en_US' => 'English (United States)',
             'en_GB' => 'English (United Kingdom)',
             'de_DE' => 'German (Germany)',
             'fr_FR' => 'French (France)',
             'es_ES' => 'Spanish (Spain)',
-            'it_IT' => 'Italian (Italy)',
-            'nl_NL' => 'Dutch (Netherlands)',
-            'pt_BR' => 'Portuguese (Brazil)',
-            'ja_JP' => 'Japanese (Japan)',
-            'zh_CN' => 'Chinese (China)',
+            'nl_NL' => 'Dutch (Netherlands)'
         ];
 
-        // Build choices array (code => label)
+        // Build simple numbered choices
         $choices = [];
+        $choiceMap = [];
+        $index = 0;
+
         foreach ($commonLocales as $code => $label) {
             if (isset($locales[$code])) {
-                $choices[$code] = sprintf('%s (%s)', $label, $code);
+                $choices[] = sprintf('%s (%s)', $label, $code);
+                $choiceMap[$index] = $code;
+                $index++;
             }
         }
 
-        $output->writeln('');
-        $output->writeln('<comment>ℹ️  Showing common languages. Type a locale code (e.g., en_US) to use a different one.</comment>');
+        // Add "Other" option
+        $choices[] = 'Other (type manually)';
+        $otherIndex = $index;
 
+        $output->writeln('');
         $languageQuestion = new ChoiceQuestion(
-            '? Default language [<comment>en_US</comment>]: ',
+            '? Default language: ',
             $choices,
-            'en_US'
+            0  // en_US is default
         );
-        $languageQuestion->setAutocompleterValues(array_keys($locales));
 
         $selected = $questionHelper->ask($input, $output, $languageQuestion);
 
-        // If user typed a code directly, use it; otherwise extract from choice
-        foreach ($choices as $code => $label) {
-            if ($label === $selected) {
+        // Check if "Other" was selected
+        if ($selected === 'Other (type manually)') {
+            $output->writeln('');
+            $output->writeln('<comment>ℹ️  Type a locale code (e.g., pt_BR, ja_JP, zh_CN)</comment>');
+            $manualQuestion = new Question('? Locale code [<comment>en_US</comment>]: ', 'en_US');
+            $manualQuestion->setAutocompleterValues(array_keys($locales));
+            $manualCode = $questionHelper->ask($input, $output, $manualQuestion);
+
+            if (isset($locales[$manualCode])) {
+                return $manualCode;
+            }
+            return $manualCode ?? 'en_US';
+        }
+
+        // Extract code from selected choice
+        foreach ($choiceMap as $idx => $code) {
+            if ($choices[$idx] === $selected) {
                 return $code;
             }
         }
 
-        // User typed a code directly
-        if (isset($locales[$selected])) {
-            return $selected;
-        }
-
-        return $selected ?? 'en_US';
+        return 'en_US';
     }
 
     /**
@@ -239,60 +250,81 @@ class StoreConfig
         $timezones = $this->lists->getTimezoneList();
         $systemTimezone = date_default_timezone_get();
 
-        // Most common timezones
+        // Most common timezones (small curated list)
         $commonTimezones = [
+            'UTC',
             'America/New_York',
             'America/Chicago',
-            'America/Denver',
             'America/Los_Angeles',
-            'America/Phoenix',
             'Europe/London',
-            'Europe/Paris',
-            'Europe/Berlin',
-            'Asia/Tokyo',
-            'Asia/Shanghai',
-            'Australia/Sydney',
-            'UTC',
+            'Europe/Amsterdam',
+            'Europe/Berlin'
         ];
 
-        // Build choices array
+        // Build simple numbered choices
         $choices = [];
+        $choiceMap = [];
+        $index = 0;
+        $defaultIndex = 0;
+
+        // Add system timezone first if not in common list
+        if (!in_array($systemTimezone, $commonTimezones) && isset($timezones[$systemTimezone])) {
+            $choices[] = sprintf('%s (detected)', $timezones[$systemTimezone]);
+            $choiceMap[$index] = $systemTimezone;
+            $defaultIndex = $index;
+            $index++;
+        }
+
         foreach ($commonTimezones as $code) {
             if (isset($timezones[$code])) {
-                $choices[$code] = $timezones[$code];
+                $label = str_replace(' (' . $code . ')', '', $timezones[$code]);
+                $choices[] = sprintf('%s (%s)', $label, $code);
+                $choiceMap[$index] = $code;
+
+                if ($code === $systemTimezone) {
+                    $defaultIndex = $index;
+                }
+                $index++;
             }
         }
 
-        // Make sure system timezone is in the list
-        if (!isset($choices[$systemTimezone]) && isset($timezones[$systemTimezone])) {
-            $choices = [$systemTimezone => $timezones[$systemTimezone]] + $choices;
-        }
+        // Add "Other" option
+        $choices[] = 'Other (type manually)';
 
         $output->writeln('');
-        $output->writeln('<comment>ℹ️  Showing common timezones. Type a timezone code (e.g., America/New_York) to use a different one.</comment>');
-
         $timezoneQuestion = new ChoiceQuestion(
-            sprintf('? Default timezone [<comment>%s</comment>]: ', $systemTimezone),
+            '? Default timezone: ',
             $choices,
-            $systemTimezone
+            $defaultIndex
         );
-        $timezoneQuestion->setAutocompleterValues(array_keys($timezones));
 
         $selected = $questionHelper->ask($input, $output, $timezoneQuestion);
 
-        // If user typed a code directly, use it; otherwise extract from choice
-        foreach ($choices as $code => $label) {
-            if ($label === $selected) {
+        // Check if "Other" was selected
+        if ($selected === 'Other (type manually)') {
+            $output->writeln('');
+            $output->writeln('<comment>ℹ️  Type a timezone code (e.g., America/Denver, Asia/Tokyo, Europe/Paris)</comment>');
+            $manualQuestion = new Question(
+                sprintf('? Timezone code [<comment>%s</comment>]: ', $systemTimezone),
+                $systemTimezone
+            );
+            $manualQuestion->setAutocompleterValues(array_keys($timezones));
+            $manualCode = $questionHelper->ask($input, $output, $manualQuestion);
+
+            if (isset($timezones[$manualCode])) {
+                return $manualCode;
+            }
+            return $manualCode ?? $systemTimezone;
+        }
+
+        // Extract code from selected choice
+        foreach ($choiceMap as $idx => $code) {
+            if ($choices[$idx] === $selected) {
                 return $code;
             }
         }
 
-        // User typed a code directly
-        if (isset($timezones[$selected])) {
-            return $selected;
-        }
-
-        return $selected ?? $systemTimezone;
+        return $systemTimezone;
     }
 
     /**
@@ -310,51 +342,62 @@ class StoreConfig
     ): string {
         $currencies = $this->lists->getCurrencyList();
 
-        // Most common currencies
+        // Most common currencies (small curated list)
         $commonCurrencies = [
             'USD' => 'US Dollar',
             'EUR' => 'Euro',
             'GBP' => 'British Pound',
             'JPY' => 'Japanese Yen',
             'CAD' => 'Canadian Dollar',
-            'AUD' => 'Australian Dollar',
-            'CHF' => 'Swiss Franc',
-            'CNY' => 'Chinese Yuan',
-            'INR' => 'Indian Rupee',
+            'AUD' => 'Australian Dollar'
         ];
 
-        // Build choices array
+        // Build simple numbered choices
         $choices = [];
+        $choiceMap = [];
+        $index = 0;
+
         foreach ($commonCurrencies as $code => $label) {
             if (isset($currencies[$code])) {
-                $choices[$code] = $currencies[$code];
+                $choices[] = sprintf('%s (%s)', $label, $code);
+                $choiceMap[$index] = $code;
+                $index++;
             }
         }
 
-        $output->writeln('');
-        $output->writeln('<comment>ℹ️  Showing common currencies. Type a currency code (e.g., USD) to use a different one.</comment>');
+        // Add "Other" option
+        $choices[] = 'Other (type manually)';
 
+        $output->writeln('');
         $currencyQuestion = new ChoiceQuestion(
-            '? Default currency [<comment>USD</comment>]: ',
+            '? Default currency: ',
             $choices,
-            'USD'
+            0  // USD is default
         );
-        $currencyQuestion->setAutocompleterValues(array_keys($currencies));
 
         $selected = $questionHelper->ask($input, $output, $currencyQuestion);
 
-        // If user typed a code directly, use it; otherwise extract from choice
-        foreach ($choices as $code => $label) {
-            if ($label === $selected) {
+        // Check if "Other" was selected
+        if ($selected === 'Other (type manually)') {
+            $output->writeln('');
+            $output->writeln('<comment>ℹ️  Type a currency code (e.g., CHF, CNY, INR, SEK)</comment>');
+            $manualQuestion = new Question('? Currency code [<comment>USD</comment>]: ', 'USD');
+            $manualQuestion->setAutocompleterValues(array_keys($currencies));
+            $manualCode = $questionHelper->ask($input, $output, $manualQuestion);
+
+            if (isset($currencies[$manualCode])) {
+                return $manualCode;
+            }
+            return $manualCode ?? 'USD';
+        }
+
+        // Extract code from selected choice
+        foreach ($choiceMap as $idx => $code) {
+            if ($choices[$idx] === $selected) {
                 return $code;
             }
         }
 
-        // User typed a code directly
-        if (isset($currencies[$selected])) {
-            return $selected;
-        }
-
-        return $selected ?? 'USD';
+        return 'USD';
     }
 }
