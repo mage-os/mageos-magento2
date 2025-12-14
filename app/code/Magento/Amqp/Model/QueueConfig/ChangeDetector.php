@@ -13,6 +13,7 @@ use Magento\Framework\MessageQueue\ConnectionTypeResolver;
 use Magento\Framework\MessageQueue\Topology\Config\CompositeReader;
 use Magento\MessageQueue\Model\QueueConfig\ChangeDetectorInterface;
 use PhpAmqpLib\Exception\AMQPProtocolChannelException;
+use Psr\Log\LoggerInterface;
 
 /**
  * Detects changes between AMQP queue configuration and actual broker state.
@@ -25,11 +26,13 @@ class ChangeDetector implements ChangeDetectorInterface
      * @param AmqpConfig $amqpConfig
      * @param CompositeReader $topologyConfigReader
      * @param ConnectionTypeResolver $connectionTypeResolver
+     * @param LoggerInterface $logger
      */
     public function __construct(
         private readonly AmqpConfig             $amqpConfig,
         private readonly CompositeReader        $topologyConfigReader,
-        private readonly ConnectionTypeResolver $connectionTypeResolver
+        private readonly ConnectionTypeResolver $connectionTypeResolver,
+        private readonly LoggerInterface        $logger
     ) {
     }
 
@@ -42,7 +45,15 @@ class ChangeDetector implements ChangeDetectorInterface
     {
         try {
             return !empty($this->getMissingQueues());
+        } catch (\LogicException $e) {
+            $this->logger->info(
+                'AMQP queue status check skipped: ' . $e->getMessage()
+            );
+            return false;
         } catch (Exception $e) {
+            $this->logger->warning(
+                'Failed to check AMQP queue status: ' . $e->getMessage()
+            );
             return false;
         }
     }
@@ -156,7 +167,10 @@ class ChangeDetector implements ChangeDetectorInterface
                     try {
                         $channel->close();
                     } catch (Exception $closeException) {
-                        // Ignore close errors - channel is already broken after 404
+                        // Channel is already broken after 404 - close may fail, which is expected
+                        $this->logger->debug(
+                            'Failed to close AMQP channel, 404 response, this is expected: ' . $closeException->getMessage()
+                        );
                     }
                 }
                 return false;

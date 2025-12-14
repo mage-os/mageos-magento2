@@ -16,6 +16,7 @@ use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Exception\AMQPProtocolChannelException;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
 /**
  * Test for AMQP ChangeDetector
@@ -43,6 +44,11 @@ class ChangeDetectorTest extends TestCase
     private AMQPChannel|MockObject $channel;
 
     /**
+     * @var LoggerInterface|MockObject
+     */
+    private LoggerInterface|MockObject $logger;
+
+    /**
      * @var ChangeDetector
      */
     private ChangeDetector $changeDetector;
@@ -56,11 +62,13 @@ class ChangeDetectorTest extends TestCase
         $this->topologyConfigReader = $this->createMock(CompositeReader::class);
         $this->connectionTypeResolver = $this->createMock(ConnectionTypeResolver::class);
         $this->channel = $this->createMock(AMQPChannel::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->changeDetector = new ChangeDetector(
             $this->amqpConfig,
             $this->topologyConfigReader,
-            $this->connectionTypeResolver
+            $this->connectionTypeResolver,
+            $this->logger
         );
     }
 
@@ -101,13 +109,33 @@ class ChangeDetectorTest extends TestCase
     }
 
     /**
-     * Test hasChanges returns false when connection fails
+     * Test hasChanges returns false when AMQP is not configured (LogicException)
      */
     public function testHasChangesReturnsFalseWhenConnectionFails(): void
     {
         $this->setupAmqpQueues(['queue1']);
         $this->amqpConfig->method('getChannel')
-            ->willThrowException(new Exception('Connection failed'));
+            ->willThrowException(new \LogicException('Unknown connection name amqp'));
+
+        $this->logger->expects($this->once())
+            ->method('info')
+            ->with($this->stringContains('AMQP queue status check skipped'));
+
+        $this->assertFalse($this->changeDetector->hasChanges());
+    }
+
+    /**
+     * Test hasChanges returns false on unexpected exception
+     */
+    public function testHasChangesReturnsFalseOnUnexpectedException(): void
+    {
+        $this->setupAmqpQueues(['queue1']);
+        $this->amqpConfig->method('getChannel')
+            ->willThrowException(new \RuntimeException('Connection timeout'));
+
+        $this->logger->expects($this->once())
+            ->method('warning')
+            ->with($this->stringContains('Failed to check AMQP queue status'));
 
         $this->assertFalse($this->changeDetector->hasChanges());
     }
