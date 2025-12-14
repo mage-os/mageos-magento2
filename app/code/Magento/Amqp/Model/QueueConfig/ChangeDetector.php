@@ -82,27 +82,48 @@ class ChangeDetector implements ChangeDetectorInterface
 
         $config = $this->topologyConfigReader->read();
         foreach ($config as $exchangeName => $exchangeData) {
-            if (isset($exchangeData['bindings']) && is_array($exchangeData['bindings'])) {
-                foreach ($exchangeData['bindings'] as $binding) {
-                    if (isset($binding['destination'], $binding['destinationType'])
-                        && $binding['destinationType'] === 'queue'
-                    ) {
-                        // Determine connection: binding-level overrides exchange-level
-                        $connection = $binding['connection'] ?? $exchangeData['connection'] ?? null;
+            if (!isset($exchangeData['bindings']) || !is_array($exchangeData['bindings'])) {
+                continue;
+            }
 
-                        if ($connection !== null) {
-                            $connectionType = $this->connectionTypeResolver->getConnectionType($connection);
-
-                            if ($connectionType === 'amqp') {
-                                $queues[] = $binding['destination'];
-                            }
-                        }
-                    }
+            foreach ($exchangeData['bindings'] as $binding) {
+                $queueName = $this->extractAmqpQueueFromBinding($binding, $exchangeData);
+                if ($queueName !== null) {
+                    $queues[] = $queueName;
                 }
             }
         }
 
         return array_unique($queues);
+    }
+
+    /**
+     * Extract AMQP queue name from binding if it's an AMQP queue
+     *
+     * @param array $binding
+     * @param array $exchangeData
+     * @return string|null
+     */
+    private function extractAmqpQueueFromBinding(array $binding, array $exchangeData): ?string
+    {
+        if (!isset($binding['destination'], $binding['destinationType'])) {
+            return null;
+        }
+
+        if ($binding['destinationType'] !== 'queue') {
+            return null;
+        }
+
+        // Determine connection: binding-level overrides exchange-level
+        $connection = $binding['connection'] ?? $exchangeData['connection'] ?? null;
+
+        if ($connection === null) {
+            return null;
+        }
+
+        $connectionType = $this->connectionTypeResolver->getConnectionType($connection);
+
+        return $connectionType === 'amqp' ? $binding['destination'] : null;
     }
 
     /**
@@ -135,6 +156,7 @@ class ChangeDetector implements ChangeDetectorInterface
                     try {
                         $channel->close();
                     } catch (Exception $closeException) {
+                        // Ignore close errors - channel is already broken after 404
                     }
                 }
                 return false;
