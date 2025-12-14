@@ -113,9 +113,42 @@ class DatabaseConfig
                 ];
             }
 
-            // Connection failed
-            error('Database connection failed');
-            error($validation['error'] ?? 'Unknown error');
+            // Connection failed - try to create database if it doesn't exist
+            warning('Database connection failed - attempting to create database...');
+
+            $createResult = spin(
+                message: 'Creating database...',
+                callback: fn () => $this->databaseValidator->createDatabaseIfNotExists($host, $name, $user, $pass)
+            );
+
+            if ($createResult['created']) {
+                info("✓ Database '{$name}' created successfully!");
+                warning('⚠️  Database was created automatically.');
+                warning('⚠️  If you are on a PRODUCTION server, verify the user has appropriate permissions!');
+                note('The installation will continue with the newly created database.');
+
+                return [
+                    'host' => $host,
+                    'name' => $name,
+                    'user' => $user,
+                    'password' => $pass,
+                    'prefix' => $prefix
+                ];
+            }
+
+            if ($createResult['existed']) {
+                // Database existed but connection still failed - credential issue
+                error('Database exists but connection failed - check credentials');
+            } else {
+                // Could not create database
+                error('Could not create database');
+                if ($createResult['error']) {
+                    error($createResult['error']);
+                }
+            }
+
+            // Original error for context
+            error('Original error: ' . ($validation['error'] ?? 'Unknown error'));
 
             $retry = confirm(
                 label: 'Database connection failed. Do you want to reconfigure?',

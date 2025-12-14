@@ -78,4 +78,68 @@ class DatabaseValidator
             'error' => null
         ];
     }
+
+    /**
+     * Try to create database if it doesn't exist
+     *
+     * @param string $host
+     * @param string $name
+     * @param string $user
+     * @param string $password
+     * @return array{created: bool, existed: bool, error: string|null}
+     */
+    public function createDatabaseIfNotExists(string $host, string $name, string $user, string $password): array
+    {
+        try {
+            // Connect without specifying database
+            $connection = @new \mysqli($host, $user, $password);
+
+            if ($connection->connect_error) {
+                return [
+                    'created' => false,
+                    'existed' => false,
+                    'error' => sprintf('Cannot connect to MySQL server: %s', $connection->connect_error)
+                ];
+            }
+
+            // Check if database exists
+            $result = $connection->query("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '{$connection->real_escape_string($name)}'");
+
+            if ($result && $result->num_rows > 0) {
+                $connection->close();
+                return [
+                    'created' => false,
+                    'existed' => true,
+                    'error' => null
+                ];
+            }
+
+            // Try to create database
+            $createQuery = sprintf('CREATE DATABASE IF NOT EXISTS `%s` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci', $connection->real_escape_string($name));
+
+            if ($connection->query($createQuery)) {
+                $connection->close();
+                return [
+                    'created' => true,
+                    'existed' => false,
+                    'error' => null
+                ];
+            }
+
+            $error = $connection->error;
+            $connection->close();
+
+            return [
+                'created' => false,
+                'existed' => false,
+                'error' => sprintf('Could not create database: %s', $error)
+            ];
+        } catch (\Exception $e) {
+            return [
+                'created' => false,
+                'existed' => false,
+                'error' => sprintf('Database creation failed: %s', $e->getMessage())
+            ];
+        }
+    }
 }

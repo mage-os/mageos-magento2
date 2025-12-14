@@ -79,8 +79,10 @@ class MagentoInstallationStage extends AbstractStage
             return StageResult::abort('Installation cancelled by user');
         }
 
-        // Backup existing env.php and config.php if they exist
-        $this->backupExistingConfig($output);
+        // Backup existing env.php if it exists (with user confirmation)
+        if (!$this->backupExistingConfig($output)) {
+            return StageResult::abort('Installation cancelled - env.php backup declined');
+        }
 
         // Build setup:install arguments
         $arguments = $this->buildSetupInstallArguments($context);
@@ -163,34 +165,71 @@ class MagentoInstallationStage extends AbstractStage
     }
 
     /**
-     * Backup existing env.php and config.php files
+     * Backup existing env.php file if it exists
+     *
+     * Asks for user confirmation to prevent accidental production overwrites.
      *
      * @param OutputInterface $output
-     * @return void
+     * @return bool True if backup succeeded or not needed, false if user declined
      */
-    private function backupExistingConfig(OutputInterface $output): void
+    private function backupExistingConfig(OutputInterface $output): bool
     {
-        $etcDir = BP . '/app/etc';
-        $timestamp = date('Y-m-d_H-i-s');
+        $envFile = BP . '/app/etc/env.php';
 
-        $filesToBackup = [
-            'env.php' => "env.php.backup.{$timestamp}",
-            'config.php' => "config.php.backup.{$timestamp}"
-        ];
-
-        foreach ($filesToBackup as $file => $backupName) {
-            $filePath = "{$etcDir}/{$file}";
-            $backupPath = "{$etcDir}/{$backupName}";
-
-            if (file_exists($filePath)) {
-                if (copy($filePath, $backupPath)) {
-                    $output->writeln("<comment>📦 Backed up existing {$file} to {$backupName}</comment>");
-                    // Remove the original to prevent collision
-                    unlink($filePath);
-                } else {
-                    $output->writeln("<comment>⚠️  Could not backup {$file} - proceeding anyway</comment>");
-                }
-            }
+        if (!file_exists($envFile)) {
+            return true; // No backup needed
         }
+
+        $output->writeln('');
+        $output->writeln('<fg=yellow>⚠️  WARNING: Existing env.php detected!</>');
+        $output->writeln('');
+        $output->writeln('<comment>This file will be overwritten by the installation.</comment>');
+        $output->writeln('<comment>If you are on a PRODUCTION server, you should stop now!</comment>');
+        $output->writeln('');
+
+        $shouldBackup = \Laravel\Prompts\confirm(
+            label: 'Backup existing env.php before proceeding?',
+            default: true,
+            hint: 'Recommended to prevent data loss'
+        );
+
+        if (!$shouldBackup) {
+            $confirmOverwrite = \Laravel\Prompts\confirm(
+                label: 'Are you SURE you want to overwrite env.php without backup?',
+                default: false,
+                hint: 'This cannot be undone'
+            );
+
+            if (!$confirmOverwrite) {
+                return false; // User declined
+            }
+
+            // User confirmed overwrite - remove the file
+            unlink($envFile);
+            return true;
+        }
+
+        // Create timestamped backup
+        $timestamp = date('Y-m-d_H-i-s');
+        $backupFile = BP . "/app/etc/env.php.backup.{$timestamp}";
+
+        if (copy($envFile, $backupFile)) {
+            $output->writeln("<info>✓ Backed up env.php to env.php.backup.{$timestamp}</info>");
+            // Remove the original to prevent collision
+            unlink($envFile);
+            return true;
+        }
+
+        $output->writeln('<error>✗ Could not create backup!</error>');
+        $continueAnyway = \Laravel\Prompts\confirm(
+            label: 'Continue without backup?',
+            default: false
+        );
+
+        if ($continueAnyway) {
+            unlink($envFile);
+        }
+
+        return $continueAnyway;
     }
 }
