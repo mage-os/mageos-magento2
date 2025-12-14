@@ -17,6 +17,7 @@ use Magento\Framework\Phrase;
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @deprecated
+ * @see This class depended on the PHP ext-ftp extension, which has been removed.
  */
 class Ftp extends AbstractRollback
 {

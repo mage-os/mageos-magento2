@@ -21,6 +21,7 @@ use Magento\Framework\Phrase;
  * Class to work with filesystem backups
  *
  * @deprecated
+ * @see This class depended on the PHP ext-ftp extension, which has been removed.
  * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Filesystem extends AbstractBackup

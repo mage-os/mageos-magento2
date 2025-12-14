@@ -13,6 +13,7 @@ use Magento\Framework\Exception\LocalizedException;
  * FTP client
  * 
  * @deprecated
+ * @see This class depended on the PHP ext-ftp extension, which has been removed.
  */
 class Ftp extends AbstractIo
 {

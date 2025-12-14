@@ -14,6 +14,7 @@ use Magento\Framework\Filesystem;
  * Backup rollback controller.
  *
  * @deprecated
+ * @see This class depended on the PHP ext-ftp extension, which has been removed.
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Rollback extends \Magento\Backup\Controller\Adminhtml\Index implements HttpPostActionInterface
