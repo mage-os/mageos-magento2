@@ -8,6 +8,9 @@ namespace Magento\Framework\System;
 
 /**
  * Class to work with remote FTP server
+ * 
+ * @deprecated
+ * @see This class depended on the PHP ext-ftp extension, which has been removed.
  */
 class Ftp
 {
