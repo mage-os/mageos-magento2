@@ -40,27 +40,91 @@ class LoggingConfig
         );
         $debugMode = $questionHelper->ask($input, $output, $debugQuestion);
 
-        // Log handler
+        // Log handler with descriptions
+        $handlerChoices = [
+            'file' => 'File (var/log/system.log - recommended)',
+            'syslog' => 'Syslog (system logging daemon)',
+            'database' => 'Database (log table in database)'
+        ];
+
+        $choices = [];
+        $choiceMap = [];
+        $index = 0;
+
+        foreach ($handlerChoices as $code => $description) {
+            $choices[] = $description;
+            $choiceMap[$index] = $code;
+            $index++;
+        }
+
+        $output->writeln('');
         $handlerQuestion = new ChoiceQuestion(
-            '? Log handler [<comment>file</comment>]: ',
-            ['file', 'syslog', 'database'],
-            'file'
+            '? Log handler: ',
+            $choices,
+            0  // file is default
         );
-        $logHandler = $questionHelper->ask($input, $output, $handlerQuestion);
+        $selected = $questionHelper->ask($input, $output, $handlerQuestion);
+
+        // Extract code from selected choice
+        $logHandler = 'file';
+        foreach ($choiceMap as $idx => $code) {
+            if ($choices[$idx] === $selected) {
+                $logHandler = $code;
+                break;
+            }
+        }
 
         // Log level (based on debug mode)
         $defaultLevel = $debugMode ? 'debug' : 'error';
+
+        $levelChoices = [
+            'debug' => 'Debug (most verbose - development)',
+            'info' => 'Info (informational messages)',
+            'notice' => 'Notice (normal but significant)',
+            'warning' => 'Warning (potential issues)',
+            'error' => 'Error (runtime errors - production)',
+            'critical' => 'Critical (critical conditions)',
+            'alert' => 'Alert (action required immediately)',
+            'emergency' => 'Emergency (system unusable)'
+        ];
+
+        $levelChoicesList = [];
+        $levelChoiceMap = [];
+        $levelIndex = 0;
+        $defaultLevelIndex = 0;
+
+        foreach ($levelChoices as $code => $description) {
+            $levelChoicesList[] = $description;
+            $levelChoiceMap[$levelIndex] = $code;
+
+            if ($code === $defaultLevel) {
+                $defaultLevelIndex = $levelIndex;
+            }
+
+            $levelIndex++;
+        }
+
+        $output->writeln('');
         $levelQuestion = new ChoiceQuestion(
-            sprintf('? Log level [<comment>%s</comment>]: ', $defaultLevel),
-            ['debug', 'info', 'notice', 'warning', 'error', 'critical', 'alert', 'emergency'],
-            $defaultLevel
+            '? Log level: ',
+            $levelChoicesList,
+            $defaultLevelIndex
         );
-        $logLevel = $questionHelper->ask($input, $output, $levelQuestion);
+        $selectedLevel = $questionHelper->ask($input, $output, $levelQuestion);
+
+        // Extract code from selected choice
+        $logLevel = $defaultLevel;
+        foreach ($levelChoiceMap as $idx => $code) {
+            if ($levelChoicesList[$idx] === $selectedLevel) {
+                $logLevel = $code;
+                break;
+            }
+        }
 
         return [
             'debugMode' => (bool)$debugMode,
-            'logHandler' => $logHandler ?? 'file',
-            'logLevel' => $logLevel ?? $defaultLevel
+            'logHandler' => $logHandler,
+            'logLevel' => $logLevel
         ];
     }
 }
