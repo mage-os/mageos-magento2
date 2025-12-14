@@ -9,7 +9,9 @@ namespace MageOS\Installer\Console\Command;
 use MageOS\Installer\Model\Checker\PermissionChecker;
 use MageOS\Installer\Model\Config\AdminConfig;
 use MageOS\Installer\Model\Config\BackendConfig;
+use MageOS\Installer\Model\Config\CronConfig;
 use MageOS\Installer\Model\Config\DatabaseConfig;
+use MageOS\Installer\Model\Config\EmailConfig;
 use MageOS\Installer\Model\Config\EnvironmentConfig;
 use MageOS\Installer\Model\Config\LoggingConfig;
 use MageOS\Installer\Model\Config\RabbitMQConfig;
@@ -47,6 +49,8 @@ class InstallCommand extends Command
         private readonly LoggingConfig $loggingConfig,
         private readonly SampleDataConfig $sampleDataConfig,
         private readonly ThemeConfig $themeConfig,
+        private readonly CronConfig $cronConfig,
+        private readonly EmailConfig $emailConfig,
         private readonly DocumentRootDetector $documentRootDetector,
         private readonly EnvConfigWriter $envConfigWriter,
         private readonly ThemeInstaller $themeInstaller,
@@ -181,6 +185,9 @@ class InstallCommand extends Command
                 $themeConfig,
                 $baseDir
             );
+
+            // Post-install configuration (Cron, Email)
+            $this->configurePostInstall($output, $baseDir);
 
             // Delete config file on success
             $this->configFileManager->delete($baseDir);
@@ -905,5 +912,109 @@ class InstallCommand extends Command
         $output->writeln('');
         $output->writeln('<fg=yellow>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</>');
         $output->writeln('');
+    }
+
+    /**
+     * Configure post-install features (Cron, Email)
+     *
+     * @param OutputInterface $output
+     * @param string $baseDir
+     * @return void
+     */
+    private function configurePostInstall(OutputInterface $output, string $baseDir): void
+    {
+        $output->writeln('');
+        $output->writeln('<fg=cyan>═══════════════════════════════════════════════════════</>');
+        $output->writeln('<fg=cyan>Post-Installation Configuration</>');
+        $output->writeln('<fg=cyan>═══════════════════════════════════════════════════════</>');
+
+        // Cron configuration
+        $cronConfig = $this->cronConfig->collect();
+        if ($cronConfig['configure']) {
+            $this->configureCron($output, $baseDir);
+        }
+
+        // Email configuration
+        $emailConfig = $this->emailConfig->collect();
+        if ($emailConfig['configure']) {
+            $this->configureEmail($output, $baseDir, $emailConfig);
+        }
+    }
+
+    /**
+     * Configure cron
+     *
+     * @param OutputInterface $output
+     * @param string $baseDir
+     * @return void
+     */
+    private function configureCron(OutputInterface $output, string $baseDir): void
+    {
+        $output->writeln('');
+        $output->write('<comment>🔄 Configuring cron...</comment>');
+
+        try {
+            $cronCommand = sprintf('cd %s && bin/magento cron:install 2>&1', escapeshellarg($baseDir));
+            exec($cronCommand, $cronOutput, $returnCode);
+
+            if ($returnCode === 0) {
+                $output->writeln(' <info>✓</info>');
+                $output->writeln('<info>✓ Cron configured successfully!</info>');
+            } else {
+                $output->writeln(' <comment>⚠️</comment>');
+                $output->writeln('<comment>⚠️  Automatic cron setup failed. Please configure manually:</comment>');
+                $output->writeln('');
+                $output->writeln('<comment>Add to crontab (crontab -e):</comment>');
+                $output->writeln(sprintf('<comment>* * * * * %s/bin/magento cron:run 2>&1 | grep -v "Ran jobs"</comment>', $baseDir));
+                $output->writeln(sprintf('<comment>* * * * * %s/bin/magento setup:cron:run 2>&1</comment>', $baseDir));
+            }
+        } catch (\Exception $e) {
+            $output->writeln(' <error>❌</error>');
+            $output->writeln('<error>Cron configuration failed: ' . $e->getMessage() . '</error>');
+        }
+    }
+
+    /**
+     * Configure email
+     *
+     * @param OutputInterface $output
+     * @param string $baseDir
+     * @param array<string, mixed> $emailConfig
+     * @return void
+     */
+    private function configureEmail(OutputInterface $output, string $baseDir, array $emailConfig): void
+    {
+        $output->writeln('');
+        $output->write('<comment>🔄 Configuring email...</comment>');
+
+        try {
+            if ($emailConfig['transport'] === 'smtp') {
+                // Configure SMTP via Magento config
+                $commands = [
+                    sprintf('bin/magento config:set system/smtp/host %s', escapeshellarg($emailConfig['host'])),
+                    sprintf('bin/magento config:set system/smtp/port %d', $emailConfig['port']),
+                ];
+
+                if ($emailConfig['auth'] && $emailConfig['username']) {
+                    $commands[] = sprintf('bin/magento config:set system/smtp/auth %s', escapeshellarg($emailConfig['auth']));
+                    $commands[] = sprintf('bin/magento config:set system/smtp/username %s', escapeshellarg($emailConfig['username']));
+                    $commands[] = sprintf('bin/magento config:set system/smtp/password %s', escapeshellarg($emailConfig['password'] ?? ''));
+                }
+
+                foreach ($commands as $cmd) {
+                    exec(sprintf('cd %s && %s 2>&1', escapeshellarg($baseDir), $cmd));
+                }
+
+                $output->writeln(' <info>✓</info>');
+                $output->writeln('<info>✓ Email configured successfully!</info>');
+            } else {
+                $output->writeln(' <info>✓</info>');
+                $output->writeln('<info>✓ Using sendmail for email</info>');
+            }
+        } catch (\Exception $e) {
+            $output->writeln(' <error>❌</error>');
+            $output->writeln('<error>Email configuration failed: ' . $e->getMessage() . '</error>');
+            $output->writeln('<comment>You can configure email later in Admin > Stores > Configuration > Advanced > System > Mail Sending Settings</comment>');
+        }
     }
 }
