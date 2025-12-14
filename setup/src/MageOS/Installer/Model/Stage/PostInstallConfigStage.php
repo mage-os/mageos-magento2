@@ -8,7 +8,11 @@ namespace MageOS\Installer\Model\Stage;
 
 use MageOS\Installer\Model\Command\CronConfigurer;
 use MageOS\Installer\Model\Command\EmailConfigurer;
+use MageOS\Installer\Model\Command\IndexerConfigurer;
 use MageOS\Installer\Model\Command\ModeConfigurer;
+use MageOS\Installer\Model\Command\ProcessRunner;
+use MageOS\Installer\Model\Command\ThemeConfigurer;
+use MageOS\Installer\Model\Command\TwoFactorAuthConfigurer;
 use MageOS\Installer\Model\Config\CronConfig;
 use MageOS\Installer\Model\Config\EmailConfig;
 use MageOS\Installer\Model\InstallationContext;
@@ -17,7 +21,7 @@ use MageOS\Installer\Model\VO\EmailConfiguration;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Post-installation configuration stage (Cron, Email, etc.)
+ * Post-installation configuration stage (Cron, Email, Theme, Indexers, etc.)
  */
 class PostInstallConfigStage extends AbstractStage
 {
@@ -26,7 +30,11 @@ class PostInstallConfigStage extends AbstractStage
         private readonly EmailConfig $emailConfig,
         private readonly CronConfigurer $cronConfigurer,
         private readonly EmailConfigurer $emailConfigurer,
-        private readonly ModeConfigurer $modeConfigurer
+        private readonly ModeConfigurer $modeConfigurer,
+        private readonly ThemeConfigurer $themeConfigurer,
+        private readonly IndexerConfigurer $indexerConfigurer,
+        private readonly TwoFactorAuthConfigurer $twoFactorAuthConfigurer,
+        private readonly ProcessRunner $processRunner
     ) {
     }
 
@@ -96,6 +104,49 @@ class PostInstallConfigStage extends AbstractStage
             $this->modeConfigurer->setMode($env->mageMode, BP, $output);
         }
 
+        // Apply selected theme to store view
+        $theme = $context->getTheme();
+        if ($theme) {
+            $this->themeConfigurer->apply($theme, BP, $output);
+        }
+
+        // Set indexers to schedule mode for better performance
+        $this->indexerConfigurer->setScheduleMode(BP, $output);
+
+        // Configure 2FA based on environment
+        if ($env) {
+            $this->twoFactorAuthConfigurer->configure($env, BP, $output);
+        }
+
+        // Configure admin session lifetime for development environments
+        if ($env && $env->isDevelopment()) {
+            $this->configureAdminSession($output);
+        }
+
         return StageResult::continue();
+    }
+
+    /**
+     * Configure admin session lifetime for development
+     *
+     * @param OutputInterface $output
+     * @return void
+     */
+    private function configureAdminSession(OutputInterface $output): void
+    {
+        $output->writeln('');
+        $output->write('<comment>⏱️  Extending admin session lifetime for development...</comment>');
+
+        // Extend to 1 week (604800 seconds) for dev convenience
+        $result = $this->processRunner->runMagentoCommand(
+            'config:set admin/security/session_lifetime 604800',
+            BP,
+            timeout: 30
+        );
+
+        if ($result->isSuccess()) {
+            $output->writeln(' <info>✓</info>');
+            $output->writeln('<info>✓ Admin session extended to 7 days (dev mode)</info>');
+        }
     }
 }

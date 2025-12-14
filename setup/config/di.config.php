@@ -18,7 +18,10 @@ use Magento\Framework\Setup\Declaration\Schema\SchemaConfig;
 use MageOS\Installer\Model\Command\ProcessRunner;
 use MageOS\Installer\Model\Command\CronConfigurer;
 use MageOS\Installer\Model\Command\EmailConfigurer;
+use MageOS\Installer\Model\Command\IndexerConfigurer;
 use MageOS\Installer\Model\Command\ModeConfigurer;
+use MageOS\Installer\Model\Command\ThemeConfigurer;
+use MageOS\Installer\Model\Command\TwoFactorAuthConfigurer;
 use MageOS\Installer\Model\Validator\PasswordValidator;
 
 return [
@@ -55,6 +58,21 @@ return [
                     ]
                 ],
                 ModeConfigurer::class => [
+                    'parameters' => [
+                        'processRunner' => ProcessRunner::class
+                    ]
+                ],
+                ThemeConfigurer::class => [
+                    'parameters' => [
+                        'processRunner' => ProcessRunner::class
+                    ]
+                ],
+                IndexerConfigurer::class => [
+                    'parameters' => [
+                        'processRunner' => ProcessRunner::class
+                    ]
+                ],
+                TwoFactorAuthConfigurer::class => [
                     'parameters' => [
                         'processRunner' => ProcessRunner::class
                     ]
