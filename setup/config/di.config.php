@@ -15,6 +15,11 @@ use Magento\Framework\Filesystem\DriverInterface;
 use Magento\Framework\Locale\Config;
 use Magento\Framework\Locale\ConfigInterface;
 use Magento\Framework\Setup\Declaration\Schema\SchemaConfig;
+use MageOS\Installer\Model\Command\ProcessRunner;
+use MageOS\Installer\Model\Command\CronConfigurer;
+use MageOS\Installer\Model\Command\EmailConfigurer;
+use MageOS\Installer\Model\Command\ModeConfigurer;
+use MageOS\Installer\Model\Validator\PasswordValidator;
 
 return [
     'dependencies' => [
@@ -37,6 +42,24 @@ return [
                         ]
                     ]
                 ],
+                // Mage-OS Installer: Process Runner and Configurers
+                ProcessRunner::class => [],
+                CronConfigurer::class => [
+                    'parameters' => [
+                        'processRunner' => ProcessRunner::class
+                    ]
+                ],
+                EmailConfigurer::class => [
+                    'parameters' => [
+                        'processRunner' => ProcessRunner::class
+                    ]
+                ],
+                ModeConfigurer::class => [
+                    'parameters' => [
+                        'processRunner' => ProcessRunner::class
+                    ]
+                ],
+                PasswordValidator::class => [],
             ],
         ],
     ],
