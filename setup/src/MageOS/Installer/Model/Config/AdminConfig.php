@@ -7,14 +7,15 @@ declare(strict_types=1);
 namespace MageOS\Installer\Model\Config;
 
 use MageOS\Installer\Model\Validator\EmailValidator;
-use Symfony\Component\Console\Helper\QuestionHelper;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ConfirmationQuestion;
-use Symfony\Component\Console\Question\Question;
+
+use function Laravel\Prompts\info;
+use function Laravel\Prompts\note;
+use function Laravel\Prompts\password;
+use function Laravel\Prompts\text;
+use function Laravel\Prompts\warning;
 
 /**
- * Collects admin account configuration interactively
+ * Collects admin account configuration with Laravel Prompts
  */
 class AdminConfig
 {
@@ -26,133 +27,95 @@ class AdminConfig
     /**
      * Collect admin account configuration
      *
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @param QuestionHelper $questionHelper
      * @return array{firstName: string, lastName: string, email: string, username: string, password: string}
      */
-    public function collect(
-        InputInterface $input,
-        OutputInterface $output,
-        QuestionHelper $questionHelper
-    ): array {
-        $isFirstAttempt = true;
+    public function collect(): array
+    {
+        note('Admin Account');
 
-        while (true) {
-            try {
-                if ($isFirstAttempt) {
-                    $output->writeln('');
-                    $output->writeln('<info>=== Admin Account ===</info>');
-                } else {
-                    $output->writeln('');
-                    $output->writeln('<info>=== Admin Account (Retry) ===</info>');
-                }
+        // First name
+        $firstName = text(
+            label: 'Admin first name',
+            placeholder: 'John',
+            hint: 'First name of the admin user',
+            validate: fn (string $value) => empty($value) ? 'First name cannot be empty' : null
+        );
 
-                // First name
-                $firstNameQuestion = new Question('? Admin first name: ');
-                $firstNameQuestion->setValidator(function ($answer) {
-                    if (empty($answer)) {
-                        throw new \RuntimeException('First name cannot be empty');
-                    }
-                    return $answer;
-                });
-                $firstName = $questionHelper->ask($input, $output, $firstNameQuestion);
+        // Last name
+        $lastName = text(
+            label: 'Admin last name',
+            placeholder: 'Doe',
+            hint: 'Last name of the admin user',
+            validate: fn (string $value) => empty($value) ? 'Last name cannot be empty' : null
+        );
 
-                // Last name
-                $lastNameQuestion = new Question('? Admin last name: ');
-                $lastNameQuestion->setValidator(function ($answer) {
-                    if (empty($answer)) {
-                        throw new \RuntimeException('Last name cannot be empty');
-                    }
-                    return $answer;
-                });
-                $lastName = $questionHelper->ask($input, $output, $lastNameQuestion);
-
-                // Email
-                $emailQuestion = new Question('? Admin email: ');
-                $emailQuestion->setValidator(function ($answer) {
-                    $result = $this->emailValidator->validate($answer ?? '');
-                    if (!$result['valid']) {
-                        throw new \RuntimeException($result['error'] ?? 'Invalid email');
-                    }
-                    return $answer;
-                });
-                $email = $questionHelper->ask($input, $output, $emailQuestion);
-
-                // Username
-                $usernameQuestion = new Question('? Admin username: ');
-                $usernameQuestion->setValidator(function ($answer) {
-                    if (empty($answer)) {
-                        throw new \RuntimeException('Username cannot be empty');
-                    }
-                    if (strlen($answer) < 3) {
-                        throw new \RuntimeException('Username must be at least 3 characters long');
-                    }
-                    return $answer;
-                });
-                $username = $questionHelper->ask($input, $output, $usernameQuestion);
-
-                // Password (must match Magento's requirements)
-                $passwordQuestion = new Question('? Admin password: ');
-                $passwordQuestion->setHidden(true);
-                $passwordQuestion->setHiddenFallback(false);
-                $passwordQuestion->setValidator(function ($answer) {
-                    if (empty($answer)) {
-                        throw new \RuntimeException('Password cannot be empty');
-                    }
-                    if (strlen($answer) < 7) {
-                        throw new \RuntimeException('Password must be at least 7 characters long');
-                    }
-
-                    // Magento requires BOTH alphabetic AND numeric characters
-                    $hasAlpha = preg_match('/[a-zA-Z]/', $answer);
-                    $hasNumeric = preg_match('/[0-9]/', $answer);
-
-                    if (!$hasAlpha || !$hasNumeric) {
-                        throw new \RuntimeException('Password must include both alphabetic and numeric characters (required by Magento)');
-                    }
-
-                    return $answer;
-                });
-                $password = $questionHelper->ask($input, $output, $passwordQuestion);
-
-                // Check password strength and show info
-                $hasLower = preg_match('/[a-z]/', $password);
-                $hasUpper = preg_match('/[A-Z]/', $password);
-                $hasSpecial = preg_match('/[^a-zA-Z0-9]/', $password);
-
-                if (!$hasLower || !$hasUpper) {
-                    $output->writeln('<comment>ℹ️  Consider using both uppercase and lowercase letters for better security.</comment>');
-                } elseif (!$hasSpecial) {
-                    $output->writeln('<comment>ℹ️  Good password. Consider adding special characters for even better security.</comment>');
-                } else {
-                    $output->writeln('<info>✓ Strong password detected!</info>');
-                }
-
-                return [
-                    'firstName' => $firstName ?? '',
-                    'lastName' => $lastName ?? '',
-                    'email' => $email ?? '',
-                    'username' => $username ?? '',
-                    'password' => $password ?? ''
-                ];
-            } catch (\RuntimeException $e) {
-                // Show error and ask to retry
-                $output->writeln('');
-                $output->writeln('<error>❌ ' . $e->getMessage() . '</error>');
-
-                $retryQuestion = new ConfirmationQuestion(
-                    "\n<question>? Validation failed. Do you want to try again?</question> [<comment>Y/n</comment>]: ",
-                    true
-                );
-                $retry = $questionHelper->ask($input, $output, $retryQuestion);
-
-                if (!$retry) {
-                    throw new \RuntimeException('Admin account configuration failed. Installation aborted.');
-                }
-
-                $isFirstAttempt = false;
+        // Email
+        $email = text(
+            label: 'Admin email',
+            placeholder: 'admin@example.com',
+            hint: 'Email address for admin account',
+            validate: function (string $value) {
+                $result = $this->emailValidator->validate($value);
+                return $result['valid'] ? null : $result['error'];
             }
+        );
+
+        // Username (no default for security!)
+        $username = text(
+            label: 'Admin username',
+            placeholder: 'myadmin',
+            hint: 'Username to login to admin panel (avoid "admin" for security!)',
+            validate: fn (string $value) => match(true) {
+                empty($value) => 'Username cannot be empty',
+                strlen($value) < 3 => 'Username must be at least 3 characters long',
+                default => null
+            }
+        );
+
+        // Password
+        $pass = password(
+            label: 'Admin password',
+            placeholder: '••••••••',
+            hint: 'Must be 7+ characters with both letters and numbers',
+            validate: function (string $value) {
+                if (empty($value)) {
+                    return 'Password cannot be empty';
+                }
+                if (strlen($value) < 7) {
+                    return 'Password must be at least 7 characters long';
+                }
+
+                // Magento requires BOTH alphabetic AND numeric
+                $hasAlpha = preg_match('/[a-zA-Z]/', $value);
+                $hasNumeric = preg_match('/[0-9]/', $value);
+
+                if (!$hasAlpha || !$hasNumeric) {
+                    return 'Password must include both alphabetic and numeric characters (required by Magento)';
+                }
+
+                return null;
+            }
+        );
+
+        // Check password strength and show feedback
+        $hasLower = preg_match('/[a-z]/', $pass);
+        $hasUpper = preg_match('/[A-Z]/', $pass);
+        $hasSpecial = preg_match('/[^a-zA-Z0-9]/', $pass);
+
+        if (!$hasLower || !$hasUpper) {
+            info('Consider using both uppercase and lowercase letters for better security.');
+        } elseif (!$hasSpecial) {
+            info('Good password. Consider adding special characters for even better security.');
+        } else {
+            info('✓ Strong password detected!');
         }
+
+        return [
+            'firstName' => $firstName,
+            'lastName' => $lastName,
+            'email' => $email,
+            'username' => $username,
+            'password' => $pass
+        ];
     }
 }

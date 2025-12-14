@@ -109,8 +109,8 @@ class InstallCommand extends Command
                 $envConfig = $this->environmentConfig->collect();
 
                 // Stage 1 - Core + Basic Services
-                $dbConfig = $this->databaseConfig->collect($input, $output, $this->getHelper('question'));
-                $adminConfig = $this->adminConfig->collect($input, $output, $this->getHelper('question'));
+                $dbConfig = $this->databaseConfig->collect();
+                $adminConfig = $this->adminConfig->collect();
                 $storeConfig = $this->storeConfig->collect($baseDir);
                 $backendConfig = $this->backendConfig->collect();
 
@@ -777,32 +777,32 @@ class InstallCommand extends Command
         $output->writeln('<comment>   Password must be at least 7 characters with both letters and numbers</comment>');
         $output->writeln('');
 
-        $passwordQuestion = new \Symfony\Component\Console\Question\Question('? Admin password (letters + numbers): ');
-        $passwordQuestion->setHidden(true);
-        $passwordQuestion->setHiddenFallback(false);
-        $passwordQuestion->setValidator(function ($answer) {
-            if (empty($answer)) {
-                throw new \RuntimeException('Password cannot be empty');
+        $newPassword = \Laravel\Prompts\password(
+            label: 'Admin password (letters + numbers)',
+            placeholder: '••••••••',
+            hint: 'Must be 7+ characters with both letters and numbers',
+            validate: function (string $value) {
+                if (empty($value)) {
+                    return 'Password cannot be empty';
+                }
+                if (strlen($value) < 7) {
+                    return 'Password must be at least 7 characters long';
+                }
+
+                $hasAlpha = preg_match('/[a-zA-Z]/', $value);
+                $hasNumeric = preg_match('/[0-9]/', $value);
+
+                if (!$hasAlpha || !$hasNumeric) {
+                    return 'Password must include both alphabetic and numeric characters (required by Magento)';
+                }
+
+                return null;
             }
-            if (strlen($answer) < 7) {
-                throw new \RuntimeException('Password must be at least 7 characters long');
-            }
-
-            $hasAlpha = preg_match('/[a-zA-Z]/', $answer);
-            $hasNumeric = preg_match('/[0-9]/', $answer);
-
-            if (!$hasAlpha || !$hasNumeric) {
-                throw new \RuntimeException('Password must include both alphabetic and numeric characters (required by Magento)');
-            }
-
-            return $answer;
-        });
-
-        $newPassword = $this->getHelper('question')->ask($input, $output, $passwordQuestion);
+        );
 
         $adminConfig['password'] = $newPassword;
 
-        $output->writeln('<info>✓ Password updated</info>');
+        \Laravel\Prompts\info('✓ Password updated');
 
         return $adminConfig;
     }

@@ -8,14 +8,18 @@ namespace MageOS\Installer\Model\Config;
 
 use MageOS\Installer\Model\Detector\DatabaseDetector;
 use MageOS\Installer\Model\Validator\DatabaseValidator;
-use Symfony\Component\Console\Helper\QuestionHelper;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ConfirmationQuestion;
-use Symfony\Component\Console\Question\Question;
+
+use function Laravel\Prompts\confirm;
+use function Laravel\Prompts\error;
+use function Laravel\Prompts\info;
+use function Laravel\Prompts\note;
+use function Laravel\Prompts\password;
+use function Laravel\Prompts\spin;
+use function Laravel\Prompts\text;
+use function Laravel\Prompts\warning;
 
 /**
- * Collects database configuration interactively
+ * Collects database configuration with Laravel Prompts
  */
 class DatabaseConfig
 {
@@ -28,142 +32,98 @@ class DatabaseConfig
     /**
      * Collect database configuration
      *
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @param QuestionHelper $questionHelper
      * @return array{host: string, name: string, user: string, password: string, prefix: string}
      */
-    public function collect(
-        InputInterface $input,
-        OutputInterface $output,
-        QuestionHelper $questionHelper
-    ): array {
-        $isFirstAttempt = true;
-
+    public function collect(): array
+    {
         while (true) {
-            try {
-                if ($isFirstAttempt) {
-                    $output->writeln('');
-                    $output->writeln('<info>=== Database Configuration ===</info>');
-                } else {
-                    $output->writeln('');
-                    $output->writeln('<info>=== Database Configuration (Retry) ===</info>');
+            note('Database Configuration');
+
+            // Detect database
+            $detected = spin(
+                message: 'Detecting MySQL/MariaDB...',
+                callback: fn () => $this->databaseDetector->detect()
+            );
+
+            if ($detected) {
+                info(sprintf('✓ Detected database on %s:%d', $detected['host'], $detected['port']));
+                $defaultHost = $detected['host'];
+            } else {
+                warning('No database detected on common ports');
+                $defaultHost = 'localhost';
+            }
+
+            // Database host
+            $host = text(
+                label: 'Database host',
+                default: $defaultHost,
+                placeholder: 'localhost',
+                hint: 'MySQL/MariaDB hostname or IP'
+            );
+
+            // Database name
+            $name = text(
+                label: 'Database name',
+                default: 'magento',
+                placeholder: 'magento',
+                hint: 'Database must exist or user must have CREATE permission',
+                validate: function (string $value) {
+                    $result = $this->databaseValidator->validateDatabaseName($value);
+                    return $result['valid'] ? null : $result['error'];
                 }
+            );
 
-                // Detect database
-                $output->write('<comment>🔄 Detecting MySQL/MariaDB...</comment>');
-                $detected = $this->databaseDetector->detect();
+            // Database user
+            $user = text(
+                label: 'Database user',
+                default: 'root',
+                placeholder: 'root',
+                hint: 'User must have CREATE, ALTER, DROP permissions'
+            );
 
-                if ($detected) {
-                    $output->writeln(' <info>✓</info>');
-                    $output->writeln(sprintf(
-                        '<info>✓ Detected database on %s:%d</info>',
-                        $detected['host'],
-                        $detected['port']
-                    ));
-                    $defaultHost = $detected['host'];
-                } else {
-                    $output->writeln(' <comment>⚠️</comment>');
-                    $output->writeln('<comment>⚠️  No database detected on common ports</comment>');
-                    $defaultHost = 'localhost';
-                }
+            // Database password
+            $pass = password(
+                label: 'Database password',
+                hint: 'Password for database user'
+            );
 
-                $output->writeln('');
+            // Table prefix (optional)
+            $prefix = text(
+                label: 'Table prefix (optional)',
+                default: '',
+                placeholder: 'leave empty for no prefix',
+                required: false,
+                hint: 'Useful for multiple Magento installs in one database'
+            );
 
-                // Database host
-                $hostQuestion = new Question(
-                    sprintf('? Database host [<comment>%s</comment>]: ', $defaultHost),
-                    $defaultHost
-                );
-                $host = $questionHelper->ask($input, $output, $hostQuestion);
+            // Test database connection
+            $validation = spin(
+                message: 'Testing database connection...',
+                callback: fn () => $this->databaseValidator->validate($host, $name, $user, $pass)
+            );
 
-                // Database name
-                $dbNameQuestion = new Question('? Database name [<comment>magento</comment>]: ', 'magento');
-                $dbNameQuestion->setValidator(function ($answer) {
-                    $result = $this->databaseValidator->validateDatabaseName($answer ?? '');
-                    if (!$result['valid']) {
-                        throw new \RuntimeException($result['error'] ?? 'Invalid database name');
-                    }
-                    return $answer;
-                });
-                $name = $questionHelper->ask($input, $output, $dbNameQuestion);
-
-                // Database user
-                $userQuestion = new Question('? Database user [<comment>root</comment>]: ', 'root');
-                $user = $questionHelper->ask($input, $output, $userQuestion);
-
-                // Database password
-                $passwordQuestion = new Question('? Database password: ');
-                $passwordQuestion->setHidden(true);
-                $passwordQuestion->setHiddenFallback(false);
-                $password = $questionHelper->ask($input, $output, $passwordQuestion) ?? '';
-
-                // Table prefix (optional)
-                $prefixQuestion = new Question('? Table prefix (optional): ', '');
-                $prefix = $questionHelper->ask($input, $output, $prefixQuestion) ?? '';
-
-                // Test database connection
-                $output->writeln('');
-                $output->write('<comment>🔄 Testing database connection...</comment>');
-
-                $validationResult = $this->databaseValidator->validate(
-                    $host ?? $defaultHost,
-                    $name ?? 'magento',
-                    $user ?? 'root',
-                    $password
-                );
-
-                if (!$validationResult['success']) {
-                    $output->writeln('');
-                    $output->writeln('<error>❌ ' . $validationResult['error'] . '</error>');
-
-                    // Ask if user wants to retry
-                    $retryQuestion = new ConfirmationQuestion(
-                        "\n<question>? Database connection failed. Do you want to reconfigure?</question> [<comment>Y/n</comment>]: ",
-                        true
-                    );
-                    $retry = $questionHelper->ask($input, $output, $retryQuestion);
-
-                    if (!$retry) {
-                        throw new \RuntimeException('Database connection test failed. Installation aborted.');
-                    }
-
-                    // Continue loop to retry
-                    $isFirstAttempt = false;
-                    continue;
-                }
-
-                $output->writeln(' <info>✓</info>');
-                $output->writeln('<info>✓ Database connection successful!</info>');
-
+            if ($validation['success']) {
+                info('✓ Database connection successful!');
                 return [
-                    'host' => $host ?? $defaultHost,
-                    'name' => $name ?? 'magento',
-                    'user' => $user ?? 'root',
-                    'password' => $password,
+                    'host' => $host,
+                    'name' => $name,
+                    'user' => $user,
+                    'password' => $pass,
                     'prefix' => $prefix
                 ];
-            } catch (\RuntimeException $e) {
-                // If it's a validation error (not connection), ask to retry
-                if (str_contains($e->getMessage(), 'Database connection')) {
-                    throw $e; // Re-throw connection errors that already asked for retry
-                }
+            }
 
-                // For other validation errors, show and ask to retry
-                $output->writeln('');
-                $output->writeln('<error>❌ ' . $e->getMessage() . '</error>');
+            // Connection failed
+            error('Database connection failed');
+            error($validation['error'] ?? 'Unknown error');
 
-                $retryQuestion = new ConfirmationQuestion(
-                    "\n<question>? Validation failed. Do you want to try again?</question> [<comment>Y/n</comment>]: ",
-                    true
-                );
-                $retry = $questionHelper->ask($input, $output, $retryQuestion);
+            $retry = confirm(
+                label: 'Database connection failed. Do you want to reconfigure?',
+                default: true
+            );
 
-                if (!$retry) {
-                    throw new \RuntimeException('Database configuration failed. Installation aborted.');
-                }
-
-                $isFirstAttempt = false;
+            if (!$retry) {
+                throw new \RuntimeException('Database connection test failed. Installation aborted.');
             }
         }
     }
