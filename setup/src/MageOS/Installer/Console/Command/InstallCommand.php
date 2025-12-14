@@ -117,7 +117,7 @@ class InstallCommand extends Command
                 // Document root detection
                 $this->displayDocumentRootInfo($output, $baseDir);
 
-                $searchConfig = $this->searchEngineConfig->collect($input, $output, $this->getHelper('question'));
+                $searchConfig = $this->searchEngineConfig->collect();
 
                 // Stage 2 - Redis, RabbitMQ, Logging, Sample Data
                 $redisConfig = $this->redisConfig->collect();
@@ -846,7 +846,7 @@ class InstallCommand extends Command
         $output->writeln('');
         $output->writeln('<comment>Please reconfigure the search engine:</comment>');
 
-        return $this->searchEngineConfig->collect($input, $output, $this->getHelper('question'));
+        return $this->searchEngineConfig->collect();
     }
 
     /**
