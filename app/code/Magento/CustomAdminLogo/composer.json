@@ -1,0 +1,24 @@
+{
+    "name": "magento/module-custom-admin-logo",
+    "type": "magento2-module",
+    "description": "A Magento 2 module that allows admins to set the logo for their admin panel and login screen.",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Kiel Pykett",
+            "email": "pykettk@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^7.4 || ~8.0.0 || ~8.1.0 || ~8.2.0 || ~8.3.0",
+        "magento/module-config": "^101.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Element119\\CustomAdminLogo\\": ""
+        },
+        "files": [
+            "registration.php"
+        ]
+    }
+}
