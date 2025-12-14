@@ -6,6 +6,7 @@ declare(strict_types=1);
 
 namespace MageOS\Installer\Console\Command;
 
+use MageOS\Installer\Model\Checker\PermissionChecker;
 use MageOS\Installer\Model\Config\AdminConfig;
 use MageOS\Installer\Model\Config\BackendConfig;
 use MageOS\Installer\Model\Config\DatabaseConfig;
@@ -46,6 +47,7 @@ class InstallCommand extends Command
         private readonly DocumentRootDetector $documentRootDetector,
         private readonly EnvConfigWriter $envConfigWriter,
         private readonly ThemeInstaller $themeInstaller,
+        private readonly PermissionChecker $permissionChecker,
         ?string $name = null
     ) {
         parent::__construct($name);
@@ -109,6 +111,11 @@ class InstallCommand extends Command
             // Confirm installation
             if (!$this->confirmInstallation($input, $output)) {
                 $output->writeln('<comment>Installation cancelled.</comment>');
+                return Command::FAILURE;
+            }
+
+            // Check file permissions before installation
+            if (!$this->checkPermissions($output, $baseDir)) {
                 return Command::FAILURE;
             }
 
@@ -519,5 +526,52 @@ class InstallCommand extends Command
 
         $output->writeln('<fg=cyan>Happy coding! 🚀</>');
         $output->writeln('');
+    }
+
+    /**
+     * Check file permissions before installation
+     *
+     * @param OutputInterface $output
+     * @param string $baseDir
+     * @return bool
+     */
+    private function checkPermissions(OutputInterface $output, string $baseDir): bool
+    {
+        $output->writeln('');
+        $output->write('<comment>🔄 Checking file permissions...</comment>');
+
+        $result = $this->permissionChecker->check($baseDir);
+
+        if ($result['success']) {
+            $output->writeln(' <info>✓</info>');
+            $output->writeln('<info>✓ All directories are writable</info>');
+            return true;
+        }
+
+        $output->writeln(' <error>❌</error>');
+        $output->writeln('');
+        $output->writeln('<error>Missing write permissions to the following paths:</error>');
+
+        foreach ($result['missing'] as $path) {
+            $output->writeln(sprintf('  <error>• %s</error>', $path));
+        }
+
+        $output->writeln('');
+        $output->writeln('<comment>To fix permissions, run these commands:</comment>');
+        $output->writeln('');
+
+        foreach ($result['commands'] as $command) {
+            if (empty($command)) {
+                $output->writeln('');
+            } else {
+                $output->writeln('  <comment>' . $command . '</comment>');
+            }
+        }
+
+        $output->writeln('');
+        $output->writeln('<comment>Then run the installer again: bin/magento install</comment>');
+        $output->writeln('');
+
+        return false;
     }
 }
