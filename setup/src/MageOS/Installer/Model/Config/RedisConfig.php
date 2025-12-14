@@ -7,14 +7,16 @@ declare(strict_types=1);
 namespace MageOS\Installer\Model\Config;
 
 use MageOS\Installer\Model\Detector\RedisDetector;
-use Symfony\Component\Console\Helper\QuestionHelper;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ConfirmationQuestion;
-use Symfony\Component\Console\Question\Question;
+
+use function Laravel\Prompts\confirm;
+use function Laravel\Prompts\info;
+use function Laravel\Prompts\note;
+use function Laravel\Prompts\spin;
+use function Laravel\Prompts\text;
+use function Laravel\Prompts\warning;
 
 /**
- * Collects Redis configuration interactively
+ * Collects Redis configuration with Laravel Prompts
  */
 class RedisConfig
 {
@@ -26,31 +28,25 @@ class RedisConfig
     /**
      * Collect Redis configuration
      *
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @param QuestionHelper $questionHelper
      * @return array{
      *     session: array{enabled: bool, host: string, port: int, database: int}|null,
      *     cache: array{enabled: bool, host: string, port: int, database: int}|null,
      *     fpc: array{enabled: bool, host: string, port: int, database: int}|null
      * }
      */
-    public function collect(
-        InputInterface $input,
-        OutputInterface $output,
-        QuestionHelper $questionHelper
-    ): array {
-        $output->writeln('');
-        $output->writeln('<info>=== Redis Configuration ===</info>');
+    public function collect(): array
+    {
+        note('Redis Configuration');
 
         // Detect Redis instances
-        $output->write('<comment>🔄 Detecting Redis instances...</comment>');
-        $detected = $this->redisDetector->detect();
+        $detected = spin(
+            message: 'Detecting Redis instances...',
+            callback: fn () => $this->redisDetector->detect()
+        );
 
         if (empty($detected)) {
-            $output->writeln(' <comment>⚠️</comment>');
-            $output->writeln('<comment>⚠️  Redis not detected. Skipping Redis configuration.</comment>');
-            $output->writeln('<comment>ℹ️  You can configure Redis manually later in app/etc/env.php</comment>');
+            warning('Redis not detected. Skipping Redis configuration.');
+            info('You can configure Redis manually later in app/etc/env.php');
 
             return [
                 'session' => null,
@@ -59,24 +55,18 @@ class RedisConfig
             ];
         }
 
-        $output->writeln(' <info>✓</info>');
         $primaryRedis = $detected[0];
-        $output->writeln(sprintf(
-            '<info>✓ Detected Redis on %s:%d</info>',
-            $primaryRedis['host'],
-            $primaryRedis['port']
-        ));
+        info(sprintf('✓ Detected Redis on %s:%d', $primaryRedis['host'], $primaryRedis['port']));
 
         // Ask if user wants to use Redis for all purposes
-        $output->writeln('');
-        $useAllQuestion = new ConfirmationQuestion(
-            '? Use Redis for sessions, cache, and FPC? [<comment>Y/n</comment>]: ',
-            true
+        $useAll = confirm(
+            label: 'Use Redis for sessions, cache, and FPC?',
+            default: true,
+            hint: 'Quick setup with separate databases (db0, db1, db2)'
         );
-        $useAll = $questionHelper->ask($input, $output, $useAllQuestion);
 
         if ($useAll) {
-            $output->writeln('<info>✓ Using Redis for all caching purposes (sessions: db0, cache: db1, FPC: db2)</info>');
+            info('✓ Using Redis for all caching purposes (sessions: db0, cache: db1, FPC: db2)');
             return [
                 'session' => [
                     'enabled' => true,
@@ -99,18 +89,12 @@ class RedisConfig
             ];
         }
 
-        // User wants to configure individually
-        $output->writeln('<comment>ℹ️  Configure Redis individually:</comment>');
-        $output->writeln('');
+        info('Configure Redis individually:');
 
-        // Session storage
-        $sessionConfig = $this->collectSessionConfig($input, $output, $questionHelper, $primaryRedis);
-
-        // Cache backend
-        $cacheConfig = $this->collectCacheConfig($input, $output, $questionHelper, $primaryRedis);
-
-        // Full Page Cache
-        $fpcConfig = $this->collectFpcConfig($input, $output, $questionHelper, $primaryRedis);
+        // Individual configuration
+        $sessionConfig = $this->collectRedisBackend('session', 0, $primaryRedis);
+        $cacheConfig = $this->collectRedisBackend('cache', 1, $primaryRedis);
+        $fpcConfig = $this->collectRedisBackend('FPC', 2, $primaryRedis);
 
         return [
             'session' => $sessionConfig,
@@ -120,147 +104,45 @@ class RedisConfig
     }
 
     /**
-     * Collect session storage configuration
+     * Collect configuration for specific Redis backend
      *
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @param QuestionHelper $questionHelper
+     * @param string $purpose
+     * @param int $defaultDb
      * @param array{host: string, port: int} $defaultRedis
      * @return array{enabled: bool, host: string, port: int, database: int}|null
      */
-    private function collectSessionConfig(
-        InputInterface $input,
-        OutputInterface $output,
-        QuestionHelper $questionHelper,
-        array $defaultRedis
-    ): ?array {
-        $output->writeln('');
-        $enableQuestion = new ConfirmationQuestion(
-            '? Use Redis for session storage? [<comment>Y/n</comment>]: ',
-            true
+    private function collectRedisBackend(string $purpose, int $defaultDb, array $defaultRedis): ?array
+    {
+        $enabled = confirm(
+            label: sprintf('Use Redis for %s?', $purpose),
+            default: true
         );
-        $enabled = $questionHelper->ask($input, $output, $enableQuestion);
 
         if (!$enabled) {
             return null;
         }
 
-        $hostQuestion = new Question(
-            sprintf('? Redis session host [<comment>%s</comment>]: ', $defaultRedis['host']),
-            $defaultRedis['host']
+        $host = text(
+            label: sprintf('Redis %s host', $purpose),
+            default: $defaultRedis['host'],
+            placeholder: $defaultRedis['host']
         );
-        $host = $questionHelper->ask($input, $output, $hostQuestion);
 
-        $portQuestion = new Question(
-            sprintf('? Redis session port [<comment>%d</comment>]: ', $defaultRedis['port']),
-            (string)$defaultRedis['port']
+        $port = (int)text(
+            label: sprintf('Redis %s port', $purpose),
+            default: (string)$defaultRedis['port'],
+            placeholder: (string)$defaultRedis['port']
         );
-        $port = (int)$questionHelper->ask($input, $output, $portQuestion);
 
-        $dbQuestion = new Question('? Redis session database [<comment>0</comment>]: ', '0');
-        $database = (int)$questionHelper->ask($input, $output, $dbQuestion);
+        $database = (int)text(
+            label: sprintf('Redis %s database', $purpose),
+            default: (string)$defaultDb,
+            placeholder: (string)$defaultDb
+        );
 
         return [
             'enabled' => true,
-            'host' => $host ?? $defaultRedis['host'],
-            'port' => $port,
-            'database' => $database
-        ];
-    }
-
-    /**
-     * Collect cache backend configuration
-     *
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @param QuestionHelper $questionHelper
-     * @param array{host: string, port: int} $defaultRedis
-     * @return array{enabled: bool, host: string, port: int, database: int}|null
-     */
-    private function collectCacheConfig(
-        InputInterface $input,
-        OutputInterface $output,
-        QuestionHelper $questionHelper,
-        array $defaultRedis
-    ): ?array {
-        $output->writeln('');
-        $enableQuestion = new ConfirmationQuestion(
-            '? Use Redis for cache backend? [<comment>Y/n</comment>]: ',
-            true
-        );
-        $enabled = $questionHelper->ask($input, $output, $enableQuestion);
-
-        if (!$enabled) {
-            return null;
-        }
-
-        $hostQuestion = new Question(
-            sprintf('? Redis cache host [<comment>%s</comment>]: ', $defaultRedis['host']),
-            $defaultRedis['host']
-        );
-        $host = $questionHelper->ask($input, $output, $hostQuestion);
-
-        $portQuestion = new Question(
-            sprintf('? Redis cache port [<comment>%d</comment>]: ', $defaultRedis['port']),
-            (string)$defaultRedis['port']
-        );
-        $port = (int)$questionHelper->ask($input, $output, $portQuestion);
-
-        $dbQuestion = new Question('? Redis cache database [<comment>1</comment>]: ', '1');
-        $database = (int)$questionHelper->ask($input, $output, $dbQuestion);
-
-        return [
-            'enabled' => true,
-            'host' => $host ?? $defaultRedis['host'],
-            'port' => $port,
-            'database' => $database
-        ];
-    }
-
-    /**
-     * Collect FPC configuration
-     *
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @param QuestionHelper $questionHelper
-     * @param array{host: string, port: int} $defaultRedis
-     * @return array{enabled: bool, host: string, port: int, database: int}|null
-     */
-    private function collectFpcConfig(
-        InputInterface $input,
-        OutputInterface $output,
-        QuestionHelper $questionHelper,
-        array $defaultRedis
-    ): ?array {
-        $output->writeln('');
-        $enableQuestion = new ConfirmationQuestion(
-            '? Use Redis for Full Page Cache? [<comment>Y/n</comment>]: ',
-            true
-        );
-        $enabled = $questionHelper->ask($input, $output, $enableQuestion);
-
-        if (!$enabled) {
-            return null;
-        }
-
-        $hostQuestion = new Question(
-            sprintf('? Redis FPC host [<comment>%s</comment>]: ', $defaultRedis['host']),
-            $defaultRedis['host']
-        );
-        $host = $questionHelper->ask($input, $output, $hostQuestion);
-
-        $portQuestion = new Question(
-            sprintf('? Redis FPC port [<comment>%d</comment>]: ', $defaultRedis['port']),
-            (string)$defaultRedis['port']
-        );
-        $port = (int)$questionHelper->ask($input, $output, $portQuestion);
-
-        $dbQuestion = new Question('? Redis FPC database [<comment>2</comment>]: ', '2');
-        $database = (int)$questionHelper->ask($input, $output, $dbQuestion);
-
-        return [
-            'enabled' => true,
-            'host' => $host ?? $defaultRedis['host'],
+            'host' => $host,
             'port' => $port,
             'database' => $database
         ];
