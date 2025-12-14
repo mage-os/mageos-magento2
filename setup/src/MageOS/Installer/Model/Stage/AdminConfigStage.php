@@ -8,6 +8,7 @@ namespace MageOS\Installer\Model\Stage;
 
 use MageOS\Installer\Model\Config\AdminConfig;
 use MageOS\Installer\Model\InstallationContext;
+use MageOS\Installer\Model\Validator\PasswordValidator;
 use MageOS\Installer\Model\VO\AdminConfiguration;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -17,7 +18,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 class AdminConfigStage extends AbstractStage
 {
     public function __construct(
-        private readonly AdminConfig $adminConfig
+        private readonly AdminConfig $adminConfig,
+        private readonly PasswordValidator $passwordValidator
     ) {
     }
 
@@ -61,24 +63,8 @@ class AdminConfigStage extends AbstractStage
                     $password = \Laravel\Prompts\password(
                         label: 'Admin password',
                         placeholder: '••••••••',
-                        hint: 'Must be 7+ characters with both letters and numbers',
-                        validate: function (string $value) {
-                            if (empty($value)) {
-                                return 'Password cannot be empty';
-                            }
-                            if (strlen($value) < 7) {
-                                return 'Password must be at least 7 characters long';
-                            }
-
-                            $hasAlpha = preg_match('/[a-zA-Z]/', $value);
-                            $hasNumeric = preg_match('/[0-9]/', $value);
-
-                            if (!$hasAlpha || !$hasNumeric) {
-                                return 'Password must include both alphabetic and numeric characters';
-                            }
-
-                            return null;
-                        }
+                        hint: $this->passwordValidator->getRequirementsHint(),
+                        validate: fn (string $value) => $this->passwordValidator->validate($value)
                     );
 
                     // Update context with password

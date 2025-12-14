@@ -7,12 +7,12 @@ declare(strict_types=1);
 namespace MageOS\Installer\Model\Config;
 
 use MageOS\Installer\Model\Validator\EmailValidator;
+use MageOS\Installer\Model\Validator\PasswordValidator;
 
 use function Laravel\Prompts\info;
 use function Laravel\Prompts\note;
 use function Laravel\Prompts\password;
 use function Laravel\Prompts\text;
-use function Laravel\Prompts\warning;
 
 /**
  * Collects admin account configuration with Laravel Prompts
@@ -20,7 +20,8 @@ use function Laravel\Prompts\warning;
 class AdminConfig
 {
     public function __construct(
-        private readonly EmailValidator $emailValidator
+        private readonly EmailValidator $emailValidator,
+        private readonly PasswordValidator $passwordValidator
     ) {
     }
 
@@ -76,39 +77,12 @@ class AdminConfig
         $pass = password(
             label: 'Admin password',
             placeholder: '••••••••',
-            hint: 'Must be 7+ characters with both letters and numbers',
-            validate: function (string $value) {
-                if (empty($value)) {
-                    return 'Password cannot be empty';
-                }
-                if (strlen($value) < 7) {
-                    return 'Password must be at least 7 characters long';
-                }
-
-                // Magento requires BOTH alphabetic AND numeric
-                $hasAlpha = preg_match('/[a-zA-Z]/', $value);
-                $hasNumeric = preg_match('/[0-9]/', $value);
-
-                if (!$hasAlpha || !$hasNumeric) {
-                    return 'Password must include both alphabetic and numeric characters (required by Magento)';
-                }
-
-                return null;
-            }
+            hint: $this->passwordValidator->getRequirementsHint(),
+            validate: fn (string $value) => $this->passwordValidator->validate($value)
         );
 
-        // Check password strength and show feedback
-        $hasLower = preg_match('/[a-z]/', $pass);
-        $hasUpper = preg_match('/[A-Z]/', $pass);
-        $hasSpecial = preg_match('/[^a-zA-Z0-9]/', $pass);
-
-        if (!$hasLower || !$hasUpper) {
-            info('Consider using both uppercase and lowercase letters for better security.');
-        } elseif (!$hasSpecial) {
-            info('Good password. Consider adding special characters for even better security.');
-        } else {
-            info('✓ Strong password detected!');
-        }
+        // Show password strength feedback
+        info($this->passwordValidator->getStrengthFeedback($pass));
 
         return [
             'firstName' => $firstName,

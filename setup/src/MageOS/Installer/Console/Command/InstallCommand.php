@@ -27,6 +27,7 @@ use MageOS\Installer\Model\Config\StoreConfig;
 use MageOS\Installer\Model\Config\ThemeConfig;
 use MageOS\Installer\Model\Detector\DocumentRootDetector;
 use MageOS\Installer\Model\Theme\ThemeInstaller;
+use MageOS\Installer\Model\Validator\PasswordValidator;
 use MageOS\Installer\Model\Writer\ConfigFileManager;
 use MageOS\Installer\Model\Writer\EnvConfigWriter;
 use Symfony\Component\Console\Command\Command;
@@ -60,6 +61,7 @@ class InstallCommand extends Command
         private readonly ThemeInstaller $themeInstaller,
         private readonly PermissionChecker $permissionChecker,
         private readonly ConfigFileManager $configFileManager,
+        private readonly PasswordValidator $passwordValidator,
         private readonly ProcessRunner $processRunner,
         private readonly CronConfigurer $cronConfigurer,
         private readonly EmailConfigurer $emailConfigurer,
@@ -83,7 +85,7 @@ class InstallCommand extends Command
             // Configuration stages
             new Model\Stage\EnvironmentConfigStage($this->environmentConfig),
             new Model\Stage\DatabaseConfigStage($this->databaseConfig),
-            new Model\Stage\AdminConfigStage($this->adminConfig),
+            new Model\Stage\AdminConfigStage($this->adminConfig, $this->passwordValidator),
             new Model\Stage\StoreConfigStage($this->storeConfig),
             new Model\Stage\BackendConfigStage($this->backendConfig),
             new Model\Stage\DocumentRootInfoStage($this->documentRootDetector),
