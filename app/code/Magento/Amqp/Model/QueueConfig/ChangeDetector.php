@@ -169,7 +169,7 @@ class ChangeDetector implements ChangeDetectorInterface
                     } catch (Exception $closeException) {
                         // Channel is already broken after 404 - close may fail, which is expected
                         $this->logger->debug(
-                            'Failed to close AMQP channel, 404 response, this is expected: ' . $closeException->getMessage()
+                            'Failed to close AMQP channel, got 404 expected behavior: ' . $closeException->getMessage()
                         );
                     }
                 }
