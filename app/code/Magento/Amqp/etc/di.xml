@@ -6,6 +6,13 @@
  */
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\MessageQueue\Console\QueueConfigStatusCommand">
+        <arguments>
+            <argument name="changeDetectors" xsi:type="array">
+                <item name="amqp" xsi:type="object">Magento\Amqp\Model\QueueConfig\ChangeDetector</item>
+            </argument>
+        </arguments>
+    </type>
     <type name="Magento\Framework\MessageQueue\Consumer\Config\CompositeReader">
         <plugin name="queueConfigPlugin" type="Magento\Framework\MessageQueue\Config\Consumer\ConfigReaderPlugin" />
     </type>
