@@ -92,7 +92,7 @@ class AdminConfig
                 });
                 $username = $questionHelper->ask($input, $output, $usernameQuestion);
 
-                // Password
+                // Password (must match Magento's requirements)
                 $passwordQuestion = new Question('? Admin password: ');
                 $passwordQuestion->setHidden(true);
                 $passwordQuestion->setHiddenFallback(false);
@@ -103,18 +103,26 @@ class AdminConfig
                     if (strlen($answer) < 7) {
                         throw new \RuntimeException('Password must be at least 7 characters long');
                     }
+
+                    // Magento requires BOTH alphabetic AND numeric characters
+                    $hasAlpha = preg_match('/[a-zA-Z]/', $answer);
+                    $hasNumeric = preg_match('/[0-9]/', $answer);
+
+                    if (!$hasAlpha || !$hasNumeric) {
+                        throw new \RuntimeException('Password must include both alphabetic and numeric characters (required by Magento)');
+                    }
+
                     return $answer;
                 });
                 $password = $questionHelper->ask($input, $output, $passwordQuestion);
 
-                // Check password strength and show info (not blocking)
+                // Check password strength and show info
                 $hasLower = preg_match('/[a-z]/', $password);
                 $hasUpper = preg_match('/[A-Z]/', $password);
-                $hasNumber = preg_match('/[0-9]/', $password);
                 $hasSpecial = preg_match('/[^a-zA-Z0-9]/', $password);
 
-                if (!$hasLower || !$hasUpper || !$hasNumber) {
-                    $output->writeln('<comment>ℹ️  Weak password detected. Consider using uppercase, lowercase, and numbers for better security.</comment>');
+                if (!$hasLower || !$hasUpper) {
+                    $output->writeln('<comment>ℹ️  Consider using both uppercase and lowercase letters for better security.</comment>');
                 } elseif (!$hasSpecial) {
                     $output->writeln('<comment>ℹ️  Good password. Consider adding special characters for even better security.</comment>');
                 } else {
