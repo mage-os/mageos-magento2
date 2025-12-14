@@ -42,25 +42,29 @@ class ThemeConfig
         OutputInterface $output,
         QuestionHelper $questionHelper
     ): array {
-        // Ask if user wants to install a theme
+        // Ask if user wants to install a theme (default YES to encourage Hyva)
         $installQuestion = new ConfirmationQuestion(
-            '? Install a theme? [<comment>y/N</comment>]: ',
-            false
+            '? Install a theme? (Hyva recommended) [<comment>Y/n</comment>]: ',
+            true
         );
         $installTheme = $questionHelper->ask($input, $output, $installQuestion);
 
         if (!$installTheme) {
-            $output->writeln('<comment>ℹ️  Skipping theme installation (Luma will be used as default)</comment>');
+            $output->writeln('<comment>ℹ️  Skipping theme installation (Luma will be used)</comment>');
             return [
                 'install' => false,
-                'theme' => null,
+                'theme' => ThemeRegistry::THEME_LUMA,
                 'hyva_license_key' => null,
                 'hyva_project_name' => null
             ];
         }
 
-        // Show available themes
+        // Show available themes (sorted by sort_order)
         $themes = $this->themeRegistry->getAvailableThemes();
+
+        // Sort by sort_order
+        uasort($themes, fn($a, $b) => $a['sort_order'] <=> $b['sort_order']);
+
         $themeChoices = [];
         $themeMap = [];
 
@@ -68,21 +72,28 @@ class ThemeConfig
         $output->writeln('  <info>Available themes:</info>');
 
         $index = 1;
+        $defaultIndex = 1;
         foreach ($themes as $themeId => $themeInfo) {
             $choice = sprintf('%d) %s - %s', $index, $themeInfo['name'], $themeInfo['description']);
             $output->writeln('  ' . $choice);
             $themeChoices[$index] = $themeInfo['name'];
             $themeMap[$index] = $themeId;
+
+            // Remember Hyva's index as default
+            if ($themeInfo['is_recommended']) {
+                $defaultIndex = $index;
+            }
+
             $index++;
         }
 
         $output->writeln('');
 
-        // Ask user to select theme
+        // Ask user to select theme (Hyva is default)
         $themeQuestion = new ChoiceQuestion(
-            '? Select theme [<comment>1</comment>]: ',
+            sprintf('? Select theme [<comment>%d</comment>]: ', $defaultIndex),
             $themeChoices,
-            1
+            $defaultIndex
         );
         $selectedIndex = $questionHelper->ask($input, $output, $themeQuestion);
 
@@ -99,8 +110,8 @@ class ThemeConfig
             throw new \RuntimeException('Invalid theme selection');
         }
 
-        // If Luma or Blank, we're done (already installed)
-        if ($this->themeRegistry->isDefaultTheme($themeId)) {
+        // If already installed (Luma), we're done
+        if ($this->themeRegistry->isAlreadyInstalled($themeId)) {
             $output->writeln(sprintf(
                 '<info>✓ Using %s theme (already installed)</info>',
                 $themes[$themeId]['name']
