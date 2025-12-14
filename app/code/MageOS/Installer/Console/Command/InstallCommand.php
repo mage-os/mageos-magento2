@@ -15,7 +15,9 @@ use MageOS\Installer\Model\Config\RedisConfig;
 use MageOS\Installer\Model\Config\SampleDataConfig;
 use MageOS\Installer\Model\Config\SearchEngineConfig;
 use MageOS\Installer\Model\Config\StoreConfig;
+use MageOS\Installer\Model\Config\ThemeConfig;
 use MageOS\Installer\Model\Detector\DocumentRootDetector;
+use MageOS\Installer\Model\Theme\ThemeInstaller;
 use MageOS\Installer\Model\Writer\EnvConfigWriter;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -38,8 +40,10 @@ class InstallCommand extends Command
         private readonly RabbitMQConfig $rabbitMQConfig,
         private readonly LoggingConfig $loggingConfig,
         private readonly SampleDataConfig $sampleDataConfig,
+        private readonly ThemeConfig $themeConfig,
         private readonly DocumentRootDetector $documentRootDetector,
         private readonly EnvConfigWriter $envConfigWriter,
+        private readonly ThemeInstaller $themeInstaller,
         ?string $name = null
     ) {
         parent::__construct($name);
@@ -82,6 +86,9 @@ class InstallCommand extends Command
             $loggingConfig = $this->loggingConfig->collect($input, $output, $this->getHelper('question'));
             $sampleDataConfig = $this->sampleDataConfig->collect($input, $output, $this->getHelper('question'));
 
+            // Collect Stage 3 configuration (Theme)
+            $themeConfig = $this->themeConfig->collect($input, $output, $this->getHelper('question'));
+
             // Show configuration summary
             $this->displaySummary(
                 $output,
@@ -93,7 +100,8 @@ class InstallCommand extends Command
                 $redisConfig,
                 $rabbitMqConfig,
                 $loggingConfig,
-                $sampleDataConfig
+                $sampleDataConfig,
+                $themeConfig
             );
 
             // Confirm installation
@@ -114,7 +122,9 @@ class InstallCommand extends Command
                 $redisConfig,
                 $rabbitMqConfig,
                 $loggingConfig,
-                $sampleDataConfig
+                $sampleDataConfig,
+                $themeConfig,
+                $baseDir
             );
 
             return Command::SUCCESS;
@@ -175,6 +185,7 @@ class InstallCommand extends Command
      * @param array<string, mixed>|null $rabbitMqConfig
      * @param array<string, mixed> $loggingConfig
      * @param array<string, mixed> $sampleDataConfig
+     * @param array<string, mixed> $themeConfig
      * @return void
      */
     private function displaySummary(
@@ -187,7 +198,8 @@ class InstallCommand extends Command
         array $redisConfig,
         ?array $rabbitMqConfig,
         array $loggingConfig,
-        array $sampleDataConfig
+        array $sampleDataConfig,
+        array $themeConfig
     ): void {
         $output->writeln('');
         $output->writeln('<fg=cyan>🎯 Configuration complete! Here\'s what will be installed:</>');
@@ -238,6 +250,17 @@ class InstallCommand extends Command
             $output->writeln('  <info>Sample Data:</info> Yes');
         }
 
+        // Theme
+        if ($themeConfig['install'] && $themeConfig['theme']) {
+            $themeName = match($themeConfig['theme']) {
+                'hyva' => 'Hyva',
+                'luma' => 'Luma',
+                'blank' => 'Blank',
+                default => $themeConfig['theme']
+            };
+            $output->writeln(sprintf('  <info>Theme:</info> %s', $themeName));
+        }
+
         $output->writeln('');
     }
 
@@ -272,6 +295,8 @@ class InstallCommand extends Command
      * @param array<string, mixed>|null $rabbitMqConfig
      * @param array<string, mixed> $loggingConfig
      * @param array<string, mixed> $sampleDataConfig
+     * @param array<string, mixed> $themeConfig
+     * @param string $baseDir
      * @return void
      * @throws \Exception
      */
@@ -286,7 +311,9 @@ class InstallCommand extends Command
         array $redisConfig,
         ?array $rabbitMqConfig,
         array $loggingConfig,
-        array $sampleDataConfig
+        array $sampleDataConfig,
+        array $themeConfig,
+        string $baseDir
     ): void {
         $output->writeln('');
         $output->writeln('<fg=cyan>🚀 Starting installation...</>');
@@ -347,7 +374,12 @@ class InstallCommand extends Command
             $this->installSampleData($output);
         }
 
-        $this->displaySuccess($output, $storeConfig, $backendConfig, $adminConfig, $loggingConfig, $sampleDataConfig);
+        // Install theme if requested
+        if ($themeConfig['install']) {
+            $this->themeInstaller->install($baseDir, $themeConfig, $output);
+        }
+
+        $this->displaySuccess($output, $storeConfig, $backendConfig, $adminConfig, $loggingConfig, $sampleDataConfig, $themeConfig);
     }
 
     /**
@@ -426,6 +458,7 @@ class InstallCommand extends Command
      * @param array<string, mixed> $adminConfig
      * @param array<string, mixed> $loggingConfig
      * @param array<string, mixed> $sampleDataConfig
+     * @param array<string, mixed> $themeConfig
      * @return void
      */
     private function displaySuccess(
@@ -434,7 +467,8 @@ class InstallCommand extends Command
         array $backendConfig,
         array $adminConfig,
         array $loggingConfig,
-        array $sampleDataConfig
+        array $sampleDataConfig,
+        array $themeConfig
     ): void {
         $adminUrl = rtrim($storeConfig['baseUrl'], '/') . '/' . $backendConfig['frontname'];
 
@@ -467,6 +501,17 @@ class InstallCommand extends Command
 
         if ($sampleDataConfig['install']) {
             $output->writeln('  <comment>ℹ️  Sample data has been installed for development/testing purposes</comment>');
+            $output->writeln('');
+        }
+
+        if ($themeConfig['install'] && $themeConfig['theme']) {
+            $themeName = match($themeConfig['theme']) {
+                'hyva' => 'Hyva',
+                'luma' => 'Luma',
+                'blank' => 'Blank',
+                default => $themeConfig['theme']
+            };
+            $output->writeln(sprintf('  <comment>ℹ️  %s theme has been installed</comment>', $themeName));
             $output->writeln('');
         }
 
