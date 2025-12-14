@@ -274,7 +274,7 @@ class OptionTest extends AbstractImportTestCase
         }
 
         $doubleOptions = false;
-        if (str_contains($testName, 'ambiguity_several_db_rows')) {
+        if ($testName == 'testValidateAmbiguousData with data set "ambiguity_several_db_rows"') {
             $doubleOptions = true;
         }
 
@@ -326,13 +326,14 @@ class OptionTest extends AbstractImportTestCase
 
         $modelClassName = Option::class;
         $this->model = new $modelClassName(...array_values($modelClassArgs));
-        
-        // Create model mock with constructor args using MockCreationTrait
-        $this->modelMock = $this->createPartialMockWithReflection(
-            $modelClassName,
-            ['_getMultiRowFormat'],
-            array_values($modelClassArgs)
-        );
+        // Create model mock with rewritten _getMultiRowFormat method to support test data with the old format.
+        $this->modelMock = $this->getMockBuilder($modelClassName)
+            ->setConstructorArgs($modelClassArgs)
+            ->onlyMethods(['_getMultiRowFormat'])
+            ->getMock();
+        $reflection = new \ReflectionClass(Option::class);
+        $reflectionProperty = $reflection->getProperty('metadataPool');
+        $reflectionProperty->setValue($this->modelMock, $this->metadataPoolMock);
     }
 
     /**
@@ -387,8 +388,13 @@ class OptionTest extends AbstractImportTestCase
             }
         }
 
-        $resourceHelper = $this->createMock(Helper::class);
-        $resourceHelper->method('getNextAutoincrement')->willReturn(2);
+        $resourceHelper = $this->createPartialMockWithReflection(
+            \stdClass::class,
+            ['getNextAutoincrement']
+        );
+        if ($addExpectations) {
+            $resourceHelper->expects($this->any())->method('getNextAutoincrement')->willReturn(2);
+        }
 
         $data = [
             'connection' => $connection,
@@ -411,20 +417,19 @@ class OptionTest extends AbstractImportTestCase
      *
      * @return array
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     protected function _getSourceDataMocks(bool $addExpectations, bool $doubleOptions): array
     {
         $csvData = $this->_loadCsvFile();
 
-        $dataSourceModel = $this->createMock(ImportData::class);
+        $dataSourceModel = $this->createPartialMockWithReflection(
+            \stdClass::class,
+            ['getNextUniqueBunch']
+        );
         
         if ($addExpectations) {
             $dataSourceModel->method('getNextUniqueBunch')
-                ->willReturnOnConsecutiveCalls($csvData['data'], [], [], []);
-        } else {
-            $dataSourceModel->method('getNextUniqueBunch')->willReturn([]);
+                ->willReturnOnConsecutiveCalls($csvData['data'], null);
         }
 
         $products = [];
@@ -432,16 +437,13 @@ class OptionTest extends AbstractImportTestCase
         foreach ($csvData['data'] as $rowIndex => $csvDataRow) {
             if (!empty($csvDataRow['sku']) && !array_key_exists($csvDataRow['sku'], $products)) {
                 $elementIndex = $rowIndex + 1;
-                $optionTitle = $csvDataRow[Product::COL_NAME];
-                $optionType = isset($csvDataRow['_custom_option_type']) ? $csvDataRow['_custom_option_type'] : 'field';
-
                 $products[$csvDataRow['sku']] = [
                     'sku' => $csvDataRow['sku'],
                     'id' => $elementIndex,
                     'entity_id' => $elementIndex,
                     'product_id' => $elementIndex,
-                    'type' => $optionType,
-                    'title' => $optionTitle
+                    'type' => $csvDataRow[Product::COL_TYPE],
+                    'title' => $csvDataRow[Product::COL_NAME]
                 ];
             }
         }
@@ -451,12 +453,17 @@ class OptionTest extends AbstractImportTestCase
             ['getErrorAggregator']
         );
         $this->productEntity->method('getErrorAggregator')->willReturn($this->getErrorAggregatorObject());
-        // Use reflection to set metadataPool property
         $reflection = new \ReflectionClass(Product::class);
         $reflectionProperty = $reflection->getProperty('metadataPool');
         $reflectionProperty->setValue($this->productEntity, $this->metadataPoolMock);
 
-        $productModelMock = new DataObject(['product_entities_info' => $products]);
+        $productModelMock = $this->createPartialMockWithReflection(
+            \stdClass::class,
+            ['getProductEntitiesInfo']
+        );
+        $productModelMock->expects($this->any())
+            ->method('getProductEntitiesInfo')
+            ->willReturn($products);
 
         $this->skuStorageMock->method('get')->willReturnCallback(function ($sku) use ($products) {
             $skuLowered = strtolower($sku);
@@ -470,54 +477,43 @@ class OptionTest extends AbstractImportTestCase
             return isset($products[$skuLowered]);
         });
 
+        $fetchStrategy = $this->createMock(FetchStrategyInterface::class);
+        $logger = $this->createMock(LoggerInterface::class);
+        $entityFactory = $this->createMock(EntityFactory::class);
+
+        $optionCollection = $this->createPartialMockWithReflection(
+            AbstractDb::class,
+            ['getSelect', 'getNewEmptyItem', 'reset', 'addProductToFilter', 'getResource'],
+            [$entityFactory, $logger, $fetchStrategy]
+        );
+
         $select = $this->createPartialMock(Select::class, ['join', 'where']);
         $select->expects($this->any())->method('join')->willReturnSelf();
         $select->expects($this->any())->method('where')->willReturnSelf();
 
-        $optionCollection = $this->createPartialMockWithReflection(
-            OptionCollection::class,
-            ['getSelect', 'addProductToFilter', 'reset', 'getIterator', 'setNewEmptyItem']
-        );
-        $optionCollection->method('getSelect')->willReturn($select);
-        $optionCollection->method('addProductToFilter')->willReturnSelf();
-        $optionCollection->method('reset')->willReturnSelf();
-        $optionCollection->method('setNewEmptyItem')->willReturnSelf();
+        $optionCollection->expects($this->any())
+            ->method('getNewEmptyItem')
+            ->willReturnCallback([$this, 'getNewOptionMock']);
+        $optionCollection->expects($this->any())->method('reset')->willReturnSelf();
+        $optionCollection->expects($this->any())->method('addProductToFilter')->willReturnSelf();
+        $optionCollection->expects($this->any())->method('getSelect')->willReturn($select);
 
         $optionsData = array_values($products);
         if ($doubleOptions) {
             foreach ($products as $product) {
                 $elementIndex++;
                 $product['id'] = $elementIndex;
-                $product['type'] = 'date_time';
-                $product['product_id'] = $elementIndex;
                 $optionsData[] = $product;
             }
         }
 
-        $optionItems = [];
-        foreach ($optionsData as $data) {
-            $option = $this->createPartialMockWithReflection(
-                ProductOption::class,
-                ['getId', 'getProductId', 'getType', 'getTitle']
-            );
-            if (isset($data['id'])) {
-                $option->method('getId')->willReturn($data['id']);
-            }
-            if (isset($data['product_id'])) {
-                $option->method('getProductId')->willReturn($data['product_id']);
-            }
-            if (isset($data['type'])) {
-                $option->method('getType')->willReturn($data['type']);
-            }
-            if (isset($data['title'])) {
-                $option->method('getTitle')->willReturn($data['title']);
-            }
-            $optionItems[] = $option;
-        }
-        $optionCollection->method('getIterator')->willReturn(new \ArrayIterator($optionItems));
+        $fetchStrategy->expects($this->any())->method('fetchAll')->willReturn($optionsData);
 
-        $collectionIterator = $this->createMock(CollectionByPagesIterator::class);
-        $collectionIterator->method('iterate')->willReturnCallback([$this, 'iterate']);
+        $collectionIterator = $this->createPartialMockWithReflection(
+            \stdClass::class,
+            ['iterate']
+        );
+        $collectionIterator->expects($this->any())->method('iterate')->willReturnCallback([$this, 'iterate']);
 
         $data = [
             'data_source_model' => $dataSourceModel,
@@ -556,7 +552,6 @@ class OptionTest extends AbstractImportTestCase
      */
     public function getNewOptionMock(): MockObject
     {
-        // Only mock __wakeup - all other methods (get*/set*) work via magic __call method
         return $this->createPartialMock(ProductOption::class, ['__wakeup']);
     }
 
@@ -667,6 +662,8 @@ class OptionTest extends AbstractImportTestCase
 
     /**
      * @return void
+     *
+     * @covers \Magento\CatalogImportExport\Model\Import\Product\Option::getEntityTypeCode
      */
     public function testGetEntityTypeCode(): void
     {
@@ -675,6 +672,16 @@ class OptionTest extends AbstractImportTestCase
 
     /**
      * @return void
+     *
+     * @covers \Magento\CatalogImportExport\Model\Import\Product\Option::importData
+     * @covers \Magento\CatalogImportExport\Model\Import\Product\Option::_importData
+     * @covers \Magento\CatalogImportExport\Model\Import\Product\Option::_saveOptions
+     * @covers \Magento\CatalogImportExport\Model\Import\Product\Option::_saveTitles
+     * @covers \Magento\CatalogImportExport\Model\Import\Product\Option::_savePrices
+     * @covers \Magento\CatalogImportExport\Model\Import\Product\Option::_saveSpecificTypeValues
+     * @covers \Magento\CatalogImportExport\Model\Import\Product\Option::_saveSpecificTypePrices
+     * @covers \Magento\CatalogImportExport\Model\Import\Product\Option::_saveSpecificTypeTitles
+     * @covers \Magento\CatalogImportExport\Model\Import\Product\Option::_updateProducts
      */
     public function testImportDataAppendBehavior(): void
     {
@@ -683,6 +690,9 @@ class OptionTest extends AbstractImportTestCase
 
     /**
      * @return void
+     *
+     * @covers \Magento\CatalogImportExport\Model\Import\Product\Option::_importData
+     * @covers \Magento\CatalogImportExport\Model\Import\Product\Option::_deleteEntities
      */
     public function testImportDataDeleteBehavior(): void
     {
@@ -748,6 +758,7 @@ class OptionTest extends AbstractImportTestCase
      * Test for validation of row without custom option.
      *
      * @return void
+     * @covers \Magento\CatalogImportExport\Model\Import\Product\Option::_isRowWithCustomOption
      */
     public function testValidateRowNoCustomOption(): void
     {
@@ -1124,7 +1135,7 @@ class OptionTest extends AbstractImportTestCase
             'ambiguity_several_db_rows' => [
                 'rowData' => include __DIR__ . '/_files/row_data_ambiguity_several_db_rows.php',
                 'errors' => [
-                    Option::ERROR_AMBIGUOUS_TYPES => [1]
+                    Option::ERROR_AMBIGUOUS_OLD_NAMES => [1]
                 ],
                 'behavior' => Import::BEHAVIOR_APPEND
             ]
@@ -1136,7 +1147,10 @@ class OptionTest extends AbstractImportTestCase
      */
     public function testParseRequiredData(): void
     {
-        $modelData = $this->createMock(ImportData::class);
+        $modelData = $this->createPartialMockWithReflection(
+            \stdClass::class,
+            ['getNextUniqueBunch']
+        );
         $modelData->method('getNextUniqueBunch')->willReturnOnConsecutiveCalls(
             [
                 [
@@ -1145,11 +1159,14 @@ class OptionTest extends AbstractImportTestCase
                     '_custom_option_title' => 'Title'
                 ]
             ],
-            [], // Second call returns empty to stop iteration
-            []  // Additional calls return empty
+            null
         );
 
-        $productModel = new DataObject(['product_entities_info' => []]);
+        $productModel = $this->createPartialMockWithReflection(
+            \stdClass::class,
+            ['getProductEntitiesInfo']
+        );
+        $productModel->expects($this->any())->method('getProductEntitiesInfo')->willReturn([]);
 
         /** @var Product $productEntityMock */
         $productEntityMock = $this->createMock(Product::class);
@@ -1207,7 +1224,9 @@ class OptionTest extends AbstractImportTestCase
     {
         $reflection = new \ReflectionClass(get_class($object));
         $reflectionProperty = $reflection->getProperty($property);
+        $reflectionProperty->setAccessible(true);
         $reflectionProperty->setValue($object, $value);
+
         return $object;
     }
 
@@ -1222,6 +1241,8 @@ class OptionTest extends AbstractImportTestCase
     {
         $reflection = new \ReflectionClass(get_class($object));
         $reflectionProperty = $reflection->getProperty($property);
+        $reflectionProperty->setAccessible(true);
+
         return $reflectionProperty->getValue($object);
     }
 }
