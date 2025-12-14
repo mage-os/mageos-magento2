@@ -414,11 +414,6 @@ class InstallCommand extends Command
             '--cleanup-database' => true
         ];
 
-        // Set Magento mode based on environment
-        if (isset($envConfig['mageMode'])) {
-            $arguments['--mode'] = $envConfig['mageMode'];
-        }
-
         // Add search engine parameters (different for Elasticsearch vs OpenSearch)
         $isOpenSearch = $searchConfig['engine'] === 'opensearch';
         $hostKey = $isOpenSearch ? '--opensearch-host' : '--elasticsearch-host';
@@ -453,6 +448,9 @@ class InstallCommand extends Command
         if ($returnCode !== 0) {
             throw new \RuntimeException('Installation failed. Please check the errors above.');
         }
+
+        // Set Magento mode based on environment (must be done AFTER install)
+        $this->setMagentoMode($output, $baseDir, $envConfig['mageMode']);
 
         // Configure additional services
         $this->configureServices($output, $redisConfig, $rabbitMqConfig);
@@ -1015,6 +1013,36 @@ class InstallCommand extends Command
             $output->writeln(' <error>❌</error>');
             $output->writeln('<error>Email configuration failed: ' . $e->getMessage() . '</error>');
             $output->writeln('<comment>You can configure email later in Admin > Stores > Configuration > Advanced > System > Mail Sending Settings</comment>');
+        }
+    }
+
+    /**
+     * Set Magento deployment mode
+     *
+     * @param OutputInterface $output
+     * @param string $baseDir
+     * @param string $mode
+     * @return void
+     */
+    private function setMagentoMode(OutputInterface $output, string $baseDir, string $mode): void
+    {
+        $output->writeln('');
+        $output->write(sprintf('<comment>🔄 Setting Magento mode to %s...</comment>', $mode));
+
+        try {
+            $modeCommand = sprintf('cd %s && bin/magento deploy:mode:set %s 2>&1', escapeshellarg($baseDir), escapeshellarg($mode));
+            exec($modeCommand, $modeOutput, $returnCode);
+
+            if ($returnCode === 0) {
+                $output->writeln(' <info>✓</info>');
+                $output->writeln(sprintf('<info>✓ Magento mode set to %s</info>', $mode));
+            } else {
+                $output->writeln(' <comment>⚠️</comment>');
+                $output->writeln(sprintf('<comment>⚠️  Mode setting failed. Run manually: bin/magento deploy:mode:set %s</comment>', $mode));
+            }
+        } catch (\Exception $e) {
+            $output->writeln(' <error>❌</error>');
+            $output->writeln('<error>Mode setting failed: ' . $e->getMessage() . '</error>');
         }
     }
 }
