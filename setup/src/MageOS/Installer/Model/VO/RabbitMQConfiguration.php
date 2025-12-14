@@ -50,18 +50,23 @@ final readonly class RabbitMQConfiguration
     /**
      * Create from array
      *
-     * @param array<string, mixed> $data
+     * @param array<string, mixed>|null $data
      * @return self
      */
-    public static function fromArray(array $data): self
+    public static function fromArray(?array $data): self
     {
+        if ($data === null) {
+            // Not configured - return disabled
+            return new self(false);
+        }
+
         return new self(
             $data['enabled'] ?? false,
             $data['host'] ?? 'localhost',
             (int)($data['port'] ?? 5672),
             $data['user'] ?? 'guest',
             $data['password'] ?? 'guest',
-            $data['virtualHost'] ?? '/'
+            $data['virtualHost'] ?? $data['virtualhost'] ?? '/' // Handle both formats
         );
     }
 }
