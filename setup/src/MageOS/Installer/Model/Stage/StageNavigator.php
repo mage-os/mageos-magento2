@@ -55,6 +55,10 @@ class StageNavigator
                 continue;
             }
 
+            // Display progress for this stage
+            $stepDisplay = $this->getStepDisplay($currentIndex);
+            $this->displayStageProgress($output, $stage, $stepDisplay['current'], $stepDisplay['total']);
+
             // Execute stage
             $result = $stage->execute($context, $output);
 
@@ -82,6 +86,52 @@ class StageNavigator
         }
 
         return true; // Completed successfully
+    }
+
+    /**
+     * Display progress for current stage
+     *
+     * @param OutputInterface $output
+     * @param InstallationStageInterface $stage
+     * @param int $current
+     * @param int $total
+     * @return void
+     */
+    private function displayStageProgress(
+        OutputInterface $output,
+        InstallationStageInterface $stage,
+        int $current,
+        int $total
+    ): void {
+        // Only show progress for stages that have meaningful weight
+        if ($stage->getProgressWeight() === 0) {
+            return;
+        }
+
+        $progress = (int) round(($current / $total) * 100);
+        $progressBar = $this->renderProgressBar($progress);
+
+        $output->writeln('');
+        $output->writeln("\033[36m═══════════════════════════════════════════════════════\033[0m");
+        $output->writeln(sprintf("\033[36m[Step %d/%d] %s\033[0m", $current, $total, $stage->getName()));
+        $output->writeln(sprintf("\033[36m%s %d%%\033[0m", $progressBar, $progress));
+        $output->writeln("\033[36m═══════════════════════════════════════════════════════\033[0m");
+        $output->writeln('');
+    }
+
+    /**
+     * Render ASCII progress bar
+     *
+     * @param int $percentage
+     * @return string
+     */
+    private function renderProgressBar(int $percentage): string
+    {
+        $barLength = 50;
+        $filledLength = (int) round(($percentage / 100) * $barLength);
+        $emptyLength = $barLength - $filledLength;
+
+        return '[' . str_repeat('█', $filledLength) . str_repeat('▒', $emptyLength) . ']';
     }
 
     /**
