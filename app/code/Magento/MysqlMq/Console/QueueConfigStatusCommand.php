@@ -43,8 +43,8 @@ class QueueConfigStatusCommand extends Command
      */
     protected function configure()
     {
-        $this->setName('queue:config:mysql:status')
-            ->setDescription('Checks if queue DB data requires update');
+        $this->setName('queue:config:status')
+            ->setDescription('Checks if defined queues in configuration exist in the database.');
         parent::configure();
     }
 
