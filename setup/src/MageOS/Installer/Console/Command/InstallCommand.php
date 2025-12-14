@@ -92,6 +92,9 @@ class InstallCommand extends Command
                 $themeConfig = $savedConfig['theme'];
 
                 $output->writeln('<info>✓ Loaded previous configuration</info>');
+
+                // Validate loaded admin password meets current requirements
+                $adminConfig = $this->validateAndFixAdminConfig($input, $output, $adminConfig);
             } else {
                 // Collect fresh configuration
                 // Stage 1 - Core + Basic Services
@@ -702,5 +705,66 @@ class InstallCommand extends Command
             $output->writeln('');
             $output->writeln('<comment>ℹ️  Configuration saved to .mageos-install-config.json (for resume if installation fails)</comment>');
         }
+    }
+
+    /**
+     * Validate loaded admin config and re-prompt if needed
+     *
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @param array<string, mixed> $adminConfig
+     * @return array<string, mixed>
+     */
+    private function validateAndFixAdminConfig(
+        InputInterface $input,
+        OutputInterface $output,
+        array $adminConfig
+    ): array {
+        $password = $adminConfig['password'] ?? '';
+
+        // Validate password meets Magento's requirements
+        $hasAlpha = preg_match('/[a-zA-Z]/', $password);
+        $hasNumeric = preg_match('/[0-9]/', $password);
+        $hasMinLength = strlen($password) >= 7;
+
+        if ($hasMinLength && $hasAlpha && $hasNumeric) {
+            // Password is valid
+            return $adminConfig;
+        }
+
+        // Password is invalid - re-prompt
+        $output->writeln('');
+        $output->writeln('<comment>⚠️  Saved admin password does not meet current Magento requirements</comment>');
+        $output->writeln('<comment>   Password must be at least 7 characters with both letters and numbers</comment>');
+        $output->writeln('');
+
+        $passwordQuestion = new \Symfony\Component\Console\Question\Question('? Admin password (letters + numbers): ');
+        $passwordQuestion->setHidden(true);
+        $passwordQuestion->setHiddenFallback(false);
+        $passwordQuestion->setValidator(function ($answer) {
+            if (empty($answer)) {
+                throw new \RuntimeException('Password cannot be empty');
+            }
+            if (strlen($answer) < 7) {
+                throw new \RuntimeException('Password must be at least 7 characters long');
+            }
+
+            $hasAlpha = preg_match('/[a-zA-Z]/', $answer);
+            $hasNumeric = preg_match('/[0-9]/', $answer);
+
+            if (!$hasAlpha || !$hasNumeric) {
+                throw new \RuntimeException('Password must include both alphabetic and numeric characters (required by Magento)');
+            }
+
+            return $answer;
+        });
+
+        $newPassword = $this->getHelper('question')->ask($input, $output, $passwordQuestion);
+
+        $adminConfig['password'] = $newPassword;
+
+        $output->writeln('<info>✓ Password updated</info>');
+
+        return $adminConfig;
     }
 }
