@@ -30,6 +30,8 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
  */
 class InstallCommand extends Command
 {
+    public const NAME = 'install';
+
     public function __construct(
         private readonly DatabaseConfig $databaseConfig,
         private readonly AdminConfig $adminConfig,

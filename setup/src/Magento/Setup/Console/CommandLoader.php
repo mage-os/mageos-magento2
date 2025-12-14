@@ -57,7 +57,8 @@ class CommandLoader implements CommandLoaderInterface
         Command\RollbackCommand::NAME => Command\RollbackCommand::class,
         Command\UpgradeCommand::NAME => Command\UpgradeCommand::class,
         Command\UninstallCommand::NAME => Command\UninstallCommand::class,
-        Command\DeployStaticContentCommand::NAME => Command\DeployStaticContentCommand::class
+        Command\DeployStaticContentCommand::NAME => Command\DeployStaticContentCommand::class,
+        \MageOS\Installer\Console\Command\InstallCommand::NAME => \MageOS\Installer\Console\Command\InstallCommand::class
     ];
 
     /**
