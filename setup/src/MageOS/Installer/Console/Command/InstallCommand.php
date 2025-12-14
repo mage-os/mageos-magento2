@@ -19,6 +19,7 @@ use MageOS\Installer\Model\Config\StoreConfig;
 use MageOS\Installer\Model\Config\ThemeConfig;
 use MageOS\Installer\Model\Detector\DocumentRootDetector;
 use MageOS\Installer\Model\Theme\ThemeInstaller;
+use MageOS\Installer\Model\Writer\ConfigFileManager;
 use MageOS\Installer\Model\Writer\EnvConfigWriter;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -48,6 +49,7 @@ class InstallCommand extends Command
         private readonly EnvConfigWriter $envConfigWriter,
         private readonly ThemeInstaller $themeInstaller,
         private readonly PermissionChecker $permissionChecker,
+        private readonly ConfigFileManager $configFileManager,
         ?string $name = null
     ) {
         parent::__construct($name);
@@ -73,25 +75,45 @@ class InstallCommand extends Command
 
             $baseDir = BP; // Magento base directory constant
 
-            // Collect Stage 1 configuration (Core + Basic Services)
-            $dbConfig = $this->databaseConfig->collect($input, $output, $this->getHelper('question'));
-            $adminConfig = $this->adminConfig->collect($input, $output, $this->getHelper('question'));
-            $storeConfig = $this->storeConfig->collect($input, $output, $this->getHelper('question'), $baseDir);
-            $backendConfig = $this->backendConfig->collect($input, $output, $this->getHelper('question'));
+            // Check for previous installation config
+            $savedConfig = $this->checkForPreviousConfig($input, $output, $baseDir);
 
-            // Document root detection
-            $this->displayDocumentRootInfo($output, $baseDir);
+            if ($savedConfig) {
+                // Use saved configuration
+                $dbConfig = $savedConfig['database'];
+                $adminConfig = $savedConfig['admin'];
+                $storeConfig = $savedConfig['store'];
+                $backendConfig = $savedConfig['backend'];
+                $searchConfig = $savedConfig['search'];
+                $redisConfig = $savedConfig['redis'];
+                $rabbitMqConfig = $savedConfig['rabbitmq'];
+                $loggingConfig = $savedConfig['logging'];
+                $sampleDataConfig = $savedConfig['sampleData'];
+                $themeConfig = $savedConfig['theme'];
 
-            $searchConfig = $this->searchEngineConfig->collect($input, $output, $this->getHelper('question'));
+                $output->writeln('<info>✓ Loaded previous configuration</info>');
+            } else {
+                // Collect fresh configuration
+                // Stage 1 - Core + Basic Services
+                $dbConfig = $this->databaseConfig->collect($input, $output, $this->getHelper('question'));
+                $adminConfig = $this->adminConfig->collect($input, $output, $this->getHelper('question'));
+                $storeConfig = $this->storeConfig->collect($input, $output, $this->getHelper('question'), $baseDir);
+                $backendConfig = $this->backendConfig->collect($input, $output, $this->getHelper('question'));
 
-            // Collect Stage 2 configuration (Redis, RabbitMQ, Logging, Sample Data)
-            $redisConfig = $this->redisConfig->collect($input, $output, $this->getHelper('question'));
-            $rabbitMqConfig = $this->rabbitMQConfig->collect($input, $output, $this->getHelper('question'));
-            $loggingConfig = $this->loggingConfig->collect($input, $output, $this->getHelper('question'));
-            $sampleDataConfig = $this->sampleDataConfig->collect($input, $output, $this->getHelper('question'));
+                // Document root detection
+                $this->displayDocumentRootInfo($output, $baseDir);
 
-            // Collect Stage 3 configuration (Theme)
-            $themeConfig = $this->themeConfig->collect($input, $output, $this->getHelper('question'));
+                $searchConfig = $this->searchEngineConfig->collect($input, $output, $this->getHelper('question'));
+
+                // Stage 2 - Redis, RabbitMQ, Logging, Sample Data
+                $redisConfig = $this->redisConfig->collect($input, $output, $this->getHelper('question'));
+                $rabbitMqConfig = $this->rabbitMQConfig->collect($input, $output, $this->getHelper('question'));
+                $loggingConfig = $this->loggingConfig->collect($input, $output, $this->getHelper('question'));
+                $sampleDataConfig = $this->sampleDataConfig->collect($input, $output, $this->getHelper('question'));
+
+                // Stage 3 - Theme
+                $themeConfig = $this->themeConfig->collect($input, $output, $this->getHelper('question'));
+            }
 
             // Show configuration summary
             $this->displaySummary(
@@ -119,6 +141,9 @@ class InstallCommand extends Command
                 return Command::FAILURE;
             }
 
+            // Save configuration before installation (for resume capability)
+            $this->saveConfiguration($output, $baseDir, $dbConfig, $adminConfig, $storeConfig, $backendConfig, $searchConfig, $redisConfig, $rabbitMqConfig, $loggingConfig, $sampleDataConfig, $themeConfig);
+
             // Run installation
             $this->runInstallation(
                 $input,
@@ -135,6 +160,9 @@ class InstallCommand extends Command
                 $themeConfig,
                 $baseDir
             );
+
+            // Delete config file on success
+            $this->configFileManager->delete($baseDir);
 
             return Command::SUCCESS;
         } catch (\Exception $e) {
@@ -573,5 +601,106 @@ class InstallCommand extends Command
         $output->writeln('');
 
         return false;
+    }
+
+    /**
+     * Check for previous installation configuration and ask to resume
+     *
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @param string $baseDir
+     * @return array<string, mixed>|null
+     */
+    private function checkForPreviousConfig(
+        InputInterface $input,
+        OutputInterface $output,
+        string $baseDir
+    ): ?array {
+        if (!$this->configFileManager->exists($baseDir)) {
+            return null;
+        }
+
+        $output->writeln('');
+        $output->writeln('<fg=yellow>⚠️  Previous installation detected!</>');
+        $output->writeln('');
+
+        $configPath = $this->configFileManager->getConfigFilePath($baseDir);
+        $savedConfig = $this->configFileManager->load($baseDir);
+
+        if (!$savedConfig) {
+            $output->writeln('<comment>Configuration file exists but cannot be read. Starting fresh...</comment>');
+            return null;
+        }
+
+        $output->writeln(sprintf('<comment>Found saved configuration from: %s</comment>', $savedConfig['_created_at'] ?? 'unknown'));
+        $output->writeln('');
+
+        $resumeQuestion = new ConfirmationQuestion(
+            '<question>? Resume previous installation?</question> [<comment>Y/n</comment>]: ',
+            true
+        );
+
+        $resume = $this->getHelper('question')->ask($input, $output, $resumeQuestion);
+
+        if (!$resume) {
+            $output->writeln('<comment>Starting fresh installation...</comment>');
+            $this->configFileManager->delete($baseDir);
+            return null;
+        }
+
+        return $savedConfig;
+    }
+
+    /**
+     * Save configuration to file for resume capability
+     *
+     * @param OutputInterface $output
+     * @param string $baseDir
+     * @param array<string, mixed> $dbConfig
+     * @param array<string, mixed> $adminConfig
+     * @param array<string, mixed> $storeConfig
+     * @param array<string, mixed> $backendConfig
+     * @param array<string, mixed> $searchConfig
+     * @param array<string, mixed> $redisConfig
+     * @param array<string, mixed>|null $rabbitMqConfig
+     * @param array<string, mixed> $loggingConfig
+     * @param array<string, mixed> $sampleDataConfig
+     * @param array<string, mixed> $themeConfig
+     * @return void
+     */
+    private function saveConfiguration(
+        OutputInterface $output,
+        string $baseDir,
+        array $dbConfig,
+        array $adminConfig,
+        array $storeConfig,
+        array $backendConfig,
+        array $searchConfig,
+        array $redisConfig,
+        ?array $rabbitMqConfig,
+        array $loggingConfig,
+        array $sampleDataConfig,
+        array $themeConfig
+    ): void {
+        $config = [
+            '_created_at' => date('Y-m-d H:i:s'),
+            'database' => $dbConfig,
+            'admin' => $adminConfig,
+            'store' => $storeConfig,
+            'backend' => $backendConfig,
+            'search' => $searchConfig,
+            'redis' => $redisConfig,
+            'rabbitmq' => $rabbitMqConfig,
+            'logging' => $loggingConfig,
+            'sampleData' => $sampleDataConfig,
+            'theme' => $themeConfig
+        ];
+
+        $saved = $this->configFileManager->save($baseDir, $config);
+
+        if ($saved) {
+            $output->writeln('');
+            $output->writeln('<comment>ℹ️  Configuration saved to .mageos-install-config.json (for resume if installation fails)</comment>');
+        }
     }
 }
