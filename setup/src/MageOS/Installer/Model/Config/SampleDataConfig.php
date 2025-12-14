@@ -6,40 +6,31 @@ declare(strict_types=1);
 
 namespace MageOS\Installer\Model\Config;
 
-use Symfony\Component\Console\Helper\QuestionHelper;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ConfirmationQuestion;
+use function Laravel\Prompts\confirm;
+use function Laravel\Prompts\note;
 
 /**
- * Collects sample data configuration interactively
+ * Collects sample data configuration with Laravel Prompts
  */
 class SampleDataConfig
 {
     /**
      * Collect sample data configuration
      *
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @param QuestionHelper $questionHelper
      * @return array{install: bool}
      */
-    public function collect(
-        InputInterface $input,
-        OutputInterface $output,
-        QuestionHelper $questionHelper
-    ): array {
-        $output->writeln('');
-        $output->writeln('<info>=== Optional Features ===</info>');
+    public function collect(): array
+    {
+        note('Optional Features');
 
-        $sampleDataQuestion = new ConfirmationQuestion(
-            '? Install sample data? [<comment>y/N</comment>]: ',
-            false
+        $installSampleData = confirm(
+            label: 'Install sample data?',
+            default: false,
+            hint: 'Sample data is useful for development and testing'
         );
-        $installSampleData = $questionHelper->ask($input, $output, $sampleDataQuestion);
 
         return [
-            'install' => (bool)$installSampleData
+            'install' => $installSampleData
         ];
     }
 }

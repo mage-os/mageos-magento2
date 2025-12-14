@@ -106,12 +106,12 @@ class InstallCommand extends Command
             } else {
                 // Collect fresh configuration
                 // Environment type (Development vs Production) - FIRST!
-                $envConfig = $this->environmentConfig->collect($input, $output, $this->getHelper('question'));
+                $envConfig = $this->environmentConfig->collect();
 
                 // Stage 1 - Core + Basic Services
                 $dbConfig = $this->databaseConfig->collect($input, $output, $this->getHelper('question'));
                 $adminConfig = $this->adminConfig->collect($input, $output, $this->getHelper('question'));
-                $storeConfig = $this->storeConfig->collect($input, $output, $this->getHelper('question'), $baseDir);
+                $storeConfig = $this->storeConfig->collect($baseDir);
                 $backendConfig = $this->backendConfig->collect($input, $output, $this->getHelper('question'));
 
                 // Document root detection
@@ -123,7 +123,7 @@ class InstallCommand extends Command
                 $redisConfig = $this->redisConfig->collect($input, $output, $this->getHelper('question'));
                 $rabbitMqConfig = $this->rabbitMQConfig->collect($input, $output, $this->getHelper('question'));
                 $loggingConfig = $this->loggingConfig->collect($input, $output, $this->getHelper('question'));
-                $sampleDataConfig = $this->sampleDataConfig->collect($input, $output, $this->getHelper('question'));
+                $sampleDataConfig = $this->sampleDataConfig->collect();
 
                 // Stage 3 - Theme
                 $themeConfig = $this->themeConfig->collect($input, $output, $this->getHelper('question'));

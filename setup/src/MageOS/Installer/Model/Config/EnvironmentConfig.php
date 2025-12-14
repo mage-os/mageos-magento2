@@ -6,10 +6,7 @@ declare(strict_types=1);
 
 namespace MageOS\Installer\Model\Config;
 
-use Symfony\Component\Console\Helper\QuestionHelper;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ChoiceQuestion;
+use function Laravel\Prompts\select;
 
 /**
  * Collects environment type configuration
@@ -22,37 +19,23 @@ class EnvironmentConfig
     /**
      * Collect environment type
      *
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @param QuestionHelper $questionHelper
      * @return array{type: string, mageMode: string}
      */
-    public function collect(
-        InputInterface $input,
-        OutputInterface $output,
-        QuestionHelper $questionHelper
-    ): array {
-        $output->writeln('');
-        $output->writeln('<info>=== Environment Type ===</info>');
-
-        $choices = [
-            'Development (debug mode, sample data recommended)',
-            'Production (optimized, no sample data)'
-        ];
-
-        $environmentQuestion = new ChoiceQuestion(
-            '? Installation environment: ',
-            $choices,
-            0  // Development is default
+    public function collect(): array
+    {
+        $environment = select(
+            label: 'Installation environment',
+            options: [
+                self::ENV_DEVELOPMENT => 'Development (debug mode, sample data recommended)',
+                self::ENV_PRODUCTION => 'Production (optimized, no sample data)'
+            ],
+            default: self::ENV_DEVELOPMENT,
+            hint: 'Use arrow keys to select, Enter to confirm'
         );
 
-        $selected = $questionHelper->ask($input, $output, $environmentQuestion);
-
-        $isDevelopment = $selected === $choices[0];
-
         return [
-            'type' => $isDevelopment ? self::ENV_DEVELOPMENT : self::ENV_PRODUCTION,
-            'mageMode' => $isDevelopment ? 'developer' : 'production'
+            'type' => $environment,
+            'mageMode' => $environment === self::ENV_PRODUCTION ? 'production' : 'developer'
         ];
     }
 
