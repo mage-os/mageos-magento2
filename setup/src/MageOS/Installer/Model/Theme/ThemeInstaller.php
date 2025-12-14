@@ -57,7 +57,7 @@ class ThemeInstaller
 
         // Handle Hyva installation
         if ($themeId === ThemeRegistry::THEME_HYVA) {
-            return $this->installHyva($baseDir, $themeConfig, $input, $output, $questionHelper);
+            return $this->installHyva($baseDir, $themeConfig, $output);
         }
 
         // For other themes, add installation logic here
