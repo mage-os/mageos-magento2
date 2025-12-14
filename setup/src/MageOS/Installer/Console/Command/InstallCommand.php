@@ -93,8 +93,9 @@ class InstallCommand extends Command
 
                 $output->writeln('<info>✓ Loaded previous configuration</info>');
 
-                // Validate loaded admin password meets current requirements
+                // Validate loaded configurations meet current requirements
                 $adminConfig = $this->validateAndFixAdminConfig($input, $output, $adminConfig);
+                $searchConfig = $this->validateAndFixSearchConfig($input, $output, $searchConfig, $baseDir);
             } else {
                 // Collect fresh configuration
                 // Stage 1 - Core + Basic Services
@@ -766,5 +767,47 @@ class InstallCommand extends Command
         $output->writeln('<info>✓ Password updated</info>');
 
         return $adminConfig;
+    }
+
+    /**
+     * Validate loaded search engine config and re-collect if needed
+     *
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @param array<string, mixed> $searchConfig
+     * @param string $baseDir
+     * @return array<string, mixed>
+     */
+    private function validateAndFixSearchConfig(
+        InputInterface $input,
+        OutputInterface $output,
+        array $searchConfig,
+        string $baseDir
+    ): array {
+        $output->writeln('');
+        $output->write('<comment>🔄 Validating saved search engine configuration...</comment>');
+
+        // Test the saved search engine connection
+        $validation = (new \MageOS\Installer\Model\Validator\SearchEngineValidator())->testConnection(
+            $searchConfig['engine'],
+            $searchConfig['host'],
+            $searchConfig['port']
+        );
+
+        if ($validation['success']) {
+            $output->writeln(' <info>✓</info>');
+            $output->writeln('<info>✓ Search engine connection validated</info>');
+            return $searchConfig;
+        }
+
+        // Connection failed - re-collect
+        $output->writeln(' <error>❌</error>');
+        $output->writeln('');
+        $output->writeln('<comment>⚠️  Saved search engine configuration is no longer valid</comment>');
+        $output->writeln(sprintf('<comment>   Error: %s</comment>', $validation['error']));
+        $output->writeln('');
+        $output->writeln('<comment>Please reconfigure the search engine:</comment>');
+
+        return $this->searchEngineConfig->collect($input, $output, $this->getHelper('question'));
     }
 }
