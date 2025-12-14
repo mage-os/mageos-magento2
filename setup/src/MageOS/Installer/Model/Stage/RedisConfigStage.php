@@ -48,9 +48,15 @@ class RedisConfigStage extends AbstractStage
 
             if ($redis->isEnabled()) {
                 $features = [];
-                if ($redis->session) $features[] = 'Session';
-                if ($redis->cache) $features[] = 'Cache';
-                if ($redis->fpc) $features[] = 'FPC';
+                if ($redis->session) {
+                    $features[] = 'Session';
+                }
+                if ($redis->cache) {
+                    $features[] = 'Cache';
+                }
+                if ($redis->fpc) {
+                    $features[] = 'FPC';
+                }
 
                 \Laravel\Prompts\info(sprintf('Redis: %s', implode(', ', $features)));
             } else {

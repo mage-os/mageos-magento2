@@ -49,6 +49,7 @@ class RedisDetector
      */
     private function isRedisAvailable(string $host, int $port): bool
     {
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
         $connection = @fsockopen($host, $port, $errno, $errstr, 2);
 
         if (!$connection) {

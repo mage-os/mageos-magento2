@@ -81,12 +81,18 @@ final class ProcessResultTest extends TestCase
         $this->assertStringContainsString(PHP_EOL, $combined);
     }
 
-    public function test_readonly_properties(): void
+    public function test_properties_are_readonly(): void
     {
         $result = new ProcessResult(true, 'test');
 
         $reflection = new \ReflectionClass($result);
-        $this->assertTrue($reflection->isReadOnly());
+        $successProperty = $reflection->getProperty('success');
+        $outputProperty = $reflection->getProperty('output');
+        $errorProperty = $reflection->getProperty('error');
+
+        $this->assertTrue($successProperty->isReadOnly());
+        $this->assertTrue($outputProperty->isReadOnly());
+        $this->assertTrue($errorProperty->isReadOnly());
     }
 
     public function test_error_defaults_to_empty_string(): void

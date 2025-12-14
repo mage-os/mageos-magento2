@@ -109,7 +109,7 @@ class CompletionStage extends AbstractStage
         }
 
         if ($theme && $theme->install && $theme->theme) {
-            $themeName = match($theme->theme) {
+            $themeName = match ($theme->theme) {
                 'hyva' => 'Hyva',
                 'luma' => 'Luma',
                 'blank' => 'Blank',

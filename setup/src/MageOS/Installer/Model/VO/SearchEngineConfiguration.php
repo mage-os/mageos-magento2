@@ -9,13 +9,13 @@ namespace MageOS\Installer\Model\VO;
 /**
  * Search engine configuration value object
  */
-final readonly class SearchEngineConfiguration
+class SearchEngineConfiguration
 {
     public function __construct(
-        public string $engine,
-        public string $host,
-        public int $port,
-        public string $prefix = ''
+        public readonly string $engine,
+        public readonly string $host,
+        public readonly int $port,
+        public readonly string $prefix = ''
     ) {
     }
 

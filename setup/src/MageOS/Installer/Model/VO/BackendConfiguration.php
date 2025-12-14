@@ -9,10 +9,10 @@ namespace MageOS\Installer\Model\VO;
 /**
  * Backend configuration value object
  */
-final readonly class BackendConfiguration
+class BackendConfiguration
 {
     public function __construct(
-        public string $frontname
+        public readonly string $frontname
     ) {
     }
 

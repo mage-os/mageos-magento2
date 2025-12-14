@@ -11,15 +11,15 @@ use MageOS\Installer\Model\VO\Attribute\Sensitive;
 /**
  * Admin account configuration value object
  */
-final readonly class AdminConfiguration
+class AdminConfiguration
 {
     public function __construct(
-        public string $firstName,
-        public string $lastName,
-        public string $email,
-        public string $username,
+        public readonly string $firstName,
+        public readonly string $lastName,
+        public readonly string $email,
+        public readonly string $username,
         #[Sensitive]
-        public string $password
+        public readonly string $password
     ) {
     }
 

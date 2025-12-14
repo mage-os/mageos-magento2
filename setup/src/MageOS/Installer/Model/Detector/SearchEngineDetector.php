@@ -57,6 +57,7 @@ class SearchEngineDetector
             ]
         ]);
 
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
         $response = @file_get_contents($url, false, $context);
 
         if ($response === false) {

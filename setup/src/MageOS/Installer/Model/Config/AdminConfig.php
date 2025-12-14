@@ -66,7 +66,7 @@ class AdminConfig
             label: 'Admin username',
             placeholder: 'myadmin',
             hint: 'Username to login to admin panel (avoid "admin" for security!)',
-            validate: fn (string $value) => match(true) {
+            validate: fn (string $value) => match (true) {
                 empty($value) => 'Username cannot be empty',
                 strlen($value) < 3 => 'Username must be at least 3 characters long',
                 default => null

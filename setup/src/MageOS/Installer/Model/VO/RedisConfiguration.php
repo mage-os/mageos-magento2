@@ -9,17 +9,17 @@ namespace MageOS\Installer\Model\VO;
 /**
  * Redis configuration value object
  */
-final readonly class RedisConfiguration
+class RedisConfiguration
 {
     public function __construct(
-        public bool $session,
-        public bool $cache,
-        public bool $fpc,
-        public string $host = '127.0.0.1',
-        public int $port = 6379,
-        public int $sessionDb = 0,
-        public int $cacheDb = 1,
-        public int $fpcDb = 2
+        public readonly bool $session,
+        public readonly bool $cache,
+        public readonly bool $fpc,
+        public readonly string $host = '127.0.0.1',
+        public readonly int $port = 6379,
+        public readonly int $sessionDb = 0,
+        public readonly int $cacheDb = 1,
+        public readonly int $fpcDb = 2
     ) {
     }
 

@@ -9,11 +9,11 @@ namespace MageOS\Installer\Model\VO;
 /**
  * Logging configuration value object
  */
-final readonly class LoggingConfiguration
+class LoggingConfiguration
 {
     public function __construct(
-        public bool $debugMode,
-        public string $logLevel
+        public readonly bool $debugMode,
+        public readonly string $logLevel
     ) {
     }
 

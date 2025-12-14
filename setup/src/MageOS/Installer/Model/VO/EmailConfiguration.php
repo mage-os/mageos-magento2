@@ -11,17 +11,17 @@ use MageOS\Installer\Model\VO\Attribute\Sensitive;
 /**
  * Email configuration value object
  */
-final readonly class EmailConfiguration
+class EmailConfiguration
 {
     public function __construct(
-        public bool $configure,
-        public string $transport = 'sendmail',
-        public string $host = '',
-        public int $port = 587,
-        public string $auth = '',
-        public string $username = '',
+        public readonly bool $configure,
+        public readonly string $transport = 'sendmail',
+        public readonly string $host = '',
+        public readonly int $port = 587,
+        public readonly string $auth = '',
+        public readonly string $username = '',
         #[Sensitive]
-        public string $password = ''
+        public readonly string $password = ''
     ) {
     }
 

@@ -11,15 +11,22 @@ use MageOS\Installer\Model\VO\Attribute\Sensitive;
 /**
  * Database configuration value object
  */
-final readonly class DatabaseConfiguration
+class DatabaseConfiguration
 {
+    /**
+     * @param string $host
+     * @param string $name
+     * @param string $user
+     * @param string $password
+     * @param string $prefix
+     */
     public function __construct(
-        public string $host,
-        public string $name,
-        public string $user,
+        public readonly string $host,
+        public readonly string $name,
+        public readonly string $user,
         #[Sensitive]
-        public string $password,
-        public string $prefix = ''
+        public readonly string $password,
+        public readonly string $prefix = ''
     ) {
     }
 

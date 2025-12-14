@@ -107,8 +107,7 @@ class ThemeConfigurer
             // Match on theme code or path (handles 'hyva-default' or 'Hyva/default')
             $themePath = $parts[3] ?? '';
 
-            if (
-                stripos($themePath, $themeCode) !== false ||
+            if (stripos($themePath, $themeCode) !== false ||
                 stripos($themePath, str_replace('-', '/', $themeCode)) !== false
             ) {
                 $themeId = (int) $parts[1];

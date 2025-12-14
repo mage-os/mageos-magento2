@@ -9,10 +9,10 @@ namespace MageOS\Installer\Model\VO;
 /**
  * Sample data configuration value object
  */
-final readonly class SampleDataConfiguration
+class SampleDataConfiguration
 {
     public function __construct(
-        public bool $install
+        public readonly bool $install
     ) {
     }
 

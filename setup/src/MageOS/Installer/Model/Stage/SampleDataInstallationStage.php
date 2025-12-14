@@ -11,9 +11,6 @@ use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\OutputInterface;
 
-/**
- * Sample data installation stage
- */
 class SampleDataInstallationStage extends AbstractStage
 {
     public function __construct(

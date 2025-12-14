@@ -13,6 +13,6 @@ use Attribute;
  * Used for serialization to exclude sensitive fields from saved configuration
  */
 #[Attribute(Attribute::TARGET_PROPERTY)]
-final class Sensitive
+class Sensitive
 {
 }

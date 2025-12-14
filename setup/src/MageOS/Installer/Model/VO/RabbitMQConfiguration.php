@@ -11,16 +11,16 @@ use MageOS\Installer\Model\VO\Attribute\Sensitive;
 /**
  * RabbitMQ configuration value object
  */
-final readonly class RabbitMQConfiguration
+class RabbitMQConfiguration
 {
     public function __construct(
-        public bool $enabled,
-        public string $host = 'localhost',
-        public int $port = 5672,
-        public string $user = 'guest',
+        public readonly bool $enabled,
+        public readonly string $host = 'localhost',
+        public readonly int $port = 5672,
+        public readonly string $user = 'guest',
         #[Sensitive]
-        public string $password = 'guest',
-        public string $virtualHost = '/'
+        public readonly string $password = 'guest',
+        public readonly string $virtualHost = '/'
     ) {
     }
 

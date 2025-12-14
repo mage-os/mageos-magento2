@@ -9,10 +9,10 @@ namespace MageOS\Installer\Model\VO;
 /**
  * Cron configuration value object
  */
-final readonly class CronConfiguration
+class CronConfiguration
 {
     public function __construct(
-        public bool $configure
+        public readonly bool $configure
     ) {
     }
 

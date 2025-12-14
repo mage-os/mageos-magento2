@@ -46,7 +46,7 @@ class SearchEngineConfig
             );
 
             if ($detected) {
-                $engineName = match($detected['engine']) {
+                $engineName = match ($detected['engine']) {
                     'elasticsearch8' => 'Elasticsearch 8',
                     'elasticsearch7' => 'Elasticsearch 7',
                     'opensearch' => 'OpenSearch',

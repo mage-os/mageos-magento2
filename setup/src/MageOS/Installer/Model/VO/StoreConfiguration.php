@@ -9,14 +9,14 @@ namespace MageOS\Installer\Model\VO;
 /**
  * Store configuration value object
  */
-final readonly class StoreConfiguration
+class StoreConfiguration
 {
     public function __construct(
-        public string $baseUrl,
-        public string $language,
-        public string $currency,
-        public string $timezone,
-        public bool $useRewrites
+        public readonly string $baseUrl,
+        public readonly string $language,
+        public readonly string $currency,
+        public readonly string $timezone,
+        public readonly bool $useRewrites
     ) {
     }
 

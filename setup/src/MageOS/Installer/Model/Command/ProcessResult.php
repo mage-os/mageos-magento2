@@ -9,12 +9,17 @@ namespace MageOS\Installer\Model\Command;
 /**
  * Result of process execution
  */
-final readonly class ProcessResult
+class ProcessResult
 {
+    /**
+     * @param bool $success
+     * @param string $output
+     * @param string $error
+     */
     public function __construct(
-        public bool $success,
-        public string $output,
-        public string $error = ''
+        public readonly bool $success,
+        public readonly string $output,
+        public readonly string $error = ''
     ) {
     }
 

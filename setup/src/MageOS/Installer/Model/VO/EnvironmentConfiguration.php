@@ -9,11 +9,11 @@ namespace MageOS\Installer\Model\VO;
 /**
  * Environment configuration value object
  */
-final readonly class EnvironmentConfiguration
+class EnvironmentConfiguration
 {
     public function __construct(
-        public string $type,
-        public string $mageMode
+        public readonly string $type,
+        public readonly string $mageMode
     ) {
     }
 

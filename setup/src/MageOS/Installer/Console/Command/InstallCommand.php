@@ -249,5 +249,4 @@ class InstallCommand extends Command
 
         return $savedContext;
     }
-
 }

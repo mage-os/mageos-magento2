@@ -23,6 +23,7 @@ class DatabaseValidator
     public function validate(string $host, string $name, string $user, string $password): array
     {
         try {
+            // phpcs:ignore Magento2.Functions.DiscouragedFunction
             $connection = @new \mysqli($host, $user, $password, $name);
 
             if ($connection->connect_error) {
@@ -92,6 +93,7 @@ class DatabaseValidator
     {
         try {
             // Connect without specifying database
+            // phpcs:ignore Magento2.Functions.DiscouragedFunction
             $connection = @new \mysqli($host, $user, $password);
 
             if ($connection->connect_error) {

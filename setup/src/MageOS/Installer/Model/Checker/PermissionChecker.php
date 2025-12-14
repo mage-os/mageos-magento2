@@ -44,6 +44,7 @@ class PermissionChecker
             // Check if directory exists and is writable
             if (!file_exists($fullPath)) {
                 // Try to create it
+                // phpcs:ignore Magento2.Functions.DiscouragedFunction
                 if (!@mkdir($fullPath, 0775, true)) {
                     $missing[] = $path;
                 }

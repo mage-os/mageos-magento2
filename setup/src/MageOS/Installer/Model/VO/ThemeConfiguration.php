@@ -9,11 +9,11 @@ namespace MageOS\Installer\Model\VO;
 /**
  * Theme configuration value object
  */
-final readonly class ThemeConfiguration
+class ThemeConfiguration
 {
     public function __construct(
-        public bool $install,
-        public string $theme = ''
+        public readonly bool $install,
+        public readonly string $theme = ''
     ) {
     }
 

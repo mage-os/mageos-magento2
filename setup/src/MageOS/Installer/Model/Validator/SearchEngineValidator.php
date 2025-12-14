@@ -32,6 +32,7 @@ class SearchEngineValidator
                 ]
             ]);
 
+            // phpcs:ignore Magento2.Functions.DiscouragedFunction
             $response = @file_get_contents($url, false, $context);
 
             if ($response === false) {
@@ -84,6 +85,7 @@ class SearchEngineValidator
 
             // Test cluster health
             $healthUrl = sprintf('%s/_cluster/health', $url);
+            // phpcs:ignore Magento2.Functions.DiscouragedFunction
             $healthResponse = @file_get_contents($healthUrl, false, $context);
 
             if ($healthResponse !== false) {

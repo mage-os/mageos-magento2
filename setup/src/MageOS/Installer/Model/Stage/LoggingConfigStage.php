@@ -45,7 +45,8 @@ class LoggingConfigStage extends AbstractStage
         // Check if already configured
         if ($context->getLogging() !== null) {
             $logging = $context->getLogging();
-            \Laravel\Prompts\info(sprintf('Debug: %s, Log level: %s',
+            \Laravel\Prompts\info(sprintf(
+                'Debug: %s, Log level: %s',
                 $logging->debugMode ? 'ON' : 'OFF',
                 $logging->logLevel
             ));

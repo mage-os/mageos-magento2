@@ -180,6 +180,7 @@ class ConfigFileManager
             return true;
         }
 
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
         return @unlink($configFile);
     }
 

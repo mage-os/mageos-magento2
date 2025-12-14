@@ -50,14 +50,19 @@ class SummaryStage extends AbstractStage
 
         // Display all configuration
         if ($env = $context->getEnvironment()) {
-            $output->writeln(sprintf('  <info>Environment:</info> %s (mode: %s)',
-                ucfirst($env->type), $env->mageMode
+            $output->writeln(sprintf(
+                '  <info>Environment:</info> %s (mode: %s)',
+                ucfirst($env->type),
+                $env->mageMode
             ));
         }
 
         if ($db = $context->getDatabase()) {
-            $output->writeln(sprintf('  <info>Database:</info> %s@%s/%s',
-                $db->user, $db->host, $db->name
+            $output->writeln(sprintf(
+                '  <info>Database:</info> %s@%s/%s',
+                $db->user,
+                $db->host,
+                $db->name
             ));
         }
 
@@ -74,25 +79,36 @@ class SummaryStage extends AbstractStage
         }
 
         if ($search = $context->getSearchEngine()) {
-            $output->writeln(sprintf('  <info>Search Engine:</info> %s (%s:%d)',
-                $search->engine, $search->host, $search->port
+            $output->writeln(sprintf(
+                '  <info>Search Engine:</info> %s (%s:%d)',
+                $search->engine,
+                $search->host,
+                $search->port
             ));
         }
 
         if ($redis = $context->getRedis()) {
             if ($redis->isEnabled()) {
                 $features = [];
-                if ($redis->session) $features[] = 'Sessions';
-                if ($redis->cache) $features[] = 'Cache';
-                if ($redis->fpc) $features[] = 'FPC';
+                if ($redis->session) {
+                    $features[] = 'Sessions';
+                }
+                if ($redis->cache) {
+                    $features[] = 'Cache';
+                }
+                if ($redis->fpc) {
+                    $features[] = 'FPC';
+                }
                 $output->writeln(sprintf('  <info>Redis:</info> %s', implode(', ', $features)));
             }
         }
 
         if ($rabbitmq = $context->getRabbitMQ()) {
             if ($rabbitmq->enabled) {
-                $output->writeln(sprintf('  <info>RabbitMQ:</info> %s:%d',
-                    $rabbitmq->host, $rabbitmq->port
+                $output->writeln(sprintf(
+                    '  <info>RabbitMQ:</info> %s:%d',
+                    $rabbitmq->host,
+                    $rabbitmq->port
                 ));
             }
         }
@@ -110,7 +126,7 @@ class SummaryStage extends AbstractStage
 
         if ($theme = $context->getTheme()) {
             if ($theme->install && $theme->theme) {
-                $themeName = match($theme->theme) {
+                $themeName = match ($theme->theme) {
                     'hyva' => 'Hyva',
                     'luma' => 'Luma',
                     'blank' => 'Blank',

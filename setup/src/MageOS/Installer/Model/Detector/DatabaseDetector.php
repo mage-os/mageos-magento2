@@ -45,6 +45,7 @@ class DatabaseDetector
      */
     private function isPortOpen(string $host, int $port, int $timeout = 2): bool
     {
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
         $connection = @fsockopen($host, $port, $errno, $errstr, $timeout);
 
         if ($connection) {

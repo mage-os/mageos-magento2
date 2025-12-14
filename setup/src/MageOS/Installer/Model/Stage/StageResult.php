@@ -15,16 +15,20 @@ namespace MageOS\Installer\Model\Stage;
  * - RETRY: Re-run current stage
  * - ABORT: Cancel installation
  */
-final readonly class StageResult
+class StageResult
 {
     public const CONTINUE = 'continue';
     public const GO_BACK = 'back';
     public const RETRY = 'retry';
     public const ABORT = 'abort';
 
+    /**
+     * @param string $status
+     * @param string|null $message
+     */
     public function __construct(
-        public string $status,
-        public ?string $message = null
+        public readonly string $status,
+        public readonly ?string $message = null
     ) {
         // Validate status
         if (!in_array($status, [self::CONTINUE, self::GO_BACK, self::RETRY, self::ABORT], true)) {

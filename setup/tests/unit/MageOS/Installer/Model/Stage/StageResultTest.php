@@ -99,11 +99,15 @@ final class StageResultTest extends TestCase
         }
     }
 
-    public function test_readonly_properties_cannot_be_modified(): void
+    public function test_properties_are_readonly(): void
     {
         $result = StageResult::continue('test');
 
         $reflection = new \ReflectionClass($result);
-        $this->assertTrue($reflection->isReadOnly());
+        $statusProperty = $reflection->getProperty('status');
+        $messageProperty = $reflection->getProperty('message');
+
+        $this->assertTrue($statusProperty->isReadOnly());
+        $this->assertTrue($messageProperty->isReadOnly());
     }
 }
