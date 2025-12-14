@@ -9,9 +9,14 @@ namespace MageOS\Installer\Console\Command;
 use MageOS\Installer\Model\Config\AdminConfig;
 use MageOS\Installer\Model\Config\BackendConfig;
 use MageOS\Installer\Model\Config\DatabaseConfig;
+use MageOS\Installer\Model\Config\LoggingConfig;
+use MageOS\Installer\Model\Config\RabbitMQConfig;
+use MageOS\Installer\Model\Config\RedisConfig;
+use MageOS\Installer\Model\Config\SampleDataConfig;
 use MageOS\Installer\Model\Config\SearchEngineConfig;
 use MageOS\Installer\Model\Config\StoreConfig;
 use MageOS\Installer\Model\Detector\DocumentRootDetector;
+use MageOS\Installer\Model\Writer\EnvConfigWriter;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
@@ -29,7 +34,12 @@ class InstallCommand extends Command
         private readonly StoreConfig $storeConfig,
         private readonly SearchEngineConfig $searchEngineConfig,
         private readonly BackendConfig $backendConfig,
+        private readonly RedisConfig $redisConfig,
+        private readonly RabbitMQConfig $rabbitMQConfig,
+        private readonly LoggingConfig $loggingConfig,
+        private readonly SampleDataConfig $sampleDataConfig,
         private readonly DocumentRootDetector $documentRootDetector,
+        private readonly EnvConfigWriter $envConfigWriter,
         ?string $name = null
     ) {
         parent::__construct($name);
@@ -55,7 +65,7 @@ class InstallCommand extends Command
 
             $baseDir = BP; // Magento base directory constant
 
-            // Collect all configuration
+            // Collect Stage 1 configuration (Core + Basic Services)
             $dbConfig = $this->databaseConfig->collect($input, $output, $this->getHelper('question'));
             $adminConfig = $this->adminConfig->collect($input, $output, $this->getHelper('question'));
             $storeConfig = $this->storeConfig->collect($input, $output, $this->getHelper('question'), $baseDir);
@@ -66,8 +76,25 @@ class InstallCommand extends Command
 
             $searchConfig = $this->searchEngineConfig->collect($input, $output, $this->getHelper('question'));
 
+            // Collect Stage 2 configuration (Redis, RabbitMQ, Logging, Sample Data)
+            $redisConfig = $this->redisConfig->collect($input, $output, $this->getHelper('question'));
+            $rabbitMqConfig = $this->rabbitMQConfig->collect($input, $output, $this->getHelper('question'));
+            $loggingConfig = $this->loggingConfig->collect($input, $output, $this->getHelper('question'));
+            $sampleDataConfig = $this->sampleDataConfig->collect($input, $output, $this->getHelper('question'));
+
             // Show configuration summary
-            $this->displaySummary($output, $dbConfig, $adminConfig, $storeConfig, $backendConfig, $searchConfig);
+            $this->displaySummary(
+                $output,
+                $dbConfig,
+                $adminConfig,
+                $storeConfig,
+                $backendConfig,
+                $searchConfig,
+                $redisConfig,
+                $rabbitMqConfig,
+                $loggingConfig,
+                $sampleDataConfig
+            );
 
             // Confirm installation
             if (!$this->confirmInstallation($input, $output)) {
@@ -76,7 +103,19 @@ class InstallCommand extends Command
             }
 
             // Run installation
-            $this->runInstallation($input, $output, $dbConfig, $adminConfig, $storeConfig, $backendConfig, $searchConfig);
+            $this->runInstallation(
+                $input,
+                $output,
+                $dbConfig,
+                $adminConfig,
+                $storeConfig,
+                $backendConfig,
+                $searchConfig,
+                $redisConfig,
+                $rabbitMqConfig,
+                $loggingConfig,
+                $sampleDataConfig
+            );
 
             return Command::SUCCESS;
         } catch (\Exception $e) {
@@ -132,6 +171,10 @@ class InstallCommand extends Command
      * @param array<string, mixed> $storeConfig
      * @param array<string, mixed> $backendConfig
      * @param array<string, mixed> $searchConfig
+     * @param array<string, mixed> $redisConfig
+     * @param array<string, mixed>|null $rabbitMqConfig
+     * @param array<string, mixed> $loggingConfig
+     * @param array<string, mixed> $sampleDataConfig
      * @return void
      */
     private function displaySummary(
@@ -140,7 +183,11 @@ class InstallCommand extends Command
         array $adminConfig,
         array $storeConfig,
         array $backendConfig,
-        array $searchConfig
+        array $searchConfig,
+        array $redisConfig,
+        ?array $rabbitMqConfig,
+        array $loggingConfig,
+        array $sampleDataConfig
     ): void {
         $output->writeln('');
         $output->writeln('<fg=cyan>🎯 Configuration complete! Here\'s what will be installed:</>');
@@ -158,9 +205,39 @@ class InstallCommand extends Command
             $searchConfig['host'],
             $searchConfig['port']
         ));
-        $output->writeln(sprintf('  <info>Language:</info> %s', $storeConfig['language']));
-        $output->writeln(sprintf('  <info>Timezone:</info> %s', $storeConfig['timezone']));
-        $output->writeln(sprintf('  <info>Currency:</info> %s', $storeConfig['currency']));
+
+        // Redis configuration
+        if ($redisConfig['session'] || $redisConfig['cache'] || $redisConfig['fpc']) {
+            $redisFeatures = [];
+            if ($redisConfig['session']) {
+                $redisFeatures[] = 'Sessions';
+            }
+            if ($redisConfig['cache']) {
+                $redisFeatures[] = 'Cache';
+            }
+            if ($redisConfig['fpc']) {
+                $redisFeatures[] = 'FPC';
+            }
+            $output->writeln(sprintf('  <info>Redis:</info> %s', implode(', ', $redisFeatures)));
+        }
+
+        // RabbitMQ configuration
+        if ($rabbitMqConfig && $rabbitMqConfig['enabled']) {
+            $output->writeln(sprintf('  <info>RabbitMQ:</info> %s:%d',
+                $rabbitMqConfig['host'],
+                $rabbitMqConfig['port']
+            ));
+        }
+
+        // Debug and logging
+        $output->writeln(sprintf('  <info>Debug Mode:</info> %s', $loggingConfig['debugMode'] ? 'ON' : 'OFF'));
+        $output->writeln(sprintf('  <info>Log Level:</info> %s', $loggingConfig['logLevel']));
+
+        // Sample data
+        if ($sampleDataConfig['install']) {
+            $output->writeln('  <info>Sample Data:</info> Yes');
+        }
+
         $output->writeln('');
     }
 
@@ -191,6 +268,10 @@ class InstallCommand extends Command
      * @param array<string, mixed> $storeConfig
      * @param array<string, mixed> $backendConfig
      * @param array<string, mixed> $searchConfig
+     * @param array<string, mixed> $redisConfig
+     * @param array<string, mixed>|null $rabbitMqConfig
+     * @param array<string, mixed> $loggingConfig
+     * @param array<string, mixed> $sampleDataConfig
      * @return void
      * @throws \Exception
      */
@@ -201,7 +282,11 @@ class InstallCommand extends Command
         array $adminConfig,
         array $storeConfig,
         array $backendConfig,
-        array $searchConfig
+        array $searchConfig,
+        array $redisConfig,
+        ?array $rabbitMqConfig,
+        array $loggingConfig,
+        array $sampleDataConfig
     ): void {
         $output->writeln('');
         $output->writeln('<fg=cyan>🚀 Starting installation...</>');
@@ -254,7 +339,82 @@ class InstallCommand extends Command
             throw new \RuntimeException('Installation failed. Please check the errors above.');
         }
 
-        $this->displaySuccess($output, $storeConfig, $backendConfig, $adminConfig);
+        // Configure additional services
+        $this->configureServices($output, $redisConfig, $rabbitMqConfig);
+
+        // Install sample data if requested
+        if ($sampleDataConfig['install']) {
+            $this->installSampleData($output);
+        }
+
+        $this->displaySuccess($output, $storeConfig, $backendConfig, $adminConfig, $loggingConfig, $sampleDataConfig);
+    }
+
+    /**
+     * Configure additional services (Redis, RabbitMQ)
+     *
+     * @param OutputInterface $output
+     * @param array<string, mixed> $redisConfig
+     * @param array<string, mixed>|null $rabbitMqConfig
+     * @return void
+     */
+    private function configureServices(
+        OutputInterface $output,
+        array $redisConfig,
+        ?array $rabbitMqConfig
+    ): void {
+        if ($redisConfig['session'] || $redisConfig['cache'] || $redisConfig['fpc']) {
+            $output->writeln('');
+            $output->writeln('<comment>🔄 Configuring Redis...</comment>');
+            try {
+                $this->envConfigWriter->writeRedisConfig($redisConfig);
+                $output->writeln('<info>✓ Redis configured</info>');
+            } catch (\Exception $e) {
+                $output->writeln('<error>❌ Redis configuration failed: ' . $e->getMessage() . '</error>');
+            }
+        }
+
+        if ($rabbitMqConfig && $rabbitMqConfig['enabled']) {
+            $output->writeln('');
+            $output->writeln('<comment>🔄 Configuring RabbitMQ...</comment>');
+            try {
+                $this->envConfigWriter->writeRabbitMQConfig($rabbitMqConfig);
+                $output->writeln('<info>✓ RabbitMQ configured</info>');
+            } catch (\Exception $e) {
+                $output->writeln('<error>❌ RabbitMQ configuration failed: ' . $e->getMessage() . '</error>');
+            }
+        }
+    }
+
+    /**
+     * Install sample data
+     *
+     * @param OutputInterface $output
+     * @return void
+     */
+    private function installSampleData(OutputInterface $output): void
+    {
+        $output->writeln('');
+        $output->writeln('<comment>🔄 Installing sample data...</comment>');
+
+        try {
+            // Deploy sample data
+            $sampleDataCommand = $this->getApplication()->find('sampledata:deploy');
+            $sampleDataInput = new ArrayInput(['command' => 'sampledata:deploy']);
+            $sampleDataInput->setInteractive(false);
+            $sampleDataCommand->run($sampleDataInput, $output);
+
+            // Run setup:upgrade to install sample data modules
+            $upgradeCommand = $this->getApplication()->find('setup:upgrade');
+            $upgradeInput = new ArrayInput(['command' => 'setup:upgrade']);
+            $upgradeInput->setInteractive(false);
+            $upgradeCommand->run($upgradeInput, $output);
+
+            $output->writeln('<info>✓ Sample data installed</info>');
+        } catch (\Exception $e) {
+            $output->writeln('<comment>⚠️  Sample data installation failed: ' . $e->getMessage() . '</comment>');
+            $output->writeln('<comment>   You can install it later with: bin/magento sampledata:deploy</comment>');
+        }
     }
 
     /**
@@ -264,13 +424,17 @@ class InstallCommand extends Command
      * @param array<string, mixed> $storeConfig
      * @param array<string, mixed> $backendConfig
      * @param array<string, mixed> $adminConfig
+     * @param array<string, mixed> $loggingConfig
+     * @param array<string, mixed> $sampleDataConfig
      * @return void
      */
     private function displaySuccess(
         OutputInterface $output,
         array $storeConfig,
         array $backendConfig,
-        array $adminConfig
+        array $adminConfig,
+        array $loggingConfig,
+        array $sampleDataConfig
     ): void {
         $adminUrl = rtrim($storeConfig['baseUrl'], '/') . '/' . $backendConfig['frontname'];
 
@@ -289,9 +453,23 @@ class InstallCommand extends Command
         $output->writeln('  1. Clear cache:');
         $output->writeln('     <comment>bin/magento cache:clean</comment>');
         $output->writeln('');
-        $output->writeln('  2. Open your store:');
+
+        if ($loggingConfig['debugMode']) {
+            $output->writeln('  2. For production, disable debug mode:');
+            $output->writeln('     <comment>bin/magento deploy:mode:set production</comment>');
+            $output->writeln('');
+            $output->writeln('  3. Open your store:');
+        } else {
+            $output->writeln('  2. Open your store:');
+        }
         $output->writeln('     <comment>' . $storeConfig['baseUrl'] . '</comment>');
         $output->writeln('');
+
+        if ($sampleDataConfig['install']) {
+            $output->writeln('  <comment>ℹ️  Sample data has been installed for development/testing purposes</comment>');
+            $output->writeln('');
+        }
+
         $output->writeln('<fg=cyan>Happy coding! 🚀</>');
         $output->writeln('');
     }
