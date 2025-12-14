@@ -80,7 +80,16 @@ class AdminConfig
                 $email = $questionHelper->ask($input, $output, $emailQuestion);
 
                 // Username
-                $usernameQuestion = new Question('? Admin username [<comment>admin</comment>]: ', 'admin');
+                $usernameQuestion = new Question('? Admin username: ');
+                $usernameQuestion->setValidator(function ($answer) {
+                    if (empty($answer)) {
+                        throw new \RuntimeException('Username cannot be empty');
+                    }
+                    if (strlen($answer) < 3) {
+                        throw new \RuntimeException('Username must be at least 3 characters long');
+                    }
+                    return $answer;
+                });
                 $username = $questionHelper->ask($input, $output, $usernameQuestion);
 
                 // Password
@@ -116,7 +125,7 @@ class AdminConfig
                     'firstName' => $firstName ?? '',
                     'lastName' => $lastName ?? '',
                     'email' => $email ?? '',
-                    'username' => $username ?? 'admin',
+                    'username' => $username ?? '',
                     'password' => $password ?? ''
                 ];
             } catch (\RuntimeException $e) {
