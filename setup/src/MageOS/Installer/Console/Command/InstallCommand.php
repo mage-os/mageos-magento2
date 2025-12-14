@@ -126,7 +126,7 @@ class InstallCommand extends Command
                 $sampleDataConfig = $this->sampleDataConfig->collect();
 
                 // Stage 3 - Theme
-                $themeConfig = $this->themeConfig->collect($input, $output, $this->getHelper('question'));
+                $themeConfig = $this->themeConfig->collect();
             }
 
             // Show configuration summary
@@ -161,7 +161,7 @@ class InstallCommand extends Command
 
             // Install theme FIRST (before Magento installation)
             if ($themeConfig['install']) {
-                $this->themeInstaller->install($baseDir, $themeConfig, $input, $output, $this->getHelper('question'));
+                $this->themeInstaller->install($baseDir, $themeConfig, $output);
             }
 
             // Run installation
