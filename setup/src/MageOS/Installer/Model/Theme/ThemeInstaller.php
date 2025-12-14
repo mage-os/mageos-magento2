@@ -29,8 +29,8 @@ class ThemeInstaller
      * @param array{
      *     install: bool,
      *     theme: string|null,
-     *     hyva_license_key: string|null,
-     *     hyva_project_name: string|null
+     *     hyva_project_key: string|null,
+     *     hyva_api_token: string|null
      * } $themeConfig
      * @param InputInterface $input
      * @param OutputInterface $output
@@ -74,8 +74,8 @@ class ThemeInstaller
      *
      * @param string $baseDir
      * @param array{
-     *     hyva_license_key: string|null,
-     *     hyva_project_name: string|null
+     *     hyva_project_key: string|null,
+     *     hyva_api_token: string|null
      * } $themeConfig
      * @param InputInterface $input
      * @param OutputInterface $output
@@ -89,15 +89,15 @@ class ThemeInstaller
         OutputInterface $output,
         QuestionHelper $questionHelper
     ): bool {
-        if (empty($themeConfig['hyva_license_key']) || empty($themeConfig['hyva_project_name'])) {
+        if (empty($themeConfig['hyva_project_key']) || empty($themeConfig['hyva_api_token'])) {
             $output->writeln('<error>❌ Hyva credentials are required</error>');
             return false;
         }
 
         $success = $this->hyvaInstaller->install(
             $baseDir,
-            $themeConfig['hyva_license_key'],
-            $themeConfig['hyva_project_name'],
+            $themeConfig['hyva_project_key'],
+            $themeConfig['hyva_api_token'],
             $output
         );
 
@@ -113,14 +113,11 @@ class ThemeInstaller
                 throw new \RuntimeException('Hyva installation failed. Installation aborted.');
             }
 
-            $output->writeln('<comment>⚠️  Continuing without Hyva theme</comment>');
+            $output->writeln('<comment>⚠️  Continuing without Hyva theme (Luma will be used)</comment>');
             return false;
         }
 
-        // Optionally set as active theme
-        $this->hyvaInstaller->setAsActiveTheme($baseDir, $output);
-
-        $output->writeln('<info>✓ Hyva theme installed successfully!</info>');
+        $output->writeln('<info>✓ Hyva theme ready! Will be activated during Magento installation</info>');
 
         return true;
     }

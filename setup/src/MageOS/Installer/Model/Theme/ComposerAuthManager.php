@@ -15,12 +15,12 @@ class ComposerAuthManager
      * Add Hyva authentication to auth.json
      *
      * @param string $baseDir
-     * @param string $licenseKey
-     * @param string $projectName
+     * @param string $projectKey
+     * @param string $apiToken
      * @return void
      * @throws \RuntimeException
      */
-    public function addHyvaAuth(string $baseDir, string $licenseKey, string $projectName): void
+    public function addHyvaAuth(string $baseDir, string $projectKey, string $apiToken): void
     {
         $authFile = $baseDir . '/auth.json';
 
@@ -39,10 +39,10 @@ class ComposerAuthManager
             $authData['http-basic'] = [];
         }
 
-        // Add Hyva credentials
+        // Add Hyva credentials (project key as username, API token as password)
         $authData['http-basic']['hyva-themes.repo.packagist.com'] = [
-            'username' => 'token',
-            'password' => $licenseKey
+            'username' => $projectKey,
+            'password' => $apiToken
         ];
 
         // Write back to auth.json
@@ -63,11 +63,11 @@ class ComposerAuthManager
      * Add Hyva repository to composer.json
      *
      * @param string $baseDir
-     * @param string $projectName
+     * @param string $projectKey
      * @return void
      * @throws \RuntimeException
      */
-    public function addHyvaRepository(string $baseDir, string $projectName): void
+    public function addHyvaRepository(string $baseDir, string $projectKey): void
     {
         $composerFile = $baseDir . '/composer.json';
 
@@ -88,7 +88,7 @@ class ComposerAuthManager
         // Add Hyva repository
         $hyvaRepo = [
             'type' => 'composer',
-            'url' => sprintf('https://hyva-themes.repo.packagist.com/%s/', $projectName)
+            'url' => sprintf('https://hyva-themes.repo.packagist.com/%s/', $projectKey)
         ];
 
         // Check if already exists

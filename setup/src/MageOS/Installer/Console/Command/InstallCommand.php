@@ -144,6 +144,11 @@ class InstallCommand extends Command
             // Save configuration before installation (for resume capability)
             $this->saveConfiguration($output, $baseDir, $dbConfig, $adminConfig, $storeConfig, $backendConfig, $searchConfig, $redisConfig, $rabbitMqConfig, $loggingConfig, $sampleDataConfig, $themeConfig);
 
+            // Install theme FIRST (before Magento installation)
+            if ($themeConfig['install']) {
+                $this->themeInstaller->install($baseDir, $themeConfig, $input, $output, $this->getHelper('question'));
+            }
+
             // Run installation
             $this->runInstallation(
                 $input,
@@ -409,11 +414,6 @@ class InstallCommand extends Command
         // Install sample data if requested
         if ($sampleDataConfig['install']) {
             $this->installSampleData($output);
-        }
-
-        // Install theme if requested
-        if ($themeConfig['install']) {
-            $this->themeInstaller->install($baseDir, $themeConfig, $input, $output, $this->getHelper('question'));
         }
 
         $this->displaySuccess($output, $storeConfig, $backendConfig, $adminConfig, $loggingConfig, $sampleDataConfig, $themeConfig);

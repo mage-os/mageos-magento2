@@ -33,8 +33,8 @@ class ThemeConfig
      * @return array{
      *     install: bool,
      *     theme: string|null,
-     *     hyva_license_key: string|null,
-     *     hyva_project_name: string|null
+     *     hyva_project_key: string|null,
+     *     hyva_api_token: string|null
      * }
      */
     public function collect(
@@ -54,8 +54,8 @@ class ThemeConfig
             return [
                 'install' => false,
                 'theme' => ThemeRegistry::THEME_LUMA,
-                'hyva_license_key' => null,
-                'hyva_project_name' => null
+                'hyva_project_key' => null,
+                'hyva_api_token' => null
             ];
         }
 
@@ -119,8 +119,8 @@ class ThemeConfig
             return [
                 'install' => false,
                 'theme' => $themeId,
-                'hyva_license_key' => null,
-                'hyva_project_name' => null
+                'hyva_project_key' => null,
+                'hyva_api_token' => null
             ];
         }
 
@@ -132,8 +132,8 @@ class ThemeConfig
         return [
             'install' => true,
             'theme' => $themeId,
-            'hyva_license_key' => null,
-            'hyva_project_name' => null
+            'hyva_project_key' => null,
+            'hyva_api_token' => null
         ];
     }
 
@@ -147,8 +147,8 @@ class ThemeConfig
      * @return array{
      *     install: bool,
      *     theme: string,
-     *     hyva_license_key: string,
-     *     hyva_project_name: string
+     *     hyva_project_key: string,
+     *     hyva_api_token: string
      * }
      */
     private function collectHyvaCredentials(
@@ -171,39 +171,38 @@ class ThemeConfig
 
                 $output->writeln('');
                 $output->writeln('<comment>ℹ️  Hyva requires API credentials from your account</comment>');
-                $output->writeln('<comment>   Get your free license key at: https://www.hyva.io/hyva-theme-license.html</comment>');
+                $output->writeln('<comment>   Get your credentials at: https://www.hyva.io/hyva-theme-license.html</comment>');
                 $output->writeln('');
 
-                // License key
-                $licenseQuestion = new Question('? Hyva license key: ');
-                $licenseQuestion->setValidator(function ($answer) {
+                // Project key
+                $projectKeyQuestion = new Question('? Hyva project key: ');
+                $projectKeyQuestion->setValidator(function ($answer) {
                     if (empty($answer)) {
-                        throw new \RuntimeException('License key is required for Hyva installation');
+                        throw new \RuntimeException('Project key is required for Hyva installation');
                     }
                     return $answer;
                 });
-                $licenseKey = $questionHelper->ask($input, $output, $licenseQuestion);
+                $projectKey = $questionHelper->ask($input, $output, $projectKeyQuestion);
 
-                // Project name
+                // API token
                 $output->writeln('');
-                $output->writeln('<comment>ℹ️  Your Hyva project name can be found in your Hyva account</comment>');
-                $output->writeln('<comment>   It\'s part of your repository URL: hyva-themes.repo.packagist.com/[PROJECT-NAME]/</comment>');
+                $output->writeln('<comment>ℹ️  Your API token can be found in your Hyva account</comment>');
                 $output->writeln('');
 
-                $projectQuestion = new Question('? Hyva project name: ');
-                $projectQuestion->setValidator(function ($answer) {
+                $apiTokenQuestion = new Question('? Hyva API token: ');
+                $apiTokenQuestion->setValidator(function ($answer) {
                     if (empty($answer)) {
-                        throw new \RuntimeException('Project name is required for Hyva installation');
+                        throw new \RuntimeException('API token is required for Hyva installation');
                     }
                     return $answer;
                 });
-                $projectName = $questionHelper->ask($input, $output, $projectQuestion);
+                $apiToken = $questionHelper->ask($input, $output, $apiTokenQuestion);
 
                 return [
                     'install' => true,
                     'theme' => $themeId,
-                    'hyva_license_key' => $licenseKey ?? '',
-                    'hyva_project_name' => $projectName ?? ''
+                    'hyva_project_key' => $projectKey ?? '',
+                    'hyva_api_token' => $apiToken ?? ''
                 ];
             } catch (\RuntimeException $e) {
                 // Show error and ask to retry
