@@ -1880,6 +1880,10 @@
                 <item name="MySQL-5.7" xsi:type="string">^5\.7\.</item>
                 <item name="MariaDB-(10.2-10.6)" xsi:type="string">^10\.[2-6]\.</item>
                 <item name="MariaDB-11.4" xsi:type="string">^11\.4\.</item>
+                <!-- Mage-OS wider compatibility rules to match reessolutions/db-override -->
+                <item name="MySQL-(8.0-8.1)" xsi:type="string">^8\.[0-1]\.</item>
+                <item name="MariaDB-(10.2-10.11)" xsi:type="string">^10\.([2-9]|10|11)\.</item>
+                <item name="MariaDB-11.x" xsi:type="string">^11\.</item>
             </argument>
         </arguments>
     </type>
