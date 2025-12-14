@@ -94,22 +94,23 @@ class AdminConfig
                     if (strlen($answer) < 7) {
                         throw new \RuntimeException('Password must be at least 7 characters long');
                     }
-                    // Check password strength
-                    $hasLower = preg_match('/[a-z]/', $answer);
-                    $hasUpper = preg_match('/[A-Z]/', $answer);
-                    $hasNumber = preg_match('/[0-9]/', $answer);
-
-                    if (!$hasLower || !$hasUpper || !$hasNumber) {
-                        throw new \RuntimeException(
-                            'Password must contain at least one lowercase letter, one uppercase letter, and one number'
-                        );
-                    }
-
                     return $answer;
                 });
                 $password = $questionHelper->ask($input, $output, $passwordQuestion);
 
-                $output->writeln('<info>✓ Strong password detected!</info>');
+                // Check password strength and show info (not blocking)
+                $hasLower = preg_match('/[a-z]/', $password);
+                $hasUpper = preg_match('/[A-Z]/', $password);
+                $hasNumber = preg_match('/[0-9]/', $password);
+                $hasSpecial = preg_match('/[^a-zA-Z0-9]/', $password);
+
+                if (!$hasLower || !$hasUpper || !$hasNumber) {
+                    $output->writeln('<comment>ℹ️  Weak password detected. Consider using uppercase, lowercase, and numbers for better security.</comment>');
+                } elseif (!$hasSpecial) {
+                    $output->writeln('<comment>ℹ️  Good password. Consider adding special characters for even better security.</comment>');
+                } else {
+                    $output->writeln('<info>✓ Strong password detected!</info>');
+                }
 
                 return [
                     'firstName' => $firstName ?? '',
