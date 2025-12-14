@@ -4,44 +4,54 @@ declare(strict_types=1);
 
 namespace MageOS\Installer\Test\TestCase;
 
-use org\bovigo\vfs\vfsStream;
-use org\bovigo\vfs\vfsStreamDirectory;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Abstract base test for file system operations
  *
- * Provides vfsStream setup for testing file I/O without touching real filesystem
+ * Uses native PHP temp directory for testing file I/O
  */
 abstract class FileSystemTestCase extends TestCase
 {
     /**
-     * Virtual filesystem root
+     * Temporary directory for this test
      */
-    protected vfsStreamDirectory $vfs;
+    protected string $tempDir;
 
     /**
-     * Set up virtual filesystem before each test
+     * Set up temporary directory before each test
      */
     protected function setUp(): void
     {
         parent::setUp();
-        $this->vfs = vfsStream::setup('root');
+        $this->tempDir = sys_get_temp_dir() . '/mageos-test-' . uniqid();
+        mkdir($this->tempDir, 0777, true);
     }
 
     /**
-     * Get virtual file path
+     * Clean up temporary directory after each test
+     */
+    protected function tearDown(): void
+    {
+        if (is_dir($this->tempDir)) {
+            $this->recursiveRemove($this->tempDir);
+        }
+        parent::tearDown();
+    }
+
+    /**
+     * Get temp file path
      *
-     * @param string $filename Filename within virtual filesystem
-     * @return string Full vfsStream URL path
+     * @param string $filename Filename within temp directory
+     * @return string Full path
      */
     protected function getVirtualFilePath(string $filename): string
     {
-        return vfsStream::url("root/{$filename}");
+        return $this->tempDir . '/' . ltrim($filename, '/');
     }
 
     /**
-     * Create a virtual file with content
+     * Create a temp file with content
      *
      * @param string $filename
      * @param string $content
@@ -50,12 +60,16 @@ abstract class FileSystemTestCase extends TestCase
     protected function createVirtualFile(string $filename, string $content): string
     {
         $path = $this->getVirtualFilePath($filename);
+        $dir = dirname($path);
+        if (!is_dir($dir)) {
+            mkdir($dir, 0777, true);
+        }
         file_put_contents($path, $content);
         return $path;
     }
 
     /**
-     * Create a virtual directory
+     * Create a temp directory
      *
      * @param string $dirname
      * @return string Full path to created directory
@@ -68,7 +82,7 @@ abstract class FileSystemTestCase extends TestCase
     }
 
     /**
-     * Assert that a virtual file exists
+     * Assert that a temp file exists
      */
     protected function assertVirtualFileExists(string $filename, string $message = ''): void
     {
@@ -77,7 +91,7 @@ abstract class FileSystemTestCase extends TestCase
     }
 
     /**
-     * Assert that a virtual file does not exist
+     * Assert that a temp file does not exist
      */
     protected function assertVirtualFileDoesNotExist(string $filename, string $message = ''): void
     {
@@ -86,11 +100,28 @@ abstract class FileSystemTestCase extends TestCase
     }
 
     /**
-     * Get content of a virtual file
+     * Get content of a temp file
      */
     protected function getVirtualFileContent(string $filename): string
     {
         $path = $this->getVirtualFilePath($filename);
         return file_get_contents($path);
+    }
+
+    /**
+     * Recursively remove directory
+     */
+    private function recursiveRemove(string $dir): void
+    {
+        if (!is_dir($dir)) {
+            return;
+        }
+
+        $files = array_diff(scandir($dir), ['.', '..']);
+        foreach ($files as $file) {
+            $path = $dir . '/' . $file;
+            is_dir($path) ? $this->recursiveRemove($path) : unlink($path);
+        }
+        rmdir($dir);
     }
 }
