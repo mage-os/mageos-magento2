@@ -7,13 +7,13 @@ declare(strict_types=1);
 namespace MageOS\Installer\Model\Config;
 
 use MageOS\Installer\Model\Validator\UrlValidator;
-use Symfony\Component\Console\Helper\QuestionHelper;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\Question;
+
+use function Laravel\Prompts\note;
+use function Laravel\Prompts\text;
+use function Laravel\Prompts\warning;
 
 /**
- * Collects backend configuration interactively
+ * Collects backend configuration with Laravel Prompts
  */
 class BackendConfig
 {
@@ -25,38 +25,32 @@ class BackendConfig
     /**
      * Collect backend configuration
      *
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @param QuestionHelper $questionHelper
      * @return array{frontname: string}
      */
-    public function collect(
-        InputInterface $input,
-        OutputInterface $output,
-        QuestionHelper $questionHelper
-    ): array {
-        $output->writeln('');
-        $output->writeln('<info>=== Backend Configuration ===</info>');
+    public function collect(): array
+    {
+        note('Backend Configuration');
 
         // Backend frontname (admin path)
-        $frontnameQuestion = new Question('? Backend admin path [<comment>admin</comment>]: ', 'admin');
-        $frontnameQuestion->setValidator(function ($answer) {
-            $result = $this->urlValidator->validateAdminPath($answer ?? 'admin');
-            if (!$result['valid']) {
-                throw new \RuntimeException($result['error'] ?? 'Invalid admin path');
+        $frontname = text(
+            label: 'Backend admin path',
+            default: 'admin',
+            placeholder: 'admin',
+            hint: 'Custom path recommended for security (e.g., "admin_xyz")',
+            validate: fn (string $value) => match (true) {
+                empty($value) => 'Admin path cannot be empty',
+                !preg_match('/^[a-zA-Z0-9_-]+$/', $value) => 'Admin path can only contain letters, numbers, underscores, and hyphens',
+                default => null
             }
-            return $answer;
-        });
-        $frontname = $questionHelper->ask($input, $output, $frontnameQuestion);
+        );
 
         // Show security warning if using default
-        $validation = $this->urlValidator->validateAdminPath($frontname ?? 'admin');
-        if ($validation['warning']) {
-            $output->writeln('<comment>⚠️  ' . $validation['warning'] . '</comment>');
+        if ($frontname === 'admin') {
+            warning('Using default "admin" path is not recommended for security. Consider using a custom path.');
         }
 
         return [
-            'frontname' => $frontname ?? 'admin'
+            'frontname' => $frontname
         ];
     }
 }

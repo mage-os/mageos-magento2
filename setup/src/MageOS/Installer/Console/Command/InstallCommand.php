@@ -112,7 +112,7 @@ class InstallCommand extends Command
                 $dbConfig = $this->databaseConfig->collect($input, $output, $this->getHelper('question'));
                 $adminConfig = $this->adminConfig->collect($input, $output, $this->getHelper('question'));
                 $storeConfig = $this->storeConfig->collect($baseDir);
-                $backendConfig = $this->backendConfig->collect($input, $output, $this->getHelper('question'));
+                $backendConfig = $this->backendConfig->collect();
 
                 // Document root detection
                 $this->displayDocumentRootInfo($output, $baseDir);
