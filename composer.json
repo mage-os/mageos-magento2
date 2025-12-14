@@ -95,13 +95,14 @@
         "wikimedia/less.php": "^5.0"
     },
     "require-dev": {
-        "magento/magento-allure-phpunit": "^3.0",
+        "carlos-mg89/oauth": "^0.8.17",
         "dealerdirect/phpcodesniffer-composer-installer": "^0.7 || ^1.0",
         "dg/bypass-finals": "^1.4",
         "friendsofphp/php-cs-fixer": "^3.22",
-        "carlos-mg89/oauth": "^0.8.17",
+        "magento/magento-allure-phpunit": "^3.0",
         "magento/magento-coding-standard": "*",
         "magento/magento2-functional-testing-framework": "^5.0",
+        "mikey179/vfsstream": "^1.6",
         "pdepend/pdepend": "3.x-dev",
         "phpmd/phpmd": "3.x-dev",
         "phpstan/phpstan": "^1.9",
@@ -376,7 +377,8 @@
             "Magento\\Tools\\Sanity\\": "dev/build/publication/sanity/Magento/Tools/Sanity/",
             "Magento\\TestFramework\\Inspection\\": "dev/tests/static/framework/Magento/TestFramework/Inspection/",
             "Magento\\TestFramework\\Utility\\": "dev/tests/static/framework/Magento/TestFramework/Utility/",
-            "Magento\\PhpStan\\": "dev/tests/static/framework/Magento/PhpStan/"
+            "Magento\\PhpStan\\": "dev/tests/static/framework/Magento/PhpStan/",
+            "MageOS\\Installer\\Test\\": "setup/tests/"
         }
     },
     "prefer-stable": true,
