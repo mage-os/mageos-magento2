@@ -8,6 +8,10 @@ namespace MageOS\Installer\Console\Command;
 
 use MageOS\Installer\Model;
 use MageOS\Installer\Model\Checker\PermissionChecker;
+use MageOS\Installer\Model\Command\CronConfigurer;
+use MageOS\Installer\Model\Command\EmailConfigurer;
+use MageOS\Installer\Model\Command\ModeConfigurer;
+use MageOS\Installer\Model\Command\ProcessRunner;
 use MageOS\Installer\Model\Config\AdminConfig;
 use MageOS\Installer\Model\Config\BackendConfig;
 use MageOS\Installer\Model\Config\CronConfig;
@@ -56,6 +60,10 @@ class InstallCommand extends Command
         private readonly ThemeInstaller $themeInstaller,
         private readonly PermissionChecker $permissionChecker,
         private readonly ConfigFileManager $configFileManager,
+        private readonly ProcessRunner $processRunner,
+        private readonly CronConfigurer $cronConfigurer,
+        private readonly EmailConfigurer $emailConfigurer,
+        private readonly ModeConfigurer $modeConfigurer,
         ?string $name = null
     ) {
         parent::__construct($name);
@@ -105,7 +113,13 @@ class InstallCommand extends Command
             new Model\Stage\SampleDataInstallationStage($this->getApplication()),
 
             // Post-install configuration
-            new Model\Stage\PostInstallConfigStage($this->cronConfig, $this->emailConfig),
+            new Model\Stage\PostInstallConfigStage(
+                $this->cronConfig,
+                $this->emailConfig,
+                $this->cronConfigurer,
+                $this->emailConfigurer,
+                $this->modeConfigurer
+            ),
 
             // Completion
             new Model\Stage\CompletionStage(),

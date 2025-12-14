@@ -6,6 +6,9 @@ declare(strict_types=1);
 
 namespace MageOS\Installer\Model\Stage;
 
+use MageOS\Installer\Model\Command\CronConfigurer;
+use MageOS\Installer\Model\Command\EmailConfigurer;
+use MageOS\Installer\Model\Command\ModeConfigurer;
 use MageOS\Installer\Model\Config\CronConfig;
 use MageOS\Installer\Model\Config\EmailConfig;
 use MageOS\Installer\Model\InstallationContext;
@@ -20,7 +23,10 @@ class PostInstallConfigStage extends AbstractStage
 {
     public function __construct(
         private readonly CronConfig $cronConfig,
-        private readonly EmailConfig $emailConfig
+        private readonly EmailConfig $emailConfig,
+        private readonly CronConfigurer $cronConfigurer,
+        private readonly EmailConfigurer $emailConfigurer,
+        private readonly ModeConfigurer $modeConfigurer
     ) {
     }
 
@@ -72,7 +78,7 @@ class PostInstallConfigStage extends AbstractStage
         $context->setCron($cronConfig);
 
         if ($cronConfig->configure) {
-            $this->configureCron($output);
+            $this->cronConfigurer->configure(BP, $output);
         }
 
         // Collect email configuration
@@ -81,122 +87,15 @@ class PostInstallConfigStage extends AbstractStage
         $context->setEmail($emailConfig);
 
         if ($emailConfig->configure) {
-            $this->configureEmail($output, $emailConfig);
+            $this->emailConfigurer->configure($emailConfig, BP, $output);
         }
 
         // Set Magento mode based on environment
         $env = $context->getEnvironment();
         if ($env) {
-            $this->setMagentoMode($output, $env->mageMode);
+            $this->modeConfigurer->setMode($env->mageMode, BP, $output);
         }
 
         return StageResult::continue();
-    }
-
-    /**
-     * Configure cron
-     *
-     * @param OutputInterface $output
-     * @return void
-     */
-    private function configureCron(OutputInterface $output): void
-    {
-        $output->writeln('');
-        $output->write('<comment>🔄 Configuring cron...</comment>');
-
-        try {
-            $baseDir = BP;
-            $cronCommand = sprintf('cd %s && bin/magento cron:install 2>&1', escapeshellarg($baseDir));
-            exec($cronCommand, $cronOutput, $returnCode);
-
-            if ($returnCode === 0) {
-                $output->writeln(' <info>✓</info>');
-                $output->writeln('<info>✓ Cron configured successfully!</info>');
-            } else {
-                $output->writeln(' <comment>⚠️</comment>');
-                $output->writeln('<comment>⚠️  Automatic cron setup failed. Configure manually:</comment>');
-                $output->writeln('');
-                $output->writeln('<comment>Add to crontab (crontab -e):</comment>');
-                $output->writeln(sprintf('<comment>* * * * * %s/bin/magento cron:run 2>&1 | grep -v "Ran jobs"</comment>', $baseDir));
-                $output->writeln(sprintf('<comment>* * * * * %s/bin/magento setup:cron:run 2>&1</comment>', $baseDir));
-            }
-        } catch (\Exception $e) {
-            $output->writeln(' <error>❌</error>');
-            $output->writeln('<error>Cron configuration failed: ' . $e->getMessage() . '</error>');
-        }
-    }
-
-    /**
-     * Configure email
-     *
-     * @param OutputInterface $output
-     * @param EmailConfiguration $emailConfig
-     * @return void
-     */
-    private function configureEmail(OutputInterface $output, EmailConfiguration $emailConfig): void
-    {
-        $output->writeln('');
-        $output->write('<comment>🔄 Configuring email...</comment>');
-
-        try {
-            if ($emailConfig->isSmtp()) {
-                $baseDir = BP;
-
-                // Configure SMTP via Magento config
-                $commands = [
-                    sprintf('bin/magento config:set system/smtp/host %s', escapeshellarg($emailConfig->host)),
-                    sprintf('bin/magento config:set system/smtp/port %d', $emailConfig->port),
-                ];
-
-                if ($emailConfig->auth && $emailConfig->username) {
-                    $commands[] = sprintf('bin/magento config:set system/smtp/auth %s', escapeshellarg($emailConfig->auth));
-                    $commands[] = sprintf('bin/magento config:set system/smtp/username %s', escapeshellarg($emailConfig->username));
-                    $commands[] = sprintf('bin/magento config:set system/smtp/password %s', escapeshellarg($emailConfig->password));
-                }
-
-                foreach ($commands as $cmd) {
-                    exec(sprintf('cd %s && %s 2>&1', escapeshellarg($baseDir), $cmd));
-                }
-
-                $output->writeln(' <info>✓</info>');
-                $output->writeln('<info>✓ Email configured successfully!</info>');
-            } else {
-                $output->writeln(' <info>✓</info>');
-                $output->writeln('<info>✓ Using sendmail for email</info>');
-            }
-        } catch (\Exception $e) {
-            $output->writeln(' <error>❌</error>');
-            $output->writeln('<error>Email configuration failed: ' . $e->getMessage() . '</error>');
-        }
-    }
-
-    /**
-     * Set Magento deployment mode
-     *
-     * @param OutputInterface $output
-     * @param string $mode
-     * @return void
-     */
-    private function setMagentoMode(OutputInterface $output, string $mode): void
-    {
-        $output->writeln('');
-        $output->write(sprintf('<comment>🔄 Setting Magento mode to %s...</comment>', $mode));
-
-        try {
-            $baseDir = BP;
-            $modeCommand = sprintf('cd %s && bin/magento deploy:mode:set %s 2>&1', escapeshellarg($baseDir), escapeshellarg($mode));
-            exec($modeCommand, $modeOutput, $returnCode);
-
-            if ($returnCode === 0) {
-                $output->writeln(' <info>✓</info>');
-                $output->writeln(sprintf('<info>✓ Magento mode set to %s</info>', $mode));
-            } else {
-                $output->writeln(' <comment>⚠️</comment>');
-                $output->writeln(sprintf('<comment>⚠️  Mode setting failed. Run manually: bin/magento deploy:mode:set %s</comment>', $mode));
-            }
-        } catch (\Exception $e) {
-            $output->writeln(' <error>❌</error>');
-            $output->writeln('<error>Mode setting failed: ' . $e->getMessage() . '</error>');
-        }
     }
 }
