@@ -72,4 +72,11 @@
             <argument name="instanceName" xsi:type="string">\Magento\Framework\Amqp\Bulk\Exchange</argument>
         </arguments>
     </virtualType>
+    <type name="Magento\Framework\Console\CommandListInterface">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="queueConfigAmqpStatus" xsi:type="object">Magento\Amqp\Console\QueueConfigStatusCommand</item>
+            </argument>
+        </arguments>
+    </type>
 </config>
