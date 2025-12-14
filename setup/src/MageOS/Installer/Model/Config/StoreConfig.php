@@ -44,29 +44,8 @@ class StoreConfig
         $output->writeln('');
         $output->writeln('<info>=== Store Configuration ===</info>');
 
-        // Base URL
-        $detectedUrl = $this->urlDetector->detect($baseDir);
-        $urlQuestion = new Question(
-            sprintf('? Store URL [<comment>%s</comment>]: ', $detectedUrl),
-            $detectedUrl
-        );
-        $urlQuestion->setValidator(function ($answer) {
-            $result = $this->urlValidator->validate($answer ?? '');
-            if (!$result['valid']) {
-                throw new \RuntimeException($result['error'] ?? 'Invalid URL');
-            }
-            if ($result['warning']) {
-                // We'll show the warning but not fail validation
-            }
-            return $answer;
-        });
-        $baseUrl = $questionHelper->ask($input, $output, $urlQuestion);
-
-        // Show warning if applicable
-        $urlValidation = $this->urlValidator->validate($baseUrl ?? $detectedUrl);
-        if ($urlValidation['warning']) {
-            $output->writeln('<comment>⚠️  ' . $urlValidation['warning'] . '</comment>');
-        }
+        // Base URL with retry and auto-correction
+        $baseUrl = $this->collectBaseUrl($input, $output, $questionHelper, $baseDir);
 
         // Language
         $languageQuestion = new Question('? Default language [<comment>en_US</comment>]: ', 'en_US');
@@ -92,11 +71,96 @@ class StoreConfig
         $useRewrites = $questionHelper->ask($input, $output, $rewritesQuestion);
 
         return [
-            'baseUrl' => $baseUrl ?? $detectedUrl,
+            'baseUrl' => $baseUrl,
             'language' => $language ?? 'en_US',
             'timezone' => $timezone ?? $defaultTimezone,
             'currency' => $currency ?? 'USD',
             'useRewrites' => (bool)$useRewrites
         ];
+    }
+
+    /**
+     * Collect and validate base URL with auto-correction
+     *
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @param QuestionHelper $questionHelper
+     * @param string $baseDir
+     * @return string
+     */
+    private function collectBaseUrl(
+        InputInterface $input,
+        OutputInterface $output,
+        QuestionHelper $questionHelper,
+        string $baseDir
+    ): string {
+        $detectedUrl = $this->urlDetector->detect($baseDir);
+
+        while (true) {
+            // Ask for URL
+            $urlQuestion = new Question(
+                sprintf('? Store URL [<comment>%s</comment>]: ', $detectedUrl),
+                $detectedUrl
+            );
+            $enteredUrl = $questionHelper->ask($input, $output, $urlQuestion) ?? $detectedUrl;
+
+            // Normalize the URL
+            $normalized = $this->urlValidator->normalize($enteredUrl);
+
+            // If URL was changed, show corrected version
+            if ($normalized['changed']) {
+                $output->writeln('');
+                $output->writeln('<comment>ℹ️  URL has been auto-corrected:</comment>');
+                $output->writeln(sprintf('   <comment>Original:</comment>  %s', $enteredUrl));
+                $output->writeln(sprintf('   <comment>Corrected:</comment> %s', $normalized['normalized']));
+
+                foreach ($normalized['changes'] as $change) {
+                    $output->writeln(sprintf('   <comment>• %s</comment>', $change));
+                }
+
+                // Ask if user wants to use corrected version or re-enter
+                $acceptQuestion = new ConfirmationQuestion(
+                    "\n<question>? Use corrected URL?</question> [<comment>Y/n</comment>]: ",
+                    true
+                );
+                $accept = $questionHelper->ask($input, $output, $acceptQuestion);
+
+                if (!$accept) {
+                    $output->writeln('<comment>Please re-enter the URL</comment>');
+                    continue;
+                }
+
+                $finalUrl = $normalized['normalized'];
+            } else {
+                $finalUrl = $enteredUrl;
+            }
+
+            // Validate the normalized URL
+            $validation = $this->urlValidator->validate($finalUrl);
+
+            if (!$validation['valid']) {
+                $output->writeln('');
+                $output->writeln('<error>❌ ' . $validation['error'] . '</error>');
+
+                $retryQuestion = new ConfirmationQuestion(
+                    "\n<question>? Invalid URL. Do you want to try again?</question> [<comment>Y/n</comment>]: ",
+                    true
+                );
+                $retry = $questionHelper->ask($input, $output, $retryQuestion);
+
+                if (!$retry) {
+                    throw new \RuntimeException('URL validation failed. Installation aborted.');
+                }
+
+                continue;
+            }
+
+            // Show HTTPS warning if applicable
+            if ($validation['warning']) {
+                $output->writeln('<comment>⚠️  ' . $validation['warning'] . '</comment>');
+            }
+
+            return $finalUrl;
+        }
     }
 }

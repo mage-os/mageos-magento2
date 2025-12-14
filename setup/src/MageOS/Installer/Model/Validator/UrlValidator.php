@@ -12,6 +12,36 @@ namespace MageOS\Installer\Model\Validator;
 class UrlValidator
 {
     /**
+     * Normalize URL to proper format
+     *
+     * @param string $url
+     * @return array{normalized: string, changed: bool, changes: array<string>}
+     */
+    public function normalize(string $url): array
+    {
+        $original = $url;
+        $changes = [];
+
+        // Add scheme if missing
+        if (!preg_match('/^https?:\/\//', $url)) {
+            $url = 'http://' . $url;
+            $changes[] = 'Added http:// prefix';
+        }
+
+        // Add trailing slash if missing
+        if (!str_ends_with($url, '/')) {
+            $url = $url . '/';
+            $changes[] = 'Added trailing /';
+        }
+
+        return [
+            'normalized' => $url,
+            'changed' => $original !== $url,
+            'changes' => $changes
+        ];
+    }
+
+    /**
      * Validate URL format
      *
      * @param string $url
@@ -27,10 +57,9 @@ class UrlValidator
             ];
         }
 
-        // Add scheme if missing
-        if (!preg_match('/^https?:\/\//', $url)) {
-            $url = 'http://' . $url;
-        }
+        // Normalize first
+        $normalized = $this->normalize($url);
+        $url = $normalized['normalized'];
 
         if (!filter_var($url, FILTER_VALIDATE_URL)) {
             return [
