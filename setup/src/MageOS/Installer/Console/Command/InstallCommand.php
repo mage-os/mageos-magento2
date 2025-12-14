@@ -378,7 +378,7 @@ class InstallCommand extends Command
 
         // Install theme if requested
         if ($themeConfig['install']) {
-            $this->themeInstaller->install($baseDir, $themeConfig, $output);
+            $this->themeInstaller->install($baseDir, $themeConfig, $input, $output, $this->getHelper('question'));
         }
 
         $this->displaySuccess($output, $storeConfig, $backendConfig, $adminConfig, $loggingConfig, $sampleDataConfig, $themeConfig);

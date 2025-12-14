@@ -146,43 +146,71 @@ class ThemeConfig
         QuestionHelper $questionHelper,
         string $themeId
     ): array {
-        $output->writeln('');
-        $output->writeln('<info>=== Hyva Theme Credentials ===</info>');
-        $output->writeln('');
-        $output->writeln('<comment>ℹ️  Hyva requires API credentials from your account</comment>');
-        $output->writeln('<comment>   Get your free license key at: https://www.hyva.io/hyva-theme-license.html</comment>');
-        $output->writeln('');
+        $isFirstAttempt = true;
 
-        // License key
-        $licenseQuestion = new Question('? Hyva license key: ');
-        $licenseQuestion->setValidator(function ($answer) {
-            if (empty($answer)) {
-                throw new \RuntimeException('License key is required for Hyva installation');
+        while (true) {
+            try {
+                if ($isFirstAttempt) {
+                    $output->writeln('');
+                    $output->writeln('<info>=== Hyva Theme Credentials ===</info>');
+                } else {
+                    $output->writeln('');
+                    $output->writeln('<info>=== Hyva Theme Credentials (Retry) ===</info>');
+                }
+
+                $output->writeln('');
+                $output->writeln('<comment>ℹ️  Hyva requires API credentials from your account</comment>');
+                $output->writeln('<comment>   Get your free license key at: https://www.hyva.io/hyva-theme-license.html</comment>');
+                $output->writeln('');
+
+                // License key
+                $licenseQuestion = new Question('? Hyva license key: ');
+                $licenseQuestion->setValidator(function ($answer) {
+                    if (empty($answer)) {
+                        throw new \RuntimeException('License key is required for Hyva installation');
+                    }
+                    return $answer;
+                });
+                $licenseKey = $questionHelper->ask($input, $output, $licenseQuestion);
+
+                // Project name
+                $output->writeln('');
+                $output->writeln('<comment>ℹ️  Your Hyva project name can be found in your Hyva account</comment>');
+                $output->writeln('<comment>   It\'s part of your repository URL: hyva-themes.repo.packagist.com/[PROJECT-NAME]/</comment>');
+                $output->writeln('');
+
+                $projectQuestion = new Question('? Hyva project name: ');
+                $projectQuestion->setValidator(function ($answer) {
+                    if (empty($answer)) {
+                        throw new \RuntimeException('Project name is required for Hyva installation');
+                    }
+                    return $answer;
+                });
+                $projectName = $questionHelper->ask($input, $output, $projectQuestion);
+
+                return [
+                    'install' => true,
+                    'theme' => $themeId,
+                    'hyva_license_key' => $licenseKey ?? '',
+                    'hyva_project_name' => $projectName ?? ''
+                ];
+            } catch (\RuntimeException $e) {
+                // Show error and ask to retry
+                $output->writeln('');
+                $output->writeln('<error>❌ ' . $e->getMessage() . '</error>');
+
+                $retryQuestion = new ConfirmationQuestion(
+                    "\n<question>? Validation failed. Do you want to try again?</question> [<comment>Y/n</comment>]: ",
+                    true
+                );
+                $retry = $questionHelper->ask($input, $output, $retryQuestion);
+
+                if (!$retry) {
+                    throw new \RuntimeException('Hyva credentials configuration failed. Installation aborted.');
+                }
+
+                $isFirstAttempt = false;
             }
-            return $answer;
-        });
-        $licenseKey = $questionHelper->ask($input, $output, $licenseQuestion);
-
-        // Project name
-        $output->writeln('');
-        $output->writeln('<comment>ℹ️  Your Hyva project name can be found in your Hyva account</comment>');
-        $output->writeln('<comment>   It\'s part of your repository URL: hyva-themes.repo.packagist.com/[PROJECT-NAME]/</comment>');
-        $output->writeln('');
-
-        $projectQuestion = new Question('? Hyva project name: ');
-        $projectQuestion->setValidator(function ($answer) {
-            if (empty($answer)) {
-                throw new \RuntimeException('Project name is required for Hyva installation');
-            }
-            return $answer;
-        });
-        $projectName = $questionHelper->ask($input, $output, $projectQuestion);
-
-        return [
-            'install' => true,
-            'theme' => $themeId,
-            'hyva_license_key' => $licenseKey ?? '',
-            'hyva_project_name' => $projectName ?? ''
-        ];
+        }
     }
 }

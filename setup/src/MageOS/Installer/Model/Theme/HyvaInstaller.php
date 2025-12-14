@@ -57,10 +57,28 @@ class HyvaInstaller
 
             if ($returnCode !== 0) {
                 $output->writeln('<error>❌ Composer installation failed</error>');
-                $output->writeln('<comment>Output:</comment>');
-                foreach ($composerOutput as $line) {
-                    $output->writeln('  ' . $line);
+                $output->writeln('');
+
+                // Check for common authentication errors
+                $outputText = implode("\n", $composerOutput);
+                if (str_contains($outputText, '401') || str_contains($outputText, 'Unauthorized') || str_contains($outputText, 'authentication')) {
+                    $output->writeln('<error>Authentication Error:</error>');
+                    $output->writeln('<comment>  Your Hyva license key or project name appears to be incorrect.</comment>');
+                    $output->writeln('<comment>  Please verify your credentials at: https://www.hyva.io/hyva-theme-license.html</comment>');
+                } elseif (str_contains($outputText, '404') || str_contains($outputText, 'Not Found')) {
+                    $output->writeln('<error>Not Found Error:</error>');
+                    $output->writeln('<comment>  The Hyva package was not found. Please check your project name.</comment>');
+                } else {
+                    $output->writeln('<comment>Composer output:</comment>');
+                    foreach ($composerOutput as $line) {
+                        $output->writeln('  ' . $line);
+                    }
                 }
+
+                $output->writeln('');
+                $output->writeln('<comment>ℹ️  You can install Hyva manually later with:</comment>');
+                $output->writeln('<comment>   composer require hyva-themes/magento2-default-theme</comment>');
+
                 return false;
             }
 

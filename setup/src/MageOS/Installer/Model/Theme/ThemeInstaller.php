@@ -6,7 +6,10 @@ declare(strict_types=1);
 
 namespace MageOS\Installer\Model\Theme;
 
+use Symfony\Component\Console\Helper\QuestionHelper;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 /**
  * Orchestrates theme installation
@@ -29,11 +32,18 @@ class ThemeInstaller
      *     hyva_license_key: string|null,
      *     hyva_project_name: string|null
      * } $themeConfig
+     * @param InputInterface $input
      * @param OutputInterface $output
+     * @param QuestionHelper $questionHelper
      * @return bool
      */
-    public function install(string $baseDir, array $themeConfig, OutputInterface $output): bool
-    {
+    public function install(
+        string $baseDir,
+        array $themeConfig,
+        InputInterface $input,
+        OutputInterface $output,
+        QuestionHelper $questionHelper
+    ): bool {
         if (!$themeConfig['install'] || !$themeConfig['theme']) {
             return true; // Nothing to install
         }
@@ -51,7 +61,7 @@ class ThemeInstaller
 
         // Handle Hyva installation
         if ($themeId === ThemeRegistry::THEME_HYVA) {
-            return $this->installHyva($baseDir, $themeConfig, $output);
+            return $this->installHyva($baseDir, $themeConfig, $input, $output, $questionHelper);
         }
 
         // For other themes, add installation logic here
@@ -67,11 +77,18 @@ class ThemeInstaller
      *     hyva_license_key: string|null,
      *     hyva_project_name: string|null
      * } $themeConfig
+     * @param InputInterface $input
      * @param OutputInterface $output
+     * @param QuestionHelper $questionHelper
      * @return bool
      */
-    private function installHyva(string $baseDir, array $themeConfig, OutputInterface $output): bool
-    {
+    private function installHyva(
+        string $baseDir,
+        array $themeConfig,
+        InputInterface $input,
+        OutputInterface $output,
+        QuestionHelper $questionHelper
+    ): bool {
         if (empty($themeConfig['hyva_license_key']) || empty($themeConfig['hyva_project_name'])) {
             $output->writeln('<error>❌ Hyva credentials are required</error>');
             return false;
@@ -85,6 +102,18 @@ class ThemeInstaller
         );
 
         if (!$success) {
+            $output->writeln('');
+            $skipQuestion = new ConfirmationQuestion(
+                "<question>? Hyva installation failed. Continue without Hyva theme?</question> [<comment>Y/n</comment>]: ",
+                true
+            );
+            $skip = $questionHelper->ask($input, $output, $skipQuestion);
+
+            if (!$skip) {
+                throw new \RuntimeException('Hyva installation failed. Installation aborted.');
+            }
+
+            $output->writeln('<comment>⚠️  Continuing without Hyva theme</comment>');
             return false;
         }
 
