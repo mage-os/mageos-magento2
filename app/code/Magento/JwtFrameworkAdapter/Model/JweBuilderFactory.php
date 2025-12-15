@@ -51,9 +51,11 @@ class JweBuilderFactory
      */
     public function create(): JWEBuilder
     {
-        return new JWEBuilder(
-            $this->algoManager,
-            $this->contentAlgoManager
+        // jwt-framework v4 expects a single AlgorithmManager containing BOTH key and content algorithms.
+        $allAlgorithms = array_merge(
+            $this->algoManager->all(),
+            $this->contentAlgoManager->all()
         );
+        return new JWEBuilder(new AlgorithmManager($allAlgorithms));
     }
 }

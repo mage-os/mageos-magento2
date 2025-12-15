@@ -52,12 +52,13 @@ class JweLoaderFactory
      */
     public function create(): JWELoader
     {
+        $allAlgorithms = array_merge(
+            $this->algoManager->all(),
+            $this->contentAlgoManager->all()
+        );
         return new JWELoader(
             $this->serializers,
-            new JWEDecrypter(
-                $this->algoManager,
-                $this->contentAlgoManager
-            ),
+            new JWEDecrypter(new \Jose\Component\Core\AlgorithmManager($allAlgorithms)),
             null
         );
     }
