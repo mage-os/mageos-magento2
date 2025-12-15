@@ -10,8 +10,11 @@ use MageOS\Installer\Model;
 use MageOS\Installer\Model\Checker\PermissionChecker;
 use MageOS\Installer\Model\Command\CronConfigurer;
 use MageOS\Installer\Model\Command\EmailConfigurer;
+use MageOS\Installer\Model\Command\IndexerConfigurer;
 use MageOS\Installer\Model\Command\ModeConfigurer;
 use MageOS\Installer\Model\Command\ProcessRunner;
+use MageOS\Installer\Model\Command\ThemeConfigurer;
+use MageOS\Installer\Model\Command\TwoFactorAuthConfigurer;
 use MageOS\Installer\Model\Config\AdminConfig;
 use MageOS\Installer\Model\Config\BackendConfig;
 use MageOS\Installer\Model\Config\CronConfig;
@@ -66,6 +69,9 @@ class InstallCommand extends Command
         private readonly CronConfigurer $cronConfigurer,
         private readonly EmailConfigurer $emailConfigurer,
         private readonly ModeConfigurer $modeConfigurer,
+        private readonly ThemeConfigurer $themeConfigurer,
+        private readonly IndexerConfigurer $indexerConfigurer,
+        private readonly TwoFactorAuthConfigurer $twoFactorAuthConfigurer,
         ?string $name = null
     ) {
         parent::__construct($name);
@@ -120,7 +126,11 @@ class InstallCommand extends Command
                 $this->emailConfig,
                 $this->cronConfigurer,
                 $this->emailConfigurer,
-                $this->modeConfigurer
+                $this->modeConfigurer,
+                $this->themeConfigurer,
+                $this->indexerConfigurer,
+                $this->twoFactorAuthConfigurer,
+                $this->processRunner
             ),
 
             // Completion
