@@ -7,9 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Controller\Adminhtml\Product\Attribute;
 
-use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Controller\Adminhtml\Product\Attribute\Validate;
-use Magento\Catalog\Model\Product\Url;
 use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
 use Magento\Catalog\Test\Unit\Controller\Adminhtml\Product\AttributeTest;
 use Magento\Eav\Model\Entity\Attribute\Set as AttributeSet;
@@ -22,11 +20,14 @@ use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\Serialize\Serializer\FormData;
 use Magento\Framework\View\LayoutFactory;
 use Magento\Framework\View\LayoutInterface;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
+#[CoversClass(Validate::class)]
 class ValidateTest extends AttributeTest
 {
     /**
@@ -79,11 +80,6 @@ class ValidateTest extends AttributeTest
      */
     private $attributeCodeValidatorMock;
 
-    /**
-     * @var \Magento\Catalog\Model\Product\Url|MockObject
-     */
-    private $urlMock;
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -97,9 +93,10 @@ class ValidateTest extends AttributeTest
         $this->layoutMock = $this->createMock(LayoutInterface::class);
         $this->formDataSerializerMock = $this->createMock(FormData::class);
         $this->attributeCodeValidatorMock = $this->createMock(AttributeCodeValidator::class);
-        $this->urlMock = $this->createMock(Url::class);
 
-        $this->contextMock->method('getObjectManager')->willReturn($this->objectManagerMock);
+        $this->contextMock->expects($this->any())
+            ->method('getObjectManager')
+            ->willReturn($this->objectManagerMock);
     }
 
     /**
@@ -116,7 +113,7 @@ class ValidateTest extends AttributeTest
                 'resultPageFactory' => $this->resultPageFactoryMock,
                 'resultJsonFactory' => $this->resultJsonFactoryMock,
                 'layoutFactory' => $this->layoutFactoryMock,
-                'multipleAttributeList' => ['select' => 'option', 'multipleselect' => 'option'],
+                'multipleAttributeList' => ['select' => 'option'],
                 'formDataSerializer' => $this->formDataSerializerMock,
                 'attributeCodeValidator' => $this->attributeCodeValidatorMock,
             ]
@@ -126,10 +123,6 @@ class ValidateTest extends AttributeTest
     public function testExecute()
     {
         $serializedOptions = '{"key":"value"}';
-        $this->formDataSerializerMock->expects($this->once())
-            ->method('unserialize')
-            ->willReturn([]);
-
         $this->requestMock->expects($this->any())
             ->method('getParam')
             ->willReturnMap(
@@ -145,7 +138,7 @@ class ValidateTest extends AttributeTest
             ->willReturnMap(
                 [
                     [Attribute::class, [], $this->attributeMock],
-                    [AttributeSet::class, [], $this->attributeSetMock],
+                    [AttributeSet::class, [], $this->attributeSetMock]
                 ]
             );
         $this->attributeMock->expects($this->once())
@@ -189,10 +182,6 @@ class ValidateTest extends AttributeTest
     public function testExecuteEditExisting(): void
     {
         $serializedOptions = '{"key":"value"}';
-        $this->formDataSerializerMock->expects($this->once())
-            ->method('unserialize')
-            ->willReturn([]);
-
         $this->requestMock->expects($this->any())
             ->method('getParam')
             ->willReturnMap(
@@ -209,7 +198,7 @@ class ValidateTest extends AttributeTest
             ->willReturnMap(
                 [
                     [Attribute::class, [], $this->attributeMock],
-                    [AttributeSet::class, [], $this->attributeSetMock],
+                    [AttributeSet::class, [], $this->attributeSetMock]
                 ]
             );
         $this->attributeMock->expects($this->once())
@@ -251,43 +240,29 @@ class ValidateTest extends AttributeTest
      * @param        array   $options
      * @param        boolean $isError
      * @throws       NotFoundException
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     #[DataProvider('provideUniqueData')]
     public function testUniqueValidation(array $options, $isError)
     {
         $serializedOptions = '{"key":"value"}';
-        $this->formDataSerializerMock->expects($this->once())
+        $countFunctionCalls = ($isError) ? 6 : 5;
+        $this->requestMock->expects($this->exactly($countFunctionCalls))
+            ->method('getParam')
+            ->willReturnMap(
+                [
+                    ['frontend_label', null, null],
+                    ['attribute_code', null, "test_attribute_code"],
+                    ['new_attribute_set_name', null, 'test_attribute_set_name'],
+                    ['message_key', null, Validate::DEFAULT_MESSAGE_KEY],
+                    ['serialized_options', '[]', $serializedOptions],
+                ]
+            );
+
+        $this->formDataSerializerMock
+            ->expects($this->once())
             ->method('unserialize')
             ->with($serializedOptions)
             ->willReturn($options);
-
-        $this->requestMock->expects($this->any())
-            ->method('getParam')
-            ->willReturnCallback(function ($key, $defaultValue = null) use ($serializedOptions) {
-                if ($key === 'serialized_options') {
-                    return $serializedOptions;
-                }
-                if ($key === 'frontend_label') {
-                    return null;
-                }
-                if ($key === 'attribute_code') {
-                    return 'test_attribute_code';
-                }
-                if ($key === 'new_attribute_set_name') {
-                    return 'test_attribute_set_name';
-                }
-                if ($key === 'attribute_id') {
-                    return null;
-                }
-                if ($key === 'frontend_input') {
-                    return 'select';
-                }
-                if ($key === 'message_key') {
-                    return Validate::DEFAULT_MESSAGE_KEY;
-                }
-                return $defaultValue;
-            });
 
         $this->attributeCodeValidatorMock->expects($this->once())
             ->method('isValid')
@@ -412,11 +387,6 @@ class ValidateTest extends AttributeTest
     public function testEmptyOption(array $options, $result)
     {
         $serializedOptions = '{"key":"value"}';
-        $this->formDataSerializerMock->expects($this->once())
-            ->method('unserialize')
-            ->with($serializedOptions)
-            ->willReturn($options);
-
         $this->requestMock->expects($this->any())
             ->method('getParam')
             ->willReturnMap(
@@ -429,6 +399,12 @@ class ValidateTest extends AttributeTest
                     ['serialized_options', '[]', $serializedOptions],
                 ]
             );
+
+        $this->formDataSerializerMock
+            ->expects($this->once())
+            ->method('unserialize')
+            ->with($serializedOptions)
+            ->willReturn($options);
 
         $this->objectManagerMock->expects($this->once())
             ->method('create')
@@ -453,7 +429,7 @@ class ValidateTest extends AttributeTest
 
         $response = $this->getModel()->execute();
         $responseObject = json_decode($response);
-        $this->assertEquals($result, $responseObject);
+        $this->assertEquals($responseObject, $result);
     }
 
     /**
@@ -534,11 +510,6 @@ class ValidateTest extends AttributeTest
     public function testWhitespaceOption(array $options, $result)
     {
         $serializedOptions = '{"key":"value"}';
-        $this->formDataSerializerMock->expects($this->once())
-            ->method('unserialize')
-            ->with($serializedOptions)
-            ->willReturn($options);
-
         $this->requestMock->expects($this->any())
             ->method('getParam')
             ->willReturnMap(
@@ -551,6 +522,12 @@ class ValidateTest extends AttributeTest
                     ['serialized_options', '[]', $serializedOptions],
                 ]
             );
+
+        $this->formDataSerializerMock
+            ->expects($this->once())
+            ->method('unserialize')
+            ->with($serializedOptions)
+            ->willReturn($options);
 
         $this->objectManagerMock->expects($this->once())
             ->method('create')
@@ -575,7 +552,7 @@ class ValidateTest extends AttributeTest
 
         $response = $this->getModel()->execute();
         $responseObject = json_decode($response);
-        $this->assertEquals($result, $responseObject);
+        $this->assertEquals($responseObject, $result);
     }
 
     /**
@@ -719,10 +696,6 @@ class ValidateTest extends AttributeTest
     public function testExecuteWithInvalidAttributeCode($attributeCode, $result)
     {
         $serializedOptions = '{"key":"value"}';
-        $this->formDataSerializerMock->expects($this->once())
-            ->method('unserialize')
-            ->willReturn([]);
-
         $this->requestMock->expects($this->any())
             ->method('getParam')
             ->willReturnMap(
@@ -735,6 +708,12 @@ class ValidateTest extends AttributeTest
                     ['serialized_options', '[]', $serializedOptions],
                 ]
             );
+
+        $this->formDataSerializerMock
+            ->expects($this->once())
+            ->method('unserialize')
+            ->with($serializedOptions)
+            ->willReturn(["key" => "value"]);
 
         $this->objectManagerMock->expects($this->once())
             ->method('create')
@@ -764,7 +743,7 @@ class ValidateTest extends AttributeTest
         $response = $this->getModel()->execute();
         $responseObject = json_decode($response);
 
-        $this->assertEquals($result, $responseObject);
+        $this->assertEquals($responseObject, $result);
     }
 
     /**

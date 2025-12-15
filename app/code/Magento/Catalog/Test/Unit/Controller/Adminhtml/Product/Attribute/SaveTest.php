@@ -41,6 +41,8 @@ use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\Exception\AlreadyExistsException;
 use Magento\Eav\Model\ResourceModel\Entity\Attribute\Group\Collection as AttributeGroupCollection;
 use Magento\Eav\Model\Entity\Attribute\Group as AttributeGroup;
+use Magento\Framework\App\Action\Action;
+use Magento\Framework\Exception\LocalizedException;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -563,7 +565,7 @@ class SaveTest extends AttributeTest
             $model,
             '_objectManager',
             $omInterface,
-            \Magento\Framework\App\Action\Action::class
+            Action::class
         );
 
         $this->productAttributeMock->expects($this->once())
@@ -598,7 +600,7 @@ class SaveTest extends AttributeTest
 
         // Attribute model with load() and required getters
         $attributeWithLoad = $this->createPartialMock(
-            \Magento\Catalog\Model\ResourceModel\Eav\Attribute::class,
+            ResourceAttribute::class,
             ['load','getId','getAttributeCode','getEntityTypeId']
         );
         $attributeWithLoad->method('load')->willReturnSelf();
@@ -898,7 +900,7 @@ class SaveTest extends AttributeTest
         $this->builderMock->method('setName')->with('Name')->willReturnSelf();
         $this->builderMock->expects($this->once())
             ->method('getAttributeSet')
-            ->willThrowException(new \Magento\Framework\Exception\LocalizedException(__('bad')));
+            ->willThrowException(new LocalizedException(__('bad')));
 
         $this->messageManager->expects($this->once())->method('addErrorMessage')->with('bad');
         $this->inputTypeValidatorMock->method('isValid')->with('text')->willReturn(true);
