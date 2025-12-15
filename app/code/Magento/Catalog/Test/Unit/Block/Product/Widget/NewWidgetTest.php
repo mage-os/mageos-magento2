@@ -565,14 +565,37 @@ class NewWidgetTest extends TestCase
             ->addMethods(['setUseContainer', 'setShowAmounts', 'setTotalLimit'])
             ->getMock();
 
-        $pagerMock->method('setUseContainer')->willReturnSelf();
-        $pagerMock->method('setShowAmounts')->willReturnSelf();
-        $pagerMock->method('setShowPerPage')->willReturnSelf();
-        $pagerMock->method('setPageVarName')->willReturnSelf();
-        $pagerMock->method('setLimit')->willReturnSelf();
-        $pagerMock->method('setTotalLimit')->willReturnSelf();
-        $pagerMock->method('setCollection')->willReturnSelf();
-        $pagerMock->expects($this->once())->method('toHtml')->willReturn('pager-html');
+        $pagerMock->expects($this->once())
+            ->method('setUseContainer')
+            ->with(true)
+            ->willReturnSelf();
+        $pagerMock->expects($this->once())
+            ->method('setShowAmounts')
+            ->with(true)
+            ->willReturnSelf();
+        $pagerMock->expects($this->once())
+            ->method('setShowPerPage')
+            ->with(false)
+            ->willReturnSelf();
+        $pagerMock->expects($this->once())
+            ->method('setPageVarName')
+            ->with($this->block->getData('page_var_name'))
+            ->willReturnSelf();
+        $pagerMock->expects($this->once())
+            ->method('setLimit')
+            ->with(5)
+            ->willReturnSelf();
+        $pagerMock->expects($this->once())
+            ->method('setTotalLimit')
+            ->with(10)
+            ->willReturnSelf();
+        $pagerMock->expects($this->once())
+            ->method('setCollection')
+            ->with($this->block->getProductCollection())
+            ->willReturnSelf();
+        $pagerMock->expects($this->once())
+            ->method('toHtml')
+            ->willReturn('pager-html');
         $this->layout->expects($this->once())
             ->method('createBlock')
             ->with(Pager::class, 'widget.new.product.list.pager')
@@ -649,11 +672,11 @@ class NewWidgetTest extends TestCase
         $result = $block->getCacheKeyInfo();
 
         $this->assertIsArray($result);
-        $this->assertTrue(in_array(NewWidget::DISPLAY_TYPE_ALL_PRODUCTS, $result, true));
-        $this->assertTrue(in_array(5, $result, true));
-        $this->assertTrue(in_array(2, $result, true));
-        $this->assertTrue(in_array('serialized-params', $result, true));
-        $this->assertTrue(in_array('USD', $result, true));
+        $this->assertContains(NewWidget::DISPLAY_TYPE_ALL_PRODUCTS, $result);
+        $this->assertContains(5, $result);
+        $this->assertContains(2, $result);
+        $this->assertContains('serialized-params', $result);
+        $this->assertContains('USD', $result);
     }
 
     /**
