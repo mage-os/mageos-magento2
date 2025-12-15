@@ -6,6 +6,7 @@ declare(strict_types=1);
 
 namespace MageOS\Installer\Model\Theme;
 
+use MageOS\Installer\Model\Command\ProcessRunner;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -14,7 +15,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 class HyvaInstaller
 {
     public function __construct(
-        private readonly ComposerAuthManager $authManager
+        private readonly ComposerAuthManager $authManager,
+        private readonly ProcessRunner $processRunner
     ) {
     }
 
@@ -46,21 +48,19 @@ class HyvaInstaller
 
             // Step 3: Run composer require
             $output->writeln('<comment>  → Installing Hyva theme via Composer (this may take a few minutes)...</comment>');
-            $composerCommand = sprintf(
-                'cd %s && composer require hyva-themes/magento2-default-theme --no-interaction 2>&1',
-                escapeshellarg($baseDir)
+
+            $result = $this->processRunner->run(
+                ['composer', 'require', 'hyva-themes/magento2-default-theme', '--no-interaction'],
+                $baseDir,
+                timeout: 600 // Composer can take time
             );
 
-            $composerOutput = [];
-            $returnCode = 0;
-            exec($composerCommand, $composerOutput, $returnCode);
-
-            if ($returnCode !== 0) {
+            if (!$result->isSuccess()) {
                 $output->writeln('<error>❌ Composer installation failed</error>');
                 $output->writeln('');
 
                 // Check for common authentication errors
-                $outputText = implode("\n", $composerOutput);
+                $outputText = $result->getCombinedOutput();
                 if (str_contains($outputText, '401') || str_contains($outputText, 'Unauthorized') || str_contains($outputText, 'authentication')) {
                     $output->writeln('<error>Authentication Error:</error>');
                     $output->writeln('<comment>  Your Hyva license key or project name appears to be incorrect.</comment>');

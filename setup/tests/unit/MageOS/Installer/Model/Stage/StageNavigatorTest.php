@@ -43,17 +43,17 @@ class StageNavigatorTest extends TestCase
     {
         $executionOrder = [];
 
-        $stage1 = $this->createMockStageWithCallback('Stage 1', function() use (&$executionOrder) {
+        $stage1 = $this->createMockStageWithCallback('Stage 1', function () use (&$executionOrder) {
             $executionOrder[] = 1;
             return StageResult::continue();
         });
 
-        $stage2 = $this->createMockStageWithCallback('Stage 2', function() use (&$executionOrder) {
+        $stage2 = $this->createMockStageWithCallback('Stage 2', function () use (&$executionOrder) {
             $executionOrder[] = 2;
             return StageResult::continue();
         });
 
-        $stage3 = $this->createMockStageWithCallback('Stage 3', function() use (&$executionOrder) {
+        $stage3 = $this->createMockStageWithCallback('Stage 3', function () use (&$executionOrder) {
             $executionOrder[] = 3;
             return StageResult::continue();
         });
@@ -99,12 +99,12 @@ class StageNavigatorTest extends TestCase
     {
         $executionOrder = [];
 
-        $stage1 = $this->createMockStageWithCallback('Stage 1', function() use (&$executionOrder) {
+        $stage1 = $this->createMockStageWithCallback('Stage 1', function () use (&$executionOrder) {
             $executionOrder[] = 'stage1-' . (count(array_filter($executionOrder, fn($v) => str_starts_with($v, 'stage1'))) + 1);
             return StageResult::continue();
         });
 
-        $stage2 = $this->createMockStageWithCallback('Stage 2', function() use (&$executionOrder) {
+        $stage2 = $this->createMockStageWithCallback('Stage 2', function () use (&$executionOrder) {
             static $callCount = 0;
             $callCount++;
             $executionOrder[] = 'stage2-' . $callCount;
@@ -127,7 +127,7 @@ class StageNavigatorTest extends TestCase
     {
         $callCount = 0;
 
-        $stage = $this->createMockStageWithCallback('Stage 1', function() use (&$callCount) {
+        $stage = $this->createMockStageWithCallback('Stage 1', function () use (&$callCount) {
             $callCount++;
             // Retry twice, then continue
             return $callCount < 3 ? StageResult::retry() : StageResult::continue();
