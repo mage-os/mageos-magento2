@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Mage-OS. All rights reserved.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+    <!-- Configure ProcessRunner (base for all configurers) -->
+    <type name="MageOS\Installer\Model\Command\ProcessRunner">
+        <arguments/>
+    </type>
+
+    <!-- Configure all command configurers -->
+    <type name="MageOS\Installer\Model\Command\CronConfigurer">
+        <arguments>
+            <argument name="processRunner" xsi:type="object">MageOS\Installer\Model\Command\ProcessRunner</argument>
+        </arguments>
+    </type>
+
+    <type name="MageOS\Installer\Model\Command\EmailConfigurer">
+        <arguments>
+            <argument name="processRunner" xsi:type="object">MageOS\Installer\Model\Command\ProcessRunner</argument>
+        </arguments>
+    </type>
+
+    <type name="MageOS\Installer\Model\Command\ModeConfigurer">
+        <arguments>
+            <argument name="processRunner" xsi:type="object">MageOS\Installer\Model\Command\ProcessRunner</argument>
+        </arguments>
+    </type>
+
+    <type name="MageOS\Installer\Model\Command\ThemeConfigurer">
+        <arguments>
+            <argument name="processRunner" xsi:type="object">MageOS\Installer\Model\Command\ProcessRunner</argument>
+        </arguments>
+    </type>
+
+    <type name="MageOS\Installer\Model\Command\IndexerConfigurer">
+        <arguments>
+            <argument name="processRunner" xsi:type="object">MageOS\Installer\Model\Command\ProcessRunner</argument>
+        </arguments>
+    </type>
+
+    <type name="MageOS\Installer\Model\Command\TwoFactorAuthConfigurer">
+        <arguments>
+            <argument name="processRunner" xsi:type="object">MageOS\Installer\Model\Command\ProcessRunner</argument>
+        </arguments>
+    </type>
+
+    <!-- Configure PostInstallConfigStage with all its dependencies -->
+    <type name="MageOS\Installer\Model\Stage\PostInstallConfigStage">
+        <arguments>
+            <argument name="cronConfig" xsi:type="object">MageOS\Installer\Model\Config\CronConfig</argument>
+            <argument name="emailConfig" xsi:type="object">MageOS\Installer\Model\Config\EmailConfig</argument>
+            <argument name="cronConfigurer" xsi:type="object">MageOS\Installer\Model\Command\CronConfigurer</argument>
+            <argument name="emailConfigurer" xsi:type="object">MageOS\Installer\Model\Command\EmailConfigurer</argument>
+            <argument name="modeConfigurer" xsi:type="object">MageOS\Installer\Model\Command\ModeConfigurer</argument>
+            <argument name="themeConfigurer" xsi:type="object">MageOS\Installer\Model\Command\ThemeConfigurer</argument>
+            <argument name="indexerConfigurer" xsi:type="object">MageOS\Installer\Model\Command\IndexerConfigurer</argument>
+            <argument name="twoFactorAuthConfigurer" xsi:type="object">MageOS\Installer\Model\Command\TwoFactorAuthConfigurer</argument>
+            <argument name="processRunner" xsi:type="object">MageOS\Installer\Model\Command\ProcessRunner</argument>
+        </arguments>
+    </type>
+
+    <!-- Configure HyvaInstaller -->
+    <type name="MageOS\Installer\Model\Theme\HyvaInstaller">
+        <arguments>
+            <argument name="processRunner" xsi:type="object">MageOS\Installer\Model\Command\ProcessRunner</argument>
+        </arguments>
+    </type>
+</config>
