@@ -40,7 +40,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class DiCompileCommand extends Command
 {
-    /** Command name */
     public const NAME = 'setup:di:compile';
 
     /**

@@ -21,7 +21,6 @@ use Magento\Framework\Validator\Url as UrlValidator;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @SuppressWarnings(PHPMD.UnusedPrivateField)
  */
 class InstallStoreConfigurationCommand extends AbstractSetupCommand
 {
@@ -35,15 +34,6 @@ class InstallStoreConfigurationCommand extends AbstractSetupCommand
      * @var DeploymentConfig
      */
     private $deploymentConfig;
-
-    /**
-     * Object Manager to create object
-     *
-     * @var ObjectManagerInterface
-     * @deprecated 2.2.0
-     * @see MAGETWO-71174
-     */
-    private $objectManager;
 
     /**
      * @var LocaleValidator
@@ -65,7 +55,7 @@ class InstallStoreConfigurationCommand extends AbstractSetupCommand
      */
     private $urlValidator;
 
-    /***
+    /**
      * Inject dependencies
      *
      * @param InstallerFactory $installerFactory

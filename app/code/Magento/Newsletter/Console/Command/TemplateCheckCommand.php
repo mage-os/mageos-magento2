@@ -58,8 +58,7 @@ class TemplateCheckCommand extends DatabaseTemplateCompatibilityCommand
      *
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return int
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @return int|null
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

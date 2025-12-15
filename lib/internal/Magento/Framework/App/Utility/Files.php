@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2012 Adobe
+ * Copyright 2015 Adobe
  * All Rights Reserved.
  */
 
@@ -1020,7 +1020,7 @@ class Files
      * Parse meta-info of a static file in module
      *
      * @deprecated 102.0.4 Replaced with method accumulateStaticFiles()
-     * @see 6729b6e0
+     *
      * @param string $file
      * @return array
      */

@@ -51,14 +51,12 @@ class ModuleUninstallCommand extends AbstractModuleCommand
     private $deploymentConfig;
 
     /**
-     * Get full module list
-     *
      * @var FullModuleList
      */
     private $fullModuleList;
 
     /**
-     * Get module package info
+     * Module package info
      *
      * @var PackageInfo
      */
