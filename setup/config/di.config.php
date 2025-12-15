@@ -96,7 +96,17 @@ return [
                         'processRunner' => ProcessRunner::class
                     ]
                 ],
-                InstallCommand::class => [], // Auto-resolve all dependencies
+                InstallCommand::class => [
+                    'parameters' => [
+                        'processRunner' => ProcessRunner::class,
+                        'cronConfigurer' => CronConfigurer::class,
+                        'emailConfigurer' => EmailConfigurer::class,
+                        'modeConfigurer' => ModeConfigurer::class,
+                        'themeConfigurer' => ThemeConfigurer::class,
+                        'indexerConfigurer' => IndexerConfigurer::class,
+                        'twoFactorAuthConfigurer' => TwoFactorAuthConfigurer::class,
+                    ]
+                ],
                 PasswordValidator::class => [],
             ],
         ],
