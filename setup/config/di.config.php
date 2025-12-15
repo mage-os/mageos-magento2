@@ -25,6 +25,7 @@ use MageOS\Installer\Model\Command\TwoFactorAuthConfigurer;
 use MageOS\Installer\Model\Stage\PostInstallConfigStage;
 use MageOS\Installer\Model\Theme\HyvaInstaller;
 use MageOS\Installer\Model\Validator\PasswordValidator;
+use MageOS\Installer\Console\Command\InstallCommand;
 
 return [
     'dependencies' => [
@@ -95,6 +96,7 @@ return [
                         'processRunner' => ProcessRunner::class
                     ]
                 ],
+                InstallCommand::class => [], // Auto-resolve all dependencies
                 PasswordValidator::class => [],
             ],
         ],
