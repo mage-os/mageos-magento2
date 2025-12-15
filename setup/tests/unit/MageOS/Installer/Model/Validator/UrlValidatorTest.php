@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * Unit tests for UrlValidator
  */
-final class UrlValidatorTest extends TestCase
+class UrlValidatorTest extends TestCase
 {
     private UrlValidator $validator;
 

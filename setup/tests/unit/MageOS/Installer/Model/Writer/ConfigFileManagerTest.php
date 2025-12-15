@@ -13,7 +13,7 @@ use MageOS\Installer\Test\Util\TestDataBuilder;
  *
  * Tests file persistence for installation resume capability
  */
-final class ConfigFileManagerTest extends FileSystemTestCase
+class ConfigFileManagerTest extends FileSystemTestCase
 {
     private ConfigFileManager $manager;
 

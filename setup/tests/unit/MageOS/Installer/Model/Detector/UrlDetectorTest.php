@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * Unit tests for UrlDetector
  */
-final class UrlDetectorTest extends TestCase
+class UrlDetectorTest extends TestCase
 {
     private UrlDetector $detector;
 

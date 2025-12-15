@@ -13,7 +13,7 @@ use PHPUnit\Framework\TestCase;
  * Note: Connection testing (validate method) requires integration tests with real database.
  * These unit tests focus on validation logic that doesn't require external dependencies.
  */
-final class DatabaseValidatorTest extends TestCase
+class DatabaseValidatorTest extends TestCase
 {
     private DatabaseValidator $validator;
 

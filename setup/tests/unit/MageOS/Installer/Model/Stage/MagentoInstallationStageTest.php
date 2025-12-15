@@ -16,7 +16,7 @@ use Symfony\Component\Console\Output\BufferedOutput;
  * Note: Full installation testing requires integration tests.
  * These unit tests verify the stage structure and logic.
  */
-final class MagentoInstallationStageTest extends TestCase
+class MagentoInstallationStageTest extends TestCase
 {
     public function test_get_name_returns_magento_installation(): void
     {

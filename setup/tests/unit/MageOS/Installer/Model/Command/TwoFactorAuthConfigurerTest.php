@@ -14,7 +14,7 @@ use Symfony\Component\Console\Output\BufferedOutput;
 /**
  * Unit tests for TwoFactorAuthConfigurer
  */
-final class TwoFactorAuthConfigurerTest extends TestCase
+class TwoFactorAuthConfigurerTest extends TestCase
 {
     private ProcessRunner $processRunnerMock;
     private TwoFactorAuthConfigurer $configurer;

@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
  *
  * Tests env.php modification for Redis and RabbitMQ configuration
  */
-final class EnvConfigWriterTest extends TestCase
+class EnvConfigWriterTest extends TestCase
 {
     private Writer $writerMock;
     private EnvConfigWriter $envWriter;

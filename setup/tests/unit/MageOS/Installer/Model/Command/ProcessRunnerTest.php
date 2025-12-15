@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
  *
  * These tests use safe, side-effect-free commands for validation
  */
-final class ProcessRunnerTest extends TestCase
+class ProcessRunnerTest extends TestCase
 {
     private ProcessRunner $runner;
 

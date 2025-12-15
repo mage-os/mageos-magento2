@@ -12,7 +12,7 @@ use MageOS\Installer\Test\TestCase\AbstractVOTest;
  *
  * Reference implementation demonstrating the test pattern for all VOs
  */
-final class DatabaseConfigurationTest extends AbstractVOTest
+class DatabaseConfigurationTest extends AbstractVOTest
 {
     protected function createValidInstance(): DatabaseConfiguration
     {

@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * Unit tests for StageResult
  */
-final class StageResultTest extends TestCase
+class StageResultTest extends TestCase
 {
     public function test_continue_factory_creates_continue_result(): void
     {

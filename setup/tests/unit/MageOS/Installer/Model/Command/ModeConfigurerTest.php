@@ -13,7 +13,7 @@ use Symfony\Component\Console\Output\BufferedOutput;
 /**
  * Unit tests for ModeConfigurer
  */
-final class ModeConfigurerTest extends TestCase
+class ModeConfigurerTest extends TestCase
 {
     private ProcessRunner $processRunnerMock;
     private ModeConfigurer $configurer;

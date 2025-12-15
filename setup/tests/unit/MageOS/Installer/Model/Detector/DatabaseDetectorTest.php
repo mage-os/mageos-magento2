@@ -13,7 +13,7 @@ use PHPUnit\Framework\TestCase;
  * Note: Actual port detection requires integration tests with real database.
  * These tests verify the detector structure and logic.
  */
-final class DatabaseDetectorTest extends TestCase
+class DatabaseDetectorTest extends TestCase
 {
     private DatabaseDetector $detector;
 

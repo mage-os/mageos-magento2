@@ -10,7 +10,7 @@ use MageOS\Installer\Test\TestCase\AbstractVOTest;
 /**
  * Unit tests for RedisConfiguration VO
  */
-final class RedisConfigurationTest extends AbstractVOTest
+class RedisConfigurationTest extends AbstractVOTest
 {
     protected function createValidInstance(): RedisConfiguration
     {

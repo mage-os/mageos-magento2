@@ -10,7 +10,7 @@ use MageOS\Installer\Test\TestCase\AbstractVOTest;
 /**
  * Unit tests for AdminConfiguration VO
  */
-final class AdminConfigurationTest extends AbstractVOTest
+class AdminConfigurationTest extends AbstractVOTest
 {
     protected function createValidInstance(): AdminConfiguration
     {

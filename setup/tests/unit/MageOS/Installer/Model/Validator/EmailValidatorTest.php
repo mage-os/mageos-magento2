@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * Unit tests for EmailValidator
  */
-final class EmailValidatorTest extends TestCase
+class EmailValidatorTest extends TestCase
 {
     private EmailValidator $validator;
 

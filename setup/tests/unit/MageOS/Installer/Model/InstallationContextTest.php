@@ -13,7 +13,7 @@ use PHPUnit\Framework\TestCase;
  *
  * Tests the central data container that orchestrates all VOs
  */
-final class InstallationContextTest extends TestCase
+class InstallationContextTest extends TestCase
 {
     public function test_it_constructs_with_null_properties(): void
     {

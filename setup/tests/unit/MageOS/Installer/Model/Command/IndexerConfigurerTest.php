@@ -13,7 +13,7 @@ use Symfony\Component\Console\Output\BufferedOutput;
 /**
  * Unit tests for IndexerConfigurer
  */
-final class IndexerConfigurerTest extends TestCase
+class IndexerConfigurerTest extends TestCase
 {
     private ProcessRunner $processRunnerMock;
     private IndexerConfigurer $configurer;

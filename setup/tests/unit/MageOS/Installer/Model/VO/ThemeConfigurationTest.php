@@ -10,7 +10,7 @@ use MageOS\Installer\Test\TestCase\AbstractVOTest;
 /**
  * Unit tests for ThemeConfiguration VO
  */
-final class ThemeConfigurationTest extends AbstractVOTest
+class ThemeConfigurationTest extends AbstractVOTest
 {
     protected function createValidInstance(): ThemeConfiguration
     {

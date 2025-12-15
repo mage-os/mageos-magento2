@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * Unit tests for RabbitMQDetector
  */
-final class RabbitMQDetectorTest extends TestCase
+class RabbitMQDetectorTest extends TestCase
 {
     private RabbitMQDetector $detector;
 

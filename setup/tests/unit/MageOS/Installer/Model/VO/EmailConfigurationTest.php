@@ -10,7 +10,7 @@ use MageOS\Installer\Test\TestCase\AbstractVOTest;
 /**
  * Unit tests for EmailConfiguration VO
  */
-final class EmailConfigurationTest extends AbstractVOTest
+class EmailConfigurationTest extends AbstractVOTest
 {
     protected function createValidInstance(): EmailConfiguration
     {

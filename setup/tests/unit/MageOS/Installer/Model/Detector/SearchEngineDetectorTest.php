@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * Unit tests for SearchEngineDetector
  */
-final class SearchEngineDetectorTest extends TestCase
+class SearchEngineDetectorTest extends TestCase
 {
     private SearchEngineDetector $detector;
 

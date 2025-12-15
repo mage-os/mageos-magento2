@@ -14,7 +14,7 @@ use Symfony\Component\Console\Output\BufferedOutput;
 /**
  * Unit tests for ThemeConfigurer
  */
-final class ThemeConfigurerTest extends TestCase
+class ThemeConfigurerTest extends TestCase
 {
     private ProcessRunner $processRunnerMock;
     private ThemeConfigurer $configurer;

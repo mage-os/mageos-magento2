@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * Unit tests for PasswordValidator
  */
-final class PasswordValidatorTest extends TestCase
+class PasswordValidatorTest extends TestCase
 {
     private PasswordValidator $validator;
 

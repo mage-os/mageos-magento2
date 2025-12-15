@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * Unit tests for RedisDetector
  */
-final class RedisDetectorTest extends TestCase
+class RedisDetectorTest extends TestCase
 {
     private RedisDetector $detector;
 

@@ -17,7 +17,7 @@ use Symfony\Component\Console\Output\BufferedOutput;
  *
  * Tests the installation flow orchestration and state machine
  */
-final class StageNavigatorTest extends TestCase
+class StageNavigatorTest extends TestCase
 {
     private InstallationContext $context;
     private BufferedOutput $output;

@@ -10,7 +10,7 @@ use MageOS\Installer\Test\TestCase\AbstractVOTest;
 /**
  * Unit tests for RabbitMQConfiguration VO
  */
-final class RabbitMQConfigurationTest extends AbstractVOTest
+class RabbitMQConfigurationTest extends AbstractVOTest
 {
     protected function createValidInstance(): RabbitMQConfiguration
     {

@@ -13,7 +13,7 @@ use Symfony\Component\Console\Output\BufferedOutput;
 /**
  * Unit tests for CronConfigurer
  */
-final class CronConfigurerTest extends TestCase
+class CronConfigurerTest extends TestCase
 {
     private ProcessRunner $processRunnerMock;
     private CronConfigurer $configurer;

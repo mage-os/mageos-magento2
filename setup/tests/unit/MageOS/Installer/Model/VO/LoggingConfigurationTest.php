@@ -10,7 +10,7 @@ use MageOS\Installer\Test\TestCase\AbstractVOTest;
 /**
  * Unit tests for LoggingConfiguration VO
  */
-final class LoggingConfigurationTest extends AbstractVOTest
+class LoggingConfigurationTest extends AbstractVOTest
 {
     protected function createValidInstance(): LoggingConfiguration
     {

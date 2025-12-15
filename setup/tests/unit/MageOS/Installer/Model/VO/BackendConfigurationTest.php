@@ -10,7 +10,7 @@ use MageOS\Installer\Test\TestCase\AbstractVOTest;
 /**
  * Unit tests for BackendConfiguration VO
  */
-final class BackendConfigurationTest extends AbstractVOTest
+class BackendConfigurationTest extends AbstractVOTest
 {
     protected function createValidInstance(): BackendConfiguration
     {

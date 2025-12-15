@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * Unit tests for ProcessResult
  */
-final class ProcessResultTest extends TestCase
+class ProcessResultTest extends TestCase
 {
     public function test_it_constructs_with_success(): void
     {

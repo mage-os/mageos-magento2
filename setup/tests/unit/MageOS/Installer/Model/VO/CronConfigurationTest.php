@@ -10,7 +10,7 @@ use MageOS\Installer\Test\TestCase\AbstractVOTest;
 /**
  * Unit tests for CronConfiguration VO
  */
-final class CronConfigurationTest extends AbstractVOTest
+class CronConfigurationTest extends AbstractVOTest
 {
     protected function createValidInstance(): CronConfiguration
     {

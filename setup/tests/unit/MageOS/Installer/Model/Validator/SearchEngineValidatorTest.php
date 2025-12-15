@@ -13,7 +13,7 @@ use PHPUnit\Framework\TestCase;
  * Note: Full connection testing requires integration tests with real search engine.
  * These unit tests verify the validator's structure and error handling logic.
  */
-final class SearchEngineValidatorTest extends TestCase
+class SearchEngineValidatorTest extends TestCase
 {
     private SearchEngineValidator $validator;
 

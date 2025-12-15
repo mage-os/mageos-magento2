@@ -10,7 +10,7 @@ use MageOS\Installer\Test\TestCase\FileSystemTestCase;
 /**
  * Unit tests for DocumentRootDetector
  */
-final class DocumentRootDetectorTest extends FileSystemTestCase
+class DocumentRootDetectorTest extends FileSystemTestCase
 {
     private DocumentRootDetector $detector;
 

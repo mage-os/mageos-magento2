@@ -10,7 +10,7 @@ use MageOS\Installer\Test\TestCase\AbstractVOTest;
 /**
  * Unit tests for SearchEngineConfiguration VO
  */
-final class SearchEngineConfigurationTest extends AbstractVOTest
+class SearchEngineConfigurationTest extends AbstractVOTest
 {
     protected function createValidInstance(): SearchEngineConfiguration
     {
