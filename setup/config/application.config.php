@@ -29,6 +29,7 @@ return [
             \Symfony\Component\Console\Helper\TableFactory::class => MagentoDiFactory::class,
             \Magento\Deploy\Console\InputValidator::class => MagentoDiFactory::class,
             \Magento\Framework\App\State::class => MagentoDiFactory::class,
+            \MageOS\Installer\Console\Command\InstallCommand::class => MagentoDiFactory::class,
         ],
     ]
 ];

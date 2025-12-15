@@ -15,6 +15,17 @@ use Magento\Framework\Filesystem\DriverInterface;
 use Magento\Framework\Locale\Config;
 use Magento\Framework\Locale\ConfigInterface;
 use Magento\Framework\Setup\Declaration\Schema\SchemaConfig;
+use MageOS\Installer\Model\Command\ProcessRunner;
+use MageOS\Installer\Model\Command\CronConfigurer;
+use MageOS\Installer\Model\Command\EmailConfigurer;
+use MageOS\Installer\Model\Command\IndexerConfigurer;
+use MageOS\Installer\Model\Command\ModeConfigurer;
+use MageOS\Installer\Model\Command\ThemeConfigurer;
+use MageOS\Installer\Model\Command\TwoFactorAuthConfigurer;
+use MageOS\Installer\Model\Stage\PostInstallConfigStage;
+use MageOS\Installer\Model\Theme\HyvaInstaller;
+use MageOS\Installer\Model\Validator\PasswordValidator;
+use MageOS\Installer\Console\Command\InstallCommand;
 
 return [
     'dependencies' => [
@@ -37,6 +48,66 @@ return [
                         ]
                     ]
                 ],
+                // Mage-OS Installer: Process Runner and Configurers
+                ProcessRunner::class => [],
+                CronConfigurer::class => [
+                    'parameters' => [
+                        'processRunner' => ProcessRunner::class
+                    ]
+                ],
+                EmailConfigurer::class => [
+                    'parameters' => [
+                        'processRunner' => ProcessRunner::class
+                    ]
+                ],
+                ModeConfigurer::class => [
+                    'parameters' => [
+                        'processRunner' => ProcessRunner::class
+                    ]
+                ],
+                ThemeConfigurer::class => [
+                    'parameters' => [
+                        'processRunner' => ProcessRunner::class
+                    ]
+                ],
+                IndexerConfigurer::class => [
+                    'parameters' => [
+                        'processRunner' => ProcessRunner::class
+                    ]
+                ],
+                TwoFactorAuthConfigurer::class => [
+                    'parameters' => [
+                        'processRunner' => ProcessRunner::class
+                    ]
+                ],
+                PostInstallConfigStage::class => [
+                    'parameters' => [
+                        'cronConfigurer' => CronConfigurer::class,
+                        'emailConfigurer' => EmailConfigurer::class,
+                        'modeConfigurer' => ModeConfigurer::class,
+                        'themeConfigurer' => ThemeConfigurer::class,
+                        'indexerConfigurer' => IndexerConfigurer::class,
+                        'twoFactorAuthConfigurer' => TwoFactorAuthConfigurer::class,
+                        'processRunner' => ProcessRunner::class
+                    ]
+                ],
+                HyvaInstaller::class => [
+                    'parameters' => [
+                        'processRunner' => ProcessRunner::class
+                    ]
+                ],
+                InstallCommand::class => [
+                    'parameters' => [
+                        'processRunner' => ProcessRunner::class,
+                        'cronConfigurer' => CronConfigurer::class,
+                        'emailConfigurer' => EmailConfigurer::class,
+                        'modeConfigurer' => ModeConfigurer::class,
+                        'themeConfigurer' => ThemeConfigurer::class,
+                        'indexerConfigurer' => IndexerConfigurer::class,
+                        'twoFactorAuthConfigurer' => TwoFactorAuthConfigurer::class,
+                    ]
+                ],
+                PasswordValidator::class => [],
             ],
         ],
     ],

@@ -64,6 +64,7 @@
         "laminas/laminas-stdlib": "^3.11",
         "laminas/laminas-uri": "^2.9",
         "laminas/laminas-validator": "^2.23",
+        "laravel/prompts": "^0.3.8",
         "league/flysystem": "^3.0",
         "league/flysystem-aws-s3-v3": "^3.0",
         "magento/composer": "^1.10.1-beta1",
@@ -349,7 +350,8 @@
         "psr-4": {
             "Magento\\Framework\\": "lib/internal/Magento/Framework/",
             "Magento\\Setup\\": "setup/src/Magento/Setup/",
-            "Magento\\": "app/code/Magento/"
+            "Magento\\": "app/code/Magento/",
+            "MageOS\\Installer\\": "setup/src/MageOS/Installer/"
         },
         "psr-0": {
             "": [
@@ -373,7 +375,8 @@
             "Magento\\Tools\\Sanity\\": "dev/build/publication/sanity/Magento/Tools/Sanity/",
             "Magento\\TestFramework\\Inspection\\": "dev/tests/static/framework/Magento/TestFramework/Inspection/",
             "Magento\\TestFramework\\Utility\\": "dev/tests/static/framework/Magento/TestFramework/Utility/",
-            "Magento\\PhpStan\\": "dev/tests/static/framework/Magento/PhpStan/"
+            "Magento\\PhpStan\\": "dev/tests/static/framework/Magento/PhpStan/",
+            "MageOS\\Installer\\Test\\": "setup/tests/"
         }
     },
     "prefer-stable": true,
