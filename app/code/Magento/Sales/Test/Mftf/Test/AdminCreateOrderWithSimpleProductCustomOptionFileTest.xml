@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  /**
-  * Copyright © Magento, Inc. All rights reserved.
-  * See COPYING.txt for license details.
+  * Copyright 2020 Adobe
+  * All Rights Reserved.
   */
 -->
 
@@ -30,6 +30,7 @@
             <!--Clean up created test data.-->
             <deleteData createDataKey="simpleProduct" stepKey="deleteSimpleProduct"/>
             <deleteData createDataKey="category" stepKey="deleteCategory"/>
+            <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="logoutCustomer" />
             <deleteData createDataKey="customer" stepKey="deleteCustomer" />
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
         </after>
@@ -46,6 +47,8 @@
         <actionGroup ref="AdminNavigateToNewOrderPageExistingCustomerActionGroup" stepKey="navigateToNewOrderWithExistingCustomer">
             <argument name="customer" value="$customer$"/>
         </actionGroup>
+        <conditionalClick selector="{{AdminOrderFormStoreSelectorSection.defaultStoreViewButton}}" dependentSelector="{{AdminOrderFormStoreSelectorSection.storeSelectorContainer}}" visible="true" stepKey="selectDefaultStoreView"/>
+        <waitForPageLoad stepKey="waitForAddProductPageOpened"/>
         <actionGroup ref="AdminAddSimpleProductWithCustomOptionFileToOrderActionGroup" stepKey="addSimpleProductToOrder">
             <argument name="product" value="$simpleProduct$"/>
             <argument name="productQty" value="$simpleProduct.quantity$"/>

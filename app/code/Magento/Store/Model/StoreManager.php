@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Store\Model;
 
@@ -236,7 +236,10 @@ class StoreManager implements
     public function reinitStores()
     {
         $this->currentStoreId = null;
-        $this->cache->clean(\Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG, [StoreResolver::CACHE_TAG, Store::CACHE_TAG]);
+        $this->cache->clean(
+            \Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG,
+            [StoreResolver::CACHE_TAG, Store::CACHE_TAG, Website::CACHE_TAG, Group::CACHE_TAG]
+        );
         $this->scopeConfig->clean();
         $this->storeRepository->clean();
         $this->websiteRepository->clean();

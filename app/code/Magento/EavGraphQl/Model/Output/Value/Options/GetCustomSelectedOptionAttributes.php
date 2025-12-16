@@ -1,14 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2023 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
 namespace Magento\EavGraphQl\Model\Output\Value\Options;
 
 use Magento\Eav\Model\AttributeRepository;
-use Magento\Framework\GraphQl\Query\Uid;
 
 /**
  * Custom attribute value provider for customer
@@ -16,24 +15,15 @@ use Magento\Framework\GraphQl\Query\Uid;
 class GetCustomSelectedOptionAttributes implements GetAttributeSelectedOptionInterface
 {
     /**
-     * @var Uid
-     */
-    private Uid $uid;
-
-    /**
      * @var AttributeRepository
      */
     private AttributeRepository $attributeRepository;
 
     /**
-     * @param Uid $uid
      * @param AttributeRepository $attributeRepository
      */
-    public function __construct(
-        Uid $uid,
-        AttributeRepository $attributeRepository,
-    ) {
-        $this->uid = $uid;
+    public function __construct(AttributeRepository $attributeRepository)
+    {
         $this->attributeRepository = $attributeRepository;
     }
 
@@ -51,7 +41,6 @@ class GetCustomSelectedOptionAttributes implements GetAttributeSelectedOptionInt
                 continue;
             }
             $result[] = [
-                'uid' => $this->uid->encode($option->getValue()),
                 'value' => $option->getValue(),
                 'label' => $option->getLabel()
             ];

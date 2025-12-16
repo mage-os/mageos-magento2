@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2023 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -75,8 +75,7 @@ class GetAttributesMetadata
         foreach ($codes as $entityType => $attributeCodes) {
             $builder = $this->searchCriteriaBuilderFactory->create();
             $builder
-                ->addFilter('attribute_code', $attributeCodes, 'in')
-                ->addFilter('is_visible', true);
+                ->addFilter('attribute_code', $attributeCodes, 'in');
             try {
                 $attributes = $this->attributeRepository->getList($entityType, $builder->create())->getItems();
             } catch (LocalizedException $exception) {
@@ -95,6 +94,9 @@ class GetAttributesMetadata
                 ];
             }
             foreach ($attributes as $attribute) {
+                if (method_exists($attribute, 'getIsVisible') && !$attribute->getIsVisible()) {
+                    continue;
+                }
                 $items[] = $this->getAttributeData->execute($attribute, $entityType, $storeId);
             }
         }

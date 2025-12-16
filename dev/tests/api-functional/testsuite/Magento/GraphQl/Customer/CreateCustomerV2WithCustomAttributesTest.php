@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2023 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -250,7 +250,6 @@ mutation {
             lastname
             email
             custom_attributes {
-                uid
                 code
                 ... on AttributeValue {
                     value

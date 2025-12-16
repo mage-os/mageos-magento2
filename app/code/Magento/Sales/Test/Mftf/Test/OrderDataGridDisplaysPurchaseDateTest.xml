@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
- /**
-  * Copyright © Magento, Inc. All rights reserved.
-  * See COPYING.txt for license details.
-  */
+/**
+ * Copyright 2023 Adobe
+ * All Rights Reserved.
+ */
 -->
+
 <tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
     <test name="OrderDataGridDisplaysPurchaseDateTest">
@@ -36,7 +37,9 @@
                 <argument name="StoreGroup" value="SecondStoreGroupUnique"/>
                 <argument name="customStore" value="SecondStoreUnique"/>
             </actionGroup>
-            <magentoCron groups="index" stepKey="reindexAllIndexes"/>
+            <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindexAllIndexes">
+                <argument name="indices" value=""/>
+            </actionGroup>
             <!-- Change time zone for second website-->
             <actionGroup ref="AdminChangeTimeZoneForDifferentWebsiteActionGroup" stepKey="openConfigPage">
                 <argument name="websiteName" value="{{secondCustomWebsite.name}}"/>
@@ -96,7 +99,9 @@
             <actionGroup ref="AdminDeleteWebsiteActionGroup" stepKey="deleteWebsite">
                 <argument name="websiteName" value="{{secondCustomWebsite.name}}"/>
             </actionGroup>
-            <magentoCron groups="index" stepKey="reindex"/>
+            <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
+                <argument name="indices" value=""/>
+            </actionGroup>
             <!--reset prouct grid filter-->
             <actionGroup ref="NavigateToAndResetProductGridToDefaultViewActionGroup" stepKey="resetProductGridFilter"/>
             <!-- Admin logout -->
@@ -119,13 +124,17 @@
         <!-- Click Place Order button -->
         <actionGroup ref="ClickPlaceOrderActionGroup" stepKey="clickPlaceOrder"/>
         <!-- capture date at time of Placing Order -->
-        <generateDate date="+2 hour" format="M j, Y" stepKey="generateDateAtFirstOrderTime"/>
+        <generateDate date="now" format="M j, Y" stepKey="generateDateAtFirstOrderTime"/>
         <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber22}}" stepKey="grabFirstOrderNumber"/>
         <amOnPage url="{{AdminDashboardPage.url}}" stepKey="amOnDashboardPage"/>
         <waitForPageLoad stepKey="waitForDashboardPageLoad"/>
         <!--set second website as default-->
         <actionGroup ref="AdminSetDefaultWebsiteActionGroup" stepKey="setSecondWebsiteAsDefault">
             <argument name="websiteName" value="{{secondCustomWebsite.name}}"/>
+        </actionGroup>
+        <!-- Clean config and full page cache-->
+        <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanCache">
+            <argument name="tags" value="config full_page"/>
         </actionGroup>
         <!-- create second Customer-->
         <createData entity="Simple_US_Customer_CA" stepKey="createSecondCustomer"/>
@@ -150,7 +159,7 @@
         <wait time="75" stepKey="waitBeforePlaceOrder"/>
         <actionGroup ref="ClickPlaceOrderActionGroup" stepKey="clickPlaceOrderSecondTime"/>
         <!-- capture date at time of Placing Order -->
-        <generateDate date="+2 hour" format="M j, Y" stepKey="generateDateAtSecondOrderTime"/>
+        <generateDate date="now" format="M j, Y" stepKey="generateDateAtSecondOrderTime"/>
         <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber22}}" stepKey="grabSecondOrderNumber"/>
         <!-- Go to admin and check order status -->
         <actionGroup ref="AdminOrdersPageOpenActionGroup" stepKey="navigateToSalesOrderPage"/>
