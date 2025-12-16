@@ -89,7 +89,8 @@ class Collection extends SearchResult
             );
         $this->getSelect()->where(
             '(main_table.customer_id IS NULL OR main_table.customer_id = 0) '
-            . 'OR NOT EXISTS (' . $newerSessionExistsSubSelect . ')'
+            . 'OR NOT EXISTS (?)',
+            $newerSessionExistsSubSelect
         );
         $this->addFilterToMap('customer_id', 'main_table.customer_id');
         $expression = $connection->getCheckSql(
