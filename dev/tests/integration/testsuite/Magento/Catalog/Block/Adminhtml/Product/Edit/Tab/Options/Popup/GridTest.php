@@ -10,6 +10,8 @@ namespace Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Options\Popup;
 use Magento\Backend\App\Area\FrontNameResolver;
 use Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Options\Popup\Grid;
 use Magento\Catalog\Model\Product;
+use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
+use Magento\Framework\App\RequestInterface;
 use Magento\Framework\View\LayoutInterface;
 use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestFramework\ObjectManager;
@@ -56,7 +58,7 @@ class GridTest extends TestCase
      * Test that getRowUrl returns null to disable JS click events
      *
      * @return void
-     * @covers ::getRowUrl
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Options\Popup\Grid::getRowUrl
      */
     public function testGetRowUrlReturnsNull(): void
     {
@@ -74,7 +76,7 @@ class GridTest extends TestCase
      * Test that getRowUrl returns null for DataObject
      *
      * @return void
-     * @covers ::getRowUrl
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Options\Popup\Grid::getRowUrl
      */
     public function testGetRowUrlReturnsNullForDataObject(): void
     {
@@ -91,7 +93,7 @@ class GridTest extends TestCase
      *
      * @magentoDbIsolation enabled
      * @return void
-     * @covers ::_prepareColumns
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Options\Popup\Grid::_prepareColumns
      */
     public function testPrepareColumnsRemovesSpecificColumns(): void
     {
@@ -130,7 +132,7 @@ class GridTest extends TestCase
      *
      * @magentoDbIsolation enabled
      * @return void
-     * @covers ::_prepareMassaction
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Options\Popup\Grid::_prepareMassaction
      */
     public function testPrepareMassactionAddsImportAction(): void
     {
@@ -157,6 +159,11 @@ class GridTest extends TestCase
         $collection = $this->block->getCollection();
 
         $this->assertNotNull($collection, 'Collection should be set');
+        $this->assertInstanceOf(
+            ProductCollection::class,
+            $collection,
+            'Collection should be an instance of Product Collection'
+        );
 
         // Verify the collection has the proper join - check that SELECT contains catalog_product_option
         $selectString = $collection->getSelect()->__toString();
@@ -172,12 +179,12 @@ class GridTest extends TestCase
      *
      * @magentoDbIsolation enabled
      * @return void
-     * @covers ::_prepareCollection
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Options\Popup\Grid::_prepareCollection
      */
     public function testPrepareCollectionAppliesCurrentProductFilter(): void
     {
         $testProductId = 999;
-        $request = $this->objectManager->get(\Magento\Framework\App\RequestInterface::class);
+        $request = $this->objectManager->get(RequestInterface::class);
 
         try {
             // Simulate request with current_product_id parameter
@@ -206,7 +213,7 @@ class GridTest extends TestCase
      * Test that getGridUrl returns the correct URL for AJAX updates
      *
      * @return void
-     * @covers ::getGridUrl
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Options\Popup\Grid::getGridUrl
      */
     public function testGetGridUrlReturnsCorrectUrl(): void
     {
@@ -225,7 +232,7 @@ class GridTest extends TestCase
      *
      * @magentoDbIsolation enabled
      * @return void
-     * @covers ::_prepareMassaction
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Options\Popup\Grid::_prepareMassaction
      */
     public function testMassactionFormFieldName(): void
     {
@@ -243,9 +250,9 @@ class GridTest extends TestCase
      *
      * @magentoDbIsolation enabled
      * @return void
-     * @covers ::_prepareCollection
-     * @covers ::_prepareMassaction
-     * @covers ::getGridUrl
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Options\Popup\Grid::_prepareCollection
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Options\Popup\Grid::_prepareMassaction
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Options\Popup\Grid::getGridUrl
      */
     public function testGridBlockIsProperlyInitialized(): void
     {
