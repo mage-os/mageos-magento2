@@ -52,9 +52,6 @@ class DefaultStockqtyTest extends TestCase
 
     protected function setUp(): void
     {
-        $objectManagerMock = $this->createMock(ObjectManagerInterface::class);
-        AppObjectManager::setInstance($objectManagerMock);
-        
         $contextMock = $this->createMock(Context::class);
         $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
         $contextMock->method('getScopeConfig')->willReturn($this->scopeConfigMock);

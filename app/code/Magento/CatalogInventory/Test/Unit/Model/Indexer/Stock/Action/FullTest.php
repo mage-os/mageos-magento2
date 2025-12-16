@@ -11,7 +11,6 @@ use Magento\Catalog\Model\Product\Type;
 use Magento\Catalog\Model\ResourceModel\Indexer\ActiveTableSwitcher;
 use Magento\CatalogInventory\Model\Indexer\Stock\Action\Full;
 use Magento\CatalogInventory\Model\ResourceModel\Indexer\StockFactory;
-use Magento\Framework\App\ObjectManager as AppObjectManager;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\EntityManager\MetadataPool;
@@ -20,7 +19,7 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Indexer\BatchProviderInterface;
 use Magento\Framework\Indexer\BatchSizeManagementInterface;
 use Magento\Framework\Indexer\CacheContext;
-use Magento\Framework\ObjectManagerInterface;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -29,6 +28,16 @@ use PHPUnit\Framework\TestCase;
  */
 class FullTest extends TestCase
 {
+    /**
+     * @var ObjectManager
+     */
+    private ObjectManager $objectManagerHelper;
+
+    protected function setUp(): void
+    {
+        $this->objectManagerHelper = new ObjectManager($this);
+    }
+
     public function testExecuteWithAdapterErrorThrowsException()
     {
         $indexerFactoryMock = $this->createMock(
@@ -50,9 +59,6 @@ class FullTest extends TestCase
             ->method('getTableName')
             ->willThrowException(new \Exception($exceptionMessage));
 
-        $objectManagerMock = $this->createMock(ObjectManagerInterface::class);
-        AppObjectManager::setInstance($objectManagerMock);
-
         $cacheContextMock = $this->createMock(CacheContext::class);
         $eventManagerMock = $this->createMock(EventManagerInterface::class);
         $metadataPoolMock = $this->createMock(MetadataPool::class);
@@ -60,13 +66,12 @@ class FullTest extends TestCase
         $batchSizeManagementMock = $this->createMock(BatchSizeManagementInterface::class);
         $activeTableSwitcherMock = $this->createMock(ActiveTableSwitcher::class);
 
-        $objectManagerMock->method('get')
-            ->willReturnMap([
-                [MetadataPool::class, $metadataPoolMock],
-                [BatchProviderInterface::class, $batchProviderMock],
-                [BatchSizeManagementInterface::class, $batchSizeManagementMock],
-                [ActiveTableSwitcher::class, $activeTableSwitcherMock]
-            ]);
+        $this->objectManagerHelper->prepareObjectManager([
+            [MetadataPool::class, $metadataPoolMock],
+            [BatchProviderInterface::class, $batchProviderMock],
+            [BatchSizeManagementInterface::class, $batchSizeManagementMock],
+            [ActiveTableSwitcher::class, $activeTableSwitcherMock]
+        ]);
 
         $model = new Full(
             $resourceMock,

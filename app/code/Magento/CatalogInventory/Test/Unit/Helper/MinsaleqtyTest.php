@@ -36,10 +36,7 @@ class MinsaleqtyTest extends TestCase
     private $serializerMock;
 
     protected function setUp(): void
-    {
-        $objectManagerMock = $this->createMock(ObjectManagerInterface::class);
-        AppObjectManager::setInstance($objectManagerMock);
-        
+    {   
         $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
         $this->randomMock = $this->createMock(Random::class);
         $this->randomMock->expects($this->any())

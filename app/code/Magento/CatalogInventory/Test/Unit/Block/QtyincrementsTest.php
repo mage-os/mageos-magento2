@@ -54,9 +54,6 @@ class QtyincrementsTest extends TestCase
 
     protected function setUp(): void
     {
-        $objectManagerMock = $this->createMock(ObjectManagerInterface::class);
-        AppObjectManager::setInstance($objectManagerMock);
-        
         $contextMock = $this->createMock(Context::class);
         
         $this->registryMock = $this->createMock(Registry::class);
