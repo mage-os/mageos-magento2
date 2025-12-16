@@ -9,6 +9,7 @@ namespace Magento\Wishlist\Test\Unit\Block\Customer;
 
 use Magento\Catalog\Block\Product\Context;
 use Magento\Catalog\Model\Product;
+use Magento\Framework\App\Http\Context as HttpContext;
 use Magento\Framework\Pricing\Render;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\LayoutInterface;
@@ -24,7 +25,7 @@ class SidebarTest extends TestCase
     private $productContext;
 
     /**
-     * @var \Magento\Framework\App\Http\Context|MockObject
+     * @var HttpContext|MockObject
      */
     private $httpContext;
 
@@ -45,7 +46,7 @@ class SidebarTest extends TestCase
         $this->productContext = $this->createMock(Context::class);
         $this->productContext->method('getLayout')->willReturn($this->layout);
 
-        $this->httpContext = $this->createMock(\Magento\Framework\App\Http\Context::class);
+        $this->httpContext = $this->createMock(HttpContext::class);
 
         $objectManager = new ObjectManager($this);
 

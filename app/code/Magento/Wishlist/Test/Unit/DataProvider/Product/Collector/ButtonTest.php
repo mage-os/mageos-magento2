@@ -5,6 +5,7 @@
  */
 declare(strict_types=1);
 
+
 namespace Magento\Wishlist\Test\Unit\DataProvider\Product\Collector;
 
 use Magento\Catalog\Api\Data\ProductInterface;
@@ -21,7 +22,6 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Collect information needed to render wishlist button on front
- * @SuppressWarnings(PHPMD.UnusedLocalVariable)
  */
 class ButtonTest extends TestCase
 {
@@ -41,12 +41,8 @@ class ButtonTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->productRenderExtensionFactoryMock = $this->createMock(
-            ProductRenderExtensionFactory::class
-        );
-        $this->buttonInterfaceFactoryMock = $this->createMock(
-            ButtonInterfaceFactory::class
-        );
+        $this->productRenderExtensionFactoryMock = $this->createMock(ProductRenderExtensionFactory::class);
+        $this->buttonInterfaceFactoryMock = $this->createMock(ButtonInterfaceFactory::class);
         $this->wishlistHelperMock = $this->createMock(Data::class);
 
         $this->button = new Button(
@@ -60,11 +56,9 @@ class ButtonTest extends TestCase
     {
         $productRendererMock = $this->createMock(ProductRenderInterface::class);
         $productMock = $this->createMock(ProductInterface::class);
-        $wishlistButton = null;
-        /** @var ProductRenderExtensionInterface $productRendererExtensionMock */
         $productRendererExtensionMock = $this->createPartialMockWithReflection(
             ProductRenderExtensionInterface::class,
-            ['getWishlistButton', 'setWishlistButton', 'getReviewHtml', 'setReviewHtml']
+            ['setWishlistButton']
         );
         $buttonInterfaceMock = $this->createMock(ButtonInterface::class);
 
@@ -81,23 +75,9 @@ class ButtonTest extends TestCase
         $buttonInterfaceMock->expects($this->once())
             ->method('setUrl')
             ->with('http://www.example.com/');
-
-        $productRendererExtensionMock->method('getReviewHtml')->willReturn(null);
-        $productRendererExtensionMock->method('setReviewHtml')->willReturnSelf();
-
-        $storedButton = null;
-        $productRendererExtensionMock->method('setWishlistButton')
-            ->willReturnCallback(function ($button) use (&$storedButton) {
-                $storedButton = $button;
-                return null;
-            });
-        $productRendererExtensionMock->method('getWishlistButton')
-            ->willReturnCallback(function () use (&$storedButton) {
-                return $storedButton;
-            });
-        
-        $productRendererExtensionMock->setWishlistButton($buttonInterfaceMock);
-        $this->assertEquals($buttonInterfaceMock, $productRendererExtensionMock->getWishlistButton());
+        $productRendererExtensionMock->expects($this->once())
+            ->method('setWishlistButton')
+            ->with($buttonInterfaceMock);
 
         $this->button->collect($productMock, $productRendererMock);
     }
@@ -107,11 +87,9 @@ class ButtonTest extends TestCase
         $productRendererMock = $this->createMock(ProductRenderInterface::class);
         $productMock = $this->createMock(ProductInterface::class);
         $buttonInterfaceMock = $this->createMock(ButtonInterface::class);
-        $wishlistButton = null;
-        /** @var ProductRenderExtensionInterface $productRendererExtensionMock */
         $productRendererExtensionMock = $this->createPartialMockWithReflection(
             ProductRenderExtensionInterface::class,
-            ['setWishlistButton', 'getWishlistButton', 'getReviewHtml', 'setReviewHtml']
+            ['setWishlistButton']
         );
 
         $productRendererMock->expects($this->once())
@@ -130,23 +108,9 @@ class ButtonTest extends TestCase
         $buttonInterfaceMock->expects($this->once())
             ->method('setUrl')
             ->with('http://www.example.com/');
-
-        $productRendererExtensionMock->method('getReviewHtml')->willReturn(null);
-        $productRendererExtensionMock->method('setReviewHtml')->willReturnSelf();
-
-        $storedButton = null;
-        $productRendererExtensionMock->method('setWishlistButton')
-            ->willReturnCallback(function ($button) use (&$storedButton) {
-                $storedButton = $button;
-                return null;
-            });
-        $productRendererExtensionMock->method('getWishlistButton')
-            ->willReturnCallback(function () use (&$storedButton) {
-                return $storedButton;
-            });
-        
-        $productRendererExtensionMock->setWishlistButton($buttonInterfaceMock);
-        $this->assertEquals($buttonInterfaceMock, $productRendererExtensionMock->getWishlistButton());
+        $productRendererExtensionMock->expects($this->once())
+            ->method('setWishlistButton')
+            ->with($buttonInterfaceMock);
 
         $this->button->collect($productMock, $productRendererMock);
     }

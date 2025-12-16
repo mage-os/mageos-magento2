@@ -13,22 +13,20 @@ use Magento\Framework\Translate\Inline\StateInterface;
 use Magento\Framework\UrlInterface;
 use Magento\Framework\View\LayoutInterface;
 use Magento\Store\Model\Information as StoreInformation;
-use Magento\Framework\View\Element\BlockInterface as ViewBlockInterface;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Widget\Block\BlockInterface;
 use Magento\Widget\Model\ResourceModel\Widget;
 use Magento\Widget\Model\Template\Filter;
+use Magento\Widget\Model\Widget as WidgetModel;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @SuppressWarnings(PHPMD.UnusedLocalVariable)
- */
 class FilterTest extends TestCase
 {
     use MockCreationTrait;
+
     /**
      * @var Filter
      */
@@ -55,7 +53,7 @@ class FilterTest extends TestCase
     protected $widgetResourceMock;
 
     /**
-     * @var \Magento\Widget\Model\Widget|MockObject
+     * @var WidgetModel|MockObject
      */
     protected $widgetMock;
 
@@ -73,7 +71,7 @@ class FilterTest extends TestCase
         $this->storeMock = $this->createMock(Store::class);
         $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
         $this->widgetResourceMock = $this->createMock(Widget::class);
-        $this->widgetMock = $this->createMock(\Magento\Widget\Model\Widget::class);
+        $this->widgetMock = $this->createMock(WidgetModel::class);
         $this->layoutMock = $this->createMock(LayoutInterface::class);
 
         $objects = [
@@ -100,20 +98,24 @@ class FilterTest extends TestCase
     }
 
     /**
-     * @param  array         $construction
-     * @param  string        $type
-     * @param  int           $preConfigId
-     * @param  array         $preconfigure
-     * @param  string        $widgetXml
-     * @param  \Closure|null $widgetBlock
-     * @param  string        $expectedResult
+     * @param array $construction
+     * @param string $name
+     * @param string $type
+     * @param int $preConfigId
+     * @param array $params
+     * @param array $preconfigure
+     * @param string $widgetXml
+     * @param \Closure|null $widgetBlock
+     * @param string $expectedResult
      * @return void
      */
     #[DataProvider('generateWidgetDataProvider')]
     public function testGenerateWidget(
         $construction,
+        $name,
         $type,
         $preConfigId,
+        $params,
         $preconfigure,
         $widgetXml,
         $widgetBlock,
@@ -122,25 +124,29 @@ class FilterTest extends TestCase
         if ($widgetBlock!=null) {
             $widgetBlock = $widgetBlock($this);
         }
-        $this->generalForGenerateWidget($type, $preConfigId, $preconfigure, $widgetXml, $widgetBlock);
+        $this->generalForGenerateWidget($name, $type, $preConfigId, $params, $preconfigure, $widgetXml, $widgetBlock);
         $this->assertSame($expectedResult, $this->filter->generateWidget($construction));
     }
 
     /**
-     * @param  array         $construction
-     * @param  string        $type
-     * @param  int           $preConfigId
-     * @param  array         $preconfigure
-     * @param  string        $widgetXml
-     * @param  \Closure|null $widgetBlock
-     * @param  string        $expectedResult
+     * @param array $construction
+     * @param string $name
+     * @param string $type
+     * @param int $preConfigId
+     * @param array $params
+     * @param array $preconfigure
+     * @param string $widgetXml
+     * @param \Closure|null $widgetBlock
+     * @param string $expectedResult
      * @return void
      */
     #[DataProvider('generateWidgetDataProvider')]
     public function testWidgetDirective(
         $construction,
+        $name,
         $type,
         $preConfigId,
+        $params,
         $preconfigure,
         $widgetXml,
         $widgetBlock,
@@ -149,7 +155,7 @@ class FilterTest extends TestCase
         if ($widgetBlock!=null) {
             $widgetBlock = $widgetBlock($this);
         }
-        $this->generalForGenerateWidget($type, $preConfigId, $preconfigure, $widgetXml, $widgetBlock);
+        $this->generalForGenerateWidget($name, $type, $preConfigId, $params, $preconfigure, $widgetXml, $widgetBlock);
         $this->assertSame($expectedResult, $this->filter->widgetDirective($construction));
     }
 
@@ -165,8 +171,10 @@ class FilterTest extends TestCase
                     'widget',
                     ' type="" anchor_text="Test" template="block.phtml" id_path="p/1"'
                 ],
+                'name' => null,
                 'type' => 'Widget\Link',
                 'preConfigId' => null,
+                'params' => ['id' => ''],
                 'preconfigure' => [],
                 'widgetXml' => '',
                 'widgetBlock' => null,
@@ -178,8 +186,10 @@ class FilterTest extends TestCase
                     'widget',
                     ' type="" id="1" anchor_text="Test" template="block.phtml" id_path="p/1"'
                 ],
+                'name' => null,
                 'type' => null,
                 'preConfigId' => 1,
+                'params' => ['id' => '1'],
                 'preconfigure' => ['widget_type' => '', 'parameters' => ''],
                 'widgetXml' => null,
                 'widgetBlock' => null,
@@ -191,8 +201,10 @@ class FilterTest extends TestCase
                     'widget',
                     ' type="" name="testName" id="1" anchor_text="Test" template="block.phtml" id_path="p/1"'
                 ],
+                'name' => 'testName',
                 'type' => 'Widget\Link',
                 'preConfigId' => 1,
+                'params' => ['id' => '1'],
                 'preconfigure' => ['widget_type' => "Widget\\Link", 'parameters' => ['id' => '1']],
                 'widgetXml' => 'some xml',
                 'widgetBlock' => static fn (self $testCase) => $testCase->getBlockMock('widget text'),
@@ -204,8 +216,16 @@ class FilterTest extends TestCase
                     'widget',
                     ' type="Widget\\Link" name="testName" anchor_text="Test" template="block.phtml" id_path="p/1"'
                 ],
+                'name' => 'testName',
                 'type' => 'Widget\Link',
                 'preConfigId' => null,
+                'params' => [
+                    'type' => 'Widget\Link',
+                    'name' => 'testName',
+                    'anchor_text' => 'Test',
+                    'template' => 'block.phtml',
+                    'id_path' => 'p/1'
+                ],
                 'preconfigure' => [],
                 'widgetXml' => 'some xml',
                 'widgetBlock' => static fn (self $testCase) => $testCase->getBlockMock('widget text'),
@@ -215,17 +235,21 @@ class FilterTest extends TestCase
     }
 
     /**
-     * @param  string                   $type
-     * @param  int                      $preConfigId
-     * @param  array                    $preconfigure
-     * @param  string                   $widgetXml
-     * @param  ViewBlockInterface|null  $widgetBlock
+     * @param string $name
+     * @param string $type
+     * @param int $preConfigId
+     * @param array $params
+     * @param array $preconfigure
+     * @param string $widgetXml
+     * @param BlockInterface|null $widgetBlock
      * @return void
+     * @dataProvider generateWidgetDataProvider
      */
-    #[DataProvider('generateWidgetDataProvider')]
     protected function generalForGenerateWidget(
+        $name,
         $type,
         $preConfigId,
+        $params,
         $preconfigure,
         $widgetXml,
         $widgetBlock
@@ -240,21 +264,26 @@ class FilterTest extends TestCase
             ->willReturn($widgetXml);
         $this->layoutMock->expects($this->any())
             ->method('createBlock')
+            ->with($type, $name, ['data' => $params])
             ->willReturn($widgetBlock);
     }
 
     /**
-     * @param  string $returnedResult
-     * @return BlockInterface
+     * @param string $returnedResult
+     * @return BlockInterface|MockObject
      */
     protected function getBlockMock($returnedResult = '')
     {
-        $block = $this->createPartialMockWithReflection(
+        /** @var BlockInterface|MockObject $blockMock */
+        $blockMock = $this->createPartialMockWithReflection(
             BlockInterface::class,
             ['toHtml', 'addData', 'setData']
         );
-        $block->method('toHtml')->willReturn($returnedResult);
-        return $block;
+        $blockMock->expects($this->any())
+            ->method('toHtml')
+            ->willReturn($returnedResult);
+
+        return $blockMock;
     }
 
     /**

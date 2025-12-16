@@ -339,7 +339,7 @@ class AddToCartTest extends TestCase
         // Mock items with only found IDs
         $mockItems = [];
         foreach ($foundItemIds as $itemId) {
-            $mockItem = $this->createMock(\Magento\Wishlist\Model\Item::class);
+            $mockItem = $this->createMock(WishlistItem::class);
             $mockItems[$itemId] = $mockItem;
         }
         $this->wishlistItemsCollection->expects($this->once())

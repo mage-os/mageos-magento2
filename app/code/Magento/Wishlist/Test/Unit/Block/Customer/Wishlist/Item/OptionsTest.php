@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Wishlist\Test\Unit\Block\Customer\Wishlist\Item;
 
+use Magento\Catalog\Block\Product\Context as ProductContext;
 use Magento\Catalog\Helper\Product\Configuration\ConfigurationInterface;
 use Magento\Catalog\Helper\Product\ConfigurationPool;
 use Magento\Catalog\Model\Product;
@@ -16,9 +17,9 @@ use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Wishlist\Block\Customer\Wishlist\Item\Options;
 use Magento\Wishlist\Model\Item;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use PHPUnit\Framework\Attributes\DataProvider;
 
 class OptionsTest extends TestCase
 {
@@ -52,7 +53,7 @@ class OptionsTest extends TestCase
 
     protected function setUp(): void
     {
-        $productContextMock = $this->createMock(\Magento\Catalog\Block\Product\Context::class);
+        $productContextMock = $this->createMock(ProductContext::class);
         $this->escaperMock = $this->createMock(Escaper::class);
         $eventManagerMock = $this->createMock(ManagerInterface::class);
         $productContextMock->method('getEscaper')
@@ -67,15 +68,8 @@ class OptionsTest extends TestCase
         $this->itemMock = $this->createMock(Item::class);
 
         $objectManager = new ObjectManager($this);
-        
-        $objects = [
-            [
-                \Magento\Framework\View\Element\Template\Context::class,
-                $this->createMock(\Magento\Framework\View\Element\Template\Context::class)
-            ]
-        ];
-        $objectManager->prepareObjectManager($objects);
-        
+        $objectManager->prepareObjectManager();
+
         $this->block = $objectManager->getObject(
             Options::class,
             [
@@ -90,7 +84,7 @@ class OptionsTest extends TestCase
 
     /**
      * @param array $options
-     * @param int   $callNum
+     * @param int $callNum
      * @param array $expected
      */
     #[DataProvider('getConfiguredOptionsDataProvider')]

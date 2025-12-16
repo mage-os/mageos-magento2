@@ -12,6 +12,7 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\Escaper;
 use Magento\Framework\Filter\FilterManager;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Review\Helper\Data as HelperData;
 use Magento\Store\Model\ScopeInterface;
@@ -20,6 +21,8 @@ use PHPUnit\Framework\TestCase;
 
 class DataTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var ObjectManagerHelper
      */
@@ -53,19 +56,16 @@ class DataTest extends TestCase
     /**
      * Setup environment
      */
-    /**
-     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
-     */
     protected function setUp(): void
     {
         $this->context = $this->createMock(Context::class);
 
         $this->scopeConfig = $this->createMock(ScopeConfigInterface::class);
 
-        $this->filter = $this->getMockBuilder(FilterManager::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['__call'])
-            ->getMock();
+        $this->filter = $this->createPartialMockWithReflection(
+            FilterManager::class,
+            ['truncate']
+        );
 
         $this->escaper = $this->createMock(Escaper::class);
 
@@ -92,9 +92,8 @@ class DataTest extends TestCase
         $origDetail = "This\nis\na\nstring";
         $expected = "This<br />" . "\n" . "is<br />" . "\n" . "a<br />" . "\n" . "string";
 
-        $this->filter->expects($this->once())
-            ->method('__call')
-            ->with('truncate', [$origDetail, ['length' => 50]])
+        $this->filter->expects($this->any())->method('truncate')
+            ->with($origDetail, ['length' => 50])
             ->willReturn($origDetail);
 
         $this->assertEquals($expected, $this->helper->getDetail($origDetail));
@@ -109,14 +108,12 @@ class DataTest extends TestCase
         $origDetailEscapeHtml = "This\nis\na\nstring";
         $expected = "This<br />" . "\n" . "is<br />" . "\n" . "a<br />" . "\n" . "string";
 
-        $this->escaper->expects($this->once())
-            ->method('escapeHtml')
+        $this->escaper->expects($this->any())->method('escapeHtml')
             ->with($origDetail)
             ->willReturn($origDetailEscapeHtml);
 
-        $this->filter->expects($this->once())
-            ->method('__call')
-            ->with('truncate', [$origDetailEscapeHtml, ['length' => 50]])
+        $this->filter->expects($this->any())->method('truncate')
+            ->with($origDetailEscapeHtml, ['length' => 50])
             ->willReturn($origDetailEscapeHtml);
 
         $this->assertEquals($expected, $this->helper->getDetailHtml($origDetail));

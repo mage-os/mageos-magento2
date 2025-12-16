@@ -59,7 +59,7 @@ class ConfigurableProductTest extends TestCase
         $this->priceInfoMock = $this->createMock(PriceInfoInterface::class);
 
         $this->saleableItem = $this->createPartialMock(
-            \Magento\Catalog\Model\Product::class,
+            Product::class,
             ['getCustomOption', 'getPriceInfo']
         );
 
@@ -81,8 +81,11 @@ class ConfigurableProductTest extends TestCase
      * @throws \Magento\Framework\Exception\LocalizedException
      */
     #[DataProvider('setOptionsDataProvider')]
-    public function testGetValue(array $options, $optionIds, $priceValue, $customPrice)
+    public function testGetValue(array $options, $optionIds)
     {
+        $priceValue = 10;
+        $customPrice = 100;
+
         $priceMock = $this->createMock(PriceInterface::class);
         $priceMock->expects($this->once())
             ->method('getValue')
@@ -105,15 +108,13 @@ class ConfigurableProductTest extends TestCase
 
         $this->saleableItem->expects($this->any())
             ->method('getCustomOption')
-            ->willReturnCallback(
-                function ($arg1) use ($wishlistItemOptionMock) {
-                    if ($arg1 == 'simple_product') {
-                        return $wishlistItemOptionMock;
-                    } elseif ($arg1 == 'option_ids') {
-                        return $wishlistItemOptionMock;
-                    }
+            ->willReturnCallback(function ($arg1) use ($wishlistItemOptionMock) {
+                if ($arg1 == 'simple_product') {
+                    return $wishlistItemOptionMock;
+                } elseif ($arg1 == 'option_ids') {
+                    return $wishlistItemOptionMock;
                 }
-            );
+            });
 
         $wishlistItemOptionMock->expects($this->any())
             ->method('getValue')->willReturn($optionIds);
@@ -178,13 +179,11 @@ class ConfigurableProductTest extends TestCase
 
         $this->saleableItem->expects($this->any())
             ->method('getCustomOption')
-            ->willReturnCallback(
-                function ($arg) {
-                    if ($arg == 'simple_product' || $arg == 'option_ids') {
-                        return null;
-                    }
+            ->willReturnCallback(function ($arg) {
+                if ($arg == 'simple_product' || $arg == 'option_ids') {
+                    return null;
                 }
-            );
+            });
 
         $this->saleableItem->expects($this->once())
             ->method('getPriceInfo')
@@ -214,9 +213,22 @@ class ConfigurableProductTest extends TestCase
                     'price' => null,
                     'price_type' => null
                 ],
-                '1',
-                10,
-                100
+                '1'
+            ],
+            [
+                [
+                    'option_id' => '2',
+                    'product_id' => '2091',
+                    'type' => 'field',
+                    'is_require' => '1',
+                    'default_title' => 'field',
+                    'title' => 'field',
+                    'default_price' => '100.000000',
+                    'default_price_type' => 'fixed',
+                    'price' => '100.000000',
+                    'price_type' => 'fixed'
+                ],
+                '2'
             ]
         ];
     }

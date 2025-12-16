@@ -10,12 +10,11 @@ namespace Magento\WeeeGraphQl\Test\Unit;
 use Magento\Framework\DataObject;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\GraphQl\Config\Element\Field;
+use Magento\Framework\GraphQl\Query\Resolver\ContextInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
-use Magento\GraphQl\Model\Query\Context;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\GraphQl\Model\Query\ContextExtensionInterface;
-use Magento\Store\Api\Data\StoreInterface;
-use Magento\Tax\Helper\Data as TaxHelper;
 use Magento\Weee\Helper\Data as WeeeHelper;
 use Magento\WeeeGraphQl\Model\Resolver\FixedProductTax;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -24,10 +23,11 @@ use PHPUnit\Framework\TestCase;
 class FixedProductTaxTest extends TestCase
 {
     use MockCreationTrait;
-    public const STUB_STORE_ID = 1;
+
+    private const STUB_STORE_ID = 1;
 
     /**
-     * @var MockObject|Context
+     * @var MockObject|ContextInterface
      */
     private $contextMock;
 
@@ -47,11 +47,6 @@ class FixedProductTaxTest extends TestCase
     private $weeeHelperMock;
 
     /**
-     * @var MockObject|TaxHelper
-     */
-    private $taxHelperMock;
-
-    /**
      * @var MockObject|DataObject
      */
     private $productMock;
@@ -61,14 +56,17 @@ class FixedProductTaxTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->extensionAttributesMock = $this->createPartialMockWithReflection(
-            ContextExtensionInterface::class,
-            ['setStore', 'getStore', 'getIsCustomer', 'setIsCustomer', 'getCustomerGroupId', 'setCustomerGroupId']
+        $this->contextMock = $this->createPartialMockWithReflection(
+            ContextInterface::class,
+            ['getExtensionAttributes']
         );
 
-        $this->contextMock = $this->createPartialMockWithReflection(Context::class, ['getExtensionAttributes']);
-        $this->contextMock->expects($this->any())
-            ->method('getExtensionAttributes')
+        $this->extensionAttributesMock = $this->createPartialMockWithReflection(
+            ContextExtensionInterface::class,
+            ['getStore', 'setStore', 'getIsCustomer', 'setIsCustomer']
+        );
+
+        $this->contextMock->method('getExtensionAttributes')
             ->willReturn($this->extensionAttributesMock);
 
         $this->productMock = $this->createMock(DataObject::class);
@@ -77,9 +75,11 @@ class FixedProductTaxTest extends TestCase
             WeeeHelper::class,
             ['isEnabled', 'getProductWeeeAttributesForDisplay']
         );
-        $this->taxHelperMock = $this->createPartialMock(TaxHelper::class, ['getPriceDisplayType']);
 
-        $this->resolver = new FixedProductTax($this->weeeHelperMock, $this->taxHelperMock);
+        $objectManager = new ObjectManager($this);
+        $this->resolver = $objectManager->getObject(FixedProductTax::class, [
+            'weeeHelper' => $this->weeeHelperMock
+        ]);
     }
 
     /**
@@ -92,7 +92,7 @@ class FixedProductTaxTest extends TestCase
 
         $this->resolver->resolve(
             $this->getFieldStub(),
-            $this->contextMock,
+            null,
             $this->getResolveInfoStub()
         );
     }
@@ -103,13 +103,11 @@ class FixedProductTaxTest extends TestCase
     public function testNotGettingAttributesWhenWeeeDisabledForStore(): void
     {
         // Given
-        $this->extensionAttributesMock->expects($this->any())
-            ->method('getStore')
-            ->willReturn(self::STUB_STORE_ID);
+        $this->extensionAttributesMock->method('getStore')
+            ->willreturn(self::STUB_STORE_ID);
 
         // When
-        $this->weeeHelperMock->expects($this->any())
-            ->method('isEnabled')
+        $this->weeeHelperMock->method('isEnabled')
             ->with(self::STUB_STORE_ID)
             ->willReturn(false);
 
@@ -128,7 +126,7 @@ class FixedProductTaxTest extends TestCase
     /**
      * Returns stub for Field
      *
-     * @return Field
+     * @return MockObject|Field
      */
     private function getFieldStub(): Field
     {
@@ -142,7 +140,7 @@ class FixedProductTaxTest extends TestCase
     /**
      * Returns stub for ResolveInfo
      *
-     * @return ResolveInfo
+     * @return MockObject|ResolveInfo
      */
     private function getResolveInfoStub(): ResolveInfo
     {

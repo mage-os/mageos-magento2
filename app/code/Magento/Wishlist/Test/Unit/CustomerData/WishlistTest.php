@@ -32,54 +32,34 @@ use Magento\Store\Api\Data\WebsiteInterface;
  */
 class WishlistTest extends TestCase
 {
-    /**
-     * @var Wishlist
-     */
+    /** @var Wishlist */
     private $model;
 
-    /**
-     * @var Data|MockObject
-     */
+    /** @var Data|MockObject */
     private $wishlistHelperMock;
 
-    /**
-     * @var Sidebar|MockObject
-     */
+    /** @var Sidebar|MockObject */
     private $sidebarMock;
 
-    /**
-     * @var Image|MockObject
-     */
+    /** @var Image|MockObject */
     private $catalogImageHelperMock;
 
-    /**
-     * @var ViewInterface|MockObject
-     */
+    /** @var ViewInterface|MockObject */
     private $viewMock;
 
-    /**
-     * @var ImageBuilder|MockObject
-     */
+    /** @var ImageBuilder|MockObject */
     private $itemResolver;
 
-    /**
-     * @var StoreManagerInterface|MockObject
-     */
+    /** @var StoreManagerInterface|MockObject */
     private $storeManagerMock;
 
-    /**
-     * @var WebsiteInterface|MockObject
-     */
+    /** @var WebsiteInterface|MockObject */
     private $websiteMock;
 
-    /**
-     * @var StoreInterface|MockObject
-     */
+    /** @var StoreInterface|MockObject */
     private $storeMock;
 
-    /**
-     * @var ImageFactory|MockObject
-     */
+    /** @var ImageFactory|MockObject */
     private $imageHelperFactory;
 
     protected function setUp(): void
@@ -100,11 +80,9 @@ class WishlistTest extends TestCase
 
         $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
 
-        $this->websiteMock = $this->createStub(WebsiteInterface::class);
-        $this->websiteMock->method('getId')->willReturn(1);
+        $this->websiteMock = $this->createMock(WebsiteInterface::class);
 
-        $this->storeMock = $this->createStub(StoreInterface::class);
-        $this->storeMock->method('getId')->willReturn(1);
+        $this->storeMock = $this->createMock(StoreInterface::class);
 
         $this->model = new Wishlist(
             $this->wishlistHelperMock,
@@ -143,6 +121,14 @@ class WishlistTest extends TestCase
         $this->storeManagerMock->expects($this->once())
             ->method('getStore')
             ->willReturn($this->storeMock);
+
+        $this->websiteMock->expects($this->once())
+            ->method('getId')
+            ->willReturn(1);
+
+        $this->storeMock->expects($this->once())
+            ->method('getId')
+            ->willReturn(1);
 
         $result = [
             'counter' => __('1 item'),
@@ -274,10 +260,7 @@ class WishlistTest extends TestCase
             ->willReturn($productIsVisible);
 
         /** @var AbstractType|MockObject $productTypeMock */
-        $productTypeMock = $this->createPartialMock(
-            AbstractType::class,
-            ['hasRequiredOptions', 'deleteTypeSpecificData']
-        );
+        $productTypeMock = $this->createMock(AbstractType::class);
 
         $productMock->expects($this->once())
             ->method('getTypeInstance')
@@ -331,6 +314,14 @@ class WishlistTest extends TestCase
         $this->storeManagerMock->expects($this->once())
             ->method('getStore')
             ->willReturn($this->storeMock);
+
+        $this->websiteMock->expects($this->once())
+            ->method('getId')
+            ->willReturn(1);
+
+        $this->storeMock->expects($this->once())
+            ->method('getId')
+            ->willReturn(1);
 
         $result = [
             'counter' =>  __('%1 items', count($items)),
@@ -477,10 +468,7 @@ class WishlistTest extends TestCase
             ->method('isVisibleInSiteVisibility');
 
         /** @var AbstractType|MockObject $productTypeMock */
-        $productTypeMock = $this->createPartialMock(
-            AbstractType::class,
-            ['hasRequiredOptions', 'deleteTypeSpecificData']
-        );
+        $productTypeMock = $this->createMock(AbstractType::class);
 
         $productMock->expects($this->exactly(2))
             ->method('getTypeInstance')
@@ -507,11 +495,6 @@ class WishlistTest extends TestCase
     {
         $items = [];
 
-        $this->websiteMock = $this->createStub(WebsiteInterface::class);
-        $this->websiteMock->method('getId')->willReturn(null);
-        $this->storeMock = $this->createStub(StoreInterface::class);
-        $this->storeMock->method('getId')->willReturn(null);
-
         $this->storeManagerMock->expects($this->once())
             ->method('getWebsite')
             ->willReturn($this->websiteMock);
@@ -519,6 +502,14 @@ class WishlistTest extends TestCase
         $this->storeManagerMock->expects($this->once())
             ->method('getStore')
             ->willReturn($this->storeMock);
+
+        $this->websiteMock->expects($this->once())
+            ->method('getId')
+            ->willReturn(null);
+
+        $this->storeMock->expects($this->once())
+            ->method('getId')
+            ->willReturn(null);
 
         $result = [
             'counter' =>  null,

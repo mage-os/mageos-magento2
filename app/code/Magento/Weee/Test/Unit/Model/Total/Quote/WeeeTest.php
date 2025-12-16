@@ -11,7 +11,6 @@ use Magento\Catalog\Model\Product;
 use Magento\Framework\DataObject;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Framework\Serialize\Serializer\Json;
-
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Quote\Api\Data\ShippingAssignmentInterface;
@@ -25,18 +24,17 @@ use Magento\Tax\Helper\Data;
 use Magento\Tax\Model\Calculation;
 use Magento\Weee\Helper\Data as WeeeHelperData;
 use Magento\Weee\Model\Total\Quote\Weee;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @SuppressWarnings(PHPMD.UnusedLocalVariable)
- * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  */
 class WeeeTest extends TestCase
 {
     use MockCreationTrait;
+
     /**
      * @var MockObject|PriceCurrencyInterface
      */
@@ -96,16 +94,10 @@ class WeeeTest extends TestCase
             ->method('getRateOriginRequest')
             ->willReturn($defaultRateRequest);
 
-        $callCount = 0;
         $taxCalculation
             ->expects($this->any())
             ->method('getRate')
-            ->willReturnCallback(
-                function () use (&$callCount, $storeTaxRate, $customerTaxRate) {
-                    $callCount++;
-                    return $callCount === 1 ? $storeTaxRate : $customerTaxRate;
-                }
-            );
+            ->willReturnOnConsecutiveCalls($storeTaxRate, $customerTaxRate);
 
         return $taxCalculation;
     }
@@ -113,7 +105,7 @@ class WeeeTest extends TestCase
     /**
      * Setup weee helper with an array of methodName, returnValue.
      *
-     * @param  array $weeeConfig
+     * @param array $weeeConfig
      * @return MockObject|WeeeHelperData
      */
     protected function setupWeeeHelper($weeeConfig): WeeeHelperData
@@ -134,94 +126,6 @@ class WeeeTest extends TestCase
     }
 
     /**
-     * Create item mock with all required methods
-     *
-     * @return Item|MockObject
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    private function createItemMock()
-    {
-        $methods = [
-            'getProduct', 'setProduct', 'getTotalQty', 'setTotalQty',
-            'getParentItem', 'setParentItem', 'getHasChildren', 'setHasChildren',
-            'getChildren', 'setChildren', 'setIsChildrenCalculated',
-            'getAssociatedTaxables', 'setAssociatedTaxables',
-            'setWeeeTaxAppliedAmount', 'setBaseWeeeTaxAppliedAmount',
-            'setWeeeTaxAppliedRowAmount', 'setBaseWeeeTaxAppliedRowAmnt',
-            'setWeeeTaxAppliedAmountInclTax', 'setBaseWeeeTaxAppliedAmountInclTax',
-            'setWeeeTaxAppliedRowAmountInclTax', 'setBaseWeeeTaxAppliedRowAmntInclTax',
-            'getData', 'setData', 'getStoreId', 'setStoreId'
-        ];
-        
-        $itemMock = $this->createPartialMockWithReflection(Item::class, $methods);
-        
-        // Configure data storage
-        $data = [];
-        $itemMock->method('setData')->willReturnCallback(function ($key, $value = null) use (&$data, $itemMock) {
-            if (is_array($key)) {
-                $data = array_merge($data, $key);
-            } else {
-                $data[$key] = $value;
-            }
-            return $itemMock;
-        });
-        $itemMock->method('getData')->willReturnCallback(function ($key = '', $index = null) use (&$data) {
-            if ($key === '') {
-                return $data;
-            }
-            $value = $data[$key] ?? null;
-            if ($index !== null && is_array($value)) {
-                return $value[$index] ?? null;
-            }
-            return $value;
-        });
-        
-        // Configure chainable setters
-        $itemMock->method('setWeeeTaxAppliedAmount')->willReturnCallback(function ($val) use (&$data, $itemMock) {
-            $data['weee_tax_applied_amount'] = $val;
-            return $itemMock;
-        });
-        $itemMock->method('setBaseWeeeTaxAppliedAmount')->willReturnCallback(function ($val) use (&$data, $itemMock) {
-            $data['base_weee_tax_applied_amount'] = $val;
-            return $itemMock;
-        });
-        $itemMock->method('setWeeeTaxAppliedRowAmount')->willReturnCallback(function ($val) use (&$data, $itemMock) {
-            $data['weee_tax_applied_row_amount'] = $val;
-            return $itemMock;
-        });
-        $itemMock->method('setBaseWeeeTaxAppliedRowAmnt')->willReturnCallback(function ($val) use (&$data, $itemMock) {
-            $data['base_weee_tax_applied_row_amnt'] = $val;
-            return $itemMock;
-        });
-        $itemMock->method('setWeeeTaxAppliedAmountInclTax')->willReturnCallback(
-            function ($val) use (&$data, $itemMock) {
-                $data['weee_tax_applied_amount_incl_tax'] = $val;
-                return $itemMock;
-            }
-        );
-        $itemMock->method('setBaseWeeeTaxAppliedAmountInclTax')->willReturnCallback(
-            function ($val) use (&$data, $itemMock) {
-                $data['base_weee_tax_applied_amount_incl_tax'] = $val;
-                return $itemMock;
-            }
-        );
-        $itemMock->method('setWeeeTaxAppliedRowAmountInclTax')->willReturnCallback(
-            function ($val) use (&$data, $itemMock) {
-                $data['weee_tax_applied_row_amount_incl_tax'] = $val;
-                return $itemMock;
-            }
-        );
-        $itemMock->method('setBaseWeeeTaxAppliedRowAmntInclTax')->willReturnCallback(
-            function ($val) use (&$data, $itemMock) {
-                $data['base_weee_tax_applied_row_amnt_incl_tax'] = $val;
-                return $itemMock;
-            }
-        );
-        
-        return $itemMock;
-    }
-
-    /**
      * Setup the basics of an item mock.
      *
      * @param float $itemTotalQty
@@ -230,86 +134,23 @@ class WeeeTest extends TestCase
      */
     protected function setupItemMockBasics($itemTotalQty): Item
     {
-        $itemMock = $this->createItemMock();
+        $itemMock = $this->createPartialMockWithReflection(
+            Item::class,
+            [
+                'getHasChildren',
+                'getProduct',
+                'getQuote',
+                'getAddress',
+                'getTotalQty',
+                'getParentItem',
+                'getChildren',
+                'isChildrenCalculated'
+            ]
+        );
 
-        // Create product mock with proper extension attributes configuration
-        $productMock = $this->createPartialMockWithReflection(
-            Product::class,
-            [
-                'getSku', 'getWeight', 'getName', 'getTaxClassId',
-                'getCost', 'getId', 'getTypeId', 'getExtensionAttributes'
-            ]
-        );
-        $productMock->method('getSku')->willReturn('test-sku');
-        $productMock->method('getWeight')->willReturn(1.0);
-        $productMock->method('getName')->willReturn('Test Product');
-        $productMock->method('getTaxClassId')->willReturn(1);
-        $productMock->method('getCost')->willReturn(10.0);
-        $productMock->method('getId')->willReturn(1);
-        $productMock->method('getTypeId')->willReturn('simple');
-        
-        $stockItem = $this->createMock(\Magento\CatalogInventory\Api\Data\StockItemInterface::class);
-        $stockItem->method('getIsQtyDecimal')->willReturn(false);
-        
-        $extensionAttributes = $this->createPartialMockWithReflection(
-            \Magento\Catalog\Api\Data\ProductExtensionInterface::class,
-            [
-                'getStockItem', 'setStockItem',
-                'getWebsiteIds', 'setWebsiteIds',
-                'getCategoryLinks', 'setCategoryLinks',
-                'getConfigurableProductOptions', 'setConfigurableProductOptions',
-                'getConfigurableProductLinks', 'setConfigurableProductLinks',
-                'getBundleProductOptions', 'setBundleProductOptions',
-                'getDownloadableProductLinks', 'setDownloadableProductLinks',
-                'getDownloadableProductSamples', 'setDownloadableProductSamples',
-                'getGiftcardAmounts', 'setGiftcardAmounts',
-                'getDiscounts', 'setDiscounts'
-            ]
-        );
-        
-        $extensionAttributes->method('getWebsiteIds')->willReturn(null);
-        $extensionAttributes->method('setWebsiteIds')->willReturnSelf();
-        $extensionAttributes->method('getCategoryLinks')->willReturn(null);
-        $extensionAttributes->method('setCategoryLinks')->willReturnSelf();
-        $extensionAttributes->method('getConfigurableProductOptions')->willReturn(null);
-        $extensionAttributes->method('setConfigurableProductOptions')->willReturnSelf();
-        $extensionAttributes->method('getConfigurableProductLinks')->willReturn(null);
-        $extensionAttributes->method('setConfigurableProductLinks')->willReturnSelf();
-        $extensionAttributes->method('getBundleProductOptions')->willReturn(null);
-        $extensionAttributes->method('setBundleProductOptions')->willReturnSelf();
-        $extensionAttributes->method('getDownloadableProductLinks')->willReturn(null);
-        $extensionAttributes->method('setDownloadableProductLinks')->willReturnSelf();
-        $extensionAttributes->method('getDownloadableProductSamples')->willReturn(null);
-        $extensionAttributes->method('setDownloadableProductSamples')->willReturnSelf();
-        $extensionAttributes->method('getGiftcardAmounts')->willReturn(null);
-        $extensionAttributes->method('setGiftcardAmounts')->willReturnSelf();
-        $extensionAttributes->method('getDiscounts')->willReturn(null);
-        $extensionAttributes->method('setDiscounts')->willReturnSelf();
-        $extensionAttributes->method('setStockItem')->willReturnSelf();
-        
-        $extensionAttributes->method('getStockItem')->willReturn($stockItem);
-        
-        $productMock->method('getExtensionAttributes')->willReturn($extensionAttributes);
-        
-        // Configure product and quantity on item
-        $product = $productMock;
-        $totalQty = $itemTotalQty;
-        $itemMock->method('getProduct')->willReturnCallback(function () use (&$product) {
-            return $product;
-        });
-        $itemMock->method('setProduct')->willReturnCallback(function ($p) use (&$product, $itemMock) {
-            $product = $p;
-            return $itemMock;
-        });
-        $itemMock->method('getTotalQty')->willReturnCallback(function () use (&$totalQty) {
-            return $totalQty;
-        });
-        $itemMock->method('setTotalQty')->willReturnCallback(function ($qty) use (&$totalQty, $itemMock) {
-            $totalQty = $qty;
-            return $itemMock;
-        });
-        $itemMock->method('getStoreId')->willReturn(1);
-        $itemMock->method('setStoreId')->willReturnSelf();
+        $productMock = $this->createMock(Product::class);
+        $itemMock->expects($this->any())->method('getProduct')->willReturn($productMock);
+        $itemMock->expects($this->any())->method('getTotalQty')->willReturn($itemTotalQty);
 
         return $itemMock;
     }
@@ -325,43 +166,10 @@ class WeeeTest extends TestCase
     {
         $itemMock = $this->setupItemMockBasics($itemQty);
 
-        // Configure parent, children, and associated taxables
-        $parentItem = false;
-        $hasChildren = false;
-        $children = [];
-        $associatedTaxables = null;
-        
-        $itemMock->method('getParentItem')->willReturnCallback(function () use (&$parentItem) {
-            return $parentItem;
-        });
-        $itemMock->method('setParentItem')->willReturnCallback(function ($p) use (&$parentItem, $itemMock) {
-            $parentItem = $p;
-            return $itemMock;
-        });
-        $itemMock->method('getHasChildren')->willReturnCallback(function () use (&$hasChildren) {
-            return $hasChildren;
-        });
-        $itemMock->method('setHasChildren')->willReturnCallback(function ($h) use (&$hasChildren, $itemMock) {
-            $hasChildren = $h;
-            return $itemMock;
-        });
-        $itemMock->method('getChildren')->willReturnCallback(function () use (&$children) {
-            return $children;
-        });
-        $itemMock->method('setChildren')->willReturnCallback(function ($c) use (&$children, $itemMock) {
-            $children = $c;
-            return $itemMock;
-        });
-        $itemMock->method('setIsChildrenCalculated')->willReturnSelf();
-        $itemMock->method('getAssociatedTaxables')->willReturnCallback(function () use (&$associatedTaxables) {
-            return $associatedTaxables;
-        });
-        $itemMock->method('setAssociatedTaxables')->willReturnCallback(
-            function ($t) use (&$associatedTaxables, $itemMock) {
-                $associatedTaxables = $t;
-                return $itemMock;
-            }
-        );
+        $itemMock->expects($this->any())->method('getParentItem')->willReturn(false);
+        $itemMock->expects($this->any())->method('getHasChildren')->willReturn(false);
+        $itemMock->expects($this->any())->method('getChildren')->willReturn([]);
+        $itemMock->expects($this->any())->method('isChildrenCalculated')->willReturn(false);
 
         return $itemMock;
     }
@@ -378,71 +186,18 @@ class WeeeTest extends TestCase
     {
         $items = [];
 
-        // Create parent and child using the base setup
         $parentItemMock = $this->setupItemMockBasics($parentQty);
+
         $childItemMock = $this->setupItemMockBasics($parentQty * $itemQty);
-        
-        // Set up parent-child relationship and other required methods
-        $parentItem = false;
-        $hasChildrenForParent = true;
-        $childrenForParent = [$childItemMock];
-        $associatedTaxablesForParent = null;
-        
-        $parentItemMock->method('getParentItem')->willReturnCallback(function () use (&$parentItem) {
-            return $parentItem;
-        });
-        $parentItemMock->method('getHasChildren')->willReturnCallback(function () use (&$hasChildrenForParent) {
-            return $hasChildrenForParent;
-        });
-        $parentItemMock->method('getChildren')->willReturnCallback(function () use (&$childrenForParent) {
-            return $childrenForParent;
-        });
-        $parentItemMock->method('getAssociatedTaxables')->willReturnCallback(
-            function () use (&$associatedTaxablesForParent) {
-                return $associatedTaxablesForParent;
-            }
-        );
-        $parentItemMock->method('setAssociatedTaxables')->willReturnCallback(
-            function ($t) use (&$associatedTaxablesForParent, $parentItemMock) {
-                $associatedTaxablesForParent = $t;
-                return $parentItemMock;
-            }
-        );
-        $parentItemMock->method('setParentItem')->willReturnSelf();
-        $parentItemMock->method('setHasChildren')->willReturnSelf();
-        $parentItemMock->method('setChildren')->willReturnSelf();
-        $parentItemMock->method('setIsChildrenCalculated')->willReturnSelf();
-        
-        // For child item
-        $parentItemForChild = $parentItemMock;
-        $hasChildrenForChild = false;
-        $childrenForChild = [];
-        $associatedTaxablesForChild = null;
-        
-        $childItemMock->method('getParentItem')->willReturnCallback(function () use (&$parentItemForChild) {
-            return $parentItemForChild;
-        });
-        $childItemMock->method('getHasChildren')->willReturnCallback(function () use (&$hasChildrenForChild) {
-            return $hasChildrenForChild;
-        });
-        $childItemMock->method('getChildren')->willReturnCallback(function () use (&$childrenForChild) {
-            return $childrenForChild;
-        });
-        $childItemMock->method('getAssociatedTaxables')->willReturnCallback(
-            function () use (&$associatedTaxablesForChild) {
-                return $associatedTaxablesForChild;
-            }
-        );
-        $childItemMock->method('setAssociatedTaxables')->willReturnCallback(
-            function ($t) use (&$associatedTaxablesForChild, $childItemMock) {
-                $associatedTaxablesForChild = $t;
-                return $childItemMock;
-            }
-        );
-        $childItemMock->method('setParentItem')->willReturnSelf();
-        $childItemMock->method('setHasChildren')->willReturnSelf();
-        $childItemMock->method('setChildren')->willReturnSelf();
-        $childItemMock->method('setIsChildrenCalculated')->willReturnSelf();
+        $childItemMock->expects($this->any())->method('getParentItem')->willReturn($parentItemMock);
+        $childItemMock->expects($this->any())->method('getHasChildren')->willReturn(false);
+        $childItemMock->expects($this->any())->method('getChildren')->willReturn([]);
+        $childItemMock->expects($this->any())->method('isChildrenCalculated')->willReturn(false);
+
+        $parentItemMock->expects($this->any())->method('getParentItem')->willReturn(false);
+        $parentItemMock->expects($this->any())->method('getHasChildren')->willReturn(true);
+        $parentItemMock->expects($this->any())->method('getChildren')->willReturn([$childItemMock]);
+        $parentItemMock->expects($this->any())->method('isChildrenCalculated')->willReturn(true);
 
         $items[] = $parentItemMock;
         $items[] = $childItemMock;
@@ -459,14 +214,11 @@ class WeeeTest extends TestCase
      */
     protected function setupAddressMock(array $items): MockObject
     {
-        $addressMock = $this->createPartialMock(
-            Address::class,
-            [
+        $addressMock = $this->createPartialMock(Address::class, [
             'getAllItems',
             'getQuote',
             'getCustomAttributesCodes'
-            ]
-        );
+        ]);
 
         $quoteMock = $this->createMock(Quote::class);
         $storeMock = $this->createMock(Store::class);
@@ -543,7 +295,7 @@ class WeeeTest extends TestCase
      * @param float $itemQty
      * @param float $parentQty
      * @param array $addressData
-     * @param bool  $assertSetApplied
+     * @param bool $assertSetApplied
      *
      * @return void
      */
@@ -559,27 +311,23 @@ class WeeeTest extends TestCase
         $assertSetApplied = false
     ): void {
         $items = [];
-        $shippingItems = [];
 
         if ($parentQty > 0) {
             $items = $this->setupParentItemWithChildrenMock($parentQty, $itemQty);
-            // For shipping assignment, only pass the parent item (collector discovers children via getChildren())
-            $shippingItems = [$items[0]];  // Only parent
         } else {
             $itemMock = $this->setupItemMock($itemQty);
             $items[] = $itemMock;
-            $shippingItems = $items;
         }
         $quoteMock = $this->createMock(Quote::class);
         $storeMock = $this->createMock(Store::class);
         $quoteMock->expects($this->any())->method('getStore')->willReturn($storeMock);
-        $addressMock = $this->setupAddressMock($shippingItems);
+        $addressMock = $this->setupAddressMock($items);
         $totalMock = new Total(
             [],
             $this->getMockBuilder(Json::class)
                 ->getMock()
         );
-        $shippingAssignmentMock = $this->setupShippingAssignmentMock($addressMock, $shippingItems);
+        $shippingAssignmentMock = $this->setupShippingAssignmentMock($addressMock, $items);
 
         $taxHelper = $this->setupTaxHelper($taxConfig);
         $weeeHelper = $this->setupWeeeHelper($weeeConfig);

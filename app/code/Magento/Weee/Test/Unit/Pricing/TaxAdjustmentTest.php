@@ -10,6 +10,7 @@ namespace Magento\Weee\Test\Unit\Pricing;
 use Magento\Framework\DataObject;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Framework\Pricing\SaleableInterface;
+use Magento\Tax\Helper\Data as TaxHelperData;
 use Magento\Weee\Helper\Data;
 use Magento\Weee\Model\Tax;
 use Magento\Weee\Pricing\TaxAdjustment;
@@ -30,7 +31,7 @@ class TaxAdjustmentTest extends TestCase
     protected $weeeHelperMock;
 
     /**
-     * @var \Magento\Tax\Helper\Data|MockObject
+     * @var TaxHelperData|MockObject
      */
     protected $taxHelperMock;
 
@@ -47,7 +48,7 @@ class TaxAdjustmentTest extends TestCase
     protected function setUp(): void
     {
         $this->weeeHelperMock = $this->createMock(Data::class);
-        $this->taxHelperMock = $this->createMock(\Magento\Tax\Helper\Data::class);
+        $this->taxHelperMock = $this->createMock(TaxHelperData::class);
         $this->priceCurrencyMock = $this->createMock(PriceCurrencyInterface::class);
         $this->priceCurrencyMock->expects($this->any())
             ->method('convertAndRound')

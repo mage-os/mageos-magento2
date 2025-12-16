@@ -19,6 +19,7 @@ use Magento\Framework\EntityManager\EntityMetadata;
 use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\TestFramework\Unit\Helper\SelectRendererTrait;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use ReflectionClass;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManager;
@@ -33,6 +34,7 @@ use PHPUnit\Framework\TestCase;
 class CollectionTest extends TestCase
 {
     use SelectRendererTrait;
+    use MockCreationTrait;
 
     /**
      * @var Collection
@@ -79,8 +81,13 @@ class CollectionTest extends TestCase
             ->method('quote')
             ->willReturn('\'TestProductName\'');
         $connection
-            ->method('select')->willReturn($select);
-        $resource = $this->createMock(Item::class);
+            ->expects($this->any())
+            ->method('select')
+            ->willReturn($select);
+        $resource = $this->createPartialMockWithReflection(
+            Item::class,
+            ['getTableName', 'getConnection', 'getMainTable', 'getTable']
+        );
 
         $resource
             ->expects($this->any())

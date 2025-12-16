@@ -20,6 +20,7 @@ use Magento\Quote\Model\Quote\Item;
 use Magento\Tax\Helper\Data;
 use Magento\Tax\Model\Calculation;
 use Magento\Tax\Model\Sales\Total\Quote\CommonTaxCollector as CTC;
+use Magento\Weee\Helper\Data as WeeeHelperData;
 use Magento\Weee\Model\Total\Quote\WeeeTax;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -49,7 +50,7 @@ class WeeeTaxTest extends TestCase
     protected $quoteMock;
 
     /**
-     * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
+     * @var ObjectManager
      */
     protected $objectManagerHelper;
 
@@ -63,7 +64,7 @@ class WeeeTaxTest extends TestCase
      * Setup tax helper with an array of methodName, returnValue
      *
      * @param  array $taxConfig
-     * @return MockObject|\Magento\Tax\Helper\Data
+     * @return MockObject|Data
      */
     protected function setupTaxHelper($taxConfig)
     {
@@ -80,11 +81,11 @@ class WeeeTaxTest extends TestCase
      * Setup weee helper with an array of methodName, returnValue
      *
      * @param  array $weeeConfig
-     * @return MockObject|\Magento\Weee\Helper\Data
+     * @return MockObject|WeeeHelperData
      */
     protected function setupWeeeHelper($weeeConfig)
     {
-        $weeeHelper = $this->createMock(\Magento\Weee\Helper\Data::class);
+        $weeeHelper = $this->createMock(WeeeHelperData::class);
 
         foreach ($weeeConfig as $method => $value) {
             $weeeHelper->expects($this->any())->method($method)->willReturn($value);

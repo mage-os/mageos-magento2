@@ -9,6 +9,7 @@ namespace Magento\Widget\Test\Unit\Controller\Adminhtml\Widget;
 
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\App\RequestInterface;
+use Magento\Framework\App\Response\Http as ResponseHttp;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\App\ViewInterface;
 use Magento\Framework\Exception\LocalizedException;
@@ -25,13 +26,12 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Test class for \Magento\Widget\Controller\Adminhtml\Widget\LoadOptions
- *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @SuppressWarnings(PHPMD.UnusedLocalVariable)
  */
 class LoadOptionsTest extends TestCase
 {
     use MockCreationTrait;
+
     /**
      * @var ObjectManagerHelper
      */
@@ -81,7 +81,7 @@ class LoadOptionsTest extends TestCase
         $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
         $this->viewMock = $this->createMock(ViewInterface::class);
         $this->requestMock = $this->createMock(RequestInterface::class);
-        $this->responseMock = $this->createMock(ResponseInterface::class);
+        $this->responseMock = $this->createPartialMock(ResponseHttp::class, ['representJson']);
         $this->contextMock = $this->createMock(Context::class);
         $this->contextMock->expects($this->once())
             ->method('getView')
@@ -158,6 +158,14 @@ class LoadOptionsTest extends TestCase
                 'conditions_encoded' => $conditionsEncoded,
             ],
         ];
+        $resultWidgetArrayParams = [
+            'widget_type' => $widgetType,
+            'values' => [
+                'title' => '"Test"',
+                'conditions_encoded' => $conditionsEncoded,
+                'conditions' => $conditionsDecoded,
+            ],
+        ];
 
         /** @var Data|MockObject $jsonDataHelperMock */
         $jsonDataHelperMock = $this->createMock(Data::class);
@@ -177,10 +185,19 @@ class LoadOptionsTest extends TestCase
             ->with(Data::class)
             ->willReturn($jsonDataHelperMock);
 
+        /** @var BlockInterface|MockObject $blockMock */
         $blockMock = $this->createPartialMockWithReflection(
             BlockInterface::class,
             ['setWidgetType', 'setWidgetValues', 'toHtml']
         );
+        $blockMock->expects($this->once())
+            ->method('setWidgetType')
+            ->with($widgetType)
+            ->willReturnSelf();
+        $blockMock->expects($this->once())
+            ->method('setWidgetValues')
+            ->with($resultWidgetArrayParams['values'])
+            ->willReturnSelf();
 
         /** @var LayoutInterface|MockObject $layoutMock */
         $layoutMock = $this->createMock(LayoutInterface::class);

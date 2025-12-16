@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\Weee\Test\Unit\Model;
 
 use Magento\Store\Model\Store;
+use Magento\Store\Model\StoreManager;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Weee\Helper\Data;
 use Magento\Weee\Model\Config;
@@ -47,7 +48,7 @@ class WeeeConfigProviderTest extends TestCase
     {
         $this->weeeHelperMock = $this->createMock(Data::class);
         $this->weeeConfigMock = $this->createMock(Config::class);
-        $this->storeManagerMock = $this->createPartialMock(\Magento\Store\Model\StoreManager::class, ['getStore']);
+        $this->storeManagerMock = $this->createPartialMock(StoreManager::class, ['getStore']);
         $this->storeMock = $this->createMock(Store::class);
 
         $this->storeManagerMock->expects($this->any())->method('getStore')->willReturn($this->storeMock);

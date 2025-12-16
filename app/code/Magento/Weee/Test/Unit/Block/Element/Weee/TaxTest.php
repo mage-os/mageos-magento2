@@ -8,12 +8,14 @@ declare(strict_types=1);
 namespace Magento\Weee\Test\Unit\Block\Element\Weee;
 
 use Magento\Catalog\Block\Adminhtml\Product\Helper\Form\Weight;
+use Magento\Framework\Currency as FrameworkCurrency;
 use Magento\Framework\Data\Form\Element\CollectionFactory;
 use Magento\Framework\Data\Form\Element\Factory;
 use Magento\Framework\DataObject;
 use Magento\Framework\Locale\Currency;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManagerHelper;
+use Magento\Framework\View\Element\Template\Context as TemplateContext;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManager;
 use Magento\Weee\Block\Element\Weee\Tax;
@@ -32,8 +34,8 @@ class TaxTest extends TestCase
         
         $objects = [
             [
-                \Magento\Framework\View\Element\Template\Context::class,
-                $this->createMock(\Magento\Framework\View\Element\Template\Context::class)
+                TemplateContext::class,
+                $this->createMock(TemplateContext::class)
             ]
         ];
         $objectManager->prepareObjectManager($objects);
@@ -51,7 +53,7 @@ class TaxTest extends TestCase
 
         $localeCurrency = $this->createMock(Currency::class);
 
-        $currency = $this->createMock(\Magento\Framework\Currency::class);
+        $currency = $this->createMock(FrameworkCurrency::class);
 
         $currency->expects(
             $this->any()

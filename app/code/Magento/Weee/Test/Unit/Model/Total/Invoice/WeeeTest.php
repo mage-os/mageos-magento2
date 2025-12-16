@@ -12,6 +12,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Invoice;
 use Magento\Sales\Model\Order\Invoice\Item;
+use Magento\Sales\Model\Order\Item as OrderItem;
 use Magento\Sales\Model\Order\Invoice\Total\Tax;
 use Magento\Weee\Helper\Data;
 use Magento\Weee\Model\Total\Invoice\Weee;
@@ -53,21 +54,20 @@ class WeeeTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->weeeData = $this->getMockBuilder(Data::class)
-            ->onlyMethods(
-                [
-                    'getRowWeeeTaxInclTax',
-                    'getBaseRowWeeeTaxInclTax',
-                    'getWeeeAmountInvoiced',
-                    'getBaseWeeeAmountInvoiced',
-                    'getWeeeTaxAmountInvoiced',
-                    'getBaseWeeeTaxAmountInvoiced',
-                    'getApplied',
-                    'setApplied',
-                    'includeInSubtotal',
-                ]
-            )->disableOriginalConstructor()
-            ->getMock();
+        $this->weeeData = $this->createPartialMock(
+            Data::class,
+            [
+                'getRowWeeeTaxInclTax',
+                'getBaseRowWeeeTaxInclTax',
+                'getWeeeAmountInvoiced',
+                'getBaseWeeeAmountInvoiced',
+                'getWeeeTaxAmountInvoiced',
+                'getBaseWeeeTaxAmountInvoiced',
+                'getApplied',
+                'setApplied',
+                'includeInSubtotal',
+            ]
+        );
 
         $this->objectManager = new ObjectManager($this);
         $serializer = $this->objectManager->getObject(Json::class);
@@ -100,6 +100,7 @@ class WeeeTest extends TestCase
      */
     private function setupOrder($orderData)
     {
+        //Set up order mock
         foreach ($orderData['data_fields'] as $key => $value) {
             $this->order->setData($key, $value);
         }
@@ -117,10 +118,12 @@ class WeeeTest extends TestCase
 
         $this->setupOrder($orderData);
 
+        //Set up weeeData mock
         $this->weeeData->expects($this->atLeastOnce())
             ->method('includeInSubtotal')
             ->willReturn($invoiceData['include_in_subtotal']);
 
+        //Set up invoice mock
         /** @var Item[] $invoiceItems */
         $invoiceItems = [];
         foreach ($invoiceData['items'] as $itemKey => $invoiceItemData) {
@@ -151,6 +154,7 @@ class WeeeTest extends TestCase
 
         $this->model->collect($this->invoice);
 
+        //verify invoice data
         foreach ($expectedResults['invoice_data'] as $key => $value) {
             $this->assertEqualsWithDelta(
                 $value,
@@ -159,7 +163,7 @@ class WeeeTest extends TestCase
                 'Invoice data field ' . $key . ' is incorrect'
             );
         }
-
+        //verify invoice item data
         foreach ($expectedResults['invoice_items'] as $itemKey => $itemData) {
             $invoiceItem = $invoiceItems[$itemKey];
             foreach ($itemData as $key => $value) {
@@ -699,9 +703,9 @@ class WeeeTest extends TestCase
      */
     protected function getInvoiceItem($invoiceItemData)
     {
-        /** @var \Magento\Sales\Model\Order\Item|MockObject $orderItem */
+        /** @var OrderItem|MockObject $orderItem */
         $orderItem = $this->createPartialMock(
-            \Magento\Sales\Model\Order\Item::class,
+            OrderItem::class,
             [
             'isDummy'
             ]

@@ -11,9 +11,6 @@ use Magento\Framework\Registry;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Widget\Block\Adminhtml\Widget\Instance\Edit\Tab\Properties;
 use Magento\Widget\Model\Widget\Instance;
-use Magento\Framework\Json\Helper\Data;
-use Magento\Directory\Helper\Data as DirectoryHelper;
-use Magento\Backend\Block\Widget\Form\Element\ElementCreator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -38,23 +35,8 @@ class PropertiesTest extends TestCase
     protected function setUp(): void
     {
         $objectManager = new ObjectManager($this);
-        
-        $objects = [
-            [
-                Data::class,
-                $this->createMock(Data::class)
-            ],
-            [
-                DirectoryHelper::class,
-                $this->createMock(DirectoryHelper::class)
-            ],
-            [
-                ElementCreator::class,
-                $this->createMock(ElementCreator::class)
-            ]
-        ];
-        $objectManager->prepareObjectManager($objects);
-        
+        $objectManager->prepareObjectManager();
+
         $this->widget = $this->createMock(Instance::class);
         $this->registry = $this->createMock(Registry::class);
 
@@ -67,7 +49,7 @@ class PropertiesTest extends TestCase
     }
 
     /**
-     * @param array   $widgetConfig
+     * @param array $widgetConfig
      * @param boolean $isHidden
      */
     #[DataProvider('isHiddenDataProvider')]

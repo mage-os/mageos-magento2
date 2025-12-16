@@ -12,6 +12,7 @@ use Magento\Customer\Model\Session;
 use Magento\Framework\App\ActionInterface;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\App\RequestInterface;
+use Magento\Framework\App\Request\Http as RequestHttp;
 use Magento\Framework\Data\Helper\PostHelper;
 use Magento\Framework\DataObject;
 use Magento\Framework\Registry;
@@ -30,10 +31,6 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @SuppressWarnings(PHPMD.TooManyFields)
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
- * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
- * @SuppressWarnings(PHPMD.UnusedLocalVariable)
  */
 class DataTest extends TestCase
 {
@@ -97,7 +94,10 @@ class DataTest extends TestCase
 
         $this->urlEncoderMock = $this->createMock(EncoderInterface::class);
 
-        $this->requestMock = $this->createMock(\Magento\Framework\HTTP\PhpEnvironment\Request::class);
+        $this->requestMock = $this->createPartialMock(
+            RequestHttp::class,
+            ['getServer']
+        );
 
         $this->urlBuilder = $this->createMock(UrlInterface::class);
 
@@ -120,28 +120,8 @@ class DataTest extends TestCase
 
         $this->wishlistItem = $this->createPartialMockWithReflection(
             WishlistItem::class,
-            ['getId', 'getWishlistItemId', 'getProductId', 'getQty', 'getData', 'hasData', 'getProduct',
-             'load', 'save', 'getResource']
+            ['getWishlistItemId', 'getQty', 'getProduct']
         );
-        $this->wishlistItem->method('getId')->willReturn(1);
-        $this->wishlistItem->method('getWishlistItemId')->willReturn(1);
-        $this->wishlistItem->method('getProductId')->willReturn(1);
-        $this->wishlistItem->method('getQty')->willReturn(0);
-        $this->wishlistItem->method('getData')->willReturnCallback(function ($key) {
-            if ($key === 'product') {
-                return $this->product;
-            }
-            return null;
-        });
-        $this->wishlistItem->method('hasData')->willReturnCallback(function ($key) {
-            return $key === 'product';
-        });
-        $this->wishlistItem->method('getProduct')->willReturnCallback(function () {
-            return $this->product;
-        });
-        $this->wishlistItem->method('load')->willReturnSelf();
-        $this->wishlistItem->method('save')->willReturnSelf();
-        $this->wishlistItem->method('getResource')->willReturn(null);
 
         $this->wishlist = $this->createMock(Wishlist::class);
 
@@ -184,24 +164,45 @@ class DataTest extends TestCase
     {
         $url = 'http://magento2ce/wishlist/index/configure/id/4/product_id/30/qty/1000';
 
-        /** @var WishlistItem $wishlistItem */
+        $buyRequest = $this->createPartialMockWithReflection(
+            DataObject::class,
+            ['getSuperAttribute', 'getQty']
+        );
+        $buyRequest->expects($this->once())
+            ->method('getSuperAttribute')
+            ->willReturn(['100' => '10']);
+        $buyRequest->expects($this->exactly(2))
+            ->method('getQty')
+            ->willReturn('1000');
+
+        /** @var WishlistItem|MockObject $wishlistItem */
         $wishlistItem = $this->createPartialMockWithReflection(
             WishlistItem::class,
-            ['getWishlistItemId', 'getProductId', 'getQty', 'load', 'save', 'getResource']
+            ['getWishlistItemId', 'getProductId', 'getQty', 'getBuyRequest']
         );
-        $wishlistItem->method('getWishlistItemId')->willReturn(4);
-        $wishlistItem->method('getProductId')->willReturn(null);
-        $wishlistItem->method('getQty')->willReturn(0);
-        $wishlistItem->method('load')->willReturnSelf();
-        $wishlistItem->method('save')->willReturnSelf();
-        $wishlistItem->method('getResource')->willReturn(null);
+        $wishlistItem
+            ->expects($this->once())
+            ->method('getBuyRequest')
+            ->willReturn($buyRequest);
+        $wishlistItem
+            ->expects($this->once())
+            ->method('getWishlistItemId')
+            ->willReturn(4);
+        $wishlistItem
+            ->expects($this->once())
+            ->method('getProductId')
+            ->willReturn(30);
+        $wishlistItem
+            ->expects($this->once())
+            ->method('getQty')
+            ->willReturn(1000);
 
         $this->urlBuilder->expects($this->once())
             ->method('getUrl')
-            ->with('wishlist/index/configure', ['id' => 4, 'product_id' => null, 'qty' => 0])
+            ->with('wishlist/index/configure', ['id' => 4, 'product_id' => 30, 'qty' => 1000])
             ->willReturn($url);
 
-        $this->assertEquals($url, $this->model->getConfigureUrl($wishlistItem));
+        $this->assertEquals($url . '#100=10', $this->model->getConfigureUrl($wishlistItem));
     }
 
     public function testGetWishlist()
@@ -227,10 +228,17 @@ class DataTest extends TestCase
         $url = 'result url';
         $storeId = 1;
         $wishlistItemId = 1;
+        $wishlistItemQty = 1;
 
-        // Configure the test item for this specific test
-        $this->wishlistItem->setId($wishlistItemId);
-        $this->wishlistItem->setData('product', $this->product);
+        $this->wishlistItem->expects($this->once())
+            ->method('getProduct')
+            ->willReturn($this->product);
+        $this->wishlistItem->expects($this->once())
+            ->method('getWishlistItemId')
+            ->willReturn($wishlistItemId);
+        $this->wishlistItem->expects($this->once())
+            ->method('getQty')
+            ->willReturn($wishlistItemQty);
 
         $this->product->expects($this->once())
             ->method('isVisibleInSiteVisibility')
@@ -238,6 +246,9 @@ class DataTest extends TestCase
         $this->product->expects($this->once())
             ->method('getStoreId')
             ->willReturn($storeId);
+
+        $this->requestMock->expects($this->never())
+            ->method('getServer');
 
         $this->urlEncoderMock->expects($this->never())
             ->method('encode');
@@ -249,7 +260,7 @@ class DataTest extends TestCase
 
         $expected = [
             'item' => $wishlistItemId,
-            'qty' => null,
+            'qty' => $wishlistItemQty,
             ActionInterface::PARAM_NAME_URL_ENCODED => '',
         ];
         $this->postDataHelper->expects($this->once())
@@ -265,12 +276,19 @@ class DataTest extends TestCase
         $url = 'result url';
         $storeId = 1;
         $wishlistItemId = 1;
+        $wishlistItemQty = 1;
         $referer = 'referer';
         $refererEncoded = 'referer_encoded';
 
-        // Configure the test item for this specific test
-        $this->wishlistItem->setId($wishlistItemId);
-        $this->wishlistItem->setData('product', $this->product);
+        $this->wishlistItem->expects($this->once())
+            ->method('getProduct')
+            ->willReturn($this->product);
+        $this->wishlistItem->expects($this->once())
+            ->method('getWishlistItemId')
+            ->willReturn($wishlistItemId);
+        $this->wishlistItem->expects($this->once())
+            ->method('getQty')
+            ->willReturn($wishlistItemQty);
 
         $this->product->expects($this->once())
             ->method('isVisibleInSiteVisibility')
@@ -297,7 +315,7 @@ class DataTest extends TestCase
         $expected = [
             'item' => $wishlistItemId,
             ActionInterface::PARAM_NAME_URL_ENCODED => $refererEncoded,
-            'qty' => null,
+            'qty' => $wishlistItemQty,
         ];
         $this->postDataHelper->expects($this->once())
             ->method('getPostData')
@@ -312,15 +330,12 @@ class DataTest extends TestCase
         $url = 'result url';
         $wishlistItemId = 1;
 
-        $wishlistItem = $this->createPartialMockWithReflection(
-            WishlistItem::class,
-            ['getId', 'getWishlistItemId', 'load', 'save', 'getResource']
-        );
-        $wishlistItem->method('getId')->willReturn($wishlistItemId);
-        $wishlistItem->method('getWishlistItemId')->willReturn($wishlistItemId);
-        $wishlistItem->method('load')->willReturnSelf();
-        $wishlistItem->method('save')->willReturnSelf();
-        $wishlistItem->method('getResource')->willReturn(null);
+        $this->wishlistItem->expects($this->once())
+            ->method('getWishlistItemId')
+            ->willReturn($wishlistItemId);
+
+        $this->requestMock->expects($this->never())
+            ->method('getServer');
 
         $this->urlEncoderMock->expects($this->never())
             ->method('encode');
@@ -335,7 +350,7 @@ class DataTest extends TestCase
             ->with($url, ['item' => $wishlistItemId, ActionInterface::PARAM_NAME_URL_ENCODED => ''])
             ->willReturn($url);
 
-        $this->assertEquals($url, $this->model->getRemoveParams($wishlistItem));
+        $this->assertEquals($url, $this->model->getRemoveParams($this->wishlistItem));
     }
 
     public function testGetRemoveParamsWithReferer()
@@ -345,15 +360,9 @@ class DataTest extends TestCase
         $referer = 'referer';
         $refererEncoded = 'referer_encoded';
 
-        $wishlistItem = $this->createPartialMockWithReflection(
-            WishlistItem::class,
-            ['getId', 'getWishlistItemId', 'load', 'save', 'getResource']
-        );
-        $wishlistItem->method('getId')->willReturn($wishlistItemId);
-        $wishlistItem->method('getWishlistItemId')->willReturn($wishlistItemId);
-        $wishlistItem->method('load')->willReturnSelf();
-        $wishlistItem->method('save')->willReturnSelf();
-        $wishlistItem->method('getResource')->willReturn(null);
+        $this->wishlistItem->expects($this->once())
+            ->method('getWishlistItemId')
+            ->willReturn($wishlistItemId);
 
         $this->requestMock->expects($this->once())
             ->method('getServer')
@@ -375,7 +384,7 @@ class DataTest extends TestCase
             ->with($url, ['item' => $wishlistItemId, ActionInterface::PARAM_NAME_URL_ENCODED => $refererEncoded])
             ->willReturn($url);
 
-        $this->assertEquals($url, $this->model->getRemoveParams($wishlistItem, true));
+        $this->assertEquals($url, $this->model->getRemoveParams($this->wishlistItem, true));
     }
 
     public function testGetSharedAddToCartUrl()
@@ -383,10 +392,17 @@ class DataTest extends TestCase
         $url = 'result url';
         $storeId = 1;
         $wishlistItemId = 1;
+        $wishlistItemQty = 1;
 
-        // Configure the test item for this specific test
-        $this->wishlistItem->setId($wishlistItemId);
-        $this->wishlistItem->setData('product', $this->product);
+        $this->wishlistItem->expects($this->once())
+            ->method('getProduct')
+            ->willReturn($this->product);
+        $this->wishlistItem->expects($this->once())
+            ->method('getWishlistItemId')
+            ->willReturn($wishlistItemId);
+        $this->wishlistItem->expects($this->once())
+            ->method('getQty')
+            ->willReturn($wishlistItemQty);
 
         $this->product->expects($this->once())
             ->method('isVisibleInSiteVisibility')
@@ -402,7 +418,7 @@ class DataTest extends TestCase
 
         $expected = [
             'item' => $wishlistItemId,
-            'qty' => null,
+            'qty' => $wishlistItemQty,
         ];
         $this->postDataHelper->expects($this->once())
             ->method('getPostData')

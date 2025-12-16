@@ -27,12 +27,11 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @SuppressWarnings(PHPMD.UnusedLocalVariable)
- * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  */
 class WeeeTest extends TestCase
 {
     use MockCreationTrait;
+
     /** @var Weee */
     protected $model;
 
@@ -69,18 +68,8 @@ class WeeeTest extends TestCase
 
         $this->extensionAttributes = $this->createPartialMockWithReflection(
             PriceInfoExtensionInterface::class,
-            [
-                'setWeeeAttributes', 'getWeeeAttributes',
-                'setWeeeAdjustment', 'getWeeeAdjustment',
-                'getMsrp', 'setMsrp',
-                'getTaxAdjustments', 'setTaxAdjustments'
-            ]
+            ['setWeeeAttributes', 'setWeeeAdjustment']
         );
-        
-        $this->extensionAttributes->method('getMsrp')->willReturn(null);
-        $this->extensionAttributes->method('setMsrp')->willReturnSelf();
-        $this->extensionAttributes->method('getTaxAdjustments')->willReturn(null);
-        $this->extensionAttributes->method('setTaxAdjustments')->willReturnSelf();
 
         $this->priceInfoExtensionFactory = $this->createPartialMock(
             PriceInfoExtensionInterfaceFactory::class,
@@ -100,25 +89,38 @@ class WeeeTest extends TestCase
 
     /**
      * @return void
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function testCollect()
     {
         $productMock = $this->createMock(Product::class);
         $productRender = $this->createMock(ProductRenderInterface::class);
-        $weeAttribute = $this->createWeeeAdjustmentAttributeMock();
+        $weeAttribute  = $this->createPartialMockWithReflection(
+            WeeeAdjustmentAttribute::class,
+            ['getData', 'setAttributeCode']
+        );
         $this->weeeAdjustmentAttributeFactory->expects($this->atLeastOnce())
             ->method('create')
             ->willReturn($weeAttribute);
-        $priceInfo = $this->createPriceInfoMock();
+        $priceInfo = $this->createPartialMockWithReflection(
+            Base::class,
+            ['getPrice', 'getExtensionAttributes', 'setExtensionAttributes']
+        );
         $price = $this->createMock(FinalPrice::class);
-        $weeAttribute->setAttributeCode('');
-        $productRender->method('getPriceInfo')->willReturn($priceInfo);
-        $priceInfo->setExtensionAttributes($this->extensionAttributes);
-        $priceInfo->method('getExtensionAttributes')->willReturn($this->extensionAttributes);
-        $priceInfo->method('getPrice')->willReturn($price);
-        $productMock->method('getPriceInfo')->willReturn($priceInfo);
-        $priceInfo->setPrice($price);
+        $weeAttribute->expects($this->once())
+            ->method('setAttributeCode')
+            ->with();
+        $productRender->expects($this->any())
+            ->method('getPriceInfo')
+            ->willReturn($priceInfo);
+        $priceInfo->expects($this->any())
+            ->method('getExtensionAttributes')
+            ->willReturn($this->extensionAttributes);
+        $productMock->expects($this->any())
+            ->method('getPriceInfo')
+            ->willReturn($priceInfo);
+        $priceInfo->expects($this->atLeastOnce())
+            ->method('getPrice')
+            ->willReturn($price);
         $amount = $this->createMock(AmountInterface::class);
         $productRender->expects($this->exactly(5))
             ->method('getStoreId')
@@ -133,67 +135,51 @@ class WeeeTest extends TestCase
             ->method('getValue')
             ->willReturn(12.1);
         $weeAttributes = ['weee_1' => $weeAttribute];
-        $callCount = 0;
+        $weeAttribute->expects($this->exactly(6))
+            ->method('getData')
+            ->willReturnCallback(
+                function ($arg) {
+                     static $callCount = 0;
+                    if ($callCount==0) {
+                        $callCount++;
+                        return [
+                            'amount' => 12.1,
+                            'tax_amount' => 12,
+                            'amount_excl_tax' => 71
+                        ];
+                    } elseif ($callCount==1 && $arg == 'amount') {
+                        $callCount++;
+                        return 12.1;
+                    } elseif ($callCount==2 && $arg == 'tax_amount') {
+                        $callCount++;
+                        return 12.1;
+                    } elseif ($callCount==3 && $arg == 'amount_excl_tax') {
+                        $callCount++;
+                        return 12.1;
+                    } elseif ($callCount==4) {
+                        $callCount++;
+                        return 12.1;
+                    }
+                }
+            );
         $this->priceCurrencyMock->expects($this->exactly(5))
             ->method('format')
-            ->willReturnCallback(function ($value) use (&$callCount) {
-                $callCount++;
-                $values = [
-                    '<span>$12</span>',
-                    '<span>$12</span>',
-                    '<span>$71</span>',
-                    '<span>$83</span>',
-                    '<span>$12</span>'
-                ];
-                return $values[$callCount - 1];
-            });
+            ->with(12.1, true, 2, 1, 'USD')
+            ->willReturnOnConsecutiveCalls(
+                '<span>$12</span>',
+                '<span>$12</span>',
+                '<span>$71</span>',
+                '<span>$83</span>',
+                '<span>$12</span>'
+            );
         $this->weeeHelperMock->expects($this->once())
             ->method('getProductWeeeAttributesForDisplay')
             ->with($productMock)
             ->willReturn($weeAttributes);
+        $priceInfo->expects($this->once())
+            ->method('setExtensionAttributes')
+            ->with($this->extensionAttributes);
 
         $this->model->collect($productMock, $productRender);
-    }
-
-    /**
-     * Create a mock for WeeeAdjustmentAttributeInterface
-     *
-     * @return WeeeAdjustmentAttributeInterface
-     */
-    private function createWeeeAdjustmentAttributeMock(): WeeeAdjustmentAttributeInterface
-    {
-        $weeAttribute = $this->createPartialMock(WeeeAdjustmentAttribute::class, ['getData']);
-        $weeAttribute->method('getData')->willReturnCallback(function ($key = null) {
-            if ($key === null) {
-                return [
-                    'code' => 'test_code',
-                    'amount' => 12.1,
-                    'tax_amount' => 12.1,
-                    'amount_excl_tax' => 12.1
-                ];
-            }
-            // Return 12.1 for all numeric fields to match test expectations
-            if (in_array($key, ['amount', 'tax_amount', 'amount_excl_tax'])) {
-                return 12.1;
-            }
-            if ($key === 'code') {
-                return 'test_code';
-            }
-            return null;
-        });
-        return $weeAttribute;
-    }
-
-    /**
-     * Create a mock for PriceInfo Base
-     *
-     * @return Base
-     */
-    private function createPriceInfoMock(): Base
-    {
-        return $this->createPartialMockWithReflection(
-            Base::class,
-            ['getPrice', 'setExtensionAttributes', 'getExtensionAttributes', 'setPrice']
-        );
     }
 }

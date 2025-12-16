@@ -9,7 +9,9 @@ namespace Magento\Review\Test\Unit\Block;
 
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
+use Magento\Customer\Model\Context as CustomerContext;
 use Magento\Customer\Model\Url;
+use Magento\Framework\App\Http\Context as HttpContext;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\DataObject;
 use Magento\Framework\Serialize\Serializer\Json;
@@ -19,6 +21,7 @@ use Magento\Framework\UrlInterface;
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Review\Block\Form;
 use Magento\Review\Helper\Data;
+use Magento\Store\Model\StoreManager;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -79,7 +82,7 @@ class FormTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->storeManager = $this->createPartialMock(\Magento\Store\Model\StoreManager::class, ['getStore']);
+        $this->storeManager = $this->createPartialMock(StoreManager::class, ['getStore']);
         $this->requestMock = $this->createMock(RequestInterface::class);
         $this->reviewDataMock = $this->createMock(Data::class);
 
@@ -295,7 +298,7 @@ class FormTest extends TestCase
         $encoded = 'ENCODED_REFERER';
         $loginUrlBase = 'https://example.com/customer/account/login/';
 
-        $urlBuilder = $this->createMock(\Magento\Framework\UrlInterface::class);
+        $urlBuilder = $this->createMock(UrlInterface::class);
         $urlBuilder->method('getUrl')
             ->willReturnCallback(
                 function ($route, $params = []) use ($currentUrl, $encoded, $loginUrlBase) {
@@ -318,12 +321,12 @@ class FormTest extends TestCase
             ->with($currentUrl . '#review-form')
             ->willReturn($encoded);
 
-        $httpContext = $this->createMock(\Magento\Framework\App\Http\Context::class);
+        $httpContext = $this->createMock(HttpContext::class);
         $httpContext->method('getValue')
-            ->with(\Magento\Customer\Model\Context::CONTEXT_AUTH)
+            ->with(CustomerContext::CONTEXT_AUTH)
             ->willReturn(false);
 
-        $reviewData = $this->createMock(\Magento\Review\Helper\Data::class);
+        $reviewData = $this->createMock(Data::class);
         $reviewData->method('getIsGuestAllowToWrite')->willReturn(false);
 
         $formBlock = $this->createPartialMock(Form::class, []);

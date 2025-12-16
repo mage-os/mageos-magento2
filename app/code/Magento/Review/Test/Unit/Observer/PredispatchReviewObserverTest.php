@@ -8,6 +8,7 @@ declare(strict_types = 1);
 namespace Magento\Review\Test\Unit\Observer;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\App\Response\Http as ResponseHttp;
 use Magento\Framework\App\Response\RedirectInterface;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Event\Observer;
@@ -63,7 +64,7 @@ class PredispatchReviewObserverTest extends TestCase
     {
         $this->configMock = $this->createMock(ScopeConfigInterface::class);
         $this->urlMock = $this->createMock(UrlInterface::class);
-        $this->responseMock = $this->createPartialMock(\Magento\Framework\App\Response\Http::class, ['setRedirect']);
+        $this->responseMock = $this->createPartialMock(ResponseHttp::class, ['setRedirect']);
         $this->redirectMock = $this->createMock(RedirectInterface::class);
         $this->objectManager = new ObjectManager($this);
         $this->mockObject = $this->objectManager->getObject(

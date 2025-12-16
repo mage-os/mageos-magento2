@@ -9,11 +9,11 @@ declare(strict_types=1);
 namespace Magento\Wishlist\Test\Unit\Observer;
 
 use Magento\Checkout\Model\Session;
-use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\ResponseInterface;
-use Magento\Framework\App\Response\Http as HttpResponse;
+use Magento\Framework\App\Response\Http as ResponseHttp;
 use Magento\Framework\Event;
+use Magento\Framework\Event\Observer as EventObserver;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Wishlist\Helper\Data;
 use Magento\Wishlist\Model\ResourceModel\Wishlist\Collection;
@@ -21,6 +21,7 @@ use Magento\Wishlist\Model\Wishlist;
 use Magento\Wishlist\Model\WishlistFactory;
 use Magento\Wishlist\Observer\AddToCart as Observer;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+use Magento\Customer\Model\Session as CustomerSession;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -37,32 +38,69 @@ class AddToCartTest extends TestCase
     protected $observer;
 
     /**
-     * @var array
+     * @var Data|MockObject
      */
-    protected $mocks;
+    protected $helper;
+
+    /**
+     * @var Session|MockObject
+     */
+    protected $checkoutSession;
+
+    /**
+     * @var CustomerSession|MockObject
+     */
+    protected $customerSession;
+
+    /**
+     * @var WishlistFactory|MockObject
+     */
+    protected $wishlistFactory;
+
+    /**
+     * @var Wishlist|MockObject
+     */
+    protected $wishlist;
+
+    /**
+     * @var ManagerInterface|MockObject
+     */
+    protected $messageManager;
 
     protected function setUp(): void
     {
-        $this->mocks = [
-            'checkoutSession' => $this->createPartialMock(Session::class, []),
-            'customerSession' => $this->createCustomerSessionMock(),
-            'wishlistFactory' => $this->createPartialMock(WishlistFactory::class, ['create']),
-            'wishlist' => $this->createMock(Wishlist::class),
-            'messageManager' => $this->createPartialMock(\Magento\Framework\Message\Manager::class, ['addError'])
-        ];
+        $this->checkoutSession = $this->createPartialMockWithReflection(
+            Session::class,
+            [
+                'getSharedWishlist',
+                'getWishlistPendingMessages',
+                'getWishlistPendingUrls',
+                'getWishlistIds',
+                'getSingleWishlistId',
+                'setSingleWishlistId',
+                'setWishlistIds',
+                'setWishlistPendingUrls',
+                'setWishlistPendingMessages',
+                'setNoCartRedirect',
+            ]
+        );
+        $this->customerSession = $this->createPartialMockWithReflection(
+            CustomerSession::class,
+            ['setWishlistItemCount', 'isLoggedIn', 'getCustomerId']
+        );
+        $this->wishlistFactory = $this->createPartialMock(WishlistFactory::class, ['create']);
+        $this->wishlist = $this->createMock(Wishlist::class);
+        $this->messageManager = $this->createMock(ManagerInterface::class);
 
-        // Initialize storage for magic __call methods
-        $reflection = new \ReflectionClass($this->mocks['checkoutSession']);
-        $property = $reflection->getProperty('storage');
-        $property->setValue($this->mocks['checkoutSession'], new \Magento\Framework\Session\Storage());
-
-        $this->mocks['wishlistFactory']->method('create')->willReturn($this->mocks['wishlist']);
+        $this->wishlistFactory->expects($this->any())
+            ->method('create')
+            ->willReturn($this->wishlist);
 
         $this->observer = new Observer(
-            $this->mocks['checkoutSession'],
-            $this->mocks['customerSession'],
-            $this->mocks['wishlistFactory'],
-            $this->mocks['messageManager']
+            $this->checkoutSession,
+            $this->customerSession,
+            $this->wishlistFactory,
+            $this->messageManager
         );
     }
 
@@ -73,34 +111,41 @@ class AddToCartTest extends TestCase
         $url = 'http://some.pending/url';
         $message = 'some error msg';
 
-        $eventObserver = $this->createMock(\Magento\Framework\Event\Observer::class);
-        
-        $event = $this->createEventMock();
+        $eventObserver = $this->createMock(EventObserver::class);
+        $event = $this->createPartialMockWithReflection(
+            Event::class,
+            ['getRequest', 'getResponse']
+        );
         $request = $this->createMock(RequestInterface::class);
-        $response = $this->createResponseMock();
-        
+        $response = $this->createPartialMock(
+            ResponseHttp::class,
+            ['setRedirect']
+        );
         $wishlists = $this->createMock(Collection::class);
         $loadedWishlist = $this->createPartialMock(Wishlist::class, ['getId', 'delete']);
 
         $eventObserver->expects($this->any())->method('getEvent')->willReturn($event);
 
         $request->expects($this->any())->method('getParam')->with('wishlist_next')->willReturn(true);
-        
-        $event->setRequest($request);
-        $event->setResponse($response);
+        $event->expects($this->once())->method('getRequest')->willReturn($request);
 
-        $this->mocks['checkoutSession']->setWishlistPendingMessages([$message]);
-        $this->mocks['checkoutSession']->setWishlistPendingUrls([$url]);
-        $this->mocks['checkoutSession']->setSingleWishlistId($wishlistId);
+        $this->checkoutSession->expects($this->once())->method('getSharedWishlist');
+        $this->checkoutSession->expects($this->once())->method('getWishlistPendingMessages')->willReturn([$message]);
+        $this->checkoutSession->expects($this->once())->method('getWishlistPendingUrls')->willReturn([$url]);
+        $this->checkoutSession->expects($this->once())->method('getWishlistIds');
+        $this->checkoutSession->expects($this->once())->method('getSingleWishlistId')->willReturn($wishlistId);
 
-        // Mock customer session methods
-        $this->mocks['customerSession']->method('isLoggedIn')->willReturn(true);
-        $this->mocks['customerSession']->method('getCustomerId')->willReturn($customerId);
-        $this->mocks['wishlist']->expects($this->once())
+        $this->customerSession->expects($this->once())
+            ->method('isLoggedIn')
+            ->willReturn(true);
+        $this->customerSession->expects($this->once())
+            ->method('getCustomerId')
+            ->willReturn($customerId);
+        $this->wishlist->expects($this->once())
             ->method('loadByCustomerId')
             ->with($this->logicalOr($customerId, true))
             ->willReturnSelf();
-        $this->mocks['wishlist']->expects($this->once())
+        $this->wishlist->expects($this->once())
             ->method('getItemCollection')
             ->willReturn($wishlists);
         $loadedWishlist->expects($this->once())
@@ -111,38 +156,37 @@ class AddToCartTest extends TestCase
         $wishlists->expects($this->once())
             ->method('load')
             ->willReturn([$loadedWishlist]);
-        $this->mocks['messageManager']->expects($this->once())
+        $this->checkoutSession->expects($this->once())
+            ->method('setWishlistIds')
+            ->with([])
+            ->willReturnSelf();
+        $this->checkoutSession->expects($this->once())
+            ->method('setSingleWishlistId')
+            ->with(null)
+            ->willReturnSelf();
+        $this->checkoutSession->expects($this->once())
+            ->method('setWishlistPendingUrls')
+            ->with([])
+            ->willReturnSelf();
+        $this->checkoutSession->expects($this->once())
+            ->method('setWishlistPendingMessages')
+            ->with([])
+            ->willReturnSelf();
+        $this->messageManager->expects($this->once())
             ->method('addError')
             ->with($message)
             ->willReturnSelf();
+        $event->expects($this->once())
+            ->method('getResponse')
+            ->willReturn($response);
+        $response->expects($this->once())
+            ->method('setRedirect')
+            ->with($url);
+        $this->checkoutSession->expects($this->once())
+            ->method('setNoCartRedirect')
+            ->with(true);
 
-        /** @var $eventObserver \Magento\Framework\Event\Observer */
+        /** @var $eventObserver EventObserver */
         $this->observer->execute($eventObserver);
-    }
-
-    private function createEventMock()
-    {
-        $event = $this->createPartialMock(Event::class, []);
-        $reflection = new \ReflectionClass($event);
-        $property = $reflection->getProperty('_data');
-        $property->setValue($event, []);
-        return $event;
-    }
-
-    private function createResponseMock()
-    {
-        return $this->createPartialMockWithReflection(HttpResponse::class, ['setRedirect']);
-    }
-
-    private function createCustomerSessionMock()
-    {
-        $session = $this->createPartialMock(CustomerSession::class, ['isLoggedIn', 'getCustomerId']);
-        
-        // Initialize storage for magic __call methods
-        $reflection = new \ReflectionClass($session);
-        $property = $reflection->getProperty('storage');
-        $property->setValue($session, new \Magento\Framework\Session\Storage());
-        
-        return $session;
     }
 }

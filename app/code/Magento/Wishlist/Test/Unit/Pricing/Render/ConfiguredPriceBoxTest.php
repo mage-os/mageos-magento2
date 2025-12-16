@@ -9,6 +9,7 @@ namespace Magento\Wishlist\Test\Unit\Pricing\Render;
 
 use Magento\Catalog\Model\Product\Configuration\Item\ItemInterface;
 use Magento\Catalog\Model\Product\Pricing\Renderer\SalableResolverInterface;
+use Magento\Catalog\Pricing\Price\ConfiguredPrice;
 use Magento\Catalog\Pricing\Price\ConfiguredPriceSelection;
 use Magento\Catalog\Pricing\Price\MinimalPriceCalculatorInterface;
 use Magento\Framework\Pricing\Price\PriceInterface;
@@ -74,7 +75,7 @@ class ConfiguredPriceBoxTest extends TestCase
 
         $this->saleableItem = $this->createMock(SaleableInterface::class);
 
-        $this->price = $this->createMock(\Magento\Catalog\Pricing\Price\ConfiguredPrice::class);
+        $this->price = $this->createMock(ConfiguredPrice::class);
 
         $this->rendererPool = $this->createMock(RendererPool::class);
 

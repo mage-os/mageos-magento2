@@ -22,6 +22,7 @@ use Magento\Wishlist\Controller\Index\Remove;
 use Magento\Wishlist\Controller\WishlistProvider;
 use Magento\Wishlist\Helper\Data;
 use Magento\Wishlist\Model\Item;
+use Magento\Wishlist\Model\Product\AttributeValueProvider;
 use Magento\Wishlist\Model\Wishlist;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -84,6 +85,11 @@ class RemoveTest extends TestCase
     protected $formKeyValidator;
 
     /**
+     * @var AttributeValueProvider|MockObject
+     */
+    protected $attributeValueProvider;
+
+    /**
      * @inheritdoc
      */
     protected function setUp(): void
@@ -104,6 +110,7 @@ class RemoveTest extends TestCase
             ->willReturn($this->resultRedirectMock);
 
         $this->formKeyValidator = $this->createMock(Validator::class);
+        $this->attributeValueProvider = $this->createMock(AttributeValueProvider::class);
     }
 
     /**
@@ -175,13 +182,11 @@ class RemoveTest extends TestCase
             ->with($this->request)
             ->willReturn(true);
 
-        $attributeValueProviderMock = $this->createMock(\Magento\Wishlist\Model\Product\AttributeValueProvider::class);
-        
         return new Remove(
             $this->context,
             $this->wishlistProvider,
             $this->formKeyValidator,
-            $attributeValueProviderMock
+            $this->attributeValueProvider
         );
     }
 
@@ -202,13 +207,11 @@ class RemoveTest extends TestCase
             ->with('*/*/')
             ->willReturnSelf();
 
-        $attributeValueProviderMock = $this->createMock(\Magento\Wishlist\Model\Product\AttributeValueProvider::class);
-        
         $controller = new Remove(
             $this->context,
             $this->wishlistProvider,
             $this->formKeyValidator,
-            $attributeValueProviderMock
+            $this->attributeValueProvider
         );
 
         $this->assertSame($this->resultRedirectMock, $controller->execute());

@@ -14,6 +14,7 @@ use Magento\Payment\Model\Cart\SalesModel\SalesModelInterface;
 use Magento\Quote\Model\Quote\Item;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\Store;
+use Magento\Store\Model\StoreManager;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Weee\Helper\Data;
 use Magento\Weee\Observer\AddPaymentWeeeItem;
@@ -54,7 +55,7 @@ class AddPaymentWeeeItemTest extends TestCase
     protected function setUp(): void
     {
         $this->weeeHelperMock = $this->createMock(Data::class);
-        $this->storeManagerMock = $this->createPartialMock(\Magento\Store\Model\StoreManager::class, ['getStore']);
+        $this->storeManagerMock = $this->createPartialMock(StoreManager::class, ['getStore']);
 
         $this->observer = new AddPaymentWeeeItem(
             $this->weeeHelperMock,
@@ -132,7 +133,7 @@ class AddPaymentWeeeItemTest extends TestCase
      */
     private function prepareShouldBeAddedAsCustomItem(bool $isEnabled, bool $includeInSubtotal): bool
     {
-        $storeMock = $this->createPartialMock(\Magento\Store\Model\Store::class, ['getId']);
+        $storeMock = $this->createPartialMock(Store::class, ['getId']);
         $storeMock->expects($this->once())
             ->method('getId')
             ->willReturn(Store::DEFAULT_STORE_ID);

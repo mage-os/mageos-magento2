@@ -37,14 +37,12 @@ class AdjustmentTest extends TestCase
     protected $model;
 
     /**
-     * @var \Magento\Weee\Helper\Data
+     * @var Data
      */
     protected $weeeHelperMock;
 
     /**
-     * Context mock object
-     *
-     * @var \Magento\Framework\View\Element\Template\Context
+     * @var Context
      */
     protected $contextMock;
 
@@ -62,21 +60,20 @@ class AdjustmentTest extends TestCase
     {
         $this->contextMock = $this->createPartialMockWithReflection(
             Context::class,
-            ['getEventManager', 'getScopeConfig', 'getStoreConfig']
+            ['getStoreConfig', 'getEventManager', 'getScopeConfig']
         );
-        
+        $this->priceCurrencyMock = $this->createMock(PriceCurrencyInterface::class);
+        $this->weeeHelperMock = $this->createMock(Data::class);
         $eventManagerMock = $this->createMock(ManagerInterface::class);
+
         $scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
-        
+
         $this->contextMock->expects($this->any())
             ->method('getEventManager')
             ->willReturn($eventManagerMock);
         $this->contextMock->expects($this->any())
             ->method('getScopeConfig')
             ->willReturn($scopeConfigMock);
-        
-        $this->priceCurrencyMock = $this->createMock(PriceCurrencyInterface::class);
-        $this->weeeHelperMock = $this->createMock(Data::class);
 
         $this->model = new Adjustment(
             $this->contextMock,
@@ -193,9 +190,9 @@ class AdjustmentTest extends TestCase
     /**
      * Test method for showExclDescrIncl
      *
-     * @param int   $typeOfDisplay
+     * @param int $typeOfDisplay
      * @param float $amount
-     * @param bool  $expectedResult
+     * @param bool $expectedResult
      */
     #[DataProvider('showExclDescrInclDataProvider')]
     public function testShowExclDescrIncl($typeOfDisplay, $amount, $expectedResult)
@@ -258,7 +255,7 @@ class AdjustmentTest extends TestCase
     /**
      * Test for method getWeeeTaxAttributes
      *
-     * @param int   $typeOfDisplay
+     * @param int $typeOfDisplay
      * @param array $attributes
      * @param array $expectedResult
      */
@@ -316,7 +313,7 @@ class AdjustmentTest extends TestCase
      * Test for method renderWeeeTaxAttribute
      *
      * @param DataObject $attribute
-     * @param string     $expectedResult
+     * @param string $expectedResult
      */
     #[DataProvider('renderWeeeTaxAttributeAmountDataProvider')]
     public function testRenderWeeeTaxAttributeAmount($attribute, $expectedResult)
@@ -344,7 +341,7 @@ class AdjustmentTest extends TestCase
      * Test for method renderWeeeTaxAttributeName
      *
      * @param DataObject $attribute
-     * @param string     $expectedResult
+     * @param string $expectedResult
      */
     #[DataProvider('renderWeeeTaxAttributeNameDataProvider')]
     public function testRenderWeeeTaxAttributeName($attribute, $expectedResult)
@@ -372,7 +369,7 @@ class AdjustmentTest extends TestCase
      * Test for method renderWeeeTaxAttributeWithTax
      *
      * @param DataObject $attribute
-     * @param string     $expectedResult
+     * @param string $expectedResult
      */
     #[DataProvider('renderWeeeTaxAttributeAmountWithTaxDataProvider')]
     public function testRenderWeeeTaxAttributeWithTax($attribute, $expectedResult)

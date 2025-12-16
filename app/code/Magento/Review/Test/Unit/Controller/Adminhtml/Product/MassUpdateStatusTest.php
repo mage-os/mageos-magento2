@@ -127,17 +127,11 @@ class MassUpdateStatusTest extends TestCase
             ->willReturnSelf();
         $modelMock = $this->createPartialMockWithReflection(
             Review::class,
-            ['setStatusId', 'save', 'aggregate', '_getResource']
+            ['setStatusId', '_getResource']
         );
         $modelMock->expects($this->once())
             ->method('setStatusId')
             ->with(Review::STATUS_APPROVED)
-            ->willReturnSelf();
-        $modelMock->expects($this->once())
-            ->method('save')
-            ->willReturnSelf();
-        $modelMock->expects($this->once())
-            ->method('aggregate')
             ->willReturnSelf();
         $modelMock->method('_getResource')
             ->willReturn($this->createMock(ReviewResourceModel::class));

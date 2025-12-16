@@ -9,11 +9,12 @@ namespace Magento\Widget\Test\Unit\Controller\Adminhtml\Widget\Instance;
 
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\App\RequestInterface;
+use Magento\Framework\App\Response\Http as ResponseHttp;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\App\ViewInterface;
 use Magento\Framework\Message\ManagerInterface;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Element\Messages;
 use Magento\Framework\View\Layout;
 use Magento\Framework\View\LayoutInterface;
@@ -25,9 +26,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Test for \Magento\Widget\Controller\Adminhtml\Widget\Instance\Validate.
- *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  */
 class ValidateTest extends TestCase
 {
@@ -42,6 +41,11 @@ class ValidateTest extends TestCase
      * @var Validate
      */
     private $model;
+
+    /**
+     * @var Layout|MockObject
+     */
+    private $layout;
 
     /**
      * @var ManagerInterface|MockObject
@@ -73,14 +77,11 @@ class ValidateTest extends TestCase
         $request = $this->createMock(RequestInterface::class);
         $this->messageManagerMock = $this->createMock(ManagerInterface::class);
         $viewMock = $this->createMock(ViewInterface::class);
+        $layoutMock = $this->createPartialMock(Layout::class, ['getMessagesBlock', 'initMessages']);
         $this->messagesBlock = $this->createMock(Messages::class);
-        $layoutMock = $this->createMock(Layout::class);
         $layoutMock->method('getMessagesBlock')->willReturn($this->messagesBlock);
         $viewMock->method('getLayout')->willReturn($layoutMock);
-        $this->responseMock = $this->createPartialMockWithReflection(
-            \Magento\Framework\App\Response\Http::class,
-            ['representJson']
-        );
+        $this->responseMock = $this->createPartialMock(ResponseHttp::class, ['representJson']);
 
         $context = $this->createMock(Context::class);
         $context->method('getRequest')->willReturn($request);
@@ -102,7 +103,8 @@ class ValidateTest extends TestCase
             Validate::class,
             [
                 'widgetFactory' => $widgetFactoryMock,
-                'context' => $context
+                'context' => $context,
+                'layout' => $this->layout
             ]
         );
     }

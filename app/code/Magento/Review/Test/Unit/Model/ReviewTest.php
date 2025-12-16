@@ -11,14 +11,20 @@ use Magento\Catalog\Model\Product;
 use Magento\Framework\DataObject;
 use Magento\Framework\Model\Context;
 use Magento\Framework\Registry;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Framework\UrlInterface;
+use Magento\Review\Model\ResourceModel\Review as ReviewResource;
 use Magento\Review\Model\ResourceModel\Review\Product\Collection;
 use Magento\Review\Model\ResourceModel\Review\Product\CollectionFactory;
+use Magento\Review\Model\ResourceModel\Review\Status\Collection as StatusCollection;
+use Magento\Review\Model\ResourceModel\Review\Status\CollectionFactory as StatusCollectionFactory;
+use Magento\Review\Model\ResourceModel\Review\Summary\CollectionFactory as SummaryCollectionFactory;
 use Magento\Review\Model\Review;
 use Magento\Review\Model\Review\Summary;
 use Magento\Review\Model\Review\SummaryFactory;
 use Magento\Store\Model\Store;
+use Magento\Store\Model\StoreManager;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -29,6 +35,8 @@ use PHPUnit\Framework\Attributes\DataProvider;
  */
 class ReviewTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Review
      */
@@ -103,20 +111,20 @@ class ReviewTest extends TestCase
             ['create']
         );
         $this->statusFactoryMock = $this->createPartialMock(
-            \Magento\Review\Model\ResourceModel\Review\Status\CollectionFactory::class,
+            StatusCollectionFactory::class,
             ['create']
         );
         $this->reviewSummaryMock = $this->createMock(
-            \Magento\Review\Model\ResourceModel\Review\Summary\CollectionFactory::class
+            SummaryCollectionFactory::class
         );
         $this->summaryModMock = $this->createPartialMock(
             SummaryFactory::class,
             ['create']
         );
         $this->summaryMock = $this->createMock(Summary::class);
-        $this->storeManagerMock = $this->createPartialMock(\Magento\Store\Model\StoreManager::class, ['getStore']);
+        $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
         $this->urlInterfaceMock = $this->createMock(UrlInterface::class);
-        $this->resource = $this->createMock(\Magento\Review\Model\ResourceModel\Review::class);
+        $this->resource = $this->createMock(ReviewResource::class);
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->review = $this->objectManagerHelper->getObject(
@@ -148,7 +156,7 @@ class ReviewTest extends TestCase
 
     public function testGetStatusCollection()
     {
-        $collection = $this->createMock(\Magento\Review\Model\ResourceModel\Review\Status\Collection::class);
+        $collection = $this->createMock(StatusCollection::class);
         $this->statusFactoryMock->expects($this->once())
             ->method('create')
             ->willReturn($collection);
@@ -178,9 +186,6 @@ class ReviewTest extends TestCase
     /**
      * @deprecated
      */
-    /**
-     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
-     */
     public function testGetEntitySummary()
     {
         $productId = 6;
@@ -189,14 +194,22 @@ class ReviewTest extends TestCase
         $summary = new DataObject();
         $summary->setData($testSummaryData);
 
-        $product = $this->createMock(Product::class);
-        $product->method('getId')->willReturn(1);
+        $product = $this->createPartialMockWithReflection(
+            Product::class,
+            ['getId', 'setRatingSummary', '__wakeup']
+        );
+        $product->expects($this->once())->method('getId')->willReturn($productId);
+        $product->expects($this->once())->method('setRatingSummary')->with($summary)->willReturnSelf();
 
-        $summaryData = $this->createPartialMock(Summary::class, ['load']);
-        $summaryReflection = new \ReflectionClass($summaryData);
-        $summaryDataProperty = $summaryReflection->getProperty('_data');
-        $summaryDataProperty->setValue($summaryData, []);
-        $summaryData->method('load')->willReturnSelf();
+        $summaryData = $this->createPartialMockWithReflection(
+            Summary::class,
+            ['setStoreId', 'load', 'getData', '__wakeup']
+        );
+        $summaryData->expects($this->once())->method('setStoreId')
+            ->with($storeId)->willReturnSelf();
+        $summaryData->expects($this->once())->method('load')
+            ->with($productId)->willReturnSelf();
+        $summaryData->expects($this->once())->method('getData')->willReturn($testSummaryData);
         $this->summaryModMock->expects($this->once())->method('create')->willReturn($summaryData);
         $this->assertNull($this->review->getEntitySummary($product, $storeId));
     }

@@ -20,6 +20,7 @@ use Magento\Framework\Registry;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Store\Model\Group;
 use Magento\Store\Model\Store;
+use Magento\Store\Model\StoreManager;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Store\Model\Website;
 use Magento\Tax\Helper\Data;
@@ -118,44 +119,27 @@ class TaxTest extends TestCase
         $this->context = $this->createMock(Context::class);
         $this->registry = $this->createMock(Registry::class);
 
-        $this->attributeFactory = $this->getMockBuilder(AttributeFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
+        $this->attributeFactory = $this->createPartialMock(AttributeFactory::class, ['create']);
 
-        $this->storeManager = $this->createPartialMock(\Magento\Store\Model\StoreManager::class, ['getWebsite']);
+        $this->storeManager = $this->createPartialMock(StoreManager::class, ['getWebsite']);
 
-        $this->calculationFactory = $this->getMockBuilder(CalculationFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
+        $this->calculationFactory = $this->createPartialMock(CalculationFactory::class, ['create']);
 
         $this->customerSession = $this->createPartialMockWithReflection(
             Session::class,
             ['getCustomerId', 'getDefaultTaxShippingAddress', 'getDefaultTaxBillingAddress', 'getCustomerTaxClassId']
         );
-        $this->customerSession->expects($this->any())->method('getCustomerId')->willReturn(null);
-        $this->customerSession->expects($this->any())->method('getDefaultTaxShippingAddress')->willReturn(null);
-        $this->customerSession->expects($this->any())->method('getDefaultTaxBillingAddress')->willReturn(null);
-        $this->customerSession->expects($this->any())->method('getCustomerTaxClassId')->willReturn(null);
+        $this->customerSession->method('getCustomerId')->willReturn(null);
+        $this->customerSession->method('getDefaultTaxShippingAddress')->willReturn(null);
+        $this->customerSession->method('getDefaultTaxBillingAddress')->willReturn(null);
+        $this->customerSession->method('getCustomerTaxClassId')->willReturn(null);
 
-        $className = AccountManagementInterface::class;
-        $this->accountManagement = $this->createMock($className);
-
-        $className = Data::class;
-        $this->taxData = $this->createMock($className);
-
-        $className = ResourceModelTax::class;
-        $this->resource = $this->createMock($className);
-
-        $className = Config::class;
-        $this->weeeConfig = $this->createMock($className);
-
-        $className = PriceCurrencyInterface::class;
-        $this->priceCurrency = $this->createMock($className);
-
-        $className = AbstractDb::class;
-        $this->resourceCollection = $this->createMock($className);
+        $this->accountManagement = $this->createMock(AccountManagementInterface::class);
+        $this->taxData = $this->createMock(Data::class);
+        $this->resource = $this->createMock(ResourceModelTax::class);
+        $this->weeeConfig = $this->createMock(Config::class);
+        $this->priceCurrency = $this->createMock(PriceCurrencyInterface::class);
+        $this->resourceCollection = $this->createMock(AbstractDb::class);
 
         $this->model = new Tax(
             $this->context,

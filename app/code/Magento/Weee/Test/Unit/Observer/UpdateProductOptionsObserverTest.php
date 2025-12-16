@@ -14,6 +14,7 @@ use Magento\Framework\Event\Observer;
 use Magento\Framework\Registry;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+use Magento\Tax\Helper\Data as TaxHelperData;
 use Magento\Tax\Model\Config as TaxConfig;
 use Magento\Weee\Helper\Data;
 use Magento\Weee\Model\Tax as WeeeDisplayConfig;
@@ -80,7 +81,7 @@ class UpdateProductOptionsObserverTest extends TestCase
             ->method('getWeeeAttributesForBundle')
             ->willReturn([['fpt1' => $weeeObject1], ['fpt1'=>$weeeObject1, 'fpt2'=>$weeeObject2]]);
 
-        $taxHelper=$this->createMock(\Magento\Tax\Helper\Data::class);
+        $taxHelper=$this->createMock(TaxHelperData::class);
         $taxHelper->expects($this->any())
             ->method('displayPriceExcludingTax')
             ->willReturn($priceDisplay == TaxConfig::DISPLAY_TYPE_EXCLUDING_TAX);

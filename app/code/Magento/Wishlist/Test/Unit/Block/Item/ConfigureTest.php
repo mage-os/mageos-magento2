@@ -8,6 +8,7 @@ namespace Magento\Wishlist\Test\Unit\Block\Item;
 use Magento\Catalog\Model\Product;
 use Magento\Framework\Escaper;
 use Magento\Framework\Registry;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\View\Element\AbstractBlock;
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Framework\View\LayoutInterface;
@@ -19,6 +20,8 @@ use PHPUnit\Framework\TestCase;
 
 class ConfigureTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Configure
      */
@@ -95,7 +98,10 @@ class ConfigureTest extends TestCase
     {
         $layoutMock = $this->createMock(LayoutInterface::class);
 
-        $blockMock = $this->createMock(\Magento\Framework\View\Element\AbstractBlock::class);
+        $blockMock = $this->createPartialMockWithReflection(
+            AbstractBlock::class,
+            ['setCustomAddToCartUrl']
+        );
         $layoutMock->expects($this->once())
             ->method('getBlock')
             ->with('product.info')
@@ -113,6 +119,10 @@ class ConfigureTest extends TestCase
             ->with($itemMock)
             ->willReturn('some_url');
 
+        $blockMock->expects($this->once())
+            ->method('setCustomAddToCartUrl')
+            ->with('some_url');
+
         $this->assertEquals($this->model, $this->model->setLayout($layoutMock));
         $this->assertEquals($layoutMock, $this->model->getLayout());
     }
@@ -121,7 +131,10 @@ class ConfigureTest extends TestCase
     {
         $layoutMock = $this->createMock(LayoutInterface::class);
 
-        $blockMock = $this->createMock(\Magento\Framework\View\Element\AbstractBlock::class);
+        $blockMock = $this->createPartialMockWithReflection(
+            AbstractBlock::class,
+            ['setCustomAddToCartUrl']
+        );
         $layoutMock->expects($this->once())
             ->method('getBlock')
             ->with('product.info')
@@ -134,6 +147,9 @@ class ConfigureTest extends TestCase
 
         $this->wishlistDataMock->expects($this->never())
             ->method('getAddToCartUrl');
+
+        $blockMock->expects($this->never())
+            ->method('setCustomAddToCartUrl');
 
         $this->assertEquals($this->model, $this->model->setLayout($layoutMock));
         $this->assertEquals($layoutMock, $this->model->getLayout());

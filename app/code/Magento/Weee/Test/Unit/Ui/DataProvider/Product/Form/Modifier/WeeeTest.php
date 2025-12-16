@@ -10,6 +10,7 @@ namespace Magento\Weee\Test\Unit\Ui\DataProvider\Product\Form\Modifier;
 use Magento\Catalog\Model\ResourceModel\Eav\Attribute as EavAttribute;
 use Magento\Catalog\Model\ResourceModel\Eav\AttributeFactory as EavAttributeFactory;
 use Magento\Catalog\Test\Unit\Ui\DataProvider\Product\Form\Modifier\AbstractModifierTestCase;
+use Magento\Directory\Helper\Data as DirectoryHelper;
 use Magento\Directory\Model\Config\Source\Country as SourceCountry;
 use Magento\Weee\Ui\DataProvider\Product\Form\Modifier\Manager\Website as WebsiteManager;
 use Magento\Weee\Ui\DataProvider\Product\Form\Modifier\Weee;
@@ -67,7 +68,7 @@ class WeeeTest extends AbstractModifierTestCase
         return new Weee(
             $this->locatorMock,
             $this->sourceCountryMock,
-            $this->createMock(\Magento\Directory\Helper\Data::class),
+            $this->createMock(DirectoryHelper::class),
             $this->eavAttributeFactoryMock,
             $this->websiteManagerMock
         );

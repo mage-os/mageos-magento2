@@ -9,9 +9,9 @@ namespace Magento\WeeeGraphQl\Test\Unit\Model\Resolver;
 
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\GraphQl\Config\Element\Field;
+use Magento\Framework\GraphQl\Query\Resolver\ContextInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
-use Magento\GraphQl\Model\Query\Context;
 use Magento\GraphQl\Model\Query\ContextExtensionInterface;
 use Magento\Quote\Api\Data\CartItemInterface;
 use Magento\Store\Api\Data\StoreInterface;
@@ -30,7 +30,7 @@ class FixedProductTaxResolverTest extends TestCase
     use MockCreationTrait;
 
     /**
-     * @var MockObject|Context
+     * @var MockObject|ContextInterface
      */
     private $contextMock;
 
@@ -118,18 +118,24 @@ class FixedProductTaxResolverTest extends TestCase
      */
     protected function setUp(): void
     {
+        $this->contextMock = $this->createPartialMockWithReflection(
+            ContextInterface::class,
+            ['getExtensionAttributes']
+        );
+
+        $this->weeeHelperMock = $this->createPartialMock(
+            WeeeHelper::class,
+            ['isEnabled', 'getApplied']
+        );
+        $this->taxHelperMock = $this->createPartialMock(
+            TaxHelper::class,
+            ['getPriceDisplayType']
+        );
+
         $this->contextExtensionAttributesMock = $this->createPartialMockWithReflection(
             ContextExtensionInterface::class,
             ['getStore']
         );
-
-        $this->contextMock = $this->createPartialMockWithReflection(Context::class, ['getExtensionAttributes']);
-        $this->contextMock->expects($this->any())
-            ->method('getExtensionAttributes')
-            ->willReturn($this->contextExtensionAttributesMock);
-
-        $this->weeeHelperMock = $this->createPartialMock(WeeeHelper::class, ['isEnabled', 'getApplied']);
-        $this->taxHelperMock = $this->createPartialMock(TaxHelper::class, ['getPriceDisplayType']);
         $this->storeMock = $this->createMock(StoreInterface::class);
         $this->cartItemMock = $this->createMock(CartItemInterface::class);
         $this->fieldMock = $this->createMock(Field::class);
@@ -148,7 +154,7 @@ class FixedProductTaxResolverTest extends TestCase
         $this->expectException(LocalizedException::class);
         $this->expectExceptionMessageMatches('/value should be specified/');
 
-        $this->resolver->resolve($this->fieldMock, $this->contextMock, $this->resolveInfoMock);
+        $this->resolver->resolve($this->fieldMock, null, $this->resolveInfoMock);
     }
 
     /**
@@ -158,9 +164,10 @@ class FixedProductTaxResolverTest extends TestCase
      */
     public function testShouldReturnEmptyResult(): void
     {
-        $this->contextExtensionAttributesMock->expects($this->any())
-            ->method('getStore')
-            ->willReturn($this->storeMock);
+        $this->contextExtensionAttributesMock->method('getStore')
+            ->willreturn($this->storeMock);
+        $this->contextMock->method('getExtensionAttributes')
+            ->willReturn($this->contextExtensionAttributesMock);
 
         $this->weeeHelperMock->method('isEnabled')
             ->with($this->storeMock)
@@ -181,7 +188,7 @@ class FixedProductTaxResolverTest extends TestCase
     }
 
     /**
-     * @param int   $displayType
+     * @param int $displayType
      * @param array $expected
      *
      * @return void
@@ -189,9 +196,10 @@ class FixedProductTaxResolverTest extends TestCase
     #[DataProvider('shouldReturnResultDataProvider')]
     public function testShouldReturnResult(int $displayType, array $expected): void
     {
-        $this->contextExtensionAttributesMock->expects($this->any())
-            ->method('getStore')
-            ->willReturn($this->storeMock);
+        $this->contextExtensionAttributesMock->method('getStore')
+            ->willreturn($this->storeMock);
+        $this->contextMock->method('getExtensionAttributes')
+            ->willReturn($this->contextExtensionAttributesMock);
 
         $this->weeeHelperMock->method('isEnabled')
             ->with($this->storeMock)

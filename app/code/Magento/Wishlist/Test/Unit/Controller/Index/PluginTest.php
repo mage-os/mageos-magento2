@@ -24,7 +24,7 @@ use Magento\Wishlist\Controller\Index\Plugin;
 use Magento\Wishlist\Model\AuthenticationState;
 use Magento\Wishlist\Model\AuthenticationStateInterface;
 use Magento\Wishlist\Model\DataSerializer;
-use Magento\Customer\Model\Session as CustomerSession;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -35,6 +35,8 @@ use PHPUnit\Framework\TestCase;
  */
 class PluginTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var Session|MockObject
      */
@@ -85,12 +87,25 @@ class PluginTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->customerSession = $this->createCustomerSessionMock();
+        $this->customerSession = $this->createPartialMockWithReflection(
+            Session::class,
+            [
+                'authenticate',
+                'getBeforeWishlistUrl',
+                'setBeforeWishlistUrl',
+                'setBeforeWishlistRequest',
+                'getBeforeWishlistRequest',
+                'setBeforeRequestParams',
+                'setBeforeModuleName',
+                'setBeforeControllerName',
+                'setBeforeAction',
+            ]
+        );
 
         $this->authenticationState = $this->createMock(AuthenticationState::class);
         $this->config = $this->createMock(Config::class);
         $this->redirector = $this->createMock(Redirect::class);
-        $this->messageManager = $this->createStub(ManagerInterface::class);
+        $this->messageManager = $this->createMock(ManagerInterface::class);
         $this->request = $this->createMock(Http::class);
         $this->dataSerializer = $this->createMock(DataSerializer::class);
         $this->formKey = $this->createMock(FormKey::class);
@@ -156,10 +171,40 @@ class PluginTest extends TestCase
             ->expects($this->exactly(2))
             ->method('getActionName')
             ->willReturn('add');
-            
-        // Use magic __call methods via storage
-        $this->customerSession->setData('before_wishlist_url', false);
-        $this->customerSession->setData('before_wishlist_request', $params);
+
+        $this->customerSession->expects($this->once())
+            ->method('authenticate')
+            ->willReturn(false);
+        $this->customerSession->expects($this->once())
+            ->method('getBeforeWishlistUrl')
+            ->willReturn(false);
+        $this->customerSession->expects($this->once())
+            ->method('setBeforeWishlistUrl')
+            ->with($refererUrl)
+            ->willReturnSelf();
+        $this->customerSession->expects($this->once())
+            ->method('setBeforeWishlistRequest')
+            ->with(['product' => 1])
+            ->willReturnSelf();
+        $this->customerSession->expects($this->once())
+            ->method('getBeforeWishlistRequest')
+            ->willReturn($params);
+        $this->customerSession->expects($this->once())
+            ->method('setBeforeRequestParams')
+            ->with($params)
+            ->willReturnSelf();
+        $this->customerSession->expects($this->once())
+            ->method('setBeforeModuleName')
+            ->with('wishlist')
+            ->willReturnSelf();
+        $this->customerSession->expects($this->once())
+            ->method('setBeforeControllerName')
+            ->with('index')
+            ->willReturnSelf();
+        $this->customerSession->expects($this->once())
+            ->method('setBeforeAction')
+            ->with('add')
+            ->willReturnSelf();
 
         $this->config
             ->expects($this->once())
@@ -168,46 +213,5 @@ class PluginTest extends TestCase
             ->willReturn(false);
 
         $this->getPlugin()->beforeDispatch($indexController, $this->request);
-    }
-
-    /**
-     * Create customer session mock
-     */
-    private function createCustomerSessionMock()
-    {
-        $session = $this->createPartialMock(CustomerSession::class, []);
-        
-        // Initialize storage for magic __call methods
-        $reflection = new \ReflectionClass($session);
-        $storageProperty = $reflection->getProperty('storage');
-        $storageProperty->setValue($session, new \Magento\Framework\Session\Storage());
-        
-        // Create and set mock URL factory
-        $urlFactoryMock = $this->createMock(\Magento\Framework\UrlFactory::class);
-        $urlMock = $this->createMock(\Magento\Framework\Url::class);
-        $urlFactoryMock->method('create')->willReturn($urlMock);
-        $urlFactoryProperty = $reflection->getProperty('_urlFactory');
-        $urlFactoryProperty->setValue($session, $urlFactoryMock);
-        
-        // Create and set mock customer factory
-        $customerFactoryMock = $this->createMock(\Magento\Customer\Model\CustomerFactory::class);
-        $customerMock = $this->createMock(\Magento\Customer\Model\Customer::class);
-        $customerFactoryMock->method('create')->willReturn($customerMock);
-        $customerFactoryProperty = $reflection->getProperty('_customerFactory');
-        $customerFactoryProperty->setValue($session, $customerFactoryMock);
-        
-        // Create and set mock customer URL
-        $customerUrlMock = $this->createMock(\Magento\Customer\Model\Url::class);
-        $customerUrlMock->method('getLoginUrlParams')->willReturn([]);
-        $customerUrlProperty = $reflection->getProperty('_customerUrl');
-        $customerUrlProperty->setValue($session, $customerUrlMock);
-        
-        // Create and set mock response
-        $responseMock = $this->createMock(\Magento\Framework\App\Response\Http::class);
-        $responseMock->method('setRedirect')->willReturnSelf();
-        $responseProperty = $reflection->getProperty('response');
-        $responseProperty->setValue($session, $responseMock);
-        
-        return $session;
     }
 }

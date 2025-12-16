@@ -199,7 +199,8 @@ class PostTest extends TestCase
             ->method('setReviewId')
             ->willReturnSelf();
         $this->ratingMock->expects($this->once())
-            ->method('addOptionVote');
+            ->method('addOptionVote')
+            ->willReturnSelf();
 
         $this->assertSame($this->resultRedirectMock, $this->postController->execute());
     }

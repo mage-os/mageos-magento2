@@ -13,6 +13,7 @@ use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Creditmemo;
 use Magento\Sales\Model\Order\Invoice;
 use Magento\Sales\Model\Order\Invoice\Item;
+use Magento\Sales\Model\Order\Item as OrderItem;
 use Magento\Sales\Model\Order\Invoice\Total\Tax;
 use Magento\Weee\Helper\Data;
 use Magento\Weee\Model\Total\Creditmemo\Weee;
@@ -59,25 +60,24 @@ class WeeeTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->weeeData = $this->getMockBuilder(Data::class)
-            ->onlyMethods(
-                [
-                    'getRowWeeeTaxInclTax',
-                    'getBaseRowWeeeTaxInclTax',
-                    'getWeeeAmountInvoiced',
-                    'getBaseWeeeAmountInvoiced',
-                    'getWeeeAmountRefunded',
-                    'getBaseWeeeAmountRefunded',
-                    'getWeeeTaxAmountInvoiced',
-                    'getBaseWeeeTaxAmountInvoiced',
-                    'getWeeeTaxAmountRefunded',
-                    'getBaseWeeeTaxAmountRefunded',
-                    'getApplied',
-                    'setApplied',
-                    'includeInSubtotal',
-                ]
-            )->disableOriginalConstructor()
-            ->getMock();
+        $this->weeeData = $this->createPartialMock(
+            Data::class,
+            [
+                'getRowWeeeTaxInclTax',
+                'getBaseRowWeeeTaxInclTax',
+                'getWeeeAmountInvoiced',
+                'getBaseWeeeAmountInvoiced',
+                'getWeeeAmountRefunded',
+                'getBaseWeeeAmountRefunded',
+                'getWeeeTaxAmountInvoiced',
+                'getBaseWeeeTaxAmountInvoiced',
+                'getWeeeTaxAmountRefunded',
+                'getBaseWeeeTaxAmountRefunded',
+                'getApplied',
+                'setApplied',
+                'includeInSubtotal',
+            ]
+        );
 
         $this->objectManager = new ObjectManager($this);
         $serializer = $this->objectManager->getObject(Json::class);
@@ -111,10 +111,13 @@ class WeeeTest extends TestCase
     public function testCollect($creditmemoData, $expectedResults)
     {
         $roundingDelta = [];
+
+        //Set up weeeData mock
         $this->weeeData->expects($this->once())
             ->method('includeInSubtotal')
             ->willReturn($creditmemoData['include_in_subtotal']);
 
+        //Set up invoice mock
         /** @var Item[] $creditmemoItems */
         $creditmemoItems = [];
         foreach ($creditmemoData['items'] as $itemKey => $creditmemoItemData) {
@@ -142,6 +145,7 @@ class WeeeTest extends TestCase
 
         $this->model->collect($this->creditmemo);
 
+        //verify invoice data
         foreach ($expectedResults['creditmemo_data'] as $key => $value) {
             $this->assertEqualsWithDelta(
                 $value,
@@ -150,7 +154,7 @@ class WeeeTest extends TestCase
                 'Creditmemo data field ' . $key . ' is incorrect'
             );
         }
-
+        //verify invoice item data
         foreach ($expectedResults['creditmemo_items'] as $itemKey => $itemData) {
             $creditmemoItem = $creditmemoItems[$itemKey];
             foreach ($itemData as $key => $value) {
@@ -510,9 +514,9 @@ class WeeeTest extends TestCase
      */
     protected function getInvoiceItem($creditmemoItemData)
     {
-        /** @var \Magento\Sales\Model\Order\Item|MockObject $orderItem */
+        /** @var OrderItem|MockObject $orderItem */
         $orderItem = $this->createPartialMock(
-            \Magento\Sales\Model\Order\Item::class,
+            OrderItem::class,
             [
             'isDummy'
             ]

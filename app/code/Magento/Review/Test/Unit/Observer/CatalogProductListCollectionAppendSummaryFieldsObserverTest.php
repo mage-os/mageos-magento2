@@ -14,6 +14,8 @@ use Magento\Review\Model\ResourceModel\Review\Summary;
 use Magento\Review\Model\ResourceModel\Review\SummaryFactory;
 use Magento\Review\Observer\CatalogProductListCollectionAppendSummaryFieldsObserver;
 use Magento\Store\Api\Data\StoreInterface;
+use Magento\Store\Model\Store;
+use Magento\Store\Model\StoreManager;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use MockObject;
@@ -81,9 +83,9 @@ class CatalogProductListCollectionAppendSummaryFieldsObserverTest extends TestCa
 
         $this->productCollectionMock = $this->createMock(Collection::class);
 
-        $this->storeManagerMock = $this->createPartialMock(\Magento\Store\Model\StoreManager::class, ['getStore']);
+        $this->storeManagerMock = $this->createPartialMock(StoreManager::class, ['getStore']);
 
-        $this->storeMock = $this->createPartialMock(\Magento\Store\Model\Store::class, ['getId']);
+        $this->storeMock = $this->createPartialMock(Store::class, ['getId']);
 
         $this->sumResourceMock = $this->createPartialMock(
             Summary::class,

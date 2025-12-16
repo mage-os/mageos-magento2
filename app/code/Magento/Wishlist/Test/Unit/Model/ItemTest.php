@@ -24,125 +24,187 @@ use Magento\Wishlist\Model\Item\Option;
 use Magento\Wishlist\Model\Item\OptionFactory;
 use Magento\Wishlist\Model\ResourceModel\Item\Collection;
 use Magento\Wishlist\Model\ResourceModel\Item\Option\CollectionFactory;
+use Magento\Wishlist\Model\ResourceModel\Item as ItemResource;
+use Magento\Quote\Model\Quote\Item as QuoteItem;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @SuppressWarnings(PHPMD.TooManyFields)
  */
 class ItemTest extends TestCase
 {
+    use MockCreationTrait;
+
+    /**
+     * @var Registry|MockObject
+     */
+    protected $registry;
+
+    /**
+     * @var Url|MockObject
+     */
+    protected $catalogUrl;
+
+    /**
+     * @var ConfigInterface|MockObject
+     */
+    protected $productTypeConfig;
+
+    /**
+     * @var ItemResource|MockObject
+     */
+    protected $resource;
+
+    /**
+     * @var Collection|MockObject
+     */
+    protected $collection;
+
+    /**
+     * @var StoreManagerInterface|MockObject
+     */
+    protected $storeManager;
+
+    /**
+     * @var DateTime|MockObject
+     */
+    protected $date;
+
+    /**
+     * @var OptionFactory|MockObject
+     */
+    protected $optionFactory;
+
+    /**
+     * @var CollectionFactory|MockObject
+     */
+    protected $itemOptFactory;
+
+    /**
+     * @var ProductRepositoryInterface|MockObject
+     */
+    protected $productRepository;
+
     /**
      * @var Item
      */
     protected $model;
 
     /**
-     * @var array
+     * @var Json
      */
-    protected $mocks;
+    protected $serializer;
 
     protected function setUp(): void
     {
         $context = $this->createMock(Context::class);
-        $this->mocks = [
-            'registry' => $this->createMock(Registry::class),
-            'storeManager' => $this->createMock(StoreManagerInterface::class),
-            'date' => $this->createMock(DateTime::class),
-            'catalogUrl' => $this->createMock(Url::class),
-            'optionFactory' => $this->createMock(OptionFactory::class),
-            'itemOptFactory' => $this->createPartialMock(CollectionFactory::class, ['create']),
-            'productTypeConfig' => $this->createMock(ConfigInterface::class),
-            'productRepository' => $this->createMock(ProductRepositoryInterface::class),
-            'resource' => $this->createMock(\Magento\Wishlist\Model\ResourceModel\Item::class),
-            'collection' => $this->createMock(Collection::class),
-            'serializer' => $this->createMock(Json::class)
-        ];
+        $this->registry = $this->createMock(Registry::class);
+        $this->storeManager = $this->createMock(StoreManagerInterface::class);
+        $this->date = $this->createMock(DateTime::class);
+        $this->catalogUrl = $this->createMock(Url::class);
+        $this->optionFactory = $this->createPartialMock(OptionFactory::class, ['create']);
+        $this->itemOptFactory = $this->createPartialMock(CollectionFactory::class, ['create']);
+        $this->productTypeConfig = $this->createMock(ConfigInterface::class);
+        $this->productRepository = $this->createMock(ProductRepositoryInterface::class);
+        $this->resource = $this->createMock(ItemResource::class);
+        $this->collection = $this->createMock(Collection::class);
+
+        $this->serializer = $this->createMock(Json::class);
 
         $this->model = new Item(
             $context,
-            $this->mocks['registry'],
-            $this->mocks['storeManager'],
-            $this->mocks['date'],
-            $this->mocks['catalogUrl'],
-            $this->mocks['optionFactory'],
-            $this->mocks['itemOptFactory'],
-            $this->mocks['productTypeConfig'],
-            $this->mocks['productRepository'],
-            $this->mocks['resource'],
-            $this->mocks['collection'],
+            $this->registry,
+            $this->storeManager,
+            $this->date,
+            $this->catalogUrl,
+            $this->optionFactory,
+            $this->itemOptFactory,
+            $this->productTypeConfig,
+            $this->productRepository,
+            $this->resource,
+            $this->collection,
             [],
-            $this->mocks['serializer']
+            $this->serializer
         );
     }
 
+    /**
+     */
     #[DataProvider('getOptionsDataProvider')]
     public function testAddGetOptions($code, $option)
     {
-        $this->assertEmpty($this->model->getOptions());
-
         if (is_callable($option)) {
             $option = $option($this);
         }
-
-        $optionMock = $this->createMock(Option::class);
+        $this->assertEmpty($this->model->getOptions());
+        $optionMock = $this->createPartialMockWithReflection(
+            Option::class,
+            ['getCode', 'setData', '__wakeup']
+        );
         $optionMock->expects($this->any())
             ->method('setData')
             ->willReturnSelf();
-        $optionMock->method('setItem')
-            ->willReturnSelf();
-        $optionMock->method('getData')
-            ->with('code')
+        $optionMock->expects($this->any())
+            ->method('getCode')
             ->willReturn($code);
-        $optionMock->method('isDeleted')
-            ->willReturn(false);
 
-        $this->mocks['optionFactory']->method('create')->willReturn($optionMock);
+        $this->optionFactory->expects($this->any())
+            ->method('create')
+            ->willReturn($optionMock);
         $this->model->addOption($option);
         $this->assertCount(1, $this->model->getOptions());
     }
 
+    /**
+     */
     #[DataProvider('getOptionsDataProvider')]
     public function testRemoveOptionByCode($code, $option)
     {
-        $this->assertEmpty($this->model->getOptions());
-
         if (is_callable($option)) {
             $option = $option($this);
         }
+        $this->assertEmpty($this->model->getOptions());
+        $optionMock = $this->createPartialMockWithReflection(
+            Option::class,
+            ['getCode', 'setData', '__wakeup']
+        );
+        $optionMock->expects($this->any())
+            ->method('setData')
+            ->willReturnSelf();
+        $optionMock->expects($this->any())
+            ->method('getCode')
+            ->willReturn($code);
 
-        $optionMock = $this->createPartialMock(Option::class, []);
-        $reflection = new \ReflectionClass($optionMock);
-        $property = $reflection->getProperty('_data');
-        $property->setValue($optionMock, []);
-        $optionMock->setCode($code);
-        $this->mocks['optionFactory']->method('create')->willReturn($optionMock);
+        $this->optionFactory->expects($this->any())
+            ->method('create')
+            ->willReturn($optionMock);
         $this->model->addOption($option);
         $this->assertCount(1, $this->model->getOptions());
         $this->model->removeOption($code);
-        $this->assertTrue(true);
+        $actualOptions = $this->model->getOptions();
+        $actualOption = array_pop($actualOptions);
+        $this->assertTrue($actualOption->isDeleted());
     }
 
     protected function getMockForOptionClass()
     {
-        $optionMock = $this->createPartialMock(Option::class, []);
-        $reflection = new \ReflectionClass($optionMock);
-        $property = $reflection->getProperty('_data');
-        $property->setValue($optionMock, []);
-        $optionMock->setCode('second_key');
+        $optionMock = $this->createPartialMockWithReflection(
+            Option::class,
+            ['getCode', '__wakeup']
+        );
+        $optionMock->expects($this->any())
+            ->method('getCode')
+            ->willReturn('second_key');
         return $optionMock;
     }
 
     protected function getMockForProductClass()
     {
-        $optionMock = $this->createPartialMock(Option::class, []);
-        $reflection = new \ReflectionClass($optionMock);
-        $property = $reflection->getProperty('_data');
-        $property->setValue($optionMock, []);
-        $optionMock->setCode('third_key');
-        return $optionMock;
+        $productMock = $this->createMock(Product::class);
+        return new DataObject(['code' => 'third_key', 'product' => $productMock]);
     }
 
     /**
@@ -164,23 +226,21 @@ class ItemTest extends TestCase
     {
         $code = 'someOption';
         $optionValue = 100;
+        $optionsOneMock = $this->createPartialMockWithReflection(
+            QuoteItem::class,
+            ['getCode', 'getValue', '__wakeup']
+        );
+        $optionsTwoMock = $this->createPartialMockWithReflection(
+            QuoteItem::class,
+            ['getValue', '__wakeup']
+        );
 
-        $optionsOneMock = $this->createPartialMock(Option::class, []);
-        $reflection = new \ReflectionClass($optionsOneMock);
-        $property = $reflection->getProperty('_data');
-        $property->setValue($optionsOneMock, []);
-        $optionsOneMock->setCode($code);
-        $optionsOneMock->setValue($optionValue);
-
-        $optionsTwoMock = $this->createPartialMock(Option::class, []);
-        $reflection = new \ReflectionClass($optionsTwoMock);
-        $property = $reflection->getProperty('_data');
-        $property->setValue($optionsTwoMock, []);
-        $optionsTwoMock->setCode($code);
-        $optionsTwoMock->setValue($optionValue);
+        $optionsOneMock->expects($this->once())->method('getCode')->willReturn($code);
+        $optionsOneMock->expects($this->once())->method('getValue')->willReturn($optionValue);
+        $optionsTwoMock->expects($this->once())->method('getValue')->willReturn($optionValue);
 
         $result = $this->model->compareOptions(
-            [$optionsOneMock],
+            [$code => $optionsOneMock],
             [$code => $optionsTwoMock]
         );
 
@@ -192,23 +252,21 @@ class ItemTest extends TestCase
         $code = 'someOption';
         $optionOneValue = 100;
         $optionTwoValue = 200;
+        $optionsOneMock = $this->createPartialMockWithReflection(
+            QuoteItem::class,
+            ['getCode', 'getValue', '__wakeup']
+        );
+        $optionsTwoMock = $this->createPartialMockWithReflection(
+            QuoteItem::class,
+            ['getValue', '__wakeup']
+        );
 
-        $optionsOneMock = $this->createPartialMock(Option::class, []);
-        $reflection = new \ReflectionClass($optionsOneMock);
-        $property = $reflection->getProperty('_data');
-        $property->setValue($optionsOneMock, []);
-        $optionsOneMock->setCode($code);
-        $optionsOneMock->setValue($optionOneValue);
-
-        $optionsTwoMock = $this->createPartialMock(Option::class, []);
-        $reflection = new \ReflectionClass($optionsTwoMock);
-        $property = $reflection->getProperty('_data');
-        $property->setValue($optionsTwoMock, []);
-        $optionsTwoMock->setCode($code);
-        $optionsTwoMock->setValue($optionTwoValue);
+        $optionsOneMock->expects($this->once())->method('getCode')->willReturn($code);
+        $optionsOneMock->expects($this->once())->method('getValue')->willReturn($optionOneValue);
+        $optionsTwoMock->expects($this->once())->method('getValue')->willReturn($optionTwoValue);
 
         $result = $this->model->compareOptions(
-            [$optionsOneMock],
+            [$code => $optionsOneMock],
             [$code => $optionsTwoMock]
         );
 
@@ -218,20 +276,19 @@ class ItemTest extends TestCase
     public function testCompareOptionsNegativeOptionsTwoHaveNotOption()
     {
         $code = 'someOption';
+        $optionsOneMock = $this->createPartialMockWithReflection(
+            QuoteItem::class,
+            ['getCode', '__wakeup']
+        );
+        $optionsTwoMock = $this->createPartialMockWithReflection(
+            QuoteItem::class,
+            ['__wakeup']
+        );
 
-        $optionsOneMock = $this->createPartialMock(Option::class, []);
-        $reflection = new \ReflectionClass($optionsOneMock);
-        $property = $reflection->getProperty('_data');
-        $property->setValue($optionsOneMock, []);
-        $optionsOneMock->setCode($code);
-
-        $optionsTwoMock = $this->createPartialMock(Option::class, []);
-        $reflection = new \ReflectionClass($optionsTwoMock);
-        $property = $reflection->getProperty('_data');
-        $property->setValue($optionsTwoMock, []);
+        $optionsOneMock->expects($this->once())->method('getCode')->willReturn($code);
 
         $result = $this->model->compareOptions(
-            [$optionsOneMock],
+            [$code => $optionsOneMock],
             ['someOneElse' => $optionsTwoMock]
         );
 
@@ -241,8 +298,28 @@ class ItemTest extends TestCase
     public function testSetAndSaveItemOptions()
     {
         $this->assertEmpty($this->model->getOptions());
-        $firstOptionMock = $this->createFirstOptionMock('first_code', true);
-        $secondOptionMock = $this->createSecondOptionMock('second_code', false);
+        $firstOptionMock = $this->createPartialMockWithReflection(
+            Option::class,
+            ['getCode', 'isDeleted', 'delete', '__wakeup']
+        );
+        $firstOptionMock->expects($this->any())
+            ->method('getCode')
+            ->willReturn('first_code');
+        $firstOptionMock->expects($this->any())
+            ->method('isDeleted')
+            ->willReturn(true);
+        $firstOptionMock->expects($this->once())
+            ->method('delete');
+
+        $secondOptionMock = $this->createPartialMockWithReflection(
+            Option::class,
+            ['getCode', 'save', '__wakeup']
+        );
+        $secondOptionMock->expects($this->any())
+            ->method('getCode')
+            ->willReturn('second_code');
+        $secondOptionMock->expects($this->once())
+            ->method('save');
 
         $this->model->setOptions([$firstOptionMock, $secondOptionMock]);
         $this->assertNull($this->model->isOptionsSaved());
@@ -265,10 +342,7 @@ class ItemTest extends TestCase
         $this->model->setData('store_id', $storeId);
         $productMock = $this->createPartialMock(
             Product::class,
-            [
-            'setCustomOptions',
-            'setFinalPrice'
-            ]
+            ['setCustomOptions', 'setFinalPrice']
         );
         $productMock->expects($this->any())
             ->method('setFinalPrice')
@@ -276,34 +350,10 @@ class ItemTest extends TestCase
         $productMock->expects($this->any())
             ->method('setCustomOptions')
             ->with([]);
-        $this->mocks['productRepository']->expects($this->once())
+        $this->productRepository->expects($this->once())
             ->method('getById')
             ->with($productId, false, $storeId, true)
             ->willReturn($productMock);
         $this->assertEquals($productMock, $this->model->getProduct());
-    }
-
-    private function createFirstOptionMock($code, $deleted)
-    {
-        $option = $this->createPartialMock(Option::class, ['delete', 'isDeleted']);
-        $reflection = new \ReflectionClass($option);
-        $property = $reflection->getProperty('_data');
-        $property->setValue($option, []);
-        $option->setCode($code);
-        $option->method('isDeleted')->willReturn($deleted);
-        $option->expects($this->once())->method('delete')->willReturnSelf();
-        return $option;
-    }
-
-    private function createSecondOptionMock($code, $deleted)
-    {
-        $option = $this->createPartialMock(Option::class, ['save', 'isDeleted']);
-        $reflection = new \ReflectionClass($option);
-        $property = $reflection->getProperty('_data');
-        $property->setValue($option, []);
-        $option->setCode($code);
-        $option->method('isDeleted')->willReturn($deleted);
-        $option->expects($this->once())->method('save')->willReturnSelf();
-        return $option;
     }
 }

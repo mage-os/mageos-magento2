@@ -10,7 +10,6 @@ namespace Magento\WishlistGraphQl\Test\Unit\Model\Resolver;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\GraphQl\Model\Query\ContextExtensionInterface;
 use Magento\GraphQl\Model\Query\ContextInterface;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
@@ -20,6 +19,7 @@ use Magento\Wishlist\Model\ResourceModel\Item\Collection as WishlistItemCollecti
 use Magento\Wishlist\Model\ResourceModel\Item\CollectionFactory as WishlistItemCollectionFactory;
 use Magento\Wishlist\Model\Wishlist;
 use Magento\WishlistGraphQl\Model\Resolver\WishlistItems;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -52,15 +52,11 @@ class WishlistItemsTest extends TestCase
 
     /**
      * @return void
-     * @throws Exception
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     * @throws \PHPUnit\Framework\MockObject\Exception
      */
     public function testResolve(): void
     {
-        $webId = $storeId = 1;
-        $itemId = 1;
-        $_ = [$itemId];
-        unset($_);
+        $webId = $storeId = $itemId = 1;
 
         $field = $this->createMock(Field::class);
         $context = $this->createMock(ContextInterface::class);
@@ -68,48 +64,28 @@ class WishlistItemsTest extends TestCase
         $store->expects($this->once())->method('getWebsiteId')->willReturn($webId);
         $store->expects($this->any())->method('getId')->willReturn($storeId);
 
-        $storeValue = null;
         $extensionAttributes = $this->createPartialMockWithReflection(
             ContextExtensionInterface::class,
-            ['setStore', 'getStore', 'getCustomerGroupId', 'setCustomerGroupId', 'getIsCustomer', 'setIsCustomer']
+            ['getStore']
         );
-        
-        $extensionAttributes->method('getCustomerGroupId')->willReturn(null);
-        $extensionAttributes->method('setCustomerGroupId')->willReturnSelf();
-        $extensionAttributes->method('getIsCustomer')->willReturn(null);
-        $extensionAttributes->method('setIsCustomer')->willReturnSelf();
-        
-        $extensionAttributes->method('setStore')
-            ->willReturnCallback(function ($value) use (&$storeValue, &$extensionAttributes) {
-                $storeValue = $value;
-                return $extensionAttributes;
-            });
-        $extensionAttributes->method('getStore')
-            ->willReturnCallback(function () use (&$storeValue) {
-                return $storeValue;
-            });
-        $extensionAttributes->setStore($store);
-
+        $extensionAttributes->expects($this->exactly(2))
+            ->method('getStore')
+            ->willReturn($store);
         $context->expects($this->exactly(2))
             ->method('getExtensionAttributes')
             ->willReturn($extensionAttributes);
         $info = $this->createMock(ResolveInfo::class);
         $wishlist = $this->createMock(Wishlist::class);
 
-        $item = $this->createPartialMock(Item::class, ['getId', 'getData', 'getProduct']);
-        $item->expects($this->once())
-            ->method('getId')
-            ->willReturn(1);
-        $item->expects($this->any())
-            ->method('getData')
-            ->willReturnMap([
-                ['qty', null, 1],
-                ['added_at', null, '2024-01-01 00:00:00'],
-                ['description', null, 'Test description']
-            ]);
-        $item->expects($this->once())
-            ->method('getProduct')
-            ->willReturn(null);
+        $item = $this->createPartialMockWithReflection(
+            Item::class,
+            ['getId', 'getData', 'getDescription', 'getAddedAt', 'getProduct']
+        );
+        $item->expects($this->once())->method('getId')->willReturn($itemId);
+        $item->expects($this->once())->method('getData')->with('qty');
+        $item->expects($this->once())->method('getDescription');
+        $item->expects($this->once())->method('getAddedAt');
+        $item->expects($this->once())->method('getProduct');
 
         $wishlistCollection = $this->createMock(WishlistItemCollection::class);
         $wishlistCollection->expects($this->once())

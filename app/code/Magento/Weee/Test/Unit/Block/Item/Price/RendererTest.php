@@ -11,6 +11,7 @@ use Magento\Directory\Model\PriceCurrency;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Quote\Model\Quote\Item;
+use Magento\Sales\Model\Order\Item as OrderItem;
 use Magento\Weee\Block\Item\Price\Renderer;
 use Magento\Weee\Helper\Data;
 use Magento\Weee\Model\Tax as WeeeDisplayConfig;
@@ -57,24 +58,19 @@ class RendererTest extends TestCase
     {
         $objectManager = new ObjectManager($this);
 
-        $this->weeeHelper = $this->getMockBuilder(Data::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(
-                [
+        $this->weeeHelper = $this->createPartialMock(
+            Data::class,
+            [
                 'isEnabled',
                 'typeOfDisplay',
                 'getWeeeTaxInclTax',
                 'getRowWeeeTaxInclTax',
                 'getBaseRowWeeeTaxInclTax',
                 'getBaseWeeeTaxInclTax',
-                ]
-            )
-            ->getMock();
+            ]
+        );
 
-        $this->priceCurrency = $this->getMockBuilder(PriceCurrency::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['format'])
-            ->getMock();
+        $this->priceCurrency = $this->createPartialMock(PriceCurrency::class, ['format']);
 
         $this->item = $this->createItemMock();
         $this->item->setStoreId(self::STORE_ID);
@@ -877,17 +873,15 @@ class RendererTest extends TestCase
 
         $expectedValue = 97;
 
-        $itemMock = $this->getMockBuilder(\Magento\Sales\Model\Order\Item::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(
-                [
-                    'getRowTotal',
-                    'getTaxAmount',
-                    'getDiscountTaxCompensationAmount',
-                    'getDiscountAmount'
-                ]
-            )
-            ->getMock();
+        $itemMock = $this->createPartialMock(
+            OrderItem::class,
+            [
+                'getRowTotal',
+                'getTaxAmount',
+                'getDiscountTaxCompensationAmount',
+                'getDiscountAmount'
+            ]
+        );
 
         $itemMock->expects($this->once())
             ->method('getRowTotal')
@@ -924,17 +918,15 @@ class RendererTest extends TestCase
         $expectedValue = $baseRowTotal + $baseTaxAmount + $baseDiscountTaxCompensationAmount -
             $baseDiscountAmount + $baseWeeeAmount;
 
-        $itemMock = $this->getMockBuilder(\Magento\Sales\Model\Order\Item::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(
-                [
-                    'getBaseRowTotal',
-                    'getBaseTaxAmount',
-                    'getBaseDiscountTaxCompensationAmount',
-                    'getBaseDiscountAmount'
-                ]
-            )
-            ->getMock();
+        $itemMock = $this->createPartialMock(
+            OrderItem::class,
+            [
+                'getBaseRowTotal',
+                'getBaseTaxAmount',
+                'getBaseDiscountTaxCompensationAmount',
+                'getBaseDiscountAmount'
+            ]
+        );
 
         $itemMock->expects($this->once())
             ->method('getBaseRowTotal')

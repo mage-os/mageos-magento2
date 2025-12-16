@@ -8,31 +8,27 @@ declare(strict_types=1);
 namespace Magento\Weee\Test\Unit\Observer;
 
 use Magento\Bundle\Model\Product\Type;
-use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Type\Simple;
 use Magento\Framework\DataObject;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Registry;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Weee\Helper\Data;
 use Magento\Weee\Observer\GetPriceConfigurationObserver;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-/**
- * Unit Tests to cover GetPriceConfigurationObserver
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @SuppressWarnings(PHPMD.UnusedLocalVariable)
- */
 class GetPriceConfigurationObserverTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * Tests the methods that rely on the ScopeConfigInterface object to provide their return values
      */
     #[DataProvider('getPriceConfigurationProvider')]
     /**
-     * @param bool  $hasWeeeAttributes
+     * @param bool $hasWeeeAttributes
      * @param array $testArray
      * @param array $expectedArray
      */
@@ -71,8 +67,19 @@ class GetPriceConfigurationObserverTest extends TestCase
 
         $productInstance=$this->createMock(Simple::class);
 
-        $product = $this->createProductMock();
-        $product->method('getTypeInstance')->willReturn($productInstance);
+        $product = $this->createPartialMockWithReflection(
+            Type::class,
+            ['getTypeInstance', 'getTypeId', 'getStoreId']
+        );
+        $product->expects($this->any())
+            ->method('getTypeInstance')
+            ->willReturn($productInstance);
+        $product->expects($this->any())
+            ->method('getTypeId')
+            ->willReturn('simple');
+        $product->expects($this->any())
+            ->method('getStoreId')
+            ->willReturn(null);
 
         $registry=$this->createMock(Registry::class);
         $registry->expects($this->any())
@@ -83,15 +90,13 @@ class GetPriceConfigurationObserverTest extends TestCase
         if ($hasWeeeAttributes) {
             $weeeHelper->expects($this->any())
                 ->method('getWeeeAttributesForBundle')
-                ->willReturn(
-                    [
+                ->willReturn([
                     1 => ['fpt1' => $weeeObject1],
                     2 => [
                         'fpt1' => $weeeObject1,
                         'fpt2' => $weeeObject2
                     ]
-                    ]
-                );
+                ]);
         } else {
             $weeeHelper->expects($this->any())
                 ->method('getWeeeAttributesForBundle')
@@ -237,18 +242,5 @@ class GetPriceConfigurationObserverTest extends TestCase
                 ],
             ],
         ];
-    }
-
-    /**
-     * Create a mock for Product
-     *
-     * @return Product
-     */
-    private function createProductMock(): Product
-    {
-        $product = $this->createPartialMock(Product::class, ['getStoreId', 'getTypeId', 'getTypeInstance']);
-        $product->method('getStoreId')->willReturn(null);
-        $product->method('getTypeId')->willReturn('simple');
-        return $product;
     }
 }

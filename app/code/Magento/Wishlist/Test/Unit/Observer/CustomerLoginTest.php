@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Wishlist\Test\Unit\Observer;
 
+use Magento\Framework\Event\Observer as EventObserver;
 use Magento\Wishlist\Helper\Data;
 use Magento\Wishlist\Observer\CustomerLogin as Observer;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -33,8 +34,8 @@ class CustomerLoginTest extends TestCase
 
     public function testExecute()
     {
-        $event = $this->createMock(\Magento\Framework\Event\Observer::class);
-        /** @var \Magento\Framework\Event\Observer $event */
+        $event = $this->createMock(EventObserver::class);
+        /** @var EventObserver $event */
 
         $this->helper->expects($this->once())
             ->method('calculate');

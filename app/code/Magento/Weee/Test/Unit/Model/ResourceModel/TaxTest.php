@@ -12,6 +12,7 @@ use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Select;
 use Magento\Framework\Model\ResourceModel\Db\Context;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Store\Model\StoreManager;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Weee\Model\ResourceModel\Tax;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -51,7 +52,7 @@ class TaxTest extends TestCase
     {
         $objectManager = new ObjectManager($this);
 
-        $this->storeManagerMock = $this->createPartialMock(\Magento\Store\Model\StoreManager::class, []);
+        $this->storeManagerMock = $this->createPartialMock(StoreManager::class, []);
 
         $this->selectMock = $this->createMock(Select::class);
 

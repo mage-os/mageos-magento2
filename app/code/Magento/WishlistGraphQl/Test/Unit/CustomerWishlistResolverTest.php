@@ -9,8 +9,9 @@ namespace Magento\WishlistGraphQl\Test\Unit;
 
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Exception\GraphQlAuthorizationException;
-use Magento\GraphQl\Model\Query\Context;
+use Magento\Framework\GraphQl\Query\Resolver\ContextInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\GraphQl\Model\Query\ContextExtensionInterface;
 use Magento\Wishlist\Model\Wishlist;
 use Magento\Wishlist\Model\Wishlist\Config;
@@ -61,44 +62,33 @@ class CustomerWishlistResolverTest extends TestCase
      */
     protected function setUp(): void
     {
-        $isCustomer = false;
+        $this->contextMock = $this->createPartialMockWithReflection(
+            ContextInterface::class,
+            ['getExtensionAttributes', 'getUserId']
+        );
 
         $this->extensionAttributesMock = $this->createPartialMockWithReflection(
             ContextExtensionInterface::class,
-            ['setIsCustomer', 'getIsCustomer', 'getStore', 'setStore', 'getCustomerGroupId', 'setCustomerGroupId']
+            ['getStore', 'setStore', 'getIsCustomer', 'setIsCustomer']
         );
-        
-        $this->extensionAttributesMock->method('getStore')->willReturn(null);
-        $this->extensionAttributesMock->method('setStore')->willReturnSelf();
-        $this->extensionAttributesMock->method('getCustomerGroupId')->willReturn(null);
-        $this->extensionAttributesMock->method('setCustomerGroupId')->willReturnSelf();
-        
-        $this->extensionAttributesMock->method('setIsCustomer')
-            ->willReturnCallback(function ($value) use (&$isCustomer) {
-                $isCustomer = $value;
-                return $this->extensionAttributesMock;
-            });
-        $this->extensionAttributesMock->method('getIsCustomer')
-            ->willReturnCallback(function () use (&$isCustomer) {
-                return $isCustomer;
-            });
 
-        $this->contextMock = $this->createMock(Context::class);
-        $this->contextMock->method('getUserId')->willReturn(self::STUB_CUSTOMER_ID);
-        $this->contextMock->method('getUserType')->willReturn(null);
-        $this->contextMock->method('getExtensionAttributes')->willReturn($this->extensionAttributesMock);
+        $this->contextMock->method('getExtensionAttributes')
+            ->willReturn($this->extensionAttributesMock);
+
         $this->wishlistFactoryMock = $this->createPartialMock(WishlistFactory::class, ['create']);
-        $this->wishlistMock = $this->createPartialMock(Wishlist::class, ['loadByCustomerId', 'getItemsCount']);
-        $reflection = new \ReflectionClass($this->wishlistMock);
-        $property = $reflection->getProperty('_data');
-        $property->setValue($this->wishlistMock, []);
-        $this->wishlistMock->method('getItemsCount')->willReturn(0);
+
+        $this->wishlistMock = $this->createPartialMockWithReflection(
+            Wishlist::class,
+            ['getSharingCode', 'getUpdatedAt', 'loadByCustomerId', 'getId', 'getItemsCount']
+        );
+
         $this->wishlistConfigMock = $this->createMock(Config::class);
 
-        $this->resolver = new CustomerWishlistResolver(
-            $this->wishlistFactoryMock,
-            $this->wishlistConfigMock
-        );
+        $objectManager = new ObjectManager($this);
+        $this->resolver = $objectManager->getObject(CustomerWishlistResolver::class, [
+            'wishlistFactory' => $this->wishlistFactoryMock,
+            'wishlistConfig' => $this->wishlistConfigMock
+        ]);
     }
 
     /**
@@ -108,11 +98,16 @@ class CustomerWishlistResolverTest extends TestCase
     {
         $this->wishlistConfigMock->method('isEnabled')->willReturn(true);
 
-        $this->extensionAttributesMock->setIsCustomer(false);
+        // Given
+        $this->extensionAttributesMock->method('getIsCustomer')
+            ->willReturn(false);
 
+        // Then
         $this->expectException(GraphQlAuthorizationException::class);
         $this->wishlistFactoryMock->expects($this->never())
             ->method('create');
+
+        // When
         $this->resolver->resolve(
             $this->getFieldStub(),
             $this->contextMock,
@@ -127,11 +122,24 @@ class CustomerWishlistResolverTest extends TestCase
     {
         $this->wishlistConfigMock->method('isEnabled')->willReturn(true);
 
-        $this->extensionAttributesMock->setIsCustomer(true);
+        // Given
+        $this->extensionAttributesMock->method('getIsCustomer')
+            ->willReturn(true);
+
+        $this->contextMock->method('getUserId')
+            ->willReturn(self::STUB_CUSTOMER_ID);
+
+        // Then
+        $this->wishlistMock->expects($this->once())
+            ->method('loadByCustomerId')
+            ->with(self::STUB_CUSTOMER_ID)
+            ->willReturnSelf();
 
         $this->wishlistFactoryMock->expects($this->once())
             ->method('create')
             ->willReturn($this->wishlistMock);
+
+        // When
         $this->resolver->resolve(
             $this->getFieldStub(),
             $this->contextMock,

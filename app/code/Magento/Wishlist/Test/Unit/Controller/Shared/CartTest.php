@@ -8,7 +8,7 @@ declare(strict_types=1);
 namespace Magento\Wishlist\Test\Unit\Controller\Shared;
 
 use Magento\Catalog\Model\Product;
-use Magento\Catalog\Model\Product\Exception as ProductException;
+use Magento\Catalog\Model\Product\Exception;
 use Magento\Checkout\Helper\Cart as CartHelper;
 use Magento\Checkout\Model\Cart;
 use Magento\Framework\App\Action\Context as ActionContext;
@@ -19,7 +19,6 @@ use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Escaper;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Message\ManagerInterface;
-use Exception;
 use Magento\Quote\Model\Quote;
 use Magento\Wishlist\Controller\Shared\Cart as SharedCart;
 use Magento\Wishlist\Model\Item;
@@ -27,9 +26,10 @@ use Magento\Wishlist\Model\Item\Option;
 use Magento\Wishlist\Model\Item\OptionFactory;
 use Magento\Wishlist\Model\ItemFactory;
 use Magento\Wishlist\Model\ResourceModel\Item\Option\Collection as OptionCollection;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Test for \Magento\Wishlist\Controller\Shared\Cart.
@@ -39,6 +39,8 @@ use PHPUnit\Framework\Attributes\DataProvider;
  */
 class CartTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var SharedCart|MockObject
      */
@@ -111,7 +113,7 @@ class CartTest extends TestCase
     {
         $this->request = $this->createMock(RequestInterface::class);
         $this->redirect = $this->createMock(RedirectInterface::class);
-        $this->messageManager = $this->createStub(ManagerInterface::class);
+        $this->messageManager = $this->createMock(ManagerInterface::class);
         $this->resultRedirect = $this->createMock(Redirect::class);
 
         $resultFactory = $this->createMock(ResultFactory::class);
@@ -138,7 +140,7 @@ class CartTest extends TestCase
         $this->cart = $this->createMock(Cart::class);
         $this->cartHelper = $this->createMock(CartHelper::class);
 
-        $this->quote = $this->createPartialMock(Quote::class, ['setHasError']);
+        $this->quote = $this->createPartialMockWithReflection(Quote::class, ['getHasError']);
 
         $this->optionCollection = $this->createMock(OptionCollection::class);
 
@@ -171,10 +173,10 @@ class CartTest extends TestCase
     }
 
     /**
-     * @param int    $itemId
+     * @param int $itemId
      * @param string $productName
-     * @param bool   $hasErrors
-     * @param bool   $redirectToCart
+     * @param bool $hasErrors
+     * @param bool $redirectToCart
      * @param string $refererUrl
      * @param string $cartUrl
      * @param string $redirectUrl
@@ -227,7 +229,9 @@ class CartTest extends TestCase
             ->method('getProduct')
             ->willReturn($this->product);
 
-        $this->quote->setHasError($hasErrors);
+        $this->quote->expects($this->once())
+            ->method('getHasError')
+            ->willReturn($hasErrors);
 
         $this->cart->expects($this->once())
             ->method('getQuote')
@@ -253,7 +257,8 @@ class CartTest extends TestCase
             ->willReturn($productName);
 
         $successMessage = __('You added %1 to your shopping cart.', $productName);
-        $this->messageManager->method('addSuccessMessage')
+        $this->messageManager->expects($this->any())
+            ->method('addSuccessMessage')
             ->with($successMessage)
             ->willReturnSelf();
 
@@ -340,7 +345,7 @@ class CartTest extends TestCase
 
         $this->option->expects($this->once())
             ->method('getCollection')
-            ->willThrowException(new Exception('LocalizedException'));
+            ->willThrowException(new Exception(__('LocalizedException')));
 
         $this->resultRedirect->expects($this->once())
             ->method('setUrl')
@@ -371,7 +376,7 @@ class CartTest extends TestCase
 
         $this->option->expects($this->once())
             ->method('getCollection')
-            ->willThrowException(new Exception('Exception'));
+            ->willThrowException(new \Exception('Exception'));
 
         $this->resultRedirect->expects($this->once())
             ->method('setUrl')
