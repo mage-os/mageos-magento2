@@ -18,6 +18,7 @@ use Magento\CatalogInventory\Api\Data\StockItemInterfaceFactory;
 use Magento\CatalogInventory\Api\StockConfigurationInterface;
 use Magento\CatalogInventory\Api\StockItemCriteriaInterface;
 use Magento\CatalogInventory\Model\Indexer\Stock\Processor;
+use Magento\CatalogInventory\Model\ResourceModel\Stock\Item as StockItemResource;
 use Magento\CatalogInventory\Model\Spi\StockStateProviderInterface;
 use Magento\CatalogInventory\Model\Stock\Item;
 use Magento\CatalogInventory\Model\Stock\StockItemRepository;
@@ -73,7 +74,7 @@ class StockItemRepositoryTest extends TestCase
     private $stockStateProviderMock;
 
     /**
-     * @var \Magento\CatalogInventory\Model\ResourceModel\Stock\Item|MockObject
+     * @var StockItemResource|MockObject
      */
     private $stockItemResourceMock;
 
@@ -151,7 +152,7 @@ class StockItemRepositoryTest extends TestCase
         $this->stockConfigurationMock = $this->createMock(StockConfigurationInterface::class);
         $this->stockStateProviderMock = $this->createMock(StockStateProviderInterface::class);
         $this->stockItemResourceMock = $this->createMock(
-            \Magento\CatalogInventory\Model\ResourceModel\Stock\Item::class
+            StockItemResource::class
         );
         $this->stockItemFactoryMock = $this->createPartialMock(
             StockItemInterfaceFactory::class,

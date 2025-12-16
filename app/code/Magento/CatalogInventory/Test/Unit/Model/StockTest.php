@@ -45,7 +45,7 @@ class StockTest extends TestCase
     private $extensionFactory;
 
     /**
-     * @var \Magento\Framework\Model\ExtensionAttributesFactory
+     * @var AttributeValueFactory
      */
     private $customAttributeFactory;
 

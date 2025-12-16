@@ -14,7 +14,6 @@ use Magento\Framework\DB\Adapter\Pdo\Mysql;
 use Magento\Framework\DB\Select;
 use Magento\Framework\Model\ResourceModel\Db\Context;
 use Magento\Framework\Stdlib\DateTime\DateTime;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -27,8 +26,6 @@ use Zend_Db_Statement_Interface;
  */
 class StockTest extends TestCase
 {
-    use MockCreationTrait;
-
     private const PRODUCT_TABLE = 'testProductTable';
     private const ITEM_TABLE = 'testItemTableName';
 

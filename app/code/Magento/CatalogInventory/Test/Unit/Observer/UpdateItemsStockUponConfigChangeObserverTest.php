@@ -53,7 +53,6 @@ class UpdateItemsStockUponConfigChangeObserverTest extends TestCase
             ->method('getEvent')
             ->willReturn($this->event);
 
-        // Direct instantiation instead of ObjectManagerHelper
         $this->observer = new UpdateItemsStockUponConfigChangeObserver(
             $this->resourceStockItem
         );
@@ -66,7 +65,6 @@ class UpdateItemsStockUponConfigChangeObserverTest extends TestCase
         $this->resourceStockItem->expects($this->once())->method('updateSetInStock');
         $this->resourceStockItem->expects($this->once())->method('updateLowStockDate');
 
-        // Use setters instead of expects for the anonymous class
         $this->event->setWebsite($websiteId);
         $this->event->setChangedPaths([Configuration::XML_PATH_MANAGE_STOCK]);
 

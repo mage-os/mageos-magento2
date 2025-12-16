@@ -81,7 +81,7 @@ class ItemTest extends TestCase
     protected $stockItemRepository;
 
     /**
-     * @var \Magento\CatalogInventory\Model\ResourceModel\Stock\Item|MockObject
+     * @var StockItemResource|MockObject
      */
     protected $resource;
 

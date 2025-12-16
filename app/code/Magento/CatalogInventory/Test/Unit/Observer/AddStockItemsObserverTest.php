@@ -87,10 +87,7 @@ class AddStockItemsObserverTest extends TestCase
             ->method('getDefaultScopeId')
             ->willReturn($defaultScopeId);
 
-        $productExtension = $this->createPartialMockWithReflection(
-            ProductExtensionInterface::class,
-            ['getStockItem', 'setStockItem']
-        );
+        $productExtension = $this->createStub(ProductExtensionInterface::class);
 
         $product = $this->createMock(Product::class);
         $product->expects(self::once())

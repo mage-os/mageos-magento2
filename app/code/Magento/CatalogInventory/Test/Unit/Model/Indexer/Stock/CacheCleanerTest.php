@@ -86,7 +86,6 @@ class CacheCleanerTest extends TestCase
             ->getMock();
         $this->connectionMock = $this->getMockBuilder(AdapterInterface::class)
             ->getMock();
-        // Use StockConfigurationInterfaceTestHelper implementing StockConfigurationInterface with dynamic methods
         $this->stockConfigurationMock = $this->createPartialMockWithReflection(
             Configuration::class,
             ['getStockThresholdQty']
@@ -96,11 +95,6 @@ class CacheCleanerTest extends TestCase
             ->getMock();
         $this->eventManagerMock = $this->getMockBuilder(ManagerInterface::class)
             ->getMock();
-
-        $objectManagerMock = $this->createMock(ObjectManagerInterface::class);
-        \Magento\Framework\App\ObjectManager::setInstance($objectManagerMock);
-
-        $sequenceFactoryMock = $this->createMock(SequenceFactory::class);
         
         $this->metadataPoolMock = $this->createPartialMockWithReflection(
             MetadataPool::class,
@@ -120,7 +114,6 @@ class CacheCleanerTest extends TestCase
 
         $this->resourceMock->method('getConnection')->willReturn($this->connectionMock);
 
-        // Direct instantiation instead of ObjectManagerHelper
         $this->unit = new CacheCleaner(
             $this->resourceMock,
             $this->stockConfigurationMock,

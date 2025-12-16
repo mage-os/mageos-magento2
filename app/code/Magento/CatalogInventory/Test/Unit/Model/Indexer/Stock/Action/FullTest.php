@@ -62,13 +62,12 @@ class FullTest extends TestCase
 
         $objectManagerMock->method('get')
             ->willReturnMap([
-                [\Magento\Framework\EntityManager\MetadataPool::class, $metadataPoolMock],
-                [\Magento\Framework\Indexer\BatchProviderInterface::class, $batchProviderMock],
-                [\Magento\Framework\Indexer\BatchSizeManagementInterface::class, $batchSizeManagementMock],
-                [\Magento\Catalog\Model\ResourceModel\Indexer\ActiveTableSwitcher::class, $activeTableSwitcherMock]
+                [MetadataPool::class, $metadataPoolMock],
+                [BatchProviderInterface::class, $batchProviderMock],
+                [BatchSizeManagementInterface::class, $batchSizeManagementMock],
+                [ActiveTableSwitcher::class, $activeTableSwitcherMock]
             ]);
 
-        // Direct instantiation instead of ObjectManagerHelper
         $model = new Full(
             $resourceMock,
             $indexerFactoryMock,

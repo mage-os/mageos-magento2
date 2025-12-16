@@ -13,14 +13,11 @@ use Magento\CatalogRule\Model\Indexer\IndexBuilder;
 use Magento\Framework\App\CacheInterface;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class AbstractIndexerTest extends TestCase
 {
-    use MockCreationTrait;
-
     /**
      * @var IndexBuilder|MockObject
      */

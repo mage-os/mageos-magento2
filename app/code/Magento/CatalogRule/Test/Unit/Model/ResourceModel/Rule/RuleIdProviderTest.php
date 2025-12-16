@@ -11,7 +11,6 @@ use Magento\CatalogRule\Model\ResourceModel\Rule\RuleIdProvider;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Select;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -20,8 +19,6 @@ use PHPUnit\Framework\TestCase;
  */
 class RuleIdProviderTest extends TestCase
 {
-    use MockCreationTrait;
-
     /**
      * @var ResourceConnection|MockObject
      */

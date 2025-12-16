@@ -29,7 +29,7 @@ class AdvancedInventoryTest extends AbstractModifierTestCase
     private $stockRegistryMock;
 
     /**
-     * @var ItemTestHelper
+     * @var Item|MockObject
      */
     private $stockItemMock;
 
@@ -68,7 +68,6 @@ class AdvancedInventoryTest extends AbstractModifierTestCase
             ->willReturn($this->stockItemMock);
         $this->stockConfigurationMock = $this->createMock(StockConfigurationInterface::class);
         $this->stockRegistryMock->method('getStockItem')->willReturn($this->stockItemMock);
-        // Use setter instead of expects for the anonymous class
         $this->storeMock->setWebsiteId(1);
         $this->productMock->setStore($this->storeMock);
         $this->serializerMock = $this->createMock(Json::class);

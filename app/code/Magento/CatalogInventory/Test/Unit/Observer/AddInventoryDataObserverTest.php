@@ -45,9 +45,6 @@ class AddInventoryDataObserverTest extends TestCase
 
     protected function setUp(): void
     {
-        $objectManagerMock = $this->createMock(ObjectManagerInterface::class);
-        AppObjectManager::setInstance($objectManagerMock);
-        
         $this->stockHelper = $this->createMock(Stock::class);
 
         $this->event = new Event();

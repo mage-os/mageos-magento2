@@ -14,11 +14,13 @@ use Magento\Catalog\Model\ProductTypes\ConfigInterface;
 use Magento\CatalogInventory\Api\StockStateInterface;
 use Magento\CatalogInventory\Model\Quote\Item\QuantityValidator\Initializer\StockItem;
 use Magento\CatalogInventory\Model\Quote\Item\QuantityValidator\QuoteItemQtyList;
+use Magento\CatalogInventory\Model\Spi\StockStateProviderInterface;
 use Magento\CatalogInventory\Model\Stock\Item;
 use Magento\CatalogInventory\Model\StockStateProvider;
 use Magento\Framework\DataObject;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Quote\Model\Quote\Item as QuoteItem;
 use Magento\Store\Model\Store;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -50,7 +52,7 @@ class StockItemTest extends TestCase
     protected $stockStateMock;
 
     /**
-     * @var \Magento\CatalogInventory\Model\StockStateProviderInterface|MockObject
+     * @var StockStateProviderInterface|MockObject
      */
     private $stockStateProviderMock;
 
@@ -94,12 +96,12 @@ class StockItemTest extends TestCase
             ['checkQuoteItemQty', 'setProductName', 'setIsChildItem', 'hasIsChildItem', 'unsIsChildItem', '__wakeup']
         );
         $quoteItem = $this->createPartialMockWithReflection(
-            \Magento\Quote\Model\Quote\Item::class,
+            QuoteItem::class,
             ['setIsQtyDecimal', 'setUseOldQty', 'setBackorders', 'setStockStateResult', 'getParentItem',
              'getProduct', 'getId', 'getQuoteId', 'setData', 'setMessage', '__wakeup']
         );
         $parentItem = $this->createPartialMockWithReflection(
-            \Magento\Quote\Model\Quote\Item::class,
+            QuoteItem::class,
             ['setIsQtyDecimal', 'getQty', 'getProduct', '__wakeup']
         );
         $product = $this->createMock(Product::class);
@@ -192,7 +194,7 @@ class StockItemTest extends TestCase
             ->method('getWebsiteId')
             ->willReturn($websiteId);
         $quoteItem = $this->createPartialMockWithReflection(
-            \Magento\Quote\Model\Quote\Item::class,
+            QuoteItem::class,
             ['getQtyToAdd', 'getProduct', 'getParentItem', 'getId', 'getQuoteId', '__wakeup']
         );
         $product = $this->createMock(Product::class);

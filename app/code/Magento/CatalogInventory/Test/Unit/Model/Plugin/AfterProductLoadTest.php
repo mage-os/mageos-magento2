@@ -62,14 +62,10 @@ class AfterProductLoadTest extends TestCase
             ->with($productId)
             ->willReturn($this->stockItemMock);
 
-        // Use ProductExtensionInterfaceTestHelper implementing ProductExtensionInterface with dynamic methods
-        $this->productExtensionMock = $this->createPartialMockWithReflection(
-            ProductExtensionInterface::class,
-            ['getStockItem', 'setStockItem']
-        );
+        $this->productExtensionMock = $this->createStub(ProductExtensionInterface::class);
         
         // Implement stateful behavior for setStockItem/getStockItem
-        $stockItem = null;
+        $stockItem = $this->stockItemMock;
         $productExtensionMock = $this->productExtensionMock;
         
         $this->productExtensionMock->method('setStockItem')->willReturnCallback(
@@ -81,9 +77,6 @@ class AfterProductLoadTest extends TestCase
         $this->productExtensionMock->method('getStockItem')->willReturnCallback(function () use (&$stockItem) {
             return $stockItem;
         });
-        
-        // Use setter method instead of expects for anonymous class
-        $this->productExtensionMock->setStockItem($this->stockItemMock);
 
         $this->productMock = $this->createMock(Product::class);
         $this->productMock->expects($this->once())

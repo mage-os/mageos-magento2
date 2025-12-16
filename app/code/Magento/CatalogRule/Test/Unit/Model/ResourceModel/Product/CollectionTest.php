@@ -14,7 +14,6 @@ use Magento\Eav\Model\Config as EavConfig;
 use Magento\Eav\Model\Entity\AbstractEntity;
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
 use Magento\Framework\DB\Adapter\AdapterInterface;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -26,8 +25,6 @@ use PHPUnit\Framework\TestCase;
  */
 class CollectionTest extends TestCase
 {
-    use MockCreationTrait;
-
     /**
      * @var Collection
      */

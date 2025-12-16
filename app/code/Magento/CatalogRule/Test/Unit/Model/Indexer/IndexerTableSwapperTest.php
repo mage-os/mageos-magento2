@@ -11,7 +11,6 @@ use Magento\CatalogRule\Model\Indexer\IndexerTableSwapper;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Ddl\Table;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -20,8 +19,6 @@ use PHPUnit\Framework\TestCase;
  */
 class IndexerTableSwapperTest extends TestCase
 {
-    use MockCreationTrait;
-
     /**
      * @var ResourceConnection|MockObject
      */
@@ -48,12 +45,13 @@ class IndexerTableSwapperTest extends TestCase
     protected function setUp(): void
     {
         $this->resourceConnectionMock = $this->createMock(ResourceConnection::class);
-
         $this->adapterInterfaceMock = $this->createMock(AdapterInterface::class);
         $zendDbStatementInterfaceMock = $this->createMock(\Zend_Db_Statement_Interface::class);
         $this->adapterInterfaceMock->method('query')->willReturn($zendDbStatementInterfaceMock);
+        
         /** @var \Zend_Db_Statement_Interface $statementInterfaceMock */
         $this->statementInterfaceMock = $this->createMock(\Zend_Db_Statement_Interface::class);
+        
         /** @var Table $tableMock */
         $this->tableMock = $this->createMock(Table::class);
         $this->resourceConnectionMock->method('getConnection')->willReturn($this->adapterInterfaceMock);

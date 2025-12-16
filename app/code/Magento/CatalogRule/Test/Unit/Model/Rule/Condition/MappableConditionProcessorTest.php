@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\CatalogRule\Test\Unit\Model\Rule\Condition;
 
+use Magento\Catalog\Model\Product;
 use Magento\CatalogRule\Model\Rule\Condition\Combine as CombinedCondition;
 use Magento\CatalogRule\Model\Rule\Condition\MappableConditionsProcessor;
 use Magento\CatalogRule\Model\Rule\Condition\Product as SimpleCondition;
@@ -1055,7 +1056,7 @@ class MappableConditionProcessorTest extends TestCase
         $this->eavConfigMock
             ->expects($this->once())
             ->method('getAttribute')
-            ->with(\Magento\Catalog\Model\Product::ENTITY, 'sku')
+            ->with(Product::ENTITY, 'sku')
             ->willReturn($attributeMock);
 
         $inputCondition = $this->getMockForCombinedCondition([$simpleCondition], 'all');
@@ -1094,7 +1095,7 @@ class MappableConditionProcessorTest extends TestCase
         $this->eavConfigMock
             ->expects($this->once())
             ->method('getAttribute')
-            ->with(\Magento\Catalog\Model\Product::ENTITY, 'non_existent_field')
+            ->with(Product::ENTITY, 'non_existent_field')
             ->willReturn($attributeMock);
 
         $inputCondition = $this->getMockForCombinedCondition([$simpleCondition], 'all');

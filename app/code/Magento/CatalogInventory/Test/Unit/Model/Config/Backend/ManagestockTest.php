@@ -45,7 +45,6 @@ class ManagestockTest extends TestCase
         $eventDispatcherMock = $this->createMock(EventManagerInterface::class);
         $contextMock->method('getEventDispatcher')->willReturn($eventDispatcherMock);
 
-        // Direct instantiation instead of ObjectManagerHelper
         $this->model = new Managestock(
             $contextMock,
             $registryMock,

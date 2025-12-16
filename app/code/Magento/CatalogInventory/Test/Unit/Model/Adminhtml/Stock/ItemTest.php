@@ -65,7 +65,6 @@ class ItemTest extends TestCase
         $stockRegistryMock = $this->createMock(StockRegistryInterface::class);
         $stockItemRepositoryMock = $this->createMock(StockItemRepositoryInterface::class);
 
-        // Direct instantiation instead of ObjectManagerHelper
         $this->_model = new Item(
             $contextMock,
             $registryMock,

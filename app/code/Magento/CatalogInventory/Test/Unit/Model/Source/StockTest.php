@@ -12,15 +12,11 @@ use Magento\Eav\Model\Entity\Collection\AbstractCollection;
 use Magento\Framework\DB\Select;
 use Magento\Framework\EntityManager\EntityMetadata;
 use Magento\Framework\EntityManager\MetadataPool;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 class StockTest extends TestCase
 {
-    use MockCreationTrait;
-
     /**
      * @var Stock
      */

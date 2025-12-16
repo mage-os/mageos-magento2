@@ -18,7 +18,7 @@ class DataTest extends TestCase
     /**
      * Helper object
      *
-     * @var \Magento\CatalogRule\Helper\Data
+     * @var Data
      */
     protected $helper;
 

@@ -22,7 +22,6 @@ use PHPUnit\Framework\TestCase;
 class CatalogRuleProductPriceRowSizeEstimatorTest extends TestCase
 {
     use MockCreationTrait;
-
     /**
      * @var ResourceConnection|MockObject
      */

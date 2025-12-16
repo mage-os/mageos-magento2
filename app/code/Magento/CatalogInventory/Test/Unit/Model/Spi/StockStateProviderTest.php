@@ -45,7 +45,7 @@ class StockStateProviderTest extends TestCase
     protected $productFactory;
 
     /**
-     * @var \Magento\Catalog\Model\Product|MockObject
+     * @var Product|MockObject
      */
     protected $product;
 

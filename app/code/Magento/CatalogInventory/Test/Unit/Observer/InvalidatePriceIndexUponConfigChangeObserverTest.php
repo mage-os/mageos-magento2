@@ -59,7 +59,6 @@ class InvalidatePriceIndexUponConfigChangeObserverTest extends TestCase
         
         $this->eventMock = new Event();
 
-        // Direct instantiation instead of ObjectManagerHelper
         $this->observer = new InvalidatePriceIndexUponConfigChangeObserver(
             $this->priceIndexProcessorMock
         );
@@ -72,7 +71,6 @@ class InvalidatePriceIndexUponConfigChangeObserverTest extends TestCase
     {
         $changedPaths = [Configuration::XML_PATH_SHOW_OUT_OF_STOCK];
 
-        // Use setter instead of expects for the anonymous class
         $this->eventMock->setChangedPaths($changedPaths);
         $this->observerMock->expects($this->once())
             ->method('getEvent')
@@ -93,7 +91,6 @@ class InvalidatePriceIndexUponConfigChangeObserverTest extends TestCase
     {
         $changedPaths = [Configuration::XML_PATH_ITEM_AUTO_RETURN];
 
-        // Use setter instead of expects for the anonymous class
         $this->eventMock->setChangedPaths($changedPaths);
         $this->observerMock->expects($this->once())
             ->method('getEvent')

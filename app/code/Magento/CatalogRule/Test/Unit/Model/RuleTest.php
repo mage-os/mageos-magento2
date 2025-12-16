@@ -36,7 +36,6 @@ use PHPUnit\Framework\TestCase;
 class RuleTest extends TestCase
 {
     use MockCreationTrait;
-
     /**
      * @var Rule
      */

@@ -126,7 +126,7 @@ class ConditionsToSearchCriteriaMapperTest extends TestCase
      */
     public function testMapCustomProductConditionToSearchCriteria()
     {
-        // Simulates custom condition class
+        // Create a mock that extends SimpleCondition (simulates custom condition class)
         $customConditionMock = $this->createPartialMockWithReflection(
             SimpleCondition::class,
             ['getAttribute', 'getOperator', 'getValue']
@@ -266,6 +266,7 @@ class ConditionsToSearchCriteriaMapperTest extends TestCase
      */
     public function testInstanceofCheckAcceptsSubclasses()
     {
+        // Create a subclass of SimpleCondition
         $subclassConditionMock = $this->createMock(SimpleCondition::class);
 
         // Verify instanceof relationship

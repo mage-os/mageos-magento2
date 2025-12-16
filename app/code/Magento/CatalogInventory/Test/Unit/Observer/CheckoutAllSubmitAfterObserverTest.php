@@ -68,7 +68,6 @@ class CheckoutAllSubmitAfterObserverTest extends TestCase
             ->method('getEvent')
             ->willReturn($this->event);
 
-        // Direct instantiation instead of ObjectManagerHelper
         $this->observer = new CheckoutAllSubmitAfterObserver(
             $this->subtractQuoteInventoryObserver,
             $this->reindexQuoteInventoryObserver
@@ -82,7 +81,6 @@ class CheckoutAllSubmitAfterObserverTest extends TestCase
             ['getAllVisibleItems', 'setAllVisibleItems', 'getAllItems', 'setAllItems']
         );
 
-        // Use setter instead of expects for the anonymous class
         $quote->setInventoryProcessed(false);
         $this->event->setQuote($quote);
 
