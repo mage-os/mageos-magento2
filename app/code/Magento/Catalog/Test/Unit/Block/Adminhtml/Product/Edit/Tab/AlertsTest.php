@@ -52,20 +52,26 @@ class AlertsTest extends TestCase
      *
      * @param bool $includePriceBlock
      * @param bool $includeStockBlock
-     * @return void
+     * @param Accordion|null $accordionMock
+     * @return Accordion&MockObject
      */
-    private function setupLayoutMock($includePriceBlock = false, $includeStockBlock = false): void
-    {
-        $accordionMock = $this->getMockBuilder(Accordion::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['addItem'])
-            ->addMethods(['setId'])
-            ->getMock();
+    private function setupLayoutMock(
+        bool $includePriceBlock = false,
+        bool $includeStockBlock = false,
+        ?Accordion $accordionMock = null
+    ): MockObject {
+        if ($accordionMock === null) {
+            $accordionMock = $this->getMockBuilder(Accordion::class)
+                ->disableOriginalConstructor()
+                ->onlyMethods(['addItem'])
+                ->addMethods(['setId'])
+                ->getMock();
 
-        // Allow setId to be called any number of times (may be called during layout setup)
-        $accordionMock->method('setId')
-            ->with('productAlerts')
-            ->willReturnSelf();
+            $accordionMock->method('setId')
+                ->with('productAlerts')
+                ->willReturnSelf();
+        }
+
         $blockMap = [
             [Accordion::class, '', [], $accordionMock]
         ];
@@ -87,6 +93,112 @@ class AlertsTest extends TestCase
         $this->layoutMock->method('createBlock')
             ->willReturnMap($blockMap);
         $this->alerts->setLayout($this->layoutMock);
+
+        return $accordionMock;
+    }
+
+    /**
+     * Create accordion mock with standard configuration
+     *
+     * @return Accordion&MockObject
+     */
+    private function createAccordionMock(): MockObject
+    {
+        $accordionMock = $this->getMockBuilder(Accordion::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['addItem'])
+            ->addMethods(['setId'])
+            ->getMock();
+
+        $accordionMock->method('setId')->willReturnSelf();
+
+        return $accordionMock;
+    }
+
+    /**
+     * Create price block mock
+     *
+     * @return Price&MockObject
+     */
+    private function createPriceBlockMock(): MockObject
+    {
+        $priceBlockMock = $this->getMockBuilder(Price::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['toHtml'])
+            ->getMock();
+        $priceBlockMock->method('toHtml')->willReturn('<price-content>');
+
+        return $priceBlockMock;
+    }
+
+    /**
+     * Create stock block mock
+     *
+     * @return Stock&MockObject
+     */
+    private function createStockBlockMock(): MockObject
+    {
+        return $this->createMock(Stock::class);
+    }
+
+    /**
+     * Configure scope config mock for alert settings
+     *
+     * @param bool $priceAllow
+     * @param bool $stockAllow
+     * @return void
+     */
+    private function configureScopeConfig(bool $priceAllow, bool $stockAllow): void
+    {
+        $this->scopeConfigMock->method('getValue')
+            ->willReturnMap([
+                ['catalog/productalert/allow_price', ScopeInterface::SCOPE_STORE, null, $priceAllow],
+                ['catalog/productalert/allow_stock', ScopeInterface::SCOPE_STORE, null, $stockAllow],
+            ]);
+    }
+
+    /**
+     * Setup layout mock with createBlock callback
+     *
+     * @param Accordion&MockObject $accordionMock
+     * @param Price&MockObject|null $priceBlockMock
+     * @param Stock&MockObject|null $stockBlockMock
+     * @return void
+     */
+    private function setupLayoutWithCallback(
+        MockObject $accordionMock,
+        ?MockObject $priceBlockMock = null,
+        ?MockObject $stockBlockMock = null
+    ): void {
+        $this->layoutMock->method('createBlock')
+            ->willReturnCallback(function ($class) use ($accordionMock, $priceBlockMock, $stockBlockMock) {
+                if ($class === Accordion::class) {
+                    return $accordionMock;
+                }
+                if ($class === Price::class && $priceBlockMock !== null) {
+                    return $priceBlockMock;
+                }
+                if ($class === Stock::class && $stockBlockMock !== null) {
+                    return $stockBlockMock;
+                }
+                return null;
+            });
+
+        $this->alerts->setLayout($this->layoutMock);
+    }
+
+    /**
+     * Invoke protected _prepareLayout method via reflection
+     *
+     * @return mixed
+     * @throws \ReflectionException
+     */
+    private function invokePrepareLayout()
+    {
+        $reflection = new \ReflectionClass($this->alerts);
+        $method = $reflection->getMethod('_prepareLayout');
+        $method->setAccessible(true);
+        return $method->invoke($this->alerts);
     }
 
     /**
@@ -117,54 +229,189 @@ class AlertsTest extends TestCase
     }
 
     /**
-     * Test prepareLayout with different alert configurations
+     * Test that accordion is created with correct ID
      *
-     * @dataProvider alertConfigurationProvider
-     * @param bool $priceAllow
-     * @param bool $stockAllow
      * @return void
+     * @throws \ReflectionException
      */
-    public function testPrepareLayout($priceAllow, $stockAllow): void
+    public function testPrepareLayoutCreatesAccordionWithCorrectId(): void
     {
-        $this->scopeConfigMock->expects($this->any())
-            ->method('getValue')
-            ->willReturnCallback(function ($path) use ($priceAllow, $stockAllow) {
-                if ($path === 'catalog/productalert/allow_price') {
-                    return $priceAllow;
-                }
-                if ($path === 'catalog/productalert/allow_stock') {
-                    return $stockAllow;
-                }
-                return false;
-            });
+        $this->scopeConfigMock->method('getValue')->willReturn(false);
 
-        $this->setupLayoutMock($priceAllow, $stockAllow);
+        $accordionMock = $this->getMockBuilder(Accordion::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['addItem'])
+            ->addMethods(['setId'])
+            ->getMock();
 
-        $reflection = new \ReflectionClass($this->alerts);
-        $method = $reflection->getMethod('_prepareLayout');
-        $method->setAccessible(true);
-        $method->invoke($this->alerts);
+        $accordionMock->expects($this->atLeastOnce())
+            ->method('setId')
+            ->with('productAlerts')
+            ->willReturnSelf();
 
-        // Get accordion HTML to verify child was set
-        $result = $this->alerts->getAccordionHtml();
-        $this->assertNotNull($result);
+        $this->layoutMock->method('createBlock')
+            ->with(Accordion::class)
+            ->willReturn($accordionMock);
+        $this->alerts->setLayout($this->layoutMock);
+
+        $this->invokePrepareLayout();
     }
 
     /**
-     * Data provider for alert configuration scenarios
+     * Test that price alert item is added when price alerts are enabled
      *
-     * Tests all possible combinations of price and stock alert configurations
-     *
-     * @return array
+     * @return void
+     * @throws \ReflectionException
      */
-    public static function alertConfigurationProvider(): array
+    public function testPrepareLayoutAddsPriceAlertWhenEnabled(): void
     {
-        return [
-            'both_enabled' => [true, true],
-            'only_price' => [true, false],
-            'only_stock' => [false, true],
-            'both_disabled' => [false, false],
-        ];
+        $this->configureScopeConfig(true, false);
+
+        $accordionMock = $this->createAccordionMock();
+        $accordionMock->expects($this->atLeastOnce())
+            ->method('addItem')
+            ->with(
+                'price',
+                $this->callback(function ($config) {
+                    return isset($config['title'])
+                        && $config['title'] == 'Price Alert Subscriptions'
+                        && isset($config['content'])
+                        && isset($config['open'])
+                        && $config['open'] === true;
+                })
+            );
+
+        $priceBlockMock = $this->createPriceBlockMock();
+        $this->setupLayoutWithCallback($accordionMock, $priceBlockMock);
+        $this->invokePrepareLayout();
+    }
+
+    /**
+     * Test that stock alert item is added when stock alerts are enabled
+     *
+     * @return void
+     * @throws \ReflectionException
+     */
+    public function testPrepareLayoutAddsStockAlertWhenEnabled(): void
+    {
+        $this->configureScopeConfig(false, true);
+
+        $accordionMock = $this->createAccordionMock();
+        $accordionMock->expects($this->atLeastOnce())
+            ->method('addItem')
+            ->with(
+                'stock',
+                $this->callback(function ($config) {
+                    return isset($config['title'])
+                        && $config['title'] == 'Stock Alert Subscriptions'
+                        && isset($config['content'])
+                        && isset($config['open'])
+                        && $config['open'] === true;
+                })
+            );
+
+        $stockBlockMock = $this->createStockBlockMock();
+        $this->setupLayoutWithCallback($accordionMock, null, $stockBlockMock);
+        $this->invokePrepareLayout();
+    }
+
+    /**
+     * Test that both price and stock alert items are added when both are enabled
+     *
+     * @return void
+     * @throws \ReflectionException
+     */
+    public function testPrepareLayoutAddsBothAlertsWhenBothEnabled(): void
+    {
+        $this->configureScopeConfig(true, true);
+
+        $accordionMock = $this->createAccordionMock();
+
+        $priceAdded = false;
+        $stockAdded = false;
+        $accordionMock->expects($this->atLeast(2))
+            ->method('addItem')
+            ->willReturnCallback(function ($id, $config) use (&$priceAdded, &$stockAdded) {
+                if ($id === 'price') {
+                    $this->assertEquals('Price Alert Subscriptions', (string)$config['title']);
+                    $this->assertTrue($config['open']);
+                    $priceAdded = true;
+                } elseif ($id === 'stock') {
+                    $this->assertEquals('Stock Alert Subscriptions', (string)$config['title']);
+                    $this->assertTrue($config['open']);
+                    $stockAdded = true;
+                }
+            });
+
+        $priceBlockMock = $this->createPriceBlockMock();
+        $stockBlockMock = $this->createStockBlockMock();
+
+        $this->setupLayoutWithCallback($accordionMock, $priceBlockMock, $stockBlockMock);
+        $this->invokePrepareLayout();
+
+        $this->assertTrue($priceAdded, 'Price alert should be added');
+        $this->assertTrue($stockAdded, 'Stock alert should be added');
+    }
+
+    /**
+     * Test that no alert items are added when both alerts are disabled
+     *
+     * @return void
+     * @throws \ReflectionException
+     */
+    public function testPrepareLayoutAddsNoAlertsWhenBothDisabled(): void
+    {
+        $this->configureScopeConfig(false, false);
+
+        $accordionMock = $this->createAccordionMock();
+        $accordionMock->expects($this->never())
+            ->method('addItem');
+
+        $this->setupLayoutMock(false, false, $accordionMock);
+        $this->invokePrepareLayout();
+    }
+
+    /**
+     * Test that accordion is set as child block
+     *
+     * @return void
+     * @throws \ReflectionException
+     */
+    public function testPrepareLayoutSetsAccordionAsChild(): void
+    {
+        $this->scopeConfigMock->method('getValue')->willReturn(false);
+
+        $this->setupLayoutMock(false, false);
+        $this->invokePrepareLayout();
+
+        $accordionHtml = $this->alerts->getAccordionHtml();
+        $this->assertIsString($accordionHtml);
+    }
+
+    /**
+     * Test that price alert content includes Price block HTML
+     *
+     * @return void
+     * @throws \ReflectionException
+     */
+    public function testPrepareLayoutPriceAlertContentIncludesPriceBlockHtml(): void
+    {
+        $this->configureScopeConfig(true, false);
+
+        $accordionMock = $this->createAccordionMock();
+        $accordionMock->expects($this->atLeastOnce())
+            ->method('addItem')
+            ->with(
+                'price',
+                $this->callback(function ($config) {
+                    return isset($config['content'])
+                        && str_contains($config['content'], '<price-content>');
+                })
+            );
+
+        $priceBlockMock = $this->createPriceBlockMock();
+        $this->setupLayoutWithCallback($accordionMock, $priceBlockMock);
+        $this->invokePrepareLayout();
     }
 
     /**

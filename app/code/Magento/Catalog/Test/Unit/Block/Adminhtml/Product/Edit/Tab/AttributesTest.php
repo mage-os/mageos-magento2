@@ -25,6 +25,12 @@ use Magento\Framework\Registry;
 use Magento\Framework\View\LayoutInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Catalog\Block\Adminhtml\Product\Helper\Form\Price;
+use Magento\Catalog\Block\Adminhtml\Product\Helper\Form\Weight;
+use Magento\Catalog\Block\Adminhtml\Product\Helper\Form\Gallery;
+use Magento\Catalog\Block\Adminhtml\Product\Helper\Form\Image;
+use Magento\Catalog\Block\Adminhtml\Product\Helper\Form\Boolean;
+use \Magento\Catalog\Block\Adminhtml\Helper\Form\Wysiwyg;
 
 /**
  * Unit tests for Attributes block
@@ -34,6 +40,21 @@ use PHPUnit\Framework\TestCase;
  */
 class AttributesTest extends TestCase
 {
+    /**
+     * Test attribute set ID for mock product
+     */
+    private const TEST_ATTRIBUTE_SET_ID = 4;
+
+    /**
+     * Test store ID for mock product
+     */
+    private const TEST_STORE_ID = 1;
+
+    /**
+     * Test group ID for attribute group
+     */
+    private const TEST_GROUP_ID = 1;
+
     /**
      * @var Attributes&MockObject
      */
@@ -96,17 +117,17 @@ class AttributesTest extends TestCase
 
         $this->assertIsArray($result);
         $this->assertArrayHasKey('price', $result);
-        $this->assertEquals(\Magento\Catalog\Block\Adminhtml\Product\Helper\Form\Price::class, $result['price']);
+        $this->assertEquals(Price::class, $result['price']);
         $this->assertArrayHasKey('weight', $result);
-        $this->assertEquals(\Magento\Catalog\Block\Adminhtml\Product\Helper\Form\Weight::class, $result['weight']);
+        $this->assertEquals(Weight::class, $result['weight']);
         $this->assertArrayHasKey('gallery', $result);
-        $this->assertEquals(\Magento\Catalog\Block\Adminhtml\Product\Helper\Form\Gallery::class, $result['gallery']);
+        $this->assertEquals(Gallery::class, $result['gallery']);
         $this->assertArrayHasKey('image', $result);
-        $this->assertEquals(\Magento\Catalog\Block\Adminhtml\Product\Helper\Form\Image::class, $result['image']);
+        $this->assertEquals(Image::class, $result['image']);
         $this->assertArrayHasKey('boolean', $result);
-        $this->assertEquals(\Magento\Catalog\Block\Adminhtml\Product\Helper\Form\Boolean::class, $result['boolean']);
+        $this->assertEquals(Boolean::class, $result['boolean']);
         $this->assertArrayHasKey('textarea', $result);
-        $this->assertEquals(\Magento\Catalog\Block\Adminhtml\Helper\Form\Wysiwyg::class, $result['textarea']);
+        $this->assertEquals(Wysiwyg::class, $result['textarea']);
     }
 
     /**
@@ -159,18 +180,12 @@ class AttributesTest extends TestCase
      */
     public function testPrepareFormCreatesFormWithProduct(): void
     {
-        $productMock = $this->createProductMock(1, false);
-        $formMock = $this->createFormMock();
-        $groupMock = $this->createGroupMock('general', 'General');
+        $mocks = $this->setupStandardPrepareFormTest();
 
-        $this->setupRegistryForProduct($productMock, true);
-        $this->setupFormFactory($formMock);
-        $this->setupBasicFormExpectations($formMock);
-
-        $formMock->expects($this->once())->method('setDataObject')->with($productMock)->willReturnSelf();
-
-        $this->attributesMock->method('getGroup')->willReturn($groupMock);
-        $this->attributesMock->method('getGroupAttributes')->willReturn([]);
+        $mocks['form']->expects($this->once())
+            ->method('setDataObject')
+            ->with($mocks['product'])
+            ->willReturnSelf();
 
         $this->invokeProtectedMethod('_prepareForm');
     }
@@ -184,13 +199,14 @@ class AttributesTest extends TestCase
     {
         $productMock = $this->createProductMock(1, false);
         $formMock = $this->createFormMock();
-        $tierPriceElementMock = $this->createMock(AbstractElement::class);
-        $tierBlockMock = $this->createMock(Tier::class);
         $groupMock = $this->createGroupMock('pricing', 'Pricing');
 
         $this->setupRegistryForProduct($productMock, true);
         $this->setupFormFactory($formMock);
         $this->setupBasicFormExpectations($formMock, false);
+
+        $tierPriceElementMock = $this->createMock(AbstractElement::class);
+        $tierBlockMock = $this->createMock(Tier::class);
 
         $formMock->method('getElement')->willReturnMap([
             ['tier_price', $tierPriceElementMock],
@@ -220,24 +236,18 @@ class AttributesTest extends TestCase
     public function testPrepareFormCreatesAttributeControlsWhenAuthorized(): void
     {
         $productMock = $this->createProductMock(1, false);
-        $productMock->method('getStoreId')->willReturn(1);
-        $productMock->method('getAttributeSetId')->willReturn(4);
-        $productMock->method('getTypeId')->willReturn('simple');
+        $this->configureProductExtended($productMock);
 
         $formMock = $this->createFormMock();
         $formMock->method('getDataObject')->willReturn($productMock);
         $fieldsetMock = $this->createFieldsetMock();
         $createBlockMock = $this->createAttributeCreateBlockMock();
         $searchBlockMock = $this->createAttributeSearchBlockMock();
-        $groupMock = $this->createGroupMock('general', 'General', 1);
+        $groupMock = $this->createGroupMock('general', 'General', self::TEST_GROUP_ID);
 
         $this->setupRegistryForProduct($productMock, true);
         $this->setupFormFactory($formMock);
-        $formMock->method('addFieldset')->willReturn($fieldsetMock);
-        $formMock->method('setDataObject')->willReturnSelf();
-        $formMock->method('getElement')->willReturn(null);
-        $formMock->method('setFieldNameSuffix')->willReturnSelf();
-        $formMock->method('addValues')->willReturnSelf();
+        $this->setupExtendedFormExpectations($formMock, $fieldsetMock);
 
         $this->authorizationMock->expects($this->once())
             ->method('isAllowed')
@@ -248,8 +258,48 @@ class AttributesTest extends TestCase
             ->method('createBlock')
             ->willReturnOnConsecutiveCalls($createBlockMock, $searchBlockMock);
 
-        $searchBlockMock->expects($this->once())->method('setAttributeCreate');
-        $fieldsetMock->expects($this->once())->method('setHeaderBar');
+        $searchBlockMock->expects($this->once())
+            ->method('setAttributeCreate')
+            ->with('<create-html>');
+        $fieldsetMock->expects($this->once())
+            ->method('setHeaderBar')
+            ->with('<search-html>');
+
+        $this->attributesMock->method('getGroup')->willReturn($groupMock);
+        $this->attributesMock->method('getGroupAttributes')->willReturn([]);
+
+        $this->invokeProtectedMethod('_prepareForm');
+    }
+
+    /**
+     * Test prepareForm does not create attribute controls when not authorized
+     *
+     * @return void
+     */
+    public function testPrepareFormDoesNotCreateAttributeControlsWhenNotAuthorized(): void
+    {
+        $productMock = $this->createProductMock(1, false);
+        $this->configureProductExtended($productMock);
+
+        $formMock = $this->createFormMock();
+        $formMock->method('getDataObject')->willReturn($productMock);
+        $fieldsetMock = $this->createFieldsetMock();
+        $groupMock = $this->createGroupMock('general', 'General', self::TEST_GROUP_ID);
+
+        $this->setupRegistryForProduct($productMock, true);
+        $this->setupFormFactory($formMock);
+        $this->setupExtendedFormExpectations($formMock, $fieldsetMock);
+
+        $this->authorizationMock->expects($this->once())
+            ->method('isAllowed')
+            ->with('Magento_Catalog::attributes_attributes')
+            ->willReturn(false);
+
+        $this->layoutMock->expects($this->never())
+            ->method('createBlock');
+
+        $fieldsetMock->expects($this->never())
+            ->method('setHeaderBar');
 
         $this->attributesMock->method('getGroup')->willReturn($groupMock);
         $this->attributesMock->method('getGroupAttributes')->willReturn([]);
@@ -265,16 +315,16 @@ class AttributesTest extends TestCase
     public function testPrepareFormSetsDefaultValuesForNewProduct(): void
     {
         $productMock = $this->createProductMock(null, false);
-        $attributeMock = $this->createMock(Attribute::class);
-        $attributeMock->method('getAttributeCode')->willReturn('custom_attribute');
-        $attributeMock->method('getDefaultValue')->willReturn('default_value');
-
         $formMock = $this->createFormMock();
         $groupMock = $this->createGroupMock('general', 'General');
 
         $this->setupRegistryForProduct($productMock, true);
         $this->setupFormFactory($formMock);
         $this->setupBasicFormExpectations($formMock);
+
+        $attributeMock = $this->createMock(Attribute::class);
+        $attributeMock->method('getAttributeCode')->willReturn('custom_attribute');
+        $attributeMock->method('getDefaultValue')->willReturn('default_value');
 
         $formMock->expects($this->once())
             ->method('addValues')
@@ -312,7 +362,9 @@ class AttributesTest extends TestCase
             ['name', $elementMock]
         ]);
 
-        $elementMock->expects($this->once())->method('setReadonly')->with(true, true);
+        $elementMock->expects($this->once())
+            ->method('setReadonly')
+            ->with(true, true);
 
         $this->attributesMock->method('getGroup')->willReturn($groupMock);
         $this->attributesMock->method('getGroupAttributes')->willReturn([]);
@@ -327,25 +379,38 @@ class AttributesTest extends TestCase
      */
     public function testPrepareFormDispatchesEventWithFormAndLayout(): void
     {
-        $productMock = $this->createProductMock(1, false);
-        $formMock = $this->createFormMock();
-        $groupMock = $this->createGroupMock('general', 'General');
-
-        $this->setupRegistryForProduct($productMock, true);
-        $this->setupFormFactory($formMock);
-        $this->setupBasicFormExpectations($formMock);
+        $mocks = $this->setupStandardPrepareFormTest();
 
         $this->eventManagerMock->expects($this->once())
             ->method('dispatch')
             ->with(
                 'adminhtml_catalog_product_edit_prepare_form',
-                $this->callback(function ($data) use ($formMock) {
-                    return isset($data['form']) && $data['form'] === $formMock;
+                $this->callback(function ($data) use ($mocks) {
+                    return isset($data['form']) && $data['form'] === $mocks['form'];
                 })
             );
 
-        $this->attributesMock->method('getGroup')->willReturn($groupMock);
-        $this->attributesMock->method('getGroupAttributes')->willReturn([]);
+        $this->invokeProtectedMethod('_prepareForm');
+    }
+
+    /**
+     * Test prepareForm when use_wrapper is false
+     *
+     * @return void
+     */
+    public function testPrepareFormWhenUseWrapperIsFalse(): void
+    {
+        $mocks = $this->setupStandardPrepareFormTest(
+            1,
+            'general',
+            'General',
+            false
+        );
+
+        $mocks['form']->expects($this->once())
+            ->method('setFieldNameSuffix')
+            ->with('product')
+            ->willReturnSelf();
 
         $this->invokeProtectedMethod('_prepareForm');
     }
@@ -394,9 +459,9 @@ class AttributesTest extends TestCase
      * @param int|null $id
      * @param bool $hasLockedAttributes
      * @param array $lockedAttributes
-     * @return Product&MockObject
+     * @return MockObject
      */
-    private function createProductMock($id, bool $hasLockedAttributes, array $lockedAttributes = []): Product&MockObject
+    private function createProductMock(?int $id, bool $hasLockedAttributes, array $lockedAttributes = []): MockObject
     {
         $productMock = $this->createMock(Product::class);
         $productMock->method('getId')->willReturn($id);
@@ -409,9 +474,9 @@ class AttributesTest extends TestCase
     /**
      * Create a configured form mock
      *
-     * @return Form&MockObject
+     * @return MockObject
      */
-    private function createFormMock(): Form&MockObject
+    private function createFormMock(): MockObject
     {
         return $this->getMockBuilder(Form::class)
             ->disableOriginalConstructor()
@@ -423,9 +488,9 @@ class AttributesTest extends TestCase
     /**
      * Create a configured fieldset mock
      *
-     * @return Fieldset&MockObject
+     * @return MockObject
      */
-    private function createFieldsetMock(): Fieldset&MockObject
+    private function createFieldsetMock(): MockObject
     {
         return $this->getMockBuilder(Fieldset::class)
             ->disableOriginalConstructor()
@@ -439,9 +504,9 @@ class AttributesTest extends TestCase
      * @param string $code
      * @param string $name
      * @param int|null $id
-     * @return Group&MockObject
+     * @return MockObject
      */
-    private function createGroupMock(string $code, string $name, ?int $id = null): Group&MockObject
+    private function createGroupMock(string $code, string $name, ?int $id = null): MockObject
     {
         $groupMock = $this->getMockBuilder(Group::class)
             ->disableOriginalConstructor()
@@ -460,13 +525,13 @@ class AttributesTest extends TestCase
     }
 
     /**
-     * Setup registry for product and use_wrapper
+     * Setup registry mock to return product and use_wrapper flag
      *
-     * @param Product&MockObject $productMock
+     * @param MockObject $productMock
      * @param bool $useWrapper
      * @return void
      */
-    private function setupRegistryForProduct($productMock, bool $useWrapper): void
+    private function setupRegistryForProduct(MockObject $productMock, bool $useWrapper): void
     {
         $this->registryMock->method('registry')->willReturnMap([
             ['product', $productMock],
@@ -477,10 +542,10 @@ class AttributesTest extends TestCase
     /**
      * Setup form factory to return form mock
      *
-     * @param Form&MockObject $formMock
+     * @param MockObject $formMock
      * @return void
      */
-    private function setupFormFactory($formMock): void
+    private function setupFormFactory(MockObject $formMock): void
     {
         $this->formFactoryMock->method('create')->willReturn($formMock);
     }
@@ -488,11 +553,11 @@ class AttributesTest extends TestCase
     /**
      * Setup basic form expectations common to most tests
      *
-     * @param Form&MockObject $formMock
+     * @param MockObject $formMock
      * @param bool $includeGetElement
      * @return void
      */
-    private function setupBasicFormExpectations($formMock, bool $includeGetElement = true): void
+    private function setupBasicFormExpectations(MockObject $formMock, bool $includeGetElement = true): void
     {
         $fieldsetMock = $this->createFieldsetMock();
 
@@ -508,11 +573,81 @@ class AttributesTest extends TestCase
     }
 
     /**
-     * Create attribute create block mock
+     * Setup standard mocks for _prepareForm tests
      *
-     * @return Create&MockObject
+     * @param int|null $productId
+     * @param string $groupCode
+     * @param string $groupName
+     * @param bool $useWrapper
+     * @return array{product: MockObject, form: MockObject, group: MockObject}
      */
-    private function createAttributeCreateBlockMock(): Create&MockObject
+    private function setupStandardPrepareFormTest(
+        ?int $productId = 1,
+        string $groupCode = 'general',
+        string $groupName = 'General',
+        bool $useWrapper = true
+    ): array {
+        $productMock = $this->createProductMock($productId, false);
+        $formMock = $this->createFormMock();
+        $groupMock = $this->createGroupMock($groupCode, $groupName);
+
+        $this->setupRegistryForProduct($productMock, $useWrapper);
+        $this->setupFormFactory($formMock);
+        $this->setupBasicFormExpectations($formMock);
+
+        $this->attributesMock->method('getGroup')->willReturn($groupMock);
+        $this->attributesMock->method('getGroupAttributes')->willReturn([]);
+
+        return [
+            'product' => $productMock,
+            'form' => $formMock,
+            'group' => $groupMock
+        ];
+    }
+
+    /**
+     * Setup extended form mock configuration
+     *
+     *
+     * @param MockObject $formMock
+     * @param MockObject $fieldsetMock
+     * @return void
+     */
+    private function setupExtendedFormExpectations(MockObject $formMock, MockObject $fieldsetMock): void
+    {
+        $formMock->method('addFieldset')->willReturn($fieldsetMock);
+        $formMock->method('setDataObject')->willReturnSelf();
+        $formMock->method('getElement')->willReturn(null);
+        $formMock->method('setFieldNameSuffix')->willReturnSelf();
+        $formMock->method('addValues')->willReturnSelf();
+    }
+
+    /**
+     * Configure product mock with store, attribute set, and type
+     *
+     * @param MockObject $productMock
+     * @param int $storeId
+     * @param int $attributeSetId
+     * @param string $typeId
+     * @return void
+     */
+    private function configureProductExtended(
+        MockObject $productMock,
+        int $storeId = self::TEST_STORE_ID,
+        int $attributeSetId = self::TEST_ATTRIBUTE_SET_ID,
+        string $typeId = 'simple'
+    ): void {
+        $productMock->method('getStoreId')->willReturn($storeId);
+        $productMock->method('getAttributeSetId')->willReturn($attributeSetId);
+        $productMock->method('getTypeId')->willReturn($typeId);
+    }
+
+    /**
+     * Create attribute config mock with fluent setters
+     *
+     * @return MockObject
+     */
+    private function createAttributeConfigMock(): MockObject
     {
         $configMock = $this->getMockBuilder(DataObject::class)
             ->disableOriginalConstructor()
@@ -521,14 +656,26 @@ class AttributesTest extends TestCase
                 'setStoreId', 'setAttributeSetId', 'setTypeId', 'setProductId'
             ])
             ->getMock();
+        $fluentMethods = [
+            'setAttributeGroupCode', 'setTabId', 'setGroupId', 'setStoreId',
+            'setAttributeSetId', 'setTypeId', 'setProductId'
+        ];
 
-        $configMock->method('setAttributeGroupCode')->willReturnSelf();
-        $configMock->method('setTabId')->willReturnSelf();
-        $configMock->method('setGroupId')->willReturnSelf();
-        $configMock->method('setStoreId')->willReturnSelf();
-        $configMock->method('setAttributeSetId')->willReturnSelf();
-        $configMock->method('setTypeId')->willReturnSelf();
-        $configMock->method('setProductId')->willReturnSelf();
+        foreach ($fluentMethods as $method) {
+            $configMock->method($method)->willReturnSelf();
+        }
+
+        return $configMock;
+    }
+
+    /**
+     * Create attribute create block mock
+     *
+     * @return MockObject
+     */
+    private function createAttributeCreateBlockMock(): MockObject
+    {
+        $configMock = $this->createAttributeConfigMock();
 
         $createBlockMock = $this->createMock(Create::class);
         $createBlockMock->method('getConfig')->willReturn($configMock);
@@ -540,9 +687,9 @@ class AttributesTest extends TestCase
     /**
      * Create attribute search block mock
      *
-     * @return Search&MockObject
+     * @return MockObject
      */
-    private function createAttributeSearchBlockMock(): Search&MockObject
+    private function createAttributeSearchBlockMock(): MockObject
     {
         $searchBlockMock = $this->getMockBuilder(Search::class)
             ->disableOriginalConstructor()
