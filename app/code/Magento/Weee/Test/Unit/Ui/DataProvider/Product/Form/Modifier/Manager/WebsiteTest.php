@@ -12,6 +12,7 @@ use Magento\Catalog\Model\Locator\LocatorInterface;
 use Magento\Catalog\Model\ResourceModel\Eav\Attribute as EavAttribute;
 use Magento\Directory\Helper\Data as DirectoryHelper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Store\Model\StoreManager;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Weee\Ui\DataProvider\Product\Form\Modifier\Manager\Website;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -59,7 +60,7 @@ class WebsiteTest extends TestCase
         $this->objectManager = new ObjectManager($this);
         $this->locatorMock = $this->createMock(LocatorInterface::class);
         $this->storeManagerMock = $this->createPartialMock(
-            \Magento\Store\Model\StoreManager::class,
+            StoreManager::class,
             ['hasSingleStore']
         );
         $this->directoryHelperMock = $this->createMock(DirectoryHelper::class);
