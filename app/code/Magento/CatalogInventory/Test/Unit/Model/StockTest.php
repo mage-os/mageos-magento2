@@ -95,7 +95,6 @@ class StockTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        // Create AbstractResourceTestHelper extending AbstractResource with dynamic methods
         $this->resource = $this->createPartialMockWithReflection(DbAbstractDb::class, ['getIdFieldName', '_construct']);
         $this->resource->method('getIdFieldName')->willReturn('stock_id');
 

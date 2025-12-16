@@ -12,8 +12,11 @@ use Magento\CatalogInventory\Api\Data\StockItemInterface;
 use Magento\CatalogInventory\Api\StockRegistryInterface;
 use Magento\CatalogInventory\Block\Qtyincrements;
 use Magento\CatalogInventory\Model\Stock\Item;
+use Magento\Framework\App\ObjectManager as AppObjectManager;
+use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\Registry;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+use Magento\Framework\View\Element\Template\Context;
 use Magento\Store\Model\Store;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -51,16 +54,13 @@ class QtyincrementsTest extends TestCase
 
     protected function setUp(): void
     {
-        // Create minimal ObjectManager mock
-        $objectManagerMock = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
-        \Magento\Framework\App\ObjectManager::setInstance($objectManagerMock);
+        $objectManagerMock = $this->createMock(ObjectManagerInterface::class);
+        AppObjectManager::setInstance($objectManagerMock);
         
-        // Create Context mock
-        $contextMock = $this->createMock(\Magento\Framework\View\Element\Template\Context::class);
+        $contextMock = $this->createMock(Context::class);
         
         $this->registryMock = $this->createMock(Registry::class);
         
-        // Create StockItemInterfaceTestHelper for StockItemInterface
         $this->stockItem = $this->createPartialMockWithReflection(
             Item::class,
             ['getStockItem', 'getQtyIncrements', 'setQtyIncrements']
@@ -83,7 +83,6 @@ class QtyincrementsTest extends TestCase
         $this->stockRegistry = $this->createMock(StockRegistryInterface::class);
         $this->stockRegistry->method('getStockItem')->willReturn($this->stockItem);
 
-        // Instantiate Qtyincrements block directly with mocks
         $this->block = new Qtyincrements(
             $contextMock,
             $this->registryMock,

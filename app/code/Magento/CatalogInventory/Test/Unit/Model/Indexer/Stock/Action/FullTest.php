@@ -8,11 +8,19 @@ declare(strict_types=1);
 namespace Magento\CatalogInventory\Test\Unit\Model\Indexer\Stock\Action;
 
 use Magento\Catalog\Model\Product\Type;
+use Magento\Catalog\Model\ResourceModel\Indexer\ActiveTableSwitcher;
 use Magento\CatalogInventory\Model\Indexer\Stock\Action\Full;
 use Magento\CatalogInventory\Model\ResourceModel\Indexer\StockFactory;
+use Magento\Framework\App\ObjectManager as AppObjectManager;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
+use Magento\Framework\EntityManager\MetadataPool;
+use Magento\Framework\Event\ManagerInterface as EventManagerInterface;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Indexer\BatchProviderInterface;
+use Magento\Framework\Indexer\BatchSizeManagementInterface;
+use Magento\Framework\Indexer\CacheContext;
+use Magento\Framework\ObjectManagerInterface;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -42,21 +50,16 @@ class FullTest extends TestCase
             ->method('getTableName')
             ->willThrowException(new \Exception($exceptionMessage));
 
-        // Create minimal ObjectManager mock and set it up first
-        $objectManagerMock = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
-        \Magento\Framework\App\ObjectManager::setInstance($objectManagerMock);
+        $objectManagerMock = $this->createMock(ObjectManagerInterface::class);
+        AppObjectManager::setInstance($objectManagerMock);
 
-        // Create additional required mocks
-        $cacheContextMock = $this->createMock(\Magento\Framework\Indexer\CacheContext::class);
-        $eventManagerMock = $this->createMock(\Magento\Framework\Event\ManagerInterface::class);
-        $metadataPoolMock = $this->createMock(\Magento\Framework\EntityManager\MetadataPool::class);
-        $batchProviderMock = $this->createMock(\Magento\Framework\Indexer\BatchProviderInterface::class);
-        $batchSizeManagementMock = $this->createMock(\Magento\Framework\Indexer\BatchSizeManagementInterface::class);
-        $activeTableSwitcherMock = $this->createMock(
-            \Magento\Catalog\Model\ResourceModel\Indexer\ActiveTableSwitcher::class
-        );
+        $cacheContextMock = $this->createMock(CacheContext::class);
+        $eventManagerMock = $this->createMock(EventManagerInterface::class);
+        $metadataPoolMock = $this->createMock(MetadataPool::class);
+        $batchProviderMock = $this->createMock(BatchProviderInterface::class);
+        $batchSizeManagementMock = $this->createMock(BatchSizeManagementInterface::class);
+        $activeTableSwitcherMock = $this->createMock(ActiveTableSwitcher::class);
 
-        // Configure ObjectManager mock to return the required instances
         $objectManagerMock->method('get')
             ->willReturnMap([
                 [\Magento\Framework\EntityManager\MetadataPool::class, $metadataPoolMock],

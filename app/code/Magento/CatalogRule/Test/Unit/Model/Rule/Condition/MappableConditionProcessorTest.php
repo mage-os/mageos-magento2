@@ -986,7 +986,6 @@ class MappableConditionProcessorTest extends TestCase
         $this->expectException('Magento\Framework\Exception\InputException');
         $this->expectExceptionMessage('Undefined condition type "olo-lo" passed in.');
         
-        // Create a mock that doesn't extend SimpleCondition or CombinedCondition
         // This tests the instanceof logic at line 82 and 70 - if neither match, throw exception
         $invalidCondition = $this->createPartialMockWithReflection(
             AbstractCondition::class,
@@ -1036,7 +1035,6 @@ class MappableConditionProcessorTest extends TestCase
      */
     public function testValidateSimpleConditionWithEavAttribute()
     {
-        // Create a simple condition with an EAV attribute
         $simpleCondition = $this->getMockForSimpleCondition('sku');
         
         // Mock attribute with backend type (valid EAV attribute)
@@ -1076,7 +1074,6 @@ class MappableConditionProcessorTest extends TestCase
      */
     public function testValidateSimpleConditionWithNonEavAttribute()
     {
-        // Create a simple condition with a non-EAV field
         $simpleCondition = $this->getMockForSimpleCondition('non_existent_field');
         
         // Mock attribute with null backend type (invalid/non-existent EAV attribute)
@@ -1116,7 +1113,6 @@ class MappableConditionProcessorTest extends TestCase
      */
     public function testValidateSimpleConditionWithCustomProcessor()
     {
-        // Create a simple condition with a custom field
         $simpleCondition = $this->getMockForSimpleCondition('custom_field');
         
         // Has custom processor for this field

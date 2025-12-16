@@ -45,7 +45,6 @@ class UpdateItemsStockUponConfigChangeObserverTest extends TestCase
     {
         $this->resourceStockItem = $this->createMock(Item::class);
 
-        // Create Event with getWebsite and getChangedPaths methods via __call
         $this->event = new Event();
 
         $this->eventObserver = $this->createMock(Observer::class);

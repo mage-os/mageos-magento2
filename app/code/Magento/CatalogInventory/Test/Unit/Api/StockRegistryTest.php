@@ -158,21 +158,15 @@ class StockRegistryTest extends TestCase
         $itemId = 1;
         $testData = ['test_key' => 'test_value'];
         
-        // Configure the input stock item (passed to the method)
-        $inputStockItem = $this->createPartialMockWithReflection(
-            Item::class,
-            ['getWebsiteId', 'getData']
-        );
-        $inputStockItem->method('getWebsiteId')->willReturn(null);
-        $inputStockItem->method('getData')->willReturn($testData);
+        $this->stockItem->method('getWebsiteId')->willReturn(null);
+        $this->stockItem->method('getData')->willReturn($testData);
         
-        // Configure $this->stockItem (returned by getStockItem and save)
         $this->stockItem->method('getItemId')->willReturn($itemId);
         $this->stockItem->method('getData')->willReturn($testData);
         
         $this->assertEquals(
             $itemId,
-            $this->stockRegistry->updateStockItemBySku(self::PRODUCT_SKU, $inputStockItem)
+            $this->stockRegistry->updateStockItemBySku(self::PRODUCT_SKU, $this->stockItem)
         );
     }
 }

@@ -126,7 +126,7 @@ class ConditionsToSearchCriteriaMapperTest extends TestCase
      */
     public function testMapCustomProductConditionToSearchCriteria()
     {
-        // Create a mock that extends SimpleCondition (simulates custom condition class)
+        // Simulates custom condition class
         $customConditionMock = $this->createPartialMockWithReflection(
             SimpleCondition::class,
             ['getAttribute', 'getOperator', 'getValue']
@@ -224,7 +224,6 @@ class ConditionsToSearchCriteriaMapperTest extends TestCase
         $this->expectException(InputException::class);
         $this->expectExceptionMessage('Undefined condition type');
 
-        // Create a mock that implements ConditionInterface but is neither SimpleCondition nor CombinedCondition
         $invalidConditionMock = $this->createPartialMockWithReflection(
             AbstractCondition::class,
             ['getType']
@@ -267,7 +266,6 @@ class ConditionsToSearchCriteriaMapperTest extends TestCase
      */
     public function testInstanceofCheckAcceptsSubclasses()
     {
-        // Create a subclass of SimpleCondition
         $subclassConditionMock = $this->createMock(SimpleCondition::class);
 
         // Verify instanceof relationship
@@ -437,7 +435,6 @@ class ConditionsToSearchCriteriaMapperTest extends TestCase
     {
         $conditionMock = $this->createSimpleConditionMock('sku', '==', 'test-sku');
         
-        // Create combined condition with getValue() returning false
         $combinedConditionMock = $this->createPartialMockWithReflection(
             CombinedCondition::class,
             ['getAggregator', 'getConditions', 'getValue']

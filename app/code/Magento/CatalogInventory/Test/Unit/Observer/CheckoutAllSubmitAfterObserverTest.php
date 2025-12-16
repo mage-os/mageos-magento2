@@ -60,7 +60,6 @@ class CheckoutAllSubmitAfterObserverTest extends TestCase
             ReindexQuoteInventoryObserver::class
         );
 
-        // Create Event with all required methods via __call
         $this->event = new Event();
 
         $this->eventObserver = $this->createMock(Observer::class);

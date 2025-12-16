@@ -8,10 +8,10 @@ declare(strict_types=1);
 
 namespace Magento\CatalogInventory\Test\Unit\Model\Stock;
 
-use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Product;
 use Magento\CatalogInventory\Api\StockConfigurationInterface;
 use Magento\CatalogInventory\Api\StockItemRepositoryInterface;
+use Magento\CatalogInventory\Model\ResourceModel\Stock\Item as StockItemResource;
 use Magento\CatalogInventory\Model\ResourceModel\Stock\Item\Collection;
 use Magento\CatalogInventory\Model\Stock\Item;
 use Magento\Customer\Model\Session;
@@ -19,12 +19,13 @@ use Magento\Framework\Event\Manager;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\Model\Context;
 use Magento\Framework\Registry;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -122,7 +123,7 @@ class ItemTest extends TestCase
 
         $this->stockItemRepository = $this->createMock(StockItemRepositoryInterface::class);
 
-        $this->resource = $this->createMock(\Magento\CatalogInventory\Model\ResourceModel\Stock\Item::class);
+        $this->resource = $this->createMock(StockItemResource::class);
 
         $this->resourceCollection = $this->createMock(
             Collection::class
@@ -178,13 +179,11 @@ class ItemTest extends TestCase
         $status = 1;
         $isChangedWebsites = false;
         
-        // Create ProductTestHelper extending Product with dynamic methods
         $product = $this->createPartialMockWithReflection(
             Product::class,
             ['getIsChangedWebsites','getId', 'getName', 'getStoreId', 'getTypeId', 'dataHasChangedFor', '__wakeup']
         );
         
-        // Configure the mock to return expected values
         $product->expects($this->any())->method('getId')->willReturn($productId);
         $product->expects($this->any())->method('getName')->willReturn($productName);
         $product->expects($this->any())->method('getTypeId')->willReturn($typeId);

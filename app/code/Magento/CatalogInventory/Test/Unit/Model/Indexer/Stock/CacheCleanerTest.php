@@ -97,20 +97,16 @@ class CacheCleanerTest extends TestCase
         $this->eventManagerMock = $this->getMockBuilder(ManagerInterface::class)
             ->getMock();
 
-        // Create minimal ObjectManager mock and set it up first
         $objectManagerMock = $this->createMock(ObjectManagerInterface::class);
         \Magento\Framework\App\ObjectManager::setInstance($objectManagerMock);
 
-        // Create minimal mocks for MetadataPool constructor
         $sequenceFactoryMock = $this->createMock(SequenceFactory::class);
         
-        // Use MetadataPoolTestHelper extending MetadataPool with dynamic methods
         $this->metadataPoolMock = $this->createPartialMockWithReflection(
             MetadataPool::class,
             ['getMetadata', 'getHydrator']
         );
         
-        // Create metadata mock that returns linkField
         $metadataMock = $this->createPartialMockWithReflection(
             EntityMetadata::class,
             ['getLinkField']

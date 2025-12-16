@@ -217,7 +217,6 @@ class StockRegistryProviderTest extends TestCase
     {
         $this->stockCriteriaFactory->expects($this->once())->method('create')->willReturn($this->stockCriteria);
         $this->stockCriteria->expects($this->once())->method('setScopeFilter')->willReturn(null);
-        // Create CollectionTestHelper extending Collection with dynamic methods
         $stockCollection = $this->createPartialMockWithReflection(
             Collection::class,
             ['getItems', 'setItems', 'getSize', 'setSize']
@@ -243,7 +242,6 @@ class StockRegistryProviderTest extends TestCase
     {
         $this->stockItemCriteriaFactory->expects($this->once())->method('create')->willReturn($this->stockItemCriteria);
         $this->stockItemCriteria->expects($this->once())->method('setProductsFilter')->willReturn(null);
-        // Create StockItemCollectionTestHelper extending Stock\Item\Collection with dynamic methods
         $stockItemCollection = $this->createPartialMockWithReflection(
             StockItemCollection::class,
             ['addFieldToFilter', 'getFirstItem', 'getItems', 'setItems']
@@ -277,7 +275,6 @@ class StockRegistryProviderTest extends TestCase
             ->willReturn($this->stockStatusCriteria);
         $this->stockStatusCriteria->expects($this->once())->method('setScopeFilter')->willReturn(null);
         $this->stockStatusCriteria->expects($this->once())->method('setProductsFilter')->willReturn(null);
-        // Create StockStatusCollectionTestHelper extending Stock\Status\Collection with dynamic methods
         $stockStatusCollection = $this->createPartialMockWithReflection(
             StockStatusCollection::class,
             ['addFieldToFilter', 'getFirstItem', 'getItems', 'setItems']

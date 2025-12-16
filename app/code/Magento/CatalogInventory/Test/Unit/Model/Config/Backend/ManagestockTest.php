@@ -7,10 +7,15 @@ declare(strict_types=1);
 
 namespace Magento\CatalogInventory\Test\Unit\Model\Config\Backend;
 
-use PHPUnit\Framework\Attributes\DataProvider;
+use Magento\CatalogInventory\Api\StockIndexInterface;
 use Magento\CatalogInventory\Model\Config\Backend\Managestock;
 use Magento\CatalogInventory\Model\Indexer\Stock\Processor;
+use Magento\Framework\App\Cache\TypeListInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\Event\ManagerInterface as EventManagerInterface;
+use Magento\Framework\Model\Context;
+use Magento\Framework\Registry;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -32,14 +37,12 @@ class ManagestockTest extends TestCase
         $this->stockIndexerProcessor = $this->createMock(Processor::class);
         $this->configMock = $this->createMock(ScopeConfigInterface::class);
 
-        // Create all required mocks for the Managestock constructor
-        $contextMock = $this->createMock(\Magento\Framework\Model\Context::class);
-        $registryMock = $this->createMock(\Magento\Framework\Registry::class);
-        $cacheTypeListMock = $this->createMock(\Magento\Framework\App\Cache\TypeListInterface::class);
-        $stockIndexMock = $this->createMock(\Magento\CatalogInventory\Api\StockIndexInterface::class);
+        $contextMock = $this->createMock(Context::class);
+        $registryMock = $this->createMock(Registry::class);
+        $cacheTypeListMock = $this->createMock(TypeListInterface::class);
+        $stockIndexMock = $this->createMock(StockIndexInterface::class);
 
-        // Configure context mock to return event dispatcher
-        $eventDispatcherMock = $this->createMock(\Magento\Framework\Event\ManagerInterface::class);
+        $eventDispatcherMock = $this->createMock(EventManagerInterface::class);
         $contextMock->method('getEventDispatcher')->willReturn($eventDispatcherMock);
 
         // Direct instantiation instead of ObjectManagerHelper

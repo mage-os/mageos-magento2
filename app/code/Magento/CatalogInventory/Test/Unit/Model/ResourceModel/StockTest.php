@@ -7,7 +7,6 @@ declare(strict_types=1);
 
 namespace Magento\CatalogInventory\Test\Unit\Model\ResourceModel;
 
-use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\CatalogInventory\Model\Configuration as StockConfiguration;
 use Magento\CatalogInventory\Model\ResourceModel\Stock;
 use Magento\Framework\App\Config;
@@ -15,11 +14,13 @@ use Magento\Framework\DB\Adapter\Pdo\Mysql;
 use Magento\Framework\DB\Select;
 use Magento\Framework\Model\ResourceModel\Db\Context;
 use Magento\Framework\Stdlib\DateTime\DateTime;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Model\StoreManagerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+use Zend_Db_Statement_Interface;
 
 /**
  * Test for \Magento\CatalogInventory\Model\ResourceModel\Stock
@@ -102,7 +103,7 @@ class StockTest extends TestCase
         $this->connectionMock = $this->getMockBuilder(Mysql::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->statementMock = $this->createMock(\Zend_Db_Statement_Interface::class);
+        $this->statementMock = $this->createMock(Zend_Db_Statement_Interface::class);
         $this->stock = $this->getMockBuilder(Stock::class)
             ->onlyMethods(['getTable', 'getConnection'])
             ->setConstructorArgs(

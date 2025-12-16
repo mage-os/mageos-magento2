@@ -42,7 +42,6 @@ class ItemTest extends TestCase
      */
     protected function setUp(): void
     {
-        // Create AbstractResourceTestHelper for AbstractResource
         $resourceMock = $this->createPartialMockWithReflection(
             AbstractDb::class,
             ['getConnection', 'getIdFieldName', '_construct']
@@ -56,7 +55,6 @@ class ItemTest extends TestCase
 
         $groupManagement->method('getAllCustomersGroup')->willReturn($allGroup);
 
-        // Create all required mocks for the Item constructor
         $contextMock = $this->createMock(Context::class);
         $registryMock = $this->createMock(Registry::class);
         $extensionFactoryMock = $this->createMock(ExtensionAttributesFactory::class);

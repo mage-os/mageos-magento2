@@ -7,15 +7,19 @@ declare(strict_types=1);
 
 namespace Magento\CatalogInventory\Test\Unit\Block\Stockqty;
 
-use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Product;
 use Magento\CatalogInventory\Api\Data\StockItemInterface;
 use Magento\CatalogInventory\Api\Data\StockStatusInterface;
 use Magento\CatalogInventory\Api\StockRegistryInterface;
+use Magento\CatalogInventory\Api\StockStateInterface;
 use Magento\CatalogInventory\Block\Stockqty\DefaultStockqty;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\App\ObjectManager as AppObjectManager;
+use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\Registry;
+use Magento\Framework\View\Element\Template\Context;
 use Magento\Store\Model\Store;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -48,22 +52,18 @@ class DefaultStockqtyTest extends TestCase
 
     protected function setUp(): void
     {
-        // Create minimal ObjectManager mock
-        $objectManagerMock = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
-        \Magento\Framework\App\ObjectManager::setInstance($objectManagerMock);
+        $objectManagerMock = $this->createMock(ObjectManagerInterface::class);
+        AppObjectManager::setInstance($objectManagerMock);
         
-        // Create Context mock and configure it to provide scopeConfig
-        $contextMock = $this->createMock(\Magento\Framework\View\Element\Template\Context::class);
+        $contextMock = $this->createMock(Context::class);
         $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
         $contextMock->method('getScopeConfig')->willReturn($this->scopeConfigMock);
         
         $this->registryMock = $this->createMock(Registry::class);
         $this->stockRegistryMock = $this->createMock(StockRegistryInterface::class);
         
-        // Create StockStateInterface mock
-        $stockStateMock = $this->createMock(\Magento\CatalogInventory\Api\StockStateInterface::class);
+        $stockStateMock = $this->createMock(StockStateInterface::class);
         
-        // Instantiate DefaultStockqty block directly with mocks
         $this->block = new DefaultStockqty(
             $contextMock,
             $this->registryMock,

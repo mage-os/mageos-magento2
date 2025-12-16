@@ -7,15 +7,17 @@ declare(strict_types=1);
 
 namespace Magento\CatalogInventory\Test\Unit\Helper;
 
-use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\CatalogInventory\Helper\Minsaleqty;
 use Magento\CatalogInventory\Model\Configuration;
 use Magento\Customer\Api\Data\GroupInterface;
 use Magento\Customer\Api\GroupManagementInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\App\ObjectManager as AppObjectManager;
 use Magento\Framework\Math\Random;
+use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Store\Model\ScopeInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -35,9 +37,8 @@ class MinsaleqtyTest extends TestCase
 
     protected function setUp(): void
     {
-        // Create minimal ObjectManager mock
-        $objectManagerMock = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
-        \Magento\Framework\App\ObjectManager::setInstance($objectManagerMock);
+        $objectManagerMock = $this->createMock(ObjectManagerInterface::class);
+        AppObjectManager::setInstance($objectManagerMock);
         
         $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
         $this->randomMock = $this->createMock(Random::class);
@@ -56,7 +57,6 @@ class MinsaleqtyTest extends TestCase
 
         $this->serializerMock = $this->createMock(Json::class);
 
-        // Instantiate Minsaleqty helper directly with mocks
         $this->minsaleqty = new Minsaleqty(
             $this->scopeConfigMock,
             $this->randomMock,

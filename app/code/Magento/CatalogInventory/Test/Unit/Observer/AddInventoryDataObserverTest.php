@@ -10,8 +10,10 @@ namespace Magento\CatalogInventory\Test\Unit\Observer;
 use Magento\Catalog\Model\Product;
 use Magento\CatalogInventory\Helper\Stock;
 use Magento\CatalogInventory\Observer\AddInventoryDataObserver;
+use Magento\Framework\App\ObjectManager as AppObjectManager;
 use Magento\Framework\Event;
 use Magento\Framework\Event\Observer;
+use Magento\Framework\ObjectManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -43,13 +45,11 @@ class AddInventoryDataObserverTest extends TestCase
 
     protected function setUp(): void
     {
-        // Create minimal ObjectManager mock
-        $objectManagerMock = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
-        \Magento\Framework\App\ObjectManager::setInstance($objectManagerMock);
+        $objectManagerMock = $this->createMock(ObjectManagerInterface::class);
+        AppObjectManager::setInstance($objectManagerMock);
         
         $this->stockHelper = $this->createMock(Stock::class);
 
-        // Create Event with getProduct method via __call
         $this->event = new Event();
 
         $this->eventObserver = $this->createMock(Observer::class);
@@ -57,7 +57,6 @@ class AddInventoryDataObserverTest extends TestCase
             ->method('getEvent')
             ->willReturn($this->event);
 
-        // Instantiate AddInventoryDataObserver directly with mocks
         $this->observer = new AddInventoryDataObserver(
             $this->stockHelper
         );

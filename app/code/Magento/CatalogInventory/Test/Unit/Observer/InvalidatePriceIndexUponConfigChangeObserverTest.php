@@ -57,7 +57,6 @@ class InvalidatePriceIndexUponConfigChangeObserverTest extends TestCase
         $this->indexerMock = $this->createMock(IndexerInterface::class);
         $this->observerMock = $this->createMock(Observer::class);
         
-        // Create Event with getChangedPaths method via __call
         $this->eventMock = new Event();
 
         // Direct instantiation instead of ObjectManagerHelper

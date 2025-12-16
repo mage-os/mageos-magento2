@@ -7,9 +7,9 @@ declare(strict_types=1);
 
 namespace Magento\CatalogInventory\Test\Unit\Helper;
 
-use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ResourceModel\Collection\AbstractCollection;
+use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
 use Magento\Catalog\Model\ResourceModel\Product\Link\Product\Collection;
 use Magento\CatalogInventory\Api\Data\StockStatusInterface;
 use Magento\CatalogInventory\Api\StockConfigurationInterface;
@@ -19,10 +19,11 @@ use Magento\CatalogInventory\Model\ResourceModel\Stock\StatusFactory;
 use Magento\CatalogInventory\Model\Spi\StockRegistryProviderInterface;
 use Magento\Framework\App\Config;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Store\Model\StoreManagerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -187,7 +188,7 @@ class StockTest extends TestCase
 
     public function testAddIsInStockFilterToCollection()
     {
-        $collectionMock = $this->createMock(\Magento\Catalog\Model\ResourceModel\Product\Collection::class);
+        $collectionMock = $this->createMock(ProductCollection::class);
         $stockStatusMock = $this->createMock(Status::class);
         $stockStatusMock->expects($this->once())
             ->method('addStockDataToCollection')
