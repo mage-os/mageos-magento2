@@ -205,6 +205,7 @@ class GalleryTest extends TestCase
             'large-file' => [['size' => [1000]], true, 600],
             'small-file' => [['size' => [100]], true, 100],
             'not-a-file' => [['size' => [100]], false, false],
+            'empty-size' => [['size' => []], true, false]
         ];
     }
 
@@ -258,6 +259,7 @@ class GalleryTest extends TestCase
 
     /**
      * Unit test coverage for getPreviousImageUrl()
+     * Test getPreviousImageUrl returns last image URL when current not in collection
      *
      * @return void
      */

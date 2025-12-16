@@ -167,16 +167,21 @@ class PriceTest extends TestCase
      */
     public function testGetRealPriceJs(): void
     {
-        $expectedPriceHtml = '<span>100.00</span>';
+        $priceHtml = '<span>100.00</span>';
+        $expectedJsonEncodedValue = '"<span>100.00<\/span>"';
+
         $productMock = $this->getMockBuilder(Product::class)
             ->disableOriginalConstructor()
             ->addMethods(['getRealPriceHtml'])
             ->getMock();
 
-        $productMock->expects($this->once())->method('getRealPriceHtml')->willReturn($expectedPriceHtml);
-        $this->jsonEncoderMock->expects($this->once())->method('encode')->willReturn($expectedPriceHtml);
+        $productMock->expects($this->once())->method('getRealPriceHtml')->willReturn($priceHtml);
+        $this->jsonEncoderMock->expects($this->once())
+            ->method('encode')
+            ->with($priceHtml)
+            ->willReturn($expectedJsonEncodedValue);
 
-        $this->assertSame($expectedPriceHtml, $this->block->getRealPriceJs($productMock));
+        $this->assertSame($expectedJsonEncodedValue, $this->block->getRealPriceJs($productMock));
     }
 
     /**
