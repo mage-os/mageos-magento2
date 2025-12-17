@@ -16,13 +16,13 @@
         <element name="defaultCustomerTaxClass" type="button" selector="//*[@id='tax_customer_class']/following-sibling::section//div[@class='mselect-items-wrapper']/div[1]"/>
         <element name="ruleName" type="input" selector="#anchor-content #code"/>
         <element name="addNewTaxRate" type="block" selector="//*[text()='Add New Tax Rate']" timeout="30"/>
-        <element name="taxIdentifier" type="input" selector="#code"/>
+        <element name="taxIdentifier" type="input" selector="aside #code"/>
         <element name="zipIsRange" type="checkbox" selector="#zip_is_range"/>
         <element name="zipCode" type="input" selector="#tax_postcode"/>
         <element name="state" type="select" selector="#tax_region_id"/>
         <element name="country" type="select" selector="#tax_country_id"/>
         <element name="rate" type="input" selector="#rate"/>
-        <element name="save" type="button" selector="//*[contains(@class, 'action-save') or @id='save']" timeout="30"/>
+        <element name="save" type="button" selector=".action-save" timeout="30"/>
         <element name="saveRule" type="button" selector="#save" timeout="30"/>
         <element name="additionalSettings" type="button" selector="#details-summarybase_fieldset"/>
         <element name="productAddNewTaxClass" type="button" selector="//*[@id='tax_product_class']/following-sibling::section//*[contains(text(),'Add New Tax Class')]"/>
