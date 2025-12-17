@@ -64,8 +64,8 @@ abstract class AbstractFactory implements FactoryInterface
      */
     public function __construct(
         ConfigInterface $config,
-        ObjectManagerInterface $objectManager = null,
-        DefinitionInterface $definitions = null,
+        ?ObjectManagerInterface $objectManager = null,
+        ?DefinitionInterface $definitions = null,
         $globalArguments = []
     ) {
         $this->config = $config;
