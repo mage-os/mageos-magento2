@@ -15,6 +15,7 @@ use Magento\CatalogInventory\Api\StockConfigurationInterface;
 use Magento\CatalogInventory\Model\StockRegistryPreloader;
 use Magento\CatalogInventory\Observer\AddStockItemsObserver;
 use Magento\Framework\Event\Observer;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -23,6 +24,7 @@ use PHPUnit\Framework\TestCase;
  */
 class AddStockItemsObserverTest extends TestCase
 {
+    use MockCreationTrait;
     /**
      * Test subject.
      *
@@ -83,7 +85,10 @@ class AddStockItemsObserverTest extends TestCase
             ->method('getDefaultScopeId')
             ->willReturn($defaultScopeId);
 
-        $productExtension = $this->createMock(ProductExtension::class);
+        $productExtension = $this->createPartialMockWithReflection(
+            ProductExtension::class,
+            ['setStockItem']
+        );
         $productExtension->expects(self::once())
             ->method('setStockItem')
             ->with(self::identicalTo($stockItem));
