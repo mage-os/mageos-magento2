@@ -7,26 +7,22 @@ declare(strict_types=1);
 
 namespace Magento\CatalogInventory\Test\Unit\Observer;
 
-use Magento\Catalog\Api\Data\ProductExtensionInterface;
+use Magento\Catalog\Api\Data\ProductExtension;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
 use Magento\CatalogInventory\Api\Data\StockItemInterface;
 use Magento\CatalogInventory\Api\StockConfigurationInterface;
-use Magento\CatalogInventory\Api\StockItemCriteriaInterfaceFactory;
 use Magento\CatalogInventory\Model\StockRegistryPreloader;
 use Magento\CatalogInventory\Observer\AddStockItemsObserver;
 use Magento\Framework\Event\Observer;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class AddStockItemsObserverTest extends TestCase
 {
-    use MockCreationTrait;
-
     /**
      * Test subject.
      *
@@ -87,7 +83,10 @@ class AddStockItemsObserverTest extends TestCase
             ->method('getDefaultScopeId')
             ->willReturn($defaultScopeId);
 
-        $productExtension = $this->createStub(ProductExtensionInterface::class);
+        $productExtension = $this->createMock(ProductExtension::class);
+        $productExtension->expects(self::once())
+            ->method('setStockItem')
+            ->with(self::identicalTo($stockItem));
 
         $product = $this->createMock(Product::class);
         $product->expects(self::once())
