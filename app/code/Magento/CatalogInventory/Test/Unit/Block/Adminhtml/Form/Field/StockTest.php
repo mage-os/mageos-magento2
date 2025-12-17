@@ -65,7 +65,6 @@ class StockTest extends TestCase
         $this->_factoryTextMock = $this->createMock(TextFactory::class);
 
         $objectManagerHelper = new ObjectManager($this);
-        // Initialize ObjectManager to avoid "ObjectManager isn't initialized" errors
         $objectManagerHelper->prepareObjectManager();
         $this->_block = $objectManagerHelper->getObject(
             Stock::class,

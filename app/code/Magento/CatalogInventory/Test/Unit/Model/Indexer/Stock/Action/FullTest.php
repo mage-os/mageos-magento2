@@ -36,6 +36,7 @@ class FullTest extends TestCase
     protected function setUp(): void
     {
         $this->objectManagerHelper = new ObjectManager($this);
+        $this->objectManagerHelper->prepareObjectManager();
     }
 
     public function testExecuteWithAdapterErrorThrowsException()
