@@ -48,9 +48,10 @@ define([
          */
         initialize: function () {
             let self = this,
-                customer = customerData.get('customer'),
                 buyerCountrySection = customerData.get('paypal-buyer-country'),
-                initialBuyerCountry = buyerCountrySection() && buyerCountrySection().code ? buyerCountrySection().code : null;
+                initialBuyerCountry = buyerCountrySection() && buyerCountrySection().code
+                    ? buyerCountrySection().code
+                    : null;
 
             this._super()
                 .observe(['amount', 'buyerCountry']);
@@ -64,6 +65,7 @@ define([
                     .done(function () {
                         let updated = customerData.get('paypal-buyer-country')(),
                             code = updated && updated.code ? updated.code : null;
+
                         self.buyerCountry(code);
                         if (code) {
                             self._refreshMessages();
