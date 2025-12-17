@@ -102,7 +102,7 @@ class CollectionTest extends AbstractTestCase
         )->with(
             ['update' => self::TEST_TABLE],
             'update.layout_update_id = main_table.layout_update_id',
-            $this->isArray()
+            $this->callback('is_array')
         );
 
         $collection = $this->getCollection($select);
