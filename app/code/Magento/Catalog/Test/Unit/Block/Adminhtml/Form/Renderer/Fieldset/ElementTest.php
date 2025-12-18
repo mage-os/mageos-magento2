@@ -222,6 +222,7 @@ class ElementTest extends TestCase
      *
      * @return array
      */
+
     public static function usedDefaultDataProvider(): array
     {
         return [
@@ -230,6 +231,7 @@ class ElementTest extends TestCase
                 'storeId' => 1,
                 'elementValue' => 'anything',
                 'defaultValue' => 'default',
+                'isRequired' => null,
                 'expected' => true,
             ],
             'store_value_exists_equals_default' => [
@@ -237,6 +239,7 @@ class ElementTest extends TestCase
                 'storeId' => 2,
                 'elementValue' => 'default',
                 'defaultValue' => 'default',
+                'isRequired' => null,
                 'expected' => false,
             ],
             'store_value_exists_not_equal_default' => [
@@ -244,8 +247,17 @@ class ElementTest extends TestCase
                 'storeId' => 2,
                 'elementValue' => 'custom',
                 'defaultValue' => 'default',
+                'isRequired' => null,
                 'expected' => false,
             ],
+            'default_false_not_required_value_present' => [
+                'existsStoreValueFlag' => true,
+                'storeId' => 2,
+                'elementValue' => 'custom',
+                'defaultValue' => false,
+                'isRequired' => false,
+                'expected' => false,
+            ]
         ];
     }
 
@@ -264,18 +276,26 @@ class ElementTest extends TestCase
         ?int $storeId,
         mixed $elementValue,
         mixed $defaultValue,
+        ?bool $isRequired,
         bool $expected
     ): void {
         $this->attributeMock->expects($this->once())
             ->method('getAttributeCode')
             ->willReturn('test_code');
+
         $this->dataObjectMock->method('getAttributeDefaultValue')->willReturn($defaultValue);
         $this->dataObjectMock->method('getExistsStoreValueFlag')->willReturn($existsStoreValueFlag);
+
         if ($storeId !== null) {
             $this->dataObjectMock->method('getStoreId')->willReturn($storeId);
         }
         if ($elementValue !== null) {
             $this->elementMock->setData('value', $elementValue);
+        }
+
+        // only set getIsRequired when provided by dataset
+        if ($isRequired !== null) {
+            $this->attributeMock->method('getIsRequired')->willReturn($isRequired);
         }
 
         $this->assertSame($expected, $this->block->usedDefault());
