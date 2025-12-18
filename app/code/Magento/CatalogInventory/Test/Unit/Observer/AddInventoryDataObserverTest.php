@@ -10,10 +10,8 @@ namespace Magento\CatalogInventory\Test\Unit\Observer;
 use Magento\Catalog\Model\Product;
 use Magento\CatalogInventory\Helper\Stock;
 use Magento\CatalogInventory\Observer\AddInventoryDataObserver;
-use Magento\Framework\App\ObjectManager as AppObjectManager;
 use Magento\Framework\Event;
 use Magento\Framework\Event\Observer;
-use Magento\Framework\ObjectManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
