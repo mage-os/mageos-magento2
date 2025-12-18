@@ -62,14 +62,12 @@ class WeeeConfigProviderTest extends TestCase
 
     /**
      * @param array $expectedResult
-     */
-    #[DataProvider('getConfigDataProvider')]
-    /**
      * @param bool $weeeHelperEnabled
      * @param bool $displayWeeeDetails
      * @param bool $weeeConfigEnabled
      * @param bool $includeInSubtotal
      */
+    #[DataProvider('getConfigDataProvider')]
     public function testGetConfig(
         $expectedResult,
         $weeeHelperEnabled,

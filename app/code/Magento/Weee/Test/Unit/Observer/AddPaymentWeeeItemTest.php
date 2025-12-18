@@ -65,13 +65,12 @@ class AddPaymentWeeeItemTest extends TestCase
 
     /**
      * Test execute
-     */
-    #[DataProvider('dataProvider')]
-    /**
+     *
      * @param  bool $isEnabled
      * @param  bool $includeInSubtotal
      * @return void
      */
+    #[DataProvider('dataProvider')]
     public function testExecute(bool $isEnabled, bool $includeInSubtotal): void
     {
         /** @var Observer|MockObject $observerMock */

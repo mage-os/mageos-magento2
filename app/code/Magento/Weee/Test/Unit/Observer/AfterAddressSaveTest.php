@@ -97,14 +97,13 @@ class AfterAddressSaveTest extends TestCase
 
     /**
      * @test
-     */
-    #[DataProvider('getExecuteDataProvider')]
-    /**
+     *
      * @param $isEnabledPageCache
      * @param $isEnabledConfigCache
      * @param $isEnabledWeee
      * @param $isNeedSetAddress
      */
+    #[DataProvider('getExecuteDataProvider')]
     public function testExecute(
         $isEnabledPageCache,
         $isEnabledConfigCache,

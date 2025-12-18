@@ -113,7 +113,7 @@ class CustomerLoggedInTest extends TestCase
 
         $customerMock = $this->createMock(Customer::class);
 
-        /** @var \Magento\Customer\Api\Data\AddressInterface|MockObject $address */
+        /** @var AddressInterface|MockObject $address */
         $address = $this->createMock(AddressInterface::class);
 
         $customerMock->expects($this->once())

@@ -160,8 +160,7 @@ class ReviewTest extends TestCase
 
     /**
      * Create mock object for context
-     */
-    /**
+     *
      * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      */
     private function initContextMock()

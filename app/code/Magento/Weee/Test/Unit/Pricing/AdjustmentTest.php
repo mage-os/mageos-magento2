@@ -71,8 +71,6 @@ class AdjustmentTest extends TestCase
         $this->assertFalse($this->adjustment->isIncludedInBasePrice());
     }
 
-    /**
-     */
     #[DataProvider('isIncludedInDisplayPriceDataProvider')]
     public function testIsIncludedInDisplayPrice($expectedResult)
     {
