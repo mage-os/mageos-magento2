@@ -35,6 +35,7 @@ use \Magento\Catalog\Block\Adminhtml\Helper\Form\Wysiwyg;
 /**
  * Unit tests for Attributes block
  *
+ * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Attributes
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
@@ -56,34 +57,34 @@ class AttributesTest extends TestCase
     private const TEST_GROUP_ID = 1;
 
     /**
-     * @var Attributes&MockObject
+     * @var Attributes|MockObject
      */
-    private $attributesMock;
+    private Attributes|MockObject $attributesMock;
 
     /**
-     * @var FormFactory&MockObject
+     * @var FormFactory|MockObject
      */
-    private $formFactoryMock;
+    private FormFactory|MockObject $formFactoryMock;
 
     /**
-     * @var Registry&MockObject
+     * @var Registry|MockObject
      */
-    private $registryMock;
+    private Registry|MockObject $registryMock;
 
     /**
-     * @var ManagerInterface&MockObject
+     * @var ManagerInterface|MockObject
      */
-    private $eventManagerMock;
+    private ManagerInterface|MockObject $eventManagerMock;
 
     /**
-     * @var AuthorizationInterface&MockObject
+     * @var AuthorizationInterface|MockObject
      */
-    private $authorizationMock;
+    private AuthorizationInterface|MockObject $authorizationMock;
 
     /**
-     * @var LayoutInterface&MockObject
+     * @var LayoutInterface|MockObject
      */
-    private $layoutMock;
+    private LayoutInterface|MockObject $layoutMock;
 
     protected function setUp(): void
     {
@@ -105,6 +106,7 @@ class AttributesTest extends TestCase
     /**
      * Test getAdditionalElementTypes returns all default element types
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Attributes::_getAdditionalElementTypes
      * @return void
      */
     public function testGetAdditionalElementTypesReturnsDefaultTypes(): void
@@ -133,6 +135,7 @@ class AttributesTest extends TestCase
     /**
      * Test getAdditionalElementTypes merges custom types from event
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Attributes::_getAdditionalElementTypes
      * @return void
      */
     public function testGetAdditionalElementTypesMergesCustomTypes(): void
@@ -162,6 +165,7 @@ class AttributesTest extends TestCase
     /**
      * Test prepareForm returns early when no group is set
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Attributes::_prepareForm
      * @return void
      */
     public function testPrepareFormReturnsEarlyWhenNoGroup(): void
@@ -176,6 +180,7 @@ class AttributesTest extends TestCase
     /**
      * Test prepareForm creates form and calls setDataObject
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Attributes::_prepareForm
      * @return void
      */
     public function testPrepareFormCreatesFormWithProduct(): void
@@ -193,6 +198,7 @@ class AttributesTest extends TestCase
     /**
      * Test prepareForm sets tier price renderer
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Attributes::_prepareForm
      * @return void
      */
     public function testPrepareFormSetsTierPriceRenderer(): void
@@ -231,6 +237,7 @@ class AttributesTest extends TestCase
     /**
      * Test prepareForm creates attribute controls when authorized
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Attributes::_prepareForm
      * @return void
      */
     public function testPrepareFormCreatesAttributeControlsWhenAuthorized(): void
@@ -274,6 +281,7 @@ class AttributesTest extends TestCase
     /**
      * Test prepareForm does not create attribute controls when not authorized
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Attributes::_prepareForm
      * @return void
      */
     public function testPrepareFormDoesNotCreateAttributeControlsWhenNotAuthorized(): void
@@ -310,6 +318,7 @@ class AttributesTest extends TestCase
     /**
      * Test prepareForm sets default values for new product
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Attributes::_prepareForm
      * @return void
      */
     public function testPrepareFormSetsDefaultValuesForNewProduct(): void
@@ -341,11 +350,12 @@ class AttributesTest extends TestCase
     }
 
     /**
-     * Test prepareForm locks attributes when product has locked attributes
+     * Test prepareForm sets attributes readonly when product has locked attributes
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Attributes::_prepareForm
      * @return void
      */
-    public function testPrepareFormLocksAttributesWhenProductHasLockedAttributes(): void
+    public function testPrepareFormSetsAttributesReadonlyWhenProductHasLockedAttributes(): void
     {
         $productMock = $this->createProductMock(1, true, ['name']);
         $formMock = $this->createFormMock();
@@ -375,6 +385,7 @@ class AttributesTest extends TestCase
     /**
      * Test prepareForm dispatches event with form and layout
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Attributes::_prepareForm
      * @return void
      */
     public function testPrepareFormDispatchesEventWithFormAndLayout(): void
@@ -386,7 +397,10 @@ class AttributesTest extends TestCase
             ->with(
                 'adminhtml_catalog_product_edit_prepare_form',
                 $this->callback(function ($data) use ($mocks) {
-                    return isset($data['form']) && $data['form'] === $mocks['form'];
+                    return isset($data['form'])
+                        && $data['form'] === $mocks['form']
+                        && isset($data['layout'])
+                        && $data['layout'] === $this->layoutMock;
                 })
             );
 
@@ -394,23 +408,41 @@ class AttributesTest extends TestCase
     }
 
     /**
-     * Test prepareForm when use_wrapper is false
+     * Test prepareForm when use_wrapper is false does not add attribute create blocks
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Attributes::_prepareForm
      * @return void
      */
-    public function testPrepareFormWhenUseWrapperIsFalse(): void
+    public function testPrepareFormWhenUseWrapperIsFalseDoesNotAddAttributeBlocks(): void
     {
-        $mocks = $this->setupStandardPrepareFormTest(
-            1,
-            'general',
-            'General',
-            false
-        );
+        $productMock = $this->createProductMock(1, false);
+        $formMock = $this->createFormMock();
+        $groupMock = $this->createGroupMock('general', 'General');
+        $fieldsetMock = $this->createMock(\Magento\Framework\Data\Form\Element\Fieldset::class);
 
-        $mocks['form']->expects($this->once())
-            ->method('setFieldNameSuffix')
-            ->with('product')
-            ->willReturnSelf();
+        $this->setupRegistryForProduct($productMock, false);
+        $this->setupFormFactory($formMock);
+        $this->setupBasicFormExpectations($formMock);
+
+        // When use_wrapper is false, legend should be null and collapsable should be false
+        $formMock->expects($this->once())
+            ->method('addFieldset')
+            ->with(
+                'group-fields-general',
+                $this->callback(function ($config) {
+                    return $config['legend'] === null
+                        && $config['collapsable'] === false;
+                })
+            )
+            ->willReturn($fieldsetMock);
+
+        // When use_wrapper is false, attribute create/search blocks should NOT be created
+        $this->layoutMock->expects($this->never())
+            ->method('createBlock')
+            ->with(\Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Attributes\Create::class);
+
+        $this->attributesMock->method('getGroup')->willReturn($groupMock);
+        $this->attributesMock->method('getGroupAttributes')->willReturn([]);
 
         $this->invokeProtectedMethod('_prepareForm');
     }

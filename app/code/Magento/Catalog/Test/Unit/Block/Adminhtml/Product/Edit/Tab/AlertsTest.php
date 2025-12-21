@@ -12,28 +12,34 @@ use Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Alerts;
 use Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Alerts\Price;
 use Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Alerts\Stock;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\Phrase;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\LayoutInterface;
 use Magento\Store\Model\ScopeInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Unit test for Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Alerts
+ *
+ * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Alerts
+ */
 class AlertsTest extends TestCase
 {
     /**
      * @var Alerts
      */
-    protected $alerts;
+    protected Alerts $alerts;
 
     /**
-     * @var MockObject
+     * @var ScopeConfigInterface|MockObject
      */
-    protected $scopeConfigMock;
+    protected ScopeConfigInterface|MockObject $scopeConfigMock;
 
     /**
-     * @var LayoutInterface&MockObject
+     * @var LayoutInterface|MockObject
      */
-    protected $layoutMock;
+    protected LayoutInterface|MockObject $layoutMock;
 
     protected function setUp(): void
     {
@@ -202,13 +208,16 @@ class AlertsTest extends TestCase
     }
 
     /**
+     * Test canShowTab returns correct value based on config settings
+     *
      * @param bool $priceAllow
      * @param bool $stockAllow
      * @param bool $canShowTab
-     *
      * @dataProvider canShowTabDataProvider
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Alerts::canShowTab
+     * @return void
      */
-    public function testCanShowTab($priceAllow, $stockAllow, $canShowTab)
+    public function testCanShowTab($priceAllow, $stockAllow, $canShowTab): void
     {
         $valueMap = [
             [
@@ -231,6 +240,7 @@ class AlertsTest extends TestCase
     /**
      * Test that accordion is created with correct ID
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Alerts::_prepareLayout
      * @return void
      * @throws \ReflectionException
      */
@@ -260,6 +270,7 @@ class AlertsTest extends TestCase
     /**
      * Test that price alert item is added when price alerts are enabled
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Alerts::_prepareLayout
      * @return void
      * @throws \ReflectionException
      */
@@ -274,7 +285,8 @@ class AlertsTest extends TestCase
                 'price',
                 $this->callback(function ($config) {
                     return isset($config['title'])
-                        && $config['title'] == 'Price Alert Subscriptions'
+                        && $config['title'] instanceof Phrase
+                        && (string)$config['title'] === 'Price Alert Subscriptions'
                         && isset($config['content'])
                         && isset($config['open'])
                         && $config['open'] === true;
@@ -289,6 +301,7 @@ class AlertsTest extends TestCase
     /**
      * Test that stock alert item is added when stock alerts are enabled
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Alerts::_prepareLayout
      * @return void
      * @throws \ReflectionException
      */
@@ -303,7 +316,8 @@ class AlertsTest extends TestCase
                 'stock',
                 $this->callback(function ($config) {
                     return isset($config['title'])
-                        && $config['title'] == 'Stock Alert Subscriptions'
+                        && $config['title'] instanceof Phrase
+                        && (string)$config['title'] === 'Stock Alert Subscriptions'
                         && isset($config['content'])
                         && isset($config['open'])
                         && $config['open'] === true;
@@ -318,6 +332,7 @@ class AlertsTest extends TestCase
     /**
      * Test that both price and stock alert items are added when both are enabled
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Alerts::_prepareLayout
      * @return void
      * @throws \ReflectionException
      */
@@ -333,10 +348,12 @@ class AlertsTest extends TestCase
             ->method('addItem')
             ->willReturnCallback(function ($id, $config) use (&$priceAdded, &$stockAdded) {
                 if ($id === 'price') {
+                    $this->assertInstanceOf(Phrase::class, $config['title']);
                     $this->assertEquals('Price Alert Subscriptions', (string)$config['title']);
                     $this->assertTrue($config['open']);
                     $priceAdded = true;
                 } elseif ($id === 'stock') {
+                    $this->assertInstanceOf(Phrase::class, $config['title']);
                     $this->assertEquals('Stock Alert Subscriptions', (string)$config['title']);
                     $this->assertTrue($config['open']);
                     $stockAdded = true;
@@ -356,6 +373,7 @@ class AlertsTest extends TestCase
     /**
      * Test that no alert items are added when both alerts are disabled
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Alerts::_prepareLayout
      * @return void
      * @throws \ReflectionException
      */
@@ -374,6 +392,8 @@ class AlertsTest extends TestCase
     /**
      * Test that accordion is set as child block
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Alerts::_prepareLayout
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Alerts::getAccordionHtml
      * @return void
      * @throws \ReflectionException
      */
@@ -391,6 +411,7 @@ class AlertsTest extends TestCase
     /**
      * Test that price alert content includes Price block HTML
      *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Alerts::_prepareLayout
      * @return void
      * @throws \ReflectionException
      */
