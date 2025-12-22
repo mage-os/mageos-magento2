@@ -17,6 +17,7 @@ use Psr\Log\LoggerInterface;
 
 class GridAsyncInsertTest extends TestCase
 {
+
     /**
      * @var GridInterface|MockObject
      */

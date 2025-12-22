@@ -92,23 +92,17 @@ class LastOrderedItemsTest extends TestCase
                 ->disableOriginalConstructor()
                 ->onlyMethods(['create'])
                 ->getMock();
-        $this->orderConfigMock = $this->getMockBuilder(Config::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->customerSessionMock = $this->getMockBuilder(Session::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->orderConfigMock = $this->createMock(Config::class);
+        $this->customerSessionMock = $this->createMock(Session::class);
         $this->stockRegistryMock = $this->getMockBuilder(StockRegistryInterface::class)
-            ->getMockForAbstractClass();
-        $this->storeManagerMock = $this->getMockBuilder(StoreManagerInterface::class)
-            ->getMockForAbstractClass();
-        $this->orderMock = $this->getMockBuilder(Order::class)
-            ->disableOriginalConstructor()
             ->getMock();
+        $this->storeManagerMock = $this->getMockBuilder(StoreManagerInterface::class)
+            ->getMock();
+        $this->orderMock = $this->createMock(Order::class);
         $this->productRepositoryMock = $this->getMockBuilder(ProductRepositoryInterface::class)
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->loggerMock = $this->getMockBuilder(LoggerInterface::class)
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->section = new LastOrderedItems(
             $this->orderCollectionFactoryMock,
@@ -145,23 +139,15 @@ class LastOrderedItemsTest extends TestCase
         $productIdVisible = 1;
         $productIdNotVisible = 2;
         $stockItemMock = $this->getMockBuilder(StockItemInterface::class)
-            ->getMockForAbstractClass();
-        $itemWithVisibleProduct = $this->getMockBuilder(Item::class)
-            ->disableOriginalConstructor()
             ->getMock();
-        $itemWithNotVisibleProduct = $this->getMockBuilder(Item::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $productVisible = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $productNotVisible = $this->getMockBuilder(Product::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $itemWithVisibleProduct = $this->createMock(Item::class);
+        $itemWithNotVisibleProduct = $this->createMock(Item::class);
+        $productVisible = $this->createMock(Product::class);
+        $productNotVisible = $this->createMock(Product::class);
         $items = [$itemWithVisibleProduct, $itemWithNotVisibleProduct];
         $this->getLastOrderMock();
         $storeMock = $this->getMockBuilder(StoreInterface::class)
-            ->getMockForAbstractClass();
+            ->getMock();
         $this->storeManagerMock->expects($this->any())->method('getStore')->willReturn($storeMock);
         $storeMock->expects($this->any())->method('getWebsiteId')->willReturn($websiteId);
         $storeMock->expects($this->any())->method('getId')->willReturn($storeId);
@@ -252,7 +238,7 @@ class LastOrderedItemsTest extends TestCase
             ->onlyMethods(['getProductId'])
             ->getMock();
         $storeMock = $this->getMockBuilder(StoreInterface::class)
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $this->getLastOrderMock();
         $this->storeManagerMock->expects($this->exactly(2))->method('getStore')->willReturn($storeMock);
