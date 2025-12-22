@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Block\Adminhtml\Product\Edit\Tab;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Alerts;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
@@ -29,7 +30,7 @@ class AlertsTest extends TestCase
     protected function setUp(): void
     {
         $helper = new ObjectManager($this);
-        $this->scopeConfigMock = $this->getMockForAbstractClass(ScopeConfigInterface::class);
+        $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
 
         $this->alerts = $helper->getObject(
             Alerts::class,
@@ -41,9 +42,8 @@ class AlertsTest extends TestCase
      * @param bool $priceAllow
      * @param bool $stockAllow
      * @param bool $canShowTab
-     *
-     * @dataProvider canShowTabDataProvider
      */
+    #[DataProvider('canShowTabDataProvider')]
     public function testCanShowTab($priceAllow, $stockAllow, $canShowTab)
     {
         $valueMap = [

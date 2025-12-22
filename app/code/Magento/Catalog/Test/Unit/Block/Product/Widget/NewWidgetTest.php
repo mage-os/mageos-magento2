@@ -7,8 +7,10 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Block\Product\Widget;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Block\Product\Context as ProductBlockContext;
 use Magento\Catalog\Block\Product\Widget\NewWidget;
+use Magento\Catalog\Model\Config as CatalogConfig;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ResourceModel\Product\Collection;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
@@ -59,7 +61,7 @@ class NewWidgetTest extends TestCase
     /** @var State|MockObject */
     protected $cacheState;
 
-    /** @var \Magento\Catalog\Model\Config|MockObject */
+    /** @var CatalogConfig|MockObject */
     protected $catalogConfig;
 
     /** @var Timezone|MockObject */
@@ -78,33 +80,18 @@ class NewWidgetTest extends TestCase
         $this->scopeConfig = $this->createMock(Config::class);
         $this->cacheState = $this->createPartialMock(State::class, ['isEnabled']);
         $this->localDate = $this->createMock(Timezone::class);
-        $this->catalogConfig = $this->getMockBuilder(\Magento\Catalog\Model\Config::class)
-            ->onlyMethods(['getProductAttributes'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->catalogConfig = $this->createPartialMock(CatalogConfig::class, ['getProductAttributes']);
         $this->layout = $this->createMock(Layout::class);
-        $this->requestMock = $this->getMockBuilder(RequestInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->requestMock = $this->createMock(RequestInterface::class);
 
-        $this->context = $this->getMockBuilder(ProductBlockContext::class)
-            ->onlyMethods(
-                [
-                    'getEventManager', 'getScopeConfig', 'getLayout',
-                    'getRequest', 'getCacheState', 'getCatalogConfig',
-                    'getLocaleDate'
-                ]
-            )
-            ->disableOriginalConstructor()
-            ->disableArgumentCloning()
-            ->getMock();
+        $this->context = $this->createPartialMock(ProductBlockContext::class, [
+            'getEventManager', 'getScopeConfig', 'getLayout',
+            'getRequest', 'getCacheState', 'getCatalogConfig',
+            'getLocaleDate'
+        ]);
 
-        $this->context->expects($this->any())
-            ->method('getLayout')
-            ->willReturn($this->layout);
-        $this->context->expects($this->any())
-            ->method('getRequest')
-            ->willReturn($this->requestMock);
+        $this->context->method('getLayout')->willReturn($this->layout);
+        $this->context->method('getRequest')->willReturn($this->requestMock);
 
         $this->block = $this->objectManager->getObject(
             NewWidget::class,
@@ -162,8 +149,8 @@ class NewWidgetTest extends TestCase
     /**
      * @param int $pageNumber
      * @param int $expectedResult
-     * @dataProvider getCurrentPageDataProvider
      */
+    #[DataProvider('getCurrentPageDataProvider')]
     public function testGetCurrentPage($pageNumber, $expectedResult)
     {
         $this->block->setData('page_var_name', 'page_number');
@@ -208,8 +195,7 @@ class NewWidgetTest extends TestCase
             ->willReturn(false);
         $this->catalogConfig->expects($this->once())->method('getProductAttributes')
             ->willReturn([]);
-        $this->localDate->expects($this->any())->method('date')
-            ->willReturn(new \DateTime('now', new \DateTimeZone('UTC')));
+        $this->localDate->method('date')->willReturn(new \DateTime('now', new \DateTimeZone('UTC')));
 
         $this->context->expects($this->once())->method('getEventManager')->willReturn($this->eventManager);
         $this->context->expects($this->once())->method('getScopeConfig')->willReturn($this->scopeConfig);
@@ -217,17 +203,12 @@ class NewWidgetTest extends TestCase
         $this->context->expects($this->once())->method('getCatalogConfig')->willReturn($this->catalogConfig);
         $this->context->expects($this->once())->method('getLocaleDate')->willReturn($this->localDate);
 
-        $this->productCollection = $this->getMockBuilder(Collection::class)
-            ->onlyMethods(
-                [
-                    'setVisibility', 'addMinimalPrice', 'addFinalPrice',
-                    'addTaxPercents', 'addAttributeToSelect', 'addUrlRewrite',
-                    'addStoreFilter', 'addAttributeToSort', 'setPageSize',
-                    'setCurPage', 'addAttributeToFilter'
-                ]
-            )
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->productCollection = $this->createPartialMock(Collection::class, [
+            'setVisibility', 'addMinimalPrice', 'addFinalPrice',
+            'addTaxPercents', 'addAttributeToSelect', 'addUrlRewrite',
+            'addStoreFilter', 'addAttributeToSort', 'setPageSize',
+            'setCurPage', 'addAttributeToFilter'
+        ]);
         $this->productCollection->expects($this->once())->method('setVisibility')
             ->willReturnSelf();
         $this->productCollection->expects($this->once())->method('addMinimalPrice')
@@ -293,8 +274,8 @@ class NewWidgetTest extends TestCase
      * @param int $productsCount
      * @param int $productsPerPage
      * @param int $expectedPageSize
-     * @dataProvider getProductCollectionDataProvider
      */
+    #[DataProvider('getProductCollectionDataProvider')]
     public function testGetProductNewCollection($pagerEnable, $productsCount, $productsPerPage, $expectedPageSize)
     {
         $this->generalGetProductCollection();
@@ -324,8 +305,8 @@ class NewWidgetTest extends TestCase
      * @param int $productsCount
      * @param int $productsPerPage
      * @param int $expectedPageSize
-     * @dataProvider getProductCollectionDataProvider
      */
+    #[DataProvider('getProductCollectionDataProvider')]
     public function testGetProductAllCollection($pagerEnable, $productsCount, $productsPerPage, $expectedPageSize)
     {
         $this->generalGetProductCollection();
