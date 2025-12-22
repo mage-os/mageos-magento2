@@ -22,6 +22,7 @@ use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\OrderManagementInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Controller\Adminhtml\Order\Email;
+use Magento\Sales\Model\Order;
 use PHPUnit\Framework\MockObject\MockObject;
 use Magento\Store\Model\Store;
 use PHPUnit\Framework\TestCase;
@@ -142,8 +143,10 @@ class EmailTest extends TestCase
             ['addSuccessMessage', 'addErrorMessage', 'addWarningMessage']
         );
 
-        $this->orderMock = $this->getMockBuilder(OrderInterface::class)
-            ->getMock();
+        $this->orderMock = $this->createPartialMockWithReflection(
+            Order::class,
+            ['getEntityId', 'getStore']
+        );
         $this->session = $this->createPartialMockWithReflection(Session::class, ['setIsUrlNotice']);
         $this->actionFlag = $this->createPartialMock(ActionFlag::class, ['get', 'set']);
         $this->helper = $this->createPartialMock(Data::class, ['getUrl']);

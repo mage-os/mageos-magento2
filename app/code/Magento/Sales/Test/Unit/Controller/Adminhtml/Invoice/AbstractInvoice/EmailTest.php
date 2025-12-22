@@ -189,7 +189,10 @@ class EmailTest extends TestCase
         $invoice->expects($this->once())
             ->method('getEntityId')
             ->willReturn($invoiceId);
-        $order = $this->createMock(Order::class);
+        $order = $this->createPartialMockWithReflection(
+            Order::class,
+            ['getId', 'getStore']
+        );
         $order->expects($this->once())
             ->method('getId')
             ->willReturn($orderId);
