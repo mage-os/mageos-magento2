@@ -216,7 +216,10 @@ class CategoriesTest extends AbstractModifierTestCase
             );
         } else {
             // If the structure is different, let's check what we actually got
-            $this->assertTrue(isset($modifyMeta['children']['category_ids']), 'category_ids field not found in modifyMeta result');
+            $this->assertTrue(
+                isset($modifyMeta['children']['category_ids']),
+                'category_ids field not found in modifyMeta result'
+            );
         }
         
         if (isset($modifyMeta['children']['create_category_button']['arguments']['data']['config']['disabled'])) {

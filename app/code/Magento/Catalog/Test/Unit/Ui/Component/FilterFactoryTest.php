@@ -74,7 +74,14 @@ class FilterFactoryTest extends TestCase
         $contextMock = $this->createMock(ContextInterface::class);
         $attributeMock = $this->createPartialMock(
             \Magento\Catalog\Model\ResourceModel\Eav\Attribute::class,
-            ['getAttributeCode', 'getDefaultFrontendLabel', 'usesSource', 'getSourceModel', 'getFrontendInput', 'getSource']
+            [
+                'getAttributeCode',
+                'getDefaultFrontendLabel',
+                'usesSource',
+                'getSourceModel',
+                'getFrontendInput',
+                'getSource'
+            ]
         );
         $attributeMock->method('getAttributeCode')->willReturn(self::STUB_ATTRIBUTE['attribute_code']);
         $attributeMock->method('getDefaultFrontendLabel')

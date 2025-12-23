@@ -120,7 +120,9 @@ class JoinMinimalPositionTest extends TestCase
             ->willReturnSelf();
 
         $connection->method('getLeastSql')
-            ->willReturn(new \Zend_Db_Expr('LEAST(IFNULL(cat_index_3.position, ~0), IFNULL(cat_index_5.position, ~0))'));
+            ->willReturn(
+                new \Zend_Db_Expr('LEAST(IFNULL(cat_index_3.position, ~0), IFNULL(cat_index_5.position, ~0))')
+            );
 
         $connection->method('quoteInto')
             ->willReturnCallback(function ($query, $value) {

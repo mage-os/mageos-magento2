@@ -109,9 +109,11 @@ class ConfiguredPriceTest extends TestCase
             'option_3' => $itemOption,
             'option_ids' => $optionCollection,
         ];
-        $this->item->expects($this->atLeastOnce())->method('getOptionByCode')->willReturnCallback(function ($code) use ($optionsList) {
-            return $optionsList[$code];
-        });
+        $this->item->expects($this->atLeastOnce())
+            ->method('getOptionByCode')
+            ->willReturnCallback(function ($code) use ($optionsList) {
+                return $optionsList[$code];
+            });
         $configuredOptions = new ConfiguredOptions(); // Use real class instead of mock
         $this->model = new ConfiguredPrice(
             $this->product,

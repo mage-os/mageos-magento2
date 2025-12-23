@@ -148,13 +148,15 @@ class ActionTest extends TestCase
         $hasWeightAttributeMock->setData('backend_type', 'int');
         $hasWeightAttributeMock->setData('is_global', 1);
         $this->eavConfigMock->method('getAttribute')
-            ->willReturnCallback(function ($entityType, $attributeCode = null) use ($updatedAtAttributeMock, $hasWeightAttributeMock) {
-                $code = $attributeCode ?? $entityType;
-                if ($code === 'has_weight' || $code === ProductAttributeInterface::CODE_HAS_WEIGHT) {
-                    return $hasWeightAttributeMock;
+            ->willReturnCallback(
+                function ($entityType, $attributeCode = null) use ($updatedAtAttributeMock, $hasWeightAttributeMock) {
+                    $code = $attributeCode ?? $entityType;
+                    if ($code === 'has_weight' || $code === ProductAttributeInterface::CODE_HAS_WEIGHT) {
+                        return $hasWeightAttributeMock;
+                    }
+                    return $updatedAtAttributeMock;
                 }
-                return $updatedAtAttributeMock;
-            });
+            );
 
         $objectManager = new ObjectManager($this);
         $this->model = $objectManager->getObject(

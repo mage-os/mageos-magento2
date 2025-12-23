@@ -7,7 +7,6 @@ declare(strict_types=1);
 
 namespace Magento\Catalog\Test\Unit\Ui\DataProvider\Product\Form\Modifier;
 
-use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Locator\LocatorInterface;
 use Magento\Framework\Stdlib\ArrayManager;
@@ -65,8 +64,22 @@ abstract class AbstractModifierTestCase extends TestCase
         
         // Use createPartialMock for Product class to allow method configuration
         // Note: getId/setId are NOT mocked, allowing natural behavior via DataObject
-        $this->productMock = $this->createPartialMock(Product::class, ['getCustomAttributesCodes', 'getStoreId', 'getResource', 'isLockedAttribute', 'getTypeId', 'getAttributeSetId', 'getOptions', 'getStore']);
+        $this->productMock = $this->createPartialMock(
+            Product::class,
+            [
+                'getCustomAttributesCodes',
+                'getStoreId',
+                'getResource',
+                'isLockedAttribute',
+                'getTypeId',
+                'getAttributeSetId',
+                'getOptions',
+                'getStore',
+                'getMediaAttributes'
+            ]
+        );
         $this->productMock->method('getCustomAttributesCodes')->willReturn([]);
+        $this->productMock->method('getMediaAttributes')->willReturn([]);
 
         $this->storeMock = $this->createPartialMock(Store::class, ['load', 'getConfig', 'getId']);
         $this->storeMock->method('getId')->willReturn(1);

@@ -26,6 +26,7 @@ use Magento\Sales\Controller\Adminhtml\Invoice\AbstractInvoice\Email;
 use Magento\Sales\Controller\Adminhtml\Order\Invoice\Email as OrderInvoiceEmail;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Invoice;
+use Magento\Store\Model\Store;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;

@@ -373,7 +373,7 @@ class CustomOptionPriceTest extends TestCase
 
         $groupMock->expects($this->once())
             ->method('setOption')
-            ->with($this->callback(function($arg) use ($optionId1) {
+            ->with($this->callback(function ($arg) use ($optionId1) {
                 return $arg->getId() === $optionId1;
             }))->willReturnSelf();
         
