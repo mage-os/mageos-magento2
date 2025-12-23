@@ -145,7 +145,7 @@ class EmailTest extends TestCase
 
         $this->orderMock = $this->createPartialMockWithReflection(
             Order::class,
-            ['getEntityId', 'getStore']
+            ['getEntityId', 'getStore', 'getStoreId']
         );
         $this->session = $this->createPartialMockWithReflection(Session::class, ['setIsUrlNotice']);
         $this->actionFlag = $this->createPartialMock(ActionFlag::class, ['get', 'set']);
@@ -224,10 +224,13 @@ class EmailTest extends TestCase
         $orderId = 10000031;
 
         $store = $this->createMock(Store::class);
-        $store->method('getConfig')->willReturnMap([
-            ['sales_email/order/enabled', 0],
-            ['sales_email/general/async_sending', 0],
-        ]);
+        $store->method('getConfig')->willReturnCallback(function ($path) {
+            return match ($path) {
+                'sales_email/order/enabled' => false,
+                'sales_email/general/async_sending' => false,
+                default => null
+            };
+        });
         $this->orderMock->method('getStore')->willReturn($store);
 
         $this->request->expects($this->once())

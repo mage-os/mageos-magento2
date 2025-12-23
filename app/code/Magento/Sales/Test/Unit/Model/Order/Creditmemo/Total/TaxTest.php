@@ -1067,7 +1067,8 @@ class TaxTest extends TestCase
             [
                 'getBaseShippingDiscountTaxCompensationAmount', 'getTaxAmount', 'getBaseTaxAmount',
                 'getShippingTaxAmount', 'getBaseShippingTaxAmount',
-                'getShippingDiscountTaxCompensationAmount'
+                'getShippingDiscountTaxCompensationAmount', 'getDiscountTaxCompensationAmount',
+                'getBaseDiscountTaxCompensationAmount', 'getId'
             ]
         );
 

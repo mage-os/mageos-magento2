@@ -191,7 +191,7 @@ class EmailTest extends TestCase
             ->willReturn($invoiceId);
         $order = $this->createPartialMockWithReflection(
             Order::class,
-            ['getId', 'getStore']
+            ['getId']
         );
         $order->expects($this->once())
             ->method('getId')
@@ -211,9 +211,9 @@ class EmailTest extends TestCase
             ->willReturn($order);
         $this->objectManager
             ->method('create')
-            ->willReturnCallback(fn($param) => match ([$param]) {
-                [InvoiceRepositoryInterface::class] => $invoiceRepository,
-                [$cmNotifierClassName] => $this->invoiceManagement
+            ->willReturnCallback(fn($param) => match ($param) {
+                InvoiceRepositoryInterface::class => $invoiceRepository,
+                $cmNotifierClassName => $this->invoiceManagement
             });
 
         $this->invoiceManagement->expects($this->once())
@@ -265,9 +265,7 @@ class EmailTest extends TestCase
             ->with('invoice_id')
             ->willReturn($invoiceId);
 
-        $invoiceRepository = $this->getMockBuilder(InvoiceRepositoryInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $invoiceRepository = $this->createMock(InvoiceRepositoryInterface::class);
         $invoiceRepository->expects($this->any())
             ->method('get')
             ->willReturn($invoice);
@@ -278,8 +276,10 @@ class EmailTest extends TestCase
 
         $this->objectManager
             ->method('create')
-            ->with(InvoiceRepositoryInterface::class)
-            ->willReturn($invoiceRepository);
+            ->willReturnCallback(fn($param) => match ($param) {
+                InvoiceRepositoryInterface::class => $invoiceRepository,
+                default => null
+            });
 
         $this->messageManager->expects($this->once())
             ->method('addWarningMessage')

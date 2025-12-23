@@ -156,9 +156,7 @@ class EmailTest extends TestCase
         $cmManagement = CreditmemoManagementInterface::class;
         $cmManagementMock = $this->createMock($cmManagement);
 
-        $creditmemoRepository = $this->getMockBuilder(CreditmemoRepositoryInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $creditmemoRepository = $this->createMock(CreditmemoRepositoryInterface::class);
         $creditmemo = $this->createMock(Creditmemo::class);
         $store = $this->createMock(Store::class);
         $store->expects($this->once())
@@ -182,14 +180,17 @@ class EmailTest extends TestCase
 
         $this->objectManager->expects($this->exactly(2))
             ->method('create')
-            ->willReturnCallback(fn($param) => match ([$param]) {
-                [CreditmemoRepositoryInterface::class] => $creditmemoRepository,
-                [$cmManagement] => $cmManagementMock
+            ->willReturnCallback(fn($param) => match ($param) {
+                CreditmemoRepositoryInterface::class => $creditmemoRepository,
+                $cmManagement => $cmManagementMock,
+                default => throw new \Exception("Unexpected create() parameter: $param")
             });
 
         $cmManagementMock->expects($this->once())
             ->method('notify')
+            ->with($cmId)
             ->willReturn(true);
+        
         $this->messageManager->expects($this->once())
             ->method('addSuccessMessage')
             ->with('You sent the message.');
@@ -208,9 +209,7 @@ class EmailTest extends TestCase
     {
         $cmId = 10000031;
 
-        $creditmemoRepository = $this->getMockBuilder(CreditmemoRepositoryInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $creditmemoRepository = $this->createMock(CreditmemoRepositoryInterface::class);
 
         $creditmemo = $this->createMock(Creditmemo::class);
 
@@ -238,8 +237,10 @@ class EmailTest extends TestCase
 
         $this->objectManager->expects($this->once())
             ->method('create')
-            ->with(CreditmemoRepositoryInterface::class)
-            ->willReturn($creditmemoRepository);
+            ->willReturnCallback(fn($param) => match ($param) {
+                CreditmemoRepositoryInterface::class => $creditmemoRepository,
+                default => null
+            });
 
         $this->messageManager->expects($this->once())
             ->method('addWarningMessage')

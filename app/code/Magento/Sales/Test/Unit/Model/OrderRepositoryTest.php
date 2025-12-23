@@ -13,6 +13,7 @@ use Magento\Framework\Api\SearchCriteria\CollectionProcessorInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Payment\Api\Data\PaymentAdditionalInfoInterface;
 use Magento\Payment\Api\Data\PaymentAdditionalInfoInterfaceFactory;
+use Magento\Sales\Api\Data\OrderExtension;
 use Magento\Sales\Api\Data\OrderExtensionInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\Data\OrderPaymentInterface;
@@ -80,14 +81,12 @@ class OrderRepositoryTest extends TestCase
     private $shippingAssignmentBuilder;
 
     /**
-     * Create OrderExtensionInterface mock compatible with PHPUnit 12
-     *
      * @return MockObject
      */
     private function createOrderExtensionMock(): MockObject
     {
         return $this->createPartialMockWithReflection(
-            OrderExtensionInterface::class,
+            OrderExtension::class,
             [
                 'getShippingAssignments',
                 'setShippingAssignments',

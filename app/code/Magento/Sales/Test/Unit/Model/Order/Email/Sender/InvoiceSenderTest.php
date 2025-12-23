@@ -16,12 +16,15 @@ use Magento\Sales\Model\ResourceModel\EntityAbstract;
 use Magento\Sales\Model\ResourceModel\Order\Invoice as InvoiceResource;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\DataProvider;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * Test for Magento\Sales\Model\Order\Email\Sender\InvoiceSender class.
  */
 class InvoiceSenderTest extends AbstractSenderTestCase
 {
+    use MockCreationTrait;
+    
     private const INVOICE_ID = 1;
 
     private const ORDER_ID = 1;
