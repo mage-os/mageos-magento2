@@ -111,7 +111,8 @@ class LastOrderedItemsTest extends TestCase
             $this->stockRegistryMock,
             $this->storeManagerMock,
             $this->productRepositoryMock,
-            $this->loggerMock
+            $this->loggerMock,
+            false
         );
     }
 
@@ -146,8 +147,7 @@ class LastOrderedItemsTest extends TestCase
         $productNotVisible = $this->createMock(Product::class);
         $items = [$itemWithVisibleProduct, $itemWithNotVisibleProduct];
         $this->getLastOrderMock();
-        $storeMock = $this->getMockBuilder(StoreInterface::class)
-            ->getMock();
+        $storeMock = $this->createMock(StoreInterface::class);
         $this->storeManagerMock->expects($this->any())->method('getStore')->willReturn($storeMock);
         $storeMock->expects($this->any())->method('getWebsiteId')->willReturn($websiteId);
         $storeMock->expects($this->any())->method('getId')->willReturn($storeId);
@@ -253,8 +253,56 @@ class LastOrderedItemsTest extends TestCase
             ->method('getById')
             ->with($productId, false, $storeId)
             ->willThrowException($exception);
-        $this->loggerMock->expects($this->once())->method('critical')->with($exception);
+        $this->loggerMock->expects($this->once())
+            ->method('critical')
+            ->with($exception);
 
         $this->assertEquals(['items' => []], $this->section->getSectionData());
+    }
+
+    /**
+     * Test that logging is skipped when skipDeletedProductLogging is true
+     *
+     * @return void
+     */
+    public function testGetSectionDataWithNotExistingProductSkipLogging(): void
+    {
+        $storeId = 1;
+        $productId = 1;
+        $exception = new NoSuchEntityException(__("Product doesn't exist"));
+        $orderItemMock = $this->getMockBuilder(Item::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getProductId'])
+            ->getMock();
+        $storeMock = $this->createMock(StoreInterface::class);
+
+        $this->getLastOrderMock();
+        $this->storeManagerMock->expects($this->exactly(2))->method('getStore')->willReturn($storeMock);
+        $storeMock->expects($this->once())->method('getId')->willReturn($storeId);
+        $storeMock->expects($this->once())->method('getWebsiteId')->willReturn(1);
+        $this->orderMock->expects($this->once())
+            ->method('getParentItemsRandomCollection')
+            ->with(LastOrderedItems::SIDEBAR_ORDER_LIMIT)
+            ->willReturn([$orderItemMock]);
+        $orderItemMock->expects($this->any())->method('getProductId')->willReturn($productId);
+        $this->productRepositoryMock->expects($this->once())
+            ->method('getById')
+            ->with($productId, false, $storeId)
+            ->willThrowException($exception);
+        $this->loggerMock->expects($this->never())->method('critical');
+        $this->loggerMock->expects($this->never())->method('debug');
+
+        $section = new LastOrderedItems(
+            $this->orderCollectionFactoryMock,
+            $this->orderConfigMock,
+            $this->customerSessionMock,
+            $this->stockRegistryMock,
+            $this->storeManagerMock,
+            $this->productRepositoryMock,
+            $this->loggerMock,
+            true
+        );
+
+        $this->assertEquals(['items' => []], $section->getSectionData());
     }
 }
