@@ -10,4 +10,6 @@ return [
     'app/code/Magento/Customer/Controller/Adminhtml/Index/Cart.php' => ['Magento\Cart'],
     'app/code/Magento/Customer/Controller/Adminhtml/Cart/Product/Composite/Cart.php' => ['Magento\Cart'],
     'app/code/Magento/Customer/Controller/Adminhtml/Index/Carts.php' => ['Magento\Cart'],
+    'app/code/Magento/CatalogImportExport/Model/Import/Product.php' => ['Magento\Downloadable'],
+    'app/code/Magento/CatalogImportExport/Model/Import/Uploader.php' => ['Magento\Downloadable'],
 ];

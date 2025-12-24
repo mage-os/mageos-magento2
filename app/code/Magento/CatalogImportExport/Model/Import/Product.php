@@ -30,6 +30,7 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Driver\File;
+use Magento\Downloadable\Model\Url\DomainValidator;
 use Magento\Framework\Intl\DateTimeFactory;
 use Magento\Framework\Model\ResourceModel\Db\ObjectRelationProcessor;
 use Magento\Framework\Model\ResourceModel\Db\TransactionManagerInterface;
@@ -793,6 +794,11 @@ class Product extends AbstractEntity
     private ?File $fileDriver;
 
     /**
+     * @var DomainValidator|null
+     */
+    private ?DomainValidator $domainValidator;
+
+    /**
      * @param \Magento\Framework\Json\Helper\Data $jsonHelper
      * @param \Magento\ImportExport\Helper\Data $importExportData
      * @param \Magento\ImportExport\Model\ResourceModel\Import\Data $importData
@@ -843,6 +849,7 @@ class Product extends AbstractEntity
      * @param File|null $fileDriver
      * @param StockItemProcessorInterface|null $stockItemProcessor
      * @param SkuStorage|null $skuStorage
+     * @param DomainValidator|null $domainValidator
      * @throws LocalizedException
      * @throws \Magento\Framework\Exception\FileSystemException
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
@@ -899,7 +906,8 @@ class Product extends AbstractEntity
         ?LinkProcessor $linkProcessor = null,
         ?File $fileDriver = null,
         ?StockItemProcessorInterface $stockItemProcessor = null,
-        ?SkuStorage $skuStorage = null
+        ?SkuStorage $skuStorage = null,
+        ?DomainValidator $domainValidator = null
     ) {
         $this->_eventManager = $eventManager;
         $this->stockRegistry = $stockRegistry;
@@ -969,6 +977,8 @@ class Product extends AbstractEntity
             ->get(StockItemProcessorInterface::class);
         $this->fileDriver = $fileDriver ?? ObjectManager::getInstance()
             ->get(File::class);
+        $this->domainValidator = $domainValidator ?? ObjectManager::getInstance()
+            ->get(DomainValidator::class);
     }
 
     /**
@@ -1974,21 +1984,32 @@ class Product extends AbstractEntity
                     $imagesByHash
                 );
                 if (!$uploadedFile && !isset($uploadedImages[$columnImage])) {
-                    $uploadedFile = $this->uploadMediaFiles($columnImage);
-                    $uploadedFile = $uploadedFile ?: $this->getSystemFile($columnImage);
-                    if ($uploadedFile) {
-                        $uploadedImages[$columnImage] = $uploadedFile;
-                    } else {
+                    try {
+                        $uploadedFile = $this->uploadMediaFiles($columnImage);
+                        $uploadedFile = $uploadedFile ?: $this->getSystemFile($columnImage);
+                        if ($uploadedFile) {
+                            $uploadedImages[$columnImage] = $uploadedFile;
+                        } else {
+                            unset($rowData[$column]);
+                            $this->addRowError(
+                                ValidatorInterface::ERROR_MEDIA_URL_NOT_ACCESSIBLE,
+                                $rowNum,
+                                null,
+                                sprintf(
+                                    $this->_messageTemplates[ValidatorInterface::ERROR_MEDIA_URL_NOT_ACCESSIBLE],
+                                    $columnImage,
+                                    $rowNum
+                                ),
+                                ProcessingError::ERROR_LEVEL_NOT_CRITICAL
+                            );
+                        }
+                    } catch (LocalizedException $e) {
                         unset($rowData[$column]);
                         $this->addRowError(
                             ValidatorInterface::ERROR_MEDIA_URL_NOT_ACCESSIBLE,
                             $rowNum,
                             null,
-                            sprintf(
-                                $this->_messageTemplates[ValidatorInterface::ERROR_MEDIA_URL_NOT_ACCESSIBLE],
-                                $columnImage,
-                                $rowNum
-                            ),
+                            $e->getMessage(),
                             ProcessingError::ERROR_LEVEL_NOT_CRITICAL
                         );
                     }
@@ -2193,6 +2214,12 @@ class Product extends AbstractEntity
             if (stripos($filename, self::FILTER_CHAIN) !== false) {
                 return '';
             }
+
+            // Validate remote URL against allowed domains configuration
+            if (!$this->domainValidator->isValid($filename)) {
+                return '';
+            }
+
             $content = $this->fileDriver->fileGetContents($filename);
         } catch (\Exception $e) {
             $content = false;
@@ -2439,6 +2466,21 @@ class Product extends AbstractEntity
         try {
             $res = $this->_getUploader()->move($fileName, $renameFileOff);
             return $res['file'];
+        } catch (LocalizedException $e) {
+            // Re-throw only SSRF validation exceptions (domain/IP validation errors)
+            // File-not-found exceptions should be caught and logged, not re-thrown
+            $message = $e->getMessage();
+            if (is_string($message) && (
+                strpos($message, 'Image URL domain is not in the list of allowed domains') !== false ||
+                strpos($message, 'downloadable_domains') !== false ||
+                strpos($message, 'IP addresses are not allowed') !== false
+            )) {
+                // This is a validation exception - re-throw it
+                throw $e;
+            }
+            // This is a file-not-found or other LocalizedException - log and return empty
+            $this->_logger->critical($e);
+            return '';
         } catch (\Exception $e) {
             $this->_logger->critical($e);
             return '';

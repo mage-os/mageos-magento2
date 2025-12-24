@@ -46,6 +46,7 @@ use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Directory\WriteInterface;
 use Magento\Framework\Filesystem\Driver\File as DriverFile;
 use Magento\Framework\Indexer\IndexerRegistry;
+use Magento\Downloadable\Model\Url\DomainValidator;
 use Magento\Framework\Json\Helper\Data;
 use Magento\Framework\Model\ResourceModel\Db\ObjectRelationProcessor;
 use Magento\Framework\Model\ResourceModel\Db\TransactionManagerInterface;
@@ -313,6 +314,11 @@ class ProductTest extends AbstractImportTestCase
      */
     private $skuStorageMock;
 
+    /**
+     * @var DomainValidator|MockObject
+     */
+    private $domainValidator;
+
     /** @var array $productPropertiesMap */
     private array $productPropertiesMap = [];
 
@@ -495,6 +501,11 @@ class ProductTest extends AbstractImportTestCase
 
         $this->skuStorageMock = $this->createMock(SkuStorage::class);
 
+        $this->domainValidator = $this->getMockBuilder(DomainValidator::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['isValid'])
+            ->getMock();
+
         $this->_objectConstructor()
             ->_parentObjectConstructor()
             ->_initAttributeSets()
@@ -543,6 +554,8 @@ class ProductTest extends AbstractImportTestCase
             'data' => $this->data,
             'imageTypeProcessor' => $this->imageTypeProcessor,
             'skuStorage' => $this->skuStorageMock,
+            'fileDriver' => $this->driverFile,
+            'domainValidator' => $this->domainValidator,
         ];
 
         $this->importProduct = $this->objectManager->getObject(
@@ -1672,6 +1685,48 @@ class ProductTest extends AbstractImportTestCase
     }
 
     /**
+     * Test that file-not-found LocalizedException is handled correctly (logged, not re-thrown).
+     *
+     * @return void
+     */
+    public function testUploadMediaFilesHandlesFileNotFoundLocalizedException(): void
+    {
+        $fileName = 'test.jpg';
+        $fileNotFoundException = new LocalizedException(
+            __('File \'%1\' was not found or has read restriction.', $fileName)
+        );
+
+        $fileUploaderMock = $this
+            ->getMockBuilder(Uploader::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $fileUploaderMock
+            ->expects($this->once())
+            ->method('move')
+            ->with($fileName)
+            ->willThrowException($fileNotFoundException);
+
+        $this->setPropertyValue(
+            $this->importProduct,
+            '_fileUploader',
+            $fileUploaderMock
+        );
+
+        // File-not-found LocalizedException should be logged, not re-thrown
+        $this->_logger->expects($this->once())
+            ->method('critical')
+            ->with($fileNotFoundException);
+
+        $result = $this->invokeMethod(
+            $this->importProduct,
+            'uploadMediaFiles',
+            [$fileName]
+        );
+
+        $this->assertEquals('', $result);
+    }
+
+    /**
      * Check that getProductCategoriesDataSave method will return array with product-category-position relations
      * where new products positioned before existing
      *
@@ -1741,6 +1796,87 @@ class ProductTest extends AbstractImportTestCase
             [true, false, 'File directory \'pub/media/catalog/product\' is not writable.'],
             [true, true, ''],
         ];
+    }
+
+    /**
+     * Test that SSRF validation LocalizedException from uploadMediaFiles is re-thrown.
+     *
+     * @return void
+     */
+    public function testUploadMediaFilesReThrowsValidationException(): void
+    {
+        $fileName = 'http://127.0.0.1/image.jpg';
+        $validationException = new LocalizedException(
+            __('Image URL domain is not in the list of allowed domains. IP addresses are not allowed.')
+        );
+
+        $fileUploaderMock = $this
+            ->getMockBuilder(Uploader::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $fileUploaderMock
+            ->expects($this->once())
+            ->method('move')
+            ->with($fileName)
+            ->willThrowException($validationException);
+
+        $this->setPropertyValue(
+            $this->importProduct,
+            '_fileUploader',
+            $fileUploaderMock
+        );
+
+        // SSRF validation exception should be re-thrown, not caught and logged
+        $this->expectException(LocalizedException::class);
+        $this->expectExceptionMessage('Image URL domain is not in the list of allowed domains');
+
+        $this->invokeMethod(
+            $this->importProduct,
+            'uploadMediaFiles',
+            [$fileName]
+        );
+    }
+
+    /**
+     * Test that file-not-found LocalizedException from uploadMediaFiles is logged and returns empty string.
+     *
+     * @return void
+     */
+    public function testUploadMediaFilesLogsFileNotFoundException(): void
+    {
+        $fileName = 'nonexistent.jpg';
+        $fileNotFoundException = new LocalizedException(
+            __('File \'%1\' was not found or has read restriction.', $fileName)
+        );
+
+        $fileUploaderMock = $this
+            ->getMockBuilder(Uploader::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $fileUploaderMock
+            ->expects($this->once())
+            ->method('move')
+            ->with($fileName)
+            ->willThrowException($fileNotFoundException);
+
+        $this->setPropertyValue(
+            $this->importProduct,
+            '_fileUploader',
+            $fileUploaderMock
+        );
+
+        // File-not-found exception should be logged, not re-thrown
+        $this->_logger->expects($this->once())
+            ->method('critical')
+            ->with($fileNotFoundException);
+
+        $result = $this->invokeMethod(
+            $this->importProduct,
+            'uploadMediaFiles',
+            [$fileName]
+        );
+
+        $this->assertEquals('', $result);
     }
 
     /**
@@ -2270,9 +2406,9 @@ class ProductTest extends AbstractImportTestCase
     }
 
     /**
-     * get remote file content
+     * get remote file content - filter chain blocked
      */
-    public function testGetRemoteFileContent()
+    public function testGetRemoteFileContentFiltersFilterChain()
     {
         $reflector = new \ReflectionClass($this->importProduct);
         $property = $reflector->getMethod('getRemoteFileContent');
@@ -2281,6 +2417,65 @@ class ProductTest extends AbstractImportTestCase
             '',
             $property->invokeArgs($this->importProduct, ['php://filter'])
         );
+    }
+
+    /**
+     * Test that IP addresses are blocked in getRemoteFileContent
+     */
+    public function testGetRemoteFileContentBlocksIpAddress()
+    {
+        $reflector = new \ReflectionClass($this->importProduct);
+        $method = $reflector->getMethod('getRemoteFileContent');
+        $method->setAccessible(true);
+
+        $this->domainValidator->expects($this->once())
+            ->method('isValid')
+            ->with('http://127.0.0.1/image.jpg')
+            ->willReturn(false);
+
+        $result = $method->invokeArgs($this->importProduct, ['http://127.0.0.1/image.jpg']);
+        $this->assertEquals('', $result);
+    }
+
+    /**
+     * Test that non-whitelisted domains are blocked in getRemoteFileContent
+     */
+    public function testGetRemoteFileContentBlocksNonWhitelistedDomain()
+    {
+        $reflector = new \ReflectionClass($this->importProduct);
+        $method = $reflector->getMethod('getRemoteFileContent');
+        $method->setAccessible(true);
+
+        $this->domainValidator->expects($this->once())
+            ->method('isValid')
+            ->with('http://malicious-domain.com/image.jpg')
+            ->willReturn(false);
+
+        $result = $method->invokeArgs($this->importProduct, ['http://malicious-domain.com/image.jpg']);
+        $this->assertEquals('', $result);
+    }
+
+    /**
+     * Test that whitelisted domains are allowed in getRemoteFileContent
+     */
+    public function testGetRemoteFileContentAllowsWhitelistedDomain()
+    {
+        $reflector = new \ReflectionClass($this->importProduct);
+        $method = $reflector->getMethod('getRemoteFileContent');
+        $method->setAccessible(true);
+
+        $this->domainValidator->expects($this->once())
+            ->method('isValid')
+            ->with('https://example.com/image.jpg')
+            ->willReturn(true);
+
+        $this->driverFile->expects($this->once())
+            ->method('fileGetContents')
+            ->with('https://example.com/image.jpg')
+            ->willReturn('image content');
+
+        $result = $method->invokeArgs($this->importProduct, ['https://example.com/image.jpg']);
+        $this->assertEquals('image content', $result);
     }
 
     /**

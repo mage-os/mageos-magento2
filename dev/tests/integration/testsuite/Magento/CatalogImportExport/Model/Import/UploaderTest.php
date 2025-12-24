@@ -12,6 +12,7 @@ use Magento\Framework\App\Bootstrap;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Filesystem\Directory\TargetDirectory;
 use Magento\Framework\Filesystem\Driver\File;
+use Magento\Downloadable\Api\DomainManagerInterface;
 
 /**
  * Tests for the \Magento\CatalogImportExport\Model\Import\Uploader class.
@@ -22,7 +23,8 @@ class UploaderTest extends \Magento\TestFramework\Indexer\TestCase
     /**
      * Random string appended to downloaded image name
      */
-    const RANDOM_STRING = 'BRV8TAuR2AT88OH0';
+    private const RANDOM_STRING = 'BRV8TAuR2AT88OH0';
+    
     /**
      * @var \Magento\Framework\ObjectManagerInterface
      */
@@ -41,6 +43,11 @@ class UploaderTest extends \Magento\TestFramework\Indexer\TestCase
      * @var \Magento\Framework\Filesystem\File\ReadInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $fileReader;
+
+    /**
+     * @var DomainManagerInterface
+     */
+    private $domainManager;
 
     /**
      * @inheritdoc
@@ -83,7 +90,23 @@ class UploaderTest extends \Magento\TestFramework\Indexer\TestCase
             );
         }
 
+        // Add magento.com to allowed domains for testing
+        $this->domainManager = $this->objectManager->get(DomainManagerInterface::class);
+        $this->domainManager->addDomains(['magento.com']);
+
         parent::setUp();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function tearDown(): void
+    {
+        // Remove magento.com from allowed domains after testing
+        if ($this->domainManager) {
+            $this->domainManager->removeDomains(['magento.com']);
+        }
+        parent::tearDown();
     }
 
     /**
