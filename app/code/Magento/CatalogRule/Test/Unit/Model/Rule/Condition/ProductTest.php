@@ -9,6 +9,7 @@ namespace Magento\CatalogRule\Test\Unit\Model\Rule\Condition;
 
 use Magento\Catalog\Model\ProductCategoryList;
 use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
+use Magento\Catalog\Model\ResourceModel\Product\Collection;
 use Magento\CatalogRule\Model\Rule\Condition\Product;
 use Magento\Eav\Model\Config;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
@@ -186,10 +187,145 @@ class ProductTest extends TestCase
         $this->product->setData('value_parsed', '1');
         $this->product->setData('operator', '!=');
 
-        $this->productModel->expects($this->once())
+        $this->productModel->expects($this->atLeastOnce())
             ->method('getData')
             ->with('color')
             ->willReturn(null);
+        $this->productModel->expects($this->any())
+            ->method('getId')
+            ->willReturn('1');
+        $this->productModel->expects($this->any())
+            ->method('getStoreId')
+            ->willReturn('1');
+        $this->assertFalse($this->product->validate($this->productModel));
+    }
+
+    /**
+     * Test validation with store-scoped attribute value set only at store view level
+     *
+     * @return void
+     */
+    public function testValidateWithStoreScopedAttributeValue(): void
+    {
+        $attributeCode = 'special_price';
+        $storeId = 2;
+        $productId = '123';
+        $storeSpecificValue = '40.00';
+        $conditionValue = '30.00';
+
+        $this->product->setData('attribute', $attributeCode);
+        $this->product->setData('value_parsed', $conditionValue);
+        $this->product->setData('operator', '>=');
+
+        $this->config->expects($this->any())
+            ->method('getAttribute')
+            ->with(\Magento\Catalog\Model\Product::ENTITY, $attributeCode)
+            ->willReturn($this->eavAttributeResource);
+
+        $this->eavAttributeResource->expects($this->any())
+            ->method('isScopeGlobal')
+            ->willReturn(false);
+        $this->eavAttributeResource->expects($this->any())
+            ->method('getBackendType')
+            ->willReturn('decimal');
+        $this->eavAttributeResource->expects($this->any())
+            ->method('getFrontendInput')
+            ->willReturn('price');
+
+        $this->productModel->expects($this->any())
+            ->method('getId')
+            ->willReturn($productId);
+        $this->productModel->expects($this->any())
+            ->method('getStoreId')
+            ->willReturn($storeId);
+        $this->productModel->expects($this->any())
+            ->method('getResource')
+            ->willReturn($this->productResource);
+
+        $this->productModel->expects($this->exactly(2))
+            ->method('getData')
+            ->with($attributeCode)
+            ->willReturnOnConsecutiveCalls(null, $storeSpecificValue);
+
+        $this->productModel->expects($this->any())
+            ->method('hasData')
+            ->willReturn(false);
+
+        $this->productResource->expects($this->any())
+            ->method('getAttribute')
+            ->with($attributeCode)
+            ->willReturn($this->eavAttributeResource);
+
+        $productCollection = $this->createMock(Collection::class);
+        $productCollection->expects($this->any())
+            ->method('addAttributeToSelect')
+            ->with($attributeCode, 'left')
+            ->willReturnSelf();
+        $productCollection->expects($this->any())
+            ->method('getAllAttributeValues')
+            ->with($attributeCode)
+            ->willReturn([
+                $productId => [
+                    $storeId => $storeSpecificValue,
+                ]
+            ]);
+
+        $this->product->collectValidatedAttributes($productCollection);
+
+        $this->assertTrue($this->product->validate($this->productModel));
+    }
+
+    /**
+     * Test validation with store-scoped attribute value when value is null at all scopes
+     *
+     * @return void
+     */
+    public function testValidateWithStoreScopedAttributeNoValueAtAnyScope(): void
+    {
+        $attributeCode = 'special_price';
+        $storeId = 2;
+        $productId = '123';
+
+        $this->product->setData('attribute', $attributeCode);
+        $this->product->setData('value_parsed', '30.00');
+        $this->product->setData('operator', '>=');
+
+        $this->config->expects($this->any())
+            ->method('getAttribute')
+            ->willReturn($this->eavAttributeResource);
+
+        $this->eavAttributeResource->expects($this->any())
+            ->method('isScopeGlobal')
+            ->willReturn(false);
+        $this->eavAttributeResource->expects($this->any())
+            ->method('getBackendType')
+            ->willReturn('decimal');
+
+        $this->productModel->expects($this->any())
+            ->method('getId')
+            ->willReturn($productId);
+        $this->productModel->expects($this->any())
+            ->method('getStoreId')
+            ->willReturn($storeId);
+        $this->productModel->expects($this->any())
+            ->method('getResource')
+            ->willReturn($this->productResource);
+
+        $this->productModel->expects($this->exactly(2))
+            ->method('getData')
+            ->with($attributeCode)
+            ->willReturn(null);
+
+        $this->productResource->expects($this->any())
+            ->method('getAttribute')
+            ->willReturn($this->eavAttributeResource);
+
+        $reflection = new \ReflectionClass($this->product);
+        $property = $reflection->getProperty('_entityAttributeValues');
+        $property->setValue($this->product, [
+            $productId => []
+        ]);
+
         $this->assertFalse($this->product->validate($this->productModel));
     }
 

@@ -58,6 +58,8 @@ class AdvancedInventoryTest extends AbstractModifierTestCase
         // Use setter instead of expects for the anonymous class
         $this->storeMock->setWebsiteId(1);
         $this->productMock->setStore($this->storeMock);
+        // Configure the mocked getStore() to return storeMock
+        $this->productMock->method('getStore')->willReturn($this->storeMock);
         $this->serializerMock = $this->createMock(Json::class);
         $this->jsonValidatorMock = $this->createMock(JsonValidator::class);
     }
