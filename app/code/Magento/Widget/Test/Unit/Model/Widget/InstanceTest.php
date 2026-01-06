@@ -580,7 +580,6 @@ class InstanceTest extends TestCase
         ];
 
         $reflection = new ReflectionProperty(Instance::class, '_widgetConfigXml');
-        $reflection->setAccessible(true);
         $reflection->setValue($this->_model, $widgetConfig);
     }
 
