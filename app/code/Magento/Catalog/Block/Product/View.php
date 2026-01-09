@@ -279,15 +279,13 @@ class View extends AbstractProduct implements \Magento\Framework\DataObject\Iden
      */
     public function getProductDefaultQty($product = null)
     {
-        if (!$product) {
-            $product = $this->getProduct();
-        }
+        $product = $product ?: $this->getProduct();
 
-        $qty = $this->getMinimalQty($product);
-        $config = $product->getPreconfiguredValues();
-        $configQty = $config->getQty();
-        if ($configQty > $qty) {
-            $qty = $configQty;
+        $qty = max((float) $this->getMinimalQty($product), 1);
+
+        $configQty = $product->getPreconfiguredValues()->getQty();
+        if (is_numeric($configQty)) {
+            $qty = max($qty, (float) $configQty);
         }
 
         return $qty;
