@@ -402,14 +402,14 @@ class Advanced extends \Magento\Framework\Model\AbstractModel
                 $value[$key] = $attribute->getSource()->getOptionText($val);
 
                 if (is_array($value[$key])) {
-                    $value[$key] = $value[$key]['label'];
+                    $value[$key] = $value[$key]['label'] ?? '';
                 }
             }
             $value = implode(', ', $value);
         } elseif ($attribute->getFrontendInput() == 'select' || $attribute->getFrontendInput() == 'multiselect') {
             $value = $attribute->getSource()->getOptionText($value);
             if (is_array($value)) {
-                $value = $value['label'];
+                $value = $value['label'] ?? '';
             }
         } elseif ($attribute->getFrontendInput() == 'boolean') {
             if (is_numeric($value)) {
