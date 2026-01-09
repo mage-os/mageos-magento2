@@ -54,8 +54,6 @@ $customer->setWebsiteId($website->getId())
     ->setMiddlename('A')
     ->setLastname('Smith')
     ->setSuffix('Esq.')
-    ->setDefaultBilling(1)
-    ->setDefaultShipping(1)
     ->setGender($gender)
     ->setAddresses([$address]);
 $accountManagement->createAccount($customer, 'Qwert12345');
