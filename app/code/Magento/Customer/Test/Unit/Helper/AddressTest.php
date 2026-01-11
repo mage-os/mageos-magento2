@@ -242,6 +242,7 @@ class AddressTest extends TestCase
         return [
             [['street1', 'street2', 'street3', 'street4'], 3, ['street1 street2', 'street3', 'street4']],
             [['street1', 'street2', 'street3', 'street4'], 2, ['street1 street2', 'street3 street4']],
+            [['street1', ''], 2, ['street1']]
         ];
     }
 

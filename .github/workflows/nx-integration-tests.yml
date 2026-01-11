@@ -1,0 +1,28 @@
+name: Integration Tests (Using Nx)
+run-name: ${{ github.actor }} is running Integration Tests
+on:
+  pull_request:
+    branches: ["**"]
+
+permissions:
+  contents: write
+
+jobs:
+  call-workflow:
+    name: Calling Nx integration tests
+    uses: mage-os/github-actions/.github/workflows/nx-integration-tests.yml@main
+    secrets: inherit
+    with:
+      repository: ${{ github.repository }}
+      pr_head: ${{ github.event.pull_request.head.sha }}
+      pr_base: ${{ github.event.pull_request.base.ref }}
+
+  wait-for-result:
+    name: Wait For Result
+    needs: call-workflow
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Wait"
+        shell: bash
+        run: |
+          echo "got result"

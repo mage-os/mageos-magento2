@@ -245,6 +245,8 @@ class CheckoutTest extends TestCase
     /**
      * Place the order as guest when `Automatic Assignment to Customer Group` is enabled.
      *
+     * @magentoAppIsolation enabled
+     * @magentoDbIsolation enabled
      * @magentoDataFixture Magento/Paypal/_files/quote_express.php
      * @magentoConfigFixture current_store customer/create_account/auto_group_assign 1
      *

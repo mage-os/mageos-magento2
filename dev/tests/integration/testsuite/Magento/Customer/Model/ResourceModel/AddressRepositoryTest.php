@@ -81,15 +81,15 @@ class AddressRepositoryTest extends TestCase
         $region = $this->regionFactory->create()
             ->setRegionCode('AL')
             ->setRegion('Alabama')
-            ->setRegionId(1);
+            ->setRegionId('1');
         $address = $this->addressFactory->create()
             ->setId('1')
             ->setCountryId('US')
             ->setCustomerId('1')
             ->setPostcode('75477')
             ->setRegion($region)
-            ->setRegionId(1)
-            ->setStreet(['Green str, 67'])
+            ->setRegionId('1')
+            ->setStreet(['Green str, 67', ''])
             ->setTelephone('3468676')
             ->setCity('CityM')
             ->setFirstname('John')

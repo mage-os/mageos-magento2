@@ -37,8 +37,7 @@ $product->setTypeId(Configurable::TYPE_CODE)
     ->setName('Configurable Product')
     ->setSku('configurable')
     ->setVisibility(Visibility::VISIBILITY_BOTH)
-    ->setStatus(Status::STATUS_ENABLED)
-    ->setStockData(['use_config_manage_stock' => 1, 'is_in_stock' => 1]);
+    ->setStatus(Status::STATUS_ENABLED);
 $productRepository = Bootstrap::getObjectManager()->get(ProductRepositoryInterface::class);
 $product = $productRepository->save($product);
 
@@ -108,3 +107,10 @@ $product = $productRepository->save($product);
 
 $indexerProcessor = Bootstrap::getObjectManager()->get(PriceIndexerProcessor::class);
 $indexerProcessor->reindexRow($product->getId());
+
+/** @var Item $stockItem */
+$stockItem = Bootstrap::getObjectManager()->create(Item::class);
+$stockItem->load($product->getId(), 'product_id');
+
+$stockItem->setIsInStock(true);
+$stockItem->save();
