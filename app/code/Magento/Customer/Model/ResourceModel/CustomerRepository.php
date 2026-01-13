@@ -636,7 +636,7 @@ class CustomerRepository implements CustomerRepositoryInterface
             $this->throwInvalidAddressException($defaultAddressType);
         }
 
-        if ($customerId) {
+        if ($defaultAddressId) {
             try {
                 $customerAddress = $this->addressRepository->getById($defaultAddressId);
                 if ((int)$customerAddress->getCustomerId() !== $customerId) {
