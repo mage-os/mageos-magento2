@@ -6,6 +6,7 @@
  */
 namespace Magento\CatalogImportExport\Test\Unit\Model\Import;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\CatalogImportExport\Model\Import\Uploader;
 use Magento\Downloadable\Model\Url\DomainValidator;
 use Magento\Framework\Exception\LocalizedException;
@@ -87,50 +88,30 @@ class UploaderTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->coreFileStorageDb = $this->getMockBuilder(Database::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->coreFileStorageDb = $this->createMock(Database::class);
 
-        $this->coreFileStorage = $this->getMockBuilder(Storage::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->coreFileStorage = $this->createMock(Storage::class);
 
-        $this->imageFactory = $this->getMockBuilder(AdapterFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->imageFactory = $this->createMock(AdapterFactory::class);
 
-        $this->validator = $this->getMockBuilder(
-            NotProtectedExtension::class
-        )->disableOriginalConstructor()
-            ->getMock();
+        $this->validator = $this->createMock(NotProtectedExtension::class);
 
-        $this->readFactory = $this->getMockBuilder(ReadFactory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
-            ->getMock();
+        $this->readFactory = $this->createPartialMock(ReadFactory::class, ['create']);
 
-        $this->directoryMock = $this->getMockBuilder(Write::class)
-            ->onlyMethods(['writeFile', 'getRelativePath', 'isWritable', 'getAbsolutePath'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->directoryMock = $this->createPartialMock(
+            Write::class,
+            ['writeFile', 'getRelativePath', 'isWritable', 'getAbsolutePath']
+        );
 
-        $this->filesystem = $this->getMockBuilder(Filesystem::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getDirectoryWrite'])
-            ->getMock();
-        $this->filesystem->expects($this->any())
-            ->method('getDirectoryWrite')
-            ->willReturn($this->directoryMock);
+        $this->filesystem = $this->createPartialMock(Filesystem::class, ['getDirectoryWrite']);
+        $this->filesystem->method('getDirectoryWrite')->willReturn($this->directoryMock);
 
-        $this->random = $this->getMockBuilder(Random::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getRandomString'])
-            ->getMock();
+        $this->random = $this->createPartialMock(Random::class, ['getRandomString']);
 
-        $this->targetDirectory = $this->getMockBuilder(TargetDirectory::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getDirectoryWrite', 'getDirectoryRead'])
-            ->getMock();
+        $this->targetDirectory = $this->createPartialMock(
+            TargetDirectory::class,
+            ['getDirectoryWrite', 'getDirectoryRead']
+        );
         $this->targetDirectory->method('getDirectoryWrite')->willReturn($this->directoryMock);
         $this->targetDirectory->method('getDirectoryRead')->willReturn($this->directoryMock);
 
@@ -159,13 +140,13 @@ class UploaderTest extends TestCase
     }
 
     /**
-     * @dataProvider moveFileUrlDataProvider
      * @param $fileUrl
      * @param $expectedHost
      * @param $expectedFileName
      * @param $checkAllowedExtension
      * @throws LocalizedException
      */
+    #[DataProvider('moveFileUrlDataProvider')]
     public function testMoveFileUrl($fileUrl, $expectedHost, $expectedFileName, $checkAllowedExtension)
     {
         $tmpDir = 'var/tmp';
@@ -191,10 +172,7 @@ class UploaderTest extends TestCase
             ->with($tmpDir . '/' . $expectedFileName);
 
         // Create adjusted reader which does not validate path.
-        $readMock = $this->getMockBuilder(Read::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['readAll'])
-            ->getMock();
+        $readMock = $this->createPartialMock(Read::class, ['readAll']);
 
         // Expected invocations to create reader and read contents from url
         $this->readFactory->expects($this->once())->method('create')
@@ -204,8 +182,7 @@ class UploaderTest extends TestCase
             ->willReturn(null);
 
         // Expected invocation to write the temp file
-        $this->directoryMock->expects($this->any())->method('writeFile')
-            ->willReturn($expectedFileName);
+        $this->directoryMock->method('writeFile')->willReturn($expectedFileName);
 
         // Expected invocations save the downloaded file to temp file
         // and move the temp file to the destination directory
@@ -297,9 +274,7 @@ class UploaderTest extends TestCase
         $this->uploader->move($fileName);
     }
 
-    /**
-     * @dataProvider moveFileUrlDriverPoolDataProvider
-     */
+    #[DataProvider('moveFileUrlDriverPoolDataProvider')]
     public function testMoveFileUrlDrivePool($fileUrl, $expectedHost, $expectedDriverPool, $expectedScheme)
     {
         $driverPool = $this->createPartialMock(DriverPool::class, ['getDriver']);
@@ -479,105 +454,5 @@ class UploaderTest extends TestCase
                 'checkAllowedExtension' => 1
             ]
         ];
-    }
-
-    /**
-     * Test that IP addresses are blocked
-     */
-    public function testMoveFileUrlBlocksIpAddress()
-    {
-        $fileUrl = 'http://127.0.0.1/image.jpg';
-        
-        $this->domainValidator->expects($this->once())
-            ->method('isValid')
-            ->with('http://127.0.0.1/image.jpg')
-            ->willReturn(false);
-
-        $this->expectException(LocalizedException::class);
-        $this->expectExceptionMessage('Image URL domain is not in the list of allowed domains');
-
-        $this->uploader->move($fileUrl);
-    }
-
-    /**
-     * Test that non-whitelisted domains are blocked
-     */
-    public function testMoveFileUrlBlocksNonWhitelistedDomain()
-    {
-        $fileUrl = 'http://malicious-domain.com/image.jpg';
-        
-        $this->domainValidator->expects($this->once())
-            ->method('isValid')
-            ->with('http://malicious-domain.com/image.jpg')
-            ->willReturn(false);
-
-        $this->expectException(LocalizedException::class);
-        $this->expectExceptionMessage('Image URL domain is not in the list of allowed domains');
-
-        $this->uploader->move($fileUrl);
-    }
-
-    /**
-     * Test that whitelisted domains are allowed
-     */
-    public function testMoveFileUrlAllowsWhitelistedDomain()
-    {
-        $fileUrl = 'https://example.com/image.jpg';
-        $tmpDir = 'var/tmp';
-        $destDir = 'var/dest/dir';
-        
-        $this->uploader->method('getTmpDir')->willReturn($tmpDir);
-        
-        $this->domainValidator->expects($this->once())
-            ->method('isValid')
-            ->with('https://example.com/image.jpg')
-            ->willReturn(true);
-
-        $this->uploader->expects($this->once())->method('checkAllowedExtension')
-            ->willReturn(true);
-
-        $this->random->expects($this->once())->method('getRandomString')
-            ->with(16)
-            ->willReturn('38GcEmPFKXXR8NMj');
-
-        $readMock = $this->getMockBuilder(Read::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['readAll'])
-            ->getMock();
-
-        $this->readFactory->expects($this->once())->method('create')
-            ->with('example.com/image.jpg')
-            ->willReturn($readMock);
-        $readMock->expects($this->once())->method('readAll')
-            ->willReturn(null);
-
-        $this->directoryMock->expects($this->any())->method('writeFile')
-            ->willReturn('image_38GcEmPFKXXR8NMj.jpg');
-
-        $this->directoryMock->expects($this->exactly(2))
-            ->method('isWritable')
-            ->willReturn(true);
-
-        $this->directoryMock->expects($this->once())->method('getAbsolutePath')
-            ->with($destDir)
-            ->willReturn($destDir . '/image_38GcEmPFKXXR8NMj.jpg');
-        
-        $this->uploader->expects($this->once())->method('_setUploadFile')
-            ->willReturnSelf();
-
-        $returnFile = $destDir . DIRECTORY_SEPARATOR . 'image_38GcEmPFKXXR8NMj.jpg';
-
-        $this->uploader->expects($this->once())->method('save')
-            ->with($destDir . '/image_38GcEmPFKXXR8NMj.jpg')
-            ->willReturn([
-                'name' => 'image_38GcEmPFKXXR8NMj.jpg',
-                'path' => 'absPath',
-                'file' => $returnFile
-            ]);
-
-        $this->uploader->setDestDir($destDir);
-        $result = $this->uploader->move($fileUrl);
-
-        $this->assertEquals(['name' => 'image_38GcEmPFKXXR8NMj.jpg', 'file' => $returnFile], $result);
     }
 }

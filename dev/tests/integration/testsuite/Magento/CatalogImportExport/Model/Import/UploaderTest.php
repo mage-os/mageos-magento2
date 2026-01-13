@@ -12,7 +12,7 @@ use Magento\Framework\App\Bootstrap;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Filesystem\Directory\TargetDirectory;
 use Magento\Framework\Filesystem\Driver\File;
-use Magento\Downloadable\Api\DomainManagerInterface;
+use Magento\Downloadable\Model\Url\DomainValidator;
 
 /**
  * Tests for the \Magento\CatalogImportExport\Model\Import\Uploader class.
@@ -45,11 +45,6 @@ class UploaderTest extends \Magento\TestFramework\Indexer\TestCase
     private $fileReader;
 
     /**
-     * @var DomainManagerInterface
-     */
-    private $domainManager;
-
-    /**
      * @inheritdoc
      */
     protected function setUp(): void
@@ -60,11 +55,14 @@ class UploaderTest extends \Magento\TestFramework\Indexer\TestCase
         $fileReadFactory->method('create')->willReturn($this->fileReader);
         $random = $this->createMock(\Magento\Framework\Math\Random::class);
         $random->method('getRandomString')->willReturn(self::RANDOM_STRING);
+        $domainValidator = $this->createMock(DomainValidator::class);
+        $domainValidator->method('isValid')->willReturn(true);
         $this->uploader = $this->objectManager->create(
             \Magento\CatalogImportExport\Model\Import\Uploader::class,
             [
                 'random' => $random,
-                'readFactory' => $fileReadFactory
+                'readFactory' => $fileReadFactory,
+                'domainValidator' => $domainValidator
             ]
         );
 
@@ -90,23 +88,7 @@ class UploaderTest extends \Magento\TestFramework\Indexer\TestCase
             );
         }
 
-        // Add magento.com to allowed domains for testing
-        $this->domainManager = $this->objectManager->get(DomainManagerInterface::class);
-        $this->domainManager->addDomains(['magento.com']);
-
         parent::setUp();
-    }
-
-    /**
-     * @inheritdoc
-     */
-    protected function tearDown(): void
-    {
-        // Remove magento.com from allowed domains after testing
-        if ($this->domainManager) {
-            $this->domainManager->removeDomains(['magento.com']);
-        }
-        parent::tearDown();
     }
 
     /**

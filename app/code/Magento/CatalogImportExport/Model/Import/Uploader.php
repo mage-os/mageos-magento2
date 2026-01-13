@@ -202,13 +202,11 @@ class Uploader extends \Magento\MediaStorage\Model\File\Uploader
             $url = str_replace($matches[0], '', $fileName);
             $fullUrl = $matches[0] . $url;
 
-            // Validate remote URL against allowed domains configuration
             if (!$this->domainValidator->isValid($fullUrl)) {
                 throw new LocalizedException(
                     __(
-                        'Image URL domain is not in the list of allowed domains. ' .
-                        'IP addresses are not allowed. ' .
-                        'Please add the domain to downloadable_domains in app/etc/env.php.'
+                        \Magento\CatalogImportExport\Model\Import\Product\RowValidatorInterface::
+                        ERROR_MEDIA_URL_NOT_ACCESSIBLE
                     )
                 );
             }

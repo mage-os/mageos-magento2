@@ -1984,32 +1984,21 @@ class Product extends AbstractEntity
                     $imagesByHash
                 );
                 if (!$uploadedFile && !isset($uploadedImages[$columnImage])) {
-                    try {
-                        $uploadedFile = $this->uploadMediaFiles($columnImage);
-                        $uploadedFile = $uploadedFile ?: $this->getSystemFile($columnImage);
-                        if ($uploadedFile) {
-                            $uploadedImages[$columnImage] = $uploadedFile;
-                        } else {
-                            unset($rowData[$column]);
-                            $this->addRowError(
-                                ValidatorInterface::ERROR_MEDIA_URL_NOT_ACCESSIBLE,
-                                $rowNum,
-                                null,
-                                sprintf(
-                                    $this->_messageTemplates[ValidatorInterface::ERROR_MEDIA_URL_NOT_ACCESSIBLE],
-                                    $columnImage,
-                                    $rowNum
-                                ),
-                                ProcessingError::ERROR_LEVEL_NOT_CRITICAL
-                            );
-                        }
-                    } catch (LocalizedException $e) {
+                    $uploadedFile = $this->uploadMediaFiles($columnImage);
+                    $uploadedFile = $uploadedFile ?: $this->getSystemFile($columnImage);
+                    if ($uploadedFile) {
+                        $uploadedImages[$columnImage] = $uploadedFile;
+                    } else {
                         unset($rowData[$column]);
                         $this->addRowError(
                             ValidatorInterface::ERROR_MEDIA_URL_NOT_ACCESSIBLE,
                             $rowNum,
                             null,
-                            $e->getMessage(),
+                            sprintf(
+                                $this->_messageTemplates[ValidatorInterface::ERROR_MEDIA_URL_NOT_ACCESSIBLE],
+                                $columnImage,
+                                $rowNum
+                            ),
                             ProcessingError::ERROR_LEVEL_NOT_CRITICAL
                         );
                     }
@@ -2215,7 +2204,6 @@ class Product extends AbstractEntity
                 return '';
             }
 
-            // Validate remote URL against allowed domains configuration
             if (!$this->domainValidator->isValid($filename)) {
                 return '';
             }
@@ -2454,7 +2442,7 @@ class Product extends AbstractEntity
     /**
      * Uploading files into the "catalog/product" media folder.
      *
-     * Return a new file name if the same file is already exists.
+     * Return a new file name if the same file already exists.
      *
      * @param string $fileName
      * @param bool $renameFileOff [optional] boolean to pass.
@@ -2466,21 +2454,6 @@ class Product extends AbstractEntity
         try {
             $res = $this->_getUploader()->move($fileName, $renameFileOff);
             return $res['file'];
-        } catch (LocalizedException $e) {
-            // Re-throw only SSRF validation exceptions (domain/IP validation errors)
-            // File-not-found exceptions should be caught and logged, not re-thrown
-            $message = $e->getMessage();
-            if (is_string($message) && (
-                strpos($message, 'Image URL domain is not in the list of allowed domains') !== false ||
-                strpos($message, 'downloadable_domains') !== false ||
-                strpos($message, 'IP addresses are not allowed') !== false
-            )) {
-                // This is a validation exception - re-throw it
-                throw $e;
-            }
-            // This is a file-not-found or other LocalizedException - log and return empty
-            $this->_logger->critical($e);
-            return '';
         } catch (\Exception $e) {
             $this->_logger->critical($e);
             return '';
