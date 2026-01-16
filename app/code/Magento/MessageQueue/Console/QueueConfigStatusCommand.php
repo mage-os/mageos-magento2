@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\MessageQueue\Console;
 
+use Exception;
 use Magento\Framework\Console\Cli;
 use Magento\MessageQueue\Model\QueueConfig\ChangeDetectorInterface;
 use Symfony\Component\Console\Command\Command;
@@ -49,24 +50,29 @@ class QueueConfigStatusCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $hasChanges = false;
+        try {
+            $hasChanges = false;
 
-        foreach ($this->changeDetectors as $changeDetector) {
-            if ($changeDetector->hasChanges()) {
-                $hasChanges = true;
-                break;
+            foreach ($this->changeDetectors as $changeDetector) {
+                if ($changeDetector->hasChanges()) {
+                    $hasChanges = true;
+                    break;
+                }
             }
-        }
 
-        if ($hasChanges) {
-            $output->writeln(
-                '<info>Queue config files have changed. ' .
-                'Run setup:upgrade command to synchronize queue config.</info>'
-            );
-            return self::EXIT_CODE_QUEUE_UPDATE_REQUIRED;
-        }
+            if ($hasChanges) {
+                $output->writeln(
+                    '<info>Queue config files have changed. ' .
+                    'Run setup:upgrade command to synchronize queue config.</info>'
+                );
+                return self::EXIT_CODE_QUEUE_UPDATE_REQUIRED;
+            }
 
-        $output->writeln('<info>Queue config files are up to date.</info>');
-        return Cli::RETURN_SUCCESS;
+            $output->writeln('<info>Queue config files are up to date.</info>');
+            return Cli::RETURN_SUCCESS;
+        } catch (Exception $e) {
+            $output->writeln('<error>Failed to check queue status: ' . $e->getMessage() . '</error>');
+            return Cli::RETURN_FAILURE;
+        }
     }
 }

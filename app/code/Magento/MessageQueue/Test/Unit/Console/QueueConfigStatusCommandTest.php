@@ -141,4 +141,24 @@ class QueueConfigStatusCommandTest extends TestCase
         $this->assertEquals(0, $this->tester->getStatusCode());
         $this->assertStringContainsString('Queue config files are up to date', $this->tester->getDisplay());
     }
+
+    /**
+     * Test execute method returns failure when detector throws exception
+     */
+    public function testExecuteReturnsFailureWhenDetectorThrowsException(): void
+    {
+        $this->changeDetector1->method('hasChanges')
+            ->willThrowException(new \RuntimeException('Connection timeout'));
+
+        $command = new QueueConfigStatusCommand([
+            'detector1' => $this->changeDetector1
+        ]);
+        $this->tester = new CommandTester($command);
+
+        $this->tester->execute([]);
+
+        $this->assertEquals(1, $this->tester->getStatusCode());
+        $this->assertStringContainsString('Failed to check queue status', $this->tester->getDisplay());
+        $this->assertStringContainsString('Connection timeout', $this->tester->getDisplay());
+    }
 }

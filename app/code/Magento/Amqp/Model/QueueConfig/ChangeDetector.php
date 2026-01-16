@@ -50,11 +50,6 @@ class ChangeDetector implements ChangeDetectorInterface
                 'AMQP queue status check skipped: ' . $e->getMessage()
             );
             return false;
-        } catch (Exception $e) {
-            $this->logger->warning(
-                'Failed to check AMQP queue status: ' . $e->getMessage()
-            );
-            return false;
         }
     }
 

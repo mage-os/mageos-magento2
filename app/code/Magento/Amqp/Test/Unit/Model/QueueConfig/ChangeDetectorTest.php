@@ -125,22 +125,6 @@ class ChangeDetectorTest extends TestCase
     }
 
     /**
-     * Test hasChanges returns false on unexpected exception
-     */
-    public function testHasChangesReturnsFalseOnUnexpectedException(): void
-    {
-        $this->setupAmqpQueues(['queue1']);
-        $this->amqpConfig->method('getChannel')
-            ->willThrowException(new \RuntimeException('Connection timeout'));
-
-        $this->logger->expects($this->once())
-            ->method('warning')
-            ->with($this->stringContains('Failed to check AMQP queue status'));
-
-        $this->assertFalse($this->changeDetector->hasChanges());
-    }
-
-    /**
      * Test getMissingQueues returns correct list
      */
     public function testGetMissingQueuesReturnsCorrectList(): void
