@@ -12,6 +12,7 @@ use Magento\Catalog\Block\Product\ListProduct;
 use Magento\Catalog\Helper\Product\Edit\Action\Attribute;
 use Magento\Catalog\Model\CategoryFactory;
 use Magento\Catalog\Model\Product\Visibility;
+use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Model\ProductRepository;
 use Magento\Framework\App\Request\Http as HttpRequest;
 use Magento\Framework\Message\MessageInterface;
@@ -175,5 +176,301 @@ class SaveTest extends AbstractBackendController
             MessageInterface::TYPE_ERROR
         );
         $this->assertEquals('test', $product->getData('custom_layout_update'));
+    }
+
+    /**
+     * Test that mass update validates special price dates correctly when from_date is after to_date.
+     *
+     * @magentoDataFixture Magento/Catalog/_files/product_simple.php
+     * @magentoDbIsolation disabled
+     * @magentoAppIsolation enabled
+     * @return void
+     */
+    public function testSaveActionValidatesSpecialPriceDateRangeWithInvalidDates(): void
+    {
+        /** @var ProductRepositoryInterface $productRepository */
+        $productRepository = $this->_objectManager->get(ProductRepositoryInterface::class);
+        $product = $productRepository->get('simple');
+
+        /** @var Session $session */
+        $session = $this->_objectManager->get(Session::class);
+        $session->setProductIds([$product->getId()]);
+
+        $this->getRequest()->setMethod(HttpRequest::METHOD_POST);
+        $this->getRequest()->setPostValue([
+            'attributes' => [
+                'special_from_date' => '2026-12-31',
+                'special_to_date' => '2026-01-01',
+            ],
+        ]);
+
+        $this->dispatch('backend/catalog/product_action_attribute/save/store/0');
+
+        $this->publisherConsumerController->waitForAsynchronousResult(
+            function (ProductRepositoryInterface $productRepository, int $productId) {
+                $product = $productRepository->getById($productId);
+                return $product->getSpecialFromDate() !== null || $product->getSpecialToDate() !== null;
+            },
+            [$productRepository, $product->getId()]
+        );
+
+        $this->assertSessionMessages(
+            $this->logicalOr(
+                $this->containsEqual('Make sure the To Date is later than or the same as the From Date.'),
+                $this->containsEqual('Please correct the product special price dates.')
+            ),
+            MessageInterface::TYPE_ERROR
+        );
+
+        $updatedProduct = $productRepository->getById($product->getId());
+        $this->assertNull($updatedProduct->getSpecialFromDate());
+        $this->assertNull($updatedProduct->getSpecialToDate());
+    }
+
+    /**
+     * Test that mass update accepts valid special price dates.
+     *
+     * @magentoDataFixture Magento/Catalog/_files/product_simple.php
+     * @magentoDbIsolation disabled
+     * @magentoAppIsolation enabled
+     * @return void
+     */
+    public function testSaveActionValidatesSpecialPriceDateRangeWithValidDates(): void
+    {
+        /** @var ProductRepositoryInterface $productRepository */
+        $productRepository = $this->_objectManager->get(ProductRepositoryInterface::class);
+        $product = $productRepository->get('simple');
+
+        /** @var Session $session */
+        $session = $this->_objectManager->get(Session::class);
+        $session->setProductIds([$product->getId()]);
+
+        $this->getRequest()->setMethod(HttpRequest::METHOD_POST);
+        $this->getRequest()->setPostValue([
+            'attributes' => [
+                'special_from_date' => '2026-01-01',
+                'special_to_date' => '2026-12-31',
+                'special_price' => 5.00,
+            ],
+        ]);
+
+        $this->dispatch('backend/catalog/product_action_attribute/save/store/0');
+
+        $this->publisherConsumerController->waitForAsynchronousResult(
+            function (ProductRepositoryInterface $productRepository, int $productId) {
+                $product = $productRepository->getById($productId);
+                return $product->getSpecialFromDate() !== null;
+            },
+            [$productRepository, $product->getId()]
+        );
+
+        $this->assertSessionMessages(
+            $this->isEmpty(),
+            MessageInterface::TYPE_ERROR
+        );
+
+        $updatedProduct = $productRepository->getById($product->getId());
+        $this->assertNotNull($updatedProduct->getSpecialFromDate());
+        $this->assertNotNull($updatedProduct->getSpecialToDate());
+        $this->assertEquals(5.00, $updatedProduct->getSpecialPrice());
+    }
+
+    /**
+     * Test that mass update accepts special price with only from_date set.
+     *
+     * @magentoDataFixture Magento/Catalog/_files/product_simple.php
+     * @magentoDbIsolation disabled
+     * @magentoAppIsolation enabled
+     * @return void
+     */
+    public function testSaveActionValidatesSpecialPriceWithOnlyFromDate(): void
+    {
+        /** @var ProductRepositoryInterface $productRepository */
+        $productRepository = $this->_objectManager->get(ProductRepositoryInterface::class);
+        $product = $productRepository->get('simple');
+
+        /** @var Session $session */
+        $session = $this->_objectManager->get(Session::class);
+        $session->setProductIds([$product->getId()]);
+
+        $this->getRequest()->setMethod(HttpRequest::METHOD_POST);
+        $this->getRequest()->setPostValue([
+            'attributes' => [
+                'special_from_date' => '2026-01-01',
+                'special_price' => 7.00,
+            ],
+        ]);
+
+        $this->dispatch('backend/catalog/product_action_attribute/save/store/0');
+
+        $this->publisherConsumerController->waitForAsynchronousResult(
+            function (ProductRepositoryInterface $productRepository, int $productId) {
+                $product = $productRepository->getById($productId);
+                return $product->getSpecialFromDate() !== null;
+            },
+            [$productRepository, $product->getId()]
+        );
+
+        $this->assertSessionMessages(
+            $this->isEmpty(),
+            MessageInterface::TYPE_ERROR
+        );
+
+        $updatedProduct = $productRepository->getById($product->getId());
+        $this->assertNotNull($updatedProduct->getSpecialFromDate());
+        $this->assertEquals(7.00, $updatedProduct->getSpecialPrice());
+    }
+
+    /**
+     * Test that mass update accepts special price with only to_date set.
+     *
+     * @magentoDataFixture Magento/Catalog/_files/product_simple.php
+     * @magentoDbIsolation disabled
+     * @magentoAppIsolation enabled
+     * @return void
+     */
+    public function testSaveActionValidatesSpecialPriceWithOnlyToDate(): void
+    {
+        /** @var ProductRepositoryInterface $productRepository */
+        $productRepository = $this->_objectManager->get(ProductRepositoryInterface::class);
+        $product = $productRepository->get('simple');
+
+        /** @var Session $session */
+        $session = $this->_objectManager->get(Session::class);
+        $session->setProductIds([$product->getId()]);
+
+        $this->getRequest()->setMethod(HttpRequest::METHOD_POST);
+        $this->getRequest()->setPostValue([
+            'attributes' => [
+                'special_to_date' => '2026-12-31',
+                'special_price' => 6.00,
+            ],
+        ]);
+
+        $this->dispatch('backend/catalog/product_action_attribute/save/store/0');
+
+        $this->publisherConsumerController->waitForAsynchronousResult(
+            function (ProductRepositoryInterface $productRepository, int $productId) {
+                $product = $productRepository->getById($productId);
+                return $product->getSpecialToDate() !== null;
+            },
+            [$productRepository, $product->getId()]
+        );
+
+        $this->assertSessionMessages(
+            $this->isEmpty(),
+            MessageInterface::TYPE_ERROR
+        );
+
+        $updatedProduct = $productRepository->getById($product->getId());
+        $this->assertNotNull($updatedProduct->getSpecialToDate());
+        $this->assertEquals(6.00, $updatedProduct->getSpecialPrice());
+    }
+
+    /**
+     * Test that mass update validates special price dates when from_date equals to_date.
+     *
+     * @magentoDataFixture Magento/Catalog/_files/product_simple.php
+     * @magentoDbIsolation disabled
+     * @magentoAppIsolation enabled
+     * @return void
+     */
+    public function testSaveActionValidatesSpecialPriceDateRangeWithEqualDates(): void
+    {
+        /** @var ProductRepositoryInterface $productRepository */
+        $productRepository = $this->_objectManager->get(ProductRepositoryInterface::class);
+        $product = $productRepository->get('simple');
+
+        /** @var Session $session */
+        $session = $this->_objectManager->get(Session::class);
+        $session->setProductIds([$product->getId()]);
+
+        $this->getRequest()->setMethod(HttpRequest::METHOD_POST);
+        $this->getRequest()->setPostValue([
+            'attributes' => [
+                'special_from_date' => '2026-06-15',
+                'special_to_date' => '2026-06-15',
+                'special_price' => 8.00,
+            ],
+        ]);
+
+        $this->dispatch('backend/catalog/product_action_attribute/save/store/0');
+
+        $this->publisherConsumerController->waitForAsynchronousResult(
+            function (ProductRepositoryInterface $productRepository, int $productId) {
+                $product = $productRepository->getById($productId);
+                return $product->getSpecialFromDate() !== null;
+            },
+            [$productRepository, $product->getId()]
+        );
+
+        $this->assertSessionMessages(
+            $this->isEmpty(),
+            MessageInterface::TYPE_ERROR
+        );
+
+        $updatedProduct = $productRepository->getById($product->getId());
+        $this->assertNotNull($updatedProduct->getSpecialFromDate());
+        $this->assertNotNull($updatedProduct->getSpecialToDate());
+        $this->assertEquals(8.00, $updatedProduct->getSpecialPrice());
+    }
+
+    /**
+     * Test that mass update validates special price dates for multiple products.
+     *
+     * @magentoDataFixture Magento/Catalog/_files/product_simple.php
+     * @magentoDataFixture Magento/Catalog/_files/second_product_simple.php
+     * @magentoDbIsolation disabled
+     * @magentoAppIsolation enabled
+     * @return void
+     */
+    public function testSaveActionValidatesSpecialPriceDateRangeForMultipleProducts(): void
+    {
+        /** @var ProductRepositoryInterface $productRepository */
+        $productRepository = $this->_objectManager->get(ProductRepositoryInterface::class);
+        $product1 = $productRepository->get('simple');
+        $product2 = $productRepository->get('simple2');
+
+        /** @var Session $session */
+        $session = $this->_objectManager->get(Session::class);
+        $session->setProductIds([$product1->getId(), $product2->getId()]);
+
+        $this->getRequest()->setMethod(HttpRequest::METHOD_POST);
+        $this->getRequest()->setPostValue([
+            'attributes' => [
+                'special_from_date' => '2026-12-31',
+                'special_to_date' => '2026-01-01',
+            ],
+        ]);
+
+        $this->dispatch('backend/catalog/product_action_attribute/save/store/0');
+
+        $this->publisherConsumerController->waitForAsynchronousResult(
+            function (ProductRepositoryInterface $productRepository, array $productIds) {
+                foreach ($productIds as $productId) {
+                    $product = $productRepository->getById($productId);
+                    if ($product->getSpecialFromDate() !== null || $product->getSpecialToDate() !== null) {
+                        return true;
+                    }
+                }
+                return false;
+            },
+            [$productRepository, [$product1->getId(), $product2->getId()]]
+        );
+
+        $this->assertSessionMessages(
+            $this->logicalOr(
+                $this->containsEqual('Make sure the To Date is later than or the same as the From Date.'),
+                $this->containsEqual('Please correct the product special price dates.')
+            ),
+            MessageInterface::TYPE_ERROR
+        );
+
+        $updatedProduct1 = $productRepository->getById($product1->getId());
+        $updatedProduct2 = $productRepository->getById($product2->getId());
+        $this->assertNull($updatedProduct1->getSpecialFromDate());
+        $this->assertNull($updatedProduct1->getSpecialToDate());
+        $this->assertNull($updatedProduct2->getSpecialFromDate());
+        $this->assertNull($updatedProduct2->getSpecialToDate());
     }
 }
