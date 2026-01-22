@@ -206,14 +206,6 @@ class SaveTest extends AbstractBackendController
 
         $this->dispatch('backend/catalog/product_action_attribute/save/store/0');
 
-        $this->publisherConsumerController->waitForAsynchronousResult(
-            function (ProductRepositoryInterface $productRepository, int $productId) {
-                $product = $productRepository->getById($productId);
-                return $product->getSpecialFromDate() !== null || $product->getSpecialToDate() !== null;
-            },
-            [$productRepository, $product->getId()]
-        );
-
         $this->assertSessionMessages(
             $this->logicalOr(
                 $this->containsEqual('Make sure the To Date is later than or the same as the From Date.'),
@@ -222,6 +214,7 @@ class SaveTest extends AbstractBackendController
             MessageInterface::TYPE_ERROR
         );
 
+        // Validation failure prevents async operation, so no need to wait
         $updatedProduct = $productRepository->getById($product->getId());
         $this->assertNull($updatedProduct->getSpecialFromDate());
         $this->assertNull($updatedProduct->getSpecialToDate());
@@ -257,11 +250,7 @@ class SaveTest extends AbstractBackendController
         $this->dispatch('backend/catalog/product_action_attribute/save/store/0');
 
         $this->publisherConsumerController->waitForAsynchronousResult(
-            function (ProductRepositoryInterface $productRepository, int $productId) {
-                $product = $productRepository->getById($productId);
-                return $product->getSpecialFromDate() !== null;
-            },
-            [$productRepository, $product->getId()]
+            fn () => $productRepository->get('simple', forceReload: true)->getSpecialFromDate() !== null
         );
 
         $this->assertSessionMessages(
@@ -269,7 +258,7 @@ class SaveTest extends AbstractBackendController
             MessageInterface::TYPE_ERROR
         );
 
-        $updatedProduct = $productRepository->getById($product->getId());
+        $updatedProduct = $productRepository->get('simple');
         $this->assertNotNull($updatedProduct->getSpecialFromDate());
         $this->assertNotNull($updatedProduct->getSpecialToDate());
         $this->assertEquals(5.00, $updatedProduct->getSpecialPrice());
@@ -304,11 +293,7 @@ class SaveTest extends AbstractBackendController
         $this->dispatch('backend/catalog/product_action_attribute/save/store/0');
 
         $this->publisherConsumerController->waitForAsynchronousResult(
-            function (ProductRepositoryInterface $productRepository, int $productId) {
-                $product = $productRepository->getById($productId);
-                return $product->getSpecialFromDate() !== null;
-            },
-            [$productRepository, $product->getId()]
+            fn () => $productRepository->get('simple', forceReload: true)->getSpecialFromDate() !== null
         );
 
         $this->assertSessionMessages(
@@ -316,7 +301,7 @@ class SaveTest extends AbstractBackendController
             MessageInterface::TYPE_ERROR
         );
 
-        $updatedProduct = $productRepository->getById($product->getId());
+        $updatedProduct = $productRepository->get('simple');
         $this->assertNotNull($updatedProduct->getSpecialFromDate());
         $this->assertEquals(7.00, $updatedProduct->getSpecialPrice());
     }
@@ -350,11 +335,7 @@ class SaveTest extends AbstractBackendController
         $this->dispatch('backend/catalog/product_action_attribute/save/store/0');
 
         $this->publisherConsumerController->waitForAsynchronousResult(
-            function (ProductRepositoryInterface $productRepository, int $productId) {
-                $product = $productRepository->getById($productId);
-                return $product->getSpecialToDate() !== null;
-            },
-            [$productRepository, $product->getId()]
+            fn () => $productRepository->get('simple', forceReload: true)->getSpecialToDate() !== null
         );
 
         $this->assertSessionMessages(
@@ -362,7 +343,7 @@ class SaveTest extends AbstractBackendController
             MessageInterface::TYPE_ERROR
         );
 
-        $updatedProduct = $productRepository->getById($product->getId());
+        $updatedProduct = $productRepository->get('simple');
         $this->assertNotNull($updatedProduct->getSpecialToDate());
         $this->assertEquals(6.00, $updatedProduct->getSpecialPrice());
     }
@@ -397,11 +378,7 @@ class SaveTest extends AbstractBackendController
         $this->dispatch('backend/catalog/product_action_attribute/save/store/0');
 
         $this->publisherConsumerController->waitForAsynchronousResult(
-            function (ProductRepositoryInterface $productRepository, int $productId) {
-                $product = $productRepository->getById($productId);
-                return $product->getSpecialFromDate() !== null;
-            },
-            [$productRepository, $product->getId()]
+            fn () => $productRepository->get('simple', forceReload: true)->getSpecialFromDate() !== null
         );
 
         $this->assertSessionMessages(
@@ -409,7 +386,7 @@ class SaveTest extends AbstractBackendController
             MessageInterface::TYPE_ERROR
         );
 
-        $updatedProduct = $productRepository->getById($product->getId());
+        $updatedProduct = $productRepository->get('simple');
         $this->assertNotNull($updatedProduct->getSpecialFromDate());
         $this->assertNotNull($updatedProduct->getSpecialToDate());
         $this->assertEquals(8.00, $updatedProduct->getSpecialPrice());
@@ -445,19 +422,6 @@ class SaveTest extends AbstractBackendController
 
         $this->dispatch('backend/catalog/product_action_attribute/save/store/0');
 
-        $this->publisherConsumerController->waitForAsynchronousResult(
-            function (ProductRepositoryInterface $productRepository, array $productIds) {
-                foreach ($productIds as $productId) {
-                    $product = $productRepository->getById($productId);
-                    if ($product->getSpecialFromDate() !== null || $product->getSpecialToDate() !== null) {
-                        return true;
-                    }
-                }
-                return false;
-            },
-            [$productRepository, [$product1->getId(), $product2->getId()]]
-        );
-
         $this->assertSessionMessages(
             $this->logicalOr(
                 $this->containsEqual('Make sure the To Date is later than or the same as the From Date.'),
@@ -466,6 +430,7 @@ class SaveTest extends AbstractBackendController
             MessageInterface::TYPE_ERROR
         );
 
+        // Validation failure prevents async operation, so no need to wait
         $updatedProduct1 = $productRepository->getById($product1->getId());
         $updatedProduct2 = $productRepository->getById($product2->getId());
         $this->assertNull($updatedProduct1->getSpecialFromDate());
