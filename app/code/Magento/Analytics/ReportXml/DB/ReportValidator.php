@@ -50,7 +50,7 @@ class ReportValidator
     {
         $query = $this->queryFactory->create($name);
         $connection = $this->connectionFactory->getConnection($query->getConnectionName());
-        $query->getSelect()->limit(0);
+        $query->getSelect()->limit(1);
         try {
             $connection->query($query->getSelect());
         } catch (\Zend_Db_Statement_Exception $e) {
