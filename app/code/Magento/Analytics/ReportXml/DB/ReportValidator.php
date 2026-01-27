@@ -39,7 +39,7 @@ class ReportValidator
     }
 
     /**
-     * Tries to do query for provided report with limit 0 and return error information if it failed
+     * Tries to do query for provided report with limit 1 and return error information if it failed
      *
      * @param string $name
      * @param SearchCriteriaInterface $criteria
