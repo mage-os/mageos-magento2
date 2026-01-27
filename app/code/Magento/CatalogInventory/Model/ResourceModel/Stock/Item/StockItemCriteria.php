@@ -55,7 +55,11 @@ class StockItemCriteria extends AbstractCriteria implements StockItemCriteriaInt
      */
     public function setProductsFilter($products)
     {
-        $this->data['products_filter'] = [$products];
+        if (is_array($products)) {
+            $this->data['products_filter'] = $products;
+        } else {
+            $this->data['products_filter'] = [$products];
+        }
         return true;
     }
 
