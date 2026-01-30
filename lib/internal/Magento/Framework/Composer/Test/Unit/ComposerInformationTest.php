@@ -119,4 +119,31 @@ class ComposerInformationTest extends TestCase
             ['namespace/package', false],
         ];
     }
+
+    /**
+     * @param string $packageName
+     * @param boolean $expected
+     * @dataProvider isSystemPackageDataProvider
+     */
+    public function testIsSystemPackage($packageName, $expected)
+    {
+        $this->assertEquals($expected, $this->composerInformation->isSystemPackage($packageName));
+    }
+
+    /**
+     * @return array
+     */
+    public static function isSystemPackageDataProvider()
+    {
+        return [
+            ['mage-os/product-community-edition', true],
+            ['mage-os/product-enterprise-edition', true],
+            ['mage-os/product-minimal', true],
+            ['mage-os/product-custom-build', true],
+            ['magento/product-community-edition', false],
+            ['mage-os/module-something', false],
+            ['namespace/package', false],
+            ['mage-os/product-', false],
+        ];
+    }
 }
