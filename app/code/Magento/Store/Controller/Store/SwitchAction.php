@@ -121,6 +121,7 @@ class SwitchAction extends Action implements HttpGetActionInterface, HttpPostAct
         }
         if ($error !== null) {
             $this->messageManager->addErrorMessage($error);
+            $this->cookieManager->setCookieForStore($this->storeManager->getStore());
         } else {
             $redirectUrl = $this->storeSwitcher->switch($fromStore, $targetStore, $requestedUrlToRedirect);
             $this->cookieManager->setCookieForStore($targetStore);
