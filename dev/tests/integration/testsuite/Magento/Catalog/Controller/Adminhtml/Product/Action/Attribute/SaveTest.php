@@ -77,9 +77,13 @@ class SaveTest extends AbstractBackendController
     #[DataFixture(ProductFixture::class, ['sku' => 'simple'], 'product')]
     public function testSaveActionRedirectsSuccessfully(): void
     {
+        /** @var ProductRepositoryInterface $productRepository */
+        $productRepository = $this->_objectManager->get(ProductRepositoryInterface::class);
+        $product = $productRepository->get('simple');
+        
         /** @var $session Session */
         $session = $this->_objectManager->get(Session::class);
-        $session->setProductIds([1]);
+        $session->setProductIds([$product->getId()]);
         $this->getRequest()->setMethod(HttpRequest::METHOD_POST);
 
         $this->dispatch('backend/catalog/product_action_attribute/save/store/0');
@@ -288,7 +292,8 @@ class SaveTest extends AbstractBackendController
         if ($expectToDate) {
             $this->assertNotNull($updatedProduct->getSpecialToDate());
         }
-        $this->assertSame($expectedPrice, $updatedProduct->getSpecialPrice());
+        // Use assertEquals for price comparison as getSpecialPrice() returns string from DB
+        $this->assertEquals($expectedPrice, $updatedProduct->getSpecialPrice());
     }
 
     /**
