@@ -14,6 +14,7 @@ use Magento\Catalog\Model\CategoryFactory;
 use Magento\Catalog\Model\Product\Visibility;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Model\ProductRepository;
+use Magento\Catalog\Test\Fixture\Product as ProductFixture;
 use Magento\Framework\App\Request\Http as HttpRequest;
 use Magento\Framework\Message\MessageInterface;
 use Magento\Framework\UrlInterface;
@@ -73,7 +74,7 @@ class SaveTest extends AbstractBackendController
     /**
      * @magentoDbIsolation disabled
      */
-    #[DataFixture('Magento/Catalog/_files/product_simple.php')]
+    #[DataFixture(ProductFixture::class, ['sku' => 'simple'], 'product')]
     public function testSaveActionRedirectsSuccessfully(): void
     {
         /** @var $session Session */
@@ -83,7 +84,7 @@ class SaveTest extends AbstractBackendController
 
         $this->dispatch('backend/catalog/product_action_attribute/save/store/0');
 
-        $this->assertEquals(302, $this->getResponse()->getHttpResponseCode());
+        $this->assertSame(302, $this->getResponse()->getHttpResponseCode());
         /** @var \Magento\Backend\Model\UrlInterface $urlBuilder */
         $urlBuilder = $this->_objectManager->get(UrlInterface::class);
 
@@ -108,7 +109,7 @@ class SaveTest extends AbstractBackendController
      * @param array $attributes
      * @magentoDbIsolation disabled
      */
-    #[DataFixture('Magento/Catalog/_files/product_simple.php')]
+    #[DataFixture(ProductFixture::class, ['sku' => 'simple'], 'product')]
     public function testSaveActionChangeVisibility(array $attributes): void
     {
         /** @var ProductRepository $repository */
@@ -163,7 +164,7 @@ class SaveTest extends AbstractBackendController
      *
      * @return void
      */
-    #[DataFixture('Magento/Catalog/_files/product_simple.php')]
+    #[DataFixture(ProductFixture::class, ['sku' => 'simple'], 'product')]
     public function testSaveActionCantChangeCustomLayoutUpdate(): void
     {
         /** @var ProductRepository $repository */
@@ -185,7 +186,7 @@ class SaveTest extends AbstractBackendController
             $this->equalTo(['Custom layout update text cannot be changed, only removed']),
             MessageInterface::TYPE_ERROR
         );
-        $this->assertEquals('test', $product->getData('custom_layout_update'));
+        $this->assertSame('test', $product->getData('custom_layout_update'));
     }
 
     /**
@@ -195,7 +196,7 @@ class SaveTest extends AbstractBackendController
      * @magentoAppIsolation enabled
      * @return void
      */
-    #[DataFixture('Magento/Catalog/_files/product_simple.php')]
+    #[DataFixture(ProductFixture::class, ['sku' => 'simple'], 'product')]
     public function testSaveActionValidatesSpecialPriceDateRangeWithInvalidDates(): void
     {
         /** @var ProductRepositoryInterface $productRepository */
@@ -247,7 +248,7 @@ class SaveTest extends AbstractBackendController
      * @param bool $expectToDate
      * @return void
      */
-    #[DataFixture('Magento/Catalog/_files/product_simple.php')]
+    #[DataFixture(ProductFixture::class, ['sku' => 'simple'], 'product')]
     public function testSaveActionAcceptsValidSpecialPriceDates(
         array $attributes,
         float $expectedPrice,
@@ -287,7 +288,7 @@ class SaveTest extends AbstractBackendController
         if ($expectToDate) {
             $this->assertNotNull($updatedProduct->getSpecialToDate());
         }
-        $this->assertEquals($expectedPrice, $updatedProduct->getSpecialPrice());
+        $this->assertSame($expectedPrice, $updatedProduct->getSpecialPrice());
     }
 
     /**
@@ -346,8 +347,8 @@ class SaveTest extends AbstractBackendController
      * @magentoAppIsolation enabled
      * @return void
      */
-    #[DataFixture('Magento/Catalog/_files/product_simple.php')]
-    #[DataFixture('Magento/Catalog/_files/second_product_simple.php')]
+    #[DataFixture(ProductFixture::class, ['sku' => 'simple'], 'product1')]
+    #[DataFixture(ProductFixture::class, ['sku' => 'simple2'], 'product2')]
     public function testSaveActionValidatesSpecialPriceDateRangeForMultipleProducts(): void
     {
         /** @var ProductRepositoryInterface $productRepository */
