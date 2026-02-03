@@ -168,7 +168,7 @@ class Grid extends AbstractGrid
      *
      * @return \Magento\Framework\DB\Select
      */
-    protected function getGridOriginSelect()
+    public function getGridOriginSelect()
     {
         $select = $this->getConnection()->select()
             ->from([$this->mainTableName => $this->getTable($this->mainTableName)], []);
