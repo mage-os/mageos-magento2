@@ -7,9 +7,11 @@ declare(strict_types=1);
 
 namespace Magento\TestFramework\Helper;
 
+use InvalidArgumentException;
 use Magento\Catalog\Helper\Product\View;
 use Magento\Catalog\Model\Product;
 use Magento\Framework\App\Cache\Type\Layout;
+use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\View\EntitySpecificHandlesList;
 use Magento\Framework\View\Layout\GeneratorPool;
 use Magento\Framework\View\Layout\ProcessorInterface;
@@ -18,7 +20,6 @@ use Magento\Framework\View\Layout\ScheduledStructure;
 use Magento\Framework\View\LayoutInterface;
 use Magento\Framework\View\Model\Layout\Merge;
 use Magento\Framework\View\Result\PageFactory;
-use Magento\TestFramework\Helper\Bootstrap;
 use PHPUnit\Framework\Assert;
 
 /**
@@ -58,30 +59,25 @@ class LayoutHandles
     /**
      * Get layout handles for a product with proper isolation
      *
-     * This method ensures each product test starts with a clean slate by:
-     * 1. Validating product has required data
-     * 2. Removing shared Layout instances (if not already done)
-     * 3. Removing EntitySpecificHandlesList (accumulates handles)
-     * 4. Removing Layout\Merge (caches layout updates)
-     * 5. Clearing layout cache
-     * 6. Creating fresh Page and Layout instances
+     * Ensures each product test starts with a clean slate by removing shared Layout instances,
+     * clearing cache, and creating fresh Page and Layout instances.
      *
      * @param Product $product Product must be saved with ID and attribute set
      * @param bool $forceIsolation Force isolation even if already performed
-     * @return string[] Array of layout handle names (e.g., ['default', '___attribute_set_10', ...])
-     * @throws \InvalidArgumentException If product is not properly initialized
+     * @return string[] Array of layout handle names
+     * @throws InvalidArgumentException If product is not properly initialized
      */
     public static function getProductLayoutHandles(Product $product, bool $forceIsolation = true): array
     {
         // Validate product has required data
         if (!$product->getId()) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 'Product must be saved with an ID before layout handles can be generated'
             );
         }
 
         if (!$product->getAttributeSetId()) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 'Product must have an attribute set ID before layout handles can be generated'
             );
         }
@@ -110,10 +106,10 @@ class LayoutHandles
      *
      * This is extracted to allow reuse and avoid repeating expensive operations.
      *
-     * @param \Magento\Framework\ObjectManagerInterface $objectManager
+     * @param ObjectManagerInterface $objectManager
      * @return void
      */
-    private static function performIsolation(\Magento\Framework\ObjectManagerInterface $objectManager): void
+    private static function performIsolation(ObjectManagerInterface $objectManager): void
     {
         // CRITICAL: Remove ALL shared layout-related instances
         // These accumulate state across multiple initProductLayout calls
@@ -159,11 +155,10 @@ class LayoutHandles
     /**
      * Get attribute set handle name for a product (full format)
      *
-     * Returns the full handle name. Magento may use shorthand notation internally
-     * (e.g., '___attribute_set_10' instead of 'catalog_product_view_attribute_set_10').
+     * Returns the full handle name. Magento may use shorthand notation internally.
      *
      * @param Product $product
-     * @return string Example: 'catalog_product_view_attribute_set_10'
+     * @return string
      */
     public static function getAttributeSetHandleName(Product $product): string
     {
@@ -176,7 +171,7 @@ class LayoutHandles
      * Magento uses shorthand notation where 'catalog_product_view' is replaced with '__'.
      *
      * @param Product $product
-     * @return string Example: '___attribute_set_10'
+     * @return string
      */
     public static function getAttributeSetHandleShorthand(Product $product): string
     {
@@ -189,7 +184,7 @@ class LayoutHandles
      * Returns the full handle name for the product's type.
      *
      * @param Product $product
-     * @return string Example: 'catalog_product_view_type_simple' or 'catalog_product_view_type_configurable'
+     * @return string
      */
     public static function getProductTypeHandleName(Product $product): string
     {
@@ -202,7 +197,7 @@ class LayoutHandles
      * Magento uses shorthand notation where 'catalog_product_view' is replaced with '__'.
      *
      * @param Product $product
-     * @return string Example: '___type_simple' or '___type_configurable'
+     * @return string
      */
     public static function getProductTypeHandleShorthand(Product $product): string
     {

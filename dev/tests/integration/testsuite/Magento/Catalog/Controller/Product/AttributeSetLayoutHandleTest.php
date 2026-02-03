@@ -57,12 +57,7 @@ class AttributeSetLayoutHandleTest extends TestCase
     }
 
     /**
-     * Test Scenario: Product with unique attribute set gets its own layout handle
-     *
-     * This test represents Product 1 from the scenario:
-     * - Product 1: Attribute Set A (different from others)
-     * - Product 2: Attribute Set B
-     * - Product 3: Attribute Set B
+     * Test that product with unique attribute set gets its own layout handle
      *
      * @return void
      */
@@ -94,12 +89,7 @@ class AttributeSetLayoutHandleTest extends TestCase
     }
 
     /**
-     * Test Scenario: Two products with same attribute set get the same layout handle
-     *
-     * This test represents Products 2 and 3 from the scenario:
-     * - Product 1: Attribute Set A
-     * - Product 2: Attribute Set B (same as Product 3)
-     * - Product 3: Attribute Set B (same as Product 2)
+     * Test that two products with same attribute set get the same layout handle
      *
      * @return void
      */
@@ -152,5 +142,4 @@ class AttributeSetLayoutHandleTest extends TestCase
         LayoutHandles::assertHasProductTypeHandle($product1, $handles1);
         LayoutHandles::assertHasProductTypeHandle($product2, $handles2);
     }
-
 }
