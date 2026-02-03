@@ -27,6 +27,8 @@ use PHPUnit\Framework\Assert;
  *
  * This helper provides utilities for testing product layout handles while ensuring
  * proper isolation between test cases by clearing shared Layout instances and cache.
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class LayoutHandles
 {
