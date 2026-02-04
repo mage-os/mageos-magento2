@@ -89,6 +89,8 @@ class Grid extends AbstractGrid
             ObjectManager::getInstance()->get(LastUpdateTimeCache::class);
 
         parent::__construct($context, $connectionName);
+
+        $this->connection = $this->_resources->getConnection('sales');
     }
 
     /**
