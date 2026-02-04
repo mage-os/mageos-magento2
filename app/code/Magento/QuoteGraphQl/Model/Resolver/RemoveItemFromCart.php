@@ -91,7 +91,7 @@ class RemoveItemFromCart implements ResolverInterface
         }
         $maskedCartId = $processedArgs['input']['cart_id'];
         try {
-            $cartId = $this->maskedQuoteIdToQuoteId->execute($maskedCartId);
+            $this->maskedQuoteIdToQuoteId->execute($maskedCartId);
         } catch (NoSuchEntityException $exception) {
             throw new GraphQlNoSuchEntityException(
                 __('Could not find a cart with ID "%masked_cart_id"', ['masked_cart_id' => $maskedCartId]),
@@ -129,4 +129,3 @@ class RemoveItemFromCart implements ResolverInterface
         ];
     }
 }
-
