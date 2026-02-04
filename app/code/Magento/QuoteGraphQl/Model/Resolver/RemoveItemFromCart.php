@@ -15,6 +15,7 @@ use Magento\Framework\GraphQl\Exception\GraphQlNoSuchEntityException;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Quote\Api\CartItemRepositoryInterface;
+use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Model\MaskedQuoteIdToQuoteId;
 use Magento\QuoteGraphQl\Model\Cart\GetCartForUser;
 use Magento\Framework\GraphQl\Query\Resolver\ArgumentsProcessorInterface;
@@ -36,6 +37,11 @@ class RemoveItemFromCart implements ResolverInterface
     private CartItemRepositoryInterface $cartItemRepository;
 
     /**
+     * @var CartRepositoryInterface
+     */
+    private CartRepositoryInterface $cartRepository;
+
+    /**
      * @var MaskedQuoteIdToQuoteId
      */
     private MaskedQuoteIdToQuoteId $maskedQuoteIdToQuoteId;
@@ -53,6 +59,7 @@ class RemoveItemFromCart implements ResolverInterface
     /**
      * @param GetCartForUser $getCartForUser
      * @param CartItemRepositoryInterface $cartItemRepository
+     * @param CartRepositoryInterface $cartRepository
      * @param MaskedQuoteIdToQuoteId $maskedQuoteIdToQuoteId
      * @param ArgumentsProcessorInterface $argsSelection
      * @param ErrorMapper $errorMapper
@@ -60,12 +67,14 @@ class RemoveItemFromCart implements ResolverInterface
     public function __construct(
         GetCartForUser $getCartForUser,
         CartItemRepositoryInterface $cartItemRepository,
+        CartRepositoryInterface $cartRepository,
         MaskedQuoteIdToQuoteId $maskedQuoteIdToQuoteId,
         ArgumentsProcessorInterface $argsSelection,
         ErrorMapper $errorMapper
     ) {
         $this->getCartForUser = $getCartForUser;
         $this->cartItemRepository = $cartItemRepository;
+        $this->cartRepository = $cartRepository;
         $this->maskedQuoteIdToQuoteId = $maskedQuoteIdToQuoteId;
         $this->argsSelection = $argsSelection;
         $this->errorMapper = $errorMapper;
@@ -101,9 +110,14 @@ class RemoveItemFromCart implements ResolverInterface
         $cart = $this->getCartForUser->execute($maskedCartId, $context->getUserId(), $storeId);
 
         try {
+            $cartItem = $cart->getItemById($itemId);
+            if (!$cartItem) {
+                throw new NoSuchEntityException(__('The cart doesn\'t contain the item'));
+            }
             $cart->removeItem($itemId);
+            $this->cartRepository->save($cart);
         } catch (NoSuchEntityException $e) {
-            throw new GraphQlNoSuchEntityException(__('The cart doesn\'t contain the item'));
+            throw new GraphQlNoSuchEntityException(__($e->getMessage()));
         } catch (LocalizedException $e) {
             throw new GraphQlInputException(__($e->getMessage()), $e);
         }
@@ -115,3 +129,4 @@ class RemoveItemFromCart implements ResolverInterface
         ];
     }
 }
+
