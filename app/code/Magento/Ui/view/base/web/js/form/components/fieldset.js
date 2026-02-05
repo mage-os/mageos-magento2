@@ -86,9 +86,7 @@ define([
             if (this.disabled) {
                 try {
                     elem.disabled(true);
-                }
-                catch (e) {
-
+                } catch (e) {// eslint-disable-line no-unused-vars
                 }
             }
 
