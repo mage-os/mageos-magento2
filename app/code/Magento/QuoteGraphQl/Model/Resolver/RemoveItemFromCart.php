@@ -109,6 +109,18 @@ class RemoveItemFromCart implements ResolverInterface
         /** Check if the current user is allowed to perform actions with the cart */
         $cart = $this->getCartForUser->execute($maskedCartId, $context->getUserId(), $storeId);
 
+        /*
+         * Use Quote::removeItem() + CartRepository::save() instead of CartItemRepositoryInterface::deleteById()
+         * to maintain consistency with REST API and other Magento implementations.
+         *
+         * This approach ensures:
+         * - Cart state (is_virtual, totals) is properly recalculated
+         * - Changes are persisted to database via explicit save
+         * - Consistent behavior across all Magento APIs (GraphQL, REST, Controllers)
+         *
+         * Without explicit save, cart.is_virtual would remain stale when removing items,
+         * causing checkout issues (e.g., requesting shipping address for virtual-only carts).
+         */
         try {
             $cartItem = $cart->getItemById($itemId);
             if (!$cartItem) {
