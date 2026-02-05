@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ba975604d91e3703e5dfb69f37c6b524",
+    "content-hash": "f00fcee5e9bc3ccb1b236baa5904ab92",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -62,16 +62,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.369.23",
+            "version": "3.369.27",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "c45d13c95b188b6fc9f31c77083fad6e7dbc3efd"
+                "reference": "f844afab2a74eb3cf881970a9c31de460510eb74"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/c45d13c95b188b6fc9f31c77083fad6e7dbc3efd",
-                "reference": "c45d13c95b188b6fc9f31c77083fad6e7dbc3efd",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/f844afab2a74eb3cf881970a9c31de460510eb74",
+                "reference": "f844afab2a74eb3cf881970a9c31de460510eb74",
                 "shasum": ""
             },
             "require": {
@@ -153,22 +153,22 @@
             "support": {
                 "forum": "https://github.com/aws/aws-sdk-php/discussions",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.369.23"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.369.27"
             },
-            "time": "2026-01-29T19:15:41+00:00"
+            "time": "2026-02-04T19:07:08+00:00"
         },
         {
             "name": "brick/math",
-            "version": "0.14.1",
+            "version": "0.14.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/brick/math.git",
-                "reference": "f05858549e5f9d7bb45875a75583240a38a281d0"
+                "reference": "618a8077b3c326045e10d5788ed713b341fcfe40"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/brick/math/zipball/f05858549e5f9d7bb45875a75583240a38a281d0",
-                "reference": "f05858549e5f9d7bb45875a75583240a38a281d0",
+                "url": "https://api.github.com/repos/brick/math/zipball/618a8077b3c326045e10d5788ed713b341fcfe40",
+                "reference": "618a8077b3c326045e10d5788ed713b341fcfe40",
                 "shasum": ""
             },
             "require": {
@@ -207,7 +207,7 @@
             ],
             "support": {
                 "issues": "https://github.com/brick/math/issues",
-                "source": "https://github.com/brick/math/tree/0.14.1"
+                "source": "https://github.com/brick/math/tree/0.14.5"
             },
             "funding": [
                 {
@@ -215,7 +215,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-11-24T14:40:29+00:00"
+            "time": "2026-02-03T18:06:51+00:00"
         },
         {
             "name": "brick/varexporter",
@@ -310,16 +310,16 @@
         },
         {
             "name": "colinmollenhour/cache-backend-redis",
-            "version": "1.17.1",
+            "version": "1.18.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/colinmollenhour/Cm_Cache_Backend_Redis.git",
-                "reference": "d403f4473e1b3cc616fa59d187e817543b6620c1"
+                "reference": "1910c45781bae0744d2f92454150e0e98634e815"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/colinmollenhour/Cm_Cache_Backend_Redis/zipball/d403f4473e1b3cc616fa59d187e817543b6620c1",
-                "reference": "d403f4473e1b3cc616fa59d187e817543b6620c1",
+                "url": "https://api.github.com/repos/colinmollenhour/Cm_Cache_Backend_Redis/zipball/1910c45781bae0744d2f92454150e0e98634e815",
+                "reference": "1910c45781bae0744d2f92454150e0e98634e815",
                 "shasum": ""
             },
             "require": {
@@ -349,9 +349,9 @@
             "homepage": "https://github.com/colinmollenhour/Cm_Cache_Backend_Redis",
             "support": {
                 "issues": "https://github.com/colinmollenhour/Cm_Cache_Backend_Redis/issues",
-                "source": "https://github.com/colinmollenhour/Cm_Cache_Backend_Redis/tree/1.17.1"
+                "source": "https://github.com/colinmollenhour/Cm_Cache_Backend_Redis/tree/1.18.0"
             },
-            "time": "2023-12-21T21:56:18+00:00"
+            "time": "2026-02-02T07:40:49+00:00"
         },
         {
             "name": "colinmollenhour/credis",
@@ -1147,23 +1147,67 @@
             "time": "2024-02-05T11:56:58+00:00"
         },
         {
-            "name": "duosecurity/duo_universal_php",
-            "version": "1.1.1",
+            "name": "duosecurity/duo_api_php",
+            "version": "1.2.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/duosecurity/duo_universal_php.git",
-                "reference": "4ee7253863d84653a60a8cad4b03aa3b66fcfd35"
+                "url": "https://github.com/duosecurity/duo_api_php.git",
+                "reference": "ecff0b813c5dcd5dd37fd002dbae0d61d955c748"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/duosecurity/duo_universal_php/zipball/4ee7253863d84653a60a8cad4b03aa3b66fcfd35",
-                "reference": "4ee7253863d84653a60a8cad4b03aa3b66fcfd35",
+                "url": "https://api.github.com/repos/duosecurity/duo_api_php/zipball/ecff0b813c5dcd5dd37fd002dbae0d61d955c748",
+                "reference": "ecff0b813c5dcd5dd37fd002dbae0d61d955c748",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "php": ">=8.0"
+            },
+            "require-dev": {
+                "php-coveralls/php-coveralls": "dev-master",
+                "phpunit/phpunit": "~9",
+                "squizlabs/php_codesniffer": "2.*"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "DuoAPI\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "description": "A PHP implementation of the Duo API.",
+            "homepage": "https://duo.com/",
+            "support": {
+                "email": "support@duosecurity.com",
+                "issues": "https://github.com/duosecurity/duo_api_php/issues",
+                "source": "https://github.com/duosecurity/duo_api_php/tree/1.2.1"
+            },
+            "time": "2026-02-04T19:44:58+00:00"
+        },
+        {
+            "name": "duosecurity/duo_universal_php",
+            "version": "1.1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/duosecurity/duo_universal_php.git",
+                "reference": "68e699c52d41f681df07dc0f98e2ba551bef2fd3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/duosecurity/duo_universal_php/zipball/68e699c52d41f681df07dc0f98e2ba551bef2fd3",
+                "reference": "68e699c52d41f681df07dc0f98e2ba551bef2fd3",
                 "shasum": ""
             },
             "require": {
                 "ext-curl": "*",
                 "ext-json": "*",
-                "firebase/php-jwt": "^6.0",
+                "firebase/php-jwt": "^6.0 || ^7.0",
                 "php": ">=7.4"
             },
             "require-dev": {
@@ -1185,9 +1229,9 @@
             "support": {
                 "email": "support@duosecurity.com",
                 "issues": "https://github.com/duosecurity/duo_universal_php/issues",
-                "source": "https://github.com/duosecurity/duo_universal_php/tree/1.1.1"
+                "source": "https://github.com/duosecurity/duo_universal_php/tree/1.1.2"
             },
-            "time": "2025-08-13T14:05:56+00:00"
+            "time": "2026-02-04T19:44:44+00:00"
         },
         {
             "name": "egulias/email-validator",
@@ -1545,16 +1589,16 @@
         },
         {
             "name": "firebase/php-jwt",
-            "version": "v6.11.1",
+            "version": "v7.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/firebase/php-jwt.git",
-                "reference": "d1e91ecf8c598d073d0995afa8cd5c75c6e19e66"
+                "reference": "5645b43af647b6947daac1d0f659dd1fbe8d3b65"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/firebase/php-jwt/zipball/d1e91ecf8c598d073d0995afa8cd5c75c6e19e66",
-                "reference": "d1e91ecf8c598d073d0995afa8cd5c75c6e19e66",
+                "url": "https://api.github.com/repos/firebase/php-jwt/zipball/5645b43af647b6947daac1d0f659dd1fbe8d3b65",
+                "reference": "5645b43af647b6947daac1d0f659dd1fbe8d3b65",
                 "shasum": ""
             },
             "require": {
@@ -1602,9 +1646,9 @@
             ],
             "support": {
                 "issues": "https://github.com/firebase/php-jwt/issues",
-                "source": "https://github.com/firebase/php-jwt/tree/v6.11.1"
+                "source": "https://github.com/firebase/php-jwt/tree/v7.0.2"
             },
-            "time": "2025-04-09T20:32:01+00:00"
+            "time": "2025-12-16T22:17:28+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -4044,52 +4088,6 @@
                 "source": "https://github.com/laminas/laminas-di"
             },
             "time": "2026-01-20T07:30:46+00:00"
-        },
-        {
-            "name": "magento/magento-zf-duo_api_php",
-            "version": "1.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/magento/magento-zf-duo_api_php.git",
-                "reference": "135fca9a0923a31f3df03b7399df04fd2bd33659"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/magento/magento-zf-duo_api_php/zipball/135fca9a0923a31f3df03b7399df04fd2bd33659",
-                "reference": "135fca9a0923a31f3df03b7399df04fd2bd33659",
-                "shasum": ""
-            },
-            "require": {
-                "ext-curl": "*",
-                "php": ">=8.0"
-            },
-            "replace": {
-                "duosecurity/duo_api_php": "^1.2"
-            },
-            "require-dev": {
-                "php-coveralls/php-coveralls": "dev-master",
-                "phpunit/phpunit": "~9",
-                "squizlabs/php_codesniffer": "2.*"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.1.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "DuoAPI\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "description": "A PHP implementation of the Duo API.",
-            "homepage": "https://duo.com/",
-            "support": {
-                "email": "support@duosecurity.com",
-                "source": "https://github.com/magento/magento-zf-duo_api_php/tree/1.0.0"
-            },
-            "time": "2026-01-20T09:19:02+00:00"
         },
         {
             "name": "magento/magento-zf-server",
@@ -13135,16 +13133,16 @@
         },
         {
             "name": "psy/psysh",
-            "version": "v0.12.18",
+            "version": "v0.12.19",
             "source": {
                 "type": "git",
                 "url": "https://github.com/bobthecow/psysh.git",
-                "reference": "ddff0ac01beddc251786fe70367cd8bbdb258196"
+                "reference": "a4f766e5c5b6773d8399711019bb7d90875a50ee"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bobthecow/psysh/zipball/ddff0ac01beddc251786fe70367cd8bbdb258196",
-                "reference": "ddff0ac01beddc251786fe70367cd8bbdb258196",
+                "url": "https://api.github.com/repos/bobthecow/psysh/zipball/a4f766e5c5b6773d8399711019bb7d90875a50ee",
+                "reference": "a4f766e5c5b6773d8399711019bb7d90875a50ee",
                 "shasum": ""
             },
             "require": {
@@ -13208,9 +13206,9 @@
             ],
             "support": {
                 "issues": "https://github.com/bobthecow/psysh/issues",
-                "source": "https://github.com/bobthecow/psysh/tree/v0.12.18"
+                "source": "https://github.com/bobthecow/psysh/tree/v0.12.19"
             },
-            "time": "2025-12-17T14:35:46+00:00"
+            "time": "2026-01-30T17:33:13+00:00"
         },
         {
             "name": "react/cache",
