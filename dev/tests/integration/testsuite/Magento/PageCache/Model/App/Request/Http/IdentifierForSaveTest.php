@@ -72,6 +72,11 @@ class IdentifierForSaveTest extends TestCase
      */
     private const COOKIE_VARY_STRING = 'X-Magento-Vary';
 
+    /**
+     * @var array
+     */
+    private $createdCustomerIds = [];
+
     protected function setUp(): void
     {
         $this->objectManager = Bootstrap::getObjectManager();
@@ -82,6 +87,27 @@ class IdentifierForSaveTest extends TestCase
         $this->customerRepository = $this->objectManager->get(CustomerRepositoryInterface::class);
         $this->accountManagement = $this->objectManager->get(AccountManagementInterface::class);
         $this->customerFactory = $this->objectManager->get(CustomerInterfaceFactory::class);
+    }
+
+    protected function tearDown(): void
+    {
+        // Clean up customer session
+        $customerSession = $this->objectManager->get(Session::class);
+        if ($customerSession->isLoggedIn()) {
+            $customerSession->logout();
+        }
+
+        // Clean up cookies
+        $cookieMetadata = $this->cookieMetadataFactory->createSensitiveCookieMetadata()->setPath('/');
+        $this->cookieManager->deleteCookie(self::COOKIE_VARY_STRING, $cookieMetadata);
+
+        // Clean up created customers
+        foreach ($this->createdCustomerIds as $customerId) {
+            $this->deleteTestCustomer($customerId);
+        }
+        $this->createdCustomerIds = [];
+
+        parent::tearDown();
     }
 
     /**
@@ -102,7 +128,10 @@ class IdentifierForSaveTest extends TestCase
 
         $passwordHash = $this->accountManagement->getPasswordHash('password123');
 
-        return $this->customerRepository->save($customer, $passwordHash);
+        $savedCustomer = $this->customerRepository->save($customer, $passwordHash);
+        $this->createdCustomerIds[] = (int)$savedCustomer->getId();
+
+        return $savedCustomer;
     }
 
     /**
@@ -126,6 +155,9 @@ class IdentifierForSaveTest extends TestCase
      * This test validates the fix for the bug where "Create an Account" link was visible
      * on homepage after login due to empty context vary string on depersonalized homepage cache.
      * The fix ensures cookie vary string takes precedence over context vary string.
+     *
+     * @magentoDbIsolation enabled
+     * @magentoAppIsolation enabled
      */
     #[
         ConfigFixture('system/full_page_cache/caching_application', '1', 'store'),
@@ -137,63 +169,53 @@ class IdentifierForSaveTest extends TestCase
         $customer = $this->createTestCustomer('testcustomer1@example.com');
         $customerSession = $this->objectManager->get(Session::class);
 
-        try {
-            $customerSession->loginById($customer->getId());
+        $customerSession->loginById($customer->getId());
 
-            // Get cache identifiers with both context and cookie populated
-            $result = $this->identifierForSave->getValue();
+        // Get cache identifiers with both context and cookie populated
+        $result = $this->identifierForSave->getValue();
 
-            // Verify that cache key is not empty for logged-in user
-            $this->assertNotEmpty($result, 'Cache identifier for save should not be empty for logged-in user');
+        // Verify that cache key is not empty for logged-in user
+        $this->assertNotEmpty($result, 'Cache identifier for save should not be empty for logged-in user');
 
-            // Get the current vary string from context
-            $originalVaryString = $this->context->getVaryString();
-            $this->assertNotEmpty($originalVaryString, 'Context vary string should not be empty for logged-in user');
+        // Get the current vary string from context
+        $originalVaryString = $this->context->getVaryString();
+        $this->assertNotEmpty($originalVaryString, 'Context vary string should not be empty for logged-in user');
 
-            // Set the vary cookie to simulate a previous request
-            $cookieMetadata = $this->cookieMetadataFactory->createSensitiveCookieMetadata()->setPath('/');
+        // Set the vary cookie to simulate a previous request
+        $cookieMetadata = $this->cookieMetadataFactory->createSensitiveCookieMetadata()->setPath('/');
 
-            try {
-                $this->cookieManager->setSensitiveCookie(
-                    self::COOKIE_VARY_STRING,
-                    $originalVaryString,
-                    $cookieMetadata
-                );
+        $this->cookieManager->setSensitiveCookie(
+            self::COOKIE_VARY_STRING,
+            $originalVaryString,
+            $cookieMetadata
+        );
 
-                // Clear the context vary string to simulate depersonalized homepage cache
-                // This is the scenario that caused the bug: homepage cache was depersonalized
-                // but customer cookie was still present
-                $this->context->_resetState();
+        // Clear the context vary string to simulate depersonalized homepage cache
+        // This is the scenario that caused the bug: homepage cache was depersonalized
+        // but customer cookie was still present
+        $this->context->_resetState();
 
-                // Verify context vary string is now empty (simulates depersonalized cache)
-                $this->assertEmpty($this->context->getVaryString(), 'Context vary string should be empty after reset');
+        // Verify context vary string is now empty (simulates depersonalized cache)
+        $this->assertEmpty($this->context->getVaryString(), 'Context vary string should be empty after reset');
 
-                // Get cache identifiers again - should still work due to cookie fallback
-                // This is the CRITICAL assertion: cookie vary string takes precedence
-                $resultWithEmptyContext = $this->identifierForSave->getValue();
+        // Get cache identifiers again - should still work due to cookie fallback
+        // This is the CRITICAL assertion: cookie vary string takes precedence
+        $resultWithEmptyContext = $this->identifierForSave->getValue();
 
-                // Should still generate valid cache key due to cookie fallback
-                $this->assertNotEmpty(
-                    $resultWithEmptyContext,
-                    'Cache identifier for save should work with empty context due to cookie fallback'
-                );
+        // Should still generate valid cache key due to cookie fallback
+        $this->assertNotSame(
+            '',
+            $resultWithEmptyContext,
+            'Cache identifier for save should work with empty context due to cookie fallback'
+        );
 
-                // Both cache keys should be identical - proving cookie vary string was used
-                // This ensures logged-in customers see personalized content on homepage
-                $this->assertSame(
-                    $result,
-                    $resultWithEmptyContext,
-                    'Cache identifier should be same with cookie fallback as with context vary string'
-                );
-            } finally {
-                // Clean up cookie
-                $this->cookieManager->deleteCookie(self::COOKIE_VARY_STRING, $cookieMetadata);
-            }
-        } finally {
-            // Clean up session and customer
-            $customerSession->logout();
-            $this->deleteTestCustomer((int)$customer->getId());
-        }
+        // Both cache keys should be identical - proving cookie vary string was used
+        // This ensures logged-in customers see personalized content on homepage
+        $this->assertSame(
+            $result,
+            $resultWithEmptyContext,
+            'Cache identifier should be same with cookie fallback as with context vary string'
+        );
     }
 
     /**
@@ -216,23 +238,18 @@ class IdentifierForSaveTest extends TestCase
         $customer = $this->createTestCustomer('testcustomer2@example.com');
         $customerSession = $this->objectManager->get(Session::class);
 
-        try {
-            $customerSession->loginById($customer->getId());
+        $customerSession->loginById($customer->getId());
 
-            // Get cache identifier after login
-            $customerIdentifier = $this->identifierForSave->getValue();
-            $this->assertNotEmpty($customerIdentifier, 'Customer cache identifier should not be empty');
+        // Get cache identifier after login
+        $customerIdentifier = $this->identifierForSave->getValue();
+        $this->assertNotEmpty($customerIdentifier, 'Customer cache identifier should not be empty');
 
-            // Cache identifiers should be different for guest vs logged-in customer
-            $this->assertNotEquals(
-                $guestIdentifier,
-                $customerIdentifier,
-                'Cache identifier should change after customer login to ensure personalized content'
-            );
-        } finally {
-            $customerSession->logout();
-            $this->deleteTestCustomer((int)$customer->getId());
-        }
+        // Cache identifiers should be different for guest vs logged-in customer
+        $this->assertNotEquals(
+            $guestIdentifier,
+            $customerIdentifier,
+            'Cache identifier should change after customer login to ensure personalized content'
+        );
     }
 
     /**
@@ -251,33 +268,28 @@ class IdentifierForSaveTest extends TestCase
         $testVaryString = 'customer-group-1';
         $cookieMetadata = $this->cookieMetadataFactory->createSensitiveCookieMetadata()->setPath('/');
 
-        try {
-            $this->cookieManager->setSensitiveCookie(
-                self::COOKIE_VARY_STRING,
-                $testVaryString,
-                $cookieMetadata
-            );
+        $this->cookieManager->setSensitiveCookie(
+            self::COOKIE_VARY_STRING,
+            $testVaryString,
+            $cookieMetadata
+        );
 
-            // Ensure context vary string is empty (simulating depersonalized homepage)
-            $this->context->_resetState();
-            $this->assertEmpty($this->context->getVaryString(), 'Context vary string should be empty');
+        // Ensure context vary string is empty (simulating depersonalized homepage)
+        $this->context->_resetState();
+        $this->assertEmpty($this->context->getVaryString(), 'Context vary string should be empty');
 
-            // Get cache identifier - should use cookie vary string
-            $result = $this->identifierForSave->getValue();
+        // Get cache identifier - should use cookie vary string
+        $result = $this->identifierForSave->getValue();
 
-            // Should generate valid cache identifier from cookie alone
-            $this->assertNotEmpty($result, 'Cache identifier should be generated from cookie vary string');
+        // Should generate valid cache identifier from cookie alone
+        $this->assertNotEmpty($result, 'Cache identifier should be generated from cookie vary string');
 
-            // Verify the result is a valid cache identifier (hash)
-            // The cache identifier is a hash, not the literal vary string
-            $this->assertMatchesRegularExpression(
-                '/^[a-f0-9]{40}$/',
-                $result,
-                'Cache identifier should be a valid SHA1 hash'
-            );
-        } finally {
-            // Clean up
-            $this->cookieManager->deleteCookie(self::COOKIE_VARY_STRING, $cookieMetadata);
-        }
+        // Verify the result is a valid cache identifier (hash)
+        // The cache identifier is a hash, not the literal vary string
+        $this->assertMatchesRegularExpression(
+            '/^[a-f0-9]{40}$/',
+            $result,
+            'Cache identifier should be a valid SHA1 hash'
+        );
     }
 }
