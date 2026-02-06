@@ -33,6 +33,8 @@ use PHPUnit\Framework\TestCase;
  * @magentoAppArea frontend
  * @magentoAppIsolation enabled
  * @magentoDbIsolation disabled
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class AttributeSetLayoutHandleTest extends TestCase
 {
