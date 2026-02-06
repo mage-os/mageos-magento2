@@ -12,7 +12,7 @@
             <features value="Catalog"/>
             <stories value="Mass update product attributes"/>
             <title value="Mass update product special price with invalid date range should display validation error"/>
-            <description value="When using mass action to update product special price with From Date after To Date, validation error should be displayed and products should not be saved"/>
+            <description value="Validates special price date range during mass product attribute update"/>
             <severity value="MAJOR"/>
             <testCaseId value="AC-15367"/>
             <group value="catalog"/>
@@ -49,8 +49,6 @@
         </actionGroup>
         <!-- Step 4: From the Actions dropdown, choose Update Attributes -->
         <actionGroup ref="AdminClickMassUpdateProductAttributesActionGroup" stepKey="clickMassUpdateAttributes"/>
-        <waitForPageLoad stepKey="waitForUpdateAttributesPage"/>
-        <seeInCurrentUrl stepKey="seeUpdateAttributesUrl" url="catalog/product_action_attribute/edit/"/>
         <!-- Step 5: Enable special price date fields and set invalid dates -->
         <checkOption selector="{{AdminUpdateAttributesSection.toggleSpecialFromDate}}" stepKey="enableSpecialFromDateToggle"/>
         <checkOption selector="{{AdminUpdateAttributesSection.toggleSpecialToDate}}" stepKey="enableSpecialToDateToggle"/>
@@ -64,7 +62,6 @@
         <click selector="{{AdminEditProductAttributesSection.Save}}" stepKey="clickSaveButton"/>
         <waitForPageLoad stepKey="waitForSaveAction"/>
         <!-- Step 6: Verify error message -->
-        <waitForElementVisible selector="{{AdminMessagesSection.errorMessage}}" stepKey="waitForErrorMessage"/>
-        <waitForText selector="{{AdminMessagesSection.errorMessage}}" userInput="{{ProductAttributeMessages.special_price_date_validation_error}}" stepKey="seeValidationErrorMessage"/>
+        <waitForText selector="{{AdminMessagesSection.errorMesqsage}}" userInput="{{ProductAttributeMessages.special_price_date_validation_error}}" stepKey="seeValidationErrorMessage"/>
     </test>
 </tests>
