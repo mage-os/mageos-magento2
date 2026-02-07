@@ -110,6 +110,7 @@ class ReportProvider implements BatchReportProviderInterface
             $this->dataSelect = $this->queryFactory->create($name);
             $this->lastCursor = null;
             $this->currentPosition = 0;
+            $this->countTotal = 0;
             $this->connection = $this->connectionFactory->getConnection($this->dataSelect->getConnectionName());
             $this->cursorColumn = $this->getCursorColumn();
             if (!$this->cursorColumn) {
@@ -121,12 +122,9 @@ class ReportProvider implements BatchReportProviderInterface
         }
 
         $select = clone $this->dataSelect->getSelect();
-        if ($this->lastCursor !== null) {
-            $select->where($this->cursorColumn . ' > ?', $this->lastCursor);
-        } else {
-            $select->where($this->cursorColumn . ' > ?', 0);
-        }
-        $select->order($this->cursorColumn . ' ASC');
+        $cursorValue = $this->lastCursor ?? 0;
+        $select->where(sprintf('%s > ?', $this->cursorColumn), $cursorValue);
+        $select->order(sprintf('%s ASC', $this->cursorColumn));
         $select->limit(self::BATCH_SIZE);
         $statement = $this->connection->query($select);
         $rows = $statement->fetchAll(PDO::FETCH_ASSOC);
@@ -147,8 +145,9 @@ class ReportProvider implements BatchReportProviderInterface
     {
         $config = $this->dataSelect->getConfig();
         $tableName = $config['source']['name'] ?? null;
+        $analyticTables = ["customer_entity", "sales_order", "sales_order_address", "quote", "catalog_product_entity"];
         if ($tableName) {
-            if (in_array($tableName, ["sales_order", "sales_order_address", "quote", "catalog_product_entity"])) {
+            if (in_array($tableName, $analyticTables)) {
                 return "entity_id";
             } elseif ($tableName == "sales_order_item") {
                 return "item_id";

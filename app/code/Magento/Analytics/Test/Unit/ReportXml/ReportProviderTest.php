@@ -227,7 +227,9 @@ class ReportProviderTest extends TestCase
             ->method('getConnection')
             ->with($connectionName)
             ->willReturn($this->connectionMock);
-        $this->queryMock->expects($this->once())->method('getConnectionName')->willReturn($connectionName);
+        $this->queryMock->expects($this->once())
+            ->method('getConnectionName')
+            ->willReturn($connectionName);
         $this->queryMock->expects($this->atLeast(2))
             ->method('getConfig')
             ->willReturn(
