@@ -171,6 +171,7 @@ class CategoriesJsonTest extends TestCase
      * Ensure execute() sets expanded flag true and returns JSON error when id is missing.
      *
      * @covers \Magento\Catalog\Controller\Adminhtml\Category\CategoriesJson::execute
+     * @return void
      */
     public function testExecuteWithExpandAllTrueAndMissingIdReturnsJsonError(): void
     {
@@ -195,6 +196,7 @@ class CategoriesJsonTest extends TestCase
      * Ensure execute() sets expanded flag false and returns JSON error when id is missing.
      *
      * @covers \Magento\Catalog\Controller\Adminhtml\Category\CategoriesJson::execute
+     * @return void
      */
     public function testExecuteWithExpandAllFalseAndMissingIdReturnsJsonError(): void
     {
@@ -261,6 +263,8 @@ class CategoriesJsonTest extends TestCase
      * Ensure JSON is returned with tree block payload when category is initialized.
      *
      * @covers \Magento\Catalog\Controller\Adminhtml\Category\CategoriesJson::execute
+     * @return void
+     * @throws \PHPUnit\Framework\MockObject\Exception
      */
     public function testExecuteWithValidIdReturnsTreeJson(): void
     {
