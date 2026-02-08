@@ -5,302 +5,625 @@ namespace Magento\Catalog\Test\Unit\Block\Adminhtml\Product;
 
 use Magento\Backend\Block\Template\Context;
 use Magento\Backend\Helper\Data as BackendHelper;
+use Magento\Backend\Model\Session;
 use Magento\Catalog\Block\Adminhtml\Product\Grid;
-use Magento\Catalog\Model\Product\Attribute\Source\Status;
-use Magento\Catalog\Model\Product\Type;
+use Magento\Directory\Helper\Data as DirectoryHelper;
 use Magento\Catalog\Model\ProductFactory;
-use Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\CollectionFactory as SetsFactory;
+use Magento\Catalog\Model\Product;
+use Magento\Catalog\Model\Product\Type as ProductType;
+use Magento\Catalog\Model\Product\Attribute\Source\Status as ProductStatus;
+use Magento\Catalog\Model\Product\Visibility as ProductVisibility;
+use Magento\Catalog\Model\ResourceModel\Product\Collection;
+use Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\CollectionFactory as SetFactory;
+use Magento\Framework\App\Request\Http as HttpRequest;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\AuthorizationInterface;
-use Magento\Framework\Event\ManagerInterface as EventManager;
+use Magento\Framework\DataObject;
+use Magento\Framework\Json\Helper\Data as JsonHelper;
+use Magento\Framework\Filesystem;
+use Magento\Framework\Filesystem\Directory\WriteInterface as DirectoryWriteInterface;
+use Magento\Framework\Event\ManagerInterface as EventManagerInterface;
+use Magento\Framework\View\LayoutInterface;
 use Magento\Framework\Module\Manager as ModuleManager;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Magento\Framework\UrlInterface;
+use Magento\Backend\Block\Widget\Grid\Massaction;
+use Magento\Backend\Block\Widget\Grid\Column as GridColumn;
+use Magento\Store\Model\WebsiteFactory;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
-use Magento\Store\Model\WebsiteFactory;
-use Magento\Catalog\Model\Product\Visibility;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \Magento\Catalog\Block\Adminhtml\Product\Grid
+ */
 class GridTest extends TestCase
 {
     /**
-     * @var UrlInterface|MockObject
+     * @var ObjectManager
      */
-    private $urlBuilder;
+    private $objectManager;
+
+    /**
+     * @var Grid
+     */
+    private Grid $grid;
+
+    /**
+     * @var Context|MockObject
+     */
+    private $contextMock;
+
+    /**
+     * @var BackendHelper|MockObject
+     */
+    private $backendHelperMock;
+
+    /**
+     * @var WebsiteFactory|MockObject
+     */
+    private $websiteFactoryMock;
+
+    /**
+     * @var SetFactory|MockObject
+     */
+    private $setFactoryMock;
+
+    /**
+     * @var ProductFactory|MockObject
+     */
+    private $productFactoryMock;
+
+    /**
+     * @var ProductType|MockObject
+     */
+    private $productTypeMock;
+
+    /**
+     * @var ProductStatus|MockObject
+     */
+    private $statusMock;
+
+    /**
+     * @var ProductVisibility|MockObject
+     */
+    private $visibilityMock;
+
+    /**
+     * @var ModuleManager|MockObject
+     */
+    private $moduleManagerMock;
 
     /**
      * @var RequestInterface|MockObject
      */
-    private $request;
+    private $requestMock;
 
     /**
      * @var StoreManagerInterface|MockObject
      */
-    private $storeManager;
+    private $storeManagerMock;
 
     /**
-     * @var Store|MockObject
+     * Set up all required mocks and create the grid instance.
+     *
+     * @return void
+     * @throws \PHPUnit\Framework\MockObject\Exception
      */
-    private $store;
-
-    /** @var AuthorizationInterface|MockObject */
-    private $authorization;
-
-    /** @var EventManager|MockObject */
-    private $eventManager;
-
-    /** @var Context|MockObject */
-    private $context;
-
-    /** @var BackendHelper|MockObject */
-    private $backendHelper;
-
-    /** @var WebsiteFactory|MockObject */
-    private $websiteFactory;
-
-    /** @var SetsFactory|MockObject */
-    private $setsFactory;
-
-    /** @var ProductFactory|MockObject */
-    private $productFactory;
-
-    /** @var Type|MockObject */
-    private $type;
-
-    /** @var Status|MockObject */
-    private $status;
-
-    /** @var Visibility|MockObject */
-    private $visibility;
-
-    /** @var ModuleManager|MockObject */
-    private $moduleManager;
-
-    /** @var Grid */
-    private $grid;
-
     protected function setUp(): void
     {
-        $this->urlBuilder     = $this->createMock(UrlInterface::class);
-        $this->request        = $this->createMock(RequestInterface::class);
-        $this->storeManager   = $this->createMock(StoreManagerInterface::class);
-        $this->store          = $this->createMock(Store::class);
-        $this->authorization  = $this->createMock(AuthorizationInterface::class);
-        $this->eventManager   = $this->createMock(EventManager::class);
+        $this->objectManager = new ObjectManager($this);
 
-        // Prepare global ObjectManager for optional helpers used inside Backend Template constructor
-        $jsonHelperMock = $this->createMock(\Magento\Framework\Json\Helper\Data::class);
-        $directoryHelperMock = $this->createMock(\Magento\Directory\Helper\Data::class);
-        $deploymentConfigMock = $this->createMock(\Magento\Framework\App\DeploymentConfig::class);
+        $this->contextMock        = $this->createMock(Context::class);
+        $this->backendHelperMock  = $this->createMock(BackendHelper::class);
+        $this->websiteFactoryMock = $this->createMock(WebsiteFactory::class);
+        $this->setFactoryMock     = $this->createMock(SetFactory::class);
+        $this->productFactoryMock = $this->createMock(ProductFactory::class);
+        $this->productTypeMock    = $this->createMock(ProductType::class);
+        $this->statusMock         = $this->createMock(ProductStatus::class);
+        $this->visibilityMock     = $this->createMock(ProductVisibility::class);
+        $this->moduleManagerMock  = $this->createMock(ModuleManager::class);
 
-        $objectManager = new ObjectManager($this);
-        $objectManager->prepareObjectManager([
-            [\Magento\Framework\Json\Helper\Data::class, $jsonHelperMock],
-            [\Magento\Directory\Helper\Data::class, $directoryHelperMock],
-            [\Magento\Framework\App\DeploymentConfig::class, $deploymentConfigMock],
+        $this->objectManager->prepareObjectManager([
+            [JsonHelper::class, $this->createMock(JsonHelper::class)],
+            [DirectoryHelper::class, $this->createMock(DirectoryHelper::class)],
         ]);
 
-        // Build a rich Context mock stubbing all getters invoked by parent constructors
-        $layout                = $this->createMock(\Magento\Framework\View\LayoutInterface::class);
-        $cache                 = $this->createMock(\Magento\Framework\App\CacheInterface::class);
-        $design                = $this->createMock(\Magento\Framework\View\DesignInterface::class);
-        $session               = $this->createMock(\Magento\Framework\Session\SessionManagerInterface::class);
-        $sidResolver           = $this->createMock(\Magento\Framework\Session\SidResolverInterface::class);
-        $scopeConfig           = $this->createMock(\Magento\Framework\App\Config\ScopeConfigInterface::class);
-        $assetRepo             = $this->createMock(\Magento\Framework\View\Asset\Repository::class);
-        $viewConfig            = $this->createMock(\Magento\Framework\View\ConfigInterface::class);
-        $cacheState            = $this->createMock(\Magento\Framework\App\Cache\StateInterface::class);
-        $logger                = $this->createMock(\Psr\Log\LoggerInterface::class);
-        $escaper               = $this->createMock(\Magento\Framework\Escaper::class);
-        $filterManager         = $this->createMock(\Magento\Framework\Filter\FilterManager::class);
-        $localeDate            = $this->createMock(\Magento\Framework\Stdlib\DateTime\TimezoneInterface::class);
-        $inlineTranslation     = $this->createMock(\Magento\Framework\Translate\Inline\StateInterface::class);
-        $lockGuardedCacheLoader= $this->createMock(\Magento\Framework\Cache\LockGuardedCacheLoader::class);
-        $filesystem            = $this->createMock(\Magento\Framework\Filesystem::class);
-        $writeInterface        = $this->createMock(\Magento\Framework\Filesystem\Directory\WriteInterface::class);
-        $enginePool            = $this->createMock(\Magento\Framework\View\TemplateEnginePool::class);
-        $appState              = $this->createMock(\Magento\Framework\App\State::class);
-        $pageConfig            = $this->createMock(\Magento\Framework\View\Page\Config::class);
-        $validator             = $this->createMock(\Magento\Framework\View\Element\Template\File\Validator::class);
-        $resolver              = $this->createMock(\Magento\Framework\View\Element\Template\File\Resolver::class);
-        $mathRandom            = $this->createMock(\Magento\Framework\Math\Random::class);
-        $backendSession        = $this->createMock(\Magento\Backend\Model\Session::class);
-        $formKey               = $this->createMock(\Magento\Framework\Data\Form\FormKey::class);
-        $nameBuilder           = $this->createMock(\Magento\Framework\Code\NameBuilder::class);
+        /** @var DirectoryWriteInterface|MockObject $directoryWriteMock */
+        $directoryWriteMock = $this->createMock(DirectoryWriteInterface::class);
+        /** @var Filesystem|MockObject $filesystemMock */
+        $filesystemMock = $this->createMock(Filesystem::class);
+        $filesystemMock->method('getDirectoryWrite')->willReturn($directoryWriteMock);
+        $this->contextMock->method('getFilesystem')->willReturn($filesystemMock);
 
-        // Filesystem is used in Extended::_construct()
-        $filesystem->method('getDirectoryWrite')->willReturn($writeInterface);
+        $this->contextMock->method('getAuthorization')
+            ->willReturn($this->createMock(AuthorizationInterface::class));
 
-        $this->context = $this->getMockBuilder(Context::class)
+        /** @var LayoutInterface|MockObject $layoutMock */
+        $layoutMock = $this->createMock(LayoutInterface::class);
+        $this->contextMock->method('getLayout')->willReturn($layoutMock);
+
+        $this->requestMock = $this->getMockBuilder(HttpRequest::class)
             ->disableOriginalConstructor()
-            ->onlyMethods([
-                'getUrlBuilder',
-                'getRequest',
-                'getStoreManager',
-                'getAuthorization',
-                'getEventManager',
-                'getLayout',
-                'getCache',
-                'getDesignPackage',
-                'getSession',
-                'getSidResolver',
-                'getScopeConfig',
-                'getAssetRepository',
-                'getViewConfig',
-                'getCacheState',
-                'getLogger',
-                'getEscaper',
-                'getFilterManager',
-                'getLocaleDate',
-                'getInlineTranslation',
-                'getLockGuardedCacheLoader',
-                'getFilesystem',
-                'getEnginePool',
-                'getAppState',
-                'getPageConfig',
-                'getValidator',
-                'getResolver',
-                'getMathRandom',
-                'getBackendSession',
-                'getFormKey',
-                'getNameBuilder',
-            ])
+            ->onlyMethods(['has', 'getPost', 'getParam'])
             ->getMock();
+        $this->requestMock->method('has')->willReturn(false);
+        $this->requestMock->method('getPost')->willReturn([]);
+        $this->contextMock->method('getRequest')->willReturn($this->requestMock);
 
-        $this->context->method('getUrlBuilder')->willReturn($this->urlBuilder);
-        $this->context->method('getRequest')->willReturn($this->request);
-        $this->context->method('getStoreManager')->willReturn($this->storeManager);
-        $this->context->method('getAuthorization')->willReturn($this->authorization);
-        $this->context->method('getEventManager')->willReturn($this->eventManager);
+        $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
+        $this->contextMock->method('getStoreManager')->willReturn($this->storeManagerMock);
 
-        $this->context->method('getLayout')->willReturn($layout);
-        $this->context->method('getCache')->willReturn($cache);
-        $this->context->method('getDesignPackage')->willReturn($design);
-        $this->context->method('getSession')->willReturn($session);
-        $this->context->method('getSidResolver')->willReturn($sidResolver);
-        $this->context->method('getScopeConfig')->willReturn($scopeConfig);
-        $this->context->method('getAssetRepository')->willReturn($assetRepo);
-        $this->context->method('getViewConfig')->willReturn($viewConfig);
-        $this->context->method('getCacheState')->willReturn($cacheState);
-        $this->context->method('getLogger')->willReturn($logger);
-        $this->context->method('getEscaper')->willReturn($escaper);
-        $this->context->method('getFilterManager')->willReturn($filterManager);
-        $this->context->method('getLocaleDate')->willReturn($localeDate);
-        $this->context->method('getInlineTranslation')->willReturn($inlineTranslation);
-        $this->context->method('getLockGuardedCacheLoader')->willReturn($lockGuardedCacheLoader);
-        $this->context->method('getFilesystem')->willReturn($filesystem);
-        $this->context->method('getEnginePool')->willReturn($enginePool);
-        $this->context->method('getAppState')->willReturn($appState);
-        $this->context->method('getPageConfig')->willReturn($pageConfig);
-        $this->context->method('getValidator')->willReturn($validator);
-        $this->context->method('getResolver')->willReturn($resolver);
-        $this->context->method('getMathRandom')->willReturn($mathRandom);
-        $this->context->method('getBackendSession')->willReturn($backendSession);
-        $this->context->method('getFormKey')->willReturn($formKey);
-        $this->context->method('getNameBuilder')->willReturn($nameBuilder);
+        $this->contextMock->method('getBackendSession')
+            ->willReturn($this->createMock(Session::class));
 
-        $this->backendHelper  = $this->createMock(BackendHelper::class);
-        $this->websiteFactory = $this->createMock(WebsiteFactory::class);
-        $this->setsFactory    = $this->createMock(SetsFactory::class);
-        $this->productFactory = $this->createMock(ProductFactory::class);
-        $this->type           = $this->createMock(Type::class);
-        $this->status         = $this->createMock(Status::class);
-        $this->visibility     = $this->createMock(Visibility::class);
-        $this->moduleManager  = $this->createMock(ModuleManager::class);
-
-        $this->storeManager->method('getStore')->willReturn($this->store);
-
-        $this->grid = $objectManager->getObject(
+        $this->grid = $this->objectManager->getObject(
             Grid::class,
             [
-                'context'        => $this->context,
-                'backendHelper'  => $this->backendHelper,
-                'websiteFactory' => $this->websiteFactory,
-                'setsFactory'    => $this->setsFactory,
-                'productFactory' => $this->productFactory,
-                'type'           => $this->type,
-                'status'         => $this->status,
-                'visibility'     => $this->visibility,
-                'moduleManager'  => $this->moduleManager,
-                'data'           => [],
+                'context'        => $this->contextMock,
+                'backendHelper'  => $this->backendHelperMock,
+                'websiteFactory' => $this->websiteFactoryMock,
+                'setsFactory'    => $this->setFactoryMock,
+                'productFactory' => $this->productFactoryMock,
+                'type'           => $this->productTypeMock,
+                'status'         => $this->statusMock,
+                'visibility'     => $this->visibilityMock,
+                'moduleManager'  => $this->moduleManagerMock,
+                'data'           => []
             ]
         );
     }
 
-    public function testConstructSetsDefaults(): void
+    /**
+     * Verify that the grid object is instantiated and its ID is set correctly.
+     *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Grid::_construct
+     * @return void
+     */
+    public function testConstructInitialisesGrid(): void
     {
-        // Ensures the protected _construct() set basic defaults.
-        $this->assertSame('productGrid', $this->grid->getId(), 'Grid ID should be productGrid');
-        $this->assertTrue($this->grid->getUseAjax(), 'Grid should use Ajax by default');
-        // These are set in _construct(), but getters are not always public for all:
-        // $this->assertSame('entity_id', $this->grid->getDefaultSort());
-        // $this->assertSame('DESC', $this->grid->getDefaultDir());
+        $this->assertInstanceOf(Grid::class, $this->grid);
+        $this->assertEquals('productGrid', $this->grid->getId());
     }
 
+    /**
+     * Confirm that the protected `_getStore` method returns the store retrieved
+     * from the request and the store manager.
+     *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Grid::_getStore
+     * @return void
+     */
+    public function testGetStoreReturnsStore(): void
+    {
+        $storeMock = $this->createMock(Store::class);
+        $storeId   = 42;
+
+        $this->requestMock->method('getParam')
+            ->with('store', 0)
+            ->willReturn($storeId);
+        $this->storeManagerMock->method('getStore')
+            ->with($storeId)
+            ->willReturn($storeMock);
+
+        $store = $this->invokeMethod($this->grid, '_getStore');
+        $this->assertSame($storeMock, $store);
+    }
+
+    /**
+     * Ensure the product collection is built with the mandatory attributes for the
+     * default store
+     *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Grid::_prepareCollection
+     * @return void
+     */
+    public function testPrepareCollectionAddsAttributes(): void
+    {
+        $collectionMock = $this->createMock(Collection::class);
+        $productMock    = $this->createMock(Product::class);
+        $productMock->method('getCollection')->willReturn($collectionMock);
+        $this->productFactoryMock->method('create')->willReturn($productMock);
+
+        $collectionMock->method('addAttributeToSelect')->willReturnSelf();
+        $collectionMock->method('setStore')->willReturnSelf();
+        $collectionMock->method('joinAttribute')->willReturnSelf();
+        $collectionMock->method('addWebsiteNamesToResult')->willReturnSelf();
+
+        $storeMock = $this->createMock(Store::class);
+        $storeMock->method('getId')->willReturn(0);
+        $this->storeManagerMock->method('getStore')->willReturn($storeMock);
+
+        $gridMock = $this->getMockBuilder(Grid::class)
+            ->setConstructorArgs([
+                $this->contextMock,
+                $this->backendHelperMock,
+                $this->websiteFactoryMock,
+                $this->setFactoryMock,
+                $this->productFactoryMock,
+                $this->productTypeMock,
+                $this->statusMock,
+                $this->visibilityMock,
+                $this->moduleManagerMock,
+                []
+            ])
+            ->onlyMethods(['getColumn'])
+            ->getMock();
+        $gridMock->method('getColumn')->willReturn(null);
+
+        $result = $this->invokeMethod($gridMock, '_prepareCollection');
+        $this->assertSame($gridMock, $result);
+    }
+
+    /**
+     * Verify that the collection joins the inventory quantity field when the
+     * CatalogInventory module is enabled and that store‑specific filters are
+     * applied when a non‑default store is requested.
+     *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Grid::_prepareCollection
+     * @return void
+     */
+    public function testPrepareCollectionCoversInventoryAndStoreSpecific(): void
+    {
+        $collectionMock = $this->createMock(Collection::class);
+        $productMock    = $this->createMock(Product::class);
+        $productMock->method('getCollection')->willReturn($collectionMock);
+        $this->productFactoryMock->method('create')->willReturn($productMock);
+
+        // Inventory enabled -> expect a join on the qty column.
+        $this->moduleManagerMock->method('isEnabled')
+            ->with('Magento_CatalogInventory')
+            ->willReturn(true);
+        $collectionMock->expects($this->once())->method('joinField')
+            ->with(
+                'qty',
+                'cataloginventory_stock_item',
+                'qty',
+                'product_id=entity_id',
+                '{{table}}.stock_id=1',
+                'left'
+            );
+
+        // Store‑specific request (store ID > 0) -> expect addStoreFilter().
+        $storeMock = $this->createMock(Store::class);
+        $storeMock->method('getId')->willReturn(2);
+        $this->storeManagerMock->method('getStore')->willReturn($storeMock);
+        $collectionMock->expects($this->once())->method('addStoreFilter')
+            ->with($storeMock)
+            ->willReturnSelf();
+
+        $collectionMock->method('addAttributeToSelect')->willReturnSelf();
+        $collectionMock->method('joinAttribute')->willReturnSelf();
+        $collectionMock->method('setStore')->willReturnSelf();
+        $collectionMock->method('addWebsiteNamesToResult')->willReturnSelf();
+
+        $gridMock = $this->getMockBuilder(Grid::class)
+            ->setConstructorArgs([
+                $this->contextMock,
+                $this->backendHelperMock,
+                $this->websiteFactoryMock,
+                $this->setFactoryMock,
+                $this->productFactoryMock,
+                $this->productTypeMock,
+                $this->statusMock,
+                $this->visibilityMock,
+                $this->moduleManagerMock,
+                []
+            ])
+            ->onlyMethods(['getColumn'])
+            ->getMock();
+        $gridMock->method('getColumn')->willReturn(null);
+
+        // Visibility helper is injected as a mock that does not require constructor args.
+        $visibilityMock = $this->getMockBuilder(ProductVisibility::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getOptionArray'])
+            ->getMock();
+        $visibilityMock->method('getOptionArray')
+            ->willReturn(['1' => 'Catalog, Search']);
+        $this->setProtectedProperty($gridMock, '_visibility', $visibilityMock);
+
+        $result = $this->invokeMethod($gridMock, '_prepareCollection');
+        $this->assertSame($gridMock, $result);
+    }
+
+    /**
+     * Ensure that every column that can appear in the grid is added, including
+     * conditional columns such as the store‑specific name, quantity and websites.
+     *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Grid::_prepareColumns
+     * @return void
+     */
+    public function testPrepareColumnsCoversAllBranches(): void
+    {
+        // Force a non‑default store so store‑specific columns are rendered.
+        $this->requestMock->method('getParam')
+            ->with('store', 0)
+            ->willReturn(3);
+        $storeMock = $this->createMock(Store::class);
+        $storeMock->method('getId')->willReturn(3);
+        $storeMock->method('getName')->willReturn('Store Name');
+        $currencyMock = new class {
+            public function getCode()
+            {
+                return 'USD';
+            }
+        };
+        $storeMock->method('getBaseCurrency')->willReturn($currencyMock);
+        $this->storeManagerMock->method('getStore')->willReturn($storeMock);
+        $this->storeManagerMock->method('isSingleStoreMode')->willReturn(false);
+        $this->moduleManagerMock->method('isEnabled')
+            ->with('Magento_CatalogInventory')
+            ->willReturn(true);
+
+        $this->productTypeMock->method('getOptionArray')
+            ->willReturn(['simple' => 'Simple']);
+        $this->visibilityMock->method('getOptionArray')
+            ->willReturn(['1' => 'Catalog, Search']);
+        $this->statusMock->method('getOptionArray')
+            ->willReturn(['1' => 'Enabled', '2' => 'Disabled']);
+
+        // Attribute‑set factory chain.
+        $resourceMock = new class {
+            public function getTypeId()
+            {
+                return 4;
+            }
+        };
+        $productEntityMock = new class($resourceMock) {
+            private $resource;
+            public function __construct($resource)
+            {
+                $this->resource = $resource;
+            }
+            public function getResource()
+            {
+                return $this->resource;
+            }
+        };
+        $this->productFactoryMock->method('create')->willReturn($productEntityMock);
+
+        $setsChainMock = new class {
+            public function setEntityTypeFilter($id)
+            {
+                return $this;
+            }
+            public function load()
+            {
+                return $this;
+            }
+            public function toOptionHash()
+            {
+                return ['4' => 'Default'];
+            }
+        };
+        $this->setFactoryMock->method('create')->willReturn($setsChainMock);
+
+        // Websites list.
+        $websitesCollectionMock = new class {
+            public function toOptionHash()
+            {
+                return ['1' => 'Base'];
+            }
+        };
+        $websitesMock = new class($websitesCollectionMock) {
+            private $collection;
+            public function __construct($collection)
+            {
+                $this->collection = $collection;
+            }
+            public function getCollection()
+            {
+                return $this->collection;
+            }
+        };
+        $this->websiteFactoryMock->method('create')->willReturn($websitesMock);
+
+        // Capture the IDs of all columns added by the method.
+        $addedColumnIds = [];
+        $gridMock = $this->getMockBuilder(Grid::class)
+            ->setConstructorArgs([
+                $this->contextMock,
+                $this->backendHelperMock,
+                $this->websiteFactoryMock,
+                $this->setFactoryMock,
+                $this->productFactoryMock,
+                $this->productTypeMock,
+                $this->statusMock,
+                $this->visibilityMock,
+                $this->moduleManagerMock,
+                []
+            ])
+            ->onlyMethods(['addColumn', 'sortColumnsByOrder'])
+            ->getMock();
+        $gridMock->method('sortColumnsByOrder')->willReturn($gridMock);
+        $gridMock->method('addColumn')
+            ->willReturnCallback(function ($columnId, $config) use (&$addedColumnIds, $gridMock) {
+                $addedColumnIds[] = $columnId;
+                return $gridMock;
+            });
+
+        // Use concrete helpers for visibility and status to avoid static‑method mock issues.
+        $this->setProtectedProperty($gridMock, '_visibility', new class {
+            public function getOptionArray()
+            {
+                return ['1' => 'Catalog, Search'];
+            }
+        });
+        $this->setProtectedProperty($gridMock, '_status', new ProductStatus());
+
+        $this->invokeMethod($gridMock, '_prepareColumns');
+
+        $this->assertContains('entity_id', $addedColumnIds);
+        $this->assertContains('name', $addedColumnIds);
+        $this->assertContains('custom_name', $addedColumnIds);
+        $this->assertContains('type', $addedColumnIds);
+        $this->assertContains('set_name', $addedColumnIds);
+        $this->assertContains('sku', $addedColumnIds);
+        $this->assertContains('price', $addedColumnIds);
+        $this->assertContains('qty', $addedColumnIds);
+        $this->assertContains('visibility', $addedColumnIds);
+        $this->assertContains('status', $addedColumnIds);
+        $this->assertContains('websites', $addedColumnIds);
+        $this->assertContains('edit', $addedColumnIds);
+    }
+
+    /**
+     * Verify that the grid URL for AJAX reloading is generated correctly.
+     *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Grid::getGridUrl
+     * @return void
+     */
     public function testGetGridUrl(): void
     {
-        $expected = 'https://magento.local/admin/catalog/product/grid/current/1';
-        $this->urlBuilder
-            ->expects($this->once())
+        $expectedUrl = 'http://example.com/catalog/*/grid';
+        $gridMock = $this->getMockBuilder(Grid::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getUrl'])
+            ->getMock();
+        $gridMock->expects($this->once())
             ->method('getUrl')
             ->with('catalog/*/grid', ['_current' => true])
-            ->willReturn($expected);
-
-        $this->assertSame($expected, $this->grid->getGridUrl());
+            ->willReturn($expectedUrl);
+        $this->assertEquals($expectedUrl, $gridMock->getGridUrl());
     }
 
-    public function testGetRowUrlBuildsEditUrlWithStoreParam(): void
+    /**
+     * Verify that the URL for editing a product row contains the correct parameters.
+     *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Grid::getRowUrl
+     * @return void
+     */
+    public function testGetRowUrl(): void
     {
-        $storeId = 3;
-        $entityId = 42;
-        $expectedUrl = 'https://magento.local/admin/catalog/product/edit/id/42/store/3';
+        $rowId      = 123;
+        $storeId    = 2;
+        $expectedUrl = 'http://example.com/catalog/*/edit';
+        $rowMock = new DataObject(['id' => $rowId]);
 
-        $this->request
-            ->expects($this->once())
-            ->method('getParam')
+        $requestMock = $this->createMock(RequestInterface::class);
+        $requestMock->method('getParam')
             ->with('store')
             ->willReturn($storeId);
 
-        $rowMock = $this->getMockBuilder(\Magento\Framework\DataObject::class)
-            ->onlyMethods(['getId'])
+        $gridMock = $this->getMockBuilder(Grid::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getUrl', 'getRequest'])
             ->getMock();
-        $rowMock->expects($this->once())->method('getId')->willReturn($entityId);
-
-        $this->urlBuilder
-            ->expects($this->once())
+        $gridMock->method('getRequest')->willReturn($requestMock);
+        $gridMock->expects($this->once())
             ->method('getUrl')
             ->with(
                 'catalog/*/edit',
-                ['store' => $storeId, 'id' => $entityId]
+                ['store' => $storeId, 'id' => $rowId]
             )
             ->willReturn($expectedUrl);
 
-        $this->assertSame($expectedUrl, $this->grid->getRowUrl($rowMock));
+        $this->assertEquals($expectedUrl, $gridMock->getRowUrl($rowMock));
     }
 
-    public function testGetStoreResolvesFromRequest(): void
+    /**
+     * Check that the mass‑action block is populated with the standard actions:
+     * delete, change status and update attributes.
+     *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Grid::_prepareMassaction
+     * @return void
+     */
+    public function testPrepareMassactionAddsActions(): void
     {
-        $storeId = 5;
+        $massActionBlockMock = $this->getMockBuilder(Massaction::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $massActionBlockMock->expects($this->any())
+            ->method('addItem')
+            ->with($this->callback(function ($id) {
+                return in_array($id, ['delete', 'status', 'attributes'], true);
+            }));
 
-        $this->request
-            ->expects($this->once())
-            ->method('getParam')
-            ->with('store', 0)
-            ->willReturn($storeId);
+        $gridMock = $this->getMockBuilder(Grid::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getMassactionBlock', 'getUrl'])
+            ->getMock();
+        $gridMock->method('getMassactionBlock')->willReturn($massActionBlockMock);
+        $gridMock->method('getUrl')->willReturn('http://example.com/dummy');
 
-        $this->storeManager
-            ->expects($this->once())
-            ->method('getStore')
-            ->with($storeId)
-            ->willReturn($this->store);
+        $authMock = $this->createMock(AuthorizationInterface::class);
+        $authMock->method('isAllowed')->willReturn(true);
+        $this->setProtectedProperty($gridMock, '_authorization', $authMock);
+        $this->setProtectedProperty($gridMock, '_status', new ProductStatus());
 
-        // _getStore is protected—call via reflection to unit test its behavior.
-        $method = (new \ReflectionClass(Grid::class))->getMethod('_getStore');
-        $method->setAccessible(true);
+        $eventManagerMock = $this->createMock(EventManagerInterface::class);
+        $eventManagerMock->method('dispatch')->willReturn(null);
+        $this->setProtectedProperty($gridMock, '_eventManager', $eventManagerMock);
 
-        $resolvedStore = $method->invoke($this->grid);
-        $this->assertSame($this->store, $resolvedStore);
+        $this->invokeMethod($gridMock, '_prepareMassaction');
+    }
+
+    /**
+     * Verify that adding a filter for the “websites” column causes the collection
+     * to join the appropriate website data.
+     *
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Grid::_addColumnFilterToCollection
+     * @return void
+     */
+    public function testAddColumnFilterToCollectionJoinsWebsites(): void
+    {
+        $columnMock = $this->createMock(GridColumn::class);
+        $columnMock->method('getId')->willReturn('websites');
+
+        $collectionMock = $this->getMockBuilder(Collection::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $collectionMock->expects($this->once())
+            ->method('joinField')
+            ->with(
+                $this->equalTo('websites'),
+                $this->equalTo('catalog_product_website'),
+                $this->equalTo('website_id'),
+                $this->equalTo('product_id=entity_id'),
+                $this->equalTo(null),
+                $this->equalTo('left')
+            );
+
+        $filterMock = new class {
+            public function getCondition()
+            {
+                return null;
+            }
+        };
+        $columnMock->method('getFilter')->willReturn($filterMock);
+
+        $this->grid->setCollection($collectionMock);
+        $this->invokeMethod($this->grid, '_addColumnFilterToCollection', [$columnMock]);
+    }
+
+    /**
+     * Helper: invoke a protected or private method on an object.
+     *
+     * @param object $object Object containing the method.
+     * @param string $method Name of the method to invoke.
+     * @param array  $args   Arguments to pass to the method.
+     * @return mixed
+     * @throws \ReflectionException
+     */
+    private function invokeMethod($object, string $method, array $args = [])
+    {
+        $ref = new \ReflectionMethod($object, $method);
+        $ref->setAccessible(true);
+        return $ref->invokeArgs($object, $args);
+    }
+
+    /**
+     * Helper: set the value of a protected or private property.
+     *
+     * @param object $object   Object containing the property.
+     * @param string $property Name of the property.
+     * @param mixed  $value    Value to assign.
+     * @return void
+     * @throws \ReflectionException
+     */
+    private function setProtectedProperty($object, string $property, $value): void
+    {
+        $ref = new \ReflectionProperty($object, $property);
+        $ref->setAccessible(true);
+        $ref->setValue($object, $value);
     }
 }

@@ -28,10 +28,10 @@ class ApplyTest extends TestCase
      */
     private $objectManager;
 
-	/**
+    /**
      * @var Apply
      */
-	private Apply $apply;
+    private Apply $apply;
 
     /**
      * @var Factory|MockObject
@@ -69,9 +69,9 @@ class ApplyTest extends TestCase
         $this->factoryCollectionMock = $this->createMock(CollectionFactory::class);
         $this->escaperMock = $this->createMock(Escaper::class);
         $this->secureRendererMock = $this->createMock(SecureHtmlRenderer::class);
-		$this->formMock = $this->getMockBuilder(AbstractForm::class)
-			->disableOriginalConstructor()
-			->getMockForAbstractClass();
+        $this->formMock = $this->getMockBuilder(AbstractForm::class)
+            ->disableOriginalConstructor()
+            ->getMockForAbstractClass();
 
         // Escaper should return the value as-is for ids used in this test
         $this->escaperMock->method('escapeHtml')->willReturnCallback(
@@ -80,30 +80,30 @@ class ApplyTest extends TestCase
             }
         );
 
-		// emulate magic getters via DataObject for html id prefix/suffix
-		$this->formMock->setData('html_id_prefix', '');
-		$this->formMock->setData('html_id_suffix', '');
+        // emulate magic getters via DataObject for html id prefix/suffix
+        $this->formMock->setData('html_id_prefix', '');
+        $this->formMock->setData('html_id_suffix', '');
 
-		// Create using ObjectManager helper to mirror Magento patterns
-		$this->apply = $this->objectManager->getObject(
-			Apply::class,
-			[
-				'factoryElement' => $this->factoryElementMock,
-				'factoryCollection' => $this->factoryCollectionMock,
-				'escaper' => $this->escaperMock,
-			]
-		);
+        // Create using ObjectManager helper to mirror Magento patterns
+        $this->apply = $this->objectManager->getObject(
+            Apply::class,
+            [
+                'factoryElement' => $this->factoryElementMock,
+                'factoryCollection' => $this->factoryCollectionMock,
+                'escaper' => $this->escaperMock,
+            ]
+        );
 
-		// Inject SecureHtmlRenderer into Apply's private property
-		$secureRendererProperty = new ReflectionProperty(Apply::class, 'secureRenderer');
-		$secureRendererProperty->setAccessible(true);
-		$secureRendererProperty->setValue($this->apply, $this->secureRendererMock);
+        // Inject SecureHtmlRenderer into Apply's private property
+        $secureRendererProperty = new ReflectionProperty(Apply::class, 'secureRenderer');
+        $secureRendererProperty->setAccessible(true);
+        $secureRendererProperty->setValue($this->apply, $this->secureRendererMock);
 
-		// Provide a form and necessary baseline data
-		$this->apply->setForm($this->formMock);
-		$this->apply->setId('apply_id');
-		$this->apply->setData('name', 'apply');
-		$this->apply->setData('mode_labels', ['all' => 'All', 'custom' => 'Custom']);
+        // Provide a form and necessary baseline data
+        $this->apply->setForm($this->formMock);
+        $this->apply->setId('apply_id');
+        $this->apply->setData('name', 'apply');
+        $this->apply->setData('mode_labels', ['all' => 'All', 'custom' => 'Custom']);
     }
 
     /**
@@ -113,10 +113,13 @@ class ApplyTest extends TestCase
      */
     private function createApplyElement(): Apply
     {
-		return $this->apply;
+        return $this->apply;
     }
 
     /**
+     * Verify the element renders a select with correct options, attaches onchange listener,
+     * and appends the parent multiselect HTML to the output.
+     *
      * @return void
      * @covers \Magento\Catalog\Block\Adminhtml\Product\Helper\Form\Apply::getElementHtml
      */
@@ -153,6 +156,9 @@ class ApplyTest extends TestCase
     }
 
     /**
+     * Verify readonly/disabled flags are rendered on the select and the "custom"
+     * option is selected when a non-null value is provided.
+     *
      * @return void
      * @covers \Magento\Catalog\Block\Adminhtml\Product\Helper\Form\Apply::setReadonly
      * @covers \Magento\Catalog\Block\Adminhtml\Product\Helper\Form\Apply::getElementHtml
