@@ -31,6 +31,7 @@ use PHPUnit\Framework\TestCase;
  * Unit tests for CategoriesJson controller.
  *
  * @covers \Magento\Catalog\Controller\Adminhtml\Category\CategoriesJson
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class CategoriesJsonTest extends TestCase
 {

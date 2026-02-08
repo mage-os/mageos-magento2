@@ -40,6 +40,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \Magento\Catalog\Block\Adminhtml\Product\Grid
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class GridTest extends TestCase
 {
@@ -338,91 +339,82 @@ class GridTest extends TestCase
      */
     public function testPrepareColumnsCoversAllBranches(): void
     {
-        // Force a non‑default store so store‑specific columns are rendered.
-        $this->requestMock->method('getParam')
-            ->with('store', 0)
-            ->willReturn(3);
+        $this->prepareStoreContextForColumns(3, 'USD');
+        $this->prepareOptionsProvidersForColumns();
+        $this->prepareAttributeSetsForColumns();
+        $this->prepareWebsitesForColumns();
+
+        $addedColumnIds = [];
+        $gridMock = $this->createGridMockCapturingColumns($addedColumnIds);
+
+        $this->invokeMethod($gridMock, '_prepareColumns');
+
+        $this->assertColumnsAdded($addedColumnIds, [
+            'entity_id','name','custom_name','type','set_name','sku','price','qty','visibility','status','websites','edit'
+        ]);
+    }
+
+    private function prepareStoreContextForColumns(int $storeId, string $currencyCode): void
+    {
+        $this->requestMock->method('getParam')->with('store', 0)->willReturn($storeId);
         $storeMock = $this->createMock(Store::class);
-        $storeMock->method('getId')->willReturn(3);
+        $storeMock->method('getId')->willReturn($storeId);
         $storeMock->method('getName')->willReturn('Store Name');
-        $currencyMock = new class {
-            public function getCode()
-            {
-                return 'USD';
-            }
+        $currencyMock = new class($currencyCode) {
+            private $code;
+            public function __construct(string $code) { $this->code = $code; }
+            public function getCode() { return $this->code; }
         };
         $storeMock->method('getBaseCurrency')->willReturn($currencyMock);
         $this->storeManagerMock->method('getStore')->willReturn($storeMock);
         $this->storeManagerMock->method('isSingleStoreMode')->willReturn(false);
-        $this->moduleManagerMock->method('isEnabled')
-            ->with('Magento_CatalogInventory')
-            ->willReturn(true);
+        $this->moduleManagerMock->method('isEnabled')->with('Magento_CatalogInventory')->willReturn(true);
+    }
 
-        $this->productTypeMock->method('getOptionArray')
-            ->willReturn(['simple' => 'Simple']);
-        $this->visibilityMock->method('getOptionArray')
-            ->willReturn(['1' => 'Catalog, Search']);
-        $this->statusMock->method('getOptionArray')
-            ->willReturn(['1' => 'Enabled', '2' => 'Disabled']);
+    private function prepareOptionsProvidersForColumns(): void
+    {
+        $this->productTypeMock->method('getOptionArray')->willReturn(['simple' => 'Simple']);
+        $this->visibilityMock->method('getOptionArray')->willReturn(['1' => 'Catalog, Search']);
+        $this->statusMock->method('getOptionArray')->willReturn(['1' => 'Enabled', '2' => 'Disabled']);
+    }
 
-        // Attribute‑set factory chain.
+    private function prepareAttributeSetsForColumns(): void
+    {
         $resourceMock = new class {
-            public function getTypeId()
-            {
-                return 4;
-            }
+            public function getTypeId() { return 4; }
         };
         $productEntityMock = new class($resourceMock) {
+            /** @var object */
             private $resource;
-            public function __construct($resource)
-            {
-                $this->resource = $resource;
-            }
-            public function getResource()
-            {
-                return $this->resource;
-            }
+            public function __construct($resource) { $this->resource = $resource; }
+            public function getResource() { return $this->resource; }
         };
         $this->productFactoryMock->method('create')->willReturn($productEntityMock);
 
         $setsChainMock = new class {
-            public function setEntityTypeFilter($id)
-            {
-                return $this;
-            }
-            public function load()
-            {
-                return $this;
-            }
-            public function toOptionHash()
-            {
-                return ['4' => 'Default'];
-            }
+            public function setEntityTypeFilter($id) { return $this; }
+            public function load() { return $this; }
+            public function toOptionHash() { return ['4' => 'Default']; }
         };
         $this->setFactoryMock->method('create')->willReturn($setsChainMock);
+    }
 
-        // Websites list.
+    private function prepareWebsitesForColumns(): void
+    {
         $websitesCollectionMock = new class {
-            public function toOptionHash()
-            {
-                return ['1' => 'Base'];
-            }
+            public function toOptionHash() { return ['1' => 'Base']; }
         };
         $websitesMock = new class($websitesCollectionMock) {
+            /** @var object */
             private $collection;
-            public function __construct($collection)
-            {
-                $this->collection = $collection;
-            }
-            public function getCollection()
-            {
-                return $this->collection;
-            }
+            public function __construct($collection) { $this->collection = $collection; }
+            public function getCollection() { return $this->collection; }
         };
         $this->websiteFactoryMock->method('create')->willReturn($websitesMock);
+    }
 
-        // Capture the IDs of all columns added by the method.
-        $addedColumnIds = [];
+    private function createGridMockCapturingColumns(array &$addedColumnIds): Grid
+    {
         $gridMock = $this->getMockBuilder(Grid::class)
             ->setConstructorArgs([
                 $this->contextMock,
@@ -440,34 +432,23 @@ class GridTest extends TestCase
             ->getMock();
         $gridMock->method('sortColumnsByOrder')->willReturn($gridMock);
         $gridMock->method('addColumn')
-            ->willReturnCallback(function ($columnId, $config) use (&$addedColumnIds, $gridMock) {
+            ->willReturnCallback(function ($columnId, $_config) use (&$addedColumnIds, $gridMock) {
                 $addedColumnIds[] = $columnId;
                 return $gridMock;
             });
-
-        // Use concrete helpers for visibility and status to avoid static‑method mock issues.
+        // Avoid static-method-on-mock for helpers:
         $this->setProtectedProperty($gridMock, '_visibility', new class {
-            public function getOptionArray()
-            {
-                return ['1' => 'Catalog, Search'];
-            }
+            public function getOptionArray() { return ['1' => 'Catalog, Search']; }
         });
         $this->setProtectedProperty($gridMock, '_status', new ProductStatus());
+        return $gridMock;
+    }
 
-        $this->invokeMethod($gridMock, '_prepareColumns');
-
-        $this->assertContains('entity_id', $addedColumnIds);
-        $this->assertContains('name', $addedColumnIds);
-        $this->assertContains('custom_name', $addedColumnIds);
-        $this->assertContains('type', $addedColumnIds);
-        $this->assertContains('set_name', $addedColumnIds);
-        $this->assertContains('sku', $addedColumnIds);
-        $this->assertContains('price', $addedColumnIds);
-        $this->assertContains('qty', $addedColumnIds);
-        $this->assertContains('visibility', $addedColumnIds);
-        $this->assertContains('status', $addedColumnIds);
-        $this->assertContains('websites', $addedColumnIds);
-        $this->assertContains('edit', $addedColumnIds);
+    private function assertColumnsAdded(array $added, array $expected): void
+    {
+        foreach ($expected as $id) {
+            $this->assertContains($id, $added);
+        }
     }
 
     /**
