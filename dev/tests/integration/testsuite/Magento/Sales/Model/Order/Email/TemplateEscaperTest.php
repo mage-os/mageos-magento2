@@ -8,7 +8,6 @@ declare(strict_types=1);
 
 namespace Magento\Sales\Model\Order\Email;
 
-use Magento\Framework\App\Area;
 use Magento\Framework\Escaper;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Sales\Model\Order;
@@ -90,12 +89,12 @@ class TemplateEscaperTest extends TestCase
      * in order confirmation, invoice, shipment, and creditmemo emails.
      *
      * @magentoDataFixture Magento/Sales/_files/order.php
-     * @return void
-     * @throws LocalizedException
+     * @magentoAppArea frontend
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     * @throws LocalizedException|\Exception
      */
     public function testCustomFileOptionValueNotDoubleEscapedInEmails(): void
     {
-        Bootstrap::getInstance()->loadArea(Area::AREA_FRONTEND);
         $objectManager = Bootstrap::getObjectManager();
         $order = $objectManager->create(Order::class);
         $order->loadByIncrementId('100000001');
