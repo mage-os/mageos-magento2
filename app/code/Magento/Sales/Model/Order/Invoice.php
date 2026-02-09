@@ -29,22 +29,22 @@ class Invoice extends AbstractModel implements EntityInterface, InvoiceInterface
     /**#@+
      * Invoice states
      */
-    const STATE_OPEN = 1;
+    public const STATE_OPEN = 1;
 
-    const STATE_PAID = 2;
+    public const STATE_PAID = 2;
 
-    const STATE_CANCELED = 3;
+    public const STATE_CANCELED = 3;
     /**#@-*/
 
-    const CAPTURE_ONLINE = 'online';
+    public const CAPTURE_ONLINE = 'online';
 
-    const CAPTURE_OFFLINE = 'offline';
+    public const CAPTURE_OFFLINE = 'offline';
 
-    const NOT_CAPTURE = 'not_capture';
+    public const NOT_CAPTURE = 'not_capture';
 
-    const REPORT_DATE_TYPE_ORDER_CREATED = 'order_created';
+    public const REPORT_DATE_TYPE_ORDER_CREATED = 'order_created';
 
-    const REPORT_DATE_TYPE_INVOICE_CREATED = 'invoice_created';
+    public const REPORT_DATE_TYPE_INVOICE_CREATED = 'invoice_created';
 
     /**
      * Identifier for history item
@@ -558,6 +558,7 @@ class Invoice extends AbstractModel implements EntityInterface, InvoiceInterface
      * Retrieve invoice states array
      *
      * @return array
+     * phpcs:disable Magento2.Functions.StaticFunction
      */
     public static function getStates()
     {
@@ -574,7 +575,7 @@ class Invoice extends AbstractModel implements EntityInterface, InvoiceInterface
     /**
      * Retrieve invoice state name by state identifier
      *
-     * @param   int|null $stateId
+     * @param int|null $stateId
      * @return \Magento\Framework\Phrase
      */
     public function getStateName($stateId = null)
@@ -766,26 +767,6 @@ class Invoice extends AbstractModel implements EntityInterface, InvoiceInterface
         $this->_saveBeforeDestruct = false;
         $this->_wasPayCalled = false;
         return $this;
-    }
-
-    /**
-     * Before object save manipulations
-     *
-     * @return $this
-     */
-    protected function _beforeSave()
-    {
-        return parent::_beforeSave();
-    }
-
-    /**
-     * After object save manipulation
-     *
-     * @return $this
-     */
-    protected function _afterSave()
-    {
-        return parent::_afterSave();
     }
 
     /**
