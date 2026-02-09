@@ -398,14 +398,14 @@ class GridTest extends TestCase
         };
         $productEntityMock = new class($resourceMock) {
             /** @var object */
-            private $resource;
-            public function __construct($resource)
+            private $entityResource;
+            public function __construct($entityResource)
             {
-                $this->resource = $resource;
+                $this->entityResource = $entityResource;
             }
             public function getResource()
             {
-                return $this->resource;
+                return $this->entityResource;
             }
         };
         $this->productFactoryMock->method('create')->willReturn($productEntityMock);
@@ -437,14 +437,14 @@ class GridTest extends TestCase
         };
         $websitesMock = new class($websitesCollectionMock) {
             /** @var object */
-            private $collection;
-            public function __construct($collection)
+            private $websiteCollection;
+            public function __construct($websiteCollection)
             {
-                $this->collection = $collection;
+                $this->websiteCollection = $websiteCollection;
             }
             public function getCollection()
             {
-                return $this->collection;
+                return $this->websiteCollection;
             }
         };
         $this->websiteFactoryMock->method('create')->willReturn($websitesMock);
