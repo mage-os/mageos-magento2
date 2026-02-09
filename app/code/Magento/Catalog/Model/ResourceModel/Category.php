@@ -1034,9 +1034,13 @@ class Category extends AbstractResource implements ResetAfterRequestInterface
         $errors = parent::validate($object);
         $currentId = $object->getId();
         $newParentId = $object->getParentId();
-        $parentPathIds = explode("/", $this->getCategoryPathById($newParentId));
+        if ($parentPath = $this->getCategoryPathById($newParentId)) {
+            $parentPathIds = explode("/", $parentPath);
+        } else {
+             $parentPathIds = [];
+        }
 
-        if (in_array($currentId, $parentPathIds)) {
+        if ($currentId && !empty($parentPathIds) && in_array($currentId, $parentPathIds)) {
             throw new LocalizedException(
                 __('A category cannot be assigned to one of its own descendants.')
             );

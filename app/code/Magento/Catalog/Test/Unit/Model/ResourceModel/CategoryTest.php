@@ -21,6 +21,7 @@ use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface as Adapter;
 use Magento\Framework\DB\Select;
 use Magento\Framework\Event\ManagerInterface;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -217,6 +218,30 @@ class CategoryTest extends TestCase
             $property->setAccessible(true);
             $property->setValue($this->category, $value);
         }
+    }
+
+    /**
+     * @return void
+     * @throws Attribute\Exception
+     * @throws \PHPUnit\Framework\MockObject\Exception
+     */
+    public function testValidateCircularDependencyError(): void
+    {
+        $categoryId = 17;
+        $parentId = 2;
+        $category = $this->createMock(\Magento\Catalog\Model\Category::class);
+        $category->expects($this->once())->method('getId')->willReturn($categoryId);
+        $category->expects($this->once())->method('getParentId')->willReturn($parentId);
+
+        $this->selectMock->expects($this->once())->method('from')->willReturnSelf();
+        $this->selectMock->expects($this->once())->method('where')->willReturnSelf();
+
+        $this->connectionMock->expects($this->once())->method('fetchOne')->willReturn('1/2/17/20');
+
+        $this->expectException(LocalizedException::class);
+        $this->expectExceptionMessage('A category cannot be assigned to one of its own descendants.');
+
+        $this->category->validate($category);
     }
 
     /**
