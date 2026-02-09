@@ -62,6 +62,6 @@
         <click selector="{{AdminEditProductAttributesSection.Save}}" stepKey="clickSaveButton"/>
         <waitForPageLoad stepKey="waitForSaveAction"/>
         <!-- Step 6: Verify error message -->
-        <waitForText selector="{{AdminMessagesSection.errorMesssage}}" userInput="{{ProductAttributeMessages.special_price_date_validation_error}}" stepKey="seeValidationErrorMessage"/>
+        <waitForText selector="{{AdminMessagesSection.errorMessage}}" userInput="{{ProductAttributeMessages.special_price_date_validation_error}}" stepKey="seeValidationErrorMessage"/>
     </test>
 </tests>
