@@ -390,21 +390,19 @@ class GridTest extends TestCase
 
     private function prepareAttributeSetsForColumns(): void
     {
-        $resourceMock = new class {
-            public function getTypeId()
-            {
-                return 4;
-            }
-        };
-        $productEntityMock = new class($resourceMock) {
+        $productEntityMock = new class {
             /** @var object */
             private $entityResource;
-            public function __construct($entityResource)
-            {
-                $this->entityResource = $entityResource;
-            }
             public function getResource()
             {
+                if ($this->entityResource === null) {
+                    $this->entityResource = new class {
+                        public function getTypeId()
+                        {
+                            return 4;
+                        }
+                    };
+                }
                 return $this->entityResource;
             }
         };
@@ -429,21 +427,19 @@ class GridTest extends TestCase
 
     private function prepareWebsitesForColumns(): void
     {
-        $websitesCollectionMock = new class {
-            public function toOptionHash()
-            {
-                return ['1' => 'Base'];
-            }
-        };
-        $websitesMock = new class($websitesCollectionMock) {
+        $websitesMock = new class {
             /** @var object */
             private $websiteCollection;
-            public function __construct($websiteCollection)
-            {
-                $this->websiteCollection = $websiteCollection;
-            }
             public function getCollection()
             {
+                if ($this->websiteCollection === null) {
+                    $this->websiteCollection = new class {
+                        public function toOptionHash()
+                        {
+                            return ['1' => 'Base'];
+                        }
+                    };
+                }
                 return $this->websiteCollection;
             }
         };
