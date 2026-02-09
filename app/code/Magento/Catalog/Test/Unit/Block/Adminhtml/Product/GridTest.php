@@ -45,11 +45,6 @@ use PHPUnit\Framework\TestCase;
 class GridTest extends TestCase
 {
     /**
-     * @var ObjectManager
-     */
-    private $objectManager;
-
-    /**
      * @var Grid
      */
     private Grid $grid;
@@ -117,7 +112,7 @@ class GridTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->objectManager = new ObjectManager($this);
+        $objectManager = new ObjectManager($this);
 
         $this->contextMock        = $this->createMock(Context::class);
         $this->backendHelperMock  = $this->createMock(BackendHelper::class);
@@ -129,7 +124,7 @@ class GridTest extends TestCase
         $this->visibilityMock     = $this->createMock(ProductVisibility::class);
         $this->moduleManagerMock  = $this->createMock(ModuleManager::class);
 
-        $this->objectManager->prepareObjectManager([
+        $objectManager->prepareObjectManager([
             [JsonHelper::class, $this->createMock(JsonHelper::class)],
             [DirectoryHelper::class, $this->createMock(DirectoryHelper::class)],
         ]);
@@ -162,7 +157,7 @@ class GridTest extends TestCase
         $this->contextMock->method('getBackendSession')
             ->willReturn($this->createMock(Session::class));
 
-        $this->grid = $this->objectManager->getObject(
+        $this->grid = $objectManager->getObject(
             Grid::class,
             [
                 'context'        => $this->contextMock,
@@ -339,7 +334,7 @@ class GridTest extends TestCase
      */
     public function testPrepareColumnsCoversAllBranches(): void
     {
-        $this->prepareStoreContextForColumns(3, 'USD');
+        $this->prepareStoreContextForColumns(3);
         $this->prepareOptionsProvidersForColumns();
         $this->prepareAttributeSetsForColumns();
         $this->prepareWebsitesForColumns();
@@ -349,21 +344,36 @@ class GridTest extends TestCase
 
         $this->invokeMethod($gridMock, '_prepareColumns');
 
-        $this->assertColumnsAdded($addedColumnIds, [
-            'entity_id','name','custom_name','type','set_name','sku','price','qty','visibility','status','websites','edit'
-        ]);
+        $this->assertColumnsAdded(
+            $addedColumnIds,
+            [
+                'entity_id',
+                'name',
+                'custom_name',
+                'type',
+                'set_name',
+                'sku',
+                'price',
+                'qty',
+                'visibility',
+                'status',
+                'websites',
+                'edit',
+            ]
+        );
     }
 
-    private function prepareStoreContextForColumns(int $storeId, string $currencyCode): void
+    private function prepareStoreContextForColumns(int $storeId): void
     {
         $this->requestMock->method('getParam')->with('store', 0)->willReturn($storeId);
         $storeMock = $this->createMock(Store::class);
         $storeMock->method('getId')->willReturn($storeId);
         $storeMock->method('getName')->willReturn('Store Name');
-        $currencyMock = new class($currencyCode) {
-            private $code;
-            public function __construct(string $code) { $this->code = $code; }
-            public function getCode() { return $this->code; }
+        $currencyMock = new class {
+            public function getCode()
+            {
+                return 'USD';
+            }
         };
         $storeMock->method('getBaseCurrency')->willReturn($currencyMock);
         $this->storeManagerMock->method('getStore')->willReturn($storeMock);
@@ -381,20 +391,38 @@ class GridTest extends TestCase
     private function prepareAttributeSetsForColumns(): void
     {
         $resourceMock = new class {
-            public function getTypeId() { return 4; }
+            public function getTypeId()
+            {
+                return 4;
+            }
         };
         $productEntityMock = new class($resourceMock) {
             /** @var object */
             private $resource;
-            public function __construct($resource) { $this->resource = $resource; }
-            public function getResource() { return $this->resource; }
+            public function __construct($resource)
+            {
+                $this->resource = $resource;
+            }
+            public function getResource()
+            {
+                return $this->resource;
+            }
         };
         $this->productFactoryMock->method('create')->willReturn($productEntityMock);
 
         $setsChainMock = new class {
-            public function setEntityTypeFilter($id) { return $this; }
-            public function load() { return $this; }
-            public function toOptionHash() { return ['4' => 'Default']; }
+            public function setEntityTypeFilter($id)
+            {
+                return $this;
+            }
+            public function load()
+            {
+                return $this;
+            }
+            public function toOptionHash()
+            {
+                return ['4' => 'Default'];
+            }
         };
         $this->setFactoryMock->method('create')->willReturn($setsChainMock);
     }
@@ -402,13 +430,22 @@ class GridTest extends TestCase
     private function prepareWebsitesForColumns(): void
     {
         $websitesCollectionMock = new class {
-            public function toOptionHash() { return ['1' => 'Base']; }
+            public function toOptionHash()
+            {
+                return ['1' => 'Base'];
+            }
         };
         $websitesMock = new class($websitesCollectionMock) {
             /** @var object */
             private $collection;
-            public function __construct($collection) { $this->collection = $collection; }
-            public function getCollection() { return $this->collection; }
+            public function __construct($collection)
+            {
+                $this->collection = $collection;
+            }
+            public function getCollection()
+            {
+                return $this->collection;
+            }
         };
         $this->websiteFactoryMock->method('create')->willReturn($websitesMock);
     }
@@ -432,14 +469,23 @@ class GridTest extends TestCase
             ->getMock();
         $gridMock->method('sortColumnsByOrder')->willReturn($gridMock);
         $gridMock->method('addColumn')
-            ->willReturnCallback(function ($columnId, $_config) use (&$addedColumnIds, $gridMock) {
-                $addedColumnIds[] = $columnId;
-                return $gridMock;
-            });
+            ->willReturnCallback(
+                function ($columnId) use (&$addedColumnIds, $gridMock) {
+                    $addedColumnIds[] = $columnId;
+                    return $gridMock;
+                }
+            );
         // Avoid static-method-on-mock for helpers:
-        $this->setProtectedProperty($gridMock, '_visibility', new class {
-            public function getOptionArray() { return ['1' => 'Catalog, Search']; }
-        });
+        $this->setProtectedProperty(
+            $gridMock,
+            '_visibility',
+            new class {
+                public function getOptionArray()
+                {
+                    return ['1' => 'Catalog, Search'];
+                }
+            }
+        );
         $this->setProtectedProperty($gridMock, '_status', new ProductStatus());
         return $gridMock;
     }
