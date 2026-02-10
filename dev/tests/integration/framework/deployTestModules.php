@@ -52,6 +52,26 @@ if ((int)$settings->get('TESTS_PARALLEL_RUN') !== 1) {
     // Only delete modules if we are not using parallel executions
     // phpcs:ignore Magento2.Functions.DiscouragedFunction
     register_shutdown_function(
+        'executeRegisteringOfDeleteTestModulesOnShutdown',
+        $pathToCommittedTestModules,
+        $pathToInstalledMagentoInstanceModules
+    );
+}
+
+/**
+ * Wrapper for registering the deleteTestModules function on shutdown.
+ * This wrapper makes sure that we are running the deleteTestModules function after ALL other shutdown functions.
+ * It prevents issues with SessionManager `register_shutdown_function([$this, 'writeClose']);` -
+ * which used to be called AFTER modules removing - and Fatal Error was thrown.
+ *
+ * @param string $pathToCommittedTestModules
+ * @param string $pathToInstalledMagentoInstanceModules
+ */
+function executeRegisteringOfDeleteTestModulesOnShutdown(
+    $pathToCommittedTestModules,
+    $pathToInstalledMagentoInstanceModules
+) {
+    register_shutdown_function(
         'deleteTestModules',
         $pathToCommittedTestModules,
         $pathToInstalledMagentoInstanceModules
