@@ -8,6 +8,7 @@ namespace Magento\Customer\Model\Session\Validators;
 
 use Magento\Customer\Model\ResourceModel\Customer as ResourceCustomer;
 use Magento\Customer\Model\ResourceModel\Visitor as ResourceVisitor;
+use Magento\Customer\Model\Session\Storage as CustomerSessionStorage;
 use Magento\Framework\Exception\SessionException;
 use Magento\Framework\Phrase;
 use Magento\Framework\Session\SessionManagerInterface;
@@ -16,6 +17,8 @@ use Magento\Framework\Session\Generic;
 
 /**
  * Session Validator
+ *
+ * @SuppressWarnings(PHPMD.CookieAndSessionMisuse)
  */
 class CutoffValidator implements ValidatorInterface
 {
@@ -35,20 +38,28 @@ class CutoffValidator implements ValidatorInterface
     private $visitorSession;
 
     /**
+     * @var CustomerSessionStorage
+     */
+    private $customerSessionStorage;
+
+    /**
      * Cutoff validator constructor.
      *
      * @param ResourceCustomer $customerResource
      * @param ResourceVisitor $visitorResource
      * @param Generic $visitorSession
+     * @param CustomerSessionStorage $customerSessionStorage
      */
     public function __construct(
         ResourceCustomer $customerResource,
         ResourceVisitor $visitorResource,
-        Generic $visitorSession
+        Generic $visitorSession,
+        CustomerSessionStorage $customerSessionStorage
     ) {
         $this->customerResource = $customerResource;
         $this->visitorResource = $visitorResource;
         $this->visitorSession = $visitorSession;
+        $this->customerSessionStorage = $customerSessionStorage;
     }
 
     /**
@@ -69,15 +80,28 @@ class CutoffValidator implements ValidatorInterface
                 $cutoff = $this->customerResource->findSessionCutOff((int) $visitor['customer_id']);
                 $sessionCreationTime = $this->visitorResource->fetchCreatedAt((int) $visitor['visitor_id']);
                 if (isset($cutoff, $sessionCreationTime) && $cutoff > $sessionCreationTime) {
-                    throw new SessionException(
-                        new Phrase('The session has expired, please login again.')
-                    );
+                    if ($this->isCustomerLoggedInSession((int) $visitor['customer_id'])) {
+                        throw new SessionException(
+                            new Phrase('The session has expired, please login again.')
+                        );
+                    }
                 }
             }
         } catch (SessionException $e) {
             $session->destroy(['clear_storage' => false]);
-            // throw core session exception
             throw $e;
         }
+    }
+
+    /**
+     * Whether the current session has this customer logged in (session not just stale visitor data).
+     *
+     * @param int $customerId
+     * @return bool
+     */
+    private function isCustomerLoggedInSession(int $customerId): bool
+    {
+        $sessionCustomerId = $this->customerSessionStorage->getData('customer_id');
+        return $sessionCustomerId !== null && (int) $sessionCustomerId === $customerId;
     }
 }
