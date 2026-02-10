@@ -1,0 +1,288 @@
+{
+  "accountCreation": {
+    "createAccountButtonLabel": "Create an Account",
+    "createAccountTitleText" : "Create New Customer Account"
+  },
+  "accountDashboard": {
+    "accountDashboardTitleLabel": "Account Information",
+    "accountSideBarLabel": "Sidebar Main",
+    "addAddressButtonLabel": "ADD NEW ADDRESS",
+    "addressBookArea": ".block-addresses-list",
+    "addressDeleteIconButton": "Delete",
+    "editAddressIconButton": "pencil-alt",
+    "accountInformationFieldLocator": ".column > div > div > .flex",
+    "links": {
+      "newsletterLink": "Newsletter Subscriptions"
+    }
+  },
+  "address" : {
+    "addressBookTitle" : "Address Book"
+  },
+  "adminGeneral": {
+    "tableSearchFieldLabel": "Search by keyword",
+    "tableFilterResetLabel": "Clear All",
+    "loadingSpinnerLocator": "#container .spinner",
+    "searchButtonLabel": "Search"
+  },
+  "adminCustomers": {
+    "createNewCustomerButtonLabel": "Add New Customer",
+    "edit": {
+      "passwordFieldLabel": "Enter Password"
+    },
+    "registration": {
+      "debtorNumberFieldLabel": "Debtor number",
+      "allowBulkPurchaseFieldLabel": "Allow bulk purchase",
+      "createAccountSaveButtonLabel": "Save Customer",
+      "createAccountSaveAndContinueButtonLabel": "Save and Continue Edit"
+    }
+  },
+  "adminPage": {
+    "captchaIncorrectText" : "Incorrect CAPTCHA.",
+    "captchaDisabledLabel": "No",
+    "couponSearchFieldLocator" : "#promo_quote_grid_filter_coupon_code",
+    "dashboardHeadingText": "Dashboard",
+    "navigation": {
+      "customersButtonLabel": "Customers",
+      "marketingButtonLabel": "Marketing",
+      "storesButtonLabel": "Stores",
+      "salesButtonLabel": "Sales"
+    },
+    "searchResultsText" : "records found",
+    "subNavigation": {
+      "allCustomersButtonLabel": "All Customers",
+      "cartPriceRulesButtonLabel": "Cart Price Rules",
+      "configurationButtonLabel": "Configuration",
+      "ordersButtonLabel": "Orders"
+    },
+    "usernameFieldLabel": "Username",
+    "passwordFieldLabel": "Password",
+    "loginButtonLabel": "Sign In",
+    "usernameFieldId": "#username",
+    "passwordFieldId": "#login",
+    "loginButtonClass": ".action-login"
+  },
+  "newAddress": {
+    "addNewAddressTitle": "Add New Address",
+    "cityNameLabel": "City",
+    "companyNameLabel": "Company",
+    "countryLabel": "Country",
+    "phoneNumberLabel": "Phone Number",
+    "provinceSelectLabel": "State/Province",
+    "provinceSelectFilterLabel": "Please select a region, state or province.",
+    "regionDropdownLocator": "#region_id",
+    "streetAddressLabel": "Street Address",
+    "saveAdressButton": "Save Address",
+    "zipCodeLabel": "Zip/Postal Code"
+  },
+  "newsletterSubscriptions": {
+    "generalSubscriptionCheckLabel": "General Subscription",
+    "saveSubscriptionsButton": "Save"
+  },
+  "productPage": {
+    "addToCartButtonLocator": "Add to Cart",
+    "addToCompareButtonLabel": "Add to Compare",
+    "addToWishlistButtonLabel": "Add to Wish List",
+    "simpleProductTitle": "Push It Messenger Bag",
+    "secondSimpleProducTitle": "Aim Analog Watch",
+    "simpleProductPrice": ".final-price .price-wrapper .price",
+    "configurableProductTitle": "Inez Full Zip Jacket",
+    "configurableProductSizeLabel": "Size",
+    "configurableProductColorLabel": "Color",
+    "configurableProductOptionForm": "#product_addtocart_form",
+    "configurableProductOptionValue": ".product-option-value-label",
+    "quantityFieldLabel": "Quantity",
+    "fullScreenOpenLabel": "Click to view image in",
+    "fullScreenCloseLabel": "Close fullscreen",
+    "thumbnailImageLabel": "View larger image",
+    "reviewCountLabel": "Show items per page"
+  },
+  "categoryPage":{
+    "activeViewLocator": ".active",
+    "categoryPageWithOptionsTitleText": "Top",
+    "categoryPageTitleText": "Tops",
+    "firstFilterOptionLocator": "#filter-option-2-title",
+    "itemsOnPageAmountLocator": ".toolbar-number",
+    "itemsPerPageButtonLabel": "Show items per page",
+    "productGridLocator": ".products-grid",
+    "removeActiveFilterButtonLabel": "Remove active",
+    "sizeFilterButtonLabel": "Size",
+    "sizeLLinkLabel": "Filter Size L",
+    "sortByButtonLabel": "Sort by",
+    "sortByButtonLocator": ".form-select.sorter-options",
+    "viewSwitchLabel": "Products view mode",
+    "viewGridLabel": "Products view mode - Grid",
+    "viewListLabel": "Products view mode - List"
+  },
+  "cart": {
+    "applyDiscountButtonLabel": "Apply Discount",
+    "cancelCouponButtonLabel": "Cancel Coupon",
+    "cartTitleText": "Shopping Cart",
+    "cartQuantityLabel": "Qty",
+    "discountInputFieldLabel": "Enter discount code",
+    "showDiscountFormButtonLabel": "Apply Discount Code",
+    "updateItemButtonLabel": "Update item",
+    "updateShoppingCartButtonLabel": "Update Shopping Cart"
+  },
+  "cartPriceRulesPage": {
+    "actionsSubtitleLabel": "Actions",
+    "activeStatusLabelLocator": ".admin__actions-switch-text",
+    "activeStatusSwitcherLocator": ".admin__actions-switch-label",
+    "addCartPriceRuleButtonLabel": "Add New Rule",
+    "clearSearchButtonLabel" : "Reset Filter",
+    "couponCodeFieldLabel": "Coupon Code",
+    "couponCodeActiveStatusText": "Active",
+    "couponTypeSelectField": "select[name='coupon_type']",
+    "customerGroupsSelectLabel": "Customer Groups",
+    "discountAmountFieldLabel": "Discount Amount",
+    "ruleNameFieldLabel": "Rule Name",
+    "saveRuleButtonLabel": "Save",
+    "websitesSelectLabel": "Websites"
+  },
+  "checkout": {
+    "applyDiscountButtonLabel": "Apply Coupon",
+    "applyDiscountCodeLabel": "Apply Discount Code",
+    "cancelDiscountButtonLabel": "Cancel Coupon",
+    "cartDetailsLocator": ".minicart-items-wrapper",
+    "continueShoppingLabel": "Continue Shopping",
+    "discountInputFieldLabel": "Enter discount code",
+    "openCartButtonLabel": "Cart",
+    "openCartButtonLabelCont": "item",
+    "openCartButtonLabelContMultiple": "items",
+    "openCartDetailsButtonLocator": "button[aria-controls=\"checkout-cart-details\"]",
+    "openDiscountFormLabel": "Apply Discount Code",
+    "paymentOptionCheckLabel": "Check / Money order Free",
+    "paymentOptionCreditCardLabel": "Credit Card",
+    "paymentOptionPaypalLabel": "PayPal",
+    "checkoutCartDetailsLocator": "#checkout-cart-details",
+    "creditCardNumberLabel": "Credit Card Number",
+    "creditCardExpiryLabel": "Expiration Date",
+    "creditCardCVVLabel": "Card Verification Number",
+    "creditCardNameLabel": "Name on Card",
+    "placeOrderButtonLabel": "Place Order",
+    "remove": "Remove",
+    "shippingAddressRadioLocator": "#checkout-step-shipping .shipping-address-item.selected-item",
+    "shippingMethodFixedLabel": "Fixed",
+    "shippingMethodTableRateLabel": "Table Rate",
+    "shippingPriceText": "Shipping & Handling (Flat Rate - Fixed)",
+    "taxPriceText": "Tax"
+  },
+  "comparePage": {
+    "removeCompareLabel": "Remove Product",
+    "addToWishListLabel": "Add to Wish List",
+    "comparisonPageEmptyText": "You have no items to compare.",
+    "comparisonPageTitleText": "Compare Products"
+  },
+  "configurationPage": {
+    "advancedAdministrationTabLabel": "Admin",
+    "advancedTabLabel": "Advanced",
+    "allowMultipleLoginsSelectField": "#admin_security_admin_account_sharing",
+    "allowMultipleLoginsSystemCheckbox": "#admin_security_admin_account_sharing_inherit",
+    "captchaSettingSelectField": "#customer_captcha_enable",
+    "captchaSettingSystemCheckbox": "#customer_captcha_enable_inherit",
+    "captchaSectionLabel": "CAPTCHA",
+    "customerConfigurationTabLabel": "Customer Configuration",
+    "customersTabLabel": "Customers",
+    "saveConfigButtonLabel": "Save Config",
+    "securitySectionLabel": "Security"
+  },
+  "contactPage": {
+    "messageFieldSelector": "#comment"
+  },
+  "credentials": {
+    "currentPasswordFieldLabel": "Current Password",
+    "emailFieldLabel": "Email",
+    "emailCheckoutFieldLabel": "Email address",
+    "loginButtonLabel": "Sign In",
+    "nameFieldLabel": "Name",
+    "newPasswordConfirmFieldLabel": "Confirm New Password",
+    "newPasswordFieldLabel": "New Password",
+    "passwordConfirmFieldLabel": "Confirm Password",
+    "passwordFieldLabel": "Password"
+  },
+  "customerOverviewPage": {
+    "tableSearchFieldLabel": "Search by keyword"
+  },
+  "financial" : {
+    "subTotal": "Subtotal",
+    "grandTotal": "Grand Total"
+  },
+  "footerPage": {
+    "footerLocator": ".page-footer",
+    "currencyIdentifier": "#currency-heading",
+    "currencyLabel": "Currency",
+    "currencyDollar": "USD - US Dollar",
+    "currencyEuro": "EUR - Euro",
+    "newsletterInputElementLabel": "Email Address",
+    "newsletterSubscribeButtonLabel": "Subscribe"
+  },
+  "general": {
+    "addToCartLabel": "Add to Cart",
+    "closeMessageLabel": "Close message",
+    "errorMessageLocator": "#messages div .messages div .error span",
+    "errorMessageStreetAddressRequiredFieldText": "Street Address field is required.",
+    "genericPriceLabel": "Price",
+    "genericPriceSymbol": "£",
+    "genericSaveButtonLabel": "Save",
+    "genericSubmitButtonLabel": "Submit",
+    "headerLocator": "#header",
+    "loadingSpinnerLocator": "#container .spinner",
+    "messageLocator": "#messages .messages div",
+    "removeLabel": "Remove",
+    "searchButtonLabel": "Search",
+    "successMessageLocator": "div.message.success"
+  },
+  "homePage": {
+    "homePageTitleText": "Hyvä Theme"
+  },
+  "mainMenu": {
+    "addressBookButtonLabel" : "Address Book",
+    "createAccountButtonLabel" : "Create an Account",
+    "subCategoryItemText" : "Fitness Equipment",
+    "categoryItemText" : "Gear",
+    "loginButtonLabel" : "Sign In",
+    "miniCartLabel": "Toggle minicart",
+    "myAccountButtonLabel": "My Account",
+    "myAccountLogoutItem": "Sign Out",
+    "myOrdersButtonLabel" : "My Orders",
+    "searchButtonLabel" : "Toggle search form",
+    "wishListButtonLabel" : "My Wish List"
+  },
+  "miniCart": {
+    "cartDrawerLocator": "#cart-drawer-title",
+    "cartEmptyText": "Cart is empty",
+    "checkOutButtonLabel": "Checkout",
+    "editProductIconLabel": "Edit product",
+    "minicartButtonLocator": "#menu-cart-icon",
+    "minicartAmountBubbleLocator": "#menu-cart-icon > span",
+    "minicartPriceFieldClass": ".price-excluding-tax .minicart-price .price",
+    "miniCartToggleLabelEmpty": "Cart is empty",
+    "miniCartToggleLabelMultiItem": "items",
+    "miniCartToggleLabelOneItem": "1 item",
+    "miniCartToggleLabelPrefix": "Toggle minicart,",
+    "productQuantityFieldLabel": "Quantity",
+    "removeProductIconLabel": "Remove product",
+    "toCartLinkLabel": "View and Edit Cart"
+  },
+  "search": {
+    "searchBoxPlaceholderText" : "Search entire store here...",
+    "searchToggleLocator": "#menu-search-icon",
+    "searchInputLocator": "#search",
+    "suggestionBoxLocator": "#search_autocomplete",
+    "searchResultsTitle": "Search results for:",
+    "searchTermDropdownText" : "Search terms"
+  },
+  "orderHistoryPage" : {
+    "orderHistoryTitle": "My Orders"
+  },
+  "personalInformation": {
+    "changePasswordSwitchLabel": "Change Password",
+    "changeEmailCheckLabel": "Change Email",
+    "firstNameLabel": "First Name",
+    "lastNameLabel": "Last Name"
+  },
+  "wishListPage": {
+    "wishListItemGridLabel": "#wishlist-view-form",
+    "wishListTitle" : "My Wish List",
+    "updateCompareListButtonLabel": "Update Wish List"
+  }
+}
