@@ -770,6 +770,26 @@ class Invoice extends AbstractModel implements EntityInterface, InvoiceInterface
     }
 
     /**
+     * Before object save manipulations
+     *
+     * @return $this
+     */
+    protected function _beforeSave()
+    {
+        return $this;
+    }
+
+    /**
+     * After object save manipulation
+     *
+     * @return $this
+     */
+    protected function _afterSave()
+    {
+        return $this;
+    }
+
+    /**
      * Returns invoice items
      *
      * @return \Magento\Sales\Api\Data\InvoiceItemInterface[]
