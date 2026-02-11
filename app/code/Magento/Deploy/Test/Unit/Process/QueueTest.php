@@ -71,7 +71,7 @@ class QueueTest extends TestCase
         $this->localeResolver = $this->createMock(LocaleResolver::class);
         $this->resourceConnection = $this->createMock(ResourceConnection::class);
         $this->logger = $this->createMock(LoggerInterface::class);
-        $this->deployPackageService = $this->createMock(DeployPackage::class);
+        $this->deployPackageService = $this->createPartialMock(DeployPackage::class, ['deploy']);
     }
 
     /**
