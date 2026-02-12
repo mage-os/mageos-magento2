@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2026 Adobe
+ * Copyright 2014 Adobe
  * All Rights Reserved.
  */
 
@@ -395,7 +395,7 @@ class ProductsList extends AbstractProduct implements BlockInterface, IdentityIn
          */
         $collection->distinct(true);
 
-        $currentPage = (int)$this->getRequest()->getParam($this->getData('page_var_name'), 1);
+        $currentPage = (int)($this->getRequest()->getParam($this->getData('page_var_name')) ?? 1);
 
         // Apply pagination with total limit after all other operations
         if ($this->showPager()) {
