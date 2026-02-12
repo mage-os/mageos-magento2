@@ -7,19 +7,27 @@ declare(strict_types=1);
 
 namespace Magento\Customer\Controller\Account;
 
+use Magento\Customer\Model\ResourceModel\Customer as CustomerResource;
+use Magento\Customer\Model\ResourceModel\Visitor as VisitorResource;
 use Magento\Customer\Model\Session;
 use Magento\Customer\Model\Url;
+use Magento\Customer\Test\Fixture\Customer;
 use Magento\Framework\App\Request\Http as HttpRequest;
 use Magento\Framework\Message\MessageInterface;
 use Magento\Framework\Phrase;
 use Magento\Framework\Session\Generic;
 use Magento\Framework\Url\EncoderInterface;
+use Magento\Store\Model\ScopeInterface;
+use Magento\TestFramework\Fixture\Config;
+use Magento\TestFramework\Fixture\DataFixture;
+use Magento\TestFramework\Fixture\DataFixtureStorageManager;
 use Magento\TestFramework\TestCase\AbstractController;
 
 /**
  * Class checks customer login action
  *
  * @see \Magento\Customer\Controller\Account\LoginPost
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class LoginPostTest extends AbstractController
 {
@@ -40,6 +48,16 @@ class LoginPostTest extends AbstractController
     private $generic;
 
     /**
+     * @var CustomerResource
+     */
+    private $customerResource;
+
+    /**
+     * @var VisitorResource
+     */
+    private $visitorResource;
+
+    /**
      * @inheritdoc
      */
     protected function setUp(): void
@@ -50,6 +68,8 @@ class LoginPostTest extends AbstractController
         $this->urlEncoder = $this->_objectManager->get(EncoderInterface::class);
         $this->customerUrl = $this->_objectManager->get(Url::class);
         $this->generic = $this->_objectManager->get(Generic::class);
+        $this->customerResource = $this->_objectManager->get(CustomerResource::class);
+        $this->visitorResource = $this->_objectManager->get(VisitorResource::class);
     }
 
     /**
@@ -244,6 +264,42 @@ class LoginPostTest extends AbstractController
         $this->assertRedirect($this->stringContains('customer/account/'));
         $this->assertNotEmpty($this->generic->getVisitorData()['visitor_id']);
         $this->assertNotEmpty($this->generic->getVisitorData()['customer_id']);
+    }
+
+    /**
+     * Login succeeds on first attempt when session_cutoff is set (password reset on other device).
+     *
+     * @return void
+     */
+    #[
+        Config('customer/startup/redirect_dashboard', 0, ScopeInterface::SCOPE_STORE),
+        Config('customer/captcha/enable', 0, ScopeInterface::SCOPE_STORE),
+        DataFixture(Customer::class, as: 'customer')
+    ]
+    public function testLoginSucceedsWhenSessionCutoffSetAfterPasswordResetElsewhere(): void
+    {
+        $customer = DataFixtureStorageManager::getStorage()->get('customer');
+        $this->prepareRequest($customer->getEmail(), 'password');
+        $this->dispatch('customer/account/loginPost');
+        $this->assertTrue($this->session->isLoggedIn());
+
+        $visitorData = $this->generic->getVisitorData();
+        $this->assertNotEmpty($visitorData['visitor_id']);
+        $visitorId = (int) $visitorData['visitor_id'];
+        $customerId = (int) $this->session->getCustomerId();
+
+        $this->session->logout();
+
+        $cutoffTime = time();
+        $oldSessionCreationTime = $cutoffTime - 3600;
+        $this->customerResource->updateSessionCutOff($customerId, $cutoffTime);
+        $this->visitorResource->updateCreatedAt($visitorId, $oldSessionCreationTime);
+
+        $this->prepareRequest($customer->getEmail(), 'password');
+        $this->dispatch('customer/account/loginPost');
+
+        $this->assertTrue($this->session->isLoggedIn());
+        $this->assertRedirect($this->stringContains('customer/account/'));
     }
 
     /**
