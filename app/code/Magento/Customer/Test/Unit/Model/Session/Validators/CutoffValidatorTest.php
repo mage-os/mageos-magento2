@@ -63,7 +63,7 @@ class CutoffValidatorTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->customerSessionStorage = $this->createMock(CustomerSessionStorage::class);
-        $this->session = $this->getMockForAbstractClass(SessionManagerInterface::class);
+        $this->session = $this->createMock(SessionManagerInterface::class);
 
         $this->customerSessionStorage->method('getNamespace')
             ->willReturn('customer');
