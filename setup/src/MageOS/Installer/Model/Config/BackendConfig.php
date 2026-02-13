@@ -17,6 +17,11 @@ use function Laravel\Prompts\warning;
  */
 class BackendConfig
 {
+    /**
+     * Constructor
+     *
+     * @param UrlValidator $urlValidator
+     */
     public function __construct(
         private readonly UrlValidator $urlValidator
     ) {
@@ -39,7 +44,8 @@ class BackendConfig
             hint: 'Custom path recommended for security (e.g., "admin_xyz")',
             validate: fn (string $value) => match (true) {
                 empty($value) => 'Admin path cannot be empty',
-                !preg_match('/^[a-zA-Z0-9_-]+$/', $value) => 'Admin path can only contain letters, numbers, underscores, and hyphens',
+                !preg_match('/^[a-zA-Z0-9_-]+$/', $value)
+                    => 'Admin path can only contain letters, numbers, underscores, and hyphens',
                 default => null
             }
         );

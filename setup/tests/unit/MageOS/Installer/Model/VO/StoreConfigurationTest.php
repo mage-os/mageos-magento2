@@ -28,7 +28,7 @@ class StoreConfigurationTest extends AbstractVOTest
         return []; // No sensitive fields
     }
 
-    public function test_it_constructs_with_all_parameters(): void
+    public function testItConstructsWithAllParameters(): void
     {
         $config = new StoreConfiguration(
             baseUrl: 'https://example.com',
@@ -45,7 +45,7 @@ class StoreConfigurationTest extends AbstractVOTest
         $this->assertPropertyEquals($config, 'useRewrites', false);
     }
 
-    public function test_to_array_contains_all_fields(): void
+    public function testToArrayContainsAllFields(): void
     {
         $config = $this->createValidInstance();
         $array = $config->toArray();
@@ -58,7 +58,7 @@ class StoreConfigurationTest extends AbstractVOTest
         $this->assertTrue($array['useRewrites']);
     }
 
-    public function test_from_array_with_complete_data(): void
+    public function testFromArrayWithCompleteData(): void
     {
         $data = [
             'baseUrl' => 'https://shop.test',
@@ -77,7 +77,7 @@ class StoreConfigurationTest extends AbstractVOTest
         $this->assertPropertyEquals($config, 'useRewrites', false);
     }
 
-    public function test_from_array_with_missing_fields_uses_defaults(): void
+    public function testFromArrayWithMissingFieldsUsesDefaults(): void
     {
         $data = ['baseUrl' => 'https://test.local'];
 
@@ -90,7 +90,7 @@ class StoreConfigurationTest extends AbstractVOTest
         $this->assertPropertyEquals($config, 'useRewrites', true);
     }
 
-    public function test_handles_various_currencies(): void
+    public function testHandlesVariousCurrencies(): void
     {
         $currencies = ['USD', 'EUR', 'GBP', 'JPY', 'AUD', 'CAD'];
 
@@ -107,7 +107,7 @@ class StoreConfigurationTest extends AbstractVOTest
         }
     }
 
-    public function test_handles_various_languages(): void
+    public function testHandlesVariousLanguages(): void
     {
         $languages = ['en_US', 'en_GB', 'de_DE', 'fr_FR', 'es_ES', 'it_IT'];
 

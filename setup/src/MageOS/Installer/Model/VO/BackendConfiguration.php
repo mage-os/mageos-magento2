@@ -11,6 +11,9 @@ namespace MageOS\Installer\Model\VO;
  */
 class BackendConfiguration
 {
+    /**
+     * @param string $frontname
+     */
     public function __construct(
         public readonly string $frontname
     ) {
@@ -32,7 +35,7 @@ class BackendConfiguration
     /**
      * Create from array
      *
-     * @param array<string, string> $data
+     * @param array $data Configuration data
      * @return self
      */
     public static function fromArray(array $data): self

@@ -15,6 +15,7 @@ use PHPUnit\Framework\TestCase;
  */
 class DatabaseValidatorTest extends TestCase
 {
+    /** @var DatabaseValidator */
     private DatabaseValidator $validator;
 
     protected function setUp(): void
@@ -26,7 +27,7 @@ class DatabaseValidatorTest extends TestCase
     /**
      * @dataProvider validDatabaseNameProvider
      */
-    public function test_accepts_valid_database_names(string $name): void
+    public function testAcceptsValidDatabaseNames(string $name): void
     {
         $result = $this->validator->validateDatabaseName($name);
 
@@ -37,7 +38,7 @@ class DatabaseValidatorTest extends TestCase
     /**
      * @dataProvider invalidDatabaseNameProvider
      */
-    public function test_rejects_invalid_database_names(string $name, string $expectedError): void
+    public function testRejectsInvalidDatabaseNames(string $name, string $expectedError): void
     {
         $result = $this->validator->validateDatabaseName($name);
 
@@ -45,7 +46,7 @@ class DatabaseValidatorTest extends TestCase
         $this->assertEquals($expectedError, $result['error']);
     }
 
-    public function test_rejects_empty_database_name(): void
+    public function testRejectsEmptyDatabaseName(): void
     {
         $result = $this->validator->validateDatabaseName('');
 
@@ -53,7 +54,7 @@ class DatabaseValidatorTest extends TestCase
         $this->assertEquals('Database name cannot be empty', $result['error']);
     }
 
-    public function test_rejects_database_name_with_spaces(): void
+    public function testRejectsDatabaseNameWithSpaces(): void
     {
         $result = $this->validator->validateDatabaseName('my database');
 
@@ -61,7 +62,7 @@ class DatabaseValidatorTest extends TestCase
         $this->assertStringContainsString('letters, numbers, underscores, and hyphens', $result['error']);
     }
 
-    public function test_rejects_database_name_with_special_characters(): void
+    public function testRejectsDatabaseNameWithSpecialCharacters(): void
     {
         $result = $this->validator->validateDatabaseName('db@name');
 
@@ -69,7 +70,7 @@ class DatabaseValidatorTest extends TestCase
         $this->assertStringContainsString('letters, numbers, underscores, and hyphens', $result['error']);
     }
 
-    public function test_rejects_database_name_with_sql_injection_attempt(): void
+    public function testRejectsDatabaseNameWithSqlInjectionAttempt(): void
     {
         $result = $this->validator->validateDatabaseName("db'; DROP TABLE users;--");
 
@@ -77,7 +78,7 @@ class DatabaseValidatorTest extends TestCase
         $this->assertStringContainsString('letters, numbers, underscores, and hyphens', $result['error']);
     }
 
-    public function test_validate_returns_expected_structure_on_success(): void
+    public function testValidateReturnsExpectedStructureOnSuccess(): void
     {
         // This tests that the validate method returns the correct array structure
         // Actual connection testing requires integration tests with real database
@@ -89,7 +90,7 @@ class DatabaseValidatorTest extends TestCase
         $this->assertIsBool($result['success']);
     }
 
-    public function test_validate_handles_connection_errors_gracefully(): void
+    public function testValidateHandlesConnectionErrorsGracefully(): void
     {
         // Test with invalid host to trigger connection error
         $result = $this->validator->validate('invalid_host_12345', 'db', 'user', 'pass');
@@ -117,11 +118,26 @@ class DatabaseValidatorTest extends TestCase
     {
         return [
             'empty' => ['', 'Database name cannot be empty'],
-            'with space' => ['my database', 'Database name can only contain letters, numbers, underscores, and hyphens'],
-            'with dot' => ['magento.db', 'Database name can only contain letters, numbers, underscores, and hyphens'],
-            'with slash' => ['magento/db', 'Database name can only contain letters, numbers, underscores, and hyphens'],
-            'with special char' => ['magento@db', 'Database name can only contain letters, numbers, underscores, and hyphens'],
-            'sql injection' => ["'; DROP TABLE", 'Database name can only contain letters, numbers, underscores, and hyphens'],
+            'with space' => [
+                'my database',
+                'Database name can only contain letters, numbers, underscores, and hyphens',
+            ],
+            'with dot' => [
+                'magento.db',
+                'Database name can only contain letters, numbers, underscores, and hyphens',
+            ],
+            'with slash' => [
+                'magento/db',
+                'Database name can only contain letters, numbers, underscores, and hyphens',
+            ],
+            'with special char' => [
+                'magento@db',
+                'Database name can only contain letters, numbers, underscores, and hyphens',
+            ],
+            'sql injection' => [
+                "'; DROP TABLE",
+                'Database name can only contain letters, numbers, underscores, and hyphens',
+            ],
         ];
     }
 }

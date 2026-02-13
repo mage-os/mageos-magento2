@@ -15,8 +15,11 @@ use Symfony\Component\Console\Output\BufferedOutput;
  */
 class ModeConfigurerTest extends TestCase
 {
+    /** @var ProcessRunner */
     private ProcessRunner $processRunnerMock;
+    /** @var ModeConfigurer */
     private ModeConfigurer $configurer;
+    /** @var BufferedOutput */
     private BufferedOutput $output;
 
     protected function setUp(): void
@@ -27,7 +30,7 @@ class ModeConfigurerTest extends TestCase
         $this->output = new BufferedOutput();
     }
 
-    public function test_set_mode_returns_true_on_success(): void
+    public function testSetModeReturnsTrueOnSuccess(): void
     {
         $successResult = new ProcessResult(true, 'Mode set');
 
@@ -39,7 +42,7 @@ class ModeConfigurerTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function test_set_mode_returns_false_on_failure(): void
+    public function testSetModeReturnsFalseOnFailure(): void
     {
         $failureResult = new ProcessResult(false, '', 'Failed');
 
@@ -51,19 +54,19 @@ class ModeConfigurerTest extends TestCase
         $this->assertFalse($result);
     }
 
-    public function test_set_mode_calls_deploy_mode_set_command(): void
+    public function testSetModeCallsDeployModeSetCommand(): void
     {
         $successResult = new ProcessResult(true, '');
 
         $this->processRunnerMock->expects($this->once())
             ->method('runMagentoCommand')
-            ->with('deploy:mode:set production', $this->anything(), $this->anything())
+            ->with(['deploy:mode:set', 'production'], $this->anything(), $this->anything())
             ->willReturn($successResult);
 
         $this->configurer->setMode('production', '/var/www/magento', $this->output);
     }
 
-    public function test_set_mode_uses_120_second_timeout(): void
+    public function testSetModeUses120SecondTimeout(): void
     {
         $successResult = new ProcessResult(true, '');
 
@@ -75,7 +78,7 @@ class ModeConfigurerTest extends TestCase
         $this->configurer->setMode('developer', '/var/www/magento', $this->output);
     }
 
-    public function test_set_mode_supports_different_modes(): void
+    public function testSetModeSupportsDifferentModes(): void
     {
         $modes = ['developer', 'production', 'default'];
 
@@ -86,7 +89,7 @@ class ModeConfigurerTest extends TestCase
             $processRunner = $this->createMock(ProcessRunner::class);
             $processRunner->expects($this->once())
                 ->method('runMagentoCommand')
-                ->with("deploy:mode:set {$mode}", $this->anything(), $this->anything())
+                ->with(['deploy:mode:set', $mode], $this->anything(), $this->anything())
                 ->willReturn($successResult);
 
             $configurer = new ModeConfigurer($processRunner);
@@ -96,7 +99,7 @@ class ModeConfigurerTest extends TestCase
         }
     }
 
-    public function test_set_mode_displays_success_message(): void
+    public function testSetModeDisplaysSuccessMessage(): void
     {
         $successResult = new ProcessResult(true, '');
 
@@ -109,7 +112,7 @@ class ModeConfigurerTest extends TestCase
         $this->assertStringContainsString('Magento mode set to production', $outputContent);
     }
 
-    public function test_set_mode_displays_manual_instructions_on_failure(): void
+    public function testSetModeDisplaysManualInstructionsOnFailure(): void
     {
         $failureResult = new ProcessResult(false, '', 'Error');
 

@@ -16,6 +16,11 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class LoggingConfigStage extends AbstractStage
 {
+    /**
+     * Constructor
+     *
+     * @param LoggingConfig $loggingConfig
+     */
     public function __construct(
         private readonly LoggingConfig $loggingConfig
     ) {

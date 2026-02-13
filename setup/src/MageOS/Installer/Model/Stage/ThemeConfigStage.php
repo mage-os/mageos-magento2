@@ -16,6 +16,11 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class ThemeConfigStage extends AbstractStage
 {
+    /**
+     * Constructor
+     *
+     * @param ThemeConfig $themeConfig
+     */
     public function __construct(
         private readonly ThemeConfig $themeConfig
     ) {

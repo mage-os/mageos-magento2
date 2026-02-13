@@ -11,6 +11,11 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class IndexerConfigurer
 {
+    /**
+     * Constructor
+     *
+     * @param ProcessRunner $processRunner
+     */
     public function __construct(
         private readonly ProcessRunner $processRunner
     ) {
@@ -29,7 +34,7 @@ class IndexerConfigurer
         $output->write('<comment>⚙️  Setting indexers to schedule mode...</comment>');
 
         $result = $this->processRunner->runMagentoCommand(
-            'indexer:set-mode schedule',
+            ['indexer:set-mode', 'schedule'],
             $baseDir,
             timeout: 30
         );
@@ -65,7 +70,7 @@ class IndexerConfigurer
         $output->write('<comment>🔄 Running initial reindex...</comment>');
 
         $result = $this->processRunner->runMagentoCommand(
-            'indexer:reindex',
+            ['indexer:reindex'],
             $baseDir,
             timeout: 300 // Reindexing can take time
         );

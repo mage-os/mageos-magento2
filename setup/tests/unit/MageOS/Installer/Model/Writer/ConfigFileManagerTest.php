@@ -15,6 +15,7 @@ use MageOS\Installer\Test\Util\TestDataBuilder;
  */
 class ConfigFileManagerTest extends FileSystemTestCase
 {
+    /** @var ConfigFileManager */
     private ConfigFileManager $manager;
 
     protected function setUp(): void
@@ -23,7 +24,7 @@ class ConfigFileManagerTest extends FileSystemTestCase
         $this->manager = new ConfigFileManager();
     }
 
-    public function test_save_context_creates_file(): void
+    public function testSaveContextCreatesFile(): void
     {
         $baseDir = $this->getVirtualFilePath('');
         $context = TestDataBuilder::validInstallationContext();
@@ -31,17 +32,17 @@ class ConfigFileManagerTest extends FileSystemTestCase
         $result = $this->manager->saveContext($baseDir, $context);
 
         $this->assertTrue($result);
-        $this->assertVirtualFileExists('.mageos-install-config.json');
+        $this->assertVirtualFileExists('var/.mageos-install-config.json');
     }
 
-    public function test_save_context_creates_valid_json(): void
+    public function testSaveContextCreatesValidJson(): void
     {
         $baseDir = $this->getVirtualFilePath('');
         $context = TestDataBuilder::validInstallationContext();
 
         $this->manager->saveContext($baseDir, $context);
 
-        $content = $this->getVirtualFileContent('.mageos-install-config.json');
+        $content = $this->getVirtualFileContent('var/.mageos-install-config.json');
         $data = json_decode($content, true);
 
         $this->assertIsArray($data);
@@ -49,14 +50,14 @@ class ConfigFileManagerTest extends FileSystemTestCase
         $this->assertArrayHasKey('config', $data);
     }
 
-    public function test_save_context_includes_metadata(): void
+    public function testSaveContextIncludesMetadata(): void
     {
         $baseDir = $this->getVirtualFilePath('');
         $context = TestDataBuilder::validInstallationContext();
 
         $this->manager->saveContext($baseDir, $context);
 
-        $content = $this->getVirtualFileContent('.mageos-install-config.json');
+        $content = $this->getVirtualFileContent('var/.mageos-install-config.json');
         $data = json_decode($content, true);
 
         $this->assertArrayHasKey('created_at', $data['_metadata']);
@@ -66,14 +67,14 @@ class ConfigFileManagerTest extends FileSystemTestCase
         $this->assertEquals('1.0.0', $data['_metadata']['version']);
     }
 
-    public function test_save_context_excludes_sensitive_data(): void
+    public function testSaveContextExcludesSensitiveData(): void
     {
         $baseDir = $this->getVirtualFilePath('');
         $context = TestDataBuilder::validInstallationContext();
 
         $this->manager->saveContext($baseDir, $context);
 
-        $content = $this->getVirtualFileContent('.mageos-install-config.json');
+        $content = $this->getVirtualFileContent('var/.mageos-install-config.json');
         $data = json_decode($content, true);
 
         // Database password should not be in saved file
@@ -83,20 +84,20 @@ class ConfigFileManagerTest extends FileSystemTestCase
         $this->assertArrayNotHasKey('password', $data['config']['admin']);
     }
 
-    public function test_save_context_sets_restrictive_permissions(): void
+    public function testSaveContextSetsRestrictivePermissions(): void
     {
         $baseDir = $this->getVirtualFilePath('');
         $context = TestDataBuilder::validInstallationContext();
 
         $this->manager->saveContext($baseDir, $context);
 
-        $filePath = $this->getVirtualFilePath('.mageos-install-config.json');
+        $filePath = $this->getVirtualFilePath('var/.mageos-install-config.json');
         $perms = fileperms($filePath) & 0777;
 
         $this->assertEquals(0600, $perms, 'File should have 0600 permissions (owner read/write only)');
     }
 
-    public function test_load_context_returns_null_when_file_not_exists(): void
+    public function testLoadContextReturnsNullWhenFileNotExists(): void
     {
         $baseDir = $this->getVirtualFilePath('');
 
@@ -105,7 +106,7 @@ class ConfigFileManagerTest extends FileSystemTestCase
         $this->assertNull($result);
     }
 
-    public function test_load_context_reconstructs_installation_context(): void
+    public function testLoadContextReconstructsInstallationContext(): void
     {
         $baseDir = $this->getVirtualFilePath('');
         $original = TestDataBuilder::validInstallationContext();
@@ -117,7 +118,7 @@ class ConfigFileManagerTest extends FileSystemTestCase
         $this->assertInstanceOf(\MageOS\Installer\Model\InstallationContext::class, $loaded);
     }
 
-    public function test_round_trip_preserves_non_sensitive_data(): void
+    public function testRoundTripPreservesNonSensitiveData(): void
     {
         $baseDir = $this->getVirtualFilePath('');
         $original = TestDataBuilder::validInstallationContext();
@@ -140,7 +141,7 @@ class ConfigFileManagerTest extends FileSystemTestCase
         );
     }
 
-    public function test_round_trip_loses_sensitive_data(): void
+    public function testRoundTripLosesSensitiveData(): void
     {
         $baseDir = $this->getVirtualFilePath('');
         $original = TestDataBuilder::validInstallationContext();
@@ -153,37 +154,37 @@ class ConfigFileManagerTest extends FileSystemTestCase
         $this->assertEmpty($loaded->getAdmin()->password);
     }
 
-    public function test_load_context_handles_corrupted_json(): void
+    public function testLoadContextHandlesCorruptedJson(): void
     {
         $baseDir = $this->getVirtualFilePath('');
-        $this->createVirtualFile('.mageos-install-config.json', '{invalid json}');
+        $this->createVirtualFile('var/.mageos-install-config.json', '{invalid json}');
 
         $result = $this->manager->loadContext($baseDir);
 
         $this->assertNull($result);
     }
 
-    public function test_load_context_handles_missing_config_key(): void
+    public function testLoadContextHandlesMissingConfigKey(): void
     {
         $baseDir = $this->getVirtualFilePath('');
-        $this->createVirtualFile('.mageos-install-config.json', json_encode(['wrong_key' => []]));
+        $this->createVirtualFile('var/.mageos-install-config.json', json_encode(['wrong_key' => []]));
 
         $result = $this->manager->loadContext($baseDir);
 
         $this->assertNull($result);
     }
 
-    public function test_exists_returns_true_when_file_exists(): void
+    public function testExistsReturnsTrueWhenFileExists(): void
     {
         $baseDir = $this->getVirtualFilePath('');
-        $this->createVirtualFile('.mageos-install-config.json', '{}');
+        $this->createVirtualFile('var/.mageos-install-config.json', '{}');
 
         $result = $this->manager->exists($baseDir);
 
         $this->assertTrue($result);
     }
 
-    public function test_exists_returns_false_when_file_not_exists(): void
+    public function testExistsReturnsFalseWhenFileNotExists(): void
     {
         $baseDir = $this->getVirtualFilePath('');
 
@@ -192,17 +193,17 @@ class ConfigFileManagerTest extends FileSystemTestCase
         $this->assertFalse($result);
     }
 
-    public function test_delete_removes_file(): void
+    public function testDeleteRemovesFile(): void
     {
         $baseDir = $this->getVirtualFilePath('');
-        $this->createVirtualFile('.mageos-install-config.json', '{}');
+        $this->createVirtualFile('var/.mageos-install-config.json', '{}');
 
         $this->manager->delete($baseDir);
 
-        $this->assertVirtualFileDoesNotExist('.mageos-install-config.json');
+        $this->assertVirtualFileDoesNotExist('var/.mageos-install-config.json');
     }
 
-    public function test_delete_returns_true_when_file_not_exists(): void
+    public function testDeleteReturnsTrueWhenFileNotExists(): void
     {
         $baseDir = $this->getVirtualFilePath('');
 
@@ -211,26 +212,26 @@ class ConfigFileManagerTest extends FileSystemTestCase
         $this->assertTrue($result, 'Deleting non-existent file should return true');
     }
 
-    public function test_delete_returns_true_on_successful_deletion(): void
+    public function testDeleteReturnsTrueOnSuccessfulDeletion(): void
     {
         $baseDir = $this->getVirtualFilePath('');
-        $this->createVirtualFile('.mageos-install-config.json', '{}');
+        $this->createVirtualFile('var/.mageos-install-config.json', '{}');
 
         $result = $this->manager->delete($baseDir);
 
         $this->assertTrue($result);
     }
 
-    public function test_get_config_file_path_returns_correct_path(): void
+    public function testGetConfigFilePathReturnsCorrectPath(): void
     {
         $baseDir = '/var/www/magento';
 
         $path = $this->manager->getConfigFilePath($baseDir);
 
-        $this->assertEquals('/var/www/magento/.mageos-install-config.json', $path);
+        $this->assertEquals('/var/www/magento/var/.mageos-install-config.json', $path);
     }
 
-    public function test_save_overwrites_existing_file(): void
+    public function testSaveOverwritesExistingFile(): void
     {
         $baseDir = $this->getVirtualFilePath('');
         $context1 = TestDataBuilder::minimalInstallationContext();

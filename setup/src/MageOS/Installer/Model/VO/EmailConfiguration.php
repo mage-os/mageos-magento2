@@ -13,6 +13,15 @@ use MageOS\Installer\Model\VO\Attribute\Sensitive;
  */
 class EmailConfiguration
 {
+    /**
+     * @param bool $configure
+     * @param string $transport
+     * @param string $host
+     * @param int $port
+     * @param string $auth
+     * @param string $username
+     * @param string $password
+     */
     public function __construct(
         public readonly bool $configure,
         public readonly string $transport = 'sendmail',
@@ -62,7 +71,7 @@ class EmailConfiguration
     /**
      * Create from array
      *
-     * @param array<string, mixed> $data
+     * @param array $data
      * @return self
      */
     public static function fromArray(array $data): self

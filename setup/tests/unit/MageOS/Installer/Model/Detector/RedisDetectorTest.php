@@ -12,6 +12,7 @@ use PHPUnit\Framework\TestCase;
  */
 class RedisDetectorTest extends TestCase
 {
+    /** @var RedisDetector */
     private RedisDetector $detector;
 
     protected function setUp(): void
@@ -20,14 +21,14 @@ class RedisDetectorTest extends TestCase
         $this->detector = new RedisDetector();
     }
 
-    public function test_detect_returns_array(): void
+    public function testDetectReturnsArray(): void
     {
         $result = $this->detector->detect();
 
         $this->assertIsArray($result);
     }
 
-    public function test_detect_returns_array_of_instances(): void
+    public function testDetectReturnsArrayOfInstances(): void
     {
         $result = $this->detector->detect();
 
@@ -39,7 +40,7 @@ class RedisDetectorTest extends TestCase
         }
     }
 
-    public function test_detected_instances_have_valid_ports(): void
+    public function testDetectedInstancesHaveValidPorts(): void
     {
         $result = $this->detector->detect();
 

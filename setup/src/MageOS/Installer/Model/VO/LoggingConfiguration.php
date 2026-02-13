@@ -11,6 +11,10 @@ namespace MageOS\Installer\Model\VO;
  */
 class LoggingConfiguration
 {
+    /**
+     * @param bool $debugMode
+     * @param string $logLevel
+     */
     public function __construct(
         public readonly bool $debugMode,
         public readonly string $logLevel
@@ -34,7 +38,7 @@ class LoggingConfiguration
     /**
      * Create from array
      *
-     * @param array<string, mixed> $data
+     * @param array $data
      * @return self
      */
     public static function fromArray(array $data): self

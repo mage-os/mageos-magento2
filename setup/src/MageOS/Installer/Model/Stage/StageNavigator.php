@@ -159,6 +159,7 @@ class StageNavigator
         $completedWeight = 0;
         $totalWeight = $this->getTotalWeight();
 
+        // phpcs:ignore Generic.CodeAnalysis.ForLoopWithTestFunctionCall
         for ($i = 0; $i < $currentIndex && $i < count($this->stages); $i++) {
             $completedWeight += $this->stages[$i]->getProgressWeight();
         }

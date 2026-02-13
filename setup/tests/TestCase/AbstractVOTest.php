@@ -33,7 +33,7 @@ abstract class AbstractVOTest extends TestCase
     /**
      * Test that toArray() excludes sensitive fields by default
      */
-    public function test_it_serializes_without_sensitive_data(): void
+    public function testItSerializesWithoutSensitiveData(): void
     {
         $vo = $this->createValidInstance();
         $array = $vo->toArray(includeSensitive: false);
@@ -50,7 +50,7 @@ abstract class AbstractVOTest extends TestCase
     /**
      * Test that toArray() includes sensitive fields when requested
      */
-    public function test_it_serializes_with_sensitive_data_when_requested(): void
+    public function testItSerializesWithSensitiveDataWhenRequested(): void
     {
         $vo = $this->createValidInstance();
         $array = $vo->toArray(includeSensitive: true);
@@ -67,7 +67,7 @@ abstract class AbstractVOTest extends TestCase
     /**
      * Test that fromArray() can reconstruct the VO
      */
-    public function test_it_deserializes_from_array(): void
+    public function testItDeserializesFromArray(): void
     {
         $vo = $this->createValidInstance();
         $array = $vo->toArray(includeSensitive: true);
@@ -81,7 +81,7 @@ abstract class AbstractVOTest extends TestCase
     /**
      * Test that round-trip serialization preserves data
      */
-    public function test_round_trip_preserves_data(): void
+    public function testRoundTripPreservesData(): void
     {
         $vo = $this->createValidInstance();
         $array = $vo->toArray(includeSensitive: true);
@@ -99,7 +99,7 @@ abstract class AbstractVOTest extends TestCase
     /**
      * Test that the #[Sensitive] attribute is properly applied
      */
-    public function test_sensitive_fields_have_attribute(): void
+    public function testSensitiveFieldsHaveAttribute(): void
     {
         $vo = $this->createValidInstance();
         $reflection = new ReflectionClass($vo);
@@ -118,7 +118,7 @@ abstract class AbstractVOTest extends TestCase
     /**
      * Test that fromArray() handles missing fields gracefully
      */
-    public function test_from_array_handles_missing_fields(): void
+    public function testFromArrayHandlesMissingFields(): void
     {
         $class = get_class($this->createValidInstance());
 

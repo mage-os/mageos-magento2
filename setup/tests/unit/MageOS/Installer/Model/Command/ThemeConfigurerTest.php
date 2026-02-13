@@ -16,8 +16,11 @@ use Symfony\Component\Console\Output\BufferedOutput;
  */
 class ThemeConfigurerTest extends TestCase
 {
+    /** @var ProcessRunner */
     private ProcessRunner $processRunnerMock;
+    /** @var ThemeConfigurer */
     private ThemeConfigurer $configurer;
+    /** @var BufferedOutput */
     private BufferedOutput $output;
 
     protected function setUp(): void
@@ -28,7 +31,7 @@ class ThemeConfigurerTest extends TestCase
         $this->output = new BufferedOutput();
     }
 
-    public function test_apply_returns_true_when_no_theme_selected(): void
+    public function testApplyReturnsTrueWhenNoThemeSelected(): void
     {
         $themeConfig = new ThemeConfiguration(install: false);
 
@@ -37,7 +40,7 @@ class ThemeConfigurerTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function test_apply_returns_true_when_theme_is_empty(): void
+    public function testApplyReturnsTrueWhenThemeIsEmpty(): void
     {
         $themeConfig = new ThemeConfiguration(install: true, theme: '');
 
@@ -46,15 +49,15 @@ class ThemeConfigurerTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function test_apply_gets_theme_list(): void
+    public function testApplyGetsThemeList(): void
     {
         $themeConfig = new ThemeConfiguration(install: true, theme: 'hyva-default');
         $themeListOutput = "| 4 | frontend | Hyva/default |\n";
 
         $this->processRunnerMock->expects($this->exactly(3)) // theme:list, config:set, cache:clean
             ->method('runMagentoCommand')
-            ->willReturnCallback(function ($command) use ($themeListOutput) {
-                if (str_contains($command, 'theme:list')) {
+            ->willReturnCallback(function (array $command) use ($themeListOutput) {
+                if (in_array('theme:list', $command, true)) {
                     return new ProcessResult(true, $themeListOutput);
                 }
                 return new ProcessResult(true, '');
@@ -63,21 +66,21 @@ class ThemeConfigurerTest extends TestCase
         $this->configurer->apply($themeConfig, '/var/www/magento', $this->output);
     }
 
-    public function test_apply_calls_config_set_with_theme_id(): void
+    public function testApplyCallsConfigSetWithThemeId(): void
     {
         $themeConfig = new ThemeConfiguration(install: true, theme: 'hyva-default');
         $themeListOutput = "| 4 | frontend | Hyva/default |\n";
 
         $this->processRunnerMock->expects($this->exactly(3))
             ->method('runMagentoCommand')
-            ->willReturnCallback(function ($command) use ($themeListOutput) {
-                if (str_contains($command, 'theme:list')) {
+            ->willReturnCallback(function (array $command) use ($themeListOutput) {
+                if (in_array('theme:list', $command, true)) {
                     return new ProcessResult(true, $themeListOutput);
                 }
-                if (str_contains($command, 'config:set design/theme/theme_id 4')) {
+                if (in_array('design/theme/theme_id', $command, true)) {
                     return new ProcessResult(true, 'Config saved');
                 }
-                if (str_contains($command, 'cache:clean')) {
+                if (in_array('cache:clean', $command, true)) {
                     return new ProcessResult(true, 'Cache cleaned');
                 }
                 return new ProcessResult(false, '', 'Unknown command');
@@ -88,7 +91,7 @@ class ThemeConfigurerTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function test_apply_clears_cache_after_theme_application(): void
+    public function testApplyClearsCacheAfterThemeApplication(): void
     {
         $themeConfig = new ThemeConfiguration(install: true, theme: 'hyva');
         $themeListOutput = "| 5 | frontend | Hyva/default |\n";
@@ -96,11 +99,11 @@ class ThemeConfigurerTest extends TestCase
         $cacheCleanCalled = false;
 
         $this->processRunnerMock->method('runMagentoCommand')
-            ->willReturnCallback(function ($command) use ($themeListOutput, &$cacheCleanCalled) {
-                if (str_contains($command, 'theme:list')) {
+            ->willReturnCallback(function (array $command) use ($themeListOutput, &$cacheCleanCalled) {
+                if (in_array('theme:list', $command, true)) {
                     return new ProcessResult(true, $themeListOutput);
                 }
-                if (str_contains($command, 'cache:clean')) {
+                if (in_array('cache:clean', $command, true)) {
                     $cacheCleanCalled = true;
                     return new ProcessResult(true, '');
                 }
@@ -112,7 +115,7 @@ class ThemeConfigurerTest extends TestCase
         $this->assertTrue($cacheCleanCalled, 'Cache should be cleared after theme application');
     }
 
-    public function test_apply_returns_false_when_theme_not_found(): void
+    public function testApplyReturnsFalseWhenThemeNotFound(): void
     {
         $themeConfig = new ThemeConfiguration(install: true, theme: 'nonexistent-theme');
         $themeListOutput = "| 4 | frontend | Luma |\n";
@@ -125,7 +128,7 @@ class ThemeConfigurerTest extends TestCase
         $this->assertFalse($result);
     }
 
-    public function test_apply_handles_theme_list_failure(): void
+    public function testApplyHandlesThemeListFailure(): void
     {
         $themeConfig = new ThemeConfiguration(install: true, theme: 'hyva');
 

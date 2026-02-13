@@ -49,7 +49,7 @@ class RedisDetector
      */
     private function isRedisAvailable(string $host, int $port): bool
     {
-        // phpcs:ignore Magento2.Functions.DiscouragedFunction
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction, Generic.PHP.NoSilencedErrors.Discouraged
         $connection = @fsockopen($host, $port, $errno, $errstr, 2);
 
         if (!$connection) {
@@ -57,8 +57,11 @@ class RedisDetector
         }
 
         // Try to send PING command
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
         fwrite($connection, "PING\r\n");
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
         $response = fgets($connection);
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
         fclose($connection);
 
         return str_contains((string)$response, 'PONG') || str_contains((string)$response, '+');

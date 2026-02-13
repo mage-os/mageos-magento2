@@ -25,7 +25,9 @@ class ComposerAuthManager
         $authFile = $baseDir . '/auth.json';
 
         // Load existing auth.json or create new structure
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
         if (file_exists($authFile)) {
+            // phpcs:ignore Magento2.Functions.DiscouragedFunction
             $authData = json_decode(file_get_contents($authFile), true);
             if (!is_array($authData)) {
                 $authData = [];
@@ -51,11 +53,13 @@ class ComposerAuthManager
             throw new \RuntimeException('Failed to encode auth.json');
         }
 
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
         if (file_put_contents($authFile, $json) === false) {
             throw new \RuntimeException('Failed to write auth.json');
         }
 
         // Set proper permissions
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
         chmod($authFile, 0600);
     }
 
@@ -71,10 +75,12 @@ class ComposerAuthManager
     {
         $composerFile = $baseDir . '/composer.json';
 
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
         if (!file_exists($composerFile)) {
             throw new \RuntimeException('composer.json not found');
         }
 
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
         $composerData = json_decode(file_get_contents($composerFile), true);
         if (!is_array($composerData)) {
             throw new \RuntimeException('Invalid composer.json');
@@ -112,6 +118,7 @@ class ComposerAuthManager
             throw new \RuntimeException('Failed to encode composer.json');
         }
 
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
         if (file_put_contents($composerFile, $json) === false) {
             throw new \RuntimeException('Failed to write composer.json');
         }

@@ -16,8 +16,11 @@ use Symfony\Component\Console\Output\BufferedOutput;
  */
 class TwoFactorAuthConfigurerTest extends TestCase
 {
+    /** @var ProcessRunner */
     private ProcessRunner $processRunnerMock;
+    /** @var TwoFactorAuthConfigurer */
     private TwoFactorAuthConfigurer $configurer;
+    /** @var BufferedOutput */
     private BufferedOutput $output;
 
     protected function setUp(): void
@@ -28,7 +31,7 @@ class TwoFactorAuthConfigurerTest extends TestCase
         $this->output = new BufferedOutput();
     }
 
-    public function test_configure_keeps_2fa_enabled_for_production(): void
+    public function testConfigureKeeps2faEnabledForProduction(): void
     {
         $prodEnv = new EnvironmentConfiguration(type: 'production', mageMode: 'production');
 
@@ -43,7 +46,7 @@ class TwoFactorAuthConfigurerTest extends TestCase
         $this->assertStringContainsString('2FA enabled', $outputContent);
     }
 
-    public function test_configure_returns_true_for_production(): void
+    public function testConfigureReturnsTrueForProduction(): void
     {
         $prodEnv = new EnvironmentConfiguration(type: 'production', mageMode: 'production');
 

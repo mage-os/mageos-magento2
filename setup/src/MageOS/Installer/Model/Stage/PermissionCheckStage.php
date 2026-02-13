@@ -15,6 +15,11 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class PermissionCheckStage extends AbstractStage
 {
+    /**
+     * Constructor
+     *
+     * @param PermissionChecker $permissionChecker
+     */
     public function __construct(
         private readonly PermissionChecker $permissionChecker
     ) {

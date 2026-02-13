@@ -14,6 +14,12 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class HyvaInstaller
 {
+    /**
+     * Constructor
+     *
+     * @param ComposerAuthManager $authManager
+     * @param ProcessRunner $processRunner
+     */
     public function __construct(
         private readonly ComposerAuthManager $authManager,
         private readonly ProcessRunner $processRunner
@@ -47,7 +53,9 @@ class HyvaInstaller
             $output->writeln('<info>  ✓ Repository configured</info>');
 
             // Step 3: Run composer require
-            $output->writeln('<comment>  → Installing Hyva theme via Composer (this may take a few minutes)...</comment>');
+            $output->writeln(
+                '<comment>  → Installing Hyva theme via Composer (this may take a few minutes)...</comment>'
+            );
 
             $result = $this->processRunner->run(
                 ['composer', 'require', 'hyva-themes/magento2-default-theme', '--no-interaction'],
@@ -61,16 +69,27 @@ class HyvaInstaller
 
                 // Check for common authentication errors
                 $outputText = $result->getCombinedOutput();
-                if (str_contains($outputText, '401') || str_contains($outputText, 'Unauthorized') || str_contains($outputText, 'authentication')) {
+                if (str_contains($outputText, '401')
+                    || str_contains($outputText, 'Unauthorized')
+                    || str_contains($outputText, 'authentication')
+                ) {
                     $output->writeln('<error>Authentication Error:</error>');
-                    $output->writeln('<comment>  Your Hyva license key or project name appears to be incorrect.</comment>');
-                    $output->writeln('<comment>  Please verify your credentials at: https://www.hyva.io/hyva-theme-license.html</comment>');
-                } elseif (str_contains($outputText, '404') || str_contains($outputText, 'Not Found')) {
+                    $output->writeln(
+                        '<comment>  Your Hyva license key or project name appears to be incorrect.</comment>'
+                    );
+                    $output->writeln(
+                        '<comment>  Please verify credentials at: https://www.hyva.io/hyva-theme-license.html</comment>'
+                    );
+                } elseif (str_contains($outputText, '404')
+                    || str_contains($outputText, 'Not Found')
+                ) {
                     $output->writeln('<error>Not Found Error:</error>');
-                    $output->writeln('<comment>  The Hyva package was not found. Please check your project name.</comment>');
+                    $output->writeln(
+                        '<comment>  The Hyva package was not found. Please check your project name.</comment>'
+                    );
                 } else {
                     $output->writeln('<comment>Composer output:</comment>');
-                    foreach ($composerOutput as $line) {
+                    foreach (explode("\n", $outputText) as $line) {
                         $output->writeln('  ' . $line);
                     }
                 }

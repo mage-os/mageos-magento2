@@ -20,6 +20,11 @@ use function Laravel\Prompts\warning;
  */
 class RedisConfig
 {
+    /**
+     * Constructor
+     *
+     * @param RedisDetector $redisDetector
+     */
     public function __construct(
         private readonly RedisDetector $redisDetector
     ) {
@@ -107,9 +112,9 @@ class RedisConfig
      * Collect configuration for specific Redis backend
      *
      * @param string $purpose
-     * @param int $defaultDb
-     * @param array{host: string, port: int} $defaultRedis
-     * @return array{enabled: bool, host: string, port: int, database: int}|null
+     * @param int    $defaultDb
+     * @param array  $defaultRedis
+     * @return array|null
      */
     private function collectRedisBackend(string $purpose, int $defaultDb, array $defaultRedis): ?array
     {

@@ -19,7 +19,9 @@ use Symfony\Component\Console\Output\BufferedOutput;
  */
 class StageNavigatorTest extends TestCase
 {
+    /** @var InstallationContext */
     private InstallationContext $context;
+    /** @var BufferedOutput */
     private BufferedOutput $output;
 
     protected function setUp(): void
@@ -29,7 +31,7 @@ class StageNavigatorTest extends TestCase
         $this->output = new BufferedOutput();
     }
 
-    public function test_executes_single_stage(): void
+    public function testExecutesSingleStage(): void
     {
         $stage = $this->createMockStage('Stage 1', StageResult::continue());
         $navigator = new StageNavigator([$stage]);
@@ -39,7 +41,7 @@ class StageNavigatorTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function test_executes_stages_in_order(): void
+    public function testExecutesStagesInOrder(): void
     {
         $executionOrder = [];
 
@@ -64,7 +66,7 @@ class StageNavigatorTest extends TestCase
         $this->assertEquals([1, 2, 3], $executionOrder);
     }
 
-    public function test_handles_continue_result(): void
+    public function testHandlesContinueResult(): void
     {
         $stage1 = $this->createMockStage('Stage 1', StageResult::continue());
         $stage2 = $this->createMockStage('Stage 2', StageResult::continue());
@@ -75,7 +77,7 @@ class StageNavigatorTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function test_handles_abort_result(): void
+    public function testHandlesAbortResult(): void
     {
         $stage1 = $this->createMockStage('Stage 1', StageResult::abort('User cancelled'));
 
@@ -85,7 +87,7 @@ class StageNavigatorTest extends TestCase
         $this->assertFalse($result);
     }
 
-    public function test_aborts_immediately_on_abort_result(): void
+    public function testAbortsImmediatelyOnAbortResult(): void
     {
         $stage1 = $this->createMockStage('Stage 1', StageResult::abort());
         $stage2 = $this->createMock(InstallationStageInterface::class);
@@ -95,12 +97,13 @@ class StageNavigatorTest extends TestCase
         $navigator->navigate($this->context, $this->output);
     }
 
-    public function test_handles_go_back_result(): void
+    public function testHandlesGoBackResult(): void
     {
         $executionOrder = [];
 
         $stage1 = $this->createMockStageWithCallback('Stage 1', function () use (&$executionOrder) {
-            $executionOrder[] = 'stage1-' . (count(array_filter($executionOrder, fn($v) => str_starts_with($v, 'stage1'))) + 1);
+            $count = count(array_filter($executionOrder, fn($v) => str_starts_with($v, 'stage1')));
+            $executionOrder[] = 'stage1-' . ($count + 1);
             return StageResult::continue();
         });
 
@@ -123,7 +126,7 @@ class StageNavigatorTest extends TestCase
         $this->assertContains('stage2-2', $executionOrder);
     }
 
-    public function test_handles_retry_result(): void
+    public function testHandlesRetryResult(): void
     {
         $callCount = 0;
 
@@ -139,7 +142,7 @@ class StageNavigatorTest extends TestCase
         $this->assertEquals(3, $callCount);
     }
 
-    public function test_skips_stages_that_should_be_skipped(): void
+    public function testSkipsStagesThatShouldBeSkipped(): void
     {
         $stage1 = $this->createMockStage('Stage 1', StageResult::continue(), shouldSkip: false);
         $stage2 = $this->createMockStage('Stage 2', StageResult::continue(), shouldSkip: true);
@@ -154,7 +157,7 @@ class StageNavigatorTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function test_get_total_weight_sums_all_stage_weights(): void
+    public function testGetTotalWeightSumsAllStageWeights(): void
     {
         $stage1 = $this->createMockStageWithWeight('Stage 1', 1);
         $stage2 = $this->createMockStageWithWeight('Stage 2', 5);
@@ -165,7 +168,7 @@ class StageNavigatorTest extends TestCase
         $this->assertEquals(16, $navigator->getTotalWeight());
     }
 
-    public function test_get_progress_calculates_percentage_correctly(): void
+    public function testGetProgressCalculatesPercentageCorrectly(): void
     {
         $stage1 = $this->createMockStageWithWeight('Stage 1', 10);
         $stage2 = $this->createMockStageWithWeight('Stage 2', 20);
@@ -179,7 +182,7 @@ class StageNavigatorTest extends TestCase
         $this->assertEquals(100, $navigator->getProgress(3)); // 60/60 = 100%
     }
 
-    public function test_get_progress_returns_zero_when_total_weight_is_zero(): void
+    public function testGetProgressReturnsZeroWhenTotalWeightIsZero(): void
     {
         $stage1 = $this->createMockStageWithWeight('Stage 1', 0);
         $stage2 = $this->createMockStageWithWeight('Stage 2', 0);
@@ -191,7 +194,7 @@ class StageNavigatorTest extends TestCase
         $this->assertEquals(0, $navigator->getProgress(2));
     }
 
-    public function test_get_step_display_counts_stages(): void
+    public function testGetStepDisplayCountsStages(): void
     {
         $stage1 = $this->createMockStage('Stage 1', StageResult::continue());
         $stage2 = $this->createMockStage('Stage 2', StageResult::continue());
@@ -204,7 +207,7 @@ class StageNavigatorTest extends TestCase
         $this->assertEquals(['current' => 3, 'total' => 3], $navigator->getStepDisplay(2));
     }
 
-    public function test_handles_empty_stage_list(): void
+    public function testHandlesEmptyStageList(): void
     {
         $navigator = new StageNavigator([]);
 
@@ -213,7 +216,7 @@ class StageNavigatorTest extends TestCase
         $this->assertTrue($result); // Completes successfully (nothing to do)
     }
 
-    public function test_back_navigation_doesnt_work_when_no_history(): void
+    public function testBackNavigationDoesntWorkWhenNoHistory(): void
     {
         $stage1 = $this->createMockStage('Stage 1', StageResult::back());
 

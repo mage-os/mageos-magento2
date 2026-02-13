@@ -24,6 +24,7 @@ class SearchEngineValidator
         $url = sprintf('http://%s:%d', $host, $port);
 
         try {
+            // phpcs:ignore Magento2.Functions.DiscouragedFunction
             $context = stream_context_create([
                 'http' => [
                     'method' => 'GET',
@@ -32,7 +33,7 @@ class SearchEngineValidator
                 ]
             ]);
 
-            // phpcs:ignore Magento2.Functions.DiscouragedFunction
+            // phpcs:ignore Magento2.Functions.DiscouragedFunction, Generic.PHP.NoSilencedErrors.Discouraged
             $response = @file_get_contents($url, false, $context);
 
             if ($response === false) {
@@ -72,11 +73,15 @@ class SearchEngineValidator
                 ];
             }
 
-            if (str_starts_with($engine, 'elasticsearch') && isset($data['version']['distribution']) && $data['version']['distribution'] === 'opensearch') {
+            if (str_starts_with($engine, 'elasticsearch')
+                && isset($data['version']['distribution'])
+                && $data['version']['distribution'] === 'opensearch'
+            ) {
                 return [
                     'success' => false,
                     'error' => sprintf(
-                        'Expected Elasticsearch at %s:%d but found OpenSearch. Please select "opensearch" as the engine type.',
+                        'Expected Elasticsearch at %s:%d but found OpenSearch.'
+                        . ' Please select "opensearch" as the engine type.',
                         $host,
                         $port
                     )
@@ -85,7 +90,7 @@ class SearchEngineValidator
 
             // Test cluster health
             $healthUrl = sprintf('%s/_cluster/health', $url);
-            // phpcs:ignore Magento2.Functions.DiscouragedFunction
+            // phpcs:ignore Magento2.Functions.DiscouragedFunction, Generic.PHP.NoSilencedErrors.Discouraged
             $healthResponse = @file_get_contents($healthUrl, false, $context);
 
             if ($healthResponse !== false) {

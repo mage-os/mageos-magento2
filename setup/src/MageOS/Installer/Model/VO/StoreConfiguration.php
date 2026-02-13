@@ -11,6 +11,13 @@ namespace MageOS\Installer\Model\VO;
  */
 class StoreConfiguration
 {
+    /**
+     * @param string $baseUrl
+     * @param string $language
+     * @param string $currency
+     * @param string $timezone
+     * @param bool $useRewrites
+     */
     public function __construct(
         public readonly string $baseUrl,
         public readonly string $language,
@@ -40,7 +47,7 @@ class StoreConfiguration
     /**
      * Create from array
      *
-     * @param array<string, mixed> $data
+     * @param array $data
      * @return self
      */
     public static function fromArray(array $data): self

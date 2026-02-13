@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
  */
 class InstallationContextTest extends TestCase
 {
-    public function test_it_constructs_with_null_properties(): void
+    public function testItConstructsWithNullProperties(): void
     {
         $context = new InstallationContext();
 
@@ -34,7 +34,7 @@ class InstallationContextTest extends TestCase
         $this->assertNull($context->getEmail());
     }
 
-    public function test_it_sets_and_gets_environment(): void
+    public function testItSetsAndGetsEnvironment(): void
     {
         $context = new InstallationContext();
         $environment = TestDataBuilder::validEnvironmentConfig();
@@ -44,7 +44,7 @@ class InstallationContextTest extends TestCase
         $this->assertSame($environment, $context->getEnvironment());
     }
 
-    public function test_it_sets_and_gets_database(): void
+    public function testItSetsAndGetsDatabase(): void
     {
         $context = new InstallationContext();
         $database = TestDataBuilder::validDatabaseConfig();
@@ -54,7 +54,7 @@ class InstallationContextTest extends TestCase
         $this->assertSame($database, $context->getDatabase());
     }
 
-    public function test_it_sets_and_gets_admin(): void
+    public function testItSetsAndGetsAdmin(): void
     {
         $context = new InstallationContext();
         $admin = TestDataBuilder::validAdminConfig();
@@ -64,7 +64,7 @@ class InstallationContextTest extends TestCase
         $this->assertSame($admin, $context->getAdmin());
     }
 
-    public function test_it_sets_and_gets_all_configurations(): void
+    public function testItSetsAndGetsAllConfigurations(): void
     {
         $context = TestDataBuilder::validInstallationContext();
 
@@ -83,7 +83,7 @@ class InstallationContextTest extends TestCase
         $this->assertNotNull($context->getEmail());
     }
 
-    public function test_get_sensitive_fields_returns_password_paths(): void
+    public function testGetSensitiveFieldsReturnsPasswordPaths(): void
     {
         $context = new InstallationContext();
         $sensitiveFields = $context->getSensitiveFields();
@@ -95,7 +95,7 @@ class InstallationContextTest extends TestCase
         $this->assertCount(4, $sensitiveFields);
     }
 
-    public function test_to_array_excludes_sensitive_data(): void
+    public function testToArrayExcludesSensitiveData(): void
     {
         $context = TestDataBuilder::validInstallationContext();
         $array = $context->toArray();
@@ -113,7 +113,7 @@ class InstallationContextTest extends TestCase
         $this->assertArrayNotHasKey('password', $array['admin']);
     }
 
-    public function test_to_array_includes_created_at_timestamp(): void
+    public function testToArrayIncludesCreatedAtTimestamp(): void
     {
         $context = new InstallationContext();
         $array = $context->toArray();
@@ -122,7 +122,7 @@ class InstallationContextTest extends TestCase
         $this->assertMatchesRegularExpression('/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/', $array['_created_at']);
     }
 
-    public function test_to_array_uses_correct_keys_for_serialization(): void
+    public function testToArrayUsesCorrectKeysForSerialization(): void
     {
         $context = TestDataBuilder::validInstallationContext();
         $array = $context->toArray();
@@ -134,13 +134,19 @@ class InstallationContextTest extends TestCase
         $this->assertArrayNotHasKey('rabbitMQ', $array);
     }
 
-    public function test_from_array_reconstructs_context(): void
+    public function testFromArrayReconstructsContext(): void
     {
         $data = [
             'environment' => ['type' => 'development', 'mageMode' => 'developer'],
             'database' => ['host' => 'localhost', 'name' => 'magento', 'user' => 'root', 'password' => ''],
-            'admin' => ['firstName' => 'John', 'lastName' => 'Doe', 'email' => 'test@test.com', 'username' => 'admin', 'password' => ''],
-            'store' => ['baseUrl' => 'https://test.local', 'language' => 'en_US', 'currency' => 'USD', 'timezone' => 'UTC', 'useRewrites' => true],
+            'admin' => [
+                'firstName' => 'John', 'lastName' => 'Doe', 'email' => 'test@test.com',
+                'username' => 'admin', 'password' => '',
+            ],
+            'store' => [
+                'baseUrl' => 'https://test.local', 'language' => 'en_US',
+                'currency' => 'USD', 'timezone' => 'UTC', 'useRewrites' => true,
+            ],
             'backend' => ['frontname' => 'admin'],
             'search' => ['engine' => 'opensearch', 'host' => 'localhost', 'port' => 9200, 'prefix' => ''],
             'logging' => ['debugMode' => false, 'logLevel' => 'error']
@@ -157,7 +163,7 @@ class InstallationContextTest extends TestCase
         $this->assertNotNull($context->getLogging());
     }
 
-    public function test_from_array_with_partial_data(): void
+    public function testFromArrayWithPartialData(): void
     {
         $data = [
             'database' => ['host' => 'localhost', 'name' => 'magento', 'user' => 'root', 'password' => '']
@@ -170,7 +176,7 @@ class InstallationContextTest extends TestCase
         $this->assertNull($context->getAdmin());
     }
 
-    public function test_round_trip_preserves_non_sensitive_data(): void
+    public function testRoundTripPreservesNonSensitiveData(): void
     {
         $original = TestDataBuilder::validInstallationContext();
         $array = $original->toArray();
@@ -191,7 +197,7 @@ class InstallationContextTest extends TestCase
         );
     }
 
-    public function test_round_trip_loses_sensitive_data(): void
+    public function testRoundTripLosesSensitiveData(): void
     {
         $original = TestDataBuilder::validInstallationContext();
         $array = $original->toArray();
@@ -202,14 +208,14 @@ class InstallationContextTest extends TestCase
         $this->assertEmpty($reconstructed->getAdmin()->password);
     }
 
-    public function test_is_ready_for_installation_returns_false_when_empty(): void
+    public function testIsReadyForInstallationReturnsFalseWhenEmpty(): void
     {
         $context = new InstallationContext();
 
         $this->assertFalse($context->isReadyForInstallation());
     }
 
-    public function test_is_ready_for_installation_returns_false_with_partial_config(): void
+    public function testIsReadyForInstallationReturnsFalseWithPartialConfig(): void
     {
         $context = new InstallationContext();
         $context->setDatabase(TestDataBuilder::validDatabaseConfig());
@@ -218,7 +224,7 @@ class InstallationContextTest extends TestCase
         $this->assertFalse($context->isReadyForInstallation());
     }
 
-    public function test_is_ready_for_installation_returns_true_with_minimum_required(): void
+    public function testIsReadyForInstallationReturnsTrueWithMinimumRequired(): void
     {
         $context = new InstallationContext();
         $context->setEnvironment(TestDataBuilder::validEnvironmentConfig());
@@ -232,7 +238,7 @@ class InstallationContextTest extends TestCase
         $this->assertTrue($context->isReadyForInstallation());
     }
 
-    public function test_get_missing_passwords_returns_empty_when_all_set(): void
+    public function testGetMissingPasswordsReturnsEmptyWhenAllSet(): void
     {
         $context = TestDataBuilder::validInstallationContext();
 
@@ -241,7 +247,7 @@ class InstallationContextTest extends TestCase
         $this->assertEmpty($missing);
     }
 
-    public function test_get_missing_passwords_detects_missing_database_password(): void
+    public function testGetMissingPasswordsDetectsMissingDatabasePassword(): void
     {
         $context = new InstallationContext();
         $database = new \MageOS\Installer\Model\VO\DatabaseConfiguration(
@@ -257,7 +263,7 @@ class InstallationContextTest extends TestCase
         $this->assertContains('database.password', $missing);
     }
 
-    public function test_get_missing_passwords_detects_missing_admin_password(): void
+    public function testGetMissingPasswordsDetectsMissingAdminPassword(): void
     {
         $context = new InstallationContext();
         $admin = TestDataBuilder::validAdminConfig();
@@ -276,7 +282,7 @@ class InstallationContextTest extends TestCase
         $this->assertContains('admin.password', $missing);
     }
 
-    public function test_get_missing_passwords_only_checks_rabbitmq_when_enabled(): void
+    public function testGetMissingPasswordsOnlyChecksRabbitmqWhenEnabled(): void
     {
         $context = new InstallationContext();
         $rabbitMQ = new \MageOS\Installer\Model\VO\RabbitMQConfiguration(
@@ -290,7 +296,7 @@ class InstallationContextTest extends TestCase
         $this->assertNotContains('rabbitMQ.password', $missing);
     }
 
-    public function test_get_missing_passwords_checks_rabbitmq_when_enabled(): void
+    public function testGetMissingPasswordsChecksRabbitmqWhenEnabled(): void
     {
         $context = new InstallationContext();
         $rabbitMQ = new \MageOS\Installer\Model\VO\RabbitMQConfiguration(
@@ -304,7 +310,7 @@ class InstallationContextTest extends TestCase
         $this->assertContains('rabbitMQ.password', $missing);
     }
 
-    public function test_get_missing_passwords_only_checks_email_when_configure_and_smtp(): void
+    public function testGetMissingPasswordsOnlyChecksEmailWhenConfigureAndSmtp(): void
     {
         $context = new InstallationContext();
 
@@ -336,7 +342,7 @@ class InstallationContextTest extends TestCase
         $this->assertContains('email.password', $context->getMissingPasswords());
     }
 
-    public function test_to_array_handles_null_configurations_gracefully(): void
+    public function testToArrayHandlesNullConfigurationsGracefully(): void
     {
         $context = new InstallationContext();
         $context->setDatabase(TestDataBuilder::validDatabaseConfig());

@@ -16,6 +16,11 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class StoreConfigStage extends AbstractStage
 {
+    /**
+     * Constructor
+     *
+     * @param StoreConfig $storeConfig
+     */
     public function __construct(
         private readonly StoreConfig $storeConfig
     ) {

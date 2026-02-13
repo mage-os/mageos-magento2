@@ -33,7 +33,7 @@ class DatabaseConfigurationTest extends AbstractVOTest
     /**
      * Test construction with all parameters
      */
-    public function test_it_constructs_with_all_parameters(): void
+    public function testItConstructsWithAllParameters(): void
     {
         $config = new DatabaseConfiguration(
             host: 'db.example.com',
@@ -53,7 +53,7 @@ class DatabaseConfigurationTest extends AbstractVOTest
     /**
      * Test construction with default prefix
      */
-    public function test_it_constructs_with_default_prefix(): void
+    public function testItConstructsWithDefaultPrefix(): void
     {
         $config = new DatabaseConfiguration(
             host: 'localhost',
@@ -68,7 +68,7 @@ class DatabaseConfigurationTest extends AbstractVOTest
     /**
      * Test toArray() contains all non-sensitive fields
      */
-    public function test_to_array_contains_all_non_sensitive_fields(): void
+    public function testToArrayContainsAllNonSensitiveFields(): void
     {
         $config = $this->createValidInstance();
         $array = $config->toArray(includeSensitive: false);
@@ -83,7 +83,7 @@ class DatabaseConfigurationTest extends AbstractVOTest
     /**
      * Test toArray() with includeSensitive=true
      */
-    public function test_to_array_with_sensitive_includes_password(): void
+    public function testToArrayWithSensitiveIncludesPassword(): void
     {
         $config = $this->createValidInstance();
         $array = $config->toArray(includeSensitive: true);
@@ -95,7 +95,7 @@ class DatabaseConfigurationTest extends AbstractVOTest
     /**
      * Test fromArray() with complete data
      */
-    public function test_from_array_with_complete_data(): void
+    public function testFromArrayWithCompleteData(): void
     {
         $data = [
             'host' => 'db.local',
@@ -117,7 +117,7 @@ class DatabaseConfigurationTest extends AbstractVOTest
     /**
      * Test fromArray() with missing optional fields
      */
-    public function test_from_array_with_missing_optional_fields(): void
+    public function testFromArrayWithMissingOptionalFields(): void
     {
         $data = [
             'host' => 'localhost',
@@ -134,7 +134,7 @@ class DatabaseConfigurationTest extends AbstractVOTest
     /**
      * Test fromArray() with missing required fields uses empty strings
      */
-    public function test_from_array_with_missing_required_fields(): void
+    public function testFromArrayWithMissingRequiredFields(): void
     {
         $data = ['host' => 'localhost'];
 
@@ -149,7 +149,7 @@ class DatabaseConfigurationTest extends AbstractVOTest
     /**
      * Test fromArray() with extra fields ignores them
      */
-    public function test_from_array_ignores_extra_fields(): void
+    public function testFromArrayIgnoresExtraFields(): void
     {
         $data = [
             'host' => 'localhost',
@@ -169,7 +169,7 @@ class DatabaseConfigurationTest extends AbstractVOTest
     /**
      * Test round-trip with sensitive data
      */
-    public function test_round_trip_with_sensitive_data(): void
+    public function testRoundTripWithSensitiveData(): void
     {
         $original = $this->createValidInstance();
         $array = $original->toArray(includeSensitive: true);
@@ -181,7 +181,7 @@ class DatabaseConfigurationTest extends AbstractVOTest
     /**
      * Test round-trip without sensitive data loses password
      */
-    public function test_round_trip_without_sensitive_loses_password(): void
+    public function testRoundTripWithoutSensitiveLosesPassword(): void
     {
         $original = $this->createValidInstance();
         $array = $original->toArray(includeSensitive: false);

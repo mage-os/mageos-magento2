@@ -13,6 +13,13 @@ use MageOS\Installer\Model\VO\Attribute\Sensitive;
  */
 class AdminConfiguration
 {
+    /**
+     * @param string $firstName
+     * @param string $lastName
+     * @param string $email
+     * @param string $username
+     * @param string $password
+     */
     public function __construct(
         public readonly string $firstName,
         public readonly string $lastName,
@@ -48,7 +55,7 @@ class AdminConfiguration
     /**
      * Create from array
      *
-     * @param array<string, string> $data
+     * @param array $data
      * @return self
      */
     public static function fromArray(array $data): self

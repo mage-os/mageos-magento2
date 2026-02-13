@@ -13,6 +13,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class SampleDataInstallationStage extends AbstractStage
 {
+    /**
+     * Constructor
+     *
+     * @param Application $application
+     */
     public function __construct(
         private readonly Application $application
     ) {

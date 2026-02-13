@@ -12,6 +12,7 @@ use PHPUnit\Framework\TestCase;
  */
 class UrlValidatorTest extends TestCase
 {
+    /** @var UrlValidator */
     private UrlValidator $validator;
 
     protected function setUp(): void
@@ -23,7 +24,7 @@ class UrlValidatorTest extends TestCase
     /**
      * @dataProvider validUrlProvider
      */
-    public function test_accepts_valid_urls(string $url): void
+    public function testAcceptsValidUrls(string $url): void
     {
         $result = $this->validator->validate($url);
 
@@ -34,7 +35,7 @@ class UrlValidatorTest extends TestCase
     /**
      * @dataProvider invalidUrlProvider
      */
-    public function test_rejects_invalid_urls(string $url, string $expectedError): void
+    public function testRejectsInvalidUrls(string $url, string $expectedError): void
     {
         $result = $this->validator->validate($url);
 
@@ -42,7 +43,7 @@ class UrlValidatorTest extends TestCase
         $this->assertEquals($expectedError, $result['error']);
     }
 
-    public function test_warns_about_http_usage(): void
+    public function testWarnsAboutHttpUsage(): void
     {
         $result = $this->validator->validate('http://example.com');
 
@@ -51,7 +52,7 @@ class UrlValidatorTest extends TestCase
         $this->assertStringContainsString('HTTPS', $result['warning']);
     }
 
-    public function test_no_warning_for_https(): void
+    public function testNoWarningForHttps(): void
     {
         $result = $this->validator->validate('https://example.com');
 
@@ -59,7 +60,7 @@ class UrlValidatorTest extends TestCase
         $this->assertNull($result['warning']);
     }
 
-    public function test_rejects_empty_url(): void
+    public function testRejectsEmptyUrl(): void
     {
         $result = $this->validator->validate('');
 
@@ -67,7 +68,7 @@ class UrlValidatorTest extends TestCase
         $this->assertEquals('URL cannot be empty', $result['error']);
     }
 
-    public function test_normalize_adds_scheme_when_missing(): void
+    public function testNormalizeAddsSchemeWhenMissing(): void
     {
         $result = $this->validator->normalize('example.com');
 
@@ -76,7 +77,7 @@ class UrlValidatorTest extends TestCase
         $this->assertContains('Added http:// prefix', $result['changes']);
     }
 
-    public function test_normalize_adds_trailing_slash(): void
+    public function testNormalizeAddsTrailingSlash(): void
     {
         $result = $this->validator->normalize('https://example.com');
 
@@ -85,7 +86,7 @@ class UrlValidatorTest extends TestCase
         $this->assertContains('Added trailing /', $result['changes']);
     }
 
-    public function test_normalize_no_changes_for_complete_url(): void
+    public function testNormalizeNoChangesForCompleteUrl(): void
     {
         $result = $this->validator->normalize('https://example.com/');
 
@@ -94,7 +95,7 @@ class UrlValidatorTest extends TestCase
         $this->assertEmpty($result['changes']);
     }
 
-    public function test_normalize_adds_both_scheme_and_slash(): void
+    public function testNormalizeAddsBothSchemeAndSlash(): void
     {
         $result = $this->validator->normalize('example.com');
 
@@ -103,7 +104,7 @@ class UrlValidatorTest extends TestCase
         $this->assertCount(2, $result['changes']);
     }
 
-    public function test_validate_admin_path_accepts_valid_paths(): void
+    public function testValidateAdminPathAcceptsValidPaths(): void
     {
         $validPaths = ['backend', 'admin-panel', 'secure_admin', 'admin123', 'my-backend'];
 
@@ -113,7 +114,7 @@ class UrlValidatorTest extends TestCase
         }
     }
 
-    public function test_validate_admin_path_rejects_empty(): void
+    public function testValidateAdminPathRejectsEmpty(): void
     {
         $result = $this->validator->validateAdminPath('');
 
@@ -121,7 +122,7 @@ class UrlValidatorTest extends TestCase
         $this->assertEquals('Admin path cannot be empty', $result['error']);
     }
 
-    public function test_validate_admin_path_rejects_special_characters(): void
+    public function testValidateAdminPathRejectsSpecialCharacters(): void
     {
         $result = $this->validator->validateAdminPath('admin/panel');
 
@@ -129,7 +130,7 @@ class UrlValidatorTest extends TestCase
         $this->assertStringContainsString('letters, numbers, underscores, and hyphens', $result['error']);
     }
 
-    public function test_validate_admin_path_warns_about_default_admin(): void
+    public function testValidateAdminPathWarnsAboutDefaultAdmin(): void
     {
         $result = $this->validator->validateAdminPath('admin');
 
@@ -137,7 +138,7 @@ class UrlValidatorTest extends TestCase
         $this->assertStringContainsString('not recommended', $result['warning']);
     }
 
-    public function test_validate_admin_path_no_warning_for_custom_path(): void
+    public function testValidateAdminPathNoWarningForCustomPath(): void
     {
         $result = $this->validator->validateAdminPath('backend');
 

@@ -15,8 +15,11 @@ use Symfony\Component\Console\Output\BufferedOutput;
  */
 class CronConfigurerTest extends TestCase
 {
+    /** @var ProcessRunner */
     private ProcessRunner $processRunnerMock;
+    /** @var CronConfigurer */
     private CronConfigurer $configurer;
+    /** @var BufferedOutput */
     private BufferedOutput $output;
 
     protected function setUp(): void
@@ -27,13 +30,13 @@ class CronConfigurerTest extends TestCase
         $this->output = new BufferedOutput();
     }
 
-    public function test_configure_returns_true_on_success(): void
+    public function testConfigureReturnsTrueOnSuccess(): void
     {
         $successResult = new ProcessResult(true, 'Cron configured');
 
         $this->processRunnerMock->expects($this->once())
             ->method('runMagentoCommand')
-            ->with('cron:install', '/var/www/magento', 30)
+            ->with(['cron:install'], '/var/www/magento', 30)
             ->willReturn($successResult);
 
         $result = $this->configurer->configure('/var/www/magento', $this->output);
@@ -41,7 +44,7 @@ class CronConfigurerTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function test_configure_returns_false_on_failure(): void
+    public function testConfigureReturnsFalseOnFailure(): void
     {
         $failureResult = new ProcessResult(false, '', 'Command failed');
 
@@ -53,19 +56,19 @@ class CronConfigurerTest extends TestCase
         $this->assertFalse($result);
     }
 
-    public function test_configure_calls_cron_install_command(): void
+    public function testConfigureCallsCronInstallCommand(): void
     {
         $successResult = new ProcessResult(true, '');
 
         $this->processRunnerMock->expects($this->once())
             ->method('runMagentoCommand')
-            ->with('cron:install', $this->anything(), $this->anything())
+            ->with(['cron:install'], $this->anything(), $this->anything())
             ->willReturn($successResult);
 
         $this->configurer->configure('/var/www/magento', $this->output);
     }
 
-    public function test_configure_uses_30_second_timeout(): void
+    public function testConfigureUses30SecondTimeout(): void
     {
         $successResult = new ProcessResult(true, '');
 
@@ -77,7 +80,7 @@ class CronConfigurerTest extends TestCase
         $this->configurer->configure('/var/www/magento', $this->output);
     }
 
-    public function test_configure_displays_success_message(): void
+    public function testConfigureDisplaysSuccessMessage(): void
     {
         $successResult = new ProcessResult(true, '');
 
@@ -90,7 +93,7 @@ class CronConfigurerTest extends TestCase
         $this->assertStringContainsString('Cron configured successfully', $outputContent);
     }
 
-    public function test_configure_displays_manual_instructions_on_failure(): void
+    public function testConfigureDisplaysManualInstructionsOnFailure(): void
     {
         $failureResult = new ProcessResult(false, '', 'Error');
 

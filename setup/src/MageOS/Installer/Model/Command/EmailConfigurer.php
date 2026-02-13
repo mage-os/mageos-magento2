@@ -14,6 +14,9 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class EmailConfigurer
 {
+    /**
+     * @param ProcessRunner $processRunner
+     */
     public function __construct(
         private readonly ProcessRunner $processRunner
     ) {
@@ -40,15 +43,15 @@ class EmailConfigurer
 
         // Configure SMTP
         $commands = [
-            sprintf('config:set system/smtp/host %s', $config->host),
-            sprintf('config:set system/smtp/port %d', $config->port),
+            ['config:set', 'system/smtp/host', $config->host],
+            ['config:set', 'system/smtp/port', (string) $config->port],
         ];
 
         if ($config->auth && $config->username) {
-            $commands[] = sprintf('config:set system/smtp/auth %s', $config->auth);
-            $commands[] = sprintf('config:set system/smtp/username %s', $config->username);
+            $commands[] = ['config:set', 'system/smtp/auth', $config->auth];
+            $commands[] = ['config:set', 'system/smtp/username', $config->username];
             if ($config->password) {
-                $commands[] = sprintf('config:set system/smtp/password %s', $config->password);
+                $commands[] = ['config:set', 'system/smtp/password', $config->password];
             }
         }
 
@@ -59,7 +62,10 @@ class EmailConfigurer
             if ($result->isFailure()) {
                 $output->writeln(' <error>❌</error>');
                 $output->writeln('<error>Email configuration failed: ' . $result->error . '</error>');
-                $output->writeln('<comment>Configure manually in Admin > Stores > Configuration > Advanced > System > Mail Sending Settings</comment>');
+                $output->writeln(
+                    '<comment>Configure manually in Admin > Stores > Configuration'
+                    . ' > Advanced > System > Mail Sending Settings</comment>'
+                );
                 return false;
             }
         }

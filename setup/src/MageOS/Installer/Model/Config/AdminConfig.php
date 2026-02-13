@@ -19,6 +19,12 @@ use function Laravel\Prompts\text;
  */
 class AdminConfig
 {
+    /**
+     * Constructor
+     *
+     * @param EmailValidator $emailValidator
+     * @param PasswordValidator $passwordValidator
+     */
     public function __construct(
         private readonly EmailValidator $emailValidator,
         private readonly PasswordValidator $passwordValidator

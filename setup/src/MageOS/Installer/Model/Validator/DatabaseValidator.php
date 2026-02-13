@@ -23,27 +23,18 @@ class DatabaseValidator
     public function validate(string $host, string $name, string $user, string $password): array
     {
         try {
-            // phpcs:ignore Magento2.Functions.DiscouragedFunction
-            $connection = @new \mysqli($host, $user, $password, $name);
-
-            if ($connection->connect_error) {
-                return [
-                    'success' => false,
-                    'error' => sprintf(
-                        'Database connection failed: %s (Error %s)',
-                        $connection->connect_error,
-                        $connection->connect_errno
-                    )
-                ];
-            }
-
-            $connection->close();
+            $dsn = sprintf('mysql:host=%s;dbname=%s;charset=utf8mb4', $host, $name);
+            $pdo = new \PDO($dsn, $user, $password, [
+                \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+                \PDO::ATTR_TIMEOUT => 5,
+            ]);
+            $pdo = null;
 
             return [
                 'success' => true,
                 'error' => null
             ];
-        } catch (\Exception $e) {
+        } catch (\PDOException $e) {
             return [
                 'success' => false,
                 'error' => 'Database connection failed: ' . $e->getMessage()
@@ -93,22 +84,19 @@ class DatabaseValidator
     {
         try {
             // Connect without specifying database
-            // phpcs:ignore Magento2.Functions.DiscouragedFunction
-            $connection = @new \mysqli($host, $user, $password);
+            $dsn = sprintf('mysql:host=%s;charset=utf8mb4', $host);
+            $pdo = new \PDO($dsn, $user, $password, [
+                \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+                \PDO::ATTR_TIMEOUT => 5,
+            ]);
 
-            if ($connection->connect_error) {
-                return [
-                    'created' => false,
-                    'existed' => false,
-                    'error' => sprintf('Cannot connect to MySQL server: %s', $connection->connect_error)
-                ];
-            }
+            // Check if database exists using prepared statement
+            $stmt = $pdo->prepare(
+                'SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = :name'
+            );
+            $stmt->execute(['name' => $name]);
 
-            // Check if database exists
-            $result = $connection->query("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '{$connection->real_escape_string($name)}'");
-
-            if ($result && $result->num_rows > 0) {
-                $connection->close();
+            if ($stmt->fetch()) {
                 return [
                     'created' => false,
                     'existed' => true,
@@ -116,31 +104,26 @@ class DatabaseValidator
                 ];
             }
 
-            // Try to create database
-            $createQuery = sprintf('CREATE DATABASE IF NOT EXISTS `%s` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci', $connection->real_escape_string($name));
-
-            if ($connection->query($createQuery)) {
-                $connection->close();
-                return [
-                    'created' => true,
-                    'existed' => false,
-                    'error' => null
-                ];
-            }
-
-            $error = $connection->error;
-            $connection->close();
+            // Database name is already validated by validateDatabaseName() to contain
+            // only [a-zA-Z0-9_-], so backtick-quoting is safe here.
+            // PDO prepared statements don't support parameterized identifiers.
+            $pdo->exec(
+                sprintf(
+                    'CREATE DATABASE IF NOT EXISTS `%s` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci',
+                    str_replace('`', '``', $name)
+                )
+            );
 
             return [
-                'created' => false,
+                'created' => true,
                 'existed' => false,
-                'error' => sprintf('Could not create database: %s', $error)
+                'error' => null
             ];
-        } catch (\Exception $e) {
+        } catch (\PDOException $e) {
             return [
                 'created' => false,
                 'existed' => false,
-                'error' => sprintf('Database creation failed: %s', $e->getMessage())
+                'error' => sprintf('Database operation failed: %s', $e->getMessage())
             ];
         }
     }

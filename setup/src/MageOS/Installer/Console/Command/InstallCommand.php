@@ -45,6 +45,35 @@ class InstallCommand extends Command
 {
     public const NAME = 'install';
 
+    /**
+     * @param EnvironmentConfig $environmentConfig
+     * @param DatabaseConfig $databaseConfig
+     * @param AdminConfig $adminConfig
+     * @param StoreConfig $storeConfig
+     * @param SearchEngineConfig $searchEngineConfig
+     * @param BackendConfig $backendConfig
+     * @param RedisConfig $redisConfig
+     * @param RabbitMQConfig $rabbitMQConfig
+     * @param LoggingConfig $loggingConfig
+     * @param SampleDataConfig $sampleDataConfig
+     * @param ThemeConfig $themeConfig
+     * @param CronConfig $cronConfig
+     * @param EmailConfig $emailConfig
+     * @param DocumentRootDetector $documentRootDetector
+     * @param EnvConfigWriter $envConfigWriter
+     * @param ThemeInstaller $themeInstaller
+     * @param PermissionChecker $permissionChecker
+     * @param ConfigFileManager $configFileManager
+     * @param PasswordValidator $passwordValidator
+     * @param ProcessRunner $processRunner
+     * @param CronConfigurer $cronConfigurer
+     * @param EmailConfigurer $emailConfigurer
+     * @param ModeConfigurer $modeConfigurer
+     * @param ThemeConfigurer $themeConfigurer
+     * @param IndexerConfigurer $indexerConfigurer
+     * @param TwoFactorAuthConfigurer $twoFactorAuthConfigurer
+     * @param string|null $name
+     */
     public function __construct(
         private readonly EnvironmentConfig $environmentConfig,
         private readonly DatabaseConfig $databaseConfig,
@@ -185,7 +214,9 @@ class InstallCommand extends Command
                 $this->configFileManager->saveContext($baseDir, $context);
                 $output->writeln('');
                 $output->writeln('<comment>Installation cancelled.</comment>');
-                $output->writeln('<comment>💡 Your configuration has been saved. Run "bin/magento install" to resume.</comment>');
+                $resumeHint = 'Your configuration has been saved.'
+                    . ' Run "bin/magento install" to resume.';
+                $output->writeln('<comment>' . $resumeHint . '</comment>');
                 return Command::FAILURE;
             }
 
@@ -205,14 +236,21 @@ class InstallCommand extends Command
                     $this->configFileManager->saveContext($baseDir, $context);
                 }
             } catch (\Exception $saveException) {
-                // If save fails, at least tell the user
-                $output->writeln('<comment>⚠️  Could not save configuration: ' . $saveException->getMessage() . '</comment>');
+                $output->writeln(
+                    '<comment>Could not save configuration: '
+                    . $saveException->getMessage() . '</comment>'
+                );
             }
 
             $output->writeln('');
-            $output->writeln('<error>Installation failed: ' . $e->getMessage() . '</error>');
+            $output->writeln(
+                '<error>Installation failed: '
+                . $e->getMessage() . '</error>'
+            );
             $output->writeln('');
-            $output->writeln('<comment>💡 Your configuration has been saved. Run "bin/magento install" to resume.</comment>');
+            $resumeHint = 'Your configuration has been saved.'
+                . ' Run "bin/magento install" to resume.';
+            $output->writeln('<comment>' . $resumeHint . '</comment>');
             return Command::FAILURE;
         }
     }

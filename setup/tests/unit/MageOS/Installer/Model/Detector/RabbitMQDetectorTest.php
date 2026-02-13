@@ -12,6 +12,7 @@ use PHPUnit\Framework\TestCase;
  */
 class RabbitMQDetectorTest extends TestCase
 {
+    /** @var RabbitMQDetector */
     private RabbitMQDetector $detector;
 
     protected function setUp(): void
@@ -20,14 +21,14 @@ class RabbitMQDetectorTest extends TestCase
         $this->detector = new RabbitMQDetector();
     }
 
-    public function test_detect_returns_null_or_array(): void
+    public function testDetectReturnsNullOrArray(): void
     {
         $result = $this->detector->detect();
 
         $this->assertTrue($result === null || is_array($result));
     }
 
-    public function test_detect_returns_correct_structure_when_found(): void
+    public function testDetectReturnsCorrectStructureWhenFound(): void
     {
         $result = $this->detector->detect();
 

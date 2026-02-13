@@ -16,6 +16,11 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class SampleDataConfigStage extends AbstractStage
 {
+    /**
+     * Constructor
+     *
+     * @param SampleDataConfig $sampleDataConfig
+     */
     public function __construct(
         private readonly SampleDataConfig $sampleDataConfig
     ) {

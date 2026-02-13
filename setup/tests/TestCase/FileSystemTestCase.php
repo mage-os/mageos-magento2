@@ -15,6 +15,8 @@ abstract class FileSystemTestCase extends TestCase
 {
     /**
      * Temporary directory for this test
+     *
+     * @var string
      */
     protected string $tempDir;
 
@@ -83,6 +85,10 @@ abstract class FileSystemTestCase extends TestCase
 
     /**
      * Assert that a temp file exists
+     *
+     * @param string $filename
+     * @param string $message
+     * @return void
      */
     protected function assertVirtualFileExists(string $filename, string $message = ''): void
     {
@@ -92,6 +98,10 @@ abstract class FileSystemTestCase extends TestCase
 
     /**
      * Assert that a temp file does not exist
+     *
+     * @param string $filename
+     * @param string $message
+     * @return void
      */
     protected function assertVirtualFileDoesNotExist(string $filename, string $message = ''): void
     {
@@ -101,6 +111,9 @@ abstract class FileSystemTestCase extends TestCase
 
     /**
      * Get content of a temp file
+     *
+     * @param string $filename
+     * @return string
      */
     protected function getVirtualFileContent(string $filename): string
     {
@@ -110,6 +123,9 @@ abstract class FileSystemTestCase extends TestCase
 
     /**
      * Recursively remove directory
+     *
+     * @param string $dir
+     * @return void
      */
     private function recursiveRemove(string $dir): void
     {

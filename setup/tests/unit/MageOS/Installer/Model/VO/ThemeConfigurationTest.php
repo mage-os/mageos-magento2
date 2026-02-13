@@ -25,7 +25,7 @@ class ThemeConfigurationTest extends AbstractVOTest
         return []; // No sensitive fields
     }
 
-    public function test_it_constructs_with_all_parameters(): void
+    public function testItConstructsWithAllParameters(): void
     {
         $config = new ThemeConfiguration(
             install: true,
@@ -36,7 +36,7 @@ class ThemeConfigurationTest extends AbstractVOTest
         $this->assertPropertyEquals($config, 'theme', 'hyva-custom');
     }
 
-    public function test_it_constructs_with_default_theme(): void
+    public function testItConstructsWithDefaultTheme(): void
     {
         $config = new ThemeConfiguration(install: false);
 
@@ -44,7 +44,7 @@ class ThemeConfigurationTest extends AbstractVOTest
         $this->assertPropertyEquals($config, 'theme', '');
     }
 
-    public function test_to_array_contains_all_fields(): void
+    public function testToArrayContainsAllFields(): void
     {
         $config = $this->createValidInstance();
         $array = $config->toArray();
@@ -55,7 +55,7 @@ class ThemeConfigurationTest extends AbstractVOTest
         $this->assertEquals('hyva-default', $array['theme']);
     }
 
-    public function test_from_array_with_complete_data(): void
+    public function testFromArrayWithCompleteData(): void
     {
         $data = [
             'install' => true,
@@ -68,7 +68,7 @@ class ThemeConfigurationTest extends AbstractVOTest
         $this->assertPropertyEquals($config, 'theme', 'luma');
     }
 
-    public function test_from_array_with_missing_fields_uses_defaults(): void
+    public function testFromArrayWithMissingFieldsUsesDefaults(): void
     {
         $data = [];
 
@@ -78,7 +78,7 @@ class ThemeConfigurationTest extends AbstractVOTest
         $this->assertPropertyEquals($config, 'theme', '');
     }
 
-    public function test_supports_various_themes(): void
+    public function testSupportsVariousThemes(): void
     {
         $themes = ['hyva-default', 'hyva-custom', 'luma', 'blank'];
 

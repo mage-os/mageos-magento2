@@ -16,6 +16,11 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class EnvironmentConfigStage extends AbstractStage
 {
+    /**
+     * Constructor
+     *
+     * @param EnvironmentConfig $environmentConfig
+     */
     public function __construct(
         private readonly EnvironmentConfig $environmentConfig
     ) {

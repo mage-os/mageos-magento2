@@ -12,6 +12,11 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class TwoFactorAuthConfigurer
 {
+    /**
+     * Constructor
+     *
+     * @param ProcessRunner $processRunner
+     */
     public function __construct(
         private readonly ProcessRunner $processRunner
     ) {
@@ -43,7 +48,7 @@ class TwoFactorAuthConfigurer
 
             if ($disable) {
                 $result = $this->processRunner->runMagentoCommand(
-                    'module:disable Magento_AdminAdobeImsTwoFactorAuth Magento_TwoFactorAuth',
+                    ['module:disable', 'Magento_AdminAdobeImsTwoFactorAuth', 'Magento_TwoFactorAuth'],
                     $baseDir,
                     timeout: 60
                 );
@@ -52,14 +57,16 @@ class TwoFactorAuthConfigurer
                     $output->writeln('<info>✓ 2FA disabled for development</info>');
 
                     // Run setup:upgrade to apply module changes
-                    $this->processRunner->runMagentoCommand('setup:upgrade', $baseDir, timeout: 120);
-                    $this->processRunner->runMagentoCommand('cache:flush', $baseDir, timeout: 30);
+                    $this->processRunner->runMagentoCommand(['setup:upgrade'], $baseDir, timeout: 120);
+                    $this->processRunner->runMagentoCommand(['cache:flush'], $baseDir, timeout: 30);
 
                     return true;
                 }
 
                 $output->writeln('<comment>⚠️  Could not disable 2FA automatically</comment>');
-                $output->writeln('<comment>   Disable manually: bin/magento module:disable Magento_TwoFactorAuth</comment>');
+                $output->writeln(
+                    '<comment>   Disable manually: bin/magento module:disable Magento_TwoFactorAuth</comment>'
+                );
                 return false;
             }
 

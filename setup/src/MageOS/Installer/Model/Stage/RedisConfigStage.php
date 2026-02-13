@@ -16,6 +16,11 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class RedisConfigStage extends AbstractStage
 {
+    /**
+     * Constructor
+     *
+     * @param RedisConfig $redisConfig
+     */
     public function __construct(
         private readonly RedisConfig $redisConfig
     ) {

@@ -25,7 +25,7 @@ class EnvironmentConfigurationTest extends AbstractVOTest
         return []; // No sensitive fields
     }
 
-    public function test_it_constructs_with_all_parameters(): void
+    public function testItConstructsWithAllParameters(): void
     {
         $config = new EnvironmentConfiguration(
             type: 'production',
@@ -36,7 +36,7 @@ class EnvironmentConfigurationTest extends AbstractVOTest
         $this->assertPropertyEquals($config, 'mageMode', 'production');
     }
 
-    public function test_is_development_returns_true_for_development_type(): void
+    public function testIsDevelopmentReturnsTrueForDevelopmentType(): void
     {
         $config = new EnvironmentConfiguration(
             type: 'development',
@@ -47,7 +47,7 @@ class EnvironmentConfigurationTest extends AbstractVOTest
         $this->assertFalse($config->isProduction());
     }
 
-    public function test_is_production_returns_true_for_production_type(): void
+    public function testIsProductionReturnsTrueForProductionType(): void
     {
         $config = new EnvironmentConfiguration(
             type: 'production',
@@ -58,7 +58,7 @@ class EnvironmentConfigurationTest extends AbstractVOTest
         $this->assertTrue($config->isProduction());
     }
 
-    public function test_to_array_contains_all_fields(): void
+    public function testToArrayContainsAllFields(): void
     {
         $config = $this->createValidInstance();
         $array = $config->toArray();
@@ -69,7 +69,7 @@ class EnvironmentConfigurationTest extends AbstractVOTest
         $this->assertEquals('developer', $array['mageMode']);
     }
 
-    public function test_from_array_with_complete_data(): void
+    public function testFromArrayWithCompleteData(): void
     {
         $data = [
             'type' => 'production',
@@ -82,7 +82,7 @@ class EnvironmentConfigurationTest extends AbstractVOTest
         $this->assertPropertyEquals($config, 'mageMode', 'production');
     }
 
-    public function test_from_array_with_missing_fields_uses_defaults(): void
+    public function testFromArrayWithMissingFieldsUsesDefaults(): void
     {
         $data = [];
 
@@ -92,7 +92,7 @@ class EnvironmentConfigurationTest extends AbstractVOTest
         $this->assertPropertyEquals($config, 'mageMode', 'developer');
     }
 
-    public function test_from_array_with_partial_data_uses_defaults_for_missing(): void
+    public function testFromArrayWithPartialDataUsesDefaultsForMissing(): void
     {
         $data = ['type' => 'staging'];
 

@@ -22,21 +22,21 @@ class CronConfigurationTest extends AbstractVOTest
         return []; // No sensitive fields
     }
 
-    public function test_it_constructs_with_configure_true(): void
+    public function testItConstructsWithConfigureTrue(): void
     {
         $config = new CronConfiguration(configure: true);
 
         $this->assertPropertyEquals($config, 'configure', true);
     }
 
-    public function test_it_constructs_with_configure_false(): void
+    public function testItConstructsWithConfigureFalse(): void
     {
         $config = new CronConfiguration(configure: false);
 
         $this->assertPropertyEquals($config, 'configure', false);
     }
 
-    public function test_to_array_contains_configure_field(): void
+    public function testToArrayContainsConfigureField(): void
     {
         $config = $this->createValidInstance();
         $array = $config->toArray();
@@ -45,7 +45,7 @@ class CronConfigurationTest extends AbstractVOTest
         $this->assertTrue($array['configure']);
     }
 
-    public function test_from_array_with_configure_true(): void
+    public function testFromArrayWithConfigureTrue(): void
     {
         $data = ['configure' => true];
 
@@ -54,7 +54,7 @@ class CronConfigurationTest extends AbstractVOTest
         $this->assertPropertyEquals($config, 'configure', true);
     }
 
-    public function test_from_array_with_configure_false(): void
+    public function testFromArrayWithConfigureFalse(): void
     {
         $data = ['configure' => false];
 
@@ -63,7 +63,7 @@ class CronConfigurationTest extends AbstractVOTest
         $this->assertPropertyEquals($config, 'configure', false);
     }
 
-    public function test_from_array_with_missing_field_defaults_to_false(): void
+    public function testFromArrayWithMissingFieldDefaultsToFalse(): void
     {
         $data = [];
 

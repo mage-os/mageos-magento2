@@ -12,6 +12,7 @@ use MageOS\Installer\Test\TestCase\FileSystemTestCase;
  */
 class DocumentRootDetectorTest extends FileSystemTestCase
 {
+    /** @var DocumentRootDetector */
     private DocumentRootDetector $detector;
 
     protected function setUp(): void
@@ -20,7 +21,7 @@ class DocumentRootDetectorTest extends FileSystemTestCase
         $this->detector = new DocumentRootDetector();
     }
 
-    public function test_detect_returns_expected_structure(): void
+    public function testDetectReturnsExpectedStructure(): void
     {
         $baseDir = $this->getVirtualFilePath('');
 
@@ -33,7 +34,7 @@ class DocumentRootDetectorTest extends FileSystemTestCase
         $this->assertIsString($result['recommendation']);
     }
 
-    public function test_detect_recommends_pub_for_security(): void
+    public function testDetectRecommendsPubForSecurity(): void
     {
         $baseDir = $this->getVirtualFilePath('');
 
@@ -42,7 +43,7 @@ class DocumentRootDetectorTest extends FileSystemTestCase
         $this->assertStringContainsString('security', $result['recommendation']);
     }
 
-    public function test_detect_handles_missing_directory(): void
+    public function testDetectHandlesMissingDirectory(): void
     {
         $baseDir = $this->getVirtualFilePath('nonexistent');
 

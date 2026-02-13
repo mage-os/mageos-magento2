@@ -24,7 +24,7 @@ use MageOS\Installer\Model\VO\ThemeConfiguration;
  *
  * Provides convenient methods to create valid test data for all VOs
  */
-final class TestDataBuilder
+class TestDataBuilder
 {
     /**
      * Create a valid DatabaseConfiguration for testing

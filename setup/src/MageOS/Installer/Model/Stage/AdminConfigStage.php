@@ -17,6 +17,12 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class AdminConfigStage extends AbstractStage
 {
+    /**
+     * Constructor
+     *
+     * @param AdminConfig $adminConfig
+     * @param PasswordValidator $passwordValidator
+     */
     public function __construct(
         private readonly AdminConfig $adminConfig,
         private readonly PasswordValidator $passwordValidator

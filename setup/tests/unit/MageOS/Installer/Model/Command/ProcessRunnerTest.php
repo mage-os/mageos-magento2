@@ -14,6 +14,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ProcessRunnerTest extends TestCase
 {
+    /** @var ProcessRunner */
     private ProcessRunner $runner;
 
     protected function setUp(): void
@@ -22,7 +23,7 @@ class ProcessRunnerTest extends TestCase
         $this->runner = new ProcessRunner();
     }
 
-    public function test_run_executes_successful_command(): void
+    public function testRunExecutesSuccessfulCommand(): void
     {
         $result = $this->runner->run(['echo', 'test'], getcwd());
 
@@ -30,14 +31,14 @@ class ProcessRunnerTest extends TestCase
         $this->assertStringContainsString('test', $result->output);
     }
 
-    public function test_run_captures_command_output(): void
+    public function testRunCapturesCommandOutput(): void
     {
         $result = $this->runner->run(['echo', 'hello world'], getcwd());
 
         $this->assertStringContainsString('hello world', $result->output);
     }
 
-    public function test_run_handles_command_failure(): void
+    public function testRunHandlesCommandFailure(): void
     {
         $result = $this->runner->run(['ls', '/nonexistent_directory_xyz'], getcwd());
 
@@ -45,14 +46,14 @@ class ProcessRunnerTest extends TestCase
         $this->assertNotEmpty($result->error);
     }
 
-    public function test_run_uses_specified_working_directory(): void
+    public function testRunUsesSpecifiedWorkingDirectory(): void
     {
         $result = $this->runner->run(['pwd'], '/tmp');
 
         $this->assertStringContainsString('/tmp', $result->output);
     }
 
-    public function test_run_handles_command_with_multiple_arguments(): void
+    public function testRunHandlesCommandWithMultipleArguments(): void
     {
         $result = $this->runner->run(['echo', 'arg1', 'arg2', 'arg3'], getcwd());
 
@@ -62,7 +63,7 @@ class ProcessRunnerTest extends TestCase
         $this->assertStringContainsString('arg3', $result->output);
     }
 
-    public function test_run_magento_command_builds_correct_command_array(): void
+    public function testRunMagentoCommandBuildsCorrectCommandArray(): void
     {
         // We can't actually run bin/magento in tests, but we can test command building
         // by using a safe command that demonstrates the array structure
@@ -71,7 +72,7 @@ class ProcessRunnerTest extends TestCase
         $this->assertTrue($result->isSuccess());
     }
 
-    public function test_run_magento_command_splits_command_string(): void
+    public function testRunMagentoCommandSplitsCommandString(): void
     {
         // Test that runMagentoCommand properly splits the command string
         // Using echo as a safe substitute for bin/magento
@@ -83,14 +84,14 @@ class ProcessRunnerTest extends TestCase
         $this->assertTrue($result->isSuccess());
     }
 
-    public function test_run_returns_process_result_object(): void
+    public function testRunReturnsProcessResultObject(): void
     {
         $result = $this->runner->run(['echo', 'test'], getcwd());
 
         $this->assertInstanceOf(\MageOS\Installer\Model\Command\ProcessResult::class, $result);
     }
 
-    public function test_run_handles_empty_output(): void
+    public function testRunHandlesEmptyOutput(): void
     {
         $result = $this->runner->run(['true'], getcwd()); // 'true' command produces no output
 
@@ -98,7 +99,7 @@ class ProcessRunnerTest extends TestCase
         $this->assertIsString($result->output);
     }
 
-    public function test_run_captures_error_output(): void
+    public function testRunCapturesErrorOutput(): void
     {
         // Use a command that writes to stderr
         $result = $this->runner->run(['sh', '-c', 'echo error >&2'], getcwd());

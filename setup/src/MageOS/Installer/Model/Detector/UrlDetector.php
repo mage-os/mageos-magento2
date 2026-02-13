@@ -45,6 +45,7 @@ class UrlDetector
         ];
 
         foreach ($envVars as $var) {
+            // phpcs:ignore Magento2.Functions.DiscouragedFunction
             $value = getenv($var);
             if ($value && is_string($value)) {
                 return rtrim($value, '/') . '/';
@@ -62,6 +63,7 @@ class UrlDetector
      */
     private function detectFromDirectory(string $baseDir): string
     {
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
         $dirName = basename($baseDir);
 
         // Common patterns for local development

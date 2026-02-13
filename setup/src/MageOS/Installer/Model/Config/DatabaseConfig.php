@@ -23,6 +23,12 @@ use function Laravel\Prompts\warning;
  */
 class DatabaseConfig
 {
+    /**
+     * Constructor
+     *
+     * @param DatabaseDetector $databaseDetector
+     * @param DatabaseValidator $databaseValidator
+     */
     public function __construct(
         private readonly DatabaseDetector $databaseDetector,
         private readonly DatabaseValidator $databaseValidator

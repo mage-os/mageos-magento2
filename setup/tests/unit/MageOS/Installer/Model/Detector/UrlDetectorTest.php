@@ -12,6 +12,7 @@ use PHPUnit\Framework\TestCase;
  */
 class UrlDetectorTest extends TestCase
 {
+    /** @var UrlDetector */
     private UrlDetector $detector;
 
     protected function setUp(): void
@@ -20,42 +21,42 @@ class UrlDetectorTest extends TestCase
         $this->detector = new UrlDetector();
     }
 
-    public function test_detect_returns_string(): void
+    public function testDetectReturnsString(): void
     {
         $result = $this->detector->detect('/var/www/magento');
 
         $this->assertIsString($result);
     }
 
-    public function test_detect_returns_url_with_trailing_slash(): void
+    public function testDetectReturnsUrlWithTrailingSlash(): void
     {
         $result = $this->detector->detect('/var/www/magento');
 
         $this->assertStringEndsWith('/', $result);
     }
 
-    public function test_detect_uses_directory_name_as_base(): void
+    public function testDetectUsesDirectoryNameAsBase(): void
     {
         $result = $this->detector->detect('/var/www/myshop');
 
         $this->assertStringContainsString('myshop', $result);
     }
 
-    public function test_detect_defaults_to_test_domain(): void
+    public function testDetectDefaultsToTestDomain(): void
     {
         $result = $this->detector->detect('/var/www/magento');
 
         $this->assertStringContainsString('.test', $result);
     }
 
-    public function test_detect_returns_http_url(): void
+    public function testDetectReturnsHttpUrl(): void
     {
         $result = $this->detector->detect('/var/www/magento');
 
         $this->assertStringStartsWith('http://', $result);
     }
 
-    public function test_detect_handles_various_directory_names(): void
+    public function testDetectHandlesVariousDirectoryNames(): void
     {
         $directories = [
             '/var/www/shop' => 'shop',

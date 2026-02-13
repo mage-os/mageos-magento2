@@ -16,6 +16,11 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class RabbitMQConfigStage extends AbstractStage
 {
+    /**
+     * Constructor
+     *
+     * @param RabbitMQConfig $rabbitMQConfig
+     */
     public function __construct(
         private readonly RabbitMQConfig $rabbitMQConfig
     ) {

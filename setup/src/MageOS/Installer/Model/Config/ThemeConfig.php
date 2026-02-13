@@ -19,6 +19,11 @@ use function Laravel\Prompts\text;
  */
 class ThemeConfig
 {
+    /**
+     * Constructor
+     *
+     * @param ThemeRegistry $themeRegistry
+     */
     public function __construct(
         private readonly ThemeRegistry $themeRegistry
     ) {

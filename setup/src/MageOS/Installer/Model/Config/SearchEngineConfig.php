@@ -23,6 +23,12 @@ use function Laravel\Prompts\warning;
  */
 class SearchEngineConfig
 {
+    /**
+     * Constructor
+     *
+     * @param SearchEngineDetector $searchEngineDetector
+     * @param SearchEngineValidator $searchEngineValidator
+     */
     public function __construct(
         private readonly SearchEngineDetector $searchEngineDetector,
         private readonly SearchEngineValidator $searchEngineValidator
@@ -103,8 +109,8 @@ class SearchEngineConfig
     /**
      * Collect search engine config manually
      *
-     * @param array<string, mixed>|null $detected
-     * @return array{engine: string, host: string, port: int, prefix: string}
+     * @param array|null $detected
+     * @return array
      */
     private function collectManualConfig(?array $detected): array
     {
@@ -152,7 +158,7 @@ class SearchEngineConfig
     /**
      * Test search engine connection
      *
-     * @param array{engine: string, host: string, port: int, prefix: string} $config
+     * @param array $config
      * @return bool
      */
     private function testConnection(array $config): bool

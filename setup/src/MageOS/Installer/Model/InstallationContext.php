@@ -29,18 +29,31 @@ use MageOS\Installer\Model\VO\ThemeConfiguration;
  */
 class InstallationContext
 {
+    /** @var EnvironmentConfiguration|null */
     private ?EnvironmentConfiguration $environment = null;
+    /** @var DatabaseConfiguration|null */
     private ?DatabaseConfiguration $database = null;
+    /** @var AdminConfiguration|null */
     private ?AdminConfiguration $admin = null;
+    /** @var StoreConfiguration|null */
     private ?StoreConfiguration $store = null;
+    /** @var BackendConfiguration|null */
     private ?BackendConfiguration $backend = null;
+    /** @var SearchEngineConfiguration|null */
     private ?SearchEngineConfiguration $searchEngine = null;
+    /** @var RedisConfiguration|null */
     private ?RedisConfiguration $redis = null;
+    /** @var RabbitMQConfiguration|null */
     private ?RabbitMQConfiguration $rabbitMQ = null;
+    /** @var LoggingConfiguration|null */
     private ?LoggingConfiguration $logging = null;
+    /** @var SampleDataConfiguration|null */
     private ?SampleDataConfiguration $sampleData = null;
+    /** @var ThemeConfiguration|null */
     private ?ThemeConfiguration $theme = null;
+    /** @var CronConfiguration|null */
     private ?CronConfiguration $cron = null;
+    /** @var EmailConfiguration|null */
     private ?EmailConfiguration $email = null;
 
     /**
@@ -318,6 +331,7 @@ class InstallationContext
 
     /**
      * Get list of sensitive field names that should be excluded from serialization
+     *
      * These will need to be re-prompted when resuming installation
      *
      * @return array<string>
@@ -409,7 +423,7 @@ class InstallationContext
      * Note: Sensitive fields (passwords) will be empty and
      * need to be re-collected.
      *
-     * @param array<string, array<string, mixed>> $data
+     * @param array $data
      * @return self
      */
     public static function fromArray(array $data): self

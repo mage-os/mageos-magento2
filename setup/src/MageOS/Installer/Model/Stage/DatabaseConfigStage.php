@@ -16,6 +16,11 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class DatabaseConfigStage extends AbstractStage
 {
+    /**
+     * Constructor
+     *
+     * @param DatabaseConfig $databaseConfig
+     */
     public function __construct(
         private readonly DatabaseConfig $databaseConfig
     ) {

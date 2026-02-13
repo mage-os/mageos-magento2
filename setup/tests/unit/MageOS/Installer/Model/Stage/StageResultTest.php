@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
  */
 class StageResultTest extends TestCase
 {
-    public function test_continue_factory_creates_continue_result(): void
+    public function testContinueFactoryCreatesContinueResult(): void
     {
         $result = StageResult::continue();
 
@@ -23,7 +23,7 @@ class StageResultTest extends TestCase
         $this->assertFalse($result->shouldAbort());
     }
 
-    public function test_back_factory_creates_back_result(): void
+    public function testBackFactoryCreatesBackResult(): void
     {
         $result = StageResult::back();
 
@@ -34,7 +34,7 @@ class StageResultTest extends TestCase
         $this->assertFalse($result->shouldAbort());
     }
 
-    public function test_retry_factory_creates_retry_result(): void
+    public function testRetryFactoryCreatesRetryResult(): void
     {
         $result = StageResult::retry();
 
@@ -45,7 +45,7 @@ class StageResultTest extends TestCase
         $this->assertFalse($result->shouldAbort());
     }
 
-    public function test_abort_factory_creates_abort_result(): void
+    public function testAbortFactoryCreatesAbortResult(): void
     {
         $result = StageResult::abort();
 
@@ -56,7 +56,7 @@ class StageResultTest extends TestCase
         $this->assertTrue($result->shouldAbort());
     }
 
-    public function test_factories_accept_optional_message(): void
+    public function testFactoriesAcceptOptionalMessage(): void
     {
         $continueResult = StageResult::continue('Moving forward');
         $backResult = StageResult::back('Going back');
@@ -69,14 +69,14 @@ class StageResultTest extends TestCase
         $this->assertEquals('Installation cancelled', $abortResult->message);
     }
 
-    public function test_factories_create_null_message_by_default(): void
+    public function testFactoriesCreateNullMessageByDefault(): void
     {
         $result = StageResult::continue();
 
         $this->assertNull($result->message);
     }
 
-    public function test_constructor_validates_status(): void
+    public function testConstructorValidatesStatus(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid stage result status: invalid');
@@ -84,7 +84,7 @@ class StageResultTest extends TestCase
         new StageResult('invalid');
     }
 
-    public function test_constructor_accepts_valid_statuses(): void
+    public function testConstructorAcceptsValidStatuses(): void
     {
         $validStatuses = [
             StageResult::CONTINUE,
@@ -99,7 +99,7 @@ class StageResultTest extends TestCase
         }
     }
 
-    public function test_properties_are_readonly(): void
+    public function testPropertiesAreReadonly(): void
     {
         $result = StageResult::continue('test');
 

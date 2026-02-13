@@ -24,14 +24,14 @@ class BackendConfigurationTest extends AbstractVOTest
         return []; // No sensitive fields
     }
 
-    public function test_it_constructs_with_frontname(): void
+    public function testItConstructsWithFrontname(): void
     {
         $config = new BackendConfiguration(frontname: 'backend');
 
         $this->assertPropertyEquals($config, 'frontname', 'backend');
     }
 
-    public function test_to_array_contains_frontname(): void
+    public function testToArrayContainsFrontname(): void
     {
         $config = $this->createValidInstance();
         $array = $config->toArray();
@@ -40,7 +40,7 @@ class BackendConfigurationTest extends AbstractVOTest
         $this->assertEquals('admin', $array['frontname']);
     }
 
-    public function test_from_array_with_frontname(): void
+    public function testFromArrayWithFrontname(): void
     {
         $data = ['frontname' => 'manage'];
 
@@ -49,7 +49,7 @@ class BackendConfigurationTest extends AbstractVOTest
         $this->assertPropertyEquals($config, 'frontname', 'manage');
     }
 
-    public function test_from_array_with_missing_frontname_uses_default(): void
+    public function testFromArrayWithMissingFrontnameUsesDefault(): void
     {
         $data = [];
 
@@ -58,7 +58,7 @@ class BackendConfigurationTest extends AbstractVOTest
         $this->assertPropertyEquals($config, 'frontname', 'admin');
     }
 
-    public function test_supports_custom_backend_paths(): void
+    public function testSupportsCustomBackendPaths(): void
     {
         $customPaths = ['admin', 'backend', 'manage', 'control', 'secure-admin-panel'];
 

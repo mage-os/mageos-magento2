@@ -31,7 +31,7 @@ class RedisConfigurationTest extends AbstractVOTest
         return []; // No sensitive fields
     }
 
-    public function test_it_constructs_with_all_parameters(): void
+    public function testItConstructsWithAllParameters(): void
     {
         $config = new RedisConfiguration(
             session: true,
@@ -54,7 +54,7 @@ class RedisConfigurationTest extends AbstractVOTest
         $this->assertPropertyEquals($config, 'fpcDb', 4);
     }
 
-    public function test_it_constructs_with_defaults(): void
+    public function testItConstructsWithDefaults(): void
     {
         $config = new RedisConfiguration(
             session: false,
@@ -69,7 +69,7 @@ class RedisConfigurationTest extends AbstractVOTest
         $this->assertPropertyEquals($config, 'fpcDb', 2);
     }
 
-    public function test_is_enabled_returns_true_when_any_feature_enabled(): void
+    public function testIsEnabledReturnsTrueWhenAnyFeatureEnabled(): void
     {
         $testCases = [
             [true, false, false, true],  // session only
@@ -94,7 +94,7 @@ class RedisConfigurationTest extends AbstractVOTest
         }
     }
 
-    public function test_from_array_with_flat_format(): void
+    public function testFromArrayWithFlatFormat(): void
     {
         $data = [
             'session' => true,
@@ -119,7 +119,7 @@ class RedisConfigurationTest extends AbstractVOTest
         $this->assertPropertyEquals($config, 'fpcDb', 6);
     }
 
-    public function test_from_array_with_nested_format(): void
+    public function testFromArrayWithNestedFormat(): void
     {
         $data = [
             'session' => [
@@ -150,7 +150,7 @@ class RedisConfigurationTest extends AbstractVOTest
         $this->assertPropertyEquals($config, 'cacheDb', 1);
     }
 
-    public function test_from_array_nested_format_uses_first_available_host(): void
+    public function testFromArrayNestedFormatUsesFirstAvailableHost(): void
     {
         // When features have different hosts, use first available
         $data = [
@@ -164,7 +164,7 @@ class RedisConfigurationTest extends AbstractVOTest
         $this->assertPropertyEquals($config, 'host', 'cache.redis');
     }
 
-    public function test_from_array_with_missing_fields_uses_defaults(): void
+    public function testFromArrayWithMissingFieldsUsesDefaults(): void
     {
         $data = [];
 
@@ -180,7 +180,7 @@ class RedisConfigurationTest extends AbstractVOTest
         $this->assertPropertyEquals($config, 'fpcDb', 2);
     }
 
-    public function test_from_array_coerces_port_to_int(): void
+    public function testFromArrayCoercesPortToInt(): void
     {
         $data = [
             'session' => true,
@@ -195,7 +195,7 @@ class RedisConfigurationTest extends AbstractVOTest
         $this->assertIsInt($config->port);
     }
 
-    public function test_to_array_contains_all_fields(): void
+    public function testToArrayContainsAllFields(): void
     {
         $config = $this->createValidInstance();
         $array = $config->toArray();

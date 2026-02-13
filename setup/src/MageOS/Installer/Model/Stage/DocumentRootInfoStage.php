@@ -15,6 +15,11 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class DocumentRootInfoStage extends AbstractStage
 {
+    /**
+     * Constructor
+     *
+     * @param DocumentRootDetector $documentRootDetector
+     */
     public function __construct(
         private readonly DocumentRootDetector $documentRootDetector
     ) {

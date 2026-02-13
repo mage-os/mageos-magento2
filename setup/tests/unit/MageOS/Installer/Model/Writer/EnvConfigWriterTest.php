@@ -17,7 +17,9 @@ use PHPUnit\Framework\TestCase;
  */
 class EnvConfigWriterTest extends TestCase
 {
+    /** @var Writer */
     private Writer $writerMock;
+    /** @var EnvConfigWriter */
     private EnvConfigWriter $envWriter;
 
     protected function setUp(): void
@@ -27,7 +29,7 @@ class EnvConfigWriterTest extends TestCase
         $this->envWriter = new EnvConfigWriter($this->writerMock);
     }
 
-    public function test_write_redis_config_with_session_only(): void
+    public function testWriteRedisConfigWithSessionOnly(): void
     {
         $redisConfig = [
             'session' => true,
@@ -54,7 +56,7 @@ class EnvConfigWriterTest extends TestCase
         $this->envWriter->writeRedisConfig($redisConfig);
     }
 
-    public function test_write_redis_config_with_cache_only(): void
+    public function testWriteRedisConfigWithCacheOnly(): void
     {
         $redisConfig = [
             'session' => false,
@@ -80,7 +82,7 @@ class EnvConfigWriterTest extends TestCase
         $this->envWriter->writeRedisConfig($redisConfig);
     }
 
-    public function test_write_redis_config_with_fpc_only(): void
+    public function testWriteRedisConfigWithFpcOnly(): void
     {
         $redisConfig = [
             'session' => false,
@@ -106,7 +108,7 @@ class EnvConfigWriterTest extends TestCase
         $this->envWriter->writeRedisConfig($redisConfig);
     }
 
-    public function test_write_redis_config_with_all_features_enabled(): void
+    public function testWriteRedisConfigWithAllFeaturesEnabled(): void
     {
         $redisConfig = [
             'session' => true,
@@ -134,7 +136,7 @@ class EnvConfigWriterTest extends TestCase
         $this->envWriter->writeRedisConfig($redisConfig);
     }
 
-    public function test_write_redis_config_uses_correct_database_numbers(): void
+    public function testWriteRedisConfigUsesCorrectDatabaseNumbers(): void
     {
         $redisConfig = [
             'session' => true,
@@ -162,7 +164,7 @@ class EnvConfigWriterTest extends TestCase
         $this->envWriter->writeRedisConfig($redisConfig);
     }
 
-    public function test_write_redis_config_converts_port_to_string(): void
+    public function testWriteRedisConfigConvertsPortToString(): void
     {
         $redisConfig = [
             'session' => true,
@@ -187,7 +189,7 @@ class EnvConfigWriterTest extends TestCase
         $this->envWriter->writeRedisConfig($redisConfig);
     }
 
-    public function test_write_redis_config_with_nested_format(): void
+    public function testWriteRedisConfigWithNestedFormat(): void
     {
         $redisConfig = [
             'session' => [
@@ -218,7 +220,7 @@ class EnvConfigWriterTest extends TestCase
         $this->envWriter->writeRedisConfig($redisConfig);
     }
 
-    public function test_write_redis_config_doesnt_write_when_all_disabled(): void
+    public function testWriteRedisConfigDoesntWriteWhenAllDisabled(): void
     {
         $redisConfig = [
             'session' => false,
@@ -235,7 +237,7 @@ class EnvConfigWriterTest extends TestCase
         $this->envWriter->writeRedisConfig($redisConfig);
     }
 
-    public function test_write_rabbitmq_config_when_enabled(): void
+    public function testWriteRabbitmqConfigWhenEnabled(): void
     {
         $rabbitMqConfig = [
             'enabled' => true,
@@ -264,7 +266,7 @@ class EnvConfigWriterTest extends TestCase
         $this->envWriter->writeRabbitMQConfig($rabbitMqConfig);
     }
 
-    public function test_write_rabbitmq_config_handles_lowercase_virtualhost(): void
+    public function testWriteRabbitmqConfigHandlesLowercaseVirtualhost(): void
     {
         $rabbitMqConfig = [
             'enabled' => true,
@@ -288,7 +290,7 @@ class EnvConfigWriterTest extends TestCase
         $this->envWriter->writeRabbitMQConfig($rabbitMqConfig);
     }
 
-    public function test_write_rabbitmq_config_prefers_camelcase_virtualhost(): void
+    public function testWriteRabbitmqConfigPrefersCamelcaseVirtualhost(): void
     {
         $rabbitMqConfig = [
             'enabled' => true,
@@ -313,7 +315,7 @@ class EnvConfigWriterTest extends TestCase
         $this->envWriter->writeRabbitMQConfig($rabbitMqConfig);
     }
 
-    public function test_write_rabbitmq_config_doesnt_write_when_disabled(): void
+    public function testWriteRabbitmqConfigDoesntWriteWhenDisabled(): void
     {
         $rabbitMqConfig = [
             'enabled' => false,
@@ -329,7 +331,7 @@ class EnvConfigWriterTest extends TestCase
         $this->envWriter->writeRabbitMQConfig($rabbitMqConfig);
     }
 
-    public function test_write_rabbitmq_config_doesnt_write_when_empty_array(): void
+    public function testWriteRabbitmqConfigDoesntWriteWhenEmptyArray(): void
     {
         $rabbitMqConfig = [];
 
@@ -339,7 +341,7 @@ class EnvConfigWriterTest extends TestCase
         $this->envWriter->writeRabbitMQConfig($rabbitMqConfig);
     }
 
-    public function test_write_redis_config_uses_merge_mode(): void
+    public function testWriteRedisConfigUsesMergeMode(): void
     {
         $redisConfig = TestDataBuilder::validRedisConfig()->toArray();
 
@@ -353,7 +355,7 @@ class EnvConfigWriterTest extends TestCase
         $this->envWriter->writeRedisConfig($redisConfig);
     }
 
-    public function test_write_rabbitmq_config_uses_merge_mode(): void
+    public function testWriteRabbitmqConfigUsesMergeMode(): void
     {
         $rabbitMqConfig = TestDataBuilder::validRabbitMQConfig()->toArray();
 

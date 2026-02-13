@@ -11,6 +11,9 @@ namespace MageOS\Installer\Model\VO;
  */
 class CronConfiguration
 {
+    /**
+     * @param bool $configure
+     */
     public function __construct(
         public readonly bool $configure
     ) {
@@ -32,7 +35,7 @@ class CronConfiguration
     /**
      * Create from array
      *
-     * @param array<string, mixed> $data
+     * @param array $data
      * @return self
      */
     public static function fromArray(array $data): self

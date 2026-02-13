@@ -11,6 +11,10 @@ namespace MageOS\Installer\Model\VO;
  */
 class EnvironmentConfiguration
 {
+    /**
+     * @param string $type
+     * @param string $mageMode
+     */
     public function __construct(
         public readonly string $type,
         public readonly string $mageMode
@@ -54,7 +58,7 @@ class EnvironmentConfiguration
     /**
      * Create from array
      *
-     * @param array<string, mixed> $data
+     * @param array $data
      * @return self
      */
     public static function fromArray(array $data): self

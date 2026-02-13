@@ -24,7 +24,9 @@ class DocumentRootDetector
 
         // Check if there's a .htaccess in root that redirects to pub
         $rootHtaccess = $baseDir . '/.htaccess';
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
         if (file_exists($rootHtaccess)) {
+            // phpcs:ignore Magento2.Functions.DiscouragedFunction
             $content = file_get_contents($rootHtaccess);
             if ($content !== false && str_contains($content, 'RewriteRule .* pub/$0 [L]')) {
                 $isPub = false;
@@ -33,8 +35,10 @@ class DocumentRootDetector
         }
 
         // Check if pub/index.php exists (standard Magento structure)
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
         if (file_exists($baseDir . '/pub/index.php')) {
             // If SCRIPT_FILENAME contains /pub/, we're likely using pub as doc root
+            // phpcs:ignore Magento2.Security.Superglobal
             $scriptFile = $_SERVER['SCRIPT_FILENAME'] ?? '';
             if (str_contains($scriptFile, '/pub/')) {
                 $isPub = true;

@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ProcessResultTest extends TestCase
 {
-    public function test_it_constructs_with_success(): void
+    public function testItConstructsWithSuccess(): void
     {
         $result = new ProcessResult(
             success: true,
@@ -25,7 +25,7 @@ class ProcessResultTest extends TestCase
         $this->assertEquals('', $result->error);
     }
 
-    public function test_it_constructs_with_failure(): void
+    public function testItConstructsWithFailure(): void
     {
         $result = new ProcessResult(
             success: false,
@@ -38,7 +38,7 @@ class ProcessResultTest extends TestCase
         $this->assertEquals('Error message', $result->error);
     }
 
-    public function test_is_success_returns_true_for_successful_result(): void
+    public function testIsSuccessReturnsTrueForSuccessfulResult(): void
     {
         $result = new ProcessResult(true, 'output');
 
@@ -46,7 +46,7 @@ class ProcessResultTest extends TestCase
         $this->assertFalse($result->isFailure());
     }
 
-    public function test_is_failure_returns_true_for_failed_result(): void
+    public function testIsFailureReturnsTrueForFailedResult(): void
     {
         $result = new ProcessResult(false, '', 'error');
 
@@ -54,14 +54,14 @@ class ProcessResultTest extends TestCase
         $this->assertFalse($result->isSuccess());
     }
 
-    public function test_get_combined_output_with_output_only(): void
+    public function testGetCombinedOutputWithOutputOnly(): void
     {
         $result = new ProcessResult(true, 'Command output', '');
 
         $this->assertEquals('Command output', $result->getCombinedOutput());
     }
 
-    public function test_get_combined_output_with_error_only(): void
+    public function testGetCombinedOutputWithErrorOnly(): void
     {
         $result = new ProcessResult(false, '', 'Error message');
 
@@ -70,7 +70,7 @@ class ProcessResultTest extends TestCase
         $this->assertStringContainsString('Error message', $combined);
     }
 
-    public function test_get_combined_output_with_both(): void
+    public function testGetCombinedOutputWithBoth(): void
     {
         $result = new ProcessResult(false, 'Output line', 'Error line');
 
@@ -81,7 +81,7 @@ class ProcessResultTest extends TestCase
         $this->assertStringContainsString(PHP_EOL, $combined);
     }
 
-    public function test_properties_are_readonly(): void
+    public function testPropertiesAreReadonly(): void
     {
         $result = new ProcessResult(true, 'test');
 
@@ -95,7 +95,7 @@ class ProcessResultTest extends TestCase
         $this->assertTrue($errorProperty->isReadOnly());
     }
 
-    public function test_error_defaults_to_empty_string(): void
+    public function testErrorDefaultsToEmptyString(): void
     {
         $result = new ProcessResult(success: true, output: 'test');
 

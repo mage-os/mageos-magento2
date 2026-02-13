@@ -13,6 +13,14 @@ use MageOS\Installer\Model\VO\Attribute\Sensitive;
  */
 class RabbitMQConfiguration
 {
+    /**
+     * @param bool $enabled
+     * @param string $host
+     * @param int $port
+     * @param string $user
+     * @param string $password
+     * @param string $virtualHost
+     */
     public function __construct(
         public readonly bool $enabled,
         public readonly string $host = 'localhost',
@@ -50,7 +58,7 @@ class RabbitMQConfiguration
     /**
      * Create from array
      *
-     * @param array<string, mixed>|null $data
+     * @param array|null $data
      * @return self
      */
     public static function fromArray(?array $data): self

@@ -11,6 +11,12 @@ namespace MageOS\Installer\Model\VO;
  */
 class SearchEngineConfiguration
 {
+    /**
+     * @param string $engine
+     * @param string $host
+     * @param int $port
+     * @param string $prefix
+     */
     public function __construct(
         public readonly string $engine,
         public readonly string $host,
@@ -68,7 +74,7 @@ class SearchEngineConfiguration
     /**
      * Create from array
      *
-     * @param array<string, mixed> $data
+     * @param array $data
      * @return self
      */
     public static function fromArray(array $data): self

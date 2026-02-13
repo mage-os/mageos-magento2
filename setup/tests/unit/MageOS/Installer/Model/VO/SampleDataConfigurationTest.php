@@ -22,21 +22,21 @@ class SampleDataConfigurationTest extends AbstractVOTest
         return []; // No sensitive fields
     }
 
-    public function test_it_constructs_with_install_true(): void
+    public function testItConstructsWithInstallTrue(): void
     {
         $config = new SampleDataConfiguration(install: true);
 
         $this->assertPropertyEquals($config, 'install', true);
     }
 
-    public function test_it_constructs_with_install_false(): void
+    public function testItConstructsWithInstallFalse(): void
     {
         $config = new SampleDataConfiguration(install: false);
 
         $this->assertPropertyEquals($config, 'install', false);
     }
 
-    public function test_to_array_contains_install_field(): void
+    public function testToArrayContainsInstallField(): void
     {
         $config = $this->createValidInstance();
         $array = $config->toArray();
@@ -45,7 +45,7 @@ class SampleDataConfigurationTest extends AbstractVOTest
         $this->assertTrue($array['install']);
     }
 
-    public function test_from_array_with_install_true(): void
+    public function testFromArrayWithInstallTrue(): void
     {
         $data = ['install' => true];
 
@@ -54,7 +54,7 @@ class SampleDataConfigurationTest extends AbstractVOTest
         $this->assertPropertyEquals($config, 'install', true);
     }
 
-    public function test_from_array_with_install_false(): void
+    public function testFromArrayWithInstallFalse(): void
     {
         $data = ['install' => false];
 
@@ -63,7 +63,7 @@ class SampleDataConfigurationTest extends AbstractVOTest
         $this->assertPropertyEquals($config, 'install', false);
     }
 
-    public function test_from_array_with_missing_field_defaults_to_false(): void
+    public function testFromArrayWithMissingFieldDefaultsToFalse(): void
     {
         $data = [];
 

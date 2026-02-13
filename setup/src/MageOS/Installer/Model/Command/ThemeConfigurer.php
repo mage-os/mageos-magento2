@@ -12,6 +12,9 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class ThemeConfigurer
 {
+    /**
+     * @param ProcessRunner $processRunner
+     */
     public function __construct(
         private readonly ProcessRunner $processRunner
     ) {
@@ -40,13 +43,16 @@ class ThemeConfigurer
         if ($themeId === null) {
             $output->writeln(' <comment>⚠️</comment>');
             $output->writeln("<comment>⚠️  Could not find theme '{$themeConfig->theme}' in registry</comment>");
-            $output->writeln('<comment>   You can apply it manually from Admin > Content > Design > Configuration</comment>');
+            $output->writeln(
+                '<comment>   You can apply it manually from Admin'
+                . ' > Content > Design > Configuration</comment>'
+            );
             return false;
         }
 
         // Apply theme to default store view (store_id = 0 = all stores)
         $result = $this->processRunner->runMagentoCommand(
-            "config:set design/theme/theme_id {$themeId} --scope=default --scope-code=0",
+            ['config:set', 'design/theme/theme_id', (string) $themeId, '--scope=default', '--scope-code=0'],
             $baseDir,
             timeout: 30
         );
@@ -56,7 +62,11 @@ class ThemeConfigurer
             $output->writeln("<info>✓ Theme '{$themeConfig->theme}' applied successfully!</info>");
 
             // Clear relevant caches
-            $this->processRunner->runMagentoCommand('cache:clean config layout full_page', $baseDir, timeout: 30);
+            $this->processRunner->runMagentoCommand(
+                ['cache:clean', 'config', 'layout', 'full_page'],
+                $baseDir,
+                timeout: 30
+            );
 
             return true;
         }
@@ -77,7 +87,7 @@ class ThemeConfigurer
     {
         // Try to find theme using CLI
         $result = $this->processRunner->runMagentoCommand(
-            'theme:list',
+            ['theme:list'],
             $baseDir,
             timeout: 30
         );

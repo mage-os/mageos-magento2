@@ -15,6 +15,11 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class ServiceConfigurationStage extends AbstractStage
 {
+    /**
+     * Constructor
+     *
+     * @param EnvConfigWriter $envConfigWriter
+     */
     public function __construct(
         private readonly EnvConfigWriter $envConfigWriter
     ) {

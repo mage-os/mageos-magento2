@@ -28,7 +28,7 @@ class AdminConfigurationTest extends AbstractVOTest
         return ['password'];
     }
 
-    public function test_it_constructs_with_all_parameters(): void
+    public function testItConstructsWithAllParameters(): void
     {
         $config = new AdminConfiguration(
             firstName: 'Jane',
@@ -45,7 +45,7 @@ class AdminConfigurationTest extends AbstractVOTest
         $this->assertPropertyEquals($config, 'password', 'SecurePass123!');
     }
 
-    public function test_to_array_excludes_password_by_default(): void
+    public function testToArrayExcludesPasswordByDefault(): void
     {
         $config = $this->createValidInstance();
         $array = $config->toArray();
@@ -57,7 +57,7 @@ class AdminConfigurationTest extends AbstractVOTest
         $this->assertArrayNotHasKey('password', $array);
     }
 
-    public function test_from_array_with_complete_data(): void
+    public function testFromArrayWithCompleteData(): void
     {
         $data = [
             'firstName' => 'Test',
@@ -76,7 +76,7 @@ class AdminConfigurationTest extends AbstractVOTest
         $this->assertPropertyEquals($config, 'password', 'TestPass123');
     }
 
-    public function test_from_array_with_missing_fields_uses_empty_strings(): void
+    public function testFromArrayWithMissingFieldsUsesEmptyStrings(): void
     {
         $data = ['firstName' => 'John'];
 

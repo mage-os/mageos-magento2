@@ -16,6 +16,12 @@ use function Laravel\Prompts\warning;
  */
 class ThemeInstaller
 {
+    /**
+     * Constructor
+     *
+     * @param ThemeRegistry $themeRegistry
+     * @param HyvaInstaller $hyvaInstaller
+     */
     public function __construct(
         private readonly ThemeRegistry $themeRegistry,
         private readonly HyvaInstaller $hyvaInstaller
@@ -25,13 +31,8 @@ class ThemeInstaller
     /**
      * Install theme based on configuration
      *
-     * @param string $baseDir
-     * @param array{
-     *     install: bool,
-     *     theme: string|null,
-     *     hyva_project_key: string|null,
-     *     hyva_api_token: string|null
-     * } $themeConfig
+     * @param string          $baseDir
+     * @param array           $themeConfig
      * @param OutputInterface $output
      * @return bool
      */
@@ -68,11 +69,8 @@ class ThemeInstaller
     /**
      * Install Hyva theme
      *
-     * @param string $baseDir
-     * @param array{
-     *     hyva_project_key: string|null,
-     *     hyva_api_token: string|null
-     * } $themeConfig
+     * @param string          $baseDir
+     * @param array           $themeConfig
      * @param OutputInterface $output
      * @return bool
      */

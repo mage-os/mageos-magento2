@@ -11,6 +11,16 @@ namespace MageOS\Installer\Model\VO;
  */
 class RedisConfiguration
 {
+    /**
+     * @param bool $session
+     * @param bool $cache
+     * @param bool $fpc
+     * @param string $host
+     * @param int $port
+     * @param int $sessionDb
+     * @param int $cacheDb
+     * @param int $fpcDb
+     */
     public function __construct(
         public readonly bool $session,
         public readonly bool $cache,
@@ -58,7 +68,7 @@ class RedisConfiguration
      *
      * Handles both flat format (from saved config) and nested format (from RedisConfig::collect())
      *
-     * @param array<string, mixed> $data
+     * @param array $data
      * @return self
      */
     public static function fromArray(array $data): self

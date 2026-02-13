@@ -49,6 +49,7 @@ class SearchEngineDetector
     {
         $url = sprintf('http://%s:%d', $host, $port);
 
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction, Magento2.Exceptions.TryProcessSystemResources
         $context = stream_context_create([
             'http' => [
                 'method' => 'GET',
@@ -57,7 +58,7 @@ class SearchEngineDetector
             ]
         ]);
 
-        // phpcs:ignore Magento2.Functions.DiscouragedFunction
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction, Generic.PHP.NoSilencedErrors.Discouraged
         $response = @file_get_contents($url, false, $context);
 
         if ($response === false) {
@@ -84,7 +85,7 @@ class SearchEngineDetector
     /**
      * Detect if it's Elasticsearch or OpenSearch
      *
-     * @param array<string, mixed> $data
+     * @param array $data
      * @return string|null
      */
     private function detectEngine(array $data): ?string

@@ -25,6 +25,19 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class PostInstallConfigStage extends AbstractStage
 {
+    /**
+     * Constructor
+     *
+     * @param CronConfig $cronConfig
+     * @param EmailConfig $emailConfig
+     * @param CronConfigurer $cronConfigurer
+     * @param EmailConfigurer $emailConfigurer
+     * @param ModeConfigurer $modeConfigurer
+     * @param ThemeConfigurer $themeConfigurer
+     * @param IndexerConfigurer $indexerConfigurer
+     * @param TwoFactorAuthConfigurer $twoFactorAuthConfigurer
+     * @param ProcessRunner $processRunner
+     */
     public function __construct(
         private readonly CronConfig $cronConfig,
         private readonly EmailConfig $emailConfig,
@@ -139,7 +152,7 @@ class PostInstallConfigStage extends AbstractStage
 
         // Extend to 1 week (604800 seconds) for dev convenience
         $result = $this->processRunner->runMagentoCommand(
-            'config:set admin/security/session_lifetime 604800',
+            ['config:set', 'admin/security/session_lifetime', '604800'],
             BP,
             timeout: 30
         );

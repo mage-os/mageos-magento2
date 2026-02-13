@@ -11,6 +11,10 @@ namespace MageOS\Installer\Model\VO;
  */
 class ThemeConfiguration
 {
+    /**
+     * @param bool $install
+     * @param string $theme
+     */
     public function __construct(
         public readonly bool $install,
         public readonly string $theme = ''
@@ -34,7 +38,7 @@ class ThemeConfiguration
     /**
      * Create from array
      *
-     * @param array<string, mixed> $data
+     * @param array $data
      * @return self
      */
     public static function fromArray(array $data): self

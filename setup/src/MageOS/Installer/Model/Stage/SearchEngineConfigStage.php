@@ -16,6 +16,11 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class SearchEngineConfigStage extends AbstractStage
 {
+    /**
+     * Constructor
+     *
+     * @param SearchEngineConfig $searchEngineConfig
+     */
     public function __construct(
         private readonly SearchEngineConfig $searchEngineConfig
     ) {

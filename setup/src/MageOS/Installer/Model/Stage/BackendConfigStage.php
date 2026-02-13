@@ -16,6 +16,11 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class BackendConfigStage extends AbstractStage
 {
+    /**
+     * Constructor
+     *
+     * @param BackendConfig $backendConfig
+     */
     public function __construct(
         private readonly BackendConfig $backendConfig
     ) {

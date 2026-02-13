@@ -13,7 +13,7 @@ use MageOS\Installer\Model\InstallationContext;
  */
 class ConfigFileManager
 {
-    private const CONFIG_FILE = '.mageos-install-config.json';
+    private const CONFIG_FILE = 'var/.mageos-install-config.json';
 
     /**
      * Save configuration to file (from InstallationContext)
@@ -25,6 +25,7 @@ class ConfigFileManager
     public function saveContext(string $baseDir, InstallationContext $context): bool
     {
         $configFile = $baseDir . '/' . self::CONFIG_FILE;
+        $this->ensureDirectoryExists($configFile);
 
         // Serialize context (automatically excludes passwords)
         $config = $context->toArray();
@@ -34,7 +35,8 @@ class ConfigFileManager
             '_metadata' => [
                 'created_at' => $config['_created_at'] ?? date('Y-m-d H:i:s'),
                 'version' => '1.0.0',
-                'note' => 'This file contains your installation configuration (passwords excluded). You can delete it after successful installation.',
+                'note' => 'This file contains your installation configuration'
+                    . ' (passwords excluded). You can delete it after successful installation.',
                 'sensitive_fields_excluded' => $context->getSensitiveFields()
             ],
             'config' => $config
@@ -46,10 +48,12 @@ class ConfigFileManager
             return false;
         }
 
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
         $result = file_put_contents($configFile, $json);
 
         if ($result !== false) {
             // Set proper permissions (readable only by owner)
+            // phpcs:ignore Magento2.Functions.DiscouragedFunction
             chmod($configFile, 0600);
         }
 
@@ -66,10 +70,12 @@ class ConfigFileManager
     {
         $configFile = $baseDir . '/' . self::CONFIG_FILE;
 
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
         if (!file_exists($configFile)) {
             return null;
         }
 
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
         $content = file_get_contents($configFile);
 
         if ($content === false) {
@@ -89,21 +95,24 @@ class ConfigFileManager
     /**
      * Save configuration to file (legacy array-based method)
      *
-     * @deprecated Use saveContext() instead
+     * @deprecated Use saveContext() instead for InstallationContext-based workflow.
+     * @see saveContext()
      * @param string $baseDir
-     * @param array<string, mixed> $config
+     * @param array $config
      * @return bool
      */
     public function save(string $baseDir, array $config): bool
     {
         $configFile = $baseDir . '/' . self::CONFIG_FILE;
+        $this->ensureDirectoryExists($configFile);
 
         // Add metadata
         $configWithMeta = [
             '_metadata' => [
                 'created_at' => date('Y-m-d H:i:s'),
                 'version' => '1.0.0',
-                'note' => 'This file contains your installation configuration. You can delete it after successful installation.'
+                'note' => 'This file contains your installation configuration.'
+                    . ' You can delete it after successful installation.'
             ],
             'config' => $config
         ];
@@ -114,10 +123,12 @@ class ConfigFileManager
             return false;
         }
 
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
         $result = file_put_contents($configFile, $json);
 
         if ($result !== false) {
             // Set proper permissions (readable only by owner)
+            // phpcs:ignore Magento2.Functions.DiscouragedFunction
             chmod($configFile, 0600);
         }
 
@@ -127,18 +138,21 @@ class ConfigFileManager
     /**
      * Load configuration from file (legacy array-based method)
      *
-     * @deprecated Use loadContext() instead
+     * @deprecated Use loadContext() instead for InstallationContext-based workflow.
+     * @see loadContext()
      * @param string $baseDir
-     * @return array<string, mixed>|null
+     * @return array|null
      */
     public function load(string $baseDir): ?array
     {
         $configFile = $baseDir . '/' . self::CONFIG_FILE;
 
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
         if (!file_exists($configFile)) {
             return null;
         }
 
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
         $content = file_get_contents($configFile);
 
         if ($content === false) {
@@ -163,6 +177,7 @@ class ConfigFileManager
     public function exists(string $baseDir): bool
     {
         $configFile = $baseDir . '/' . self::CONFIG_FILE;
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
         return file_exists($configFile);
     }
 
@@ -176,11 +191,12 @@ class ConfigFileManager
     {
         $configFile = $baseDir . '/' . self::CONFIG_FILE;
 
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
         if (!file_exists($configFile)) {
             return true;
         }
 
-        // phpcs:ignore Magento2.Functions.DiscouragedFunction
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction, Generic.PHP.NoSilencedErrors.Discouraged
         return @unlink($configFile);
     }
 
@@ -193,5 +209,22 @@ class ConfigFileManager
     public function getConfigFilePath(string $baseDir): string
     {
         return $baseDir . '/' . self::CONFIG_FILE;
+    }
+
+    /**
+     * Ensure the parent directory for the config file exists
+     *
+     * @param string $filePath
+     * @return void
+     */
+    private function ensureDirectoryExists(string $filePath): void
+    {
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
+        $dir = dirname($filePath);
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
+        if (!is_dir($dir)) {
+            // phpcs:ignore Magento2.Functions.DiscouragedFunction
+            mkdir($dir, 0775, true);
+        }
     }
 }

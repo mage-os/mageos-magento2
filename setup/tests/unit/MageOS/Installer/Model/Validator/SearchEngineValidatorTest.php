@@ -15,6 +15,7 @@ use PHPUnit\Framework\TestCase;
  */
 class SearchEngineValidatorTest extends TestCase
 {
+    /** @var SearchEngineValidator */
     private SearchEngineValidator $validator;
 
     protected function setUp(): void
@@ -23,7 +24,7 @@ class SearchEngineValidatorTest extends TestCase
         $this->validator = new SearchEngineValidator();
     }
 
-    public function test_returns_expected_structure(): void
+    public function testReturnsExpectedStructure(): void
     {
         // Test with invalid host to get error response
         $result = $this->validator->testConnection('opensearch', 'nonexistent_host_xyz', 9200);
@@ -34,7 +35,7 @@ class SearchEngineValidatorTest extends TestCase
         $this->assertIsBool($result['success']);
     }
 
-    public function test_handles_connection_failure_gracefully(): void
+    public function testHandlesConnectionFailureGracefully(): void
     {
         $result = $this->validator->testConnection('opensearch', 'invalid_host_12345', 9200);
 
@@ -43,14 +44,14 @@ class SearchEngineValidatorTest extends TestCase
         $this->assertStringContainsString('Could not connect', $result['error']);
     }
 
-    public function test_error_message_includes_engine_type(): void
+    public function testErrorMessageIncludesEngineType(): void
     {
         $result = $this->validator->testConnection('opensearch', 'invalid_host', 9200);
 
         $this->assertStringContainsString('opensearch', $result['error']);
     }
 
-    public function test_error_message_includes_host_and_port(): void
+    public function testErrorMessageIncludesHostAndPort(): void
     {
         $result = $this->validator->testConnection('elasticsearch8', 'test.local', 9300);
 
@@ -58,7 +59,7 @@ class SearchEngineValidatorTest extends TestCase
         $this->assertStringContainsString('9300', $result['error']);
     }
 
-    public function test_handles_opensearch_engine_type(): void
+    public function testHandlesOpensearchEngineType(): void
     {
         $result = $this->validator->testConnection('opensearch', 'invalid', 9200);
 
@@ -66,7 +67,7 @@ class SearchEngineValidatorTest extends TestCase
         $this->assertIsArray($result);
     }
 
-    public function test_handles_elasticsearch_engine_types(): void
+    public function testHandlesElasticsearchEngineTypes(): void
     {
         $engines = ['elasticsearch', 'elasticsearch7', 'elasticsearch8'];
 
@@ -78,7 +79,7 @@ class SearchEngineValidatorTest extends TestCase
         }
     }
 
-    public function test_uses_http_protocol(): void
+    public function testUsesHttpProtocol(): void
     {
         // Verify the URL construction uses http:// (not https)
         // This is implicit in the implementation but important for port 9200
@@ -90,7 +91,7 @@ class SearchEngineValidatorTest extends TestCase
         }
     }
 
-    public function test_handles_different_ports(): void
+    public function testHandlesDifferentPorts(): void
     {
         $ports = [9200, 9300, 9400];
 
@@ -101,7 +102,7 @@ class SearchEngineValidatorTest extends TestCase
         }
     }
 
-    public function test_connection_timeout_is_reasonable(): void
+    public function testConnectionTimeoutIsReasonable(): void
     {
         // Test that connection doesn't hang forever
         $start = microtime(true);

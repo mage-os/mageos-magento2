@@ -13,6 +13,11 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class ModeConfigurer
 {
+    /**
+     * Constructor
+     *
+     * @param ProcessRunner $processRunner
+     */
     public function __construct(
         private readonly ProcessRunner $processRunner
     ) {
@@ -32,7 +37,7 @@ class ModeConfigurer
         $output->write(sprintf('<comment>🔄 Setting Magento mode to %s...</comment>', $mode));
 
         $result = $this->processRunner->runMagentoCommand(
-            sprintf('deploy:mode:set %s', $mode),
+            ['deploy:mode:set', $mode],
             $baseDir,
             timeout: 120 // Mode setting can take time (compilation)
         );
@@ -45,7 +50,10 @@ class ModeConfigurer
 
         // Failed
         $output->writeln(' <comment>⚠️</comment>');
-        $output->writeln(sprintf('<comment>⚠️  Mode setting failed. Run manually: bin/magento deploy:mode:set %s</comment>', $mode));
+        $output->writeln(sprintf(
+            '<comment>⚠️  Mode setting failed. Run manually: bin/magento deploy:mode:set %s</comment>',
+            $mode
+        ));
 
         if (!empty($result->error)) {
             $output->writeln('<comment>Error: ' . $result->error . '</comment>');

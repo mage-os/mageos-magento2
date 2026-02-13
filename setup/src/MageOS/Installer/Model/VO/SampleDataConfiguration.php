@@ -11,6 +11,9 @@ namespace MageOS\Installer\Model\VO;
  */
 class SampleDataConfiguration
 {
+    /**
+     * @param bool $install
+     */
     public function __construct(
         public readonly bool $install
     ) {
@@ -32,7 +35,7 @@ class SampleDataConfiguration
     /**
      * Create from array
      *
-     * @param array<string, mixed> $data
+     * @param array $data
      * @return self
      */
     public static function fromArray(array $data): self

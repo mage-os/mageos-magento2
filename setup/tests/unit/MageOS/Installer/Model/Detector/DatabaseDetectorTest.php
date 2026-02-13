@@ -15,6 +15,7 @@ use PHPUnit\Framework\TestCase;
  */
 class DatabaseDetectorTest extends TestCase
 {
+    /** @var DatabaseDetector */
     private DatabaseDetector $detector;
 
     protected function setUp(): void
@@ -23,14 +24,14 @@ class DatabaseDetectorTest extends TestCase
         $this->detector = new DatabaseDetector();
     }
 
-    public function test_detect_returns_null_or_array(): void
+    public function testDetectReturnsNullOrArray(): void
     {
         $result = $this->detector->detect();
 
         $this->assertTrue($result === null || is_array($result));
     }
 
-    public function test_detect_returns_correct_structure_when_found(): void
+    public function testDetectReturnsCorrectStructureWhenFound(): void
     {
         $result = $this->detector->detect();
 
@@ -45,7 +46,7 @@ class DatabaseDetectorTest extends TestCase
         }
     }
 
-    public function test_detect_checks_common_mysql_ports(): void
+    public function testDetectChecksCommonMysqlPorts(): void
     {
         // This test verifies behavior - actual detection depends on system state
         $result = $this->detector->detect();

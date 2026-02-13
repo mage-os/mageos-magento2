@@ -42,12 +42,14 @@ class PermissionChecker
             $fullPath = $baseDir . '/' . $path;
 
             // Check if directory exists and is writable
+            // phpcs:ignore Magento2.Functions.DiscouragedFunction
             if (!file_exists($fullPath)) {
                 // Try to create it
-                // phpcs:ignore Magento2.Functions.DiscouragedFunction
+                // phpcs:ignore Magento2.Functions.DiscouragedFunction, Generic.PHP.NoSilencedErrors.Discouraged
                 if (!@mkdir($fullPath, 0775, true)) {
                     $missing[] = $path;
                 }
+            // phpcs:ignore Magento2.Functions.DiscouragedFunction
             } elseif (!is_writable($fullPath)) {
                 $missing[] = $path;
             }

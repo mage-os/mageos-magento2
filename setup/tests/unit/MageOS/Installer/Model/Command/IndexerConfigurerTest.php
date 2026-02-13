@@ -15,8 +15,11 @@ use Symfony\Component\Console\Output\BufferedOutput;
  */
 class IndexerConfigurerTest extends TestCase
 {
+    /** @var ProcessRunner */
     private ProcessRunner $processRunnerMock;
+    /** @var IndexerConfigurer */
     private IndexerConfigurer $configurer;
+    /** @var BufferedOutput */
     private BufferedOutput $output;
 
     protected function setUp(): void
@@ -27,7 +30,7 @@ class IndexerConfigurerTest extends TestCase
         $this->output = new BufferedOutput();
     }
 
-    public function test_set_schedule_mode_returns_true_on_success(): void
+    public function testSetScheduleModeReturnsTrueOnSuccess(): void
     {
         $successResult = new ProcessResult(true, 'Mode changed');
 
@@ -39,7 +42,7 @@ class IndexerConfigurerTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function test_set_schedule_mode_returns_false_on_failure(): void
+    public function testSetScheduleModeReturnsFalseOnFailure(): void
     {
         $failureResult = new ProcessResult(false, '', 'Failed');
 
@@ -51,19 +54,19 @@ class IndexerConfigurerTest extends TestCase
         $this->assertFalse($result);
     }
 
-    public function test_set_schedule_mode_calls_correct_command(): void
+    public function testSetScheduleModeCallsCorrectCommand(): void
     {
         $successResult = new ProcessResult(true, '');
 
         $this->processRunnerMock->expects($this->once())
             ->method('runMagentoCommand')
-            ->with('indexer:set-mode schedule', $this->anything(), $this->anything())
+            ->with(['indexer:set-mode', 'schedule'], $this->anything(), $this->anything())
             ->willReturn($successResult);
 
         $this->configurer->setScheduleMode('/var/www/magento', $this->output);
     }
 
-    public function test_reindex_all_returns_true_on_success(): void
+    public function testReindexAllReturnsTrueOnSuccess(): void
     {
         $successResult = new ProcessResult(true, 'Reindex complete');
 
@@ -75,7 +78,7 @@ class IndexerConfigurerTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function test_reindex_all_uses_longer_timeout(): void
+    public function testReindexAllUsesLongerTimeout(): void
     {
         $successResult = new ProcessResult(true, '');
 

@@ -30,7 +30,7 @@ class EmailConfigurationTest extends AbstractVOTest
         return ['password'];
     }
 
-    public function test_it_constructs_with_all_parameters(): void
+    public function testItConstructsWithAllParameters(): void
     {
         $config = new EmailConfiguration(
             configure: true,
@@ -51,7 +51,7 @@ class EmailConfigurationTest extends AbstractVOTest
         $this->assertPropertyEquals($config, 'password', 'EmailPass123');
     }
 
-    public function test_it_constructs_with_defaults(): void
+    public function testItConstructsWithDefaults(): void
     {
         $config = new EmailConfiguration(configure: false);
 
@@ -64,7 +64,7 @@ class EmailConfigurationTest extends AbstractVOTest
         $this->assertPropertyEquals($config, 'password', '');
     }
 
-    public function test_is_smtp_returns_true_for_smtp_transport(): void
+    public function testIsSmtpReturnsTrueForSmtpTransport(): void
     {
         $config = new EmailConfiguration(
             configure: true,
@@ -74,7 +74,7 @@ class EmailConfigurationTest extends AbstractVOTest
         $this->assertTrue($config->isSmtp());
     }
 
-    public function test_is_smtp_returns_false_for_sendmail_transport(): void
+    public function testIsSmtpReturnsFalseForSendmailTransport(): void
     {
         $config = new EmailConfiguration(
             configure: true,
@@ -84,7 +84,7 @@ class EmailConfigurationTest extends AbstractVOTest
         $this->assertFalse($config->isSmtp());
     }
 
-    public function test_to_array_excludes_password_by_default(): void
+    public function testToArrayExcludesPasswordByDefault(): void
     {
         $config = $this->createValidInstance();
         $array = $config->toArray();
@@ -98,7 +98,7 @@ class EmailConfigurationTest extends AbstractVOTest
         $this->assertArrayNotHasKey('password', $array);
     }
 
-    public function test_from_array_with_complete_data(): void
+    public function testFromArrayWithCompleteData(): void
     {
         $data = [
             'configure' => true,
@@ -121,7 +121,7 @@ class EmailConfigurationTest extends AbstractVOTest
         $this->assertPropertyEquals($config, 'password', 'TestPass');
     }
 
-    public function test_from_array_with_missing_fields_uses_defaults(): void
+    public function testFromArrayWithMissingFieldsUsesDefaults(): void
     {
         $data = ['configure' => true];
 
@@ -133,7 +133,7 @@ class EmailConfigurationTest extends AbstractVOTest
         $this->assertPropertyEquals($config, 'port', 587);
     }
 
-    public function test_from_array_coerces_port_to_int(): void
+    public function testFromArrayCoercesPortToInt(): void
     {
         $data = [
             'configure' => true,
@@ -146,7 +146,7 @@ class EmailConfigurationTest extends AbstractVOTest
         $this->assertIsInt($config->port);
     }
 
-    public function test_supports_various_transports(): void
+    public function testSupportsVariousTransports(): void
     {
         $transports = ['smtp', 'sendmail'];
 
@@ -160,7 +160,7 @@ class EmailConfigurationTest extends AbstractVOTest
         }
     }
 
-    public function test_supports_various_smtp_ports(): void
+    public function testSupportsVariousSmtpPorts(): void
     {
         $ports = [25, 465, 587, 2525];
 

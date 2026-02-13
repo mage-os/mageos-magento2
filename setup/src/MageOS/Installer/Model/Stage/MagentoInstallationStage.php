@@ -19,6 +19,11 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class MagentoInstallationStage extends AbstractStage
 {
+    /**
+     * Constructor
+     *
+     * @param Application $application
+     */
     public function __construct(
         private readonly Application $application
     ) {
@@ -176,6 +181,7 @@ class MagentoInstallationStage extends AbstractStage
     {
         $envFile = BP . '/app/etc/env.php';
 
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
         if (!file_exists($envFile)) {
             return true; // No backup needed
         }
@@ -205,6 +211,7 @@ class MagentoInstallationStage extends AbstractStage
             }
 
             // User confirmed overwrite - remove the file
+            // phpcs:ignore Magento2.Functions.DiscouragedFunction
             unlink($envFile);
             return true;
         }
@@ -213,9 +220,11 @@ class MagentoInstallationStage extends AbstractStage
         $timestamp = date('Y-m-d_H-i-s');
         $backupFile = BP . "/app/etc/env.php.backup.{$timestamp}";
 
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
         if (copy($envFile, $backupFile)) {
             $output->writeln("<info>✓ Backed up env.php to env.php.backup.{$timestamp}</info>");
             // Remove the original to prevent collision
+            // phpcs:ignore Magento2.Functions.DiscouragedFunction
             unlink($envFile);
             return true;
         }
@@ -227,6 +236,7 @@ class MagentoInstallationStage extends AbstractStage
         );
 
         if ($continueAnyway) {
+            // phpcs:ignore Magento2.Functions.DiscouragedFunction
             unlink($envFile);
         }
 

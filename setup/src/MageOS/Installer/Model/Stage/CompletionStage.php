@@ -104,7 +104,9 @@ class CompletionStage extends AbstractStage
         $output->writeln('');
 
         if ($sampleData && $sampleData->install) {
-            $output->writeln('  <comment>ℹ️  Sample data has been installed for development/testing purposes</comment>');
+            $output->writeln(
+                '  <comment>ℹ️  Sample data has been installed for development/testing purposes</comment>'
+            );
             $output->writeln('');
         }
 

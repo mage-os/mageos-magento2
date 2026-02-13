@@ -27,7 +27,7 @@ class SearchEngineConfigurationTest extends AbstractVOTest
         return []; // No sensitive fields
     }
 
-    public function test_it_constructs_with_all_parameters(): void
+    public function testItConstructsWithAllParameters(): void
     {
         $config = new SearchEngineConfiguration(
             engine: 'elasticsearch8',
@@ -42,7 +42,7 @@ class SearchEngineConfigurationTest extends AbstractVOTest
         $this->assertPropertyEquals($config, 'prefix', 'store');
     }
 
-    public function test_it_constructs_with_default_prefix(): void
+    public function testItConstructsWithDefaultPrefix(): void
     {
         $config = new SearchEngineConfiguration(
             engine: 'opensearch',
@@ -53,14 +53,14 @@ class SearchEngineConfigurationTest extends AbstractVOTest
         $this->assertPropertyEquals($config, 'prefix', '');
     }
 
-    public function test_get_host_with_port(): void
+    public function testGetHostWithPort(): void
     {
         $config = $this->createValidInstance();
 
         $this->assertEquals('localhost:9200', $config->getHostWithPort());
     }
 
-    public function test_is_opensearch_returns_true_for_opensearch(): void
+    public function testIsOpensearchReturnsTrueForOpensearch(): void
     {
         $config = new SearchEngineConfiguration(
             engine: 'opensearch',
@@ -72,7 +72,7 @@ class SearchEngineConfigurationTest extends AbstractVOTest
         $this->assertFalse($config->isElasticsearch());
     }
 
-    public function test_is_elasticsearch_returns_true_for_elasticsearch(): void
+    public function testIsElasticsearchReturnsTrueForElasticsearch(): void
     {
         $config = new SearchEngineConfiguration(
             engine: 'elasticsearch8',
@@ -84,7 +84,7 @@ class SearchEngineConfigurationTest extends AbstractVOTest
         $this->assertTrue($config->isElasticsearch());
     }
 
-    public function test_is_elasticsearch_matches_version_variants(): void
+    public function testIsElasticsearchMatchesVersionVariants(): void
     {
         $elasticsearchVersions = ['elasticsearch', 'elasticsearch7', 'elasticsearch8'];
 
@@ -102,7 +102,7 @@ class SearchEngineConfigurationTest extends AbstractVOTest
         }
     }
 
-    public function test_to_array_contains_all_fields(): void
+    public function testToArrayContainsAllFields(): void
     {
         $config = $this->createValidInstance();
         $array = $config->toArray();
@@ -114,7 +114,7 @@ class SearchEngineConfigurationTest extends AbstractVOTest
         $this->assertSame(9200, $array['port']);
     }
 
-    public function test_from_array_with_complete_data(): void
+    public function testFromArrayWithCompleteData(): void
     {
         $data = [
             'engine' => 'elasticsearch8',
@@ -131,7 +131,7 @@ class SearchEngineConfigurationTest extends AbstractVOTest
         $this->assertPropertyEquals($config, 'prefix', 'shop');
     }
 
-    public function test_from_array_with_missing_fields_uses_defaults(): void
+    public function testFromArrayWithMissingFieldsUsesDefaults(): void
     {
         $data = [];
 
@@ -143,7 +143,7 @@ class SearchEngineConfigurationTest extends AbstractVOTest
         $this->assertPropertyEquals($config, 'prefix', '');
     }
 
-    public function test_from_array_coerces_port_to_int(): void
+    public function testFromArrayCoercesPortToInt(): void
     {
         $data = [
             'engine' => 'opensearch',

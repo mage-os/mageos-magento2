@@ -22,6 +22,13 @@ use function Laravel\Prompts\warning;
  */
 class StoreConfig
 {
+    /**
+     * Constructor
+     *
+     * @param UrlDetector $urlDetector
+     * @param UrlValidator $urlValidator
+     * @param Lists $lists
+     */
     public function __construct(
         private readonly UrlDetector $urlDetector,
         private readonly UrlValidator $urlValidator,

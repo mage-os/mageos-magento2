@@ -21,6 +21,11 @@ use function Laravel\Prompts\warning;
  */
 class RabbitMQConfig
 {
+    /**
+     * Constructor
+     *
+     * @param RabbitMQDetector $rabbitMQDetector
+     */
     public function __construct(
         private readonly RabbitMQDetector $rabbitMQDetector
     ) {
@@ -85,8 +90,8 @@ class RabbitMQConfig
     /**
      * Collect RabbitMQ configuration manually
      *
-     * @param array{host: string, port: int}|null $detected
-     * @return array{enabled: bool, host: string, port: int, user: string, password: string, virtualhost: string}
+     * @param array|null $detected
+     * @return array
      */
     private function collectManualConfig(?array $detected): array
     {

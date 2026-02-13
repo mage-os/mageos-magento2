@@ -18,7 +18,7 @@ use Symfony\Component\Console\Output\BufferedOutput;
  */
 class MagentoInstallationStageTest extends TestCase
 {
-    public function test_get_name_returns_magento_installation(): void
+    public function testGetNameReturnsMagentoInstallation(): void
     {
         $app = $this->createMock(Application::class);
         $stage = new \MageOS\Installer\Model\Stage\MagentoInstallationStage($app);
@@ -26,7 +26,7 @@ class MagentoInstallationStageTest extends TestCase
         $this->assertEquals('Magento Installation', $stage->getName());
     }
 
-    public function test_can_go_back_returns_false(): void
+    public function testCanGoBackReturnsFalse(): void
     {
         $app = $this->createMock(Application::class);
         $stage = new \MageOS\Installer\Model\Stage\MagentoInstallationStage($app);
@@ -34,7 +34,7 @@ class MagentoInstallationStageTest extends TestCase
         $this->assertFalse($stage->canGoBack(), 'Cannot go back once installation starts');
     }
 
-    public function test_get_progress_weight_returns_high_value(): void
+    public function testGetProgressWeightReturnsHighValue(): void
     {
         $app = $this->createMock(Application::class);
         $stage = new \MageOS\Installer\Model\Stage\MagentoInstallationStage($app);
@@ -42,7 +42,7 @@ class MagentoInstallationStageTest extends TestCase
         $this->assertEquals(10, $stage->getProgressWeight(), 'Installation is heavy operation');
     }
 
-    public function test_should_skip_returns_false(): void
+    public function testShouldSkipReturnsFalse(): void
     {
         $app = $this->createMock(Application::class);
         $stage = new \MageOS\Installer\Model\Stage\MagentoInstallationStage($app);

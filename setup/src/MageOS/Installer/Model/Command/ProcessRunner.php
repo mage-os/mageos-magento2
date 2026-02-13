@@ -48,19 +48,13 @@ class ProcessRunner
     /**
      * Run a Magento CLI command
      *
-     * @param string $magentoCommand Command after "bin/magento" (e.g., "cron:install")
+     * @param array<string> $command Command parts after "bin/magento" (e.g., ['cron:install'])
      * @param string $baseDir Magento base directory
      * @param int $timeout Timeout in seconds
      * @return ProcessResult
      */
-    public function runMagentoCommand(string $magentoCommand, string $baseDir, int $timeout = 300): ProcessResult
+    public function runMagentoCommand(array $command, string $baseDir, int $timeout = 300): ProcessResult
     {
-        // Split command into parts
-        $parts = explode(' ', $magentoCommand);
-
-        // Build command array
-        $command = array_merge(['bin/magento'], $parts);
-
-        return $this->run($command, $baseDir, $timeout);
+        return $this->run(array_merge(['bin/magento'], $command), $baseDir, $timeout);
     }
 }

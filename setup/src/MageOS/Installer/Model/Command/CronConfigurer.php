@@ -13,6 +13,11 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class CronConfigurer
 {
+    /**
+     * Constructor
+     *
+     * @param ProcessRunner $processRunner
+     */
     public function __construct(
         private readonly ProcessRunner $processRunner
     ) {
@@ -30,7 +35,7 @@ class CronConfigurer
         $output->writeln('');
         $output->write('<comment>🔄 Configuring cron...</comment>');
 
-        $result = $this->processRunner->runMagentoCommand('cron:install', $baseDir, timeout: 30);
+        $result = $this->processRunner->runMagentoCommand(['cron:install'], $baseDir, timeout: 30);
 
         if ($result->isSuccess()) {
             $output->writeln(' <info>✓</info>');
@@ -43,7 +48,10 @@ class CronConfigurer
         $output->writeln('<comment>⚠️  Automatic cron setup failed. Configure manually:</comment>');
         $output->writeln('');
         $output->writeln('<comment>Add to crontab (crontab -e):</comment>');
-        $output->writeln(sprintf('<comment>* * * * * %s/bin/magento cron:run 2>&1 | grep -v "Ran jobs"</comment>', $baseDir));
+        $output->writeln(sprintf(
+            '<comment>* * * * * %s/bin/magento cron:run 2>&1 | grep -v "Ran jobs"</comment>',
+            $baseDir
+        ));
         $output->writeln(sprintf('<comment>* * * * * %s/bin/magento setup:cron:run 2>&1</comment>', $baseDir));
         $output->writeln('');
 

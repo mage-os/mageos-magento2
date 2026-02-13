@@ -12,6 +12,7 @@ use PHPUnit\Framework\TestCase;
  */
 class EmailValidatorTest extends TestCase
 {
+    /** @var EmailValidator */
     private EmailValidator $validator;
 
     protected function setUp(): void
@@ -23,7 +24,7 @@ class EmailValidatorTest extends TestCase
     /**
      * @dataProvider validEmailProvider
      */
-    public function test_accepts_valid_emails(string $email): void
+    public function testAcceptsValidEmails(string $email): void
     {
         $result = $this->validator->validate($email);
 
@@ -34,7 +35,7 @@ class EmailValidatorTest extends TestCase
     /**
      * @dataProvider invalidEmailProvider
      */
-    public function test_rejects_invalid_emails(string $email, string $expectedError): void
+    public function testRejectsInvalidEmails(string $email, string $expectedError): void
     {
         $result = $this->validator->validate($email);
 
@@ -42,7 +43,7 @@ class EmailValidatorTest extends TestCase
         $this->assertEquals($expectedError, $result['error']);
     }
 
-    public function test_rejects_empty_email(): void
+    public function testRejectsEmptyEmail(): void
     {
         $result = $this->validator->validate('');
 
@@ -50,7 +51,7 @@ class EmailValidatorTest extends TestCase
         $this->assertEquals('Email address cannot be empty', $result['error']);
     }
 
-    public function test_rejects_email_without_at_sign(): void
+    public function testRejectsEmailWithoutAtSign(): void
     {
         $result = $this->validator->validate('invalidemail.com');
 
@@ -58,7 +59,7 @@ class EmailValidatorTest extends TestCase
         $this->assertEquals('Invalid email address format', $result['error']);
     }
 
-    public function test_rejects_email_with_multiple_at_signs(): void
+    public function testRejectsEmailWithMultipleAtSigns(): void
     {
         $result = $this->validator->validate('user@@example.com');
 

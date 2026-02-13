@@ -25,7 +25,7 @@ class LoggingConfigurationTest extends AbstractVOTest
         return []; // No sensitive fields
     }
 
-    public function test_it_constructs_with_all_parameters(): void
+    public function testItConstructsWithAllParameters(): void
     {
         $config = new LoggingConfiguration(
             debugMode: true,
@@ -36,7 +36,7 @@ class LoggingConfigurationTest extends AbstractVOTest
         $this->assertPropertyEquals($config, 'logLevel', 'debug');
     }
 
-    public function test_it_constructs_with_debug_mode_disabled(): void
+    public function testItConstructsWithDebugModeDisabled(): void
     {
         $config = new LoggingConfiguration(
             debugMode: false,
@@ -47,7 +47,7 @@ class LoggingConfigurationTest extends AbstractVOTest
         $this->assertPropertyEquals($config, 'logLevel', 'error');
     }
 
-    public function test_to_array_contains_all_fields(): void
+    public function testToArrayContainsAllFields(): void
     {
         $config = $this->createValidInstance();
         $array = $config->toArray();
@@ -58,7 +58,7 @@ class LoggingConfigurationTest extends AbstractVOTest
         $this->assertEquals('debug', $array['logLevel']);
     }
 
-    public function test_from_array_with_complete_data(): void
+    public function testFromArrayWithCompleteData(): void
     {
         $data = [
             'debugMode' => true,
@@ -71,7 +71,7 @@ class LoggingConfigurationTest extends AbstractVOTest
         $this->assertPropertyEquals($config, 'logLevel', 'info');
     }
 
-    public function test_from_array_with_missing_fields_uses_defaults(): void
+    public function testFromArrayWithMissingFieldsUsesDefaults(): void
     {
         $data = [];
 
@@ -81,7 +81,7 @@ class LoggingConfigurationTest extends AbstractVOTest
         $this->assertPropertyEquals($config, 'logLevel', 'error');
     }
 
-    public function test_supports_various_log_levels(): void
+    public function testSupportsVariousLogLevels(): void
     {
         $levels = ['debug', 'info', 'notice', 'warning', 'error', 'critical', 'alert', 'emergency'];
 

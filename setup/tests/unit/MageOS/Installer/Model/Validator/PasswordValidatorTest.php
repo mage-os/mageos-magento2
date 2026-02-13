@@ -12,6 +12,7 @@ use PHPUnit\Framework\TestCase;
  */
 class PasswordValidatorTest extends TestCase
 {
+    /** @var PasswordValidator */
     private PasswordValidator $validator;
 
     protected function setUp(): void
@@ -23,7 +24,7 @@ class PasswordValidatorTest extends TestCase
     /**
      * @dataProvider validPasswordProvider
      */
-    public function test_accepts_valid_passwords(string $password): void
+    public function testAcceptsValidPasswords(string $password): void
     {
         $result = $this->validator->validate($password);
 
@@ -33,7 +34,7 @@ class PasswordValidatorTest extends TestCase
     /**
      * @dataProvider invalidPasswordProvider
      */
-    public function test_rejects_invalid_passwords(string $password, string $expectedError): void
+    public function testRejectsInvalidPasswords(string $password, string $expectedError): void
     {
         $result = $this->validator->validate($password);
 
@@ -41,21 +42,21 @@ class PasswordValidatorTest extends TestCase
         $this->assertEquals($expectedError, $result);
     }
 
-    public function test_rejects_empty_password(): void
+    public function testRejectsEmptyPassword(): void
     {
         $result = $this->validator->validate('');
 
         $this->assertEquals('Password cannot be empty', $result);
     }
 
-    public function test_rejects_password_too_short(): void
+    public function testRejectsPasswordTooShort(): void
     {
         $result = $this->validator->validate('abc123');
 
         $this->assertEquals('Password must be at least 7 characters long', $result);
     }
 
-    public function test_rejects_password_without_letters(): void
+    public function testRejectsPasswordWithoutLetters(): void
     {
         $result = $this->validator->validate('1234567');
 
@@ -65,7 +66,7 @@ class PasswordValidatorTest extends TestCase
         );
     }
 
-    public function test_rejects_password_without_numbers(): void
+    public function testRejectsPasswordWithoutNumbers(): void
     {
         $result = $this->validator->validate('abcdefg');
 
@@ -75,7 +76,7 @@ class PasswordValidatorTest extends TestCase
         );
     }
 
-    public function test_get_strength_feedback_for_weak_password(): void
+    public function testGetStrengthFeedbackForWeakPassword(): void
     {
         $feedback = $this->validator->getStrengthFeedback('abc1234');
 
@@ -85,7 +86,7 @@ class PasswordValidatorTest extends TestCase
         );
     }
 
-    public function test_get_strength_feedback_for_medium_password(): void
+    public function testGetStrengthFeedbackForMediumPassword(): void
     {
         $feedback = $this->validator->getStrengthFeedback('Abc1234');
 
@@ -95,14 +96,14 @@ class PasswordValidatorTest extends TestCase
         );
     }
 
-    public function test_get_strength_feedback_for_strong_password(): void
+    public function testGetStrengthFeedbackForStrongPassword(): void
     {
         $feedback = $this->validator->getStrengthFeedback('Abc123!@#');
 
         $this->assertEquals('✓ Strong password detected!', $feedback);
     }
 
-    public function test_get_requirements_hint(): void
+    public function testGetRequirementsHint(): void
     {
         $hint = $this->validator->getRequirementsHint();
 
@@ -128,9 +129,18 @@ class PasswordValidatorTest extends TestCase
         return [
             'empty' => ['', 'Password cannot be empty'],
             'too short' => ['ab12', 'Password must be at least 7 characters long'],
-            'only letters' => ['abcdefg', 'Password must include both alphabetic and numeric characters (required by Magento)'],
-            'only numbers' => ['1234567', 'Password must include both alphabetic and numeric characters (required by Magento)'],
-            'only special chars' => ['!@#$%^&', 'Password must include both alphabetic and numeric characters (required by Magento)'],
+            'only letters' => [
+                'abcdefg',
+                'Password must include both alphabetic and numeric characters (required by Magento)',
+            ],
+            'only numbers' => [
+                '1234567',
+                'Password must include both alphabetic and numeric characters (required by Magento)',
+            ],
+            'only special chars' => [
+                '!@#$%^&',
+                'Password must include both alphabetic and numeric characters (required by Magento)',
+            ],
             '6 chars with alpha+num' => ['abc123', 'Password must be at least 7 characters long'],
         ];
     }

@@ -14,6 +14,11 @@ use Magento\Framework\Config\File\ConfigFilePool;
  */
 class EnvConfigWriter
 {
+    /**
+     * Constructor
+     *
+     * @param Writer $writer
+     */
     public function __construct(
         private readonly Writer $writer
     ) {
@@ -24,7 +29,7 @@ class EnvConfigWriter
      *
      * Accepts both flat VO format and nested collector format
      *
-     * @param array<string, mixed> $redisConfig
+     * @param array $redisConfig
      * @return void
      * @throws \Exception
      */
@@ -205,7 +210,7 @@ class EnvConfigWriter
     /**
      * Write RabbitMQ configuration to env.php
      *
-     * @param array<string, mixed> $rabbitMqConfig
+     * @param array $rabbitMqConfig
      * @return void
      * @throws \Exception
      */

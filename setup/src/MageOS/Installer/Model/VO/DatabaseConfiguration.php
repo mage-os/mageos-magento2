@@ -55,7 +55,7 @@ class DatabaseConfiguration
     /**
      * Create from array
      *
-     * @param array<string, string> $data
+     * @param array $data
      * @return self
      */
     public static function fromArray(array $data): self
