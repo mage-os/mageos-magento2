@@ -15,7 +15,7 @@ use Magento\Framework\Setup\Patch\DataPatchInterface;
 /**
  * Update region codes for FI.
  */
-class UpdateRegionCodesForFinland implements DataPatchInterface
+class UpdateRegionCodesForFinlandV1 implements DataPatchInterface
 {
     /**
      * @var ModuleDataSetupInterface

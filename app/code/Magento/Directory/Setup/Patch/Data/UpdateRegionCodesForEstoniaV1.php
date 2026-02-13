@@ -13,9 +13,9 @@ use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\Patch\DataPatchInterface;
 
 /**
- * Update region codes for AT.
+ * Update region codes for EE.
  */
-class UpdateRegionCodesForAustria implements DataPatchInterface
+class UpdateRegionCodesForEstoniaV1 implements DataPatchInterface
 {
     /**
      * @var ModuleDataSetupInterface
@@ -48,7 +48,7 @@ class UpdateRegionCodesForAustria implements DataPatchInterface
         $dataInstaller = $this->dataInstallerFactory->create();
         $dataInstaller->updateCountryRegionCodes(
             $this->moduleDataSetup->getConnection(),
-            'AT',
+            'EE',
             $this->getRegionCodeMapping(),
             $this->getRegionNameMapping()
         );
@@ -64,15 +64,17 @@ class UpdateRegionCodesForAustria implements DataPatchInterface
     private function getRegionCodeMapping(): array
     {
         return [
-            'BL' => 'AT-1',
-            'KN' => 'AT-2',
-            'NO' => 'AT-3',
-            'OO' => 'AT-4',
-            'SB' => 'AT-5',
-            'ST' => 'AT-6',
-            'TI' => 'AT-7',
-            'VB' => 'AT-8',
-            'WI' => 'AT-9'
+            'EE-44' => 'EE-45',
+            'EE-49' => 'EE-50',
+            'EE-51' => 'EE-52',
+            'EE-57' => 'EE-56',
+            'EE-59' => 'EE-60',
+            'EE-65' => 'EE-64',
+            'EE-67' => 'EE-68',
+            'EE-70' => 'EE-71',
+            'EE-78' => 'EE-79',
+            'EE-82' => 'EE-81',
+            'EE-86' => 'EE-87'
         ];
     }
 

@@ -13,9 +13,9 @@ use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\Patch\DataPatchInterface;
 
 /**
- * Update region codes for EE.
+ * Update region codes for DE.
  */
-class UpdateRegionCodesForEstonia implements DataPatchInterface
+class UpdateRegionCodesForGermanyV1 implements DataPatchInterface
 {
     /**
      * @var ModuleDataSetupInterface
@@ -48,7 +48,7 @@ class UpdateRegionCodesForEstonia implements DataPatchInterface
         $dataInstaller = $this->dataInstallerFactory->create();
         $dataInstaller->updateCountryRegionCodes(
             $this->moduleDataSetup->getConnection(),
-            'EE',
+            'DE',
             $this->getRegionCodeMapping(),
             $this->getRegionNameMapping()
         );
@@ -64,17 +64,22 @@ class UpdateRegionCodesForEstonia implements DataPatchInterface
     private function getRegionCodeMapping(): array
     {
         return [
-            'EE-44' => 'EE-45',
-            'EE-49' => 'EE-50',
-            'EE-51' => 'EE-52',
-            'EE-57' => 'EE-56',
-            'EE-59' => 'EE-60',
-            'EE-65' => 'EE-64',
-            'EE-67' => 'EE-68',
-            'EE-70' => 'EE-71',
-            'EE-78' => 'EE-79',
-            'EE-82' => 'EE-81',
-            'EE-86' => 'EE-87'
+            'BAW' => 'BW',
+            'BAY' => 'BY',
+            'BER' => 'BE',
+            'BRE' => 'HB',
+            'BRG' => 'BB',
+            'HAM' => 'HH',
+            'HES' => 'HE',
+            'MEC' => 'MV',
+            'NDS' => 'NI',
+            'NRW' => 'NW',
+            'RHE' => 'RP',
+            'SAC' => 'ST',
+            'SAR' => 'SL',
+            'SAS' => 'SN',
+            'SCN' => 'SH',
+            'THE' => 'TH'
         ];
     }
 

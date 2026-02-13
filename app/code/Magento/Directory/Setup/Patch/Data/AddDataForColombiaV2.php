@@ -12,10 +12,7 @@ use Magento\Directory\Setup\DataInstallerFactory;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\Patch\DataPatchInterface;
 
-/**
- * Update region codes for IN.
- */
-class UpdateRegionCodesForIndia implements DataPatchInterface
+class AddDataForColombiaV2 implements DataPatchInterface
 {
     /**
      * @var ModuleDataSetupInterface
@@ -42,45 +39,27 @@ class UpdateRegionCodesForIndia implements DataPatchInterface
     /**
      * @inheritdoc
      */
-    public function apply(): DataPatchInterface
+    public function apply()
     {
         /** @var DataInstaller $dataInstaller */
         $dataInstaller = $this->dataInstallerFactory->create();
-        $dataInstaller->updateCountryRegionCodes(
+        $dataInstaller->addCountryRegions(
             $this->moduleDataSetup->getConnection(),
-            'IN',
-            $this->getRegionCodeMapping(),
-            $this->getRegionNameMapping()
+            $this->getDataForColombia()
         );
 
         return $this;
     }
 
     /**
-     * Get region code mapping.
+     * Colombia regions data.
      *
      * @return array
      */
-    private function getRegionCodeMapping(): array
+    private function getDataForColombia(): array
     {
         return [
-            'CT' => 'CG',
-            'DN' => 'DH',
-            'OR' => 'OD',
-            'TG' => 'TS',
-            'UT' => 'UK'
-        ];
-    }
-
-    /**
-     * Get region name mapping.
-     *
-     * @return array
-     */
-    private function getRegionNameMapping(): array
-    {
-        return [
-            'DN' => 'Dādra and Nagar Haveli and Damān and Diu'
+            ['CO', 'CO-DC', 'Distrito Capital de Bogotá']
         ];
     }
 

@@ -13,9 +13,9 @@ use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\Patch\DataPatchInterface;
 
 /**
- * Update region codes for CR.
+ * Update region codes for AT.
  */
-class UpdateRegionCodesForCostaRica implements DataPatchInterface
+class UpdateRegionCodesForAustriaV1 implements DataPatchInterface
 {
     /**
      * @var ModuleDataSetupInterface
@@ -48,7 +48,7 @@ class UpdateRegionCodesForCostaRica implements DataPatchInterface
         $dataInstaller = $this->dataInstallerFactory->create();
         $dataInstaller->updateCountryRegionCodes(
             $this->moduleDataSetup->getConnection(),
-            'CR',
+            'AT',
             $this->getRegionCodeMapping(),
             $this->getRegionNameMapping()
         );
@@ -64,12 +64,15 @@ class UpdateRegionCodesForCostaRica implements DataPatchInterface
     private function getRegionCodeMapping(): array
     {
         return [
-            'CR-AL' => 'CR-A',
-            'CR-CA' => 'CR-C',
-            'CR-GU' => 'CR-G',
-            'CR-HE' => 'CR-H',
-            'CR-LI' => 'CR-L',
-            'CR-PU' => 'CR-P'
+            'BL' => 'AT-1',
+            'KN' => 'AT-2',
+            'NO' => 'AT-3',
+            'OO' => 'AT-4',
+            'SB' => 'AT-5',
+            'ST' => 'AT-6',
+            'TI' => 'AT-7',
+            'VB' => 'AT-8',
+            'WI' => 'AT-9'
         ];
     }
 

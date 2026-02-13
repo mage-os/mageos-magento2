@@ -12,7 +12,7 @@ use Magento\Directory\Setup\DataInstallerFactory;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\Patch\DataPatchInterface;
 
-class AddRegionsForBelgium implements DataPatchInterface
+class AddDataForLatviaV1 implements DataPatchInterface
 {
     /**
      * @var ModuleDataSetupInterface
@@ -45,22 +45,22 @@ class AddRegionsForBelgium implements DataPatchInterface
         $dataInstaller = $this->dataInstallerFactory->create();
         $dataInstaller->addCountryRegions(
             $this->moduleDataSetup->getConnection(),
-            $this->getDataForBelgium()
+            $this->getDataForLatvia()
         );
 
         return $this;
     }
 
     /**
-     * Belgium regions data.
+     * Latvia regions data.
      *
      * @return array
      */
-    private function getDataForBelgium(): array
+    private function getDataForLatvia(): array
     {
         return [
-            ['BE', 'VLG', 'Vlaams Gewest'],
-            ['BE', 'WAL', 'wallonne, Région']
+            ['LV', 'LV-111', 'Augšdaugavas novads'],
+            ['LV', 'LV-112', 'Dienvidkurzemes Novads']
         ];
     }
 

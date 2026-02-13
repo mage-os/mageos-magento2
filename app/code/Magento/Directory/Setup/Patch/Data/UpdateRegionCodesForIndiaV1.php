@@ -13,9 +13,9 @@ use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\Patch\DataPatchInterface;
 
 /**
- * Update region codes for CO.
+ * Update region codes for IN.
  */
-class UpdateRegionCodesForColombia implements DataPatchInterface
+class UpdateRegionCodesForIndiaV1 implements DataPatchInterface
 {
     /**
      * @var ModuleDataSetupInterface
@@ -48,7 +48,7 @@ class UpdateRegionCodesForColombia implements DataPatchInterface
         $dataInstaller = $this->dataInstallerFactory->create();
         $dataInstaller->updateCountryRegionCodes(
             $this->moduleDataSetup->getConnection(),
-            'CO',
+            'IN',
             $this->getRegionCodeMapping(),
             $this->getRegionNameMapping()
         );
@@ -64,7 +64,11 @@ class UpdateRegionCodesForColombia implements DataPatchInterface
     private function getRegionCodeMapping(): array
     {
         return [
-            'CO-HUL' => 'CO-HUI'
+            'CT' => 'CG',
+            'DN' => 'DH',
+            'OR' => 'OD',
+            'TG' => 'TS',
+            'UT' => 'UK'
         ];
     }
 
@@ -76,7 +80,7 @@ class UpdateRegionCodesForColombia implements DataPatchInterface
     private function getRegionNameMapping(): array
     {
         return [
-
+            'DN' => 'Dādra and Nagar Haveli and Damān and Diu'
         ];
     }
 

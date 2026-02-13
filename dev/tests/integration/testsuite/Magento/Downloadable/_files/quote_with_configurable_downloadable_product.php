@@ -46,7 +46,6 @@ $addressData = [
     'telephone' => 3234676,
     'postcode' => 47676,
     'country_id' => 'DE',
-    'region_code' => 'BE',
     'city' => 'CityX',
     'street' => ['Black str, 48'],
     'lastname' => 'Smith',

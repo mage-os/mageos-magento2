@@ -12,7 +12,10 @@ use Magento\Directory\Setup\DataInstallerFactory;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\Patch\DataPatchInterface;
 
-class AddDataForSpain implements DataPatchInterface
+/**
+ * Update region codes for CR.
+ */
+class UpdateRegionCodesForCostaRicaV1 implements DataPatchInterface
 {
     /**
      * @var ModuleDataSetupInterface
@@ -39,42 +42,46 @@ class AddDataForSpain implements DataPatchInterface
     /**
      * @inheritdoc
      */
-    public function apply()
+    public function apply(): DataPatchInterface
     {
         /** @var DataInstaller $dataInstaller */
         $dataInstaller = $this->dataInstallerFactory->create();
-        $dataInstaller->addCountryRegions(
+        $dataInstaller->updateCountryRegionCodes(
             $this->moduleDataSetup->getConnection(),
-            $this->getDataForSpain()
+            'CR',
+            $this->getRegionCodeMapping(),
+            $this->getRegionNameMapping()
         );
 
         return $this;
     }
 
     /**
-     * Spain regions data.
+     * Get region code mapping.
      *
      * @return array
      */
-    private function getDataForSpain(): array
+    private function getRegionCodeMapping(): array
     {
         return [
-            ['ES', 'ES-AN', 'Andalucía'],
-            ['ES', 'ES-AR', 'Aragón'],
-            ['ES', 'ES-BI', 'Bizkaia'],
-            ['ES', 'ES-CL', 'Castilla y León'],
-            ['ES', 'ES-CM', 'Castilla-La Mancha'],
-            ['ES', 'ES-CN', 'Canarias'],
-            ['ES', 'ES-CT', 'Catalunya [Cataluña]'],
-            ['ES', 'ES-EX', 'Extremadura'],
-            ['ES', 'ES-GA', 'Galicia'],
-            ['ES', 'ES-M', 'Madrid'],
-            ['ES', 'ES-MC', 'Murcia, Región de'],
-            ['ES', 'ES-NC', 'Navarra, Comunidad Foral de'],
-            ['ES', 'ES-O', 'Asturias'],
-            ['ES', 'ES-PV', 'Euskal Herria'],
-            ['ES', 'ES-S', 'Cantabria'],
-            ['ES', 'ES-V', 'Valencia']
+            'CR-AL' => 'CR-A',
+            'CR-CA' => 'CR-C',
+            'CR-GU' => 'CR-G',
+            'CR-HE' => 'CR-H',
+            'CR-LI' => 'CR-L',
+            'CR-PU' => 'CR-P'
+        ];
+    }
+
+    /**
+     * Get region name mapping.
+     *
+     * @return array
+     */
+    private function getRegionNameMapping(): array
+    {
+        return [
+
         ];
     }
 

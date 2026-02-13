@@ -13,9 +13,9 @@ use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\Patch\DataPatchInterface;
 
 /**
- * Update region codes for DE.
+ * Update region codes for FR.
  */
-class UpdateRegionCodesForGermany implements DataPatchInterface
+class UpdateRegionCodesForFranceV1 implements DataPatchInterface
 {
     /**
      * @var ModuleDataSetupInterface
@@ -48,7 +48,7 @@ class UpdateRegionCodesForGermany implements DataPatchInterface
         $dataInstaller = $this->dataInstallerFactory->create();
         $dataInstaller->updateCountryRegionCodes(
             $this->moduleDataSetup->getConnection(),
-            'DE',
+            'FR',
             $this->getRegionCodeMapping(),
             $this->getRegionNameMapping()
         );
@@ -64,22 +64,16 @@ class UpdateRegionCodesForGermany implements DataPatchInterface
     private function getRegionCodeMapping(): array
     {
         return [
-            'BAW' => 'BW',
-            'BAY' => 'BY',
-            'BER' => 'BE',
-            'BRE' => 'HB',
-            'BRG' => 'BB',
-            'HAM' => 'HH',
-            'HES' => 'HE',
-            'MEC' => 'MV',
-            'NDS' => 'NI',
-            'NRW' => 'NW',
-            'RHE' => 'RP',
-            'SAC' => 'ST',
-            'SAR' => 'SL',
-            'SAS' => 'SN',
-            'SCN' => 'SH',
-            'THE' => 'TH'
+            '1' => '01',
+            '2' => '02',
+            '3' => '03',
+            '4' => '04',
+            '5' => '05',
+            '6' => '06',
+            '7' => '07',
+            '75' => '75C',
+            '8' => '08',
+            '9' => '09'
         ];
     }
 

@@ -15,7 +15,7 @@ use Magento\Framework\Setup\Patch\DataPatchInterface;
 /**
  * Update region codes for ES.
  */
-class UpdateRegionCodesForSpain implements DataPatchInterface
+class UpdateRegionCodesForSpainV1 implements DataPatchInterface
 {
     /**
      * @var ModuleDataSetupInterface

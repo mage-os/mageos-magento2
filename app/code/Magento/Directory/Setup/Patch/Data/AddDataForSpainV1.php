@@ -12,7 +12,7 @@ use Magento\Directory\Setup\DataInstallerFactory;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\Patch\DataPatchInterface;
 
-class AddDataForFrance implements DataPatchInterface
+class AddDataForSpainV1 implements DataPatchInterface
 {
     /**
      * @var ModuleDataSetupInterface
@@ -45,48 +45,36 @@ class AddDataForFrance implements DataPatchInterface
         $dataInstaller = $this->dataInstallerFactory->create();
         $dataInstaller->addCountryRegions(
             $this->moduleDataSetup->getConnection(),
-            $this->getDataForFrance()
+            $this->getDataForSpain()
         );
 
         return $this;
     }
 
     /**
-     * France regions data.
+     * Spain regions data.
      *
      * @return array
      */
-    private function getDataForFrance(): array
+    private function getDataForSpain(): array
     {
         return [
-            ['FR', '20R', 'Corse'],
-            ['FR', '69M', 'Métropole de Lyon'],
-            ['FR', '6AE', 'Alsace'],
-            ['FR', '971', 'Guadeloupe'],
-            ['FR', '972', 'Martinique'],
-            ['FR', '973', 'Guyane (française)'],
-            ['FR', '974', 'La Réunion'],
-            ['FR', '976', 'Mayotte'],
-            ['FR', 'ARA', 'Auvergne-Rhône-Alpes'],
-            ['FR', 'BFC', 'Bourgogne-Franche-Comté'],
-            ['FR', 'BL', 'Saint-Barthélemy'],
-            ['FR', 'BRE', 'Bretagne'],
-            ['FR', 'CP', 'Clipperton'],
-            ['FR', 'CVL', 'Centre-Val de Loire'],
-            ['FR', 'GES', 'Grand-Est'],
-            ['FR', 'HDF', 'Hauts-de-France'],
-            ['FR', 'IDF', 'Île-de-France'],
-            ['FR', 'MF', 'Saint-Martin'],
-            ['FR', 'NAQ', 'Nouvelle-Aquitaine'],
-            ['FR', 'NC', 'Nouvelle-Calédonie'],
-            ['FR', 'NOR', 'Normandie'],
-            ['FR', 'OCC', 'Occitanie'],
-            ['FR', 'PAC', 'Provence-Alpes-Côte-d’Azur'],
-            ['FR', 'PDL', 'Pays-de-la-Loire'],
-            ['FR', 'PF', 'Polynésie française'],
-            ['FR', 'PM', 'Saint-Pierre-et-Miquelon'],
-            ['FR', 'TF', 'Terres australes françaises'],
-            ['FR', 'WF', 'Wallis-et-Futuna']
+            ['ES', 'ES-AN', 'Andalucía'],
+            ['ES', 'ES-AR', 'Aragón'],
+            ['ES', 'ES-BI', 'Bizkaia'],
+            ['ES', 'ES-CL', 'Castilla y León'],
+            ['ES', 'ES-CM', 'Castilla-La Mancha'],
+            ['ES', 'ES-CN', 'Canarias'],
+            ['ES', 'ES-CT', 'Catalunya [Cataluña]'],
+            ['ES', 'ES-EX', 'Extremadura'],
+            ['ES', 'ES-GA', 'Galicia'],
+            ['ES', 'ES-M', 'Madrid'],
+            ['ES', 'ES-MC', 'Murcia, Región de'],
+            ['ES', 'ES-NC', 'Navarra, Comunidad Foral de'],
+            ['ES', 'ES-O', 'Asturias'],
+            ['ES', 'ES-PV', 'Euskal Herria'],
+            ['ES', 'ES-S', 'Cantabria'],
+            ['ES', 'ES-V', 'Valencia']
         ];
     }
 

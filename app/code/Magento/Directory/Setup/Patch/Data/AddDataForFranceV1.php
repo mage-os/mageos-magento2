@@ -12,7 +12,7 @@ use Magento\Directory\Setup\DataInstallerFactory;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\Patch\DataPatchInterface;
 
-class AddRegionsForItaly implements DataPatchInterface
+class AddDataForFranceV1 implements DataPatchInterface
 {
     /**
      * @var ModuleDataSetupInterface
@@ -45,41 +45,48 @@ class AddRegionsForItaly implements DataPatchInterface
         $dataInstaller = $this->dataInstallerFactory->create();
         $dataInstaller->addCountryRegions(
             $this->moduleDataSetup->getConnection(),
-            $this->getDataForItaly()
+            $this->getDataForFrance()
         );
 
         return $this;
     }
 
     /**
-     * Italy regions data.
+     * France regions data.
      *
      * @return array
      */
-    private function getDataForItaly(): array
+    private function getDataForFrance(): array
     {
         return [
-            ['IT', '21', 'Piemonte'],
-            ['IT', '23', 'Valle d\'Aosta'],
-            ['IT', '25', 'Lombardia'],
-            ['IT', '32', 'Trentino-Alto Adige'],
-            ['IT', '34', 'Veneto'],
-            ['IT', '36', 'Friuli Venezia Giulia'],
-            ['IT', '42', 'Liguria'],
-            ['IT', '45', 'Emilia-Romagna'],
-            ['IT', '52', 'Toscana'],
-            ['IT', '55', 'Umbria'],
-            ['IT', '57', 'Marche'],
-            ['IT', '62', 'Lazio'],
-            ['IT', '65', 'Abruzzo'],
-            ['IT', '67', 'Molise'],
-            ['IT', '72', 'Campania'],
-            ['IT', '75', 'Puglia'],
-            ['IT', '77', 'Basilicata'],
-            ['IT', '78', 'Calabria'],
-            ['IT', '82', 'Sicilia'],
-            ['IT', '88', 'Sardegna'],
-            ['IT', 'SU', 'Sud Sardegna']
+            ['FR', '20R', 'Corse'],
+            ['FR', '69M', 'Métropole de Lyon'],
+            ['FR', '6AE', 'Alsace'],
+            ['FR', '971', 'Guadeloupe'],
+            ['FR', '972', 'Martinique'],
+            ['FR', '973', 'Guyane (française)'],
+            ['FR', '974', 'La Réunion'],
+            ['FR', '976', 'Mayotte'],
+            ['FR', 'ARA', 'Auvergne-Rhône-Alpes'],
+            ['FR', 'BFC', 'Bourgogne-Franche-Comté'],
+            ['FR', 'BL', 'Saint-Barthélemy'],
+            ['FR', 'BRE', 'Bretagne'],
+            ['FR', 'CP', 'Clipperton'],
+            ['FR', 'CVL', 'Centre-Val de Loire'],
+            ['FR', 'GES', 'Grand-Est'],
+            ['FR', 'HDF', 'Hauts-de-France'],
+            ['FR', 'IDF', 'Île-de-France'],
+            ['FR', 'MF', 'Saint-Martin'],
+            ['FR', 'NAQ', 'Nouvelle-Aquitaine'],
+            ['FR', 'NC', 'Nouvelle-Calédonie'],
+            ['FR', 'NOR', 'Normandie'],
+            ['FR', 'OCC', 'Occitanie'],
+            ['FR', 'PAC', 'Provence-Alpes-Côte-d’Azur'],
+            ['FR', 'PDL', 'Pays-de-la-Loire'],
+            ['FR', 'PF', 'Polynésie française'],
+            ['FR', 'PM', 'Saint-Pierre-et-Miquelon'],
+            ['FR', 'TF', 'Terres australes françaises'],
+            ['FR', 'WF', 'Wallis-et-Futuna']
         ];
     }
 

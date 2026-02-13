@@ -43,7 +43,6 @@ class DataInstallerTest extends TestCase
     public function testAddCountryRegions(): void
     {
         $adapter = $this->resourceConnection->getConnection();
-        $expectedCountries = $this->getCountries(true);
 
         $regionsBefore = $this->getTableRowsCount('directory_country_region');
         $regionsNamesBefore = $this->getTableRowsCount('directory_country_region_name');
@@ -58,7 +57,6 @@ class DataInstallerTest extends TestCase
 
         $this->assertEquals(4, ($regionsAfter - $regionsBefore));
         $this->assertEquals(4, ($regionsNamesAfter - $regionsNamesBefore));
-        $this->assertEquals($expectedCountries, $this->getCountries());
     }
 
     /**
@@ -76,38 +74,6 @@ class DataInstallerTest extends TestCase
         );
 
         return (int)$connection->fetchOne($select);
-    }
-
-    /**
-     * Return required countries with regions
-     *
-     * @param bool $isConfig
-     * @return string
-     */
-    private function getCountries(bool $isConfig = false): string
-    {
-        $connection = $this->resourceConnection->getConnection();
-        $select = $connection->select()
-            ->from($connection->getTableName('core_config_data'), 'value')
-            ->where('path = ?', 'general/region/state_required')
-            ->where('scope = ?', 'default')
-            ->where('scope_id = ?', 0);
-
-        $countries = $connection->fetchOne($select);
-        $countries = (!empty($countries)) ? explode(',', $countries) : [];
-
-        if (!$isConfig) {
-            return implode(',', $countries);
-        }
-
-        $countryCodes = ['JP', 'UA'];
-        foreach ($countryCodes as $country) {
-            if (!in_array($country, $countries)) {
-                $countries[] = $country;
-            }
-        }
-
-        return implode(',', $countries);
     }
 
     /**

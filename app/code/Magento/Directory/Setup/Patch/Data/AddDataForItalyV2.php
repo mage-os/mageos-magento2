@@ -12,7 +12,7 @@ use Magento\Directory\Setup\DataInstallerFactory;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\Patch\DataPatchInterface;
 
-class AddRegionsForColombia implements DataPatchInterface
+class AddDataForItalyV2 implements DataPatchInterface
 {
     /**
      * @var ModuleDataSetupInterface
@@ -45,21 +45,41 @@ class AddRegionsForColombia implements DataPatchInterface
         $dataInstaller = $this->dataInstallerFactory->create();
         $dataInstaller->addCountryRegions(
             $this->moduleDataSetup->getConnection(),
-            $this->getDataForColombia()
+            $this->getDataForItaly()
         );
 
         return $this;
     }
 
     /**
-     * Colombia regions data.
+     * Italy regions data.
      *
      * @return array
      */
-    private function getDataForColombia(): array
+    private function getDataForItaly(): array
     {
         return [
-            ['CO', 'CO-DC', 'Distrito Capital de Bogotá']
+            ['IT', '21', 'Piemonte'],
+            ['IT', '23', 'Valle d\'Aosta'],
+            ['IT', '25', 'Lombardia'],
+            ['IT', '32', 'Trentino-Alto Adige'],
+            ['IT', '34', 'Veneto'],
+            ['IT', '36', 'Friuli Venezia Giulia'],
+            ['IT', '42', 'Liguria'],
+            ['IT', '45', 'Emilia-Romagna'],
+            ['IT', '52', 'Toscana'],
+            ['IT', '55', 'Umbria'],
+            ['IT', '57', 'Marche'],
+            ['IT', '62', 'Lazio'],
+            ['IT', '65', 'Abruzzo'],
+            ['IT', '67', 'Molise'],
+            ['IT', '72', 'Campania'],
+            ['IT', '75', 'Puglia'],
+            ['IT', '77', 'Basilicata'],
+            ['IT', '78', 'Calabria'],
+            ['IT', '82', 'Sicilia'],
+            ['IT', '88', 'Sardegna'],
+            ['IT', 'SU', 'Sud Sardegna']
         ];
     }
 
