@@ -346,7 +346,7 @@
         <data key="country_id">FR</data>
         <data key="country">France</data>
         <data key="city">Quintin</data>
-        <data key="state">22</data>
+        <data key="state">Côtes-d'Armor</data>
         <data key="postcode">12345</data>
     </entity>
     <entity name="updateCustomerChinaAddress" type="address">
