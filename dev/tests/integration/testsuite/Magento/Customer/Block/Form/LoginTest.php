@@ -52,7 +52,6 @@ class LoginTest extends TestCase
         $code = 'customer_login_form_submit';
         $buttonLock = $this->getMockBuilder(ButtonLockInterface::class)
             ->disableOriginalConstructor()
-            ->disableAutoload()
             ->onlyMethods(['isDisabled', 'getCode'])
             ->getMock();
         $buttonLock->expects($this->any())->method('getCode')->willReturn($code);
