@@ -22,6 +22,11 @@ class Rule
     public const CACHE_TAG = 'salesrule';
 
     /**
+     * Cache Lifetime for salesrule attributes
+     */
+    public const CACHE_TTL = 86400;
+
+    /**
      * Temp variable to save attributes
      * @var array
      */

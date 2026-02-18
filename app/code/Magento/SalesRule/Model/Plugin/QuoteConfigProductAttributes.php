@@ -67,7 +67,8 @@ class QuoteConfigProductAttributes
             $this->cache->save(
                 $this->serializer->serialize($this->activeAttributeCodes),
                 ResourceRulePlugin::CACHE_KEY,
-                [ResourceRulePlugin::CACHE_TAG]
+                [ResourceRulePlugin::CACHE_TAG],
+                ResourceRulePlugin::CACHE_TTL
             );
         }
 
