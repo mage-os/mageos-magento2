@@ -31,6 +31,7 @@ use Magento\Framework\Stdlib\DateTime\DateTimeFormatterInterface;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\Framework\Validator\UniversalFactory;
 use Magento\Store\Model\StoreManagerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -102,9 +103,7 @@ class SpecialFromDateTest extends TestCase
         );
     }
 
-    /**
-     * @dataProvider disallowedValuesProvider
-     */
+    #[DataProvider('disallowedValuesProvider')]
     public function testIsAllowedEmptyTextValueReturnsFalseForEmptyNullFalse(mixed $value): void
     {
         self::assertFalse($this->specialFromDate->isAllowedEmptyTextValue($value));
@@ -113,18 +112,14 @@ class SpecialFromDateTest extends TestCase
     /**
      * @return array
      */
-    public static function disallowedValuesProvider(): array
+    public static function disallowedValuesProvider(): iterable
     {
-        return [
-            'empty string' => [''],
-            'null' => [null],
-            'false' => [false],
-        ];
+        yield 'empty string' => [''];
+        yield 'null' => [null];
+        yield 'false' => [false];
     }
 
-    /**
-     * @dataProvider allowedValuesProvider
-     */
+    #[DataProvider('allowedValuesProvider')]
     public function testIsAllowedEmptyTextValueReturnsTrueForOtherValues(mixed $value): void
     {
         self::assertTrue($this->specialFromDate->isAllowedEmptyTextValue($value));
