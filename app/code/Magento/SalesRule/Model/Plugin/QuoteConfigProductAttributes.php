@@ -10,7 +10,6 @@ namespace Magento\SalesRule\Model\Plugin;
 use Magento\Framework\App\CacheInterface;
 use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Quote\Model\Quote\Config;
-use Magento\Quote\Model\Quote;
 use Magento\SalesRule\Model\ResourceModel\Rule as RuleResource;
 
 class QuoteConfigProductAttributes

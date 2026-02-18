@@ -3,8 +3,11 @@
  * Copyright 2025 Adobe
  * All Rights Reserved.
  */
+<<<<<<< HEAD
 declare(strict_types=1);
 
+=======
+>>>>>>> a741d8bc62d (#40226 - Cache clean and Return Type comments were addressed)
 namespace Magento\SalesRule\Model\Plugin;
 
 class FrontController
