@@ -7,6 +7,9 @@ declare(strict_types=1);
 
 namespace Magento\SalesRule\Model\Plugin;
 
+use GraphQL\Language\AST\DocumentNode;
+use GraphQL\Language\AST\OperationDefinitionNode;
+
 class QueryParser
 {
 
@@ -21,17 +24,19 @@ class QueryParser
     /**
      * Set QueryType to RequestTypeRegistry
      *
-     * @param \Magento\Framework\GraphQl\Query\QueryParser $subject
-     * @param \GraphQL\Language\AST\DocumentNode $documentNode
-     * @return \GraphQL\Language\AST\DocumentNode $documentNode
+     * @param  \Magento\Framework\GraphQl\Query\QueryParser $subject
+     * @param  DocumentNode $documentNode
+     * @return DocumentNode $documentNode
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function afterParse(\Magento\Framework\GraphQl\Query\QueryParser $subject, $documentNode)
-    {
+    public function afterParse(
+        \Magento\Framework\GraphQl\Query\QueryParser $subject,
+        DocumentNode $documentNode
+    ): DocumentNode {
         // Get the first operation definition
         $operation = null;
         foreach ($documentNode->definitions as $definition) {
-            if ($definition instanceof \GraphQL\Language\AST\OperationDefinitionNode) {
+            if ($definition instanceof OperationDefinitionNode) {
                 $operation = $definition;
                 break;
             }

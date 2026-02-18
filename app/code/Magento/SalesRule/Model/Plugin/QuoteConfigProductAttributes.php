@@ -11,6 +11,7 @@ use Magento\Framework\App\CacheInterface;
 use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Quote\Model\Quote\Config;
 use Magento\SalesRule\Model\ResourceModel\Rule as RuleResource;
+use Magento\SalesRule\Model\Plugin\ResourceModel\Rule as ResourceRulePlugin;
 
 class QuoteConfigProductAttributes
 {
@@ -23,16 +24,6 @@ class QuoteConfigProductAttributes
      * @var array|null
      */
     private $activeAttributeCodes;
-
-    /**
-     * Cache key for active salesrule attributes
-     */
-    private const CACHE_KEY = 'salesrule_active_product_attributes';
-
-    /**
-     * Cache tag for salesrule attributes
-     */
-    private const CACHE_TAG = 'salesrule';
 
     /**
      * @param RuleResource $ruleResource
@@ -64,7 +55,7 @@ class QuoteConfigProductAttributes
             return $attributeKeys;
         }
 
-        $cachedData = $this->cache->load(self::CACHE_KEY);
+        $cachedData = $this->cache->load(ResourceRulePlugin::CACHE_KEY);
 
         if ($cachedData !== false) {
             $this->activeAttributeCodes = $this->serializer->unserialize($cachedData);
@@ -75,8 +66,8 @@ class QuoteConfigProductAttributes
             );
             $this->cache->save(
                 $this->serializer->serialize($this->activeAttributeCodes),
-                self::CACHE_KEY,
-                [self::CACHE_TAG]
+                ResourceRulePlugin::CACHE_KEY,
+                [ResourceRulePlugin::CACHE_TAG]
             );
         }
 
