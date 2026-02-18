@@ -77,20 +77,27 @@ class ProductMetadataTest extends TestCase
     public static function testGetVersionGitInstallationDataProvider()
     {
         return [
-            [
+            'community edition package' => [
                 [
-                    0 => [
-                        'name'    => 'magento/product-community-edition',
-                        'version' => '123.456.789'
-                    ],
-                    1 => [
-                        'name'    => 'magento/product-other-edition',
-                        'version' => '987.654.321'
+                    'mage-os/product-community-edition' => [
+                        'name'    => 'mage-os/product-community-edition',
+                        'version' => '1.0.0',
+                        'magento_version' => '123.456.789'
                     ],
                 ],
                 '123.456.789'
             ],
-            [
+            'minimal product package' => [
+                [
+                    'mage-os/product-minimal' => [
+                        'name'    => 'mage-os/product-minimal',
+                        'version' => '2.0.0',
+                        'magento_version' => '234.567.890'
+                    ],
+                ],
+                '234.567.890'
+            ],
+            'empty packages' => [
                 [],
                 'UNKNOWN'
             ]
