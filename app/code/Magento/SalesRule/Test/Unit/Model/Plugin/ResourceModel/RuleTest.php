@@ -120,7 +120,7 @@ class RuleTest extends TestCase
 
         $this->cacheMock->expects($this->once())
             ->method('clean')
-            ->with([\Magento\SalesRule\Model\Plugin\ResourceModel\Rule::CACHE_KEY]);
+            ->with([\Magento\SalesRule\Model\Plugin\ResourceModel\Rule::CACHE_TAG]);
 
         $result = $this->plugin->afterSetActualProductAttributes($subject, $subject);
 

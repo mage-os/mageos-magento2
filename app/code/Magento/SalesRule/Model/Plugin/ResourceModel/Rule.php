@@ -82,6 +82,7 @@ class Rule
      * @param RuleResource $subject
      * @param mixed $attributes
      * @return mixed $attributes
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function beforeSetActualProductAttributes(
         RuleResource $subject,
@@ -97,6 +98,7 @@ class Rule
      * @param RuleResource $subject
      * @param RuleResource $result
      * @return RuleResource
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function afterSetActualProductAttributes(
         RuleResource $subject,
@@ -111,8 +113,8 @@ class Rule
             return $result;
         }
 
-        if (array_diff($activeAttributeCodes, $this->attributes)) {
-            $this->cache->clean([self::CACHE_KEY]);
+        if (array_diff($this->attributes, $activeAttributeCodes)) {
+            $this->cache->clean([self::CACHE_TAG]);
         }
         return $result;
     }
