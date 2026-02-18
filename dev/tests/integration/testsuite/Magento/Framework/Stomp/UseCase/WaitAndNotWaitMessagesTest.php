@@ -79,9 +79,9 @@ class WaitAndNotWaitMessagesTest extends QueueTestCaseAbstract
     /**
      * Get message object, creating it lazily
      *
-     * @return AsyncTestData
+     * @return object
      */
-    private function getMsgObject(): AsyncTestData
+    private function getMsgObject(): object
     {
         if (!$this->msgObject) {
             // phpstan:ignore "Class Magento\TestModuleAsyncStomp\Model\AsyncTestData not found."
