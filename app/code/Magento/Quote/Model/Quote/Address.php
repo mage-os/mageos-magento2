@@ -46,6 +46,7 @@ use Magento\Shipping\Model\CarrierFactoryInterface;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Customer\Helper\Address as AddressHelper;
 
 /**
  * Sales Quote address model
@@ -341,6 +342,7 @@ class Address extends AbstractAddress implements
      * @param CompositeValidator|null $compositeValidator
      * @param CountryModelsCache|null $countryModelsCache
      * @param RegionModelsCache|null $regionModelsCache
+     * @param AddressHelper|null $addressHelper
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
@@ -382,6 +384,7 @@ class Address extends AbstractAddress implements
         ?CompositeValidator $compositeValidator = null,
         ?CountryModelsCache $countryModelsCache = null,
         ?RegionModelsCache $regionModelsCache = null,
+        ?AddressHelper $addressHelper = null
     ) {
         $this->_scopeConfig = $scopeConfig;
         $this->_addressItemFactory = $addressItemFactory;
@@ -422,6 +425,7 @@ class Address extends AbstractAddress implements
             $compositeValidator,
             $countryModelsCache,
             $regionModelsCache,
+            $addressHelper
         );
     }
 

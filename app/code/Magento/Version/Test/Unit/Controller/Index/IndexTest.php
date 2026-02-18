@@ -39,7 +39,10 @@ class IndexTest extends TestCase
     {
         $this->contextMock = $this->createMock(Context::class);
 
-        $this->productMetadataMock = $this->createMock(ProductMetadataInterface::class);
+        $this->productMetadataMock = $this->getMockBuilder(ProductMetadataInterface::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getName', 'getEdition', 'getVersion', 'getDistributionName', 'getDistributionVersion'])
+            ->getMockForAbstractClass();
 
         $this->rawResponseFactoryMock = $this->createPartialMock(RawFactory::class, ['create']);
         $this->rawResponseMock = $this->createPartialMock(Raw::class, ['setContents']);
@@ -75,9 +78,13 @@ class IndexTest extends TestCase
         $this->productMetadataMock->expects($this->any())->method('getVersion')->willReturn('2.3.3');
         $this->productMetadataMock->expects($this->any())->method('getEdition')->willReturn('Community');
         $this->productMetadataMock->expects($this->any())->method('getName')->willReturn('Magento');
+        $this->productMetadataMock->expects($this->any())->method('getDistributionVersion')
+            ->willReturn('1.1.0');
+        $this->productMetadataMock->expects($this->any())->method('getDistributionName')
+            ->willReturn('Mage-OS');
 
         $this->rawResponseMock->expects($this->once())->method('setContents')
-            ->with('Magento/2.3 (Community)')
+            ->with('Mage-OS/1.1 (Community)')
             ->willReturnSelf();
 
         $this->versionController->execute();

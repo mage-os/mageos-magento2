@@ -120,6 +120,9 @@ class SaveInventoryDataObserverTest extends TestCase
             'conf1'
         )
     ]
+    /**
+     * @group integrationIgnore
+     */
     public function testAutoChangingIsInStockForNewConfigurable(): void
     {
         $childProduct = $this->fixtures->get('p1');

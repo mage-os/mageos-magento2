@@ -8,7 +8,9 @@ namespace Magento\Elasticsearch\Model\DataProvider\Base;
 use Elasticsearch\Common\Exceptions\BadRequest400Exception;
 use Exception;
 use Magento\AdvancedSearch\Model\SuggestedQueriesInterface;
+use Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory;
 use Magento\Elasticsearch\Model\Adapter\FieldMapper\Product\FieldProviderInterface;
+use Magento\Elasticsearch\Model\Adapter\FieldMapperInterface;
 use Magento\Elasticsearch\Model\Config;
 use Magento\Elasticsearch\SearchAdapter\ConnectionManager;
 use Magento\Elasticsearch\SearchAdapter\SearchIndexNameResolver;
@@ -62,6 +64,16 @@ class Suggestions implements SuggestedQueriesInterface
     private $fieldProvider;
 
     /**
+     * @var CollectionFactory
+     */
+    private $productAttributeCollectionFactory;
+
+    /**
+     * @var FieldMapperInterface
+     */
+    private $fieldMapper;
+
+    /**
      * @var LoggerInterface
      */
     private $logger;
@@ -90,6 +102,8 @@ class Suggestions implements SuggestedQueriesInterface
      * @param FieldProviderInterface $fieldProvider
      * @param LoggerInterface|null $logger
      * @param GetSuggestionFrequencyInterface|null $getSuggestionFrequency
+     * @param CollectionFactory|null $productAttributeCollectionFactory
+     * @param FieldMapperInterface|null $fieldMapper
      * @param array $responseErrorExceptionList
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
@@ -103,6 +117,8 @@ class Suggestions implements SuggestedQueriesInterface
         FieldProviderInterface $fieldProvider,
         ?LoggerInterface $logger = null,
         ?GetSuggestionFrequencyInterface $getSuggestionFrequency = null,
+        ?CollectionFactory $productAttributeCollectionFactory = null,
+        ?FieldMapperInterface $fieldMapper = null,
         array $responseErrorExceptionList = []
     ) {
         $this->queryResultFactory = $queryResultFactory;
@@ -111,10 +127,13 @@ class Suggestions implements SuggestedQueriesInterface
         $this->config = $config;
         $this->searchIndexNameResolver = $searchIndexNameResolver;
         $this->storeManager = $storeManager;
-        $this->fieldProvider = $fieldProvider;
         $this->logger = $logger ?: ObjectManager::getInstance()->get(LoggerInterface::class);
         $this->getSuggestionFrequency = $getSuggestionFrequency ?:
             ObjectManager::getInstance()->get(GetSuggestionFrequencyInterface::class);
+        $this->productAttributeCollectionFactory = $productAttributeCollectionFactory ?:
+            ObjectManager::getInstance()->get(CollectionFactory::class);
+        $this->fieldMapper = $fieldMapper ?:
+            ObjectManager::getInstance()->get(FieldMapperInterface::class);
         $this->responseErrorExceptionList = array_merge($this->responseErrorExceptionList, $responseErrorExceptionList);
     }
 
@@ -281,11 +300,20 @@ class Suggestions implements SuggestedQueriesInterface
      */
     private function getSuggestFields()
     {
-        $fields = array_filter($this->fieldProvider->getFields(), function ($field) {
-            return (($field['type'] ?? null) === 'text') && (($field['index'] ?? null) !== false);
-        });
-
-        return array_keys($fields);
+        $productAttributes = $this->productAttributeCollectionFactory->create();
+        $productAttributes->addFieldToFilter(
+            'is_searchable',
+            1
+        );
+        $attributeCodes = $productAttributes->getColumnValues('attribute_code');
+        $fields = [];
+        foreach ($attributeCodes as $attributeCode) {
+            $fields[] = $this->fieldMapper->getFieldName(
+                $attributeCode,
+                ['type' => FieldMapperInterface::TYPE_QUERY]
+            );
+        }
+        return $fields;
     }
 
     /**

@@ -11,8 +11,8 @@
 @message-system__border-color: @color-gray82;
 @message-system__border-width: .1rem;
 @message-system__color: @color-gray20;
-@message-system-short__padding-vertical: 1.5rem;
-@message-system-short-wrapper__height: 5rem;
+@message-system-short__padding-vertical: 1rem;
+@message-system-short-wrapper__height: 4rem;
 
 //  Triangle marker
 @message-system-triangle__height: .5rem;
@@ -26,8 +26,7 @@
 .message-system-inner {
     &:extend(.abs-clearfix all);
     background: @message-system__background-color;
-    border: solid @message-system__border-color;
-    border-width: 0 @message-system__border-width @message-system__border-width;
+    box-shadow: 0 2px 10px @border__color;
     position: relative;
 
     .message-error {

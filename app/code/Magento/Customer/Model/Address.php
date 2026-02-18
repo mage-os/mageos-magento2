@@ -13,6 +13,7 @@ use Magento\Customer\Model\Address\AbstractAddress\CountryModelsCache;
 use Magento\Customer\Model\Address\AbstractAddress\RegionModelsCache;
 use Magento\Customer\Model\Address\CompositeValidator;
 use Magento\Framework\Indexer\StateInterface;
+use Magento\Customer\Helper\Address as AddressHelper;
 
 /**
  * Customer address model
@@ -80,6 +81,7 @@ class Address extends \Magento\Customer\Model\Address\AbstractAddress
      * @param CompositeValidator|null $compositeValidator
      * @param CountryModelsCache|null $countryModelsCache
      * @param RegionModelsCache|null $regionModelsCache
+     * @param AddressHelper|null $addressHelper
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
@@ -106,6 +108,7 @@ class Address extends \Magento\Customer\Model\Address\AbstractAddress
         ?CompositeValidator $compositeValidator = null,
         ?CountryModelsCache $countryModelsCache = null,
         ?RegionModelsCache $regionModelsCache = null,
+        ?AddressHelper $addressHelper = null
     ) {
         $this->dataProcessor = $dataProcessor;
         $this->_customerFactory = $customerFactory;
@@ -130,6 +133,7 @@ class Address extends \Magento\Customer\Model\Address\AbstractAddress
             $compositeValidator,
             $countryModelsCache,
             $regionModelsCache,
+            $addressHelper
         );
     }
 
