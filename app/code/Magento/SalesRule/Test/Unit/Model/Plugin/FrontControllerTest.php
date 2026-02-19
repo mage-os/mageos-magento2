@@ -36,10 +36,10 @@ class FrontControllerTest extends TestCase
     {
         $this->requestTypeRegistry = $this->createMock(RequestTypeRegistry::class);
         $this->plugin = new FrontController($this->requestTypeRegistry);
-        $this->request = $this->getMockBuilder(RequestInterface::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getMethod'])
-            ->getMock();
+        $this->request = $this->createPartialMockWithReflection(
+            RequestInterface::class,
+            ['getMethod']
+        );
         $this->subject = $this->createMock(FrontControllerInterface::class);
     }
 

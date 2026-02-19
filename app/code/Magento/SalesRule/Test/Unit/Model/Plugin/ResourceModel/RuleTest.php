@@ -90,7 +90,7 @@ class RuleTest extends TestCase
 
         $result = $this->plugin->beforeSetActualProductAttributes($subject, $attributes);
 
-        $this->assertEquals($attributes, $result);
+        $this->assertEquals([$attributes], $result);
 
         $reflection = new \ReflectionClass($this->plugin);
         $prop = $reflection->getProperty('attributes');

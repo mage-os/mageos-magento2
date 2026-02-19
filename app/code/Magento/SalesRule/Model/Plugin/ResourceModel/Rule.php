@@ -94,7 +94,7 @@ class Rule
         mixed $attributes
     ): mixed {
         $this->attributes = $attributes;
-        return $attributes;
+        return [$attributes];
     }
 
     /**
