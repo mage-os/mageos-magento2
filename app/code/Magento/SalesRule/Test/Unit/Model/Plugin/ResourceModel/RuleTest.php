@@ -88,9 +88,9 @@ class RuleTest extends TestCase
         $subject = $this->createMock(\Magento\SalesRule\Model\ResourceModel\Rule::class);
         $attributes = ['color', 'size'];
 
-        $result = $this->plugin->beforeSetActualProductAttributes($subject, $attributes);
+        $result = $this->plugin->beforeSetActualProductAttributes($subject, $this->abstractModel, $attributes);
 
-        $this->assertEquals([$attributes], $result);
+        $this->assertEquals(null, $result);
 
         $reflection = new \ReflectionClass($this->plugin);
         $prop = $reflection->getProperty('attributes');
@@ -107,7 +107,7 @@ class RuleTest extends TestCase
         $newAttributes = ['color', 'size'];
 
         // simulate attributes stored from before plugin
-        $this->plugin->beforeSetActualProductAttributes($subject, $newAttributes);
+        $this->plugin->beforeSetActualProductAttributes($subject, $this->abstractModel, $newAttributes);
 
         $this->cacheMock->expects($this->once())
             ->method('load')
@@ -134,7 +134,7 @@ class RuleTest extends TestCase
         $cachedAttributes = ['color'];
         $newAttributes = ['color'];
 
-        $this->plugin->beforeSetActualProductAttributes($subject, $newAttributes);
+        $this->plugin->beforeSetActualProductAttributes($subject, $this->abstractModel, $newAttributes);
 
         $this->cacheMock->expects($this->once())
             ->method('load')
@@ -154,7 +154,7 @@ class RuleTest extends TestCase
     {
         $subject = $this->createMock(\Magento\SalesRule\Model\ResourceModel\Rule::class);
 
-        $this->plugin->beforeSetActualProductAttributes($subject, ['color']);
+        $this->plugin->beforeSetActualProductAttributes($subject, $this->abstractModel, ['color']);
 
         $this->cacheMock->expects($this->once())
             ->method('load')
