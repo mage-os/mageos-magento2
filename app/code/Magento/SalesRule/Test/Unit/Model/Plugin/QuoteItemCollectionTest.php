@@ -13,12 +13,15 @@ use Magento\SalesRule\Model\Plugin\QuoteItemCollection;
 use Magento\Quote\Model\ResourceModel\Quote\Item\Collection;
 use Magento\SalesRule\Model\Plugin\RequestTypeRegistry;
 use Magento\Quote\Model\Quote;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * Test for QuoteItemCollection plugin
  */
 class QuoteItemCollectionTest extends TestCase
 {
+    use MockCreationTrait;
+    
     /**
      * @var RequestTypeRegistry|MockObject
      */
@@ -49,10 +52,10 @@ class QuoteItemCollectionTest extends TestCase
         $this->quoteItemCollection = $this->getMockBuilder(Collection::class)
                                     ->disableOriginalConstructor()
                                     ->getMock();
-        $this->quote = $this->getMockBuilder(Quote::class)
-                            ->disableOriginalConstructor()
-                            ->addMethods(['getTriggerRecollect'])
-                            ->getMock();
+        $this->quote = $this->createPartialMockWithReflection(
+            Quote::class,
+            ['getTriggerRecollect']
+        );
     }
 
     /**
