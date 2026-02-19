@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2025 Adobe
+ * Copyright 2026 Adobe
  * All Rights Reserved.
  */
 declare(strict_types=1);
@@ -21,7 +21,7 @@ use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 class QuoteItemCollectionTest extends TestCase
 {
     use MockCreationTrait;
-    
+
     /**
      * @var RequestTypeRegistry|MockObject
      */
