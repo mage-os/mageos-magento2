@@ -85,16 +85,18 @@ class Rule
      * Save attribute in a temp object to be used in afterSetActualProductAttributes
      *
      * @param RuleResource $subject
+     * @param \Magento\Framework\Model\AbstractModel $object
      * @param mixed $attributes
-     * @return mixed $attributes
+     * @return null
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function beforeSetActualProductAttributes(
         RuleResource $subject,
+        \Magento\Framework\Model\AbstractModel $object,
         mixed $attributes
-    ): mixed {
+    ): null {
         $this->attributes = $attributes;
-        return [$attributes];
+        return null;
     }
 
     /**
