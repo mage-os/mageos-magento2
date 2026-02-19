@@ -11,11 +11,14 @@ use Magento\Framework\App\FrontControllerInterface;
 use Magento\Framework\App\RequestInterface;
 use Magento\SalesRule\Model\Plugin\FrontController;
 use Magento\SalesRule\Model\Plugin\RequestTypeRegistry;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class FrontControllerTest extends TestCase
 {
+    use MockCreationTrait;
+    
     /** @var RequestTypeRegistry|MockObject */
     private $requestTypeRegistry;
 
