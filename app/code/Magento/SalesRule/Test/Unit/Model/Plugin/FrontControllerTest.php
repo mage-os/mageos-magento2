@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\SalesRule\Test\Unit\Model\Plugin;
 
 use Magento\Framework\App\FrontControllerInterface;
+use Magento\Framework\App\Request\Http;
 use Magento\Framework\App\RequestInterface;
 use Magento\SalesRule\Model\Plugin\FrontController;
 use Magento\SalesRule\Model\Plugin\RequestTypeRegistry;
@@ -18,7 +19,7 @@ use PHPUnit\Framework\TestCase;
 class FrontControllerTest extends TestCase
 {
     use MockCreationTrait;
-    
+
     /** @var RequestTypeRegistry|MockObject */
     private $requestTypeRegistry;
 
@@ -40,7 +41,7 @@ class FrontControllerTest extends TestCase
         $this->requestTypeRegistry = $this->createMock(RequestTypeRegistry::class);
         $this->plugin = new FrontController($this->requestTypeRegistry);
         $this->request = $this->createPartialMockWithReflection(
-            RequestInterface::class,
+            Http::class,
             ['getMethod']
         );
         $this->subject = $this->createMock(FrontControllerInterface::class);

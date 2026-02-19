@@ -94,7 +94,7 @@ class Rule
         RuleResource $subject,
         \Magento\Framework\Model\AbstractModel $object,
         mixed $attributes
-    ): null {
+    ) {
         $this->attributes = $attributes;
         return null;
     }
