@@ -30,10 +30,6 @@
             </actionGroup>
             <!--Log out-->
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
-            <!--Clear Cache-->
-            <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushCache">
-                <argument name="tags" value=""/>
-            </actionGroup>
         </after>
 
         <actionGroup ref="StorefrontOpenCustomerAccountCreatePageActionGroup" stepKey="openCreateAccountPage"/>
