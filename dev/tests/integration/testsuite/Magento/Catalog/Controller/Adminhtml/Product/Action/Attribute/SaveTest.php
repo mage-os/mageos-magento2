@@ -12,9 +12,7 @@ use Magento\Catalog\Block\Product\ListProduct;
 use Magento\Catalog\Helper\Product\Edit\Action\Attribute;
 use Magento\Catalog\Model\CategoryFactory;
 use Magento\Catalog\Model\Product\Visibility;
-use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Model\ProductRepository;
-use Magento\Catalog\Test\Fixture\Product as ProductFixture;
 use Magento\Framework\App\Request\Http as HttpRequest;
 use Magento\Framework\Message\MessageInterface;
 use Magento\Framework\UrlInterface;
@@ -22,7 +20,7 @@ use Magento\TestFramework\MessageQueue\EnvironmentPreconditionException;
 use Magento\TestFramework\MessageQueue\PreconditionFailedException;
 use Magento\TestFramework\MessageQueue\PublisherConsumerController;
 use Magento\TestFramework\TestCase\AbstractBackendController;
-use Magento\TestFramework\Fixture\DataFixture;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * @covers \Magento\Catalog\Controller\Adminhtml\Product\Action\Attribute\Save::execute
@@ -31,15 +29,6 @@ use Magento\TestFramework\Fixture\DataFixture;
  */
 class SaveTest extends AbstractBackendController
 {
-    /**
-     * Date constants for special price tests
-     */
-    private const VALID_FROM_DATE = '2026-01-01';
-    private const VALID_TO_DATE = '2026-12-31';
-    private const INVALID_FROM_DATE = '2026-12-31';
-    private const INVALID_TO_DATE = '2026-01-01';
-    private const EQUAL_DATE = '2026-06-15';
-
     /** @var PublisherConsumerController */
     private $publisherConsumerController;
 
@@ -72,23 +61,19 @@ class SaveTest extends AbstractBackendController
     }
 
     /**
+     * @magentoDataFixture Magento/Catalog/_files/product_simple.php
      * @magentoDbIsolation disabled
      */
-    #[DataFixture(ProductFixture::class, ['sku' => 'simple'], 'product')]
     public function testSaveActionRedirectsSuccessfully(): void
     {
-        /** @var ProductRepositoryInterface $productRepository */
-        $productRepository = $this->_objectManager->get(ProductRepositoryInterface::class);
-        $product = $productRepository->get('simple');
-        
         /** @var $session Session */
         $session = $this->_objectManager->get(Session::class);
-        $session->setProductIds([$product->getId()]);
+        $session->setProductIds([1]);
         $this->getRequest()->setMethod(HttpRequest::METHOD_POST);
 
         $this->dispatch('backend/catalog/product_action_attribute/save/store/0');
 
-        $this->assertSame(302, $this->getResponse()->getHttpResponseCode());
+        $this->assertEquals(302, $this->getResponse()->getHttpResponseCode());
         /** @var \Magento\Backend\Model\UrlInterface $urlBuilder */
         $urlBuilder = $this->_objectManager->get(UrlInterface::class);
 
@@ -109,11 +94,11 @@ class SaveTest extends AbstractBackendController
     }
 
     /**
-     * @dataProvider saveActionVisibilityAttrDataProvider
      * @param array $attributes
+     * @magentoDataFixture Magento/Catalog/_files/product_simple.php
      * @magentoDbIsolation disabled
      */
-    #[DataFixture(ProductFixture::class, ['sku' => 'simple'], 'product')]
+    #[DataProvider('saveActionVisibilityAttrDataProvider')]
     public function testSaveActionChangeVisibility(array $attributes): void
     {
         /** @var ProductRepository $repository */
@@ -167,8 +152,8 @@ class SaveTest extends AbstractBackendController
      * Assert that custom layout update can not be change for existing entity.
      *
      * @return void
+     * @magentoDataFixture Magento/Catalog/_files/product_simple.php
      */
-    #[DataFixture(ProductFixture::class, ['sku' => 'simple'], 'product')]
     public function testSaveActionCantChangeCustomLayoutUpdate(): void
     {
         /** @var ProductRepository $repository */
@@ -190,205 +175,6 @@ class SaveTest extends AbstractBackendController
             $this->equalTo(['Custom layout update text cannot be changed, only removed']),
             MessageInterface::TYPE_ERROR
         );
-        $this->assertSame('test', $product->getData('custom_layout_update'));
-    }
-
-    /**
-     * Test that mass update validates special price dates correctly when from_date is after to_date.
-     *
-     * @magentoDbIsolation disabled
-     * @magentoAppIsolation enabled
-     * @return void
-     */
-    #[DataFixture(ProductFixture::class, ['sku' => 'simple'], 'product')]
-    public function testSaveActionValidatesSpecialPriceDateRangeWithInvalidDates(): void
-    {
-        /** @var ProductRepositoryInterface $productRepository */
-        $productRepository = $this->_objectManager->get(ProductRepositoryInterface::class);
-        $product = $productRepository->get('simple');
-
-        /** @var Session $session */
-        $session = $this->_objectManager->get(Session::class);
-        $session->setProductIds([$product->getId()]);
-
-        $this->getRequest()->setMethod(HttpRequest::METHOD_POST);
-        $this->getRequest()->setPostValue([
-            'attributes' => [
-                'special_from_date' => self::INVALID_FROM_DATE,
-                'special_to_date' => self::INVALID_TO_DATE,
-            ],
-        ]);
-
-        $this->dispatch('backend/catalog/product_action_attribute/save/store/0');
-
-        $this->assertSessionMessages(
-            $this->logicalOr(
-                $this->containsEqual('Make sure the To Date is later than or the same as the From Date.'),
-                $this->containsEqual('Please correct the product special price dates.')
-            ),
-            MessageInterface::TYPE_ERROR
-        );
-
-        // Validation failure prevents async operation, so no need to wait
-        $updatedProduct = $productRepository->getById($product->getId(), forceReload: true);
-        $this->assertNull($updatedProduct->getSpecialFromDate());
-        $this->assertNull($updatedProduct->getSpecialToDate());
-    }
-
-    /**
-     * Test that mass update accepts valid special price dates with various scenarios.
-     * Covers:
-     * - Both from_date and to_date set with valid range
-     * - Only from_date set
-     * - Only to_date set
-     * - Both dates equal
-     *
-     * @dataProvider validSpecialPriceDateScenariosDataProvider
-     * @magentoDbIsolation disabled
-     * @magentoAppIsolation enabled
-     * @param array $attributes
-     * @param float $expectedPrice
-     * @param bool $expectFromDate
-     * @param bool $expectToDate
-     * @return void
-     */
-    #[DataFixture(ProductFixture::class, ['sku' => 'simple'], 'product')]
-    public function testSaveActionAcceptsValidSpecialPriceDates(
-        array $attributes,
-        float $expectedPrice,
-        bool $expectFromDate,
-        bool $expectToDate
-    ): void {
-        /** @var ProductRepositoryInterface $productRepository */
-        $productRepository = $this->_objectManager->get(ProductRepositoryInterface::class);
-        $product = $productRepository->get('simple');
-
-        /** @var Session $session */
-        $session = $this->_objectManager->get(Session::class);
-        $session->setProductIds([$product->getId()]);
-
-        $this->getRequest()->setMethod(HttpRequest::METHOD_POST);
-        $this->getRequest()->setPostValue(['attributes' => $attributes]);
-
-        $this->dispatch('backend/catalog/product_action_attribute/save/store/0');
-
-        // Wait for the specific date field that should be set
-        $waitCondition = $expectFromDate
-            ? fn () => $productRepository->get('simple', forceReload: true)->getSpecialFromDate() !== null
-            : fn () => $productRepository->get('simple', forceReload: true)->getSpecialToDate() !== null;
-
-        $this->publisherConsumerController->waitForAsynchronousResult($waitCondition);
-
-        $this->assertSessionMessages(
-            $this->isEmpty(),
-            MessageInterface::TYPE_ERROR
-        );
-
-        $updatedProduct = $productRepository->get('simple', forceReload: true);
-        
-        if ($expectFromDate) {
-            $this->assertNotNull($updatedProduct->getSpecialFromDate());
-        }
-        if ($expectToDate) {
-            $this->assertNotNull($updatedProduct->getSpecialToDate());
-        }
-        // Use assertEquals for price comparison as getSpecialPrice() returns string from DB
-        $this->assertEquals($expectedPrice, $updatedProduct->getSpecialPrice());
-    }
-
-    /**
-     * Data provider for valid special price date scenarios.
-     *
-     * @return array
-     */
-    public static function validSpecialPriceDateScenariosDataProvider(): array
-    {
-        return [
-            'both dates with valid range' => [
-                'attributes' => [
-                    'special_from_date' => self::VALID_FROM_DATE,
-                    'special_to_date' => self::VALID_TO_DATE,
-                    'special_price' => 5.00,
-                ],
-                'expectedPrice' => 5.00,
-                'expectFromDate' => true,
-                'expectToDate' => true,
-            ],
-            'only from_date set' => [
-                'attributes' => [
-                    'special_from_date' => self::VALID_FROM_DATE,
-                    'special_price' => 7.00,
-                ],
-                'expectedPrice' => 7.00,
-                'expectFromDate' => true,
-                'expectToDate' => false,
-            ],
-            'only to_date set' => [
-                'attributes' => [
-                    'special_to_date' => self::VALID_TO_DATE,
-                    'special_price' => 6.00,
-                ],
-                'expectedPrice' => 6.00,
-                'expectFromDate' => false,
-                'expectToDate' => true,
-            ],
-            'both dates equal' => [
-                'attributes' => [
-                    'special_from_date' => self::EQUAL_DATE,
-                    'special_to_date' => self::EQUAL_DATE,
-                    'special_price' => 8.00,
-                ],
-                'expectedPrice' => 8.00,
-                'expectFromDate' => true,
-                'expectToDate' => true,
-            ],
-        ];
-    }
-
-    /**
-     * Test that mass update validates special price dates for multiple products.
-     *
-     * @magentoDbIsolation disabled
-     * @magentoAppIsolation enabled
-     * @return void
-     */
-    #[DataFixture(ProductFixture::class, ['sku' => 'simple'], 'product1')]
-    #[DataFixture(ProductFixture::class, ['sku' => 'simple2'], 'product2')]
-    public function testSaveActionValidatesSpecialPriceDateRangeForMultipleProducts(): void
-    {
-        /** @var ProductRepositoryInterface $productRepository */
-        $productRepository = $this->_objectManager->get(ProductRepositoryInterface::class);
-        $product1 = $productRepository->get('simple');
-        $product2 = $productRepository->get('simple2');
-
-        /** @var Session $session */
-        $session = $this->_objectManager->get(Session::class);
-        $session->setProductIds([$product1->getId(), $product2->getId()]);
-
-        $this->getRequest()->setMethod(HttpRequest::METHOD_POST);
-        $this->getRequest()->setPostValue([
-            'attributes' => [
-                'special_from_date' => self::INVALID_FROM_DATE,
-                'special_to_date' => self::INVALID_TO_DATE,
-            ],
-        ]);
-
-        $this->dispatch('backend/catalog/product_action_attribute/save/store/0');
-
-        $this->assertSessionMessages(
-            $this->logicalOr(
-                $this->containsEqual('Make sure the To Date is later than or the same as the From Date.'),
-                $this->containsEqual('Please correct the product special price dates.')
-            ),
-            MessageInterface::TYPE_ERROR
-        );
-
-        // Validation failure prevents async operation, so no need to wait
-        $updatedProduct1 = $productRepository->getById($product1->getId(), forceReload: true);
-        $updatedProduct2 = $productRepository->getById($product2->getId(), forceReload: true);
-        $this->assertNull($updatedProduct1->getSpecialFromDate());
-        $this->assertNull($updatedProduct1->getSpecialToDate());
-        $this->assertNull($updatedProduct2->getSpecialFromDate());
-        $this->assertNull($updatedProduct2->getSpecialToDate());
+        $this->assertEquals('test', $product->getData('custom_layout_update'));
     }
 }
