@@ -109,8 +109,6 @@ class SessionCleaner implements SessionCleanerInterface
     /**
      * Clear authenticated customer linkage from visitor session payload.
      *
-     * Keep visitor context (e.g. visitor_id/quote bindings) intact to avoid regressions in visitor-based features.
-     *
      * @param array $visitorData
      * @return void
      */
