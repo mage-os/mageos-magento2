@@ -73,7 +73,6 @@ class Placeholder implements LocalInterface
     /** @var StoreManagerInterface */
     private StoreManagerInterface $storeManager;
 
-
     /**
      * Placeholder constructor.
      *
