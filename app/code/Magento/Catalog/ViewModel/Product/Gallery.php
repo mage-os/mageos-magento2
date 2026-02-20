@@ -1,0 +1,56 @@
+<?php
+/**
+ * Copyright 2026 Adobe
+ * All Rights Reserved.
+ */
+
+namespace Magento\Catalog\ViewModel\Product;
+
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\View\Element\Block\ArgumentInterface;
+use Magento\Store\Model\Store;
+use Magento\Store\Model\StoreManagerInterface;
+
+class Gallery implements ArgumentInterface
+{
+    /**
+     * @param ScopeConfigInterface $scopeConfig
+     * @param StoreManagerInterface $storeManager
+     * @param \Magento\Catalog\Block\Product\View\Gallery $block
+     */
+    public function __construct(
+        private readonly ScopeConfigInterface $scopeConfig,
+        private readonly StoreManagerInterface $storeManager,
+        private readonly \Magento\Catalog\Block\Product\View\Gallery $block
+    )
+    {
+    }
+
+    /**
+     * @return string
+     * @throws NoSuchEntityException
+     */
+    public function getMainProductImage(): string
+    {
+        $images = $this->block->getGalleryImages()->getItems();
+        $mainImage = current(array_filter($images, function ($img) {
+            return $this->block->isMainImage($img);
+        }));
+
+        if (!empty($images) && empty($mainImage)) {
+            $mainImage = $this->block->getGalleryImages()->getFirstItem();
+        }
+
+        $helper = $this->block->getData('imageHelper');
+        $mainImageData = $mainImage ?
+            $mainImage->getData('medium_image_url') :
+            $helper->getDefaultPlaceholderUrl('image');
+
+        if ($this->scopeConfig->isSetFlag(Store::XML_PATH_STORE_IN_URL)) {
+            $mainImageData .= '?___store=' . $this->storeManager->getStore()->getCode();
+        }
+
+        return $mainImageData;
+    }
+}

@@ -9,6 +9,7 @@ namespace Magento\Catalog\Model\View\Asset;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\App\ObjectManager;
+use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\DriverPool;
 use Magento\Framework\View\Asset\ContextInterface;
@@ -16,6 +17,7 @@ use Magento\Framework\View\Asset\File\NotFoundException;
 use Magento\Framework\View\Asset\LocalInterface;
 use Magento\Framework\View\Asset\Repository;
 use Magento\Catalog\Model\Product\Media\ConfigInterface;
+use Magento\Store\Model\StoreManagerInterface;
 
 /**
  * A locally available image placeholder file asset that can be referred with a file type
@@ -68,6 +70,10 @@ class Placeholder implements LocalInterface
      */
     private $mediaConfig;
 
+    /** @var StoreManagerInterface */
+    private StoreManagerInterface $storeManager;
+
+
     /**
      * Placeholder constructor.
      *
@@ -77,7 +83,9 @@ class Placeholder implements LocalInterface
      * @param string $type
      * @param Filesystem|null $filesystem
      * @param ConfigInterface|null $mediaConfig
+     * @param StoreManagerInterface|null $storeManager
      *
+     * @throws FileSystemException
      */
     public function __construct(
         ContextInterface $context,
@@ -85,7 +93,8 @@ class Placeholder implements LocalInterface
         Repository $assetRepo,
         $type,
         ?Filesystem $filesystem = null,
-        ?ConfigInterface $mediaConfig = null
+        ?ConfigInterface $mediaConfig = null,
+        ?StoreManagerInterface $storeManager = null
     ) {
         $this->context = $context;
         $this->scopeConfig = $scopeConfig;
@@ -97,6 +106,7 @@ class Placeholder implements LocalInterface
             DirectoryList::MEDIA,
             DriverPool::FILE
         );
+        $this->storeManager = $storeManager ?? ObjectManager::getInstance()->get(StoreManagerInterface::class);
     }
 
     /**
@@ -209,7 +219,8 @@ class Placeholder implements LocalInterface
         // check if placeholder defined in config
         $isConfigPlaceholder = $this->scopeConfig->getValue(
             "catalog/placeholder/{$this->type}_placeholder",
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $this->storeManager->getStore()->getCode()
         );
         $this->filePath = $isConfigPlaceholder;
 
