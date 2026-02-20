@@ -13,6 +13,7 @@ use Magento\Customer\Model\Session;
 use Magento\Customer\Model\Url;
 use Magento\Customer\Test\Fixture\Customer;
 use Magento\Framework\App\Request\Http as HttpRequest;
+use Magento\Framework\Exception\SessionException;
 use Magento\Framework\Message\MessageInterface;
 use Magento\Framework\Phrase;
 use Magento\Framework\Session\Generic;
@@ -300,6 +301,35 @@ class LoginPostTest extends AbstractController
 
         $this->assertTrue($this->session->isLoggedIn());
         $this->assertRedirect($this->stringContains('customer/account/'));
+    }
+
+    /**
+     * Logged-in session is invalidated after password reset on another device.
+     *
+     * @return void
+     */
+    #[
+        Config('customer/startup/redirect_dashboard', 0, ScopeInterface::SCOPE_STORE),
+        Config('customer/captcha/enable', 0, ScopeInterface::SCOPE_STORE),
+        DataFixture(Customer::class, as: 'customer')
+    ]
+    public function testLoggedInSessionIsInvalidatedWhenSessionCutoffIsUpdated(): void
+    {
+        $customer = DataFixtureStorageManager::getStorage()->get('customer');
+        $this->prepareRequest($customer->getEmail(), 'password');
+        $this->dispatch('customer/account/loginPost');
+        $this->assertTrue($this->session->isLoggedIn());
+
+        $customerId = (int)$this->session->getCustomerId();
+        $this->customerResource->updateSessionCutOff($customerId, time() + 1);
+
+        $sessionExceptionThrown = false;
+        try {
+            $this->session->start();
+        } catch (SessionException) {
+            $sessionExceptionThrown = true;
+        }
+        $this->assertTrue($sessionExceptionThrown);
     }
 
     /**
