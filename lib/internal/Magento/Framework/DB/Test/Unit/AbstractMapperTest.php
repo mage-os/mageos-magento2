@@ -125,7 +125,6 @@ class AbstractMapperTest extends TestCase
         // Set the select mock via reflection since constructor wasn't called
         $reflection = new \ReflectionClass($mapper);
         $selectProperty = $reflection->getProperty('select');
-        $selectProperty->setAccessible(true);
         $selectProperty->setValue($mapper, $this->selectMock);
         $criteriaMock = $this->createMock(CriteriaInterface::class);
         $criteriaMock->expects($this->once())
@@ -160,7 +159,6 @@ class AbstractMapperTest extends TestCase
         // Set the select mock via reflection since constructor wasn't called
         $reflection = new \ReflectionClass($mapper);
         $selectProperty = $reflection->getProperty('select');
-        $selectProperty->setAccessible(true);
         $selectProperty->setValue($mapper, $this->selectMock);
         $criteriaMock = $this->createMock(CriteriaInterface::class);
         $criteriaMock->expects($this->once())

@@ -218,7 +218,6 @@ class CategoryTest extends TestCase
 
         foreach ($properties as $propertyName => list($reflectionClass, $value)) {
             $property = $reflectionClass->getProperty($propertyName);
-            $property->setAccessible(true);
             $property->setValue($this->category, $value);
         }
     }
@@ -377,7 +376,6 @@ class CategoryTest extends TestCase
 
         $reflection = new \ReflectionClass(\Magento\Catalog\Model\ResourceModel\AbstractResource::class);
         $property = $reflection->getProperty('_storeManager');
-        $property->setAccessible(true);
         $property->setValue($this->category, $storeManagerMock);
 
         $categoryMock = $this->createMock(\Magento\Catalog\Model\Category::class);
@@ -475,7 +473,6 @@ class CategoryTest extends TestCase
 
         $reflection = new \ReflectionClass(Category::class);
         $property = $reflection->getProperty('_categoryTreeFactory');
-        $property->setAccessible(true);
         $property->setValue($this->category, $treeFactoryMock);
 
         $result = $this->category->getCategories(1);
@@ -508,11 +505,9 @@ class CategoryTest extends TestCase
         $reflection = new \ReflectionClass(Category::class);
 
         $storeProperty = $reflection->getProperty('_storeManager');
-        $storeProperty->setAccessible(true);
         $storeProperty->setValue($this->category, $storeManagerMock);
 
         $entityProperty = $reflection->getProperty('entityManager');
-        $entityProperty->setAccessible(true);
         $entityProperty->setValue($this->category, $entityManagerMock);
 
         $this->connectionMock->method('fetchRow')->willReturn(['entity_id' => 1, 'attribute_set_id' => 3]);
@@ -532,7 +527,6 @@ class CategoryTest extends TestCase
 
         $reflection = new \ReflectionClass(Category::class);
         $property = $reflection->getProperty('entityManager');
-        $property->setAccessible(true);
         $property->setValue($this->category, $entityManagerMock);
 
         $this->category->save($categoryMock);
@@ -549,7 +543,6 @@ class CategoryTest extends TestCase
 
         $reflection = new \ReflectionClass(Category::class);
         $property = $reflection->getProperty('entityManager');
-        $property->setAccessible(true);
         $property->setValue($this->category, $entityManagerMock);
 
         $this->category->delete($categoryMock);
@@ -566,12 +559,9 @@ class CategoryTest extends TestCase
 
         $reflection = new \ReflectionClass(Category::class);
         $property = $reflection->getProperty('_categoryTreeFactory');
-        $property->setAccessible(true);
         $property->setValue($this->category, $treeFactoryMock);
 
         $method = $reflection->getMethod('_getTree');
-        $method->setAccessible(true);
-
         $result = $method->invoke($this->category);
         $this->assertInstanceOf(\Magento\Catalog\Model\ResourceModel\Category\Tree::class, $result);
     }
@@ -590,8 +580,6 @@ class CategoryTest extends TestCase
 
         $reflection = new \ReflectionClass(Category::class);
         $method = $reflection->getMethod('_savePath');
-        $method->setAccessible(true);
-
         $result = $method->invoke($this->category, $categoryMock);
         $this->assertInstanceOf(Category::class, $result);
     }
@@ -602,8 +590,6 @@ class CategoryTest extends TestCase
 
         $reflection = new \ReflectionClass(Category::class);
         $method = $reflection->getMethod('_getMaxPosition');
-        $method->setAccessible(true);
-
         $result = $method->invoke($this->category, '1/2');
         $this->assertEquals(10, $result);
     }
@@ -618,8 +604,6 @@ class CategoryTest extends TestCase
 
         $reflection = new \ReflectionClass(Category::class);
         $method = $reflection->getMethod('_saveCategoryProducts');
-        $method->setAccessible(true);
-
         $result = $method->invoke($this->category, $categoryMock);
         $this->assertInstanceOf(Category::class, $result);
     }
@@ -637,8 +621,6 @@ class CategoryTest extends TestCase
 
         $reflection = new \ReflectionClass(Category::class);
         $method = $reflection->getMethod('_saveCategoryProducts');
-        $method->setAccessible(true);
-
         $result = $method->invoke($this->category, $categoryMock);
         $this->assertInstanceOf(Category::class, $result);
     }
@@ -669,7 +651,6 @@ class CategoryTest extends TestCase
 
         $reflection = new \ReflectionClass(Category::class);
         $property = $reflection->getProperty('_categoryCollectionFactory');
-        $property->setAccessible(true);
         $property->setValue($this->category, $collectionFactoryMock);
 
         $this->connectionMock->method('delete')->willReturn(1);
@@ -688,13 +669,11 @@ class CategoryTest extends TestCase
 
         $reflection = new \ReflectionClass(\Magento\Catalog\Model\ResourceModel\AbstractResource::class);
         $property = $reflection->getProperty('_storeManager');
-        $property->setAccessible(true);
         $property->setValue($this->category, $storeManagerMock);
 
         // Clear the _storeId to force it to fetch from store manager
         $categoryReflection = new \ReflectionClass(Category::class);
         $storeIdProperty = $categoryReflection->getProperty('_storeId');
-        $storeIdProperty->setAccessible(true);
         $storeIdProperty->setValue($this->category, null);
 
         $result = $this->category->getStoreId();
@@ -710,7 +689,6 @@ class CategoryTest extends TestCase
 
         $reflection = new \ReflectionClass(\Magento\Eav\Model\Entity\AbstractEntity::class);
         $property = $reflection->getProperty('_type');
-        $property->setAccessible(true);
         $property->setValue($this->category, null);
 
         $result = $this->category->getEntityType();
@@ -727,24 +705,19 @@ class CategoryTest extends TestCase
         $reflection = new \ReflectionClass(Category::class);
 
         $categoryTreeFactoryProp = $reflection->getProperty('_categoryTreeFactory');
-        $categoryTreeFactoryProp->setAccessible(true);
         $this->assertInstanceOf(TreeFactory::class, $categoryTreeFactoryProp->getValue($this->category));
 
         $categoryCollectionFactoryProp = $reflection->getProperty('_categoryCollectionFactory');
-        $categoryCollectionFactoryProp->setAccessible(true);
         $this->assertInstanceOf(CollectionFactory::class, $categoryCollectionFactoryProp->getValue($this->category));
 
         $eventManagerProp = $reflection->getProperty('_eventManager');
-        $eventManagerProp->setAccessible(true);
         $this->assertInstanceOf(ManagerInterface::class, $eventManagerProp->getValue($this->category));
 
         $indexerProcessorProp = $reflection->getProperty('indexerProcessor');
-        $indexerProcessorProp->setAccessible(true);
         $this->assertInstanceOf(Processor::class, $indexerProcessorProp->getValue($this->category));
 
         // Verify aggregateCount is initialized
         $aggregateCountProp = $reflection->getProperty('aggregateCount');
-        $aggregateCountProp->setAccessible(true);
         $this->assertInstanceOf(Category\AggregateCount::class, $aggregateCountProp->getValue($this->category));
     }
 
@@ -759,12 +732,9 @@ class CategoryTest extends TestCase
 
         $reflection = new \ReflectionClass(Category::class);
         $property = $reflection->getProperty('aggregateCount');
-        $property->setAccessible(true);
         $property->setValue($this->category, $aggregateCountMock);
 
         $method = $reflection->getMethod('_beforeDelete');
-        $method->setAccessible(true);
-
         try {
             $method->invoke($this->category, $categoryMock);
             $this->assertTrue(true);
@@ -786,12 +756,9 @@ class CategoryTest extends TestCase
 
         $reflection = new \ReflectionClass(Category::class);
         $property = $reflection->getProperty('indexerProcessor');
-        $property->setAccessible(true);
         $property->setValue($this->category, $indexerProcessorMock);
 
         $method = $reflection->getMethod('_afterDelete');
-        $method->setAccessible(true);
-
         try {
             $method->invoke($this->category, $categoryMock);
             $this->assertTrue(true);
@@ -819,8 +786,6 @@ class CategoryTest extends TestCase
 
         $reflection = new \ReflectionClass(Category::class);
         $method = $reflection->getMethod('_beforeSave');
-        $method->setAccessible(true);
-
         try {
             $method->invoke($this->category, $categoryMock);
             $this->assertTrue(true);
@@ -843,8 +808,6 @@ class CategoryTest extends TestCase
 
         $reflection = new \ReflectionClass(Category::class);
         $method = $reflection->getMethod('_afterSave');
-        $method->setAccessible(true);
-
         try {
             $method->invoke($this->category, $categoryMock);
             $this->assertTrue(true);
@@ -963,8 +926,6 @@ class CategoryTest extends TestCase
 
         $reflection = new \ReflectionClass(Category::class);
         $method = $reflection->getMethod('_beforeSave');
-        $method->setAccessible(true);
-
         try {
             $method->invoke($this->category, $categoryMock);
             $this->assertTrue(true);
@@ -990,8 +951,6 @@ class CategoryTest extends TestCase
 
         $reflection = new \ReflectionClass(Category::class);
         $method = $reflection->getMethod('_beforeSave');
-        $method->setAccessible(true);
-
         try {
             $method->invoke($this->category, $categoryMock);
             $this->assertTrue(true);
@@ -1023,7 +982,6 @@ class CategoryTest extends TestCase
             // Inject connection using reflection
             $reflection = new \ReflectionClass(\Magento\Eav\Model\Entity\AbstractEntity::class);
             $property = $reflection->getProperty('_connection');
-            $property->setAccessible(true);
             $property->setValue($this->category, $connectionMock);
 
             $metadataMock = $this->createMock(\Magento\Framework\EntityManager\EntityMetadataInterface::class);
@@ -1031,7 +989,6 @@ class CategoryTest extends TestCase
 
             $reflection2 = new \ReflectionClass(Category::class);
             $property2 = $reflection2->getProperty('metadataPool');
-            $property2->setAccessible(true);
             $metadataPoolMock = $this->createMock(\Magento\Framework\EntityManager\MetadataPool::class);
             $metadataPoolMock->method('getMetadata')->willReturn($metadataMock);
             $property2->setValue($this->category, $metadataPoolMock);
@@ -1053,7 +1010,6 @@ class CategoryTest extends TestCase
 
         $reflection = new \ReflectionClass(Category::class);
         $property = $reflection->getProperty('metadataPool');
-        $property->setAccessible(true);
         $metadataPoolMock = $this->createMock(\Magento\Framework\EntityManager\MetadataPool::class);
         $metadataPoolMock->method('getMetadata')->willReturn($metadataMock);
         $property->setValue($this->category, $metadataPoolMock);
@@ -1122,7 +1078,6 @@ class CategoryTest extends TestCase
 
         $reflection = new \ReflectionClass(Category::class);
         $property = $reflection->getProperty('_categoryCollectionFactory');
-        $property->setAccessible(true);
         $factoryMock = $this->createMock(CollectionFactory::class);
         $factoryMock->method('create')->willReturn($collectionMock);
         $property->setValue($this->category, $factoryMock);
@@ -1147,8 +1102,6 @@ class CategoryTest extends TestCase
 
         $reflection = new \ReflectionClass(Category::class);
         $method = $reflection->getMethod('_afterSave');
-        $method->setAccessible(true);
-
         try {
             $method->invoke($this->category, $categoryMock);
             $this->assertTrue(true);
@@ -1171,8 +1124,6 @@ class CategoryTest extends TestCase
 
         $reflection = new \ReflectionClass(Category::class);
         $method = $reflection->getMethod('_saveCategoryProducts');
-        $method->setAccessible(true);
-
         try {
             $method->invoke($this->category, $categoryMock);
             $this->assertTrue(true);
@@ -1200,8 +1151,6 @@ class CategoryTest extends TestCase
 
         $reflection = new \ReflectionClass(Category::class);
         $method = $reflection->getMethod('_getMaxPosition');
-        $method->setAccessible(true);
-
         $result = $method->invoke($this->category, '1/2');
         $this->assertEquals(0, $result);
     }
@@ -1218,7 +1167,6 @@ class CategoryTest extends TestCase
 
         $reflection = new \ReflectionClass(Category::class);
         $property = $reflection->getProperty('entityManager');
-        $property->setAccessible(true);
         $property->setValue($this->category, $entityManagerMock);
 
         try {
@@ -1241,7 +1189,6 @@ class CategoryTest extends TestCase
 
         $reflection = new \ReflectionClass(Category::class);
         $property = $reflection->getProperty('entityManager');
-        $property->setAccessible(true);
         $property->setValue($this->category, $entityManagerMock);
 
         try {
@@ -1269,8 +1216,6 @@ class CategoryTest extends TestCase
 
         $reflection = new \ReflectionClass(Category::class);
         $method = $reflection->getMethod('_processPositions');
-        $method->setAccessible(true);
-
         $result = $method->invoke($this->category, $categoryMock, $newParentMock, 5);
         $this->assertEquals(11, $result);
     }
@@ -1291,8 +1236,6 @@ class CategoryTest extends TestCase
 
         $reflection = new \ReflectionClass(Category::class);
         $method = $reflection->getMethod('_processPositions');
-        $method->setAccessible(true);
-
         $result = $method->invoke($this->category, $categoryMock, $newParentMock, null);
         $this->assertEquals(1, $result);
     }
@@ -1359,8 +1302,6 @@ class CategoryTest extends TestCase
 
         $reflection = new \ReflectionClass(Category::class);
         $method = $reflection->getMethod('_beforeSave');
-        $method->setAccessible(true);
-
         try {
             $method->invoke($this->category, $categoryMock);
             $this->assertTrue(true);
@@ -1388,8 +1329,6 @@ class CategoryTest extends TestCase
 
         $reflection = new \ReflectionClass(Category::class);
         $method = $reflection->getMethod('_beforeSave');
-        $method->setAccessible(true);
-
         try {
             $method->invoke($this->category, $categoryMock);
             $this->assertTrue(true);
@@ -1410,8 +1349,6 @@ class CategoryTest extends TestCase
 
         $reflection = new \ReflectionClass(Category::class);
         $method = $reflection->getMethod('_beforeSave');
-        $method->setAccessible(true);
-
         try {
             $method->invoke($this->category, $categoryMock);
             $this->assertTrue(true);
@@ -1451,12 +1388,10 @@ class CategoryTest extends TestCase
 
             $reflection = new \ReflectionClass(\Magento\Eav\Model\Entity\AbstractEntity::class);
             $property = $reflection->getProperty('_connection');
-            $property->setAccessible(true);
             $property->setValue($this->category, $connectionMock);
 
             $reflection2 = new \ReflectionClass(Category::class);
             $property2 = $reflection2->getProperty('metadataPool');
-            $property2->setAccessible(true);
             $property2->setValue($this->category, $metadataPoolMock);
 
             $result = $this->category->getCategoryWithChildren(1);
@@ -1493,7 +1428,6 @@ class CategoryTest extends TestCase
 
         $reflection = new \ReflectionClass(Category::class);
         $property = $reflection->getProperty('_categoryCollectionFactory');
-        $property->setAccessible(true);
         $property->setValue($this->category, $factoryMock);
 
         $categoryMock = new \Magento\Framework\DataObject([
@@ -1531,7 +1465,6 @@ class CategoryTest extends TestCase
 
         $reflection = new \ReflectionClass(Category::class);
         $property = $reflection->getProperty('entityManager');
-        $property->setAccessible(true);
         $property->setValue($this->category, $entityManagerMock);
 
         try {
@@ -1549,7 +1482,6 @@ class CategoryTest extends TestCase
         $reflection = new \ReflectionClass(Category::class);
 
         $prop = $reflection->getProperty('connectionName');
-        $prop->setAccessible(true);
         $this->assertEquals('catalog', $prop->getValue($this->category));
     }
 
@@ -1599,8 +1531,6 @@ class CategoryTest extends TestCase
 
         $reflection = new \ReflectionClass(Category::class);
         $method = $reflection->getMethod('_beforeSave');
-        $method->setAccessible(true);
-
         try {
             $method->invoke($this->category, $categoryMock);
         } catch (\Throwable $e) {
@@ -1659,7 +1589,6 @@ class CategoryTest extends TestCase
 
         $reflection = new \ReflectionClass(Category::class);
         $property = $reflection->getProperty('metadataPool');
-        $property->setAccessible(true);
         $property->setValue($this->category, $metadataPoolMock);
 
         $result = $this->category->getCategoryWithChildren(1);
@@ -1685,7 +1614,6 @@ class CategoryTest extends TestCase
 
         $reflection = new \ReflectionClass(Category::class);
         $property = $reflection->getProperty('entityManager');
-        $property->setAccessible(true);
         $property->setValue($this->category, $entityManagerMock);
 
         try {
