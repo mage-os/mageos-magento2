@@ -3,6 +3,7 @@
  * Copyright 2026 Adobe
  * All Rights Reserved.
  */
+declare(strict_types=1);
 
 namespace Magento\Catalog\ViewModel\Product;
 
@@ -23,11 +24,12 @@ class Gallery implements ArgumentInterface
         private readonly ScopeConfigInterface $scopeConfig,
         private readonly StoreManagerInterface $storeManager,
         private readonly \Magento\Catalog\Block\Product\View\Gallery $block
-    )
-    {
+    ) {
     }
 
     /**
+     * Determine main product image
+     *
      * @return string
      * @throws NoSuchEntityException
      */
@@ -42,10 +44,12 @@ class Gallery implements ArgumentInterface
             $mainImage = $this->block->getGalleryImages()->getFirstItem();
         }
 
-        $helper = $this->block->getData('imageHelper');
-        $mainImageData = $mainImage ?
-            $mainImage->getData('medium_image_url') :
-            $helper->getDefaultPlaceholderUrl('image');
+        $mainImageData = $mainImage?->getData('medium_image_url');
+
+        if (!$mainImageData) {
+            return $this->block->getData('imageHelper')
+                ->getDefaultPlaceholderUrl('image');
+        }
 
         if ($this->scopeConfig->isSetFlag(Store::XML_PATH_STORE_IN_URL)) {
             $mainImageData .= '?___store=' . $this->storeManager->getStore()->getCode();

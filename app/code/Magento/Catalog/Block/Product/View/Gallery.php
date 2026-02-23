@@ -8,16 +8,13 @@ namespace Magento\Catalog\Block\Product\View;
 
 use Magento\Catalog\Block\Product\Context;
 use Magento\Catalog\Helper\Image;
-use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Gallery\ImagesConfigFactoryInterface;
 use Magento\Catalog\Model\Product\Image\UrlBuilder;
-use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Data\Collection;
 use Magento\Framework\DataObject;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Json\EncoderInterface;
 use Magento\Framework\Stdlib\ArrayUtils;
-use Magento\Store\Api\StoreResolverInterface;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 
@@ -55,11 +52,6 @@ class Gallery extends AbstractView
     private $imageUrlBuilder;
 
     /**
-     * @var ScopeConfigInterface
-     */
-    private ScopeConfigInterface $scopeConfig;
-
-    /**
      * @param Context $context
      * @param ArrayUtils $arrayUtils
      * @param EncoderInterface $jsonEncoder
@@ -67,7 +59,6 @@ class Gallery extends AbstractView
      * @param ImagesConfigFactoryInterface|null $imagesConfigFactory
      * @param array $galleryImagesConfig
      * @param UrlBuilder|null $urlBuilder
-     * @param ScopeConfigInterface|null $scopeConfig
      */
     public function __construct(
         Context $context,
@@ -76,8 +67,7 @@ class Gallery extends AbstractView
         array $data = [],
         ?ImagesConfigFactoryInterface $imagesConfigFactory = null,
         array $galleryImagesConfig = [],
-        ?UrlBuilder $urlBuilder = null,
-        ?ScopeConfigInterface $scopeConfig = null
+        ?UrlBuilder $urlBuilder = null
     ) {
         parent::__construct($context, $arrayUtils, $data);
         $this->jsonEncoder = $jsonEncoder;
@@ -85,7 +75,6 @@ class Gallery extends AbstractView
             ->get(ImagesConfigFactoryInterface::class);
         $this->galleryImagesConfig = $galleryImagesConfig;
         $this->imageUrlBuilder = $urlBuilder ?? ObjectManager::getInstance()->get(UrlBuilder::class);
-        $this->scopeConfig = $scopeConfig ?? ObjectManager::getInstance()->get(ScopeConfigInterface::class);
     }
 
     /**
@@ -142,7 +131,7 @@ class Gallery extends AbstractView
     public function getGalleryImagesJson()
     {
         $storeFlag = '';
-        if ($this->scopeConfig->isSetFlag(Store::XML_PATH_STORE_IN_URL)) {
+        if ($this->_scopeConfig->isSetFlag(Store::XML_PATH_STORE_IN_URL)) {
             $storeFlag = '?' . StoreManagerInterface::PARAM_NAME . '=' . $this->getProduct()->getStore()->getCode();
         }
         $imagesItems = [];
