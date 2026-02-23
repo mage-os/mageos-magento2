@@ -44,9 +44,9 @@ class Gallery implements ArgumentInterface
             $mainImage = $this->block->getGalleryImages()->getFirstItem();
         }
 
-        $mainImageData = $mainImage?->getData('medium_image_url');
-
-        if (!$mainImageData) {
+        if ($mainImage) {
+            $mainImageData = $mainImage->getData('medium_image_url');
+        } else {
             return $this->block->getData('imageHelper')
                 ->getDefaultPlaceholderUrl('image');
         }
