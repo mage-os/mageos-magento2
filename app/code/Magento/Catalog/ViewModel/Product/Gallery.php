@@ -48,7 +48,7 @@ class Gallery implements ArgumentInterface
             $mainImageData = $mainImage->getData('medium_image_url');
         } else {
             return $this->block->getData('imageHelper')
-                ->getDefaultPlaceholderUrl('image');
+                ?->getDefaultPlaceholderUrl('image');
         }
 
         if ($this->scopeConfig->isSetFlag(Store::XML_PATH_STORE_IN_URL)) {
