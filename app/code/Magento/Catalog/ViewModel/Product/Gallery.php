@@ -30,10 +30,10 @@ class Gallery implements ArgumentInterface
     /**
      * Determine main product image
      *
-     * @return string
+     * @return string|null
      * @throws NoSuchEntityException
      */
-    public function getMainProductImage(): string
+    public function getMainProductImage(): ?string
     {
         $images = $this->block->getGalleryImages()->getItems();
         $mainImage = current(array_filter($images, function ($img) {
