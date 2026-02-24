@@ -43,7 +43,6 @@ use Magento\Framework\App\ObjectManager;
  * @method string getUpdatedAt()
  * @method \Magento\CatalogSearch\Model\Advanced setUpdatedAt(string $value)
  *
- * @author      Magento Core Team <core@magentocommerce.com>
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @api
  * @since 100.0.2
@@ -61,7 +60,8 @@ class Advanced extends \Magento\Framework\Model\AbstractModel
     protected $_productCollection;
 
     /**
-     * @deprecated 101.0.2
+     * @deprecated 101.0.2 No alternative available.
+     * @see Advanced::getAttributes()
      * @var Config
      */
     protected $_catalogConfig;
