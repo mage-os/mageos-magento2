@@ -110,7 +110,7 @@ class RemoveItemFromCart implements ResolverInterface
         $cart = $this->getCartForUser->execute($maskedCartId, $context->getUserId(), $storeId);
 
         /*
-         * Use Quote::removeItem() + CartRepository::save() instead of CartItemRepositoryInterface::deleteById()
+         * Use Quote->removeItem() + CartRepository->save() instead of CartItemRepositoryInterface->deleteById()
          * to maintain consistency with REST API and other Magento implementations.
          *
          * This approach ensures:
