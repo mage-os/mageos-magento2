@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Unit\ViewModel\Product;
+namespace Magento\Catalog\Test\Unit\ViewModel\Product;
 
 use Magento\Catalog\ViewModel\Product\Gallery;
 use Magento\Framework\App\Config\ScopeConfigInterface;
@@ -19,6 +19,9 @@ use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class GalleryTest extends TestCase
 {
     /** @var ScopeConfigInterface|MockObject */
