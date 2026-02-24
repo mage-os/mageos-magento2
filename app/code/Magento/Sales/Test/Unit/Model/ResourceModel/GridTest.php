@@ -73,7 +73,8 @@ class GridTest extends TestCase
         $this->lastUpdateTimeCache = $this->createMock(LastUpdateTimeCache::class);
 
         $resourceConnection = $this->createStub(\Magento\Framework\App\ResourceConnection::class);
-        $transactionManager = $this->createStub(\Magento\Framework\Model\ResourceModel\Db\TransactionManagerInterface::class);
+        $transactionManager =
+            $this->createStub(\Magento\Framework\Model\ResourceModel\Db\TransactionManagerInterface::class);
         $objectRelationProcessor = $this->createStub(
             \Magento\Framework\Model\ResourceModel\Db\ObjectRelationProcessor::class
         );
