@@ -277,7 +277,7 @@ class View extends DataObject implements ViewInterface, ViewSubscriptionInterfac
         try {
             $this->getState()->setStatus(View\StateInterface::STATUS_WORKING)->save();
 
-            $this->executeAction($action, $lastVersionId);
+            $this->executeAction($action, $lastVersionId, $currentVersionId);
 
             $this->getState()->loadByView($this->getId());
             $statusToRestore = $this->getState()->getStatus() === View\StateInterface::STATUS_SUSPENDED
@@ -306,17 +306,15 @@ class View extends DataObject implements ViewInterface, ViewSubscriptionInterfac
      *
      * @param ActionInterface $action
      * @param int $lastVersionId
+     * @param int $currentVersionId
      * @return void
      * @throws \Exception
      */
-    private function executeAction(ActionInterface $action, int $lastVersionId)
+    private function executeAction(ActionInterface $action, int $lastVersionId, int $currentVersionId)
     {
         $batchSize = isset($this->changelogBatchSize[$this->getChangelog()->getViewId()])
             ? (int) $this->changelogBatchSize[$this->getChangelog()->getViewId()]
             : self::DEFAULT_BATCH_SIZE;
-
-        //Manipulating current version to avoid inserting large chunk as a single batch.
-        $currentVersionId = $lastVersionId+$batchSize;
 
         $batches = $this->getWalker()->walk($this->getChangelog(), $lastVersionId, $currentVersionId, $batchSize);
 
