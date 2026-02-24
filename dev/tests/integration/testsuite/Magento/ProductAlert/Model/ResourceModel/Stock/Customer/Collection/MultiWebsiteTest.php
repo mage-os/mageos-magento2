@@ -8,7 +8,6 @@ declare(strict_types=1);
 namespace Magento\ProductAlert\Model\ResourceModel\Stock\Customer\Collection;
 
 use Magento\Catalog\Api\ProductRepositoryInterface;
-use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Customer\Model\CustomerRegistry;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\ProductAlert\Model\ResourceModel\Price\Customer\Collection as PriceCustomerCollection;
@@ -37,47 +36,11 @@ class MultiWebsiteTest extends TestCase
     private $objectManager;
 
     /**
-     * @var ProductRepositoryInterface
-     */
-    private $productRepository;
-
-    /**
-     * @var CustomerRepositoryInterface
-     */
-    private $customerRepository;
-
-    /**
-     * @var WebsiteRepositoryInterface
-     */
-    private $websiteRepository;
-
-    /**
-     * @var StoreManagerInterface
-     */
-    private $storeManager;
-
-    /**
-     * @var StockFactory
-     */
-    private $stockFactory;
-
-    /**
-     * @var StockResource
-     */
-    private $stockResource;
-
-    /**
      * @inheritdoc
      */
     protected function setUp(): void
     {
         $this->objectManager = Bootstrap::getObjectManager();
-        $this->productRepository = $this->objectManager->get(ProductRepositoryInterface::class);
-        $this->customerRepository = $this->objectManager->get(CustomerRepositoryInterface::class);
-        $this->websiteRepository = $this->objectManager->get(WebsiteRepositoryInterface::class);
-        $this->storeManager = $this->objectManager->get(StoreManagerInterface::class);
-        $this->stockFactory = $this->objectManager->get(StockFactory::class);
-        $this->stockResource = $this->objectManager->get(StockResource::class);
     }
 
     /**
@@ -97,23 +60,28 @@ class MultiWebsiteTest extends TestCase
         $customerWebsiteId = (int)$customer->getWebsiteId();
         
         // Get second website
-        $secondWebsite = $this->websiteRepository->get('test');
+        $websiteRepository = $this->objectManager->get(WebsiteRepositoryInterface::class);
+        $secondWebsite = $websiteRepository->get('test');
         $secondWebsiteId = (int)$secondWebsite->getId();
-        $secondStore = $this->storeManager->getStore('fixture_third_store');
+        $storeManager = $this->objectManager->get(StoreManagerInterface::class);
+        $secondStore = $storeManager->getStore('fixture_third_store');
         $secondStoreId = (int)$secondStore->getId();
         
         // Get product
-        $product = $this->productRepository->get('simple');
+        $productRepository = $this->objectManager->get(ProductRepositoryInterface::class);
+        $product = $productRepository->get('simple');
         $productId = (int)$product->getId();
         
         // Create stock alert on second website (different from customer's website)
-        $stockAlert = $this->stockFactory->create();
+        $stockFactory = $this->objectManager->get(StockFactory::class);
+        $stockAlert = $stockFactory->create();
         $stockAlert->setCustomerId($customer->getId())
             ->setProductId($productId)
             ->setWebsiteId($secondWebsiteId)
             ->setStoreId($secondStoreId)
             ->setStatus(0);
-        $this->stockResource->save($stockAlert);
+        $stockResource = $this->objectManager->get(StockResource::class);
+        $stockResource->save($stockAlert);
         
         // Test: Collection should return alert when filtering by alert's website_id (second website)
         $collection = $this->objectManager->create(StockCustomerCollection::class);
@@ -150,21 +118,25 @@ class MultiWebsiteTest extends TestCase
         $customerWebsiteId = (int)$customer->getWebsiteId();
         
         // Get base website store
-        $baseStore = $this->storeManager->getStore('default');
+        $storeManager = $this->objectManager->get(StoreManagerInterface::class);
+        $baseStore = $storeManager->getStore('default');
         $baseStoreId = (int)$baseStore->getId();
         
         // Get product
-        $product = $this->productRepository->get('simple');
+        $productRepository = $this->objectManager->get(ProductRepositoryInterface::class);
+        $product = $productRepository->get('simple');
         $productId = (int)$product->getId();
         
         // Create stock alert on same website as customer
-        $stockAlert = $this->stockFactory->create();
+        $stockFactory = $this->objectManager->get(StockFactory::class);
+        $stockAlert = $stockFactory->create();
         $stockAlert->setCustomerId($customer->getId())
             ->setProductId($productId)
             ->setWebsiteId($customerWebsiteId)
             ->setStoreId($baseStoreId)
             ->setStatus(0);
-        $this->stockResource->save($stockAlert);
+        $stockResource = $this->objectManager->get(StockResource::class);
+        $stockResource->save($stockAlert);
         
         // Test: Collection should return alert when filtering by same website
         $collection = $this->objectManager->create(StockCustomerCollection::class);
@@ -191,36 +163,41 @@ class MultiWebsiteTest extends TestCase
         $customerWebsiteId = (int)$customer->getWebsiteId();
         
         // Get second website
-        $secondWebsite = $this->websiteRepository->get('test');
+        $websiteRepository = $this->objectManager->get(WebsiteRepositoryInterface::class);
+        $secondWebsite = $websiteRepository->get('test');
         $secondWebsiteId = (int)$secondWebsite->getId();
-        $secondStore = $this->storeManager->getStore('fixture_third_store');
+        $storeManager = $this->objectManager->get(StoreManagerInterface::class);
+        $secondStore = $storeManager->getStore('fixture_third_store');
         $secondStoreId = (int)$secondStore->getId();
         
         // Get base website store
-        $baseStore = $this->storeManager->getStore('default');
+        $baseStore = $storeManager->getStore('default');
         $baseStoreId = (int)$baseStore->getId();
         
         // Get product
-        $product = $this->productRepository->get('simple');
+        $productRepository = $this->objectManager->get(ProductRepositoryInterface::class);
+        $product = $productRepository->get('simple');
         $productId = (int)$product->getId();
         
         // Create stock alert on base website (customer's website)
-        $stockAlert1 = $this->stockFactory->create();
+        $stockFactory = $this->objectManager->get(StockFactory::class);
+        $stockResource = $this->objectManager->get(StockResource::class);
+        $stockAlert1 = $stockFactory->create();
         $stockAlert1->setCustomerId($customer->getId())
             ->setProductId($productId)
             ->setWebsiteId($customerWebsiteId)
             ->setStoreId($baseStoreId)
             ->setStatus(0);
-        $this->stockResource->save($stockAlert1);
+        $stockResource->save($stockAlert1);
         
         // Create stock alert on second website (different from customer's website)
-        $stockAlert2 = $this->stockFactory->create();
+        $stockAlert2 = $stockFactory->create();
         $stockAlert2->setCustomerId($customer->getId())
             ->setProductId($productId)
             ->setWebsiteId($secondWebsiteId)
             ->setStoreId($secondStoreId)
             ->setStatus(0);
-        $this->stockResource->save($stockAlert2);
+        $stockResource->save($stockAlert2);
         
         // Test: Collection should return only base website alert when filtering by base website
         $collectionBase = $this->objectManager->create(StockCustomerCollection::class);
@@ -253,18 +230,21 @@ class MultiWebsiteTest extends TestCase
         $customer = $customerRegistry->retrieve(1);
         
         // Get second website
-        $secondWebsite = $this->websiteRepository->get('test');
+        $websiteRepository = $this->objectManager->get(WebsiteRepositoryInterface::class);
+        $secondWebsite = $websiteRepository->get('test');
         $secondWebsiteId = (int)$secondWebsite->getId();
-        $secondStore = $this->storeManager->getStore('fixture_third_store');
+        $storeManager = $this->objectManager->get(StoreManagerInterface::class);
+        $secondStore = $storeManager->getStore('fixture_third_store');
         $secondStoreId = (int)$secondStore->getId();
         
         // Get product
-        $product = $this->productRepository->get('simple');
+        $productRepository = $this->objectManager->get(ProductRepositoryInterface::class);
+        $product = $productRepository->get('simple');
         $productId = (int)$product->getId();
         
         // Create price alert on second website
-        $priceFactory = Bootstrap::getObjectManager()->get(\Magento\ProductAlert\Model\PriceFactory::class);
-        $priceResource = Bootstrap::getObjectManager()->get(\Magento\ProductAlert\Model\ResourceModel\Price::class);
+        $priceFactory = $this->objectManager->get(\Magento\ProductAlert\Model\PriceFactory::class);
+        $priceResource = $this->objectManager->get(\Magento\ProductAlert\Model\ResourceModel\Price::class);
         $priceAlert = $priceFactory->create();
         $priceAlert->setCustomerId($customer->getId())
             ->setProductId($productId)
@@ -297,18 +277,22 @@ class MultiWebsiteTest extends TestCase
         $customerWebsiteId = (int)$customer->getWebsiteId();
         
         // Get product
-        $product = $this->productRepository->get('simple');
+        $productRepository = $this->objectManager->get(ProductRepositoryInterface::class);
+        $product = $productRepository->get('simple');
         $productId = (int)$product->getId();
         
         // Create stock alert
-        $baseStore = $this->storeManager->getStore('default');
-        $stockAlert = $this->stockFactory->create();
+        $storeManager = $this->objectManager->get(StoreManagerInterface::class);
+        $baseStore = $storeManager->getStore('default');
+        $stockFactory = $this->objectManager->get(StockFactory::class);
+        $stockAlert = $stockFactory->create();
         $stockAlert->setCustomerId($customer->getId())
             ->setProductId($productId)
             ->setWebsiteId($customerWebsiteId)
             ->setStoreId((int)$baseStore->getId())
             ->setStatus(0);
-        $this->stockResource->save($stockAlert);
+        $stockResource = $this->objectManager->get(StockResource::class);
+        $stockResource->save($stockAlert);
         
         // Get collection
         $collection = $this->objectManager->create(StockCustomerCollection::class);
