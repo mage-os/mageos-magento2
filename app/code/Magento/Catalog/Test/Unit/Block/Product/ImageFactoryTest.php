@@ -22,6 +22,9 @@ use Magento\Framework\View\ConfigInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class ImageFactoryTest extends TestCase
 {
     /** @var  ParamsBuilder|MockObject */
