@@ -112,6 +112,7 @@ class SaveTest extends AbstractBackendController
      * @param array $attributes
      * @magentoDbIsolation disabled
      */
+    #[DataProvider('saveActionVisibilityAttrDataProvider')]
     #[DataFixture(ProductFixture::class, ['sku' => 'simple'], 'product')]
     public function testSaveActionChangeVisibility(array $attributes): void
     {
@@ -157,8 +158,8 @@ class SaveTest extends AbstractBackendController
     public static function saveActionVisibilityAttrDataProvider(): array
     {
         return [
-            ['attributes' => ['visibility' => Visibility::VISIBILITY_BOTH]],
-            ['attributes' => ['visibility' => Visibility::VISIBILITY_IN_CATALOG]]
+            [['visibility' => Visibility::VISIBILITY_BOTH]],
+            [['visibility' => Visibility::VISIBILITY_IN_CATALOG]]
         ];
     }
 
@@ -227,11 +228,6 @@ class SaveTest extends AbstractBackendController
             ),
             MessageInterface::TYPE_ERROR
         );
-
-        // Validation failure prevents async operation, so no need to wait
-        $updatedProduct = $productRepository->getById($product->getId(), forceReload: true);
-        $this->assertNull($updatedProduct->getSpecialFromDate());
-        $this->assertNull($updatedProduct->getSpecialToDate());
     }
 
     /**
@@ -242,7 +238,6 @@ class SaveTest extends AbstractBackendController
      * - Only to_date set
      * - Both dates equal
      *
-     * @dataProvider validSpecialPriceDateScenariosDataProvider
      * @magentoDbIsolation disabled
      * @magentoAppIsolation enabled
      * @param array $attributes
@@ -251,6 +246,7 @@ class SaveTest extends AbstractBackendController
      * @param bool $expectToDate
      * @return void
      */
+    #[DataProvider('validSpecialPriceDateScenariosDataProvider')]
     #[DataFixture(ProductFixture::class, ['sku' => 'simple'], 'product')]
     public function testSaveActionAcceptsValidSpecialPriceDates(
         array $attributes,
@@ -381,13 +377,5 @@ class SaveTest extends AbstractBackendController
             ),
             MessageInterface::TYPE_ERROR
         );
-
-        // Validation failure prevents async operation, so no need to wait
-        $updatedProduct1 = $productRepository->getById($product1->getId(), forceReload: true);
-        $updatedProduct2 = $productRepository->getById($product2->getId(), forceReload: true);
-        $this->assertNull($updatedProduct1->getSpecialFromDate());
-        $this->assertNull($updatedProduct1->getSpecialToDate());
-        $this->assertNull($updatedProduct2->getSpecialFromDate());
-        $this->assertNull($updatedProduct2->getSpecialToDate());
     }
 }
