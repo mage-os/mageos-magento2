@@ -26,7 +26,7 @@ class Telephone extends AbstractValidator
      * \d: Digits (0-9).
      * \s: Matches whitespace characters.
      */
-    private const PATTERN_TELEPHONE = '/^[\d\s+().\/ -]{1,30}$/u';
+    private const PATTERN_TELEPHONE = '/^[\d\s+().\/ -]{1,20}$/u';
 
     /**
      * Validate telephone fields.

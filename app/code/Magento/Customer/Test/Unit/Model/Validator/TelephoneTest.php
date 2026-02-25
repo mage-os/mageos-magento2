@@ -148,8 +148,8 @@ class TelephoneTest extends TestCase
                 'message' => 'Special character $ should not be allowed in telephone'
             ],
             [
-                'telephone' => '1234567890123456789012345678901',
-                'message' => 'Telephone number longer than 30 characters should not be allowed'
+                'telephone' => '123456789012345678901',
+                'message' => 'Telephone number longer than 20 characters should not be allowed'
             ],
             [
                 'telephone' => '<' . 'script>alert("xss")<' . '/script>',
