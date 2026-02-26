@@ -42,8 +42,15 @@ class Calculator extends Validator
 
             switch ($rule->getSimpleFreeShipping()) {
                 case Rule::FREE_SHIPPING_ITEM:
-                    $item->setFreeShipping($rule->getDiscountQty() ? $rule->getDiscountQty() : true);
-                    $item->setFreeShippingMethod($item->getAddress()->getShippingMethod());
+                    if ($item->getHasChildren() && $item->isShipSeparately()) {
+                        foreach ($item->getChildren() as $child) {
+                            $child->setFreeShipping($rule->getDiscountQty() ? $rule->getDiscountQty() : true);
+                            $child->setFreeShippingMethod($item->getAddress()->getShippingMethod());
+                        }
+                    } else {
+                        $item->setFreeShipping($rule->getDiscountQty() ? $rule->getDiscountQty() : true);
+                        $item->setFreeShippingMethod($item->getAddress()->getShippingMethod());
+                    }
                     break;
 
                 case Rule::FREE_SHIPPING_ADDRESS:
