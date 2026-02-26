@@ -16,6 +16,9 @@
             <severity value="MINOR"/>
             <testCaseId value="AC-5613"/>
             <group value="cloud"/>
+            <skip>
+                <issueId value="https://jira.corp.adobe.com/browse/AC-16573"/>
+            </skip>
         </annotations>
 
         <before>
