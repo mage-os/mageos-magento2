@@ -183,7 +183,7 @@ class GridTest extends TestCase
     public function testConstructInitialisesGrid(): void
     {
         $this->assertInstanceOf(Grid::class, $this->grid);
-        $this->assertEquals('productGrid', $this->grid->getId());
+        $this->assertSame('productGrid', $this->grid->getId());
     }
 
     /**
@@ -363,6 +363,12 @@ class GridTest extends TestCase
         );
     }
 
+    /**
+     * Prepare store, currency, and module context used when building columns.
+     *
+     * @param int $storeId
+     * @return void
+     */
     private function prepareStoreContextForColumns(int $storeId): void
     {
         $this->requestMock->method('getParam')->with('store', 0)->willReturn($storeId);
@@ -381,6 +387,11 @@ class GridTest extends TestCase
         $this->moduleManagerMock->method('isEnabled')->with('Magento_CatalogInventory')->willReturn(true);
     }
 
+    /**
+     * Prepare option providers (product type, visibility, status) for columns.
+     *
+     * @return void
+     */
     private function prepareOptionsProvidersForColumns(): void
     {
         $this->productTypeMock->method('getOptionArray')->willReturn(['simple' => 'Simple']);
@@ -388,6 +399,11 @@ class GridTest extends TestCase
         $this->statusMock->method('getOptionArray')->willReturn(['1' => 'Enabled', '2' => 'Disabled']);
     }
 
+    /**
+     * Prepare attribute set collection used for the set_name column.
+     *
+     * @return void
+     */
     private function prepareAttributeSetsForColumns(): void
     {
         $productEntityMock = new class {
@@ -425,6 +441,11 @@ class GridTest extends TestCase
         $this->setFactoryMock->method('create')->willReturn($setsChainMock);
     }
 
+    /**
+     * Prepare website factory to supply website options for the websites column.
+     *
+     * @return void
+     */
     private function prepareWebsitesForColumns(): void
     {
         $websitesMock = new class {
@@ -446,6 +467,12 @@ class GridTest extends TestCase
         $this->websiteFactoryMock->method('create')->willReturn($websitesMock);
     }
 
+    /**
+     * Create a Grid mock that captures added column IDs in the provided array.
+     *
+     * @param array<int,string> $addedColumnIds
+     * @return Grid
+     */
     private function createGridMockCapturingColumns(array &$addedColumnIds): Grid
     {
         $gridMock = $this->getMockBuilder(Grid::class)
@@ -486,6 +513,13 @@ class GridTest extends TestCase
         return $gridMock;
     }
 
+    /**
+     * Assert that all expected column IDs were added to the grid.
+     *
+     * @param array<int,string> $added
+     * @param array<int,string> $expected
+     * @return void
+     */
     private function assertColumnsAdded(array $added, array $expected): void
     {
         foreach ($expected as $id) {
@@ -510,7 +544,7 @@ class GridTest extends TestCase
             ->method('getUrl')
             ->with('catalog/*/grid', ['_current' => true])
             ->willReturn($expectedUrl);
-        $this->assertEquals($expectedUrl, $gridMock->getGridUrl());
+        $this->assertSame($expectedUrl, $gridMock->getGridUrl());
     }
 
     /**
@@ -544,7 +578,7 @@ class GridTest extends TestCase
             )
             ->willReturn($expectedUrl);
 
-        $this->assertEquals($expectedUrl, $gridMock->getRowUrl($rowMock));
+        $this->assertSame($expectedUrl, $gridMock->getRowUrl($rowMock));
     }
 
     /**
@@ -633,9 +667,14 @@ class GridTest extends TestCase
      */
     private function invokeMethod($object, string $method, array $args = [])
     {
-        $ref = new \ReflectionMethod($object, $method);
-        $ref->setAccessible(true);
-        return $ref->invokeArgs($object, $args);
+        $closure = \Closure::bind(
+            function (string $methodName, array $arguments) {
+                return $this->$methodName(...$arguments);
+            },
+            $object,
+            get_class($object)
+        );
+        return $closure($method, $args);
     }
 
     /**
@@ -649,8 +688,13 @@ class GridTest extends TestCase
      */
     private function setProtectedProperty($object, string $property, $value): void
     {
-        $ref = new \ReflectionProperty($object, $property);
-        $ref->setAccessible(true);
-        $ref->setValue($object, $value);
+        $closure = \Closure::bind(
+            function (string $propertyName, $propertyValue): void {
+                $this->$propertyName = $propertyValue;
+            },
+            $object,
+            get_class($object)
+        );
+        $closure($property, $value);
     }
 }

@@ -19,13 +19,13 @@ use Magento\Framework\App\Request\Http as HttpRequest;
 use Magento\Framework\Controller\Result\Json as ResultJson;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\Registry;
-use Magento\Framework\Stdlib\DateTime\Filter\Date as DateFilter;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Layout;
 use Magento\Framework\View\LayoutFactory;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Unit tests for CategoriesJson controller.
@@ -71,11 +71,6 @@ class CategoriesJsonTest extends TestCase
     private $wysiwygConfigMock;
 
     /**
-     * @var DateFilter|MockObject
-     */
-    private $dateFilterMock;
-
-    /**
      * @var JsonFactory|MockObject
      */
     private $resultJsonFactoryMock;
@@ -119,10 +114,18 @@ class CategoriesJsonTest extends TestCase
         $this->objectManager = new ObjectManager($this);
         $this->contextMock = $this->createMock(Context::class);
 
-        $this->authSessionMock = $this->getMockBuilder(AuthSession::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['setIsTreeWasExpanded'])
-            ->getMock();
+        // Lightweight stub for AuthSession to track expansion flag and call count without heavy constructor
+        $this->authSessionMock = new class extends AuthSession {
+            public $expandedFlag = null;
+            public $expandedFlagCallCount = 0;
+            public function __construct() {}
+            public function setIsTreeWasExpanded($isExpanded)
+            {
+                $this->expandedFlag = (bool)$isExpanded;
+                $this->expandedFlagCallCount++;
+                return $this;
+            }
+        };
 
         $this->resultJsonFactoryMock = $this->createMock(JsonFactory::class);
         $this->resultJsonMock         = $this->createMock(ResultJson::class);
@@ -132,12 +135,10 @@ class CategoriesJsonTest extends TestCase
 
         $this->resultRedirectFactoryMock = $this->getMockBuilder(RedirectFactory::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['create'])
             ->getMock();
 
         $this->resultRedirectMock = $this->getMockBuilder(Redirect::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['setPath'])
             ->getMock();
 
         $this->contextMock->method('getResultRedirectFactory')
@@ -148,7 +149,6 @@ class CategoriesJsonTest extends TestCase
         $this->storeManagerMock   = $this->createMock(StoreManagerInterface::class);
         $this->registryMock       = $this->createMock(Registry::class);
         $this->wysiwygConfigMock  = $this->createMock(WysiwygConfig::class);
-        $this->dateFilterMock     = $this->createMock(DateFilter::class);
 
         $this->objectManager->prepareObjectManager([
             [StoreManagerInterface::class, $this->storeManagerMock],
@@ -169,46 +169,44 @@ class CategoriesJsonTest extends TestCase
     }
 
     /**
-     * Ensure execute() sets expanded flag true and returns JSON error when id is missing.
+     * Data provider: expand_all values and missing ID values that should yield JSON error.
      *
-     * @covers \Magento\Catalog\Controller\Adminhtml\Category\CategoriesJson::execute
-     * @return void
+     * @return array
      */
-    public function testExecuteWithExpandAllTrueAndMissingIdReturnsJsonError(): void
+    public static function missingIdProvider(): array
     {
-        $this->requestMock->method('getParam')->with('expand_all')->willReturn(1);
-        $this->requestMock->method('getPost')->with('id')->willReturn(null);
-
-        $this->authSessionMock->expects($this->once())
-            ->method('setIsTreeWasExpanded')
-            ->with(true);
-
-        $this->resultJsonFactoryMock->method('create')->willReturn($this->resultJsonMock);
-        $this->resultJsonMock->expects($this->once())
-            ->method('setJsonData')
-            ->with(json_encode(['error' => 'Category ID is required']))
-            ->willReturnSelf();
-
-        $result = $this->controller->execute();
-        $this->assertSame($this->resultJsonMock, $result);
+        return [
+            'expand truthy, id null' => [1, true, null],
+            'expand falsy, id zero int' => [0, false, 0],
+            'expand null, id null' => [null, false, null],
+            'expand truthy string, id "0" string' => ['1', true, '0'],
+            'expand falsy empty string, id empty string' => ['', false, ''],
+            'expand bool true, id 0' => [true, true, 0],
+            'expand bool false, id null' => [false, false, null],
+        ];
     }
 
     /**
-     * Ensure execute() sets expanded flag false and returns JSON error when id is missing.
+     * Ensure execute() sets expanded flag accordingly and returns JSON error when id is missing.
      *
      * @covers \Magento\Catalog\Controller\Adminhtml\Category\CategoriesJson::execute
      * @return void
      */
-    public function testExecuteWithExpandAllFalseAndMissingIdReturnsJsonError(): void
+    #[DataProvider('missingIdProvider')]
+    public function testExecuteWithMissingIdReturnsJsonError($expandAllValue, bool $expectedExpanded, $postId): void
     {
-        $this->requestMock->method('getParam')->with('expand_all')->willReturn(null);
-        $this->requestMock->method('getPost')->with('id')->willReturn(0);
+        $this->requestMock->expects($this->once())
+            ->method('getParam')
+            ->with('expand_all')
+            ->willReturn($expandAllValue);
+        $this->requestMock->expects($this->once())
+            ->method('getPost')
+            ->with('id')
+            ->willReturn($postId);
 
-        $this->authSessionMock->expects($this->once())
-            ->method('setIsTreeWasExpanded')
-            ->with(false);
-
-        $this->resultJsonFactoryMock->method('create')->willReturn($this->resultJsonMock);
+        $this->resultJsonFactoryMock->expects($this->once())
+            ->method('create')
+            ->willReturn($this->resultJsonMock);
         $this->resultJsonMock->expects($this->once())
             ->method('setJsonData')
             ->with(json_encode(['error' => 'Category ID is required']))
@@ -216,26 +214,32 @@ class CategoriesJsonTest extends TestCase
 
         $result = $this->controller->execute();
         $this->assertSame($this->resultJsonMock, $result);
+        $this->assertSame($expectedExpanded, $this->authSessionMock->expandedFlag);
+        $this->assertSame(1, $this->authSessionMock->expandedFlagCallCount);
     }
 
     /**
      * Ensure redirect is returned when _initCategory() yields null.
      *
      * @covers \Magento\Catalog\Controller\Adminhtml\Category\CategoriesJson::execute
+     * @return void
      */
     public function testExecuteWithValidIdAndNullInitCategoryReturnsRedirect(): void
     {
-        $this->requestMock->method('getParam')->with('expand_all')->willReturn(null);
-        $this->requestMock->method('getPost')->with('id')->willReturn(12);
+        $this->requestMock->expects($this->once())
+            ->method('getParam')
+            ->with('expand_all')
+            ->willReturn(null);
+        $this->requestMock->expects($this->once())
+            ->method('getPost')
+            ->with('id')
+            ->willReturn(12);
         $this->requestMock->expects($this->once())
             ->method('setParam')
             ->with('id', 12);
 
-        $this->authSessionMock->expects($this->once())
-            ->method('setIsTreeWasExpanded')
-            ->with(false);
-
-        $this->resultRedirectFactoryMock->method('create')
+        $this->resultRedirectFactoryMock->expects($this->once())
+            ->method('create')
             ->willReturn($this->resultRedirectMock);
 
         $this->resultRedirectMock->expects($this->once())
@@ -243,21 +247,29 @@ class CategoriesJsonTest extends TestCase
             ->with('catalog/*/', ['_current' => true, 'id' => null])
             ->willReturn($this->resultRedirectMock);
 
-        // Build a controller stub that returns null from _initCategory()
-        $controller = $this->getMockBuilder(CategoriesJson::class)
-            ->setConstructorArgs([
-                $this->contextMock,
-                $this->resultJsonFactoryMock,
-                $this->layoutFactoryMock,
-                $this->authSessionMock,
-            ])
-            ->onlyMethods(['_initCategory'])
-            ->getMock();
-
-        $controller->method('_initCategory')->willReturn(null);
+        // Use controller test double that returns null from _initCategory()
+        $controller = new class (
+            $this->contextMock,
+            $this->resultJsonFactoryMock,
+            $this->layoutFactoryMock,
+            $this->authSessionMock
+        ) extends CategoriesJson {
+            private $initCategoryResult;
+            public function setInitCategoryResult($category): void
+            {
+                $this->initCategoryResult = $category;
+            }
+            protected function _initCategory($getRootInstead = false)
+            {
+                return $this->initCategoryResult;
+            }
+        };
+        $controller->setInitCategoryResult(null);
 
         $result = $controller->execute();
         $this->assertSame($this->resultRedirectMock, $result);
+        $this->assertSame(false, $this->authSessionMock->expandedFlag);
+        $this->assertSame(1, $this->authSessionMock->expandedFlagCallCount);
     }
 
     /**
@@ -269,54 +281,66 @@ class CategoriesJsonTest extends TestCase
      */
     public function testExecuteWithValidIdReturnsTreeJson(): void
     {
-        $this->requestMock->method('getParam')->with('expand_all')->willReturn(0);
-        $this->requestMock->method('getPost')->with('id')->willReturn(34);
+        $this->requestMock->expects($this->once())
+            ->method('getParam')
+            ->with('expand_all')
+            ->willReturn(0);
+        $this->requestMock->expects($this->once())
+            ->method('getPost')
+            ->with('id')
+            ->willReturn(34);
         $this->requestMock->expects($this->once())
             ->method('setParam')
             ->with('id', 34);
-
-        $this->authSessionMock->expects($this->once())
-            ->method('setIsTreeWasExpanded')
-            ->with(false);
 
         $categoryMock = $this->createMock(CategoryModel::class);
 
         $treeBlockMock = $this->getMockBuilder(Tree::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['getTreeJson'])
             ->getMock();
 
-        $this->layoutFactoryMock->method('create')
+        $this->layoutFactoryMock->expects($this->once())
+            ->method('create')
             ->willReturn($this->layoutMock);
-        $this->layoutMock->method('createBlock')
+        $this->layoutMock->expects($this->once())
+            ->method('createBlock')
             ->with(Tree::class)
             ->willReturn($treeBlockMock);
 
-        $treeBlockMock->method('getTreeJson')
+        $treeBlockMock->expects($this->once())
+            ->method('getTreeJson')
             ->with($categoryMock)
             ->willReturn('{"tree":"json"}');
 
-        $this->resultJsonFactoryMock->method('create')
+        $this->resultJsonFactoryMock->expects($this->once())
+            ->method('create')
             ->willReturn($this->resultJsonMock);
         $this->resultJsonMock->expects($this->once())
             ->method('setJsonData')
             ->with('{"tree":"json"}')
             ->willReturnSelf();
 
-        $controller = $this->getMockBuilder(CategoriesJson::class)
-            ->setConstructorArgs([
-                $this->contextMock,
-                $this->resultJsonFactoryMock,
-                $this->layoutFactoryMock,
-                $this->authSessionMock,
-            ])
-            ->onlyMethods(['_initCategory'])
-            ->getMock();
-
-        $controller->method('_initCategory')
-            ->willReturn($categoryMock);
+        $controller = new class (
+            $this->contextMock,
+            $this->resultJsonFactoryMock,
+            $this->layoutFactoryMock,
+            $this->authSessionMock
+        ) extends CategoriesJson {
+            private $initCategoryResult;
+            public function setInitCategoryResult($category): void
+            {
+                $this->initCategoryResult = $category;
+            }
+            protected function _initCategory($getRootInstead = false)
+            {
+                return $this->initCategoryResult;
+            }
+        };
+        $controller->setInitCategoryResult($categoryMock);
 
         $result = $controller->execute();
         $this->assertSame($this->resultJsonMock, $result);
+        $this->assertSame(false, $this->authSessionMock->expandedFlag);
+        $this->assertSame(1, $this->authSessionMock->expandedFlagCallCount);
     }
 }

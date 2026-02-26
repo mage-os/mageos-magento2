@@ -69,9 +69,7 @@ class ApplyTest extends TestCase
         $this->factoryCollectionMock = $this->createMock(CollectionFactory::class);
         $this->escaperMock = $this->createMock(Escaper::class);
         $this->secureRendererMock = $this->createMock(SecureHtmlRenderer::class);
-        $this->formMock = $this->getMockBuilder(AbstractForm::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+        $this->formMock = $this->createMock(AbstractForm::class);
 
         // Escaper should return the value as-is for ids used in this test
         $this->escaperMock->method('escapeHtml')->willReturnCallback(
@@ -96,7 +94,6 @@ class ApplyTest extends TestCase
 
         // Inject SecureHtmlRenderer into Apply's private property
         $secureRendererProperty = new ReflectionProperty(Apply::class, 'secureRenderer');
-        $secureRendererProperty->setAccessible(true);
         $secureRendererProperty->setValue($this->apply, $this->secureRendererMock);
 
         // Provide a form and necessary baseline data
@@ -104,16 +101,6 @@ class ApplyTest extends TestCase
         $this->apply->setId('apply_id');
         $this->apply->setData('name', 'apply');
         $this->apply->setData('mode_labels', ['all' => 'All', 'custom' => 'Custom']);
-    }
-
-    /**
-     * Create and configure the Apply element used by tests.
-     *
-     * @return Apply
-     */
-    private function createApplyElement(): Apply
-    {
-        return $this->apply;
     }
 
     /**
@@ -125,17 +112,18 @@ class ApplyTest extends TestCase
      */
     public function testGetElementHtmlBuildsSelectAndEventAndAppendsParentOutput(): void
     {
-        $element = $this->createApplyElement();
+        $element = $this->apply;
         $element->setValue(null);
 
         // Mock event listener markup to a deterministic string
-        $this->secureRendererMock->method('renderEventListenerAsTag')
+        $this->secureRendererMock->expects($this->once())
+            ->method('renderEventListenerAsTag')
             ->with(
                 'onchange',
                 'toggleApplyVisibility(this)',
                 'select#apply_id'
             )
-            ->willReturn('[script type="text/x-magento-init"]{}[/script]'); // simulate Magento init script
+            ->willReturn('<script type="text/x-magento-init">{}</script>'); // simulate Magento init script
 
         $html = $element->getElementHtml();
 
@@ -148,7 +136,7 @@ class ApplyTest extends TestCase
         $this->assertStringNotContainsString('<option value="1" selected', $html);
 
         // Event markup is appended as x-magento-init wrapper
-        $this->assertStringContainsString('[script type="text/x-magento-init"]', $html);
+        $this->assertStringContainsString('<script type="text/x-magento-init">', $html);
 
         // Parent multiselect HTML is appended after our select; we cannot assert exact content,
         // but ensure something follows (closing select and line breaks already accounted for).
@@ -165,14 +153,20 @@ class ApplyTest extends TestCase
      */
     public function testGetElementHtmlIncludesReadonlyDisabledAndSelected(): void
     {
-        $element = $this->createApplyElement();
+        $element = $this->apply;
 
         // Set flags via the element-specific setReadonly
         $element->setReadonly(true, true); // readonly + disabled
         $element->setValue('non-empty');   // triggers selected on "custom" option
 
-        $this->secureRendererMock->method('renderEventListenerAsTag')
-            ->willReturn('[script type="text/x-magento-init"]{}[/script]');
+        $this->secureRendererMock->expects($this->once())
+            ->method('renderEventListenerAsTag')
+            ->with(
+                'onchange',
+                'toggleApplyVisibility(this)',
+                'select#apply_id'
+            )
+            ->willReturn('<script type="text/x-magento-init">{}</script>');
 
         $html = $element->getElementHtml();
 
@@ -182,5 +176,15 @@ class ApplyTest extends TestCase
 
         // Custom option should be selected when value is non-null
         $this->assertStringContainsString('<option value="1" selected>', $html);
+    }
+
+    /**
+     * @return void
+     * @covers \Magento\Catalog\Block\Adminhtml\Product\Helper\Form\Apply::setReadonly
+     */
+    public function testSetReadonlyReturnsSelf(): void
+    {
+        $result = $this->apply->setReadonly(true, true);
+        $this->assertSame($this->apply, $result);
     }
 }
