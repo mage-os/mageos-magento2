@@ -52,7 +52,7 @@ class Gallery implements ArgumentInterface
         }
 
         if ($this->scopeConfig->isSetFlag(Store::XML_PATH_STORE_IN_URL)) {
-            $mainImageData .= '?___store=' . $this->storeManager->getStore()->getCode();
+            $mainImageData .= '?'. StoreManagerInterface::PARAM_NAME . $this->storeManager->getStore()->getCode();
         }
 
         return $mainImageData;
