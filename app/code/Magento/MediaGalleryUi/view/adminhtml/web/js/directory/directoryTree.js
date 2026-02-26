@@ -67,10 +67,16 @@ define([
          * Render directory tree component.
          */
         renderDirectoryTree: function () {
-            return this.getJsonTree().then(function (data) {
+            if (this.isLazyTreeMode()) {
+                this.createTree();
+
+                return $.Deferred().resolve().promise();
+            }
+
+            return this.getJsonTree(true).then(function (data) {
                 this.createFolderIfNotExists(data).then(function (isFolderCreated) {
                     if (isFolderCreated) {
-                        this.getJsonTree().then(function (newData) {
+                        this.getJsonTree(true).then(function (newData) {
                             this.createTree(newData);
                         }.bind(this));
                     } else {
@@ -127,6 +133,15 @@ define([
             });
 
             return deferred.promise();
+        },
+
+        /**
+         * Check if directory tree should be loaded on demand.
+         *
+         * @returns {Boolean}
+         */
+        isLazyTreeMode: function () {
+            return _.isNull(this.getRequestedDirectory());
         },
 
         /**
@@ -218,7 +233,7 @@ define([
             this.disableMultiselectBehavior();
 
             $(window).on('reload.MediaGallery', function () {
-                this.getJsonTree().then(function (data) {
+                this.getJsonTree(!this.isLazyTreeMode()).then(function (data) {
                     this.createFolderIfNotExists(data).then(function (isCreated) {
                         if (isCreated) {
                             this.renderDirectoryTree().then(function () {
@@ -423,7 +438,15 @@ define([
         reloadJsTree: function () {
             var deferred = $.Deferred();
 
-            this.getJsonTree().then(function (data) {
+            if (this.isLazyTreeMode()) {
+                $(this.directoryTreeSelector).jstree(true).refresh(false, true);
+                this.setJsTreeReloaded(true);
+                deferred.resolve();
+
+                return deferred.promise();
+            }
+
+            this.getJsonTree(true).then(function (data) {
                 $(this.directoryTreeSelector).jstree(true).settings.core.data = data;
                 $(this.directoryTreeSelector).jstree(true).refresh(false, true);
                 this.setJsTreeReloaded(true);
@@ -436,13 +459,17 @@ define([
         /**
          * Get json data for jstree
          */
-        getJsonTree: function () {
-            var deferred = $.Deferred();
+        getJsonTree: function (loadWholeTree) {
+            var deferred = $.Deferred(),
+                requestData = {
+                    loadWholeTree: loadWholeTree ? 1 : 0
+                };
 
             $.ajax({
                 url: this.getDirectoryTreeUrl,
                 type: 'GET',
                 dataType: 'json',
+                data: requestData,
 
                 /**
                  * Success handler for request
@@ -474,6 +501,28 @@ define([
          * @param {Array} data
          */
         createTree: function (data) {
+            var treeData = data;
+
+            if (this.isLazyTreeMode()) {
+                treeData = {
+                    url: this.getDirectoryTreeUrl,
+                    type: 'GET',
+
+                    /**
+                     * Return data payload for on-demand loading.
+                     *
+                     * @param {Object} node
+                     * @returns {Object}
+                     */
+                    data: function (node) {
+                        return {
+                            path: node.id,
+                            loadWholeTree: 0
+                        };
+                    }
+                };
+            }
+
             // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
             $(this.directoryTreeSelector).jstree({
                 plugins: [],
@@ -482,7 +531,7 @@ define([
                     cascade: ''
                 },
                 core: {
-                    data: data,
+                    data: treeData,
                     check_callback: true,
                     themes: {
                         dots: false

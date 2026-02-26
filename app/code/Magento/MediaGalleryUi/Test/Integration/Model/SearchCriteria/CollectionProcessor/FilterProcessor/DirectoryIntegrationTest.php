@@ -55,7 +55,7 @@ class DirectoryIntegrationTest extends TestCase
             ->method('where')
             ->with(
                 $this->equalTo('BINARY path REGEXP ? '),
-                $this->equalTo('^testing/[^\/]*$')
+                $this->equalTo('^\/?testing/[^\/]*$')
             );
         
         // Create filter for lowercase 'testing' directory
@@ -85,7 +85,7 @@ class DirectoryIntegrationTest extends TestCase
             ->method('where')
             ->with(
                 $this->equalTo('BINARY path REGEXP ? '),
-                $this->equalTo('^Testing/[^\/]*$')
+                $this->equalTo('^\/?Testing/[^\/]*$')
             );
         
         $filter = Bootstrap::getObjectManager()->create(Filter::class);
@@ -113,7 +113,7 @@ class DirectoryIntegrationTest extends TestCase
             ->method('where')
             ->with(
                 $this->equalTo('BINARY path REGEXP ? '),
-                $this->equalTo('^TestingDirectory/[^\/]*$')
+                $this->equalTo('^\/?TestingDirectory/[^\/]*$')
             );
         
         $filter = Bootstrap::getObjectManager()->create(Filter::class);
@@ -141,7 +141,7 @@ class DirectoryIntegrationTest extends TestCase
             ->method('where')
             ->with(
                 $this->equalTo('BINARY path REGEXP ? '),
-                $this->equalTo('^/[^\/]*$')
+                $this->equalTo('^\/?[^\/]*$')
             );
         
         $filter = Bootstrap::getObjectManager()->create(Filter::class);
@@ -199,7 +199,7 @@ class DirectoryIntegrationTest extends TestCase
             ->method('where')
             ->with(
                 $this->equalTo('BINARY path REGEXP ? '),
-                $this->equalTo('^MyTestDir/[^\/]*$')
+                $this->equalTo('^\/?MyTestDir/[^\/]*$')
             );
         
         $filter = Bootstrap::getObjectManager()->create(Filter::class);
