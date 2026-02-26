@@ -53,8 +53,10 @@ class GetDirectoryTree
     }
 
     /**
-     * Return directory folder structure in array
+     * Return the directory folder structure in an array
      *
+     * @param string|null $path
+     * @param bool $loadWholeTree
      * @return array
      * @throws ValidatorException
      */
@@ -146,8 +148,7 @@ class GetDirectoryTree
 
         $allowedDirectoryPaths = [];
         foreach ($imageFolderPaths as $imageFolderPath) {
-            if (
-                is_string($imageFolderPath)
+            if (is_string($imageFolderPath)
                 && $imageFolderPath !== ''
                 && !$this->isPathExcluded->execute($imageFolderPath)
                 && $mediaDirectory->isDirectory($imageFolderPath)

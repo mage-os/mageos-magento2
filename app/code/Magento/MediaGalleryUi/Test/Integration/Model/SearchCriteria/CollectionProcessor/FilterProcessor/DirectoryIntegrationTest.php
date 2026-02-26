@@ -172,7 +172,7 @@ class DirectoryIntegrationTest extends TestCase
             ->method('where')
             ->with(
                 $this->equalTo('BINARY path REGEXP ? '),
-                $this->matchesRegularExpression('/\^\w+\/\[\\^\\\\\/\]\*\$/')
+                $this->equalTo('^\/?testing/[^\/]*$')
             );
         
         $filter = Bootstrap::getObjectManager()->create(Filter::class);
