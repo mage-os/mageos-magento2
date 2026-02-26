@@ -435,10 +435,10 @@ define([
         /**
          * Reload jstree and update jstree events
          */
-        reloadJsTree: function () {
+        reloadJsTree: function (loadWholeTree) {
             var deferred = $.Deferred();
 
-            if (this.isLazyTreeMode()) {
+            if (this.isLazyTreeMode() && !loadWholeTree) {
                 $(this.directoryTreeSelector).jstree(true).refresh(false, true);
                 this.setJsTreeReloaded(true);
                 deferred.resolve();
