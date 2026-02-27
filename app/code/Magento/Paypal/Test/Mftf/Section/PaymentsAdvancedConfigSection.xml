@@ -24,7 +24,7 @@
         <element name="positionOption" type="button" selector="#payment_{{countryCode}}_paypal_group_all_in_one_payflow_advanced_required_settings_advanced_advertise_paylater_advanced_settings_paylater_cartpage_paylater_cartpage_position" parameterized="true"/>
         <element name="payPalCheckoutField" type="text" selector="//*[@id='maincontent']/div[3]/div/div[2]/div[1]/ul/li[2]/div[1]/input"/>
         <element name="payPalFrame" type="iframe" selector="//iframe[contains(@id, 'jsx-iframe')]"/>
-        <element name="payLaterOnTopOfPage" type="input" selector="//div[@class='top-container']/div[@id='pay-later']"/>
+        <element name="payLaterOnTopOfPage" type="input" selector=".page-wrapper .top-container .pay-later-message"/>
         <element name="payLaterNearCheckoutButton" type="input" selector="//*[@class='checkout methods items checkout-methods-items']/li/div[@id='pay-later']"/>
     </section>
 </sections>
