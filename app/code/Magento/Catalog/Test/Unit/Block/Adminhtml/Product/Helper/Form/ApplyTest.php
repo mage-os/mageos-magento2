@@ -179,6 +179,8 @@ class ApplyTest extends TestCase
     }
 
     /**
+     * Ensure `setReadonly` returns the same instance to support fluent chaining.
+     *
      * @return void
      * @covers \Magento\Catalog\Block\Adminhtml\Product\Helper\Form\Apply::setReadonly
      */
