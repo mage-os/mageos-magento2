@@ -103,9 +103,9 @@ class CategoriesJsonTest extends TestCase
             public function __construct()
             {
             }
-            public function setIsTreeWasExpanded($_isExpanded)
+            public function setIsTreeWasExpanded($isExpanded)
             {
-                $this->expandedFlag = (bool)$_isExpanded;
+                $this->expandedFlag = (bool)$isExpanded;
                 $this->expandedFlagCallCount++;
                 return $this;
             }
@@ -240,9 +240,9 @@ class CategoriesJsonTest extends TestCase
         ) extends CategoriesJson {
             /** @var CategoryModel|null */
             private $initCategoryResult;
-            public function setInitCategoryResult($_category): void
+            public function setInitCategoryResult($category): void
             {
-                $this->initCategoryResult = $_category;
+                $this->initCategoryResult = $category;
             }
             protected function _initCategory($getRootInstead = false)
             {
@@ -313,9 +313,9 @@ class CategoriesJsonTest extends TestCase
         ) extends CategoriesJson {
             /** @var CategoryModel|null */
             private $initCategoryResult;
-            public function setInitCategoryResult($_category): void
+            public function setInitCategoryResult($category): void
             {
-                $this->initCategoryResult = $_category;
+                $this->initCategoryResult = $category;
             }
             protected function _initCategory($getRootInstead = false)
             {
