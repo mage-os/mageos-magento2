@@ -22,7 +22,9 @@ class Calculator extends Validator
      * This information will be added during discount amounts processing
      *
      * @param AbstractItem $item
-     * @return $this
+     *
+     * @return \Magento\OfflineShipping\Model\SalesRule\Calculator
+     *
      * @throws \Zend_Db_Select_Exception
      */
     public function processFreeShipping(AbstractItem $item)
