@@ -56,21 +56,6 @@ class CategoriesJsonTest extends TestCase
     private $requestMock;
 
     /**
-     * @var StoreManagerInterface|MockObject
-     */
-    private $storeManagerMock;
-
-    /**
-     * @var Registry|MockObject
-     */
-    private $registryMock;
-
-    /**
-     * @var WysiwygConfig|MockObject
-     */
-    private $wysiwygConfigMock;
-
-    /**
      * @var JsonFactory|MockObject
      */
     private $resultJsonFactoryMock;
@@ -101,11 +86,6 @@ class CategoriesJsonTest extends TestCase
     private $resultRedirectMock;
 
     /**
-     * @var CategoriesJson
-     */
-    private CategoriesJson $controller;
-
-    /**
      * @return void
      * @throws \PHPUnit\Framework\MockObject\Exception
      */
@@ -116,12 +96,16 @@ class CategoriesJsonTest extends TestCase
 
         // Lightweight stub for AuthSession to track expansion flag and call count without heavy constructor
         $this->authSessionMock = new class extends AuthSession {
+            /** @var bool|null */
             public $expandedFlag = null;
+            /** @var int */
             public $expandedFlagCallCount = 0;
-            public function __construct() {}
-            public function setIsTreeWasExpanded($isExpanded)
+            public function __construct()
             {
-                $this->expandedFlag = (bool)$isExpanded;
+            }
+            public function setIsTreeWasExpanded($_isExpanded)
+            {
+                $this->expandedFlag = (bool)$_isExpanded;
                 $this->expandedFlagCallCount++;
                 return $this;
             }
@@ -146,26 +130,16 @@ class CategoriesJsonTest extends TestCase
         $this->contextMock->method('getRequest')
             ->willReturn($this->requestMock);
 
-        $this->storeManagerMock   = $this->createMock(StoreManagerInterface::class);
-        $this->registryMock       = $this->createMock(Registry::class);
-        $this->wysiwygConfigMock  = $this->createMock(WysiwygConfig::class);
+        $storeManagerMock   = $this->createMock(StoreManagerInterface::class);
+        $registryMock       = $this->createMock(Registry::class);
+        $wysiwygConfigMock  = $this->createMock(WysiwygConfig::class);
 
         $this->objectManager->prepareObjectManager([
-            [StoreManagerInterface::class, $this->storeManagerMock],
-            [Registry::class, $this->registryMock],
-            [WysiwygConfig::class, $this->wysiwygConfigMock],
+            [StoreManagerInterface::class, $storeManagerMock],
+            [Registry::class, $registryMock],
+            [WysiwygConfig::class, $wysiwygConfigMock],
             [AuthSession::class, $this->authSessionMock],
         ]);
-
-        $this->controller = $this->objectManager->getObject(
-            CategoriesJson::class,
-            [
-                'context'           => $this->contextMock,
-                'resultJsonFactory' => $this->resultJsonFactoryMock,
-                'layoutFactory'     => $this->layoutFactoryMock,
-                'authSession'       => $this->authSessionMock,
-            ]
-        );
     }
 
     /**
@@ -212,7 +186,17 @@ class CategoriesJsonTest extends TestCase
             ->with(json_encode(['error' => 'Category ID is required']))
             ->willReturnSelf();
 
-        $result = $this->controller->execute();
+        $controller = $this->objectManager->getObject(
+            CategoriesJson::class,
+            [
+                'context'           => $this->contextMock,
+                'resultJsonFactory' => $this->resultJsonFactoryMock,
+                'layoutFactory'     => $this->layoutFactoryMock,
+                'authSession'       => $this->authSessionMock,
+            ]
+        );
+
+        $result = $controller->execute();
         $this->assertSame($this->resultJsonMock, $result);
         $this->assertSame($expectedExpanded, $this->authSessionMock->expandedFlag);
         $this->assertSame(1, $this->authSessionMock->expandedFlagCallCount);
@@ -254,10 +238,11 @@ class CategoriesJsonTest extends TestCase
             $this->layoutFactoryMock,
             $this->authSessionMock
         ) extends CategoriesJson {
+            /** @var CategoryModel|null */
             private $initCategoryResult;
-            public function setInitCategoryResult($category): void
+            public function setInitCategoryResult($_category): void
             {
-                $this->initCategoryResult = $category;
+                $this->initCategoryResult = $_category;
             }
             protected function _initCategory($getRootInstead = false)
             {
@@ -326,10 +311,11 @@ class CategoriesJsonTest extends TestCase
             $this->layoutFactoryMock,
             $this->authSessionMock
         ) extends CategoriesJson {
+            /** @var CategoryModel|null */
             private $initCategoryResult;
-            public function setInitCategoryResult($category): void
+            public function setInitCategoryResult($_category): void
             {
-                $this->initCategoryResult = $category;
+                $this->initCategoryResult = $_category;
             }
             protected function _initCategory($getRootInstead = false)
             {
