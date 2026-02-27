@@ -42,6 +42,9 @@
         <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanCaches">
             <argument name="tags" value="config full_page"/>
         </actionGroup>
+        <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
+            <argument name="indices" value=""/>
+        </actionGroup>
         <!-- Step 3: Go to cart and verify pay later display on top of cart page -->
         <actionGroup ref="StorefrontOpenProductEntityPageActionGroup" stepKey="openProduct">
             <argument name="product" value="$createProduct$"/>
@@ -58,6 +61,12 @@
             <argument name="display" value="1"/>
             <argument name="position" value="near_pp_button"/>
         </actionGroup>
+        <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanTheCache">
+            <argument name="tags" value="config full_page"/>
+        </actionGroup>
+        <actionGroup ref="CliIndexerReindexActionGroup" stepKey="doReindexing">
+            <argument name="indices" value=""/>
+        </actionGroup>
         <!-- Verify pay later appears on cart near checkout area -->
         <actionGroup ref="StorefrontCartPageOpenActionGroup" stepKey="reopenCartPage"/>
         <waitForElementVisible selector="{{PaymentsAdvancedConfigSection.payLaterNearCheckoutButton}}" stepKey="seePayLaterNearCheckoutButton"/>
@@ -69,6 +78,9 @@
         </actionGroup>
         <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanCache">
             <argument name="tags" value="config full_page"/>
+        </actionGroup>
+        <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindexing">
+            <argument name="indices" value=""/>
         </actionGroup>
         <actionGroup ref="StorefrontOpenProductEntityPageActionGroup" stepKey="openProductAgain">
             <argument name="product" value="$createProduct$"/>
@@ -82,6 +94,9 @@
         </actionGroup>
         <actionGroup ref="CliCacheCleanActionGroup" stepKey="cachesClean">
             <argument name="tags" value="config full_page"/>
+        </actionGroup>
+        <actionGroup ref="CliIndexerReindexActionGroup" stepKey="doTheReindexing">
+            <argument name="indices" value=""/>
         </actionGroup>
         <actionGroup ref="StorefrontOpenHomePageActionGroup" stepKey="goToHomePage"/>
         <waitForElementVisible selector="{{PaymentsAdvancedConfigSection.payLaterOnTopOfPage}}" stepKey="seePayLaterInHomePage"/>
