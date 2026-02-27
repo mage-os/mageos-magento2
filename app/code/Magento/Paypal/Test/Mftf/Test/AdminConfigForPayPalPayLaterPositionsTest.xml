@@ -39,6 +39,9 @@
         </after>
         <!-- Step 2: Enable cart page display for pay later and select header on position dropdown -->
         <actionGroup ref="AdminSetPayLaterPositionByCliActionGroup" stepKey="setCartPositions"/>
+        <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanCaches">
+            <argument name="tags" value="config full_page"/>
+        </actionGroup>
         <!-- Step 3: Go to cart and verify pay later display on top of cart page -->
         <actionGroup ref="StorefrontOpenProductEntityPageActionGroup" stepKey="openProduct">
             <argument name="product" value="$createProduct$"/>
@@ -64,6 +67,9 @@
             <argument name="display" value="1"/>
             <argument name="position" value="header"/>
         </actionGroup>
+        <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanCache">
+            <argument name="tags" value="config full_page"/>
+        </actionGroup>
         <actionGroup ref="StorefrontOpenProductEntityPageActionGroup" stepKey="openProductAgain">
             <argument name="product" value="$createProduct$"/>
         </actionGroup>
@@ -73,6 +79,9 @@
             <argument name="page" value="homepage"/>
             <argument name="display" value="1"/>
             <argument name="position" value="header"/>
+        </actionGroup>
+        <actionGroup ref="CliCacheCleanActionGroup" stepKey="cachesClean">
+            <argument name="tags" value="config full_page"/>
         </actionGroup>
         <actionGroup ref="StorefrontOpenHomePageActionGroup" stepKey="goToHomePage"/>
         <waitForElementVisible selector="{{PaymentsAdvancedConfigSection.payLaterOnTopOfPage}}" stepKey="seePayLaterInHomePage"/>
