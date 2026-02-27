@@ -59,6 +59,7 @@
     <type name="Magento\CatalogImportExport\Model\Export\Product">
         <arguments>
             <argument name="collectionFactory" xsi:type="object">Magento\CatalogImportExport\Model\ResourceModel\Product\ExportCollectionFactory</argument>
+            <argument name="estimatedMemoryPerProduct" xsi:type="number">500000</argument>
         </arguments>
     </type>
     <type name="Magento\CatalogImportExport\Model\Import\Product\LinkProcessor">

@@ -406,7 +406,7 @@ class Product extends \Magento\ImportExport\Model\Export\Entity\AbstractEntity
      *
      * @var float
      */
-    private float $estimatedMemoryPerProduct = 500000.0;
+    private float $estimatedMemoryPerProduct;
 
     /**
      * Memory snapshot taken at the start of current export iteration.
@@ -521,6 +521,7 @@ class Product extends \Magento\ImportExport\Model\Export\Entity\AbstractEntity
      * @param array $dateAttrCodes
      * @param ProductFilterInterface|null $filter
      * @param StockConfigurationInterface|null $stockConfiguration
+     * @param float $estimatedMemoryPerProduct
      * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function __construct(
@@ -542,7 +543,8 @@ class Product extends \Magento\ImportExport\Model\Export\Entity\AbstractEntity
         \Magento\CatalogImportExport\Model\Export\RowCustomizerInterface $rowCustomizer,
         array $dateAttrCodes = [],
         ?ProductFilterInterface $filter = null,
-        ?StockConfigurationInterface $stockConfiguration = null
+        ?StockConfigurationInterface $stockConfiguration = null,
+        float $estimatedMemoryPerProduct = 500000.0
     ) {
         $this->_entityCollectionFactory = $collectionFactory;
         $this->_exportConfig = $exportConfig;
@@ -561,6 +563,7 @@ class Product extends \Magento\ImportExport\Model\Export\Entity\AbstractEntity
         $this->filter = $filter ?? ObjectManager::getInstance()->get(ProductFilterInterface::class);
         $this->stockConfiguration = $stockConfiguration ?? ObjectManager::getInstance()
                 ->get(StockConfigurationInterface::class);
+        $this->estimatedMemoryPerProduct = $estimatedMemoryPerProduct;
         parent::__construct($localeDate, $config, $resource, $storeManager);
 
         $this->initTypeModels()
