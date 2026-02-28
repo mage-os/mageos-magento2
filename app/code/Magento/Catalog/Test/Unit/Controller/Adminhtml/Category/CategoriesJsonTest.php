@@ -103,9 +103,9 @@ class CategoriesJsonTest extends TestCase
             public function __construct()
             {
             }
-            public function setIsTreeWasExpanded($isExpanded)
+            public function setIsTreeWasExpanded(...$args)
             {
-                $this->expandedFlag = (bool)$isExpanded;
+                $this->expandedFlag = (bool)($args[0] ?? false);
                 $this->expandedFlagCallCount++;
                 return $this;
             }
@@ -239,17 +239,13 @@ class CategoriesJsonTest extends TestCase
             $this->authSessionMock
         ) extends CategoriesJson {
             /** @var CategoryModel|null */
-            private $initCategoryResult;
-            public function setInitCategoryResult($category): void
-            {
-                $this->initCategoryResult = $category;
-            }
+            public $initCategoryResult;
             protected function _initCategory($getRootInstead = false)
             {
                 return $this->initCategoryResult;
             }
         };
-        $controller->setInitCategoryResult(null);
+        $controller->initCategoryResult = null;
 
         $result = $controller->execute();
         $this->assertSame($this->resultRedirectMock, $result);
@@ -312,17 +308,13 @@ class CategoriesJsonTest extends TestCase
             $this->authSessionMock
         ) extends CategoriesJson {
             /** @var CategoryModel|null */
-            private $initCategoryResult;
-            public function setInitCategoryResult($category): void
-            {
-                $this->initCategoryResult = $category;
-            }
+            public $initCategoryResult;
             protected function _initCategory($getRootInstead = false)
             {
                 return $this->initCategoryResult;
             }
         };
-        $controller->setInitCategoryResult($categoryMock);
+        $controller->initCategoryResult = $categoryMock;
 
         $result = $controller->execute();
         $this->assertSame($this->resultJsonMock, $result);
