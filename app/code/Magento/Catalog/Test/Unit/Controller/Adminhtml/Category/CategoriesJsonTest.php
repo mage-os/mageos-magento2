@@ -32,6 +32,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
  *
  * @covers \Magento\Catalog\Controller\Adminhtml\Category\CategoriesJson
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.UnusedLocalVariable)
  */
 class CategoriesJsonTest extends TestCase
 {
@@ -106,6 +107,7 @@ class CategoriesJsonTest extends TestCase
             /**
              * @inheritDoc
              * @return $this
+             * @SuppressWarnings(PHPMD.UnusedLocalVariable)
              */
             public function setIsTreeWasExpanded($flag = false)
             {
