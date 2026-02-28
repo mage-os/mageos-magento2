@@ -109,7 +109,7 @@ class CategoriesJsonTest extends TestCase
              */
             public function setIsTreeWasExpanded($flag = false)
             {
-                $this->expandedFlag = (bool)$flag;
+                $this->expandedFlag = (bool) $flag;
                 $this->expandedFlagCallCount++;
                 return $this;
             }
