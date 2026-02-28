@@ -103,9 +103,13 @@ class CategoriesJsonTest extends TestCase
             public function __construct()
             {
             }
-            public function setIsTreeWasExpanded(...$args)
+            /**
+             * @inheritDoc
+             * @return $this
+             */
+            public function setIsTreeWasExpanded($flag = false)
             {
-                $this->expandedFlag = (bool)($args[0] ?? false);
+                $this->expandedFlag = (bool)$flag;
                 $this->expandedFlagCallCount++;
                 return $this;
             }
