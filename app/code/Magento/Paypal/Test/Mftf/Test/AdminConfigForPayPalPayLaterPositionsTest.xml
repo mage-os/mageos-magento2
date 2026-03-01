@@ -25,9 +25,7 @@
             <!--Login to admin -->
             <actionGroup ref="AdminLoginActionGroup" stepKey="loginAdmin"/>
             <!-- Step 1: Enable PayPal express checkout -->
-            <actionGroup ref="AdminPayPalExpressCheckoutEnableActionGroup" stepKey="enableExpressCheckout">
-                <argument name="credentials" value="_CREDS"/>
-            </actionGroup>
+            <actionGroup ref="ConfigPayPalExpressCheckoutActionGroup" stepKey="ConfigPayPalExpressCheckout"/>
             <!-- Step 1: Enable pay later experience -->
             <actionGroup ref="AdminEnablePayPalExpressCheckoutPayLaterActionGroup" stepKey="enablePayLater">
                 <argument name="countryCode" value="us"/>
