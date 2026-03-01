@@ -76,6 +76,12 @@
             <argument name="display" value="1"/>
             <argument name="position" value="header"/>
         </actionGroup>
+        <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
+            <argument name="indices" value=""/>
+        </actionGroup>
+        <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushCache">
+            <argument name="tags" value=""/>
+        </actionGroup>
         <actionGroup ref="StorefrontOpenHomePageActionGroup" stepKey="goToHomePage"/>
         <waitForElementVisible selector="{{PaymentsAdvancedConfigSection.payLaterOnTopOfPage}}" stepKey="seePayLaterInTheHomePage"/>
     </test>
