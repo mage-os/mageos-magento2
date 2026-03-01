@@ -100,7 +100,6 @@
         <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushCache">
             <argument name="tags" value=""/>
         </actionGroup>
-        <scrollToTopOfPage stepKey="scrollToTopOfHomePage"/>
         <actionGroup ref="StorefrontOpenHomePageActionGroup" stepKey="goToHomePage"/>
         <scrollToTopOfPage stepKey="scrollToTopOfHomePage"/>
         <waitForElementVisible selector="{{PaymentsAdvancedConfigSection.payLaterOnTopOfPage}}" stepKey="seePayLaterInTheHomePage"/>
