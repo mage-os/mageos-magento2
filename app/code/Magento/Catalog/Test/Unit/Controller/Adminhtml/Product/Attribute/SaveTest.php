@@ -1071,7 +1071,7 @@ class SaveTest extends AttributeTest
         $this->assertSame(1, $data['option']['delete']['option_12']);
         $this->assertSame(1, $data['option']['delete']['option_22']);
     }
-    
+
     public function testMarkAttributeOptionsAsDeletedDoesNothingWhenNoRowsKey(): void
     {
         $controller = $this->getModel();
@@ -1100,7 +1100,6 @@ class SaveTest extends AttributeTest
         array &$data
     ): void {
         $method = new \ReflectionMethod($controller, 'markAttributeOptionsAsDeleted');
-        $method->setAccessible(true);
 
         $args = [&$data]; // pass by reference
         $method->invokeArgs($controller, $args);
