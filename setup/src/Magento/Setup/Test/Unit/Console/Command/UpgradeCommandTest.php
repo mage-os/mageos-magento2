@@ -19,7 +19,6 @@ use Magento\Setup\Model\InstallerFactory;
 use Magento\Setup\Model\SearchConfig;
 use Magento\Setup\Model\SearchConfigFactory;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -27,7 +26,6 @@ use Symfony\Component\Console\Tester\CommandTester;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-#[AllowMockObjectsWithoutExpectations]
 class UpgradeCommandTest extends TestCase
 {
     /**
