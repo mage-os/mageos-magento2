@@ -381,6 +381,7 @@ class Save extends Attribute implements HttpPostActionInterface
      *
      * @param array $data
      * @return void
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     private function markAttributeOptionsAsDeleted(array &$data): void
     {
