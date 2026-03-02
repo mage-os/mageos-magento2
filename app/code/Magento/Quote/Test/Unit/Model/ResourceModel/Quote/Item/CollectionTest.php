@@ -23,6 +23,11 @@ use Magento\Quote\Model\Quote\Item as QuoteItem;
 use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory as ProductCollectionFactory;
 
+/**
+ * Class to test quote item collection
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class CollectionTest extends TestCase
 {
     /**
