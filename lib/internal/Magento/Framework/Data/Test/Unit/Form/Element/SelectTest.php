@@ -25,7 +25,9 @@ class SelectTest extends TestCase
     private const string ELEMENT_ID = 'test_select_element_name';
     private const string ELEMENT_NAME = 'test_select_element_id';
 
-    /** @var Select $element */
+    /**
+     * @var Select
+     */
     private Select $element;
 
     protected function setUp(): void
