@@ -25,6 +25,6 @@
         <element name="payPalCheckoutField" type="text" selector="//*[@id='maincontent']/div[3]/div/div[2]/div[1]/ul/li[2]/div[1]/input"/>
         <element name="payPalFrame" type="iframe" selector="//iframe[contains(@id, 'jsx-iframe')]"/>
         <element name="payLaterOnTopOfPage" type="input" selector="//div[@class='top-container']/div[@id='pay-later']"/>
-        <element name="payLaterNearCheckoutButton" type="input" selector="//*[@class='checkout methods items checkout-methods-items']/li/div[@id='pay-later']"/>
+        <element name="payLaterNearCheckoutButton" type="input" selector="//ul[contains(@class,'checkout methods items')]/li/div[@id='pay-later']"/>
     </section>
 </sections>
