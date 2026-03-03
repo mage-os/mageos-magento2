@@ -26,5 +26,6 @@
 
         <!-- Navigate menu selectors -->
         <element name="menuItem" type="button" selector="li[data-ui-id='menu-{{dataUiId}}']" parameterized="true" timeout="30"/>
+        <element name="submenuGroupTitle" type="text" selector="//li[@data-ui-id='menu-{{menuItemDataUiId}}']//strong[@class='submenu-group-title']" parameterized="true"/>
     </section>
 </sections>
