@@ -50,10 +50,10 @@ class MediaGallery implements ResolverInterface
 
         $mediaGalleryEntries = [];
         foreach ($product->getMediaGalleryEntries() ?? [] as $entry) {
-            $entryData = $entry->getData();
-            if ((int)($entryData['disabled'] ?? 0) === 1) {
+            if ($entry->isDisabled()) {
                 continue;
             }
+            $entryData = $entry->getData();
             if ($entryData['label'] === null) {
                 $entryData['label'] = $product->getName();
             }
