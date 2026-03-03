@@ -61,7 +61,7 @@ class GetTree extends Action implements HttpGetActionInterface
         try {
             $path = $this->getRequest()->getParam('path');
             $loadWholeTree = filter_var(
-                $this->getRequest()->getParam('loadWholeTree', false),
+                $this->getRequest()->getParam('loadWholeTree', true),
                 FILTER_VALIDATE_BOOLEAN
             );
             if ($path === '#' || $path === '') {

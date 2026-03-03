@@ -116,15 +116,37 @@ class GetDirectoryTree
             return $nodes;
         }
 
-        if (!$mediaDirectory->isDirectory($path)) {
+        $normalizedPath = trim($path, '/');
+        if (!$this->isPathWithinAllowedRoots($normalizedPath, $mediaDirectory)) {
             return $nodes;
         }
 
-        foreach ($this->getSubdirectoryPaths($mediaDirectory, $path) as $subdirectoryPath) {
+        if (!$mediaDirectory->isDirectory($normalizedPath)) {
+            return $nodes;
+        }
+
+        foreach ($this->getSubdirectoryPaths($mediaDirectory, $normalizedPath) as $subdirectoryPath) {
             $nodes[] = $this->getDirectoryDataForLazyLoad($mediaDirectory, $subdirectoryPath);
         }
 
         return $nodes;
+    }
+    /**
+     * Check whether a path is inside the configured allowed roots.
+     *
+     * @param string $path
+     * @param ReadInterface $mediaDirectory
+     * @return bool
+     */
+    private function isPathWithinAllowedRoots(string $path, ReadInterface $mediaDirectory): bool
+    {
+        foreach ($this->getAllowedDirectoryPaths($mediaDirectory) as $allowedRoot) {
+            if ($path === $allowedRoot || strpos($path, $allowedRoot . '/') === 0) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

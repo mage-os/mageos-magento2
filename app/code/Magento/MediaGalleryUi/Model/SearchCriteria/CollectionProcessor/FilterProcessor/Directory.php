@@ -34,10 +34,6 @@ class Directory implements CustomFilterInterface
     public function apply(Filter $filter, AbstractDb $collection): bool
     {
         $value = $filter->getValue() !== null ? str_replace('%', '', $filter->getValue()) : '';
-        $normalizedValue = trim((string)$value, '/');
-        $escapedValue = preg_quote($normalizedValue, '/');
-        $directoryPattern = $escapedValue !== '' ? $escapedValue . '/' : '';
-        $pathRegex = '^\/?' . $directoryPattern . '[^\/]*$';
 
         try {
             /**
@@ -45,10 +41,10 @@ class Directory implements CustomFilterInterface
              * Without BINARY, MySQL's default case-insensitive comparison would match
              * directories like "Testing" and "testing" as the same, leading to incorrect
              * file visibility across directories with different case variations.
-             * The regex '^\/?{path}/[^\/]*$' ensures we only match files directly in the
+             * The regex '^{path}/[^\/]*$' ensures we only match files directly in the
              * specified directory, not in subdirectories.
              */
-            $collection->getSelect()->where('BINARY path REGEXP ? ', $pathRegex);
+            $collection->getSelect()->where('BINARY path REGEXP ? ', '^' . $value . '/[^\/]*$');
         } catch (\Exception $e) {
             // Log the error for debugging but continue with case-insensitive fallback
             // Note: This fallback means directory filtering will not be case-sensitive
@@ -56,7 +52,7 @@ class Directory implements CustomFilterInterface
                 'MediaGallery Directory Filter: BINARY REGEXP not supported, ' .
                 'using case-insensitive fallback: ' . $e->getMessage()
             );
-            $collection->getSelect()->where('path REGEXP ? ', $pathRegex);
+            $collection->getSelect()->where('path REGEXP ? ', '^' . $value . '/[^\/]*$');
         }
 
         return true;

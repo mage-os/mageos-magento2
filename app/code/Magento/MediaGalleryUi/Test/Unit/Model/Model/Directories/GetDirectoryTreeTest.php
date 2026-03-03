@@ -14,22 +14,23 @@ use Magento\Framework\Filesystem\Directory\ReadInterface;
 use Magento\MediaGalleryApi\Api\IsPathExcludedInterface;
 use Magento\MediaGalleryUi\Model\Directories\GetDirectoryTree;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class GetDirectoryTreeTest extends TestCase
 {
     /**
-     * @var Filesystem
+     * @var Filesystem|MockObject
      */
     private $filesystem;
 
     /**
-     * @var IsPathExcludedInterface
+     * @var IsPathExcludedInterface|MockObject
      */
     private $isPathExcluded;
 
     /**
-     * @var ScopeConfigInterface
+     * @var ScopeConfigInterface|MockObject
      */
     private $coreConfig;
 
@@ -88,9 +89,9 @@ class GetDirectoryTreeTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->filesystem = $this->createStub(Filesystem::class);
-        $this->isPathExcluded = $this->createStub(IsPathExcludedInterface::class);
-        $this->coreConfig = $this->createStub(ScopeConfigInterface::class);
+        $this->filesystem = $this->createMock(Filesystem::class);
+        $this->isPathExcluded = $this->createMock(IsPathExcludedInterface::class);
+        $this->coreConfig = $this->createMock(ScopeConfigInterface::class);
         $this->model = new GetDirectoryTree(
             $this->filesystem,
             $this->isPathExcluded,
@@ -108,7 +109,7 @@ class GetDirectoryTreeTest extends TestCase
     {
         $pathsMap = $this->buildDirectoryChildrenMap($this->foldersStruture);
 
-        $directory = $this->createStub(ReadInterface::class);
+        $directory = $this->createMock(ReadInterface::class);
         $directory->method('isDirectory')
             ->willReturnCallback(
                 function (?string $path = null) use ($pathsMap): bool {
@@ -138,7 +139,7 @@ class GetDirectoryTreeTest extends TestCase
     public function testExecuteInLazyModeForRootsAndSubdirectories(): void
     {
         $pathsMap = $this->buildDirectoryChildrenMap($this->foldersStruture);
-        $directory = $this->createStub(ReadInterface::class);
+        $directory = $this->createMock(ReadInterface::class);
         $directory->method('isDirectory')
             ->willReturnCallback(
                 function (?string $path = null) use ($pathsMap): bool {
@@ -203,6 +204,37 @@ class GetDirectoryTreeTest extends TestCase
             ],
             $this->model->execute('dir2/dir2_2', false)
         );
+    }
+
+    /**
+     * @throws ValidatorException
+     */
+    public function testExecuteInLazyModeRejectsPathOutsideAllowedRoots(): void
+    {
+        $pathsMap = $this->buildDirectoryChildrenMap($this->foldersStruture);
+        $directory = $this->createMock(ReadInterface::class);
+        $directory->method('isDirectory')
+            ->willReturnCallback(
+                function (?string $path = null) use ($pathsMap): bool {
+                    if ($path === null || $path === '') {
+                        return true;
+                    }
+
+                    return isset($pathsMap[$path]);
+                }
+            );
+        $directory->method('read')
+            ->willReturnCallback(
+                function (?string $path = null) use ($pathsMap): array {
+                    $normalizedPath = $path ?? '';
+                    return $pathsMap[$normalizedPath] ?? [];
+                }
+            );
+        $this->filesystem->method('getDirectoryRead')->willReturn($directory);
+        $this->isPathExcluded->method('execute')->willReturn(false);
+        $this->coreConfig->method('getValue')->willReturn(['dir1', 'dir2']);
+
+        $this->assertSame([], $this->model->execute('dir3/dir3_1', false));
     }
 
     /**
