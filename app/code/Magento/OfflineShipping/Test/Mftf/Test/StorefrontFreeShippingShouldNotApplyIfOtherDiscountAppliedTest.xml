@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?><!--
- /**
-  * Copyright © Magento, Inc. All rights reserved.
-  * See COPYING.txt for license details.
-  */
+/**
+ * Copyright 2023 Adobe
+ * All Rights Reserved.
+ */
 -->
 
 <tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
@@ -67,6 +67,8 @@
         </actionGroup>
         <waitForElement time="30" selector="{{CheckoutCartSummarySection.estimateShippingAndTaxForm}}" stepKey="waitForEstimateShippingAndTaxFormAfterCouponApplied"/>
         <waitForElement time="30" selector="{{CheckoutCartSummarySection.shippingMethodForm}}" stepKey="waitForShippingMethodFormAfterCouponApplied"/>
+        <!-- Sometimes the shipping loading masks are not done loading -->
+        <waitForPageLoad stepKey="waitForShippingLoaded"/>
         <see selector="{{CheckoutCartSummarySection.shippingPrice}}" userInput="$5.00" stepKey="seeFlatShippingPrice"/>
     </test>
 </tests>

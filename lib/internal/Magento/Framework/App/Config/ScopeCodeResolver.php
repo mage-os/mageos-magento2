@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2016 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Framework\App\Config;
 
@@ -40,7 +40,7 @@ class ScopeCodeResolver
      */
     public function resolve($scopeType, $scopeCode)
     {
-        if (isset($this->resolvedScopeCodes[$scopeType][$scopeCode])) {
+        if (isset($scopeCode, $this->resolvedScopeCodes[$scopeType][$scopeCode])) {
             return $this->resolvedScopeCodes[$scopeType][$scopeCode];
         }
 
@@ -59,10 +59,9 @@ class ScopeCodeResolver
             $scopeCode = $resolverScopeCode;
         }
 
-        $this->resolvedScopeCodes[$scopeType][$scopeCode] =
-            is_null($resolverScopeCode) ? null : strtolower($resolverScopeCode);
+        $this->resolvedScopeCodes[$scopeType][$scopeCode] = $resolverScopeCode;
 
-        return $this->resolvedScopeCodes[$scopeType][$scopeCode];
+        return $resolverScopeCode;
     }
 
     /**

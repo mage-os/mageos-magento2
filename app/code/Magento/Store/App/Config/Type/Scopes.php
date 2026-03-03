@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2016 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Store\App\Config\Type;
 
@@ -72,7 +72,7 @@ class Scopes implements ConfigTypeInterface
             $path = $this->convertIdPathToCodePath($patchChunks);
         }
 
-        return $this->data->getData(strtolower($path));
+        return $this->data->getData($path);
     }
 
     /**

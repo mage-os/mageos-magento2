@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2017 Adobe
+ * All Rights Reserved.
  */
 -->
 <listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
@@ -16,9 +16,6 @@
                                 <item name="children" xsi:type="array">
                                     <item name="regular_price" xsi:type="array">
                                         <item name="bodyTmpl" xsi:type="string">Magento_GroupedProduct/product/price/regular_price</item>
-                                    </item>
-                                    <item name="special_price" xsi:type="array">
-                                        <item name="bodyTmpl" xsi:type="string">Magento_GroupedProduct/product/price/special_price</item>
                                     </item>
                                     <item name="minimal_price" xsi:type="array">
                                         <item name="label" xsi:type="string" translate="true">Starting at</item>

@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2016 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Store\App\Config\Source;
 
@@ -102,7 +102,7 @@ class RuntimeConfigSource implements ConfigSourceInterface
         );
 
         foreach ($entities as $entity) {
-            $data[strtolower($entity[$keyField])] = $entity;
+            $data[$entity[$keyField]] = $entity;
         }
 
         return $data;

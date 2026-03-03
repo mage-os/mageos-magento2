@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -20,13 +20,17 @@ use Magento\Sales\Model\Order\Pdf\Config;
 use Magento\Sales\Model\Order\Pdf\ItemsFactory;
 use Magento\Sales\Model\Order\Pdf\Total\DefaultTotal;
 use Magento\Sales\Model\Order\Pdf\Total\Factory;
+use Magento\Tax\Helper\Data as TaxHelper;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class AbstractTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * Test protected method to reduce testing complexity, which would be too high in case of testing a public method
      * without completing a huge refactoring of the class.
@@ -44,11 +48,12 @@ class AbstractTest extends TestCase
         $paymentData = $this->createMock(Data::class);
         $addressRenderer = $this->createMock(Renderer::class);
         $string = $this->createMock(StringUtils::class);
-        $scopeConfig = $this->getMockForAbstractClass(ScopeConfigInterface::class);
-        $translate = $this->getMockForAbstractClass(StateInterface::class);
+        $scopeConfig = $this->createMock(ScopeConfigInterface::class);
+        $translate = $this->createMock(StateInterface::class);
         $filesystem = $this->createMock(Filesystem::class);
         $pdfItemsFactory = $this->createMock(ItemsFactory::class);
-        $localeMock = $this->getMockForAbstractClass(TimezoneInterface::class);
+        $localeMock = $this->createMock(TimezoneInterface::class);
+        $taxHelper = $this->createMock(TaxHelper::class);
 
         // Setup config file totals
         $configTotals = ['item1' => [''], 'item2' => ['model' => 'custom_class']];
@@ -56,11 +61,10 @@ class AbstractTest extends TestCase
         $pdfConfig->expects($this->once())->method('getTotals')->willReturn($configTotals);
 
         // Setup total factory
-        $total1 = $this->getMockBuilder(DefaultTotal::class)
-            ->addMethods(['setSource', 'setOrder'])
-            ->onlyMethods(['canDisplay', 'getTotalsForDisplay'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $total1 = $this->createPartialMockWithReflection(
+            DefaultTotal::class,
+            ['setSource', 'setOrder', 'canDisplay', 'getTotalsForDisplay']
+        );
         $total1->expects($this->once())->method('setOrder')->with($order)->willReturnSelf();
         $total1->expects($this->once())->method('setSource')->with($source)->willReturnSelf();
         $total1->expects($this->once())->method('canDisplay')->willReturn(true);
@@ -68,11 +72,10 @@ class AbstractTest extends TestCase
             ->method('getTotalsForDisplay')
             ->willReturn([['label' => 'label1', 'font_size' => 1, 'amount' => '$1']]);
 
-        $total2 = $this->getMockBuilder(DefaultTotal::class)
-            ->addMethods(['setSource', 'setOrder'])
-            ->onlyMethods(['canDisplay', 'getTotalsForDisplay'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $total2 = $this->createPartialMockWithReflection(
+            DefaultTotal::class,
+            ['setSource', 'setOrder', 'canDisplay', 'getTotalsForDisplay']
+        );
         $total2->expects($this->once())->method('setOrder')->with($order)->willReturnSelf();
         $total2->expects($this->once())->method('setSource')->with($source)->willReturnSelf();
         $total2->expects($this->once())->method('canDisplay')->willReturn(true);
@@ -86,9 +89,8 @@ class AbstractTest extends TestCase
 
         // Test model
         /** @var AbstractPdf $model */
-        $model = $this->getMockForAbstractClass(
-            AbstractPdf::class,
-            [
+        $model = $this->getMockBuilder(AbstractPdf::class)
+            ->setConstructorArgs([
                 $paymentData,
                 $string,
                 $scopeConfig,
@@ -98,18 +100,18 @@ class AbstractTest extends TestCase
                 $pdfItemsFactory,
                 $localeMock,
                 $translate,
-                $addressRenderer
-            ],
-            '',
-            true,
-            false,
-            true,
-            ['drawLineBlocks']
-        );
+                $addressRenderer,
+                [],
+                null,
+                null,
+                null,
+                $taxHelper
+            ])
+            ->onlyMethods(['drawLineBlocks', 'getPdf'])
+            ->getMock();
         $model->expects($this->once())->method('drawLineBlocks')->willReturn($page);
 
         $reflectionMethod = new \ReflectionMethod(AbstractPdf::class, 'insertTotals');
-        $reflectionMethod->setAccessible(true);
         $actual = $reflectionMethod->invoke($model, $page, $source);
 
         $this->assertSame($page, $actual);
@@ -126,18 +128,18 @@ class AbstractTest extends TestCase
         // Setup constructor dependencies
         $paymentData = $this->createMock(Data::class);
         $string = $this->createMock(StringUtils::class);
-        $scopeConfig = $this->getMockForAbstractClass(ScopeConfigInterface::class);
+        $scopeConfig = $this->createMock(ScopeConfigInterface::class);
         $filesystem = $this->createMock(Filesystem::class);
         $pdfConfig = $this->createMock(Config::class);
         $pdfTotalFactory = $this->createMock(Factory::class);
         $pdfItemsFactory = $this->createMock(ItemsFactory::class);
-        $localeMock = $this->getMockForAbstractClass(TimezoneInterface::class);
-        $translate = $this->getMockForAbstractClass(StateInterface::class);
+        $localeMock = $this->createMock(TimezoneInterface::class);
+        $translate = $this->createMock(StateInterface::class);
         $addressRenderer = $this->createMock(Renderer::class);
+        $taxHelper = $this->createMock(TaxHelper::class);
 
-        $abstractPdfMock = $this->getMockForAbstractClass(
-            AbstractPdf::class,
-            [
+        $abstractPdfMock = $this->getMockBuilder(AbstractPdf::class)
+            ->setConstructorArgs([
                 $paymentData,
                 $string,
                 $scopeConfig,
@@ -147,14 +149,15 @@ class AbstractTest extends TestCase
                 $pdfItemsFactory,
                 $localeMock,
                 $translate,
-                $addressRenderer
-            ],
-            '',
-            true,
-            false,
-            true,
-            ['_setFontRegular', '_getPdf']
-        );
+                $addressRenderer,
+                [],
+                null,
+                null,
+                null,
+                $taxHelper
+            ])
+            ->onlyMethods(['_setFontRegular', '_getPdf', 'getPdf'])
+            ->getMock();
 
         $page = $this->createMock(\Zend_Pdf_Page::class);
         $zendFont = $this->createMock(\Zend_Pdf_Font::class);

@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2017 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Config\App\Config\Type;
 
@@ -72,5 +72,11 @@ class SystemTest extends \PHPUnit\Framework\TestCase
             'test_env_value',
             $this->system->get('stores/default/abc/qrs/xyz')
         );
+    }
+
+    protected function tearDown(): void
+    {
+        unset($_ENV['CONFIG__STORES__DEFAULT__ABC__QRS__XYZ']);
+        parent::tearDown();
     }
 }

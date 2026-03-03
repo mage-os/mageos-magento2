@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2016 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Config\Model\Config\Reader\Source\Deployed;
 
@@ -102,12 +102,8 @@ class SettingChecker
     public function getEnvValue($placeholder)
     {
         // phpcs:disable Magento2.Security.Superglobal
-        $environment = [];
-        foreach ($_ENV as $key => $value) {
-            $environment[strtolower($key)] = $value;
-        }
-        if ($this->placeholder->isApplicable($placeholder) && isset($environment[strtolower($placeholder)])) {
-            return $environment[strtolower($placeholder)];
+        if ($this->placeholder->isApplicable($placeholder) && isset($_ENV[$placeholder])) {
+            return $_ENV[$placeholder];
         }
         // phpcs:enable
 

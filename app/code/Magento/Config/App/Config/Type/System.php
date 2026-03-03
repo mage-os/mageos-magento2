@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2016 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\Config\App\Config\Type;
@@ -15,6 +15,7 @@ use Magento\Framework\App\Config\Spi\PostProcessorInterface;
 use Magento\Framework\App\Config\Spi\PreProcessorInterface;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\App\ScopeInterface;
+use Magento\Framework\Cache\CacheConstants;
 use Magento\Framework\Cache\FrontendInterface;
 use Magento\Framework\Cache\LockGuardedCacheLoader;
 use Magento\Framework\Encryption\Encryptor;
@@ -22,6 +23,7 @@ use Magento\Framework\Lock\LockManagerInterface;
 use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Store\Model\Config\Processor\Fallback;
 use Magento\Store\Model\ScopeInterface as StoreScope;
+use Psr\Log\LoggerInterface;
 
 /**
  * System configuration type
@@ -105,6 +107,10 @@ class System implements ConfigTypeInterface
     private $cacheState;
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+    /**
      * System constructor.
      * @param ConfigSourceInterface $source
      * @param PostProcessorInterface $postProcessor
@@ -119,6 +125,7 @@ class System implements ConfigTypeInterface
      * @param LockManagerInterface|null $locker
      * @param LockGuardedCacheLoader|null $lockQuery
      * @param StateInterface|null $cacheState
+     * @param LoggerInterface $logger
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
@@ -131,11 +138,12 @@ class System implements ConfigTypeInterface
         PreProcessorInterface $preProcessor,
         $cachingNestedLevel = 1,
         $configType = self::CONFIG_TYPE,
-        Reader $reader = null,
-        Encryptor $encryptor = null,
-        LockManagerInterface $locker = null,
-        LockGuardedCacheLoader $lockQuery = null,
-        StateInterface $cacheState = null
+        ?Reader $reader = null,
+        ?Encryptor $encryptor = null,
+        ?LockManagerInterface $locker = null,
+        ?LockGuardedCacheLoader $lockQuery = null,
+        ?StateInterface $cacheState = null,
+        ?LoggerInterface $logger = null
     ) {
         $this->postProcessor = $postProcessor;
         $this->cache = $cache;
@@ -148,6 +156,8 @@ class System implements ConfigTypeInterface
             ?: ObjectManager::getInstance()->get(LockGuardedCacheLoader::class);
         $this->cacheState = $cacheState
             ?: ObjectManager::getInstance()->get(StateInterface::class);
+        $this->logger = $logger
+            ?: ObjectManager::getInstance()->get(LoggerInterface::class);
     }
 
     /**
@@ -265,7 +275,12 @@ class System implements ConfigTypeInterface
             $cachedData = $this->cache->load($this->configType . '_' . $scopeType);
             $scopeData = false;
             if ($cachedData !== false) {
-                $scopeData = [$scopeType => $this->serializer->unserialize($this->encryptor->decrypt($cachedData))];
+                try {
+                    $scopeData = [$scopeType => $this->serializer->unserialize($this->encryptor->decrypt($cachedData))];
+                } catch (\InvalidArgumentException $e) {
+                    $this->logger->warning($e->getMessage());
+                    $scopeData = false;
+                }
             }
             return $scopeData;
         };
@@ -445,7 +460,7 @@ class System implements ConfigTypeInterface
         $this->data = [];
         if (!$this->cacheState->isEnabled(Config::TYPE_IDENTIFIER)) {
             // Note: If cache is disabled, we still clean cache in case it will be enabled later
-            $this->cache->clean(\Zend_Cache::CLEANING_MODE_MATCHING_TAG, [self::CACHE_TAG]);
+            $this->cache->clean(CacheConstants::CLEANING_MODE_MATCHING_TAG, [self::CACHE_TAG]);
             return;
         }
         $this->lockQuery->lockedCleanData(self::$lockName, $cleanAction);
@@ -536,5 +551,16 @@ class System implements ConfigTypeInterface
             $this->cachePreparedData($preparedData);
         };
         $this->lockQuery->lockedLoadData(self::$lockName, $loadAction, $dataCollector, $dataSaver);
+    }
+
+    /**
+     * Disable show internals with var_dump
+     *
+     * @see https://www.php.net/manual/en/language.oop5.magic.php#object.debuginfo
+     * @return array
+     */
+    public function __debugInfo()
+    {
+        return [];
     }
 }
