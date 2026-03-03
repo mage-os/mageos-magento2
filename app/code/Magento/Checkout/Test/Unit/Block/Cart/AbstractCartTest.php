@@ -9,12 +9,14 @@ namespace Magento\Checkout\Test\Unit\Block\Cart;
 
 use Magento\Backend\Block\Template\Context;
 use Magento\Checkout\Block\Cart\AbstractCart;
+use Magento\Checkout\Block\Cart\Item\Renderer as ItemRenderer;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Element\RendererList;
 use Magento\Framework\View\Layout;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Address;
+use Magento\Quote\Model\Quote\Item as QuoteItem;
 use Magento\Sales\Block\Items\AbstractItems;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -108,6 +110,56 @@ class AbstractCartTest extends TestCase
         $block->getItemRenderer('some-type');
     }
 
+    public function testGetItemHtmlReturnsRendererHtml(): void
+    {
+        $expectedHtml = 'item html';
+
+        $itemMock = $this->createMock(QuoteItem::class);
+        $itemMock->expects($this->once())
+            ->method('getProductType')
+            ->willReturn('simple');
+
+        $rendererBlockMock = $this->createPartialMock(ItemRenderer::class, ['setItem', 'toHtml']);
+        $rendererBlockMock->expects($this->once())
+            ->method('setItem')
+            ->with($itemMock)
+            ->willReturnSelf();
+        $rendererBlockMock->expects($this->once())
+            ->method('toHtml')
+            ->willReturn($expectedHtml);
+
+        $rendererListMock = $this->createMock(RendererList::class);
+        $getRendererArgs = [];
+        $rendererListMock->expects($this->once())
+            ->method('getRenderer')
+            ->willReturnCallback(function (...$args) use (&$getRendererArgs, $rendererBlockMock) {
+                $getRendererArgs = $args;
+                return $rendererBlockMock;
+            });
+
+        $layout = $this->createPartialMock(Layout::class, ['getChildName', 'getBlock']);
+        $layout->expects($this->once())->method('getChildName')->willReturn('renderer.list');
+        $layout->expects($this->once())
+            ->method('getBlock')
+            ->with('renderer.list')
+            ->willReturn($rendererListMock);
+
+        /** @var AbstractCart $block */
+        $block = $this->_objectManager->getObject(
+            AbstractCart::class,
+            [
+                'context' => $this->_objectManager->getObject(
+                    Context::class,
+                    ['layout' => $layout]
+                )
+            ]
+        );
+
+        $this->assertSame($expectedHtml, $block->getItemHtml($itemMock));
+        $this->assertSame('simple', $getRendererArgs[0] ?? null);
+        $this->assertSame(AbstractCart::DEFAULT_TYPE, $getRendererArgs[1] ?? null);
+    }
+
     /**
      * @param array $expectedResult
      * @param bool $isVirtual
@@ -143,5 +195,114 @@ class AbstractCartTest extends TestCase
             [['billing_totals'], true],
             [['shipping_totals'], false]
         ];
+    }
+
+    public function testGetQuoteRecollectsTotalsOnceForPersistedQuote(): void
+    {
+        $checkoutSessionMock = $this->createMock(Session::class);
+        $quoteMock = $this->createPartialMock(
+            Quote::class,
+            ['getId', 'getData', 'setData', 'collectTotals']
+        );
+
+        $checkoutSessionMock->expects($this->once())
+            ->method('getQuote')
+            ->willReturn($quoteMock);
+
+        $quoteMock->expects($this->once())
+            ->method('getId')
+            ->willReturn(123);
+        $quoteMock->expects($this->once())
+            ->method('getData')
+            ->with('_checkout_cart_totals_recollected')
+            ->willReturn(null);
+
+        $setDataCalls = [];
+        $quoteMock->expects($this->exactly(2))
+            ->method('setData')
+            ->willReturnCallback(function ($key, $value = null) use (&$setDataCalls, $quoteMock) {
+                $setDataCalls[] = [$key, $value];
+                return $quoteMock;
+            });
+        $quoteMock->expects($this->once())
+            ->method('collectTotals')
+            ->willReturnSelf();
+
+        /** @var AbstractCart $model */
+        $model = $this->_objectManager->getObject(
+            AbstractCart::class,
+            ['checkoutSession' => $checkoutSessionMock]
+        );
+
+        $this->assertSame($quoteMock, $model->getQuote());
+        // second call should use cached quote and not trigger recollect again
+        $this->assertSame($quoteMock, $model->getQuote());
+
+        $this->assertSame(
+            [
+                ['_checkout_cart_totals_recollected', true],
+                ['totals_collected_flag', false],
+            ],
+            $setDataCalls
+        );
+    }
+
+    public function testGetQuoteDoesNotRecollectTotalsWhenQuoteIsNotPersisted(): void
+    {
+        $checkoutSessionMock = $this->createMock(Session::class);
+        $quoteMock = $this->createPartialMock(
+            Quote::class,
+            ['getId', 'getData', 'setData', 'collectTotals']
+        );
+
+        $checkoutSessionMock->expects($this->once())
+            ->method('getQuote')
+            ->willReturn($quoteMock);
+
+        $quoteMock->expects($this->once())
+            ->method('getId')
+            ->willReturn(null);
+        $quoteMock->expects($this->never())->method('getData');
+        $quoteMock->expects($this->never())->method('setData');
+        $quoteMock->expects($this->never())->method('collectTotals');
+
+        /** @var AbstractCart $model */
+        $model = $this->_objectManager->getObject(
+            AbstractCart::class,
+            ['checkoutSession' => $checkoutSessionMock]
+        );
+
+        $this->assertSame($quoteMock, $model->getQuote());
+    }
+
+    public function testGetQuoteDoesNotRecollectTotalsWhenAlreadyRecollected(): void
+    {
+        $checkoutSessionMock = $this->createMock(Session::class);
+        $quoteMock = $this->createPartialMock(
+            Quote::class,
+            ['getId', 'getData', 'setData', 'collectTotals']
+        );
+
+        $checkoutSessionMock->expects($this->once())
+            ->method('getQuote')
+            ->willReturn($quoteMock);
+
+        $quoteMock->expects($this->once())
+            ->method('getId')
+            ->willReturn(123);
+        $quoteMock->expects($this->once())
+            ->method('getData')
+            ->with('_checkout_cart_totals_recollected')
+            ->willReturn(true);
+        $quoteMock->expects($this->never())->method('setData');
+        $quoteMock->expects($this->never())->method('collectTotals');
+
+        /** @var AbstractCart $model */
+        $model = $this->_objectManager->getObject(
+            AbstractCart::class,
+            ['checkoutSession' => $checkoutSessionMock]
+        );
+
+        $this->assertSame($quoteMock, $model->getQuote());
     }
 }
