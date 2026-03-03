@@ -68,35 +68,17 @@ class AbstractMapperTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->resourceMock = $this->getMockForAbstractClass(
-            AbstractDb::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            []
-        );
-        $this->connectionMock = $this->getMockForAbstractClass(
-            AdapterInterface::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            []
-        );
+        $this->resourceMock = $this->getMockBuilder(AbstractDb::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->connectionMock = $this->getMockBuilder(AdapterInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->selectMock = $this->createMock(Select::class);
         $this->loggerMock = $this->getMockForAbstractClass(LoggerInterface::class);
-        $this->fetchStrategyMock = $this->getMockForAbstractClass(
-            FetchStrategyInterface::class,
-            [],
-            '',
-            false,
-            true,
-            true,
-            []
-        );
+        $this->fetchStrategyMock = $this->getMockBuilder(FetchStrategyInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->objectFactoryMock = $this->createMock(ObjectFactory::class);
         $this->mapperFactoryMock = $this->createMock(MapperFactory::class);
     }
