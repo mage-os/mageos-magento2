@@ -26,6 +26,7 @@ define([
             createDirectoryUrl: 'media_gallery/directories/create',
             deleteDirectoryUrl: 'media_gallery/directories/delete',
             jsTreeReloaded: null,
+            restoringDirectorySelection: false,
             modules: {
                 bookmarks: '${ $.bookmarkProvider }',
                 directories: '${ $.name }_directories',
@@ -266,9 +267,14 @@ define([
          * Verify directory filter on init event, select folder per directory filter state
          */
         updateSelectedDirectory: function () {
-            var currentFilterPath = this.filterChips().filters.path,
+            var appliedFilters = this.filterChips().get('applied') || {},
+                currentFilterPath = appliedFilters.path || this.filterChips().filters.path,
                 requestedDirectory = this.getRequestedDirectory(),
                 currentTreePath;
+
+            if (this.restoringDirectorySelection) {
+                return;
+            }
 
             if (_.isUndefined(currentFilterPath)) {
                 this.clearFiltersHandle();
@@ -290,9 +296,128 @@ define([
 
             if (this.folderExistsInTree(currentTreePath)) {
                 this.locateNode(currentTreePath);
-            } else {
-                this.selectStorageRoot();
+            } else if (_.isString(currentTreePath) && currentTreePath !== '') {
+                if (!this.isLazyTreeMode()) {
+                    this.selectStorageRoot();
+                    return;
+                }
+
+                this.restoringDirectorySelection = true;
+                this.ensurePathLoaded(currentTreePath)
+                    .done(function (isLoaded) {
+                        if (isLoaded && this.folderExistsInTree(currentTreePath)) {
+                            this.locateNode(currentTreePath);
+                        } else {
+                            this.selectStorageRoot();
+                        }
+                    }.bind(this))
+                    .always(function () {
+                        this.restoringDirectorySelection = false;
+                    }.bind(this));
             }
+        },
+
+        /**
+         * Ensure all directory ancestors are loaded in lazy tree mode.
+         *
+         * @param {String} path
+         * @returns {jQuery.Promise}
+         */
+        ensurePathLoaded: function (path) {
+            var deferred = $.Deferred(),
+                pathChain = this.getPathChain(path),
+                index;
+
+            if (!_.isString(path) || path === '') {
+                deferred.resolve(false);
+                return deferred.promise();
+            }
+
+            if (!this.isLazyTreeMode()) {
+                deferred.resolve(this.folderExistsInTree(path));
+                return deferred.promise();
+            }
+
+            index = _.findIndex(pathChain, function (segmentPath) {
+                return !!this.folderExistsInTree(segmentPath);
+            }.bind(this));
+
+            if (index === -1) {
+                deferred.resolve(false);
+                return deferred.promise();
+            }
+
+            /**
+             * Open each path segment sequentially so jstree lazy-loads children.
+             */
+            function processNextSegment() {
+                var segmentPath;
+
+                if (index >= pathChain.length) {
+                    deferred.resolve(this.folderExistsInTree(path));
+                    return;
+                }
+
+                segmentPath = pathChain[index];
+
+                if (!this.folderExistsInTree(segmentPath)) {
+                    deferred.resolve(false);
+                    return;
+                }
+
+                this.openNodeAsync(segmentPath)
+                    .always(function () {
+                        index++;
+                        processNextSegment.call(this);
+                    }.bind(this));
+            }
+
+            processNextSegment.call(this);
+
+            return deferred.promise();
+        },
+
+        /**
+         * Open node and resolve once jstree processes lazy children.
+         *
+         * @param {String} path
+         * @returns {jQuery.Promise}
+         */
+        openNodeAsync: function (path) {
+            var deferred = $.Deferred(),
+                tree = $(this.directoryTreeSelector).jstree(true);
+
+            if (!tree || !tree.get_node(path)) {
+                deferred.resolve(false);
+
+                return deferred.promise();
+            }
+
+            tree.open_node(path, function (node, status) {
+                deferred.resolve(status !== false);
+            });
+
+            return deferred.promise();
+        },
+
+        /**
+         * Convert path string into cumulative segments:
+         * 'a/b/c' -> ['a', 'a/b', 'a/b/c'].
+         *
+         * @param {String} path
+         * @returns {Array}
+         */
+        getPathChain: function (path) {
+            var segments = _.filter(path.split('/'), function (segment) {
+                    return segment !== '';
+                }),
+                pathChain = [];
+
+            $.each(segments, function (index) {
+                pathChain.push(segments.slice(0, index + 1).join('/'));
+            });
+
+            return pathChain;
         },
 
         /**
@@ -430,6 +555,10 @@ define([
             filters = $.extend(true, filters, applied);
             filters.path = path;
             this.filterChips().set('applied', filters);
+
+            if (!_.isUndefined(this.bookmarks()) && _.isFunction(this.bookmarks().store)) {
+                this.bookmarks().store('current');
+            }
         },
 
         /**
