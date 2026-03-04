@@ -60,7 +60,6 @@
         <waitForElementVisible selector="{{AdminMenuSection.submenuGroupTitle('magento-backend-stores-settings')}}" stepKey="waitForStoresSettingsSubtitleVisible"/>
         <waitForElementVisible selector="{{AdminMenuSection.submenuGroupTitle('magento-currencysymbol-system-currency')}}" stepKey="waitForStoresCurrencySubtitleVisible"/>
         <waitForElementVisible selector="{{AdminMenuSection.submenuGroupTitle('magento-backend-stores-attributes')}}" stepKey="waitForStoresAttributesSubtitleVisible"/>
-        <waitForElementVisible selector="{{AdminMenuSection.submenuGroupTitle('magento-backend-other-settings')}}" stepKey="waitForStoresOtherSettingsSubtitleVisible"/>
         <waitForElementVisible selector="{{AdminMenuSection.submenuGroupTitle('magento-tax-sales-tax')}}" stepKey="waitForStoresTaxesSubtitleVisible"/>
         <!-- Step 7: Expand System and verify subtitles (tools, data transfer, permissions, other settings, extensions, action logs) -->
         <waitForElementClickable selector="{{AdminMenuSection.system}}" stepKey="waitForSystemMenuClickable"/>
@@ -71,6 +70,7 @@
         <waitForElementVisible selector="{{AdminMenuSection.submenuGroupTitle('magento-user-system-acl')}}" stepKey="waitForSystemPermissionsSubtitleVisible"/>
         <waitForElementVisible selector="{{AdminMenuSection.submenuGroupTitle('magento-backend-system-other-settings')}}" stepKey="waitForSystemOtherSettingsSubtitleVisible"/>
         <waitForElementVisible selector="{{AdminMenuSection.submenuGroupTitle('magento-integration-system-extensions')}}" stepKey="waitForSystemExtensionsSubtitleVisible"/>
+        <waitForElementVisible selector="{{AdminMenuSection.submenuGroupTitle('magento-servicesid-configuration')}}" stepKey="waitForSystemServicesSubtitleVisible"/>
         <waitForElementVisible selector="{{AdminMenuSection.submenuGroupTitle('magento-logging-system-magento-logging')}}" stepKey="waitForSystemActionLogsSubtitleVisible"/>
         <!-- Step 8: Expand Reports and verify subtitles (marketing, sales, products, customers, reviews, statistics) -->
         <waitForElementClickable selector="{{AdminMenuSection.menuItem('magento-reports-report')}}" stepKey="waitForReportsMenuClickable"/>
@@ -81,6 +81,7 @@
         <waitForElementVisible selector="{{AdminMenuSection.submenuGroupTitle('magento-reports-report-salesroot')}}" stepKey="waitForReportsSalesSubtitleVisible"/>
         <waitForElementVisible selector="{{AdminMenuSection.submenuGroupTitle('magento-reports-report-products')}}" stepKey="waitForReportsProductsSubtitleVisible"/>
         <waitForElementVisible selector="{{AdminMenuSection.submenuGroupTitle('magento-reports-report-customers')}}" stepKey="waitForReportsCustomersSubtitleVisible"/>
+        <waitForElementVisible selector="{{AdminMenuSection.submenuGroupTitle('magento-analytics-business-intelligence')}}" stepKey="waitForReportsBusinessIntelligenceSubtitleVisible"/>
         <waitForElementVisible selector="{{AdminMenuSection.submenuGroupTitle('magento-reports-report-statistics')}}" stepKey="waitForReportsStatisticsSubtitleVisible"/>
     </test>
 </tests>
