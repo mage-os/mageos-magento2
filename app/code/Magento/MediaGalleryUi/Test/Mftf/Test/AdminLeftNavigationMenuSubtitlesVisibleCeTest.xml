@@ -70,7 +70,7 @@
         <waitForElementVisible selector="{{AdminMenuSection.submenuGroupTitle('magento-user-system-acl')}}" stepKey="waitForSystemPermissionsSubtitleVisible"/>
         <waitForElementVisible selector="{{AdminMenuSection.submenuGroupTitle('magento-backend-system-other-settings')}}" stepKey="waitForSystemOtherSettingsSubtitleVisible"/>
         <waitForElementVisible selector="{{AdminMenuSection.submenuGroupTitle('magento-integration-system-extensions')}}" stepKey="waitForSystemExtensionsSubtitleVisible"/>
-        <waitForElementVisible selector="{{AdminMenuSection.submenuGroupTitle('magento-logging-system-magento-logging')}}" stepKey="waitForSystemActionLogsSubtitleVisible"/>
+        <waitForElementVisible selector="{{AdminMenuSection.submenuGroupTitle('magento-asynchronousoperations-system-magento-logging')}}" stepKey="waitForSystemActionLogsSubtitleVisible"/>
         <!-- Step 8: Expand Reports and verify subtitles (marketing, sales, products, customers, reviews, statistics) -->
         <waitForElementClickable selector="{{AdminMenuSection.menuItem('magento-reports-report')}}" stepKey="waitForReportsMenuClickable"/>
         <click selector="{{AdminMenuSection.menuItem('magento-reports-report')}}" stepKey="expandReportsMenu"/>
