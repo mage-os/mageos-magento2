@@ -100,16 +100,14 @@ class Calculator extends Validator
     private function applyItemFreeShipping(SalesRule $rule, AbstractItem $item): void
     {
         $method = $item->getAddress()->getShippingMethod();
+        $item->setFreeShipping($rule->getDiscountQty() ? $rule->getDiscountQty() : true);
+        $item->setFreeShippingMethod($method);
 
         if ($item->getHasChildren() && $item->isShipSeparately()) {
             foreach ($item->getChildren() as $child) {
                 $child->setFreeShipping($rule->getDiscountQty() ? $rule->getDiscountQty() : true);
                 $child->setFreeShippingMethod($method);
             }
-            return;
         }
-
-        $item->setFreeShipping($rule->getDiscountQty() ? $rule->getDiscountQty() : true);
-        $item->setFreeShippingMethod($method);
     }
 }

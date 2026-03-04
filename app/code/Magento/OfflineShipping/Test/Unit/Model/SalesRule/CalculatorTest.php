@@ -198,12 +198,14 @@ class CalculatorTest extends TestCase
         $childItem = $this->createMock(Item::class);
         $item = $this->createPartialMockWithReflection(
             Item::class,
-            ['getAddress', '__wakeup', 'getHasChildren', 'isShipSeparately']
+            ['getAddress', '__wakeup', 'getHasChildren', 'isShipSeparately', 'setFreeShippingMethod', 'setFreeShipping']
         );
 
         $item->expects($this->once())->method('getHasChildren')->willReturn([$childItem]);
         $item->expects($this->exactly(2))->method('getAddress')->willReturn($addressMock);
         $item->expects($this->once())->method('isShipSeparately')->willReturn(true);
+        $item->expects($this->exactly(2))->method('setFreeShipping');
+        $item->expects($this->once())->method('setFreeShippingMethod');
 
         $actions = $this->createPartialMockWithReflection(\Magento\Rule\Model\Action\Collection::class, ['validate']);
         $actions->expects($this->once())->method('validate')->willReturn(true);
