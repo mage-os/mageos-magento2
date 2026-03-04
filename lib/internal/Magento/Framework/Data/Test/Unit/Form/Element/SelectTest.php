@@ -22,8 +22,8 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(Select::class)]
 class SelectTest extends TestCase
 {
-    private const string ELEMENT_ID = 'test_select_element_name';
-    private const string ELEMENT_NAME = 'test_select_element_id';
+    private const string ELEMENT_ID = 'test_select_element_id';
+    private const string ELEMENT_NAME = 'test_select_element_name';
 
     /**
      * @var Select
