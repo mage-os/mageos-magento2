@@ -5,6 +5,7 @@
  */
 namespace Magento\Backend\Block\Page;
 
+use Magento\Backend\Model\VersionUpdate\VersionComparison;
 use Magento\Framework\App\DistributionMetadataInterface;
 
 /**
@@ -28,16 +29,24 @@ class Footer extends \Magento\Backend\Block\Template
     protected $productMetadata;
 
     /**
+     * @var VersionComparison|null
+     */
+    private $versionComparison;
+
+    /**
      * @param \Magento\Backend\Block\Template\Context $context
      * @param \Magento\Framework\App\ProductMetadataInterface $productMetadata
+     * @param VersionComparison|null $versionComparison
      * @param array $data
      */
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,
         \Magento\Framework\App\ProductMetadataInterface $productMetadata,
+        ?VersionComparison $versionComparison = null,
         array $data = []
     ) {
         $this->productMetadata = $productMetadata;
+        $this->versionComparison = $versionComparison;
         parent::__construct($context, $data);
     }
 
@@ -68,6 +77,46 @@ class Footer extends \Magento\Backend\Block\Template
     public function getName()
     {
         return $this->productMetadata->getDistributionName();
+    }
+
+    /**
+     * Check if a newer version is available
+     *
+     * @return bool
+     */
+    public function isUpdateAvailable(): bool
+    {
+        return $this->versionComparison !== null && $this->versionComparison->isUpdateAvailable();
+    }
+
+    /**
+     * Get the latest available version
+     *
+     * @return string|null
+     */
+    public function getLatestVersion(): ?string
+    {
+        return $this->versionComparison?->getLatestVersion();
+    }
+
+    /**
+     * Check if the update is a major or minor version bump
+     *
+     * @return bool
+     */
+    public function isMajorOrMinorUpdate(): bool
+    {
+        return $this->versionComparison !== null && $this->versionComparison->isMajorOrMinorUpdate();
+    }
+
+    /**
+     * Get the URL to the Mage-OS releases page
+     *
+     * @return string
+     */
+    public function getReleasesUrl(): string
+    {
+        return 'https://mage-os.org/category/releases/';
     }
 
     /**
