@@ -153,4 +153,27 @@ class LatestVersionFetcherTest extends TestCase
 
         $this->assertSame('2.1.0', $this->fetcher->getLatestVersion());
     }
+
+    public function testFindsHighestVersionRegardlessOfOrder(): void
+    {
+        $this->cache->method('load')->willReturn(false);
+        $this->packageResolver->method('getPackageName')
+            ->willReturn('mage-os/product-community-edition');
+
+        $responseBody = json_encode([
+            'packages' => [
+                'mage-os/product-community-edition' => [
+                    ['version' => '2.1.0'],
+                    ['version' => '1.0.0'],
+                    ['version' => '2.0.0'],
+                    ['version' => '1.3.1'],
+                ],
+            ],
+        ]);
+
+        $this->httpClient->method('getStatus')->willReturn(200);
+        $this->httpClient->method('getBody')->willReturn($responseBody);
+
+        $this->assertSame('2.1.0', $this->fetcher->getLatestVersion());
+    }
 }

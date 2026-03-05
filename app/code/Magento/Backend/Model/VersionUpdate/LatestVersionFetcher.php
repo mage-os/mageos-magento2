@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Magento\Backend\Model\VersionUpdate;
 
+use Composer\Semver\Comparator;
 use Composer\Semver\VersionParser;
 use Magento\Framework\App\CacheInterface;
 use Magento\Framework\HTTP\ClientInterface;
@@ -68,10 +69,12 @@ class LatestVersionFetcher
             $version = $entry['version'] ?? '';
             try {
                 $normalized = $parser->normalize($version);
-                if (preg_match('/(dev|alpha|beta|rc|patch)/i', $normalized)) {
+                if (preg_match('/(dev|alpha|beta|RC)/i', $normalized)) {
                     continue;
                 }
-                $latest = $version;
+                if ($latest === null || Comparator::greaterThan($version, $latest)) {
+                    $latest = $version;
+                }
             } catch (\UnexpectedValueException $e) {
                 continue;
             }
