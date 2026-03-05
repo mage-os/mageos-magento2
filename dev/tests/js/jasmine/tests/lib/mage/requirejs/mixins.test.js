@@ -26,6 +26,26 @@ define(['rjsResolver', 'mixins'], function (resolver, mixins) {
         it('should copy nameToUrl from default context to unbundled context', function () {
             expect(unbundledContext.nameToUrl).toBe(defContext.nameToUrl);
         });
+
+        it('should not load deps in unbundled context during default context configure', function (done) {
+            var moduleName = 'tests/assets/mixins/configure-dep-' + Date.now();
+
+            resolver(function () {
+                spyOn(unbundledContext, 'require').and.callThrough();
+
+                define(moduleName, [], function () {
+                    return {};
+                });
+
+                defContext.configure({
+                    deps: [moduleName],
+                    callback: function () {
+                        expect(unbundledContext.require).not.toHaveBeenCalled();
+                        done();
+                    }
+                });
+            });
+        });
     });
 
     describe('mixins module', function () {
