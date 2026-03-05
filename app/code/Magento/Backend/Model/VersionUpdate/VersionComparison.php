@@ -28,12 +28,17 @@ class VersionComparison
     public function isMajorOrMinorUpdate(): bool
     {
         $latest = $this->fetcher->getLatestVersion();
-        if ($latest === null || !$this->isUpdateAvailable()) {
+        $current = $this->getCurrentVersion();
+
+        if ($latest === null || $current === null) {
             return false;
         }
 
-        $current = $this->getCurrentVersion();
-        $currentParts = explode('.', $current ?? '');
+        if (!Comparator::greaterThan($latest, $current)) {
+            return false;
+        }
+
+        $currentParts = explode('.', $current);
         $latestParts = explode('.', $latest);
 
         return ($latestParts[0] ?? '0') !== ($currentParts[0] ?? '0')

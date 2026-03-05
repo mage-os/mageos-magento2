@@ -11,7 +11,7 @@ use Psr\Log\LoggerInterface;
 
 class LatestVersionFetcher
 {
-    public const CACHE_KEY = 'mageos_latest_version';
+    public const CACHE_KEY_PREFIX = 'mageos_latest_version_';
     public const CACHE_LIFETIME = 86400; // 24 hours
 
     public function __construct(
@@ -25,14 +25,15 @@ class LatestVersionFetcher
 
     public function getLatestVersion(): ?string
     {
-        $cached = $this->cache->load(self::CACHE_KEY);
-        if ($cached !== false) {
-            return $cached;
-        }
-
         $packageName = $this->packageResolver->getPackageName();
         if ($packageName === null) {
             return null;
+        }
+
+        $cacheKey = self::CACHE_KEY_PREFIX . str_replace('/', '_', $packageName);
+        $cached = $this->cache->load($cacheKey);
+        if ($cached !== false) {
+            return $cached;
         }
 
         try {
@@ -51,7 +52,7 @@ class LatestVersionFetcher
                 return null;
             }
 
-            $this->cache->save($latestStable, self::CACHE_KEY, [], self::CACHE_LIFETIME);
+            $this->cache->save($latestStable, $cacheKey, [], self::CACHE_LIFETIME);
 
             return $latestStable;
         } catch (\Exception $e) {

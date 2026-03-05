@@ -37,8 +37,12 @@ class LatestVersionFetcherTest extends TestCase
 
     public function testReturnsCachedVersion(): void
     {
+        $this->packageResolver->method('getPackageName')
+            ->willReturn('mage-os/product-community-edition');
+
+        $expectedCacheKey = LatestVersionFetcher::CACHE_KEY_PREFIX . 'mage-os_product-community-edition';
         $this->cache->method('load')
-            ->with(LatestVersionFetcher::CACHE_KEY)
+            ->with($expectedCacheKey)
             ->willReturn('2.1.0');
 
         $this->httpClient->expects($this->never())->method('get');
@@ -68,9 +72,10 @@ class LatestVersionFetcherTest extends TestCase
         $this->httpClient->method('getStatus')->willReturn(200);
         $this->httpClient->method('getBody')->willReturn($responseBody);
 
+        $expectedCacheKey = LatestVersionFetcher::CACHE_KEY_PREFIX . 'mage-os_product-community-edition';
         $this->cache->expects($this->once())
             ->method('save')
-            ->with('2.1.0', LatestVersionFetcher::CACHE_KEY, [], LatestVersionFetcher::CACHE_LIFETIME);
+            ->with('2.1.0', $expectedCacheKey, [], LatestVersionFetcher::CACHE_LIFETIME);
 
         $this->assertSame('2.1.0', $this->fetcher->getLatestVersion());
     }

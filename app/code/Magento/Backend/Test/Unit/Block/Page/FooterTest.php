@@ -58,4 +58,16 @@ class FooterTest extends TestCase
     {
         $this->assertSame('https://mage-os.org/category/releases/', $this->block->getReleasesUrl());
     }
+
+    public function testBackwardCompatibleWithoutVersionComparison(): void
+    {
+        $context = $this->createMock(Context::class);
+        $productMetadata = $this->createMock(ProductMetadataInterface::class);
+
+        $block = new Footer($context, $productMetadata);
+
+        $this->assertFalse($block->isUpdateAvailable());
+        $this->assertNull($block->getLatestVersion());
+        $this->assertFalse($block->isMajorOrMinorUpdate());
+    }
 }
