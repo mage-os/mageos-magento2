@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace Magento\Backend\Test\Unit\Model\VersionUpdate;
+namespace Magento\Backend\Test\Unit\Model\VersionCheck;
 
-use Magento\Backend\Model\VersionUpdate\SystemPackageResolver;
+use Magento\Backend\Model\VersionCheck\SystemPackageResolver;
 use Magento\Framework\Composer\ComposerInformation;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;

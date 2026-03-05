@@ -1,11 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace Magento\Backend\Test\Unit\Model\VersionUpdate;
+namespace Magento\Backend\Test\Unit\Model\VersionCheck;
 
-use Magento\Backend\Model\VersionUpdate\LatestVersionFetcher;
-use Magento\Backend\Model\VersionUpdate\SystemPackageResolver;
+use Magento\Backend\Model\VersionCheck\LatestVersionFetcher;
+use Magento\Backend\Model\VersionCheck\SystemPackageResolver;
 use Magento\Framework\App\CacheInterface;
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\Composer\ComposerInformation;
 use Magento\Framework\HTTP\ClientInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -17,6 +19,8 @@ class LatestVersionFetcherTest extends TestCase
     private CacheInterface|MockObject $cache;
     private LoggerInterface|MockObject $logger;
     private SystemPackageResolver|MockObject $packageResolver;
+    private ComposerInformation|MockObject $composerInformation;
+    private ScopeConfigInterface|MockObject $scopeConfig;
     private LatestVersionFetcher $fetcher;
 
     protected function setUp(): void
@@ -25,13 +29,26 @@ class LatestVersionFetcherTest extends TestCase
         $this->cache = $this->createMock(CacheInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->packageResolver = $this->createMock(SystemPackageResolver::class);
+        $this->composerInformation = $this->createMock(ComposerInformation::class);
+        $this->scopeConfig = $this->createMock(ScopeConfigInterface::class);
+
+        $this->scopeConfig->method('isSetFlag')
+            ->with(LatestVersionFetcher::XML_PATH_ENABLED)
+            ->willReturn(true);
+        $this->scopeConfig->method('getValue')
+            ->with(LatestVersionFetcher::XML_PATH_CACHE_LIFETIME)
+            ->willReturn('86400');
+
+        $this->composerInformation->method('getRootRepositories')
+            ->willReturn(['https://repo.mage-os.org']);
 
         $this->fetcher = new LatestVersionFetcher(
             $this->httpClient,
             $this->cache,
             $this->logger,
             $this->packageResolver,
-            'https://repo.mage-os.org'
+            $this->composerInformation,
+            $this->scopeConfig
         );
     }
 
@@ -50,7 +67,7 @@ class LatestVersionFetcherTest extends TestCase
         $this->assertSame('2.1.0', $this->fetcher->getLatestVersion());
     }
 
-    public function testFetchesAndCachesVersionForCommunityEdition(): void
+    public function testFetchesAndCachesVersionFromDiscoveredRepo(): void
     {
         $this->cache->method('load')->willReturn(false);
         $this->packageResolver->method('getPackageName')
@@ -75,32 +92,66 @@ class LatestVersionFetcherTest extends TestCase
         $expectedCacheKey = LatestVersionFetcher::CACHE_KEY_PREFIX . 'mage-os_product-community-edition';
         $this->cache->expects($this->once())
             ->method('save')
-            ->with('2.1.0', $expectedCacheKey, [], LatestVersionFetcher::CACHE_LIFETIME);
+            ->with('2.1.0', $expectedCacheKey, [], 86400);
 
         $this->assertSame('2.1.0', $this->fetcher->getLatestVersion());
     }
 
-    public function testFetchesVersionForEnterpriseEdition(): void
+    public function testTriesMultipleReposAndUsesFirstSuccessful(): void
     {
+        $composerInformation = $this->createMock(ComposerInformation::class);
+        $composerInformation->method('getRootRepositories')
+            ->willReturn(['https://first-repo.example.com', 'https://second-repo.example.com']);
+
+        $fetcher = new LatestVersionFetcher(
+            $this->httpClient,
+            $this->cache,
+            $this->logger,
+            $this->packageResolver,
+            $composerInformation,
+            $this->scopeConfig
+        );
+
         $this->cache->method('load')->willReturn(false);
         $this->packageResolver->method('getPackageName')
-            ->willReturn('mage-os/product-enterprise-edition');
+            ->willReturn('mage-os/product-community-edition');
 
         $responseBody = json_encode([
             'packages' => [
-                'mage-os/product-enterprise-edition' => [
+                'mage-os/product-community-edition' => [
                     ['version' => '3.0.0'],
                 ],
             ],
         ]);
 
-        $this->httpClient->expects($this->once())
-            ->method('get')
-            ->with('https://repo.mage-os.org/p2/mage-os/product-enterprise-edition.json');
-        $this->httpClient->method('getStatus')->willReturn(200);
+        $statusCallCount = 0;
+        $this->httpClient->method('getStatus')->willReturnCallback(function () use (&$statusCallCount) {
+            $statusCallCount++;
+            return $statusCallCount === 1 ? 404 : 200;
+        });
         $this->httpClient->method('getBody')->willReturn($responseBody);
 
-        $this->assertSame('3.0.0', $this->fetcher->getLatestVersion());
+        $this->assertSame('3.0.0', $fetcher->getLatestVersion());
+    }
+
+    public function testReturnsNullWhenDisabled(): void
+    {
+        $scopeConfig = $this->createMock(ScopeConfigInterface::class);
+        $scopeConfig->method('isSetFlag')
+            ->with(LatestVersionFetcher::XML_PATH_ENABLED)
+            ->willReturn(false);
+
+        $fetcher = new LatestVersionFetcher(
+            $this->httpClient,
+            $this->cache,
+            $this->logger,
+            $this->packageResolver,
+            $this->composerInformation,
+            $scopeConfig
+        );
+
+        $this->httpClient->expects($this->never())->method('get');
+        $this->assertNull($fetcher->getLatestVersion());
     }
 
     public function testReturnsNullWhenNoSystemPackageInstalled(): void
@@ -113,7 +164,7 @@ class LatestVersionFetcherTest extends TestCase
         $this->assertNull($this->fetcher->getLatestVersion());
     }
 
-    public function testReturnsNullOnHttpFailure(): void
+    public function testReturnsNullWhenAllReposFail(): void
     {
         $this->cache->method('load')->willReturn(false);
         $this->packageResolver->method('getPackageName')
@@ -135,6 +186,28 @@ class LatestVersionFetcherTest extends TestCase
         $this->httpClient->method('getBody')->willReturn($responseBody);
 
         $this->assertNull($this->fetcher->getLatestVersion());
+    }
+
+    public function testReturnsNullWhenNoReposConfigured(): void
+    {
+        $composerInformation = $this->createMock(ComposerInformation::class);
+        $composerInformation->method('getRootRepositories')->willReturn([]);
+
+        $fetcher = new LatestVersionFetcher(
+            $this->httpClient,
+            $this->cache,
+            $this->logger,
+            $this->packageResolver,
+            $composerInformation,
+            $this->scopeConfig
+        );
+
+        $this->cache->method('load')->willReturn(false);
+        $this->packageResolver->method('getPackageName')
+            ->willReturn('mage-os/product-community-edition');
+
+        $this->httpClient->expects($this->never())->method('get');
+        $this->assertNull($fetcher->getLatestVersion());
     }
 
     public function testFiltersOutNonStableVersions(): void

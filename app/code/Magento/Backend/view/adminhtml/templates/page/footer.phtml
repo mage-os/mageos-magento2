@@ -18,8 +18,8 @@ use Magento\Framework\Escaper;
         <a href="<?= $escaper->escapeUrl($block->getReleasesUrl()) ?>"
            target="_blank"
            rel="noopener noreferrer"
-           title="<?= $escaper->escapeHtmlAttr(__('View Mage-OS releases')) ?>"
-           class="mageos-update-notice"
+           title="<?= $escaper->escapeHtmlAttr(__('View %1 releases', $block->getName())) ?>"
+           class="distro-update-notice"
            style="margin-left:8px;<?= $isMajorMinor ? 'color:#e22626;font-weight:bold;' : '' ?>">
             <?= $escaper->escapeHtml(__('Update available: %1', $block->getLatestVersion())) ?>
         </a>

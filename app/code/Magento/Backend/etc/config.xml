@@ -32,6 +32,11 @@
                 <max_width>1920</max_width>
                 <max_height>1200</max_height>
             </upload_configuration>
+            <version_check>
+                <enabled>1</enabled>
+                <cache_lifetime>86400</cache_lifetime>
+                <releases_url>https://mage-os.org/category/releases/</releases_url>
+            </version_check>
         </system>
         <admin>
             <grid>

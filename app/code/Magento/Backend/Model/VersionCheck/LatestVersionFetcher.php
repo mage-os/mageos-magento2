@@ -1,30 +1,40 @@
 <?php
 declare(strict_types=1);
 
-namespace Magento\Backend\Model\VersionUpdate;
+namespace Magento\Backend\Model\VersionCheck;
 
 use Composer\Semver\Comparator;
 use Composer\Semver\VersionParser;
 use Magento\Framework\App\CacheInterface;
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\Composer\ComposerInformation;
 use Magento\Framework\HTTP\ClientInterface;
 use Psr\Log\LoggerInterface;
 
 class LatestVersionFetcher
 {
-    public const CACHE_KEY_PREFIX = 'mageos_latest_version_';
-    public const CACHE_LIFETIME = 86400; // 24 hours
+    public const CACHE_KEY_PREFIX = 'distro_latest_version_';
+    public const CACHE_LIFETIME = 86400;
+    public const XML_PATH_ENABLED = 'system/version_check/enabled';
+    public const XML_PATH_CACHE_LIFETIME = 'system/version_check/cache_lifetime';
+    private const METADATA_URL_PATTERN = '%s/p2/%s.json';
 
     public function __construct(
         private readonly ClientInterface $httpClient,
         private readonly CacheInterface $cache,
         private readonly LoggerInterface $logger,
         private readonly SystemPackageResolver $packageResolver,
-        private readonly string $repoBaseUrl = 'https://repo.mage-os.org'
+        private readonly ComposerInformation $composerInformation,
+        private readonly ScopeConfigInterface $scopeConfig
     ) {
     }
 
     public function getLatestVersion(): ?string
     {
+        if (!$this->scopeConfig->isSetFlag(self::XML_PATH_ENABLED)) {
+            return null;
+        }
+
         $packageName = $this->packageResolver->getPackageName();
         if ($packageName === null) {
             return null;
@@ -37,26 +47,37 @@ class LatestVersionFetcher
         }
 
         try {
-            $url = sprintf('%s/p2/%s.json', $this->repoBaseUrl, $packageName);
-            $this->httpClient->get($url);
+            $repoUrls = $this->composerInformation->getRootRepositories();
+            $latestStable = null;
 
-            if ($this->httpClient->getStatus() !== 200) {
-                return null;
+            foreach ($repoUrls as $repoUrl) {
+                $url = sprintf(self::METADATA_URL_PATTERN, rtrim($repoUrl, '/'), $packageName);
+                $this->httpClient->get($url);
+
+                if ($this->httpClient->getStatus() !== 200) {
+                    continue;
+                }
+
+                $data = json_decode($this->httpClient->getBody(), true);
+                $versions = $data['packages'][$packageName] ?? [];
+                $latestStable = $this->findLatestStable($versions);
+
+                if ($latestStable !== null) {
+                    break;
+                }
             }
 
-            $data = json_decode($this->httpClient->getBody(), true);
-            $versions = $data['packages'][$packageName] ?? [];
-
-            $latestStable = $this->findLatestStable($versions);
             if ($latestStable === null) {
                 return null;
             }
 
-            $this->cache->save($latestStable, $cacheKey, [], self::CACHE_LIFETIME);
+            $cacheLifetime = (int) $this->scopeConfig->getValue(self::XML_PATH_CACHE_LIFETIME)
+                ?: self::CACHE_LIFETIME;
+            $this->cache->save($latestStable, $cacheKey, [], $cacheLifetime);
 
             return $latestStable;
         } catch (\Exception $e) {
-            $this->logger->warning('Failed to fetch latest Mage-OS version: ' . $e->getMessage());
+            $this->logger->warning('Failed to fetch latest distribution version: ' . $e->getMessage());
             return null;
         }
     }

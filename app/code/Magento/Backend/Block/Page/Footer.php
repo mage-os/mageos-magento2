@@ -5,7 +5,7 @@
  */
 namespace Magento\Backend\Block\Page;
 
-use Magento\Backend\Model\VersionUpdate\VersionComparison;
+use Magento\Backend\Model\VersionCheck\VersionComparison;
 use Magento\Framework\App\DistributionMetadataInterface;
 
 /**
@@ -17,6 +17,8 @@ use Magento\Framework\App\DistributionMetadataInterface;
  */
 class Footer extends \Magento\Backend\Block\Template
 {
+    private const XML_PATH_RELEASES_URL = 'system/version_check/releases_url';
+
     /**
      * @var string
      */
@@ -116,7 +118,7 @@ class Footer extends \Magento\Backend\Block\Template
      */
     public function getReleasesUrl(): string
     {
-        return 'https://mage-os.org/category/releases/';
+        return (string) $this->_scopeConfig->getValue(self::XML_PATH_RELEASES_URL);
     }
 
     /**

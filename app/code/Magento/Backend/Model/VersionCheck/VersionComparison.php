@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Magento\Backend\Model\VersionUpdate;
+namespace Magento\Backend\Model\VersionCheck;
 
 use Composer\Semver\Comparator;
 
