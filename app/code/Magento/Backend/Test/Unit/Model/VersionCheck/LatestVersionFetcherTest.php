@@ -210,6 +210,22 @@ class LatestVersionFetcherTest extends TestCase
         $this->assertNull($fetcher->getLatestVersion());
     }
 
+    public function testLogsWarningAndReturnsNullOnException(): void
+    {
+        $this->cache->method('load')->willReturn(false);
+        $this->packageResolver->method('getPackageName')
+            ->willReturn('mage-os/product-community-edition');
+
+        $this->httpClient->method('get')
+            ->willThrowException(new \RuntimeException('Connection timed out'));
+
+        $this->logger->expects($this->once())
+            ->method('warning')
+            ->with($this->stringContains('Connection timed out'));
+
+        $this->assertNull($this->fetcher->getLatestVersion());
+    }
+
     public function testFiltersOutNonStableVersions(): void
     {
         $this->cache->method('load')->willReturn(false);

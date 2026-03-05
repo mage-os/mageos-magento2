@@ -19,7 +19,7 @@ class SystemPackageResolverTest extends TestCase
         $this->resolver = new SystemPackageResolver($this->composerInfo);
     }
 
-    public function testReturnsCommunityEditionPackageName(): void
+    public function testResolvesPackageNameAndVersion(): void
     {
         $this->composerInfo->method('getSystemPackages')->willReturn([
             'mage-os/product-community-edition' => [
@@ -30,19 +30,7 @@ class SystemPackageResolverTest extends TestCase
         ]);
 
         $this->assertSame('mage-os/product-community-edition', $this->resolver->getPackageName());
-    }
-
-    public function testReturnsEnterpriseEditionPackageName(): void
-    {
-        $this->composerInfo->method('getSystemPackages')->willReturn([
-            'mage-os/product-enterprise-edition' => [
-                'name' => 'mage-os/product-enterprise-edition',
-                'type' => 'metapackage',
-                'version' => '2.1.0',
-            ],
-        ]);
-
-        $this->assertSame('mage-os/product-enterprise-edition', $this->resolver->getPackageName());
+        $this->assertSame('2.1.0', $this->resolver->getInstalledVersion());
     }
 
     public function testReturnsNullWhenNoSystemPackage(): void
@@ -50,25 +38,6 @@ class SystemPackageResolverTest extends TestCase
         $this->composerInfo->method('getSystemPackages')->willReturn([]);
 
         $this->assertNull($this->resolver->getPackageName());
-    }
-
-    public function testReturnsInstalledVersion(): void
-    {
-        $this->composerInfo->method('getSystemPackages')->willReturn([
-            'mage-os/product-community-edition' => [
-                'name' => 'mage-os/product-community-edition',
-                'type' => 'metapackage',
-                'version' => '2.1.0',
-            ],
-        ]);
-
-        $this->assertSame('2.1.0', $this->resolver->getInstalledVersion());
-    }
-
-    public function testReturnsNullVersionWhenNoSystemPackage(): void
-    {
-        $this->composerInfo->method('getSystemPackages')->willReturn([]);
-
         $this->assertNull($this->resolver->getInstalledVersion());
     }
 

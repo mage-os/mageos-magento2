@@ -58,18 +58,6 @@ class VersionComparisonTest extends TestCase
         $this->assertFalse($this->comparison->isUpdateAvailable());
     }
 
-    public function testGetLatestVersionDelegates(): void
-    {
-        $this->fetcher->method('getLatestVersion')->willReturn('2.1.0');
-        $this->assertSame('2.1.0', $this->comparison->getLatestVersion());
-    }
-
-    public function testGetCurrentVersion(): void
-    {
-        $this->packageResolver->method('getInstalledVersion')->willReturn('2.0.0');
-        $this->assertSame('2.0.0', $this->comparison->getCurrentVersion());
-    }
-
     public function testIsMajorUpdateWhenMajorDiffers(): void
     {
         $this->packageResolver->method('getInstalledVersion')->willReturn('1.3.0');

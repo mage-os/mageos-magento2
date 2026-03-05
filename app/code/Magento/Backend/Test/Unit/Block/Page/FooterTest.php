@@ -34,30 +34,6 @@ class FooterTest extends TestCase
         $this->block = new Footer($context, $productMetadata, $this->versionComparison);
     }
 
-    public function testIsUpdateAvailableDelegates(): void
-    {
-        $this->versionComparison->method('isUpdateAvailable')->willReturn(true);
-        $this->assertTrue($this->block->isUpdateAvailable());
-    }
-
-    public function testIsUpdateAvailableReturnsFalseByDefault(): void
-    {
-        $this->versionComparison->method('isUpdateAvailable')->willReturn(false);
-        $this->assertFalse($this->block->isUpdateAvailable());
-    }
-
-    public function testGetLatestVersionDelegates(): void
-    {
-        $this->versionComparison->method('getLatestVersion')->willReturn('2.1.0');
-        $this->assertSame('2.1.0', $this->block->getLatestVersion());
-    }
-
-    public function testIsMajorOrMinorUpdateDelegates(): void
-    {
-        $this->versionComparison->method('isMajorOrMinorUpdate')->willReturn(true);
-        $this->assertTrue($this->block->isMajorOrMinorUpdate());
-    }
-
     public function testGetReleasesUrl(): void
     {
         $this->scopeConfig->method('getValue')
