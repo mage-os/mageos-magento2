@@ -196,4 +196,10 @@
             </argument>
         </arguments>
     </type>
+    <type name="Magento\Backend\Model\VersionUpdate\LatestVersionFetcher">
+        <arguments>
+            <argument name="httpClient" xsi:type="object">Magento\Framework\HTTP\Client\Curl</argument>
+            <argument name="repoBaseUrl" xsi:type="string">https://repo.mage-os.org</argument>
+        </arguments>
+    </type>
 </config>
