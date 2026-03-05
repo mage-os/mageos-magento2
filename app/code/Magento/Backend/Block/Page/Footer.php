@@ -5,7 +5,7 @@
  */
 namespace Magento\Backend\Block\Page;
 
-use Magento\Backend\Model\VersionCheck\VersionComparison;
+use Magento\Backend\Api\VersionComparisonInterface;
 use Magento\Framework\App\DistributionMetadataInterface;
 
 /**
@@ -31,20 +31,20 @@ class Footer extends \Magento\Backend\Block\Template
     protected $productMetadata;
 
     /**
-     * @var VersionComparison|null
+     * @var VersionComparisonInterface|null
      */
     private $versionComparison;
 
     /**
      * @param \Magento\Backend\Block\Template\Context $context
      * @param \Magento\Framework\App\ProductMetadataInterface $productMetadata
-     * @param VersionComparison|null $versionComparison
+     * @param VersionComparisonInterface|null $versionComparison
      * @param array $data
      */
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,
         \Magento\Framework\App\ProductMetadataInterface $productMetadata,
-        ?VersionComparison $versionComparison = null,
+        ?VersionComparisonInterface $versionComparison = null,
         array $data = []
     ) {
         $this->productMetadata = $productMetadata;

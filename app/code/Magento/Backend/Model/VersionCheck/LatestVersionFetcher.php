@@ -13,11 +13,15 @@ use Psr\Log\LoggerInterface;
 
 class LatestVersionFetcher
 {
-    public const CACHE_KEY_PREFIX = 'distro_latest_version_';
-    public const CACHE_LIFETIME = 86400;
+    private const CACHE_KEY_PREFIX = 'distro_latest_version_';
+    private const CACHE_LIFETIME = 86400;
+    private const HTTP_TIMEOUT = 3;
+    private const METADATA_URL_PATTERN = '%s/p2/%s.json';
+
     public const XML_PATH_ENABLED = 'system/version_check/enabled';
     public const XML_PATH_CACHE_LIFETIME = 'system/version_check/cache_lifetime';
-    private const METADATA_URL_PATTERN = '%s/p2/%s.json';
+
+    private ?VersionParser $versionParser = null;
 
     public function __construct(
         private readonly ClientInterface $httpClient,
@@ -37,6 +41,7 @@ class LatestVersionFetcher
 
         $packageName = $this->packageResolver->getPackageName();
         if ($packageName === null) {
+            $this->logger->debug('Version check skipped: no system package detected');
             return null;
         }
 
@@ -46,19 +51,31 @@ class LatestVersionFetcher
             return $cached;
         }
 
+        $latestStable = null;
         try {
             $repoUrls = $this->composerInformation->getRootRepositories();
-            $latestStable = null;
 
             foreach ($repoUrls as $repoUrl) {
                 $url = sprintf(self::METADATA_URL_PATTERN, rtrim($repoUrl, '/'), $packageName);
+                $this->httpClient->setTimeout(self::HTTP_TIMEOUT);
                 $this->httpClient->get($url);
 
-                if ($this->httpClient->getStatus() !== 200) {
+                $status = $this->httpClient->getStatus();
+                if ($status !== 200) {
+                    $this->logger->debug(
+                        sprintf('Version check: %s returned HTTP %d', $url, $status)
+                    );
                     continue;
                 }
 
                 $data = json_decode($this->httpClient->getBody(), true);
+                if (!is_array($data)) {
+                    $this->logger->info(
+                        sprintf('Version check: non-JSON response from %s', $url)
+                    );
+                    continue;
+                }
+
                 $versions = $data['packages'][$packageName] ?? [];
                 $latestStable = $this->findLatestStable($versions);
 
@@ -66,25 +83,35 @@ class LatestVersionFetcher
                     break;
                 }
             }
+        } catch (\RuntimeException $e) {
+            $this->logger->info('Version check network failure: ' . $e->getMessage());
+            return null;
+        } catch (\Exception $e) {
+            $this->logger->warning(
+                'Unexpected error during version check',
+                ['exception' => $e]
+            );
+            return null;
+        }
 
-            if ($latestStable === null) {
-                return null;
-            }
+        if ($latestStable === null) {
+            return null;
+        }
 
+        try {
             $cacheLifetime = (int) $this->scopeConfig->getValue(self::XML_PATH_CACHE_LIFETIME)
                 ?: self::CACHE_LIFETIME;
             $this->cache->save($latestStable, $cacheKey, [], $cacheLifetime);
-
-            return $latestStable;
         } catch (\Exception $e) {
-            $this->logger->warning('Failed to fetch latest distribution version: ' . $e->getMessage());
-            return null;
+            $this->logger->warning('Failed to cache version check result: ' . $e->getMessage());
         }
+
+        return $latestStable;
     }
 
     private function findLatestStable(array $versions): ?string
     {
-        $parser = new VersionParser();
+        $parser = $this->versionParser ??= new VersionParser();
         $latest = null;
 
         foreach ($versions as $entry) {

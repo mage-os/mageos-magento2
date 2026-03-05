@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace Magento\Backend\Test\Unit\Block\Page;
 
+use Magento\Backend\Api\VersionComparisonInterface;
 use Magento\Backend\Block\Page\Footer;
 use Magento\Backend\Block\Template\Context;
-use Magento\Backend\Model\VersionCheck\VersionComparison;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\ProductMetadataInterface;
 use Magento\Framework\ObjectManagerInterface;
@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 
 class FooterTest extends TestCase
 {
-    private VersionComparison|MockObject $versionComparison;
+    private VersionComparisonInterface|MockObject $versionComparison;
     private ScopeConfigInterface|MockObject $scopeConfig;
     private Footer $block;
 
@@ -29,7 +29,7 @@ class FooterTest extends TestCase
         $context = $this->createMock(Context::class);
         $context->method('getScopeConfig')->willReturn($this->scopeConfig);
         $productMetadata = $this->createMock(ProductMetadataInterface::class);
-        $this->versionComparison = $this->createMock(VersionComparison::class);
+        $this->versionComparison = $this->createMock(VersionComparisonInterface::class);
 
         $this->block = new Footer($context, $productMetadata, $this->versionComparison);
     }
@@ -41,6 +41,34 @@ class FooterTest extends TestCase
             ->willReturn('https://mage-os.org/category/releases/');
 
         $this->assertSame('https://mage-os.org/category/releases/', $this->block->getReleasesUrl());
+    }
+
+    public function testIsUpdateAvailableDelegatesToVersionComparison(): void
+    {
+        $this->versionComparison->method('isUpdateAvailable')->willReturn(true);
+
+        $this->assertTrue($this->block->isUpdateAvailable());
+    }
+
+    public function testGetLatestVersionDelegatesToVersionComparison(): void
+    {
+        $this->versionComparison->method('getLatestVersion')->willReturn('2.5.0');
+
+        $this->assertSame('2.5.0', $this->block->getLatestVersion());
+    }
+
+    public function testIsMajorOrMinorUpdateDelegatesToVersionComparison(): void
+    {
+        $this->versionComparison->method('isMajorOrMinorUpdate')->willReturn(true);
+
+        $this->assertTrue($this->block->isMajorOrMinorUpdate());
+    }
+
+    public function testIsMajorOrMinorUpdateReturnsFalseForPatchOnly(): void
+    {
+        $this->versionComparison->method('isMajorOrMinorUpdate')->willReturn(false);
+
+        $this->assertFalse($this->block->isMajorOrMinorUpdate());
     }
 
     public function testBackwardCompatibleWithoutVersionComparison(): void

@@ -196,6 +196,7 @@
             </argument>
         </arguments>
     </type>
+    <preference for="Magento\Backend\Api\VersionComparisonInterface" type="Magento\Backend\Model\VersionCheck\VersionComparison" />
     <type name="Magento\Backend\Model\VersionCheck\LatestVersionFetcher">
         <arguments>
             <argument name="httpClient" xsi:type="object">Magento\Framework\HTTP\Client\Curl</argument>

@@ -57,10 +57,7 @@ class LatestVersionFetcherTest extends TestCase
         $this->packageResolver->method('getPackageName')
             ->willReturn('mage-os/product-community-edition');
 
-        $expectedCacheKey = LatestVersionFetcher::CACHE_KEY_PREFIX . 'mage-os_product-community-edition';
-        $this->cache->method('load')
-            ->with($expectedCacheKey)
-            ->willReturn('2.1.0');
+        $this->cache->method('load')->willReturn('2.1.0');
 
         $this->httpClient->expects($this->never())->method('get');
 
@@ -89,10 +86,9 @@ class LatestVersionFetcherTest extends TestCase
         $this->httpClient->method('getStatus')->willReturn(200);
         $this->httpClient->method('getBody')->willReturn($responseBody);
 
-        $expectedCacheKey = LatestVersionFetcher::CACHE_KEY_PREFIX . 'mage-os_product-community-edition';
         $this->cache->expects($this->once())
             ->method('save')
-            ->with('2.1.0', $expectedCacheKey, [], 86400);
+            ->with('2.1.0', $this->anything(), [], 86400);
 
         $this->assertSame('2.1.0', $this->fetcher->getLatestVersion());
     }
@@ -220,8 +216,28 @@ class LatestVersionFetcherTest extends TestCase
             ->willThrowException(new \RuntimeException('Connection timed out'));
 
         $this->logger->expects($this->once())
-            ->method('warning')
+            ->method('info')
             ->with($this->stringContains('Connection timed out'));
+
+        $this->assertNull($this->fetcher->getLatestVersion());
+    }
+
+    public function testLogsWarningWithContextOnUnexpectedException(): void
+    {
+        $this->cache->method('load')->willReturn(false);
+        $this->packageResolver->method('getPackageName')
+            ->willReturn('mage-os/product-community-edition');
+
+        $exception = new \LogicException('Unexpected error');
+        $this->httpClient->method('get')
+            ->willThrowException($exception);
+
+        $this->logger->expects($this->once())
+            ->method('warning')
+            ->with(
+                'Unexpected error during version check',
+                ['exception' => $exception]
+            );
 
         $this->assertNull($this->fetcher->getLatestVersion());
     }
@@ -269,5 +285,111 @@ class LatestVersionFetcherTest extends TestCase
         $this->httpClient->method('getBody')->willReturn($responseBody);
 
         $this->assertSame('2.1.0', $this->fetcher->getLatestVersion());
+    }
+
+    public function testHandlesMalformedJsonResponse(): void
+    {
+        $this->cache->method('load')->willReturn(false);
+        $this->packageResolver->method('getPackageName')
+            ->willReturn('mage-os/product-community-edition');
+
+        $this->httpClient->method('getStatus')->willReturn(200);
+        $this->httpClient->method('getBody')->willReturn('<html>Error page</html>');
+
+        $this->logger->expects($this->once())
+            ->method('info')
+            ->with($this->stringContains('non-JSON response'));
+
+        $this->assertNull($this->fetcher->getLatestVersion());
+    }
+
+    public function testSkipsUnparseableVersionStrings(): void
+    {
+        $this->cache->method('load')->willReturn(false);
+        $this->packageResolver->method('getPackageName')
+            ->willReturn('mage-os/product-community-edition');
+
+        $responseBody = json_encode([
+            'packages' => [
+                'mage-os/product-community-edition' => [
+                    ['version' => 'not-a-version'],
+                    ['version' => '2.0.0'],
+                ],
+            ],
+        ]);
+
+        $this->httpClient->method('getStatus')->willReturn(200);
+        $this->httpClient->method('getBody')->willReturn($responseBody);
+
+        $this->assertSame('2.0.0', $this->fetcher->getLatestVersion());
+    }
+
+    public function testReturnsVersionEvenWhenCacheSaveFails(): void
+    {
+        $this->cache->method('load')->willReturn(false);
+        $this->packageResolver->method('getPackageName')
+            ->willReturn('mage-os/product-community-edition');
+
+        $responseBody = json_encode([
+            'packages' => [
+                'mage-os/product-community-edition' => [
+                    ['version' => '2.1.0'],
+                ],
+            ],
+        ]);
+
+        $this->httpClient->method('getStatus')->willReturn(200);
+        $this->httpClient->method('getBody')->willReturn($responseBody);
+        $this->cache->method('save')
+            ->willThrowException(new \RuntimeException('Cache backend unavailable'));
+
+        $this->logger->expects($this->once())
+            ->method('warning')
+            ->with($this->stringContains('Failed to cache'));
+
+        $this->assertSame('2.1.0', $this->fetcher->getLatestVersion());
+    }
+
+    public function testLogsDebugWhenNoSystemPackageDetected(): void
+    {
+        $this->packageResolver->method('getPackageName')->willReturn(null);
+
+        $this->logger->expects($this->once())
+            ->method('debug')
+            ->with($this->stringContains('no system package'));
+
+        $this->fetcher->getLatestVersion();
+    }
+
+    public function testSetsTimeoutOnHttpClient(): void
+    {
+        $this->cache->method('load')->willReturn(false);
+        $this->packageResolver->method('getPackageName')
+            ->willReturn('mage-os/product-community-edition');
+
+        $this->httpClient->expects($this->once())
+            ->method('setTimeout')
+            ->with(3);
+        $this->httpClient->method('getStatus')->willReturn(200);
+        $this->httpClient->method('getBody')->willReturn(json_encode([
+            'packages' => ['mage-os/product-community-edition' => [['version' => '1.0.0']]],
+        ]));
+
+        $this->fetcher->getLatestVersion();
+    }
+
+    public function testLogsNon200HttpStatus(): void
+    {
+        $this->cache->method('load')->willReturn(false);
+        $this->packageResolver->method('getPackageName')
+            ->willReturn('mage-os/product-community-edition');
+
+        $this->httpClient->method('getStatus')->willReturn(403);
+
+        $this->logger->expects($this->once())
+            ->method('debug')
+            ->with($this->stringContains('HTTP 403'));
+
+        $this->fetcher->getLatestVersion();
     }
 }

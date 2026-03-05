@@ -4,9 +4,14 @@ declare(strict_types=1);
 namespace Magento\Backend\Model\VersionCheck;
 
 use Composer\Semver\Comparator;
+use Magento\Backend\Api\VersionComparisonInterface;
 
-class VersionComparison
+class VersionComparison implements VersionComparisonInterface
 {
+    private bool $resolved = false;
+    private ?string $latestVersion = null;
+    private ?string $currentVersion = null;
+
     public function __construct(
         private readonly LatestVersionFetcher $fetcher,
         private readonly SystemPackageResolver $packageResolver
@@ -15,31 +20,23 @@ class VersionComparison
 
     public function isUpdateAvailable(): bool
     {
-        $latest = $this->fetcher->getLatestVersion();
-        $current = $this->getCurrentVersion();
+        $this->resolve();
 
-        if ($latest === null || $current === null) {
+        if ($this->latestVersion === null || $this->currentVersion === null) {
             return false;
         }
 
-        return Comparator::greaterThan($latest, $current);
+        return Comparator::greaterThan($this->latestVersion, $this->currentVersion);
     }
 
     public function isMajorOrMinorUpdate(): bool
     {
-        $latest = $this->fetcher->getLatestVersion();
-        $current = $this->getCurrentVersion();
-
-        if ($latest === null || $current === null) {
+        if (!$this->isUpdateAvailable()) {
             return false;
         }
 
-        if (!Comparator::greaterThan($latest, $current)) {
-            return false;
-        }
-
-        $currentParts = explode('.', $current);
-        $latestParts = explode('.', $latest);
+        $currentParts = explode('.', $this->currentVersion);
+        $latestParts = explode('.', $this->latestVersion);
 
         return ($latestParts[0] ?? '0') !== ($currentParts[0] ?? '0')
             || ($latestParts[1] ?? '0') !== ($currentParts[1] ?? '0');
@@ -47,11 +44,22 @@ class VersionComparison
 
     public function getCurrentVersion(): ?string
     {
-        return $this->packageResolver->getInstalledVersion();
+        $this->resolve();
+        return $this->currentVersion;
     }
 
     public function getLatestVersion(): ?string
     {
-        return $this->fetcher->getLatestVersion();
+        $this->resolve();
+        return $this->latestVersion;
+    }
+
+    private function resolve(): void
+    {
+        if (!$this->resolved) {
+            $this->latestVersion = $this->fetcher->getLatestVersion();
+            $this->currentVersion = $this->packageResolver->getInstalledVersion();
+            $this->resolved = true;
+        }
     }
 }

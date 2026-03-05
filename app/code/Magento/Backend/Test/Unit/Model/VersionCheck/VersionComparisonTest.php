@@ -89,4 +89,31 @@ class VersionComparisonTest extends TestCase
 
         $this->assertFalse($this->comparison->isUpdateAvailable());
     }
+
+    public function testIsMajorOrMinorUpdateReturnsFalseWhenFetcherReturnsNull(): void
+    {
+        $this->packageResolver->method('getInstalledVersion')->willReturn('2.0.0');
+        $this->fetcher->method('getLatestVersion')->willReturn(null);
+
+        $this->assertFalse($this->comparison->isMajorOrMinorUpdate());
+    }
+
+    public function testIsMajorOrMinorUpdateReturnsFalseWhenNoSystemPackage(): void
+    {
+        $this->packageResolver->method('getInstalledVersion')->willReturn(null);
+        $this->fetcher->method('getLatestVersion')->willReturn('2.1.0');
+
+        $this->assertFalse($this->comparison->isMajorOrMinorUpdate());
+    }
+
+    public function testFetcherCalledOnlyOnceAcrossMultipleMethods(): void
+    {
+        $this->fetcher->expects($this->once())->method('getLatestVersion')->willReturn('2.1.0');
+        $this->packageResolver->expects($this->once())->method('getInstalledVersion')->willReturn('2.0.0');
+
+        $this->comparison->isUpdateAvailable();
+        $this->comparison->isMajorOrMinorUpdate();
+        $this->comparison->getLatestVersion();
+        $this->comparison->getCurrentVersion();
+    }
 }

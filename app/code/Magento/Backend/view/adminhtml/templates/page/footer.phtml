@@ -14,14 +14,19 @@ use Magento\Framework\Escaper;
     <strong><?= $escaper->escapeHtml(__($block->getName())); ?></strong>
     <?= $escaper->escapeHtml(__('ver. %1', $block->getMagentoVersion())); ?>
     <?php if ($block->isUpdateAvailable()): ?>
-        <?php $isMajorMinor = $block->isMajorOrMinorUpdate(); ?>
-        <a href="<?= $escaper->escapeUrl($block->getReleasesUrl()) ?>"
-           target="_blank"
-           rel="noopener noreferrer"
-           title="<?= $escaper->escapeHtmlAttr(__('View %1 releases', $block->getName())) ?>"
-           class="distro-update-notice"
-           style="margin-left:8px;<?= $isMajorMinor ? 'color:#e22626;font-weight:bold;' : '' ?>">
-            <?= $escaper->escapeHtml(__('Update available: %1', $block->getLatestVersion())) ?>
-        </a>
+        <?php
+        $latestVersion = $block->getLatestVersion();
+        $releasesUrl = $block->getReleasesUrl();
+        $isMajorMinor = $block->isMajorOrMinorUpdate();
+        ?>
+        <?php if ($latestVersion && $releasesUrl): ?>
+            <a href="<?= $escaper->escapeUrl($releasesUrl) ?>"
+               target="_blank"
+               rel="noopener noreferrer"
+               title="<?= $escaper->escapeHtmlAttr(__('View %1 releases', $block->getName())) ?>"
+               class="distro-update-notice<?= $isMajorMinor ? ' distro-update-notice--major' : '' ?>">
+                <?= $escaper->escapeHtml(__('Update available: %1', $latestVersion)) ?>
+            </a>
+        <?php endif; ?>
     <?php endif; ?>
 </p>
