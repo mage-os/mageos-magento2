@@ -13,4 +13,15 @@ use Magento\Framework\Escaper;
 <p class="magento-version">
     <strong><?= $escaper->escapeHtml(__($block->getName())); ?></strong>
     <?= $escaper->escapeHtml(__('ver. %1', $block->getMagentoVersion())); ?>
+    <?php if ($block->isUpdateAvailable()): ?>
+        <?php $isMajorMinor = $block->isMajorOrMinorUpdate(); ?>
+        <a href="<?= $escaper->escapeUrl($block->getReleasesUrl()) ?>"
+           target="_blank"
+           rel="noopener noreferrer"
+           title="<?= $escaper->escapeHtmlAttr(__('View Mage-OS releases')) ?>"
+           class="mageos-update-notice"
+           style="margin-left:8px;<?= $isMajorMinor ? 'color:#e22626;font-weight:bold;' : '' ?>">
+            <?= $escaper->escapeHtml(__('Update available: %1', $block->getLatestVersion())) ?>
+        </a>
+    <?php endif; ?>
 </p>
