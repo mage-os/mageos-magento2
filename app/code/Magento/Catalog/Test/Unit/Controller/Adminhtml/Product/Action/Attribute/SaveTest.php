@@ -89,6 +89,122 @@ class SaveTest extends TestCase
     }
 
     /**
+     * Create dependency mocks for execute() success path (request, context, services, product, date filter).
+     *
+     * @param array $attributesData Request 'attributes' param value
+     * @param array $productIds Product IDs for attribute helper
+     * @param int $storeId Store ID
+     * @param callable|null $getPost Optional getPost callback for request (e.g. multiselect toggle)
+     * @param string|null $specialToDate Value for product->getSpecialToDate()
+     * @return array{request: RequestInterface, messageManager: ManagerInterface, redirect: Redirect, context: Context, attributeHelper: AttributeHelper, bulkManagement: BulkManagementInterface, operationFactory: OperationInterfaceFactory, identityService: IdentityGeneratorInterface, serializer: SerializerInterface, userContext: UserContextInterface, timezone: TimezoneInterface, dateTimeFilter: DateTimeFilter, product: Product, productFactory: ProductFactory}
+     */
+    private function createExecuteSuccessDependencyMocks(
+        array $attributesData,
+        array $productIds = [1],
+        int $storeId = 1,
+        ?callable $getPost = null,
+        ?string $specialToDate = null
+    ): array {
+        $request = $getPost
+            ? $this->createPartialMock(HttpRequest::class, ['getParam', 'getPost'])
+            : $this->createMock(RequestInterface::class);
+        $request->method('getParam')->willReturnMap([
+            ['attributes', [], $attributesData],
+            ['remove_website_ids', [], []],
+            ['add_website_ids', [], []],
+        ]);
+        if ($getPost !== null && $request instanceof HttpRequest) {
+            $request->method('getPost')->willReturnCallback($getPost);
+        }
+        $messageManager = $this->createMock(ManagerInterface::class);
+        $messageManager->expects($this->once())->method('addSuccessMessage')->with($this->anything());
+        $messageManager->expects($this->never())->method('addErrorMessage');
+        $redirect = $this->createMock(Redirect::class);
+        $redirect->method('setPath')->willReturnSelf();
+        $resultRedirectFactory = $this->createMock(RedirectFactory::class);
+        $resultRedirectFactory->method('create')->willReturn($redirect);
+        $context = $this->createPartialMock(
+            Context::class,
+            ['getRequest', 'getMessageManager', 'getResultRedirectFactory']
+        );
+        $context->method('getRequest')->willReturn($request);
+        $context->method('getMessageManager')->willReturn($messageManager);
+        $context->method('getResultRedirectFactory')->willReturn($resultRedirectFactory);
+        $attributeHelper = $this->createMock(AttributeHelper::class);
+        $attributeHelper->method('getSelectedStoreId')->willReturn($storeId);
+        $attributeHelper->method('getStoreWebsiteId')->with($storeId)->willReturn(1);
+        $attributeHelper->method('getProductIds')->willReturn($productIds);
+        $attributeHelper->method('setProductIds')->with([]);
+        $bulkManagement = $this->createMock(BulkManagementInterface::class);
+        $bulkManagement->expects($this->once())->method('scheduleBulk')->willReturn(true);
+        $operation = $this->createMock(OperationInterface::class);
+        $operationFactory = $this->createMock(OperationInterfaceFactory::class);
+        $operationFactory->expects($this->atLeastOnce())->method('create')->willReturn($operation);
+        $identityService = $this->createMock(IdentityGeneratorInterface::class);
+        $identityService->method('generateId')->willReturn('bulk-uuid');
+        $serializer = $this->createMock(SerializerInterface::class);
+        $serializer->method('serialize')->willReturn('serialized');
+        $userContext = $this->createMock(UserContextInterface::class);
+        $userContext->method('getUserId')->willReturn(1);
+        $timezone = $this->createMock(TimezoneInterface::class);
+        $dateTimeFilter = $this->createMock(DateTimeFilter::class);
+        $dateTimeFilter->method('filter')->willReturnCallback(function ($v) {
+            return $v ? $v . ' 00:00:00' : null;
+        });
+        $product = $this->createPartialMock(Product::class, ['setData', 'getSpecialToDate']);
+        $product->method('setData')->with($this->anything());
+        $product->method('getSpecialToDate')->willReturn($specialToDate);
+        $productFactory = $this->createMock(ProductFactory::class);
+        $productFactory->method('create')->willReturn($product);
+        return [
+            'request' => $request,
+            'messageManager' => $messageManager,
+            'redirect' => $redirect,
+            'context' => $context,
+            'attributeHelper' => $attributeHelper,
+            'bulkManagement' => $bulkManagement,
+            'operationFactory' => $operationFactory,
+            'identityService' => $identityService,
+            'serializer' => $serializer,
+            'userContext' => $userContext,
+            'timezone' => $timezone,
+            'dateTimeFilter' => $dateTimeFilter,
+            'product' => $product,
+            'productFactory' => $productFactory,
+        ];
+    }
+
+    /**
+     * Build Save controller mock with _validateProducts stubbed to true.
+     *
+     * @param array $deps Result of createExecuteSuccessDependencyMocks
+     * @param EavConfig $eavConfig
+     * @return Save
+     */
+    private function createExecuteControllerWithValidate(array $deps, EavConfig $eavConfig): Save
+    {
+        $controller = $this->getMockBuilder(Save::class)
+            ->onlyMethods(['_validateProducts'])
+            ->setConstructorArgs([
+                $deps['context'],
+                $deps['attributeHelper'],
+                $deps['bulkManagement'],
+                $deps['operationFactory'],
+                $deps['identityService'],
+                $deps['serializer'],
+                $deps['userContext'],
+                100,
+                $deps['timezone'],
+                $eavConfig,
+                $deps['productFactory'],
+                $deps['dateTimeFilter'],
+            ])
+            ->getMock();
+        $controller->method('_validateProducts')->willReturn(true);
+        return $controller;
+    }
+
+    /**
      * @covers \Magento\Catalog\Controller\Adminhtml\Product\Action\Attribute\Save::validateProductAttributes
      */
     public function testValidateProductAttributesSetsMaxValueAndConvertsEavException(): void
@@ -323,77 +439,20 @@ class SaveTest extends TestCase
      */
     public function testExecutePublishesAndShowsSuccessWhenAttributesValid(): void
     {
-        $storeId = 1;
-        $websiteId = 1;
-        $productIds = [1, 2];
         $attributesData = [
             'special_from_date' => '2025-09-01',
             'special_to_date' => '2025-09-10',
         ];
-
-        $request = $this->createMock(RequestInterface::class);
-        $request->method('getParam')->willReturnMap([
-            ['attributes', [], $attributesData],
-            ['remove_website_ids', [], []],
-            ['add_website_ids', [], []],
-        ]);
-
-        $messageManager = $this->createMock(ManagerInterface::class);
-        $messageManager->expects($this->once())->method('addSuccessMessage')->with($this->anything());
-        $messageManager->expects($this->never())->method('addErrorMessage');
-
-        $redirect = $this->createMock(Redirect::class);
-        $redirect->method('setPath')->willReturnSelf();
-        $resultRedirectFactory = $this->createMock(RedirectFactory::class);
-        $resultRedirectFactory->method('create')->willReturn($redirect);
-
-        $context = $this->createPartialMock(
-            Context::class,
-            ['getRequest', 'getMessageManager', 'getResultRedirectFactory']
+        $deps = $this->createExecuteSuccessDependencyMocks(
+            $attributesData,
+            [1, 2],
+            1,
+            null,
+            '2025-09-10 00:00:00'
         );
-        $context->method('getRequest')->willReturn($request);
-        $context->method('getMessageManager')->willReturn($messageManager);
-        $context->method('getResultRedirectFactory')->willReturn($resultRedirectFactory);
-
-        $attributeHelper = $this->createMock(AttributeHelper::class);
-        $attributeHelper->method('getSelectedStoreId')->willReturn($storeId);
-        $attributeHelper->method('getStoreWebsiteId')->with($storeId)->willReturn($websiteId);
-        $attributeHelper->method('getProductIds')->willReturn($productIds);
-        $attributeHelper->expects($this->once())->method('setProductIds')->with([]);
-
-        $bulkManagement = $this->createMock(BulkManagementInterface::class);
-        $bulkManagement->expects($this->once())->method('scheduleBulk')->willReturn(true);
-
-        $operation = $this->createMock(OperationInterface::class);
-        $operationFactory = $this->createMock(OperationInterfaceFactory::class);
-        $operationFactory->expects($this->atLeastOnce())->method('create')->willReturn($operation);
-
-        $identityService = $this->createMock(IdentityGeneratorInterface::class);
-        $identityService->method('generateId')->willReturn('bulk-uuid');
-
-        $serializer = $this->createMock(SerializerInterface::class);
-        $serializer->method('serialize')->willReturn('serialized');
-
-        $userContext = $this->createMock(UserContextInterface::class);
-        $userContext->method('getUserId')->willReturn(1);
-
-        $timezone = $this->createMock(TimezoneInterface::class);
-
-        $dateTimeFilter = $this->createMock(DateTimeFilter::class);
-        $dateTimeFilter->method('filter')->willReturnCallback(function ($value) {
-            return $value ? $value . ' 00:00:00' : null;
-        });
-
-        $product = $this->createPartialMock(Product::class, ['setData', 'getSpecialToDate']);
-        $product->method('setData')->with($this->anything());
-        $product->method('getSpecialToDate')->willReturn('2025-09-10 00:00:00');
-        $productFactory = $this->createMock(ProductFactory::class);
-        $productFactory->method('create')->willReturn($product);
-
         $okBackend = $this->createBackendMock(false);
         $fromAttribute = $this->createDatetimeAttributeMockForExecute($okBackend);
         $toAttribute = $this->createDatetimeAttributeMockForExecute($okBackend);
-
         $eavConfig = $this->createMock(EavConfig::class);
         $eavConfig->method('getAttribute')->willReturnCallback(
             function ($entity, $code) use ($fromAttribute, $toAttribute) {
@@ -401,29 +460,9 @@ class SaveTest extends TestCase
                 return $code === 'special_from_date' ? $fromAttribute : $toAttribute;
             }
         );
-
-        $controller = $this->getMockBuilder(Save::class)
-            ->onlyMethods(['_validateProducts'])
-            ->setConstructorArgs([
-                $context,
-                $attributeHelper,
-                $bulkManagement,
-                $operationFactory,
-                $identityService,
-                $serializer,
-                $userContext,
-                100,
-                $timezone,
-                $eavConfig,
-                $productFactory,
-                $dateTimeFilter,
-            ])
-            ->getMock();
-        $controller->method('_validateProducts')->willReturn(true);
-
+        $controller = $this->createExecuteControllerWithValidate($deps, $eavConfig);
         $result = $controller->execute();
-
-        $this->assertSame($redirect, $result);
+        $this->assertSame($deps['redirect'], $result);
     }
 
     /**
@@ -788,75 +827,24 @@ class SaveTest extends TestCase
      */
     public function testExecuteSanitizeCoversHasWeightAndUnknownAttribute(): void
     {
-        $storeId = 1;
-        $productIds = [1];
         $attributesData = [
             ProductAttributeInterface::CODE_HAS_WEIGHT => 1,
             'unknown_attr' => 'val',
             'special_from_date' => '2025-09-01',
             'special_to_date' => '2025-09-10',
         ];
-
-        $request = $this->createMock(RequestInterface::class);
-        $request->method('getParam')->willReturnMap([
-            ['attributes', [], $attributesData],
-            ['remove_website_ids', [], []],
-            ['add_website_ids', [], []],
-        ]);
-
-        $messageManager = $this->createMock(ManagerInterface::class);
-        $messageManager->expects($this->once())->method('addSuccessMessage')->with($this->anything());
-
-        $redirect = $this->createMock(Redirect::class);
-        $redirect->method('setPath')->willReturnSelf();
-        $resultRedirectFactory = $this->createMock(RedirectFactory::class);
-        $resultRedirectFactory->method('create')->willReturn($redirect);
-
-        $context = $this->createPartialMock(
-            Context::class,
-            ['getRequest', 'getMessageManager', 'getResultRedirectFactory']
+        $deps = $this->createExecuteSuccessDependencyMocks(
+            $attributesData,
+            [1],
+            1,
+            null,
+            '2025-09-10 00:00:00'
         );
-        $context->method('getRequest')->willReturn($request);
-        $context->method('getMessageManager')->willReturn($messageManager);
-        $context->method('getResultRedirectFactory')->willReturn($resultRedirectFactory);
-
-        $attributeHelper = $this->createMock(AttributeHelper::class);
-        $attributeHelper->method('getSelectedStoreId')->willReturn($storeId);
-        $attributeHelper->method('getStoreWebsiteId')->with($storeId)->willReturn(1);
-        $attributeHelper->method('getProductIds')->willReturn($productIds);
-        $attributeHelper->method('setProductIds')->with([]);
-
-        $bulkManagement = $this->createMock(BulkManagementInterface::class);
-        $bulkManagement->method('scheduleBulk')->willReturn(true);
-
-        $operationFactory = $this->createMock(OperationInterfaceFactory::class);
-        $operationFactory->method('create')->willReturn($this->createMock(OperationInterface::class));
-        $identityService = $this->createMock(IdentityGeneratorInterface::class);
-        $identityService->method('generateId')->willReturn('bulk-uuid');
-        $serializer = $this->createMock(SerializerInterface::class);
-        $serializer->method('serialize')->willReturn('serialized');
-        $userContext = $this->createMock(UserContextInterface::class);
-        $userContext->method('getUserId')->willReturn(1);
-        $timezone = $this->createMock(TimezoneInterface::class);
-
-        $dateTimeFilter = $this->createMock(DateTimeFilter::class);
-        $dateTimeFilter->method('filter')->willReturnCallback(function ($v) {
-            return $v ? $v . ' 00:00:00' : null;
-        });
-
-        $product = $this->createPartialMock(Product::class, ['setData', 'getSpecialToDate']);
-        $product->method('setData')->with($this->anything());
-        $product->method('getSpecialToDate')->willReturn('2025-09-10 00:00:00');
-        $productFactory = $this->createMock(ProductFactory::class);
-        $productFactory->method('create')->willReturn($product);
-
         $okBackend = $this->createBackendMock(false);
         $fromAttribute = $this->createDatetimeAttributeMockForExecute($okBackend);
         $toAttribute = $this->createDatetimeAttributeMockForExecute($okBackend);
-
         $attrNoId = $this->createPartialMock(AbstractAttribute::class, ['getAttributeId']);
         $attrNoId->method('getAttributeId')->willReturn(0);
-
         $hasWeightAttr = $this->createPartialMock(
             AbstractAttribute::class,
             ['getAttributeId', 'getBackendType', 'getFrontendInput', 'getBackend']
@@ -865,7 +853,6 @@ class SaveTest extends TestCase
         $hasWeightAttr->method('getBackendType')->willReturn('int');
         $hasWeightAttr->method('getFrontendInput')->willReturn('select');
         $hasWeightAttr->method('getBackend')->willReturn($okBackend);
-
         $eavConfig = $this->createMock(EavConfig::class);
         $eavConfig->method('getAttribute')->willReturnCallback(
             function ($entity, $code) use ($fromAttribute, $toAttribute, $attrNoId, $hasWeightAttr) {
@@ -879,29 +866,9 @@ class SaveTest extends TestCase
                 return $code === 'special_from_date' ? $fromAttribute : $toAttribute;
             }
         );
-
-        $controller = $this->getMockBuilder(Save::class)
-            ->onlyMethods(['_validateProducts'])
-            ->setConstructorArgs([
-                $context,
-                $attributeHelper,
-                $bulkManagement,
-                $operationFactory,
-                $identityService,
-                $serializer,
-                $userContext,
-                100,
-                $timezone,
-                $eavConfig,
-                $productFactory,
-                $dateTimeFilter,
-            ])
-            ->getMock();
-        $controller->method('_validateProducts')->willReturn(true);
-
+        $controller = $this->createExecuteControllerWithValidate($deps, $eavConfig);
         $result = $controller->execute();
-
-        $this->assertSame($redirect, $result);
+        $this->assertSame($deps['redirect'], $result);
     }
 
     /**
@@ -992,67 +959,15 @@ class SaveTest extends TestCase
      */
     public function testExecuteSanitizeMultiselectBranch(): void
     {
-        $storeId = 1;
-        $productIds = [1];
         $multiselectCode = 'multiselect_attr';
-        $multiselectCodeUnchecked = 'multiselect_attr_unchecked';
         $attributesData = [
             $multiselectCode => ['a', 'b'],
-            $multiselectCodeUnchecked => ['x'],
+            'multiselect_attr_unchecked' => ['x'],
         ];
-
-        $request = $this->createPartialMock(HttpRequest::class, ['getParam', 'getPost']);
-        $request->method('getParam')->willReturnMap([
-            ['attributes', [], $attributesData],
-            ['remove_website_ids', [], []],
-            ['add_website_ids', [], []],
-        ]);
-        $request->method('getPost')->willReturnCallback(function ($key) use ($multiselectCode) {
+        $getPost = function ($key) use ($multiselectCode) {
             return $key === 'toggle_' . $multiselectCode ? '1' : null;
-        });
-
-        $messageManager = $this->createMock(ManagerInterface::class);
-        $messageManager->expects($this->once())->method('addSuccessMessage')->with($this->anything());
-
-        $redirect = $this->createMock(Redirect::class);
-        $redirect->method('setPath')->willReturnSelf();
-        $resultRedirectFactory = $this->createMock(RedirectFactory::class);
-        $resultRedirectFactory->method('create')->willReturn($redirect);
-
-        $context = $this->createPartialMock(
-            Context::class,
-            ['getRequest', 'getMessageManager', 'getResultRedirectFactory']
-        );
-        $context->method('getRequest')->willReturn($request);
-        $context->method('getMessageManager')->willReturn($messageManager);
-        $context->method('getResultRedirectFactory')->willReturn($resultRedirectFactory);
-
-        $attributeHelper = $this->createMock(AttributeHelper::class);
-        $attributeHelper->method('getSelectedStoreId')->willReturn($storeId);
-        $attributeHelper->method('getStoreWebsiteId')->with($storeId)->willReturn(1);
-        $attributeHelper->method('getProductIds')->willReturn($productIds);
-        $attributeHelper->method('setProductIds')->with([]);
-
-        $bulkManagement = $this->createMock(BulkManagementInterface::class);
-        $bulkManagement->method('scheduleBulk')->willReturn(true);
-
-        $operationFactory = $this->createMock(OperationInterfaceFactory::class);
-        $operationFactory->method('create')->willReturn($this->createMock(OperationInterface::class));
-        $identityService = $this->createMock(IdentityGeneratorInterface::class);
-        $identityService->method('generateId')->willReturn('bulk-uuid');
-        $serializer = $this->createMock(SerializerInterface::class);
-        $serializer->method('serialize')->willReturn('serialized');
-        $userContext = $this->createMock(UserContextInterface::class);
-        $userContext->method('getUserId')->willReturn(1);
-        $timezone = $this->createMock(TimezoneInterface::class);
-        $dateTimeFilter = $this->createMock(DateTimeFilter::class);
-
-        $product = $this->createPartialMock(Product::class, ['setData', 'getSpecialToDate']);
-        $product->method('setData')->with($this->anything());
-        $product->method('getSpecialToDate')->willReturn(null);
-        $productFactory = $this->createMock(ProductFactory::class);
-        $productFactory->method('create')->willReturn($product);
-
+        };
+        $deps = $this->createExecuteSuccessDependencyMocks($attributesData, [1], 1, $getPost, null);
         $okBackend = $this->createBackendMock(false);
         $multiselectAttr = $this->createPartialMock(
             AbstractAttribute::class,
@@ -1062,7 +977,6 @@ class SaveTest extends TestCase
         $multiselectAttr->method('getBackendType')->willReturn('varchar');
         $multiselectAttr->method('getFrontendInput')->willReturn('multiselect');
         $multiselectAttr->method('getBackend')->willReturn($okBackend);
-
         $multiselectAttrUnchecked = $this->createPartialMock(
             AbstractAttribute::class,
             ['getAttributeId', 'getBackendType', 'getFrontendInput', 'getBackend']
@@ -1071,41 +985,16 @@ class SaveTest extends TestCase
         $multiselectAttrUnchecked->method('getBackendType')->willReturn('varchar');
         $multiselectAttrUnchecked->method('getFrontendInput')->willReturn('multiselect');
         $multiselectAttrUnchecked->method('getBackend')->willReturn($okBackend);
-
         $eavConfig = $this->createMock(EavConfig::class);
-        $eavConfig->method('getAttribute')->willReturnCallback(function (
-            $entity,
-            $code
-        ) use (
-            $multiselectAttr,
-            $multiselectAttrUnchecked
-        ) {
-            unset($entity);
-            return $code === 'multiselect_attr_unchecked' ? $multiselectAttrUnchecked : $multiselectAttr;
-        });
-
-        $controller = $this->getMockBuilder(Save::class)
-            ->onlyMethods(['_validateProducts'])
-            ->setConstructorArgs([
-                $context,
-                $attributeHelper,
-                $bulkManagement,
-                $operationFactory,
-                $identityService,
-                $serializer,
-                $userContext,
-                100,
-                $timezone,
-                $eavConfig,
-                $productFactory,
-                $dateTimeFilter,
-            ])
-            ->getMock();
-        $controller->method('_validateProducts')->willReturn(true);
-
+        $eavConfig->method('getAttribute')->willReturnCallback(
+            function ($entity, $code) use ($multiselectAttr, $multiselectAttrUnchecked) {
+                unset($entity);
+                return $code === 'multiselect_attr_unchecked' ? $multiselectAttrUnchecked : $multiselectAttr;
+            }
+        );
+        $controller = $this->createExecuteControllerWithValidate($deps, $eavConfig);
         $result = $controller->execute();
-
-        $this->assertSame($redirect, $result);
+        $this->assertSame($deps['redirect'], $result);
     }
 
     /**
