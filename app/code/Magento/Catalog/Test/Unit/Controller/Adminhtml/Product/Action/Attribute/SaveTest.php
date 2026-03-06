@@ -96,7 +96,7 @@ class SaveTest extends TestCase
      * @param int $storeId Store ID
      * @param callable|null $getPost Optional getPost callback for request (e.g. multiselect toggle)
      * @param string|null $specialToDate Value for product->getSpecialToDate()
-     * @return array{request: RequestInterface, messageManager: ManagerInterface, redirect: Redirect, context: Context, attributeHelper: AttributeHelper, bulkManagement: BulkManagementInterface, operationFactory: OperationInterfaceFactory, identityService: IdentityGeneratorInterface, serializer: SerializerInterface, userContext: UserContextInterface, timezone: TimezoneInterface, dateTimeFilter: DateTimeFilter, product: Product, productFactory: ProductFactory}
+     * @return array<string, mixed> Map of dependency name to mock (request, context, redirect, etc.)
      */
     private function createExecuteSuccessDependencyMocks(
         array $attributesData,
