@@ -27,24 +27,35 @@ define(['rjsResolver', 'mixins'], function (resolver, mixins) {
             expect(unbundledContext.nameToUrl).toBe(defContext.nameToUrl);
         });
 
-        it('should not load deps in unbundled context during default context configure', function (done) {
-            var moduleName = 'tests/assets/mixins/configure-dep-' + Date.now();
+        it('should not forward deps and callback to unbundled context during default context configure', function () {
+            var originalDeps = defContext.config.deps,
+                originalCallback = defContext.config.callback,
+                noop = function () {},
+                forwardedConfig;
 
-            resolver(function () {
-                spyOn(unbundledContext, 'require').and.callThrough();
+            spyOn(unbundledContext, 'configure').and.callThrough();
 
-                define(moduleName, [], function () {
-                    return {};
-                });
-
-                defContext.configure({
-                    deps: [moduleName],
-                    callback: function () {
-                        expect(unbundledContext.require).not.toHaveBeenCalled();
-                        done();
-                    }
-                });
+            defContext.configure({
+                deps: ['mixins'],
+                callback: noop
             });
+
+            forwardedConfig = unbundledContext.configure.calls.mostRecent().args[0];
+
+            expect(forwardedConfig.deps).toBeUndefined();
+            expect(forwardedConfig.callback).toBeUndefined();
+
+            if (typeof originalDeps === 'undefined') {
+                delete defContext.config.deps;
+            } else {
+                defContext.config.deps = originalDeps;
+            }
+
+            if (typeof originalCallback === 'undefined') {
+                delete defContext.config.callback;
+            } else {
+                defContext.config.callback = originalCallback;
+            }
         });
     });
 
