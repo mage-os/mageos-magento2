@@ -1128,7 +1128,8 @@
         },
         "index": {
             "SALES_BESTSELLERS_AGGREGATED_DAILY_STORE_ID": true,
-            "SALES_BESTSELLERS_AGGREGATED_DAILY_PRODUCT_ID": true
+            "SALES_BESTSELLERS_AGGREGATED_DAILY_PRODUCT_ID": true,
+            "SALES_BESTSELLERS_AGGREGATED_DAILY_STORE_ID_PERIOD_MONTH_PRODUCT_ID": true
         },
         "constraint": {
             "PRIMARY": true,
