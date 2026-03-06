@@ -158,6 +158,10 @@ script
             $html .= ' disabled="disabled" data-is-removable="no" data-is-editable="no"';
         }
 
+        if ($option['disabled'] ?? false) {
+            $html .= ' disabled="disabled"';
+        }
+
         $html .= '>' . $this->_escape($option['label']) . '</option>' . "\n";
         if (!empty($option['style'])) {
             $html .= $this->secureRenderer->renderStyleAsTag($option['style'], "#$optionId");
