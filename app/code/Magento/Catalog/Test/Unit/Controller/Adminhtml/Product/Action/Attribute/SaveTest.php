@@ -34,7 +34,7 @@ use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use PHPUnit\Framework\TestCase;
 
-/** 
+/**
  * @covers \Magento\Catalog\Controller\Adminhtml\Product\Action\Attribute\Save
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
@@ -1073,7 +1073,10 @@ class SaveTest extends TestCase
         $multiselectAttrUnchecked->method('getBackend')->willReturn($okBackend);
 
         $eavConfig = $this->createMock(EavConfig::class);
-        $eavConfig->method('getAttribute')->willReturnCallback(function ($entity, $code) use (
+        $eavConfig->method('getAttribute')->willReturnCallback(function (
+            $entity,
+            $code
+        ) use (
             $multiselectAttr,
             $multiselectAttrUnchecked
         ) {
