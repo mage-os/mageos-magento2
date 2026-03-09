@@ -1923,7 +1923,7 @@
         <index referenceId="SALES_BESTSELLERS_AGGREGATED_DAILY_PRODUCT_ID" indexType="btree">
             <column name="product_id"/>
         </index>
-        <index name="SALES_BESTSELLERS_AGGREGATED_DAILY_STORE_ID_PERIOD_MONTH_PRODUCT_ID"
+        <index referenceId="SALES_BESTSELLERS_AGGREGATED_DAILY_STORE_ID_PERIOD_MONTH_PRODUCT_ID"
                indexType="btree">
             <column name="store_id"/>
             <column name="period_month"/>
