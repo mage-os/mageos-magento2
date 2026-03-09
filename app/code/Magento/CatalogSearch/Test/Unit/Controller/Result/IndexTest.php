@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2014 Adobe
+ * Copyright 2026 Adobe
  * All Rights Reserved.
  */
 declare(strict_types=1);
@@ -33,6 +33,9 @@ use PHPUnit\Framework\TestCase;
  * Unit test for CatalogSearch Result Index controller.
  *
  * @covers \Magento\CatalogSearch\Controller\Result\Index
+ * @SuppressWarnings(PHPMD.TooManyFields)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.UnusedLocalVariable)
  */
 class IndexTest extends TestCase
 {
@@ -120,11 +123,23 @@ class IndexTest extends TestCase
     {
         $this->request = $this->createMock(RequestInterface::class);
         $this->responseStub = new class implements ResponseInterface {
+            /** @var string */
             public $redirectUrl;
+            /** @var bool */
             public $setNoCacheHeadersCalled = false;
+
+            /**
+             * @return void
+             */
             public function sendResponse(): void
             {
             }
+
+            /**
+             * @param string $url
+             * @param int $code
+             * @return self
+             */
             public function setRedirect($url, $code = 302): self
             {
                 $this->redirectUrl = $url;
@@ -285,12 +300,12 @@ class IndexTest extends TestCase
     }
 
     /**
-     * Create a query stub with methods used by getCacheableResult / getNotCacheableResult (magic on real Query).
+     * Create a query stub for getCacheableResult / getNotCacheableResult (magic on real Query).
      *
      * @param string $queryText Query text
      * @param int $numResults Number of results
      * @param string|null $redirect Redirect URL or null
-     * @return object Query-like stub with setStoreId, getQueryText, getNumResults, getRedirect, saveIncrementalPopularity, setId, setIsActive, setIsProcessed
+     * @return object Query-like stub
      */
     private function createQueryStub(
         string $queryText = 'search term',
@@ -298,10 +313,18 @@ class IndexTest extends TestCase
         ?string $redirect = null
     ): object {
         return new class($queryText, $numResults, $redirect) {
+            /** @var string */
             private string $queryText;
+            /** @var int */
             private int $numResults;
+            /** @var string|null */
             private ?string $redirect;
 
+            /**
+             * @param string $queryText
+             * @param int $numResults
+             * @param string|null $redirect
+             */
             public function __construct(string $queryText, int $numResults, ?string $redirect)
             {
                 $this->queryText = $queryText;
@@ -495,7 +518,7 @@ class IndexTest extends TestCase
     }
 
     /**
-     * Test execute uses not cacheable result path when isMinQueryLength is false (saveIncrementalPopularity then render).
+     * Test getNotCacheableResult path when isMinQueryLength is false (no redirect, then render).
      *
      * @covers \Magento\CatalogSearch\Controller\Result\Index::execute
      * @covers \Magento\CatalogSearch\Controller\Result\Index::getNotCacheableResult
