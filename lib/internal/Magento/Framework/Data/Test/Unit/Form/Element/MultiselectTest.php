@@ -127,7 +127,7 @@ class MultiselectTest extends TestCase
     }
 
     #[DataProvider('disabledOptionDataProvider')]
-    public function testSelectWithDisabledOptions(array $option, bool $shouldBeDisabled): void
+    public function testOptionDisabledStateIsRenderedCorrectly(array $option, bool $shouldBeDisabled): void
     {
         $this->_model->setValues([$option]);
 
@@ -143,7 +143,7 @@ class MultiselectTest extends TestCase
     }
 
     #[DataProvider('disabledOptionDataProvider')]
-    public function testOptgroupWithDisabledOptions(array $option, bool $shouldBeDisabled): void
+    public function testOptgroupOptionDisabledStateIsRenderedCorrectly(array $option, bool $shouldBeDisabled): void
     {
         $this->_model->setValues([
             [
