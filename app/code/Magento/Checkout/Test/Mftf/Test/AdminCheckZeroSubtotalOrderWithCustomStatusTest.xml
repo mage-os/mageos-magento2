@@ -57,6 +57,8 @@
             </actionGroup>
             <click selector="{{AdminOrderStatusGridSection.unassign}}" stepKey="unassignOrderStatus"/>
             <waitForPageLoad stepKey="waitForGridLoad"/>
+            <amOnPage url="{{AdminOrdersPage.url.url}}" stepKey="openOrdersGrid"/>
+            <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="clearOrdersFilter"/>
 
             <deleteData createDataKey="simplecategory" stepKey="deleteCategory"/>
             <deleteData createDataKey="simpleproduct" stepKey="deleteProduct"/>
