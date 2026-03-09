@@ -70,7 +70,7 @@ class SelectTest extends TestCase
     {
         $this->element->setValues([$option]);
 
-        $optionHtml = $this->extractOptionHtml($this->element->getElementHtml(), $option['value']);
+        $optionHtml = $this->extractOptionHtmlByValue($this->element->getElementHtml(), $option['value']);
 
         $this->assertNotEmpty($optionHtml);
 
@@ -91,7 +91,7 @@ class SelectTest extends TestCase
             ],
         ]);
 
-        $optionHtml = $this->extractOptionHtml($this->element->getElementHtml(), $option['value']);
+        $optionHtml = $this->extractOptionHtmlByValue($this->element->getElementHtml(), $option['value']);
 
         $this->assertNotEmpty($optionHtml);
 
@@ -117,7 +117,7 @@ class SelectTest extends TestCase
         yield 'disabled_flag_not_provided' => [['value' => '1', 'label' => 'Option'], false];
     }
 
-    private function extractOptionHtml(string $elementHtml, string $value): string
+    private function extractOptionHtmlByValue(string $elementHtml, string $value): string
     {
         $pattern = '/<option[^>]*value="' . preg_quote($value, '/') . '"[^>]*>.*?<\/option>/s';
 
