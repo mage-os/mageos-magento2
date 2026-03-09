@@ -5,12 +5,13 @@
  */
 declare(strict_types=1);
 
-namespace Magento\OfflineShipping\Setup\Patch\Data;
+namespace Magento\Sales\Setup\Patch\Data;
 
 use Magento\Framework\Setup\Patch\DataPatchInterface;
 use Magento\Framework\App\ResourceConnection;
+use Magento\Framework\Setup\Patch\PatchRevertableInterface;
 
-class PopulatePeriodMonthColumn implements DataPatchInterface
+class PopulatePeriodMonthColumn implements DataPatchInterface, PatchRevertableInterface
 {
     /**
      * @var ResourceConnection
@@ -40,6 +41,8 @@ class PopulatePeriodMonthColumn implements DataPatchInterface
                 $table
             )
         );
+
+        return $this;
     }
 
     /**
@@ -56,5 +59,22 @@ class PopulatePeriodMonthColumn implements DataPatchInterface
     public function getAliases()
     {
         return [];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function revert()
+    {
+        $connection = $this->resourceConnection->getConnection();
+        $table = $this->resourceConnection->getTableName('sales_bestsellers_aggregated_daily');
+
+        $connection->query(
+            sprintf(
+                "UPDATE %s
+                 SET period_month = ''",
+                $table
+            )
+        );
     }
 }
