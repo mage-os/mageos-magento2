@@ -58,12 +58,19 @@ class Helper extends \Magento\Framework\DB\Helper implements \Magento\Reports\Mo
             $ratingSubSelect = $connection->select();
             $ratingSelect = $connection->select();
 
+            $tableName = $connection->getTableName($aggregationTable);
+            $columnExists = $connection->tableColumnExists($tableName, 'period_month');
+
             switch ($type) {
                 case 'year':
                     $periodCol = $connection->getDateFormatSql('t.period', '%Y-01-01');
                     break;
                 case 'month':
-                    $periodCol = 't.period_month';
+                    if ($columnExists) {
+                        $periodCol = 't.period_month';
+                    } else {
+                        $periodCol = $connection->getDateFormatSql('t.period', '%Y-%m-01');
+                    }
                     break;
                 default:
                     $periodCol = 't.period';
@@ -75,9 +82,11 @@ class Helper extends \Magento\Framework\DB\Helper implements \Magento\Reports\Mo
                 'store_id' => 't.store_id',
                 'product_id' => 't.product_id',
                 'product_name' => 't.product_name',
-                'product_price' => 't.product_price',
-                'period_month' => 't.period_month'
+                'product_price' => 't.product_price'
             ];
+            if ($columnExists) {
+                $columns['period_month'] = 't.period_month';
+            }
 
             if ($type == 'day') {
                 $columns['id'] = 't.id';  // to speed-up insert on duplicate key update
@@ -109,12 +118,8 @@ class Helper extends \Magento\Framework\DB\Helper implements \Magento\Reports\Mo
             $cols['rating_pos'] = 't.rating_pos';
 
             $ratingSubSelect->where('t.store_id = ' . $store->getId());
-            $insertColumns = $cols;
-            if ($aggregationTable !== 'sales_bestsellers_aggregated_daily') {
-                unset($insertColumns['period_month']);
-            }
-            $ratingSelect->from($ratingSubSelect, $insertColumns);
-            $sql = $ratingSelect->insertFromSelect($aggregationTable, array_keys($insertColumns));
+            $ratingSelect->from($ratingSubSelect, $cols);
+            $sql = $ratingSelect->insertFromSelect($aggregationTable, array_keys($cols));
             $connection->query("SET @pos = 0, @prevStoreId = -1, @prevPeriod = '0000-00-00'");
             $connection->query($sql);
         }
