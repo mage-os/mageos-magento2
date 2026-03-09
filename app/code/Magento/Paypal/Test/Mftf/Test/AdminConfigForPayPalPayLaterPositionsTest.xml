@@ -24,13 +24,12 @@
             <createData entity="SimpleProduct3" stepKey="createProduct"/>
             <!--Login to admin -->
             <actionGroup ref="AdminLoginActionGroup" stepKey="loginAdmin"/>
-            <!-- Step 1: Enable PayPal express checkout -->
-            <actionGroup ref="ConfigPayPalExpressCheckoutActionGroup" stepKey="ConfigPayPalExpressCheckout"/>
-            <!-- Step 1: Enable pay later experience -->
+            <!-- Step 1: Enable PayPal express checkout and pay later experience -->
+            <actionGroup ref="ConfigPayPalExpressCheckoutActionGroup" stepKey="configPayPalExpressCheckout"/>
             <actionGroup ref="AdminEnablePayPalExpressCheckoutPayLaterActionGroup" stepKey="enablePayLater">
                 <argument name="countryCode" value="us"/>
             </actionGroup>
-            <actionGroup ref="AdminSaveConfigActionGroup" stepKey="saveCartHeaderPosition"/>
+            <actionGroup ref="AdminSaveConfigActionGroup" stepKey="saveAdminConfigAfterEnablingPayLater"/>
         </before>
         <after>
             <!-- Delete product, disable PayPal pay later, PayPal express checkout and logout from admin -->
@@ -39,24 +38,6 @@
             <actionGroup ref="AdminPayPalExpressCheckoutDisableActionGroup" stepKey="disableExpressCheckout"/>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutAdmin"/>
         </after>
-        <!-- Step 2: Enable cart page display for pay later and select header on position dropdown -->
-        <actionGroup ref="AdminSetPayLaterPositionByCliActionGroup" stepKey="setCartPositions"/>
-        <actionGroup ref="CliIndexerReindexActionGroup" stepKey="doTheReindexing">
-            <argument name="indices" value=""/>
-        </actionGroup>
-        <actionGroup ref="CliCacheFlushActionGroup" stepKey="doTheCacheFlush">
-            <argument name="tags" value=""/>
-        </actionGroup>
-        <!-- Step 3: Go to cart and verify pay later display on top of cart page -->
-        <actionGroup ref="StorefrontOpenProductEntityPageActionGroup" stepKey="openProduct">
-            <argument name="product" value="$createProduct$"/>
-        </actionGroup>
-        <actionGroup ref="AddSimpleProductToCartActionGroup" stepKey="addToCart">
-            <argument name="product" value="$createProduct$"/>
-        </actionGroup>
-        <actionGroup ref="StorefrontCartPageOpenActionGroup" stepKey="openCartPage"/>
-        <scrollToTopOfPage stepKey="scrollTopCart"/>
-        <waitForElementVisible selector="{{PaymentsAdvancedConfigSection.payLaterOnTopOfPage}}" stepKey="seePayLaterNearCartHeader"/>
         <!-- Step 4: Change cart position to near PayPal pay later checkout button -->
         <actionGroup ref="AdminSetPayLaterPositionByCliActionGroup" stepKey="setCartPosition">
             <argument name="page" value="cartpage"/>
@@ -69,9 +50,24 @@
         <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushTheCache">
             <argument name="tags" value=""/>
         </actionGroup>
+        <actionGroup ref="AddSimpleProductToCartActionGroup" stepKey="addToCart">
+            <argument name="product" value="$createProduct$"/>
+        </actionGroup>
         <!-- Verify pay later appears on cart near checkout area -->
-        <actionGroup ref="StorefrontCartPageOpenActionGroup" stepKey="reopenCartPage"/>
+        <actionGroup ref="StorefrontCartPageOpenActionGroup" stepKey="openCartPage"/>
         <waitForElementVisible selector="{{PaymentsAdvancedConfigSection.payLaterNearCheckoutButton}}" stepKey="seePayLaterNearCheckoutButton"/>
+        <!-- Step 2: Enable cart page display for pay later and select header on position dropdown -->
+        <actionGroup ref="AdminSetPayLaterPositionByCliActionGroup" stepKey="setCartPositions"/>
+        <actionGroup ref="CliIndexerReindexActionGroup" stepKey="doTheReindexing">
+            <argument name="indices" value=""/>
+        </actionGroup>
+        <actionGroup ref="CliCacheFlushActionGroup" stepKey="doTheCacheFlush">
+            <argument name="tags" value=""/>
+        </actionGroup>
+        <!-- Step 3: Go to cart and verify pay later display on top of cart page -->
+        <actionGroup ref="StorefrontCartPageOpenActionGroup" stepKey="reOpenCartPage"/>
+        <scrollToTopOfPage stepKey="scrollTopCart"/>
+        <waitForElementVisible selector="{{PaymentsAdvancedConfigSection.payLaterOnTopOfPage}}" stepKey="seePayLaterNearCartHeader"/>
         <!-- Step 5: Configure product page position and verify pay later display below category menu button -->
         <actionGroup ref="AdminSetPayLaterPositionByCliActionGroup" stepKey="setProductPositionCli">
             <argument name="page" value="productpage"/>
