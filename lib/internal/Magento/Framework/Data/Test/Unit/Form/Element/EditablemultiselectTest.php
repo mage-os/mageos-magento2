@@ -46,7 +46,6 @@ class EditablemultiselectTest extends TestCase
                 }
             );
         $escaper = $this->createMock(Escaper::class);
-        $escaper->method('escapeHtml')->willReturn('test-name');
         $this->_model = $testHelper->getObject(
             Editablemultiselect::class,
             [
