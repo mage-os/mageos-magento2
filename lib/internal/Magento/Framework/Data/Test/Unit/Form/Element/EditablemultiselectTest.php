@@ -11,6 +11,7 @@ use Magento\Framework\Data\Form\Element\Editablemultiselect;
 use Magento\Framework\DataObject;
 use Magento\Framework\Escaper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Magento\Framework\Math\Random;
 use Magento\Framework\View\Helper\SecureHtmlRenderer;
@@ -45,13 +46,12 @@ class EditablemultiselectTest extends TestCase
                     return "<$tag {$attrs->serialize()}>$content</$tag>";
                 }
             );
-        $escaper = $this->createMock(Escaper::class);
         $this->_model = $testHelper->getObject(
             Editablemultiselect::class,
             [
                 'random' => $randomMock,
                 'secureRenderer' => $secureRendererMock,
-                'escaper' => $escaper
+                'escaper' => new Escaper()
             ]
         );
         $values = [
