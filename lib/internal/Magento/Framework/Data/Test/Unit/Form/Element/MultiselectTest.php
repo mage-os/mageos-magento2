@@ -51,7 +51,7 @@ class MultiselectTest extends TestCase
             );
         $escaper = new Escaper();
         $this->_model = $testHelper->getObject(
-            Editablemultiselect::class,
+            Multiselect::class,
             [
                 '_escaper' => $escaper,
                 'random' => $randomMock,
