@@ -14,6 +14,7 @@
             <title value="Product import with description greater than 65,536 characters"/>
             <description value="Import product with description 65,536 chars Check Data and Import succeed"/>
             <severity value="MAJOR"/>
+            <testCaseId value="ACP2E-4119"/>
             <group value="importExport"/>
         </annotations>
         <before>
