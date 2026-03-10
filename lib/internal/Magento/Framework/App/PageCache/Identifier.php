@@ -108,7 +108,7 @@ class Identifier implements IdentifierInterface
         }
 
         $baseUrl = strtok($url, '?');
-        $queryString = parse_url($url, PHP_URL_QUERY) ?? '';
+        $queryString = parse_url($url, PHP_URL_QUERY) ?: '';
 
         $queryArray = [];
         if ($queryString !== '') {
