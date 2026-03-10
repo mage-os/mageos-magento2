@@ -214,7 +214,8 @@ class SaveTest extends TestCase
     }
 
     /**
-     * Create identity, serializer, userContext, timezone, dateTimeFilter, product and productFactory mocks for execute tests.
+     * Create identity, serializer, userContext, timezone, dateTimeFilter, product and productFactory
+     * mocks for execute tests.
      *
      * @param string|null $specialToDate Value for product->getSpecialToDate()
      * @return array<string, mixed>
@@ -274,7 +275,12 @@ class SaveTest extends TestCase
         $context->expects($this->atLeastOnce())->method('getRequest')->willReturn($request);
         $context->expects($this->atLeastOnce())->method('getMessageManager')->willReturn($messageManager);
         $context->expects($this->atLeastOnce())->method('getResultRedirectFactory')->willReturn($resultRedirectFactory);
-        return ['request' => $request, 'messageManager' => $messageManager, 'redirect' => $redirect, 'context' => $context];
+        return [
+            'request' => $request,
+            'messageManager' => $messageManager,
+            'redirect' => $redirect,
+            'context' => $context,
+        ];
     }
 
     /**
