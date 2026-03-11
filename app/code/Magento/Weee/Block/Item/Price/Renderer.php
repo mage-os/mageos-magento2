@@ -140,14 +140,6 @@ class Renderer extends \Magento\Tax\Block\Item\Price\Renderer
     {
         $item = $this->getItem();
         $rowTotalInclTax = (float)$item->getRowTotalInclTax();
-//        if ($rowTotalInclTax == 0.0) {
-//            $qty = method_exists($item, 'getTotalQty') ? (float)$item->getTotalQty() : (float)$item->getQty();
-//            $priceInclTax = (float)$item->getPriceInclTax();
-//            if ($priceInclTax > 0.0 && $qty > 0.0) {
-//                $rowTotalInclTax = $priceInclTax * $qty;
-//            }
-//        }
-
         if (!$this->weeeHelper->isEnabled($this->getStoreId())) {
             return $rowTotalInclTax;
         }
