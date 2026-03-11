@@ -164,7 +164,12 @@ class ToModelTest extends TestCase
             ->method('getConditions')
             ->willReturn([$dataCondition1, $dataCondition2]);
 
-        $extensionAttributes = $this->createMock(ConditionExtensionInterface::class);
+        $extensionAttributes = $this->createPartialMockWithReflection(
+            ConditionExtensionInterface::class,
+            [
+                'getAttributeScope'
+            ]
+        );
         $dataCondition->expects($this->once())->method('getExtensionAttributes')
             ->willReturn($extensionAttributes);
         $dataCondition1->expects($this->once())->method('getExtensionAttributes')
