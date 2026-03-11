@@ -138,7 +138,15 @@ class Renderer extends \Magento\Tax\Block\Item\Price\Renderer
      */
     public function getRowDisplayPriceInclTax()
     {
-        $rowTotalInclTax = $this->getItem()->getRowTotalInclTax();
+        $item = $this->getItem();
+        $rowTotalInclTax = (float)$item->getRowTotalInclTax();
+//        if ($rowTotalInclTax == 0.0) {
+//            $qty = method_exists($item, 'getTotalQty') ? (float)$item->getTotalQty() : (float)$item->getQty();
+//            $priceInclTax = (float)$item->getPriceInclTax();
+//            if ($priceInclTax > 0.0 && $qty > 0.0) {
+//                $rowTotalInclTax = $priceInclTax * $qty;
+//            }
+//        }
 
         if (!$this->weeeHelper->isEnabled($this->getStoreId())) {
             return $rowTotalInclTax;
@@ -232,7 +240,15 @@ class Renderer extends \Magento\Tax\Block\Item\Price\Renderer
      */
     public function getRowDisplayPriceExclTax()
     {
-        $rowTotalExclTax = $this->getItem()->getRowTotal();
+        $item = $this->getItem();
+        $rowTotalExclTax = (float)$item->getRowTotal();
+        if ($rowTotalExclTax <= 0) {
+            $qty = method_exists($item, 'getTotalQty') ? (float)$item->getTotalQty() : (float)$item->getQty();
+            $calculationPrice = (float)$item->getCalculationPrice();
+            if ($calculationPrice > 0 && $qty > 0) {
+                $rowTotalExclTax = $calculationPrice * $qty;
+            }
+        }
 
         if (!$this->weeeHelper->isEnabled($this->getStoreId())) {
             return $rowTotalExclTax;
