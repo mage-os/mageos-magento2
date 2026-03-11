@@ -42,7 +42,7 @@ class IndexTest extends TestCase
     /**
      * Response stub that records setRedirect calls for assertion.
      *
-     * @var ResponseInterface&object
+     * @var ResponseInterface|MockObject
      */
     private $responseStub;
 
