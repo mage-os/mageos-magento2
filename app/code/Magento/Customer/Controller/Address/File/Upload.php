@@ -78,6 +78,11 @@ class Upload extends Action implements HttpPostActionInterface
                 $attributeCode = key($requestedFiles);
                 $attributeMetadata = $this->addressMetadataService->getAttributeMetadata($attributeCode);
 
+                $frontendInput = $attributeMetadata->getFrontendInput();
+                if (!in_array($frontendInput, ['file', 'image'])) {
+                    throw new LocalizedException(__('Attribute "%1" does not support file uploads.', $attributeCode));
+                }
+
                 /** @var FileUploader $fileUploader */
                 $fileUploader = $this->fileUploaderFactory->create([
                     'attributeMetadata' => $attributeMetadata,
