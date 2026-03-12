@@ -7,7 +7,6 @@ declare(strict_types=1);
 
 namespace Magento\Framework\Data\Test\Unit\Form\Element;
 
-use Magento\Framework\Data\Form\Element\Editablemultiselect;
 use Magento\Framework\Data\Form\Element\Multiselect;
 use Magento\Framework\DataObject;
 use Magento\Framework\Escaper;
