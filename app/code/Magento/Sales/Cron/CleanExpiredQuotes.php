@@ -19,9 +19,9 @@ use Psr\Log\LoggerInterface;
 class CleanExpiredQuotes
 {
     /**
-     * Number of quotes processed per iteration.
+     * Default number of quotes processed per iteration.
      */
-    private const BATCH_SIZE = 5000;
+    private const DEFAULT_BATCH_SIZE = 5000;
 
     /**
      * @var ExpiredQuotesCollection
@@ -44,21 +44,29 @@ class CleanExpiredQuotes
     private $logger;
 
     /**
+     * @var int
+     */
+    private $batchSize;
+
+    /**
      * @param StoreManagerInterface $storeManager
      * @param ExpiredQuotesCollection $expiredQuotesCollection
      * @param QuoteRepository $quoteRepository
      * @param LoggerInterface $logger
+     * @param int $batchSize
      */
     public function __construct(
         StoreManagerInterface $storeManager,
         ExpiredQuotesCollection $expiredQuotesCollection,
         QuoteRepository $quoteRepository,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        int $batchSize = self::DEFAULT_BATCH_SIZE
     ) {
         $this->storeManager = $storeManager;
         $this->expiredQuotesCollection = $expiredQuotesCollection;
         $this->quoteRepository = $quoteRepository;
         $this->logger = $logger;
+        $this->batchSize = $batchSize > 0 ? $batchSize : self::DEFAULT_BATCH_SIZE;
     }
 
     /**
@@ -88,11 +96,11 @@ class CleanExpiredQuotes
             $quoteCollection->addFieldToSelect('entity_id');
             $quoteCollection->addFieldToFilter('main_table.entity_id', ['gt' => $lastProcessedId]);
             $quoteCollection->setOrder('main_table.entity_id', 'ASC');
-            $quoteCollection->setPageSize(self::BATCH_SIZE);
+            $quoteCollection->setPageSize($this->batchSize);
             $quoteCollection->setCurPage(1);
             $quoteCollection->getSelect()->distinct(true);
             $processedCount = $this->deleteQuotes($quoteCollection, $lastProcessedId);
-        } while ($processedCount === self::BATCH_SIZE);
+        } while ($processedCount === $this->batchSize);
     }
 
     /**
