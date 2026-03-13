@@ -7,16 +7,19 @@ use Magento\Backend\Model\VersionCheck\SystemPackageResolver;
 use Magento\Framework\Composer\ComposerInformation;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
 class SystemPackageResolverTest extends TestCase
 {
     private ComposerInformation|MockObject $composerInfo;
+    private LoggerInterface|MockObject $logger;
     private SystemPackageResolver $resolver;
 
     protected function setUp(): void
     {
         $this->composerInfo = $this->createMock(ComposerInformation::class);
-        $this->resolver = new SystemPackageResolver($this->composerInfo);
+        $this->logger = $this->createMock(LoggerInterface::class);
+        $this->resolver = new SystemPackageResolver($this->composerInfo, $this->logger);
     }
 
     public function testResolvesPackageNameAndVersion(): void
@@ -50,6 +53,26 @@ class SystemPackageResolverTest extends TestCase
                 'version' => '2.1.0',
             ],
         ]);
+
+        $this->resolver->getPackageName();
+        $this->resolver->getPackageName();
+    }
+
+    public function testReturnsNullAndLogsOnException(): void
+    {
+        $this->composerInfo->method('getSystemPackages')
+            ->willThrowException(new \RuntimeException('composer.lock not found'));
+
+        $this->logger->expects($this->once())->method('warning');
+
+        $this->assertNull($this->resolver->getPackageName());
+        $this->assertNull($this->resolver->getInstalledVersion());
+    }
+
+    public function testExceptionCachedSoSecondCallDoesNotRetry(): void
+    {
+        $this->composerInfo->expects($this->once())->method('getSystemPackages')
+            ->willThrowException(new \RuntimeException('broken'));
 
         $this->resolver->getPackageName();
         $this->resolver->getPackageName();

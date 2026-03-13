@@ -107,6 +107,18 @@ class FooterTest extends TestCase
         $this->assertContains('latest_version_none', $cacheKeyInfo);
     }
 
+    public function testGetCacheKeyInfoFallsBackOnException(): void
+    {
+        $versionComparison = $this->createMock(VersionComparisonInterface::class);
+        $versionComparison->method('getLatestVersion')
+            ->willThrowException(new \RuntimeException('broken'));
+
+        $block = $this->createFooterBlockForCacheTest($versionComparison);
+        $cacheKeyInfo = $block->getCacheKeyInfo();
+
+        $this->assertContains('latest_version_error', $cacheKeyInfo);
+    }
+
     private function createFooterBlockForCacheTest(
         VersionComparisonInterface|MockObject $versionComparison
     ): Footer {

@@ -199,7 +199,7 @@
     <preference for="Magento\Backend\Api\VersionComparisonInterface" type="Magento\Backend\Model\VersionCheck\VersionComparison" />
     <type name="Magento\Backend\Block\Page\Footer">
         <arguments>
-            <argument name="versionComparison" xsi:type="object">Magento\Backend\Api\VersionComparisonInterface\Proxy</argument>
+            <argument name="versionComparison" xsi:type="object">Magento\Backend\Model\VersionCheck\VersionComparison\Proxy</argument>
         </arguments>
     </type>
     <type name="Magento\Backend\Model\VersionCheck\LatestVersionFetcher">

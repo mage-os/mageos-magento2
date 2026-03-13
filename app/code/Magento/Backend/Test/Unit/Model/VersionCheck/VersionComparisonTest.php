@@ -9,12 +9,14 @@ use Magento\Backend\Model\VersionCheck\SystemPackageResolver;
 use Magento\Backend\Model\VersionCheck\VersionComparison;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
 class VersionComparisonTest extends TestCase
 {
     private LatestVersionFetcher|MockObject $fetcher;
     private SystemPackageResolver|MockObject $packageResolver;
     private VersionParser $versionParser;
+    private LoggerInterface|MockObject $logger;
     private VersionComparison $comparison;
 
     protected function setUp(): void
@@ -22,11 +24,13 @@ class VersionComparisonTest extends TestCase
         $this->fetcher = $this->createMock(LatestVersionFetcher::class);
         $this->packageResolver = $this->createMock(SystemPackageResolver::class);
         $this->versionParser = new VersionParser();
+        $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->comparison = new VersionComparison(
             $this->fetcher,
             $this->packageResolver,
-            $this->versionParser
+            $this->versionParser,
+            $this->logger
         );
     }
 
@@ -122,6 +126,16 @@ class VersionComparisonTest extends TestCase
     {
         $this->packageResolver->method('getInstalledVersion')->willReturn('2.4.8-p3');
         $this->fetcher->method('getLatestVersion')->willReturn('2.4.8-p4');
+
+        $this->assertFalse($this->comparison->isMajorOrMinorUpdate());
+    }
+
+    public function testIsMajorOrMinorUpdateLogsWarningOnNormalizationFailure(): void
+    {
+        $this->packageResolver->method('getInstalledVersion')->willReturn('not-a-version');
+        $this->fetcher->method('getLatestVersion')->willReturn('2.1.0');
+
+        $this->logger->expects($this->once())->method('warning');
 
         $this->assertFalse($this->comparison->isMajorOrMinorUpdate());
     }

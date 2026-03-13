@@ -6,6 +6,7 @@ namespace Magento\Backend\Model\VersionCheck;
 use Composer\Semver\Comparator;
 use Composer\Semver\VersionParser;
 use Magento\Backend\Api\VersionComparisonInterface;
+use Psr\Log\LoggerInterface;
 
 class VersionComparison implements VersionComparisonInterface
 {
@@ -16,7 +17,8 @@ class VersionComparison implements VersionComparisonInterface
     public function __construct(
         private readonly LatestVersionFetcher $fetcher,
         private readonly SystemPackageResolver $packageResolver,
-        private readonly VersionParser $versionParser
+        private readonly VersionParser $versionParser,
+        private readonly LoggerInterface $logger
     ) {
     }
 
@@ -42,6 +44,14 @@ class VersionComparison implements VersionComparisonInterface
             $currentNormalized = $parser->normalize($this->currentVersion);
             $latestNormalized = $parser->normalize($this->latestVersion);
         } catch (\UnexpectedValueException $e) {
+            $this->logger->warning(
+                'Version normalization failed during major/minor comparison',
+                [
+                    'current' => $this->currentVersion,
+                    'latest' => $this->latestVersion,
+                    'exception' => $e,
+                ]
+            );
             return false;
         }
 

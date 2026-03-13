@@ -137,7 +137,7 @@ class LatestVersionFetcher
             if ($latestStable !== null) {
                 $baseTtl = (int) $this->scopeConfig->getValue(self::XML_PATH_CACHE_LIFETIME)
                     ?: self::CACHE_LIFETIME;
-                $ttl = $baseTtl + random_int(-self::CACHE_JITTER, self::CACHE_JITTER);
+                $ttl = max(60, $baseTtl + random_int(-self::CACHE_JITTER, self::CACHE_JITTER));
                 $this->cache->save($latestStable, $cacheKey, [], $ttl);
             } else {
                 $this->cache->save('', $cacheKey, [], self::NEGATIVE_CACHE_LIFETIME);

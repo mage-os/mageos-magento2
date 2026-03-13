@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace Magento\Backend\Model\VersionCheck;
 
 use Magento\Framework\Composer\ComposerInformation;
+use Psr\Log\LoggerInterface;
+use Throwable;
 
 class SystemPackageResolver
 {
@@ -11,7 +13,8 @@ class SystemPackageResolver
     private bool $resolved = false;
 
     public function __construct(
-        private readonly ComposerInformation $composerInformation
+        private readonly ComposerInformation $composerInformation,
+        private readonly LoggerInterface $logger
     ) {
     }
 
@@ -28,9 +31,18 @@ class SystemPackageResolver
     private function resolve(): ?array
     {
         if (!$this->resolved) {
-            $packages = $this->composerInformation->getSystemPackages();
-            $this->resolvedPackage = !empty($packages) ? reset($packages) : null;
-            $this->resolved = true;
+            try {
+                $packages = $this->composerInformation->getSystemPackages();
+                $this->resolvedPackage = !empty($packages) ? reset($packages) : null;
+            } catch (Throwable $e) {
+                $this->logger->warning(
+                    'Failed to resolve system packages for version check',
+                    ['exception' => $e]
+                );
+                $this->resolvedPackage = null;
+            } finally {
+                $this->resolved = true;
+            }
         }
 
         return $this->resolvedPackage;
