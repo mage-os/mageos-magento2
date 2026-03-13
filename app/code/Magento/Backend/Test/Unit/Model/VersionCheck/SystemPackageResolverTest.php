@@ -11,8 +11,19 @@ use Psr\Log\LoggerInterface;
 
 class SystemPackageResolverTest extends TestCase
 {
+    /**
+     * @var ComposerInformation|MockObject
+     */
     private ComposerInformation|MockObject $composerInfo;
+
+    /**
+     * @var LoggerInterface|MockObject
+     */
     private LoggerInterface|MockObject $logger;
+
+    /**
+     * @var SystemPackageResolver
+     */
     private SystemPackageResolver $resolver;
 
     protected function setUp(): void

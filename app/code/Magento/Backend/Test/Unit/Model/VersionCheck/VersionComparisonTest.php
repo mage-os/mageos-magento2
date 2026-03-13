@@ -13,10 +13,29 @@ use Psr\Log\LoggerInterface;
 
 class VersionComparisonTest extends TestCase
 {
+    /**
+     * @var LatestVersionFetcher|MockObject
+     */
     private LatestVersionFetcher|MockObject $fetcher;
+
+    /**
+     * @var SystemPackageResolver|MockObject
+     */
     private SystemPackageResolver|MockObject $packageResolver;
+
+    /**
+     * @var VersionParser
+     */
     private VersionParser $versionParser;
+
+    /**
+     * @var LoggerInterface|MockObject
+     */
     private LoggerInterface|MockObject $logger;
+
+    /**
+     * @var VersionComparison
+     */
     private VersionComparison $comparison;
 
     protected function setUp(): void

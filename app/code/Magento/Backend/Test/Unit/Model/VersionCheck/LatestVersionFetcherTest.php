@@ -16,13 +16,44 @@ use Psr\Log\LoggerInterface;
 
 class LatestVersionFetcherTest extends TestCase
 {
+    /**
+     * @var ClientInterface|MockObject
+     */
     private ClientInterface|MockObject $httpClient;
+
+    /**
+     * @var CacheInterface|MockObject
+     */
     private CacheInterface|MockObject $cache;
+
+    /**
+     * @var LoggerInterface|MockObject
+     */
     private LoggerInterface|MockObject $logger;
+
+    /**
+     * @var SystemPackageResolver|MockObject
+     */
     private SystemPackageResolver|MockObject $packageResolver;
+
+    /**
+     * @var ComposerInformation|MockObject
+     */
     private ComposerInformation|MockObject $composerInformation;
+
+    /**
+     * @var ScopeConfigInterface|MockObject
+     */
     private ScopeConfigInterface|MockObject $scopeConfig;
+
+    /**
+     * @var VersionParser
+     */
     private VersionParser $versionParser;
+
+    /**
+     * @var LatestVersionFetcher
+     */
     private LatestVersionFetcher $fetcher;
 
     protected function setUp(): void

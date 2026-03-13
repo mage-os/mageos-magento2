@@ -22,8 +22,19 @@ use stdClass;
 
 class FooterTest extends TestCase
 {
+    /**
+     * @var VersionComparisonInterface|MockObject
+     */
     private VersionComparisonInterface|MockObject $versionComparison;
+
+    /**
+     * @var ScopeConfigInterface|MockObject
+     */
     private ScopeConfigInterface|MockObject $scopeConfig;
+
+    /**
+     * @var Footer
+     */
     private Footer $block;
 
     protected function setUp(): void
