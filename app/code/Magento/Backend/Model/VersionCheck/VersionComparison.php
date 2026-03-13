@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Magento\Backend\Model\VersionCheck;
 
 use Composer\Semver\Comparator;
+use Composer\Semver\VersionParser;
 use Magento\Backend\Api\VersionComparisonInterface;
 
 class VersionComparison implements VersionComparisonInterface
@@ -14,7 +15,8 @@ class VersionComparison implements VersionComparisonInterface
 
     public function __construct(
         private readonly LatestVersionFetcher $fetcher,
-        private readonly SystemPackageResolver $packageResolver
+        private readonly SystemPackageResolver $packageResolver,
+        private readonly VersionParser $versionParser
     ) {
     }
 
@@ -35,8 +37,16 @@ class VersionComparison implements VersionComparisonInterface
             return false;
         }
 
-        $currentParts = explode('.', $this->currentVersion);
-        $latestParts = explode('.', $this->latestVersion);
+        $parser = $this->versionParser;
+        try {
+            $currentNormalized = $parser->normalize($this->currentVersion);
+            $latestNormalized = $parser->normalize($this->latestVersion);
+        } catch (\UnexpectedValueException $e) {
+            return false;
+        }
+
+        $currentParts = explode('.', $currentNormalized);
+        $latestParts = explode('.', $latestNormalized);
 
         return ($latestParts[0] ?? '0') !== ($currentParts[0] ?? '0')
             || ($latestParts[1] ?? '0') !== ($currentParts[1] ?? '0');

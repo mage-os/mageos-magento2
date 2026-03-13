@@ -10,6 +10,8 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\ProductMetadataInterface;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\App\ObjectManager;
+use Magento\Store\Api\Data\StoreInterface;
+use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -81,5 +83,56 @@ class FooterTest extends TestCase
         $this->assertFalse($block->isUpdateAvailable());
         $this->assertNull($block->getLatestVersion());
         $this->assertFalse($block->isMajorOrMinorUpdate());
+    }
+
+    public function testGetCacheKeyInfoIncludesVersionString(): void
+    {
+        $versionComparison = $this->createMock(VersionComparisonInterface::class);
+        $versionComparison->method('getLatestVersion')->willReturn('2.5.0');
+
+        $block = $this->createFooterBlockForCacheTest($versionComparison);
+        $cacheKeyInfo = $block->getCacheKeyInfo();
+
+        $this->assertContains('latest_version_2.5.0', $cacheKeyInfo);
+    }
+
+    public function testGetCacheKeyInfoIncludesNoneWhenNoVersion(): void
+    {
+        $versionComparison = $this->createMock(VersionComparisonInterface::class);
+        $versionComparison->method('getLatestVersion')->willReturn(null);
+
+        $block = $this->createFooterBlockForCacheTest($versionComparison);
+        $cacheKeyInfo = $block->getCacheKeyInfo();
+
+        $this->assertContains('latest_version_none', $cacheKeyInfo);
+    }
+
+    private function createFooterBlockForCacheTest(
+        VersionComparisonInterface|MockObject $versionComparison
+    ): Footer {
+        $store = $this->createMock(StoreInterface::class);
+        $store->method('getCode')->willReturn('default');
+        $storeManager = $this->createMock(StoreManagerInterface::class);
+        $storeManager->method('getStore')->willReturn($store);
+
+        $appState = $this->createMock(\Magento\Framework\App\State::class);
+        $appState->method('getAreaCode')->willReturn('adminhtml');
+
+        $resolver = $this->createMock(\Magento\Framework\View\Element\Template\File\Resolver::class);
+        $resolver->method('getTemplateFileName')->willReturn('');
+
+        $urlBuilder = $this->createMock(\Magento\Framework\UrlInterface::class);
+        $urlBuilder->method('getBaseUrl')->willReturn('https://example.com/');
+
+        $context = $this->createMock(Context::class);
+        $context->method('getScopeConfig')->willReturn($this->scopeConfig);
+        $context->method('getStoreManager')->willReturn($storeManager);
+        $context->method('getAppState')->willReturn($appState);
+        $context->method('getResolver')->willReturn($resolver);
+        $context->method('getUrlBuilder')->willReturn($urlBuilder);
+
+        $productMetadata = $this->createMock(ProductMetadataInterface::class);
+
+        return new Footer($context, $productMetadata, $versionComparison);
     }
 }

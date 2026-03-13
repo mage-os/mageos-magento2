@@ -123,6 +123,16 @@ class Footer extends \Magento\Backend\Block\Template
 
     /**
      * @inheritdoc
+     */
+    public function getCacheKeyInfo(): array
+    {
+        $info = parent::getCacheKeyInfo();
+        $info[] = 'latest_version_' . ($this->versionComparison?->getLatestVersion() ?? 'none');
+        return $info;
+    }
+
+    /**
+     * @inheritdoc
      * @since 101.0.0
      */
     protected function getCacheLifetime()

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Magento\Backend\Test\Unit\Model\VersionCheck;
 
+use Composer\Semver\VersionParser;
 use Magento\Backend\Model\VersionCheck\LatestVersionFetcher;
 use Magento\Backend\Model\VersionCheck\SystemPackageResolver;
 use Magento\Backend\Model\VersionCheck\VersionComparison;
@@ -13,16 +14,19 @@ class VersionComparisonTest extends TestCase
 {
     private LatestVersionFetcher|MockObject $fetcher;
     private SystemPackageResolver|MockObject $packageResolver;
+    private VersionParser $versionParser;
     private VersionComparison $comparison;
 
     protected function setUp(): void
     {
         $this->fetcher = $this->createMock(LatestVersionFetcher::class);
         $this->packageResolver = $this->createMock(SystemPackageResolver::class);
+        $this->versionParser = new VersionParser();
 
         $this->comparison = new VersionComparison(
             $this->fetcher,
-            $this->packageResolver
+            $this->packageResolver,
+            $this->versionParser
         );
     }
 
@@ -102,6 +106,22 @@ class VersionComparisonTest extends TestCase
     {
         $this->packageResolver->method('getInstalledVersion')->willReturn(null);
         $this->fetcher->method('getLatestVersion')->willReturn('2.1.0');
+
+        $this->assertFalse($this->comparison->isMajorOrMinorUpdate());
+    }
+
+    public function testIsMajorOrMinorUpdateWithPatchSuffix(): void
+    {
+        $this->packageResolver->method('getInstalledVersion')->willReturn('2.4.8-p4');
+        $this->fetcher->method('getLatestVersion')->willReturn('2.5.0');
+
+        $this->assertTrue($this->comparison->isMajorOrMinorUpdate());
+    }
+
+    public function testIsNotMajorOrMinorUpdateWithPatchSuffixSameMinor(): void
+    {
+        $this->packageResolver->method('getInstalledVersion')->willReturn('2.4.8-p3');
+        $this->fetcher->method('getLatestVersion')->willReturn('2.4.8-p4');
 
         $this->assertFalse($this->comparison->isMajorOrMinorUpdate());
     }
