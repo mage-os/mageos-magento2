@@ -8,12 +8,32 @@ use Composer\Semver\VersionParser;
 use Psr\Log\LoggerInterface;
 use UnexpectedValueException;
 
+/**
+ * Compares the installed distribution version against the latest available version.
+ */
 class VersionComparison implements VersionComparisonInterface
 {
+    /**
+     * @var bool
+     */
     private bool $resolved = false;
+
+    /**
+     * @var string|null
+     */
     private ?string $latestVersion = null;
+
+    /**
+     * @var string|null
+     */
     private ?string $currentVersion = null;
 
+    /**
+     * @param LatestVersionFetcher $fetcher
+     * @param SystemPackageResolver $packageResolver
+     * @param VersionParser $versionParser
+     * @param LoggerInterface $logger
+     */
     public function __construct(
         private readonly LatestVersionFetcher $fetcher,
         private readonly SystemPackageResolver $packageResolver,
@@ -22,6 +42,9 @@ class VersionComparison implements VersionComparisonInterface
     ) {
     }
 
+    /**
+     * @inheritdoc
+     */
     public function isUpdateAvailable(): bool
     {
         $this->resolve();
@@ -33,6 +56,9 @@ class VersionComparison implements VersionComparisonInterface
         return Comparator::greaterThan($this->latestVersion, $this->currentVersion);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function isMajorOrMinorUpdate(): bool
     {
         if (!$this->isUpdateAvailable()) {
@@ -62,18 +88,29 @@ class VersionComparison implements VersionComparisonInterface
             || ($latestParts[1] ?? '0') !== ($currentParts[1] ?? '0');
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getCurrentVersion(): ?string
     {
         $this->resolve();
         return $this->currentVersion;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getLatestVersion(): ?string
     {
         $this->resolve();
         return $this->latestVersion;
     }
 
+    /**
+     * Lazy-resolve current and latest versions
+     *
+     * @return void
+     */
     private function resolve(): void
     {
         if (!$this->resolved) {

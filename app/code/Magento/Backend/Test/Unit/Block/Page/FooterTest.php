@@ -80,6 +80,17 @@ class FooterTest extends TestCase
 
     public function testBackwardCompatibleWithoutVersionComparison(): void
     {
+        $versionComparison = $this->createMock(VersionComparisonInterface::class);
+        $objectManager = $this->getMockForAbstractClass(ObjectManagerInterface::class);
+        $objectManager->method('get')
+            ->willReturnCallback(function (string $type) use ($versionComparison) {
+                if ($type === VersionComparisonInterface::class) {
+                    return $versionComparison;
+                }
+                return new stdClass();
+            });
+        ObjectManager::setInstance($objectManager);
+
         $context = $this->createMock(Context::class);
         $productMetadata = $this->createMock(ProductMetadataInterface::class);
 

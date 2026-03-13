@@ -23,6 +23,15 @@ class LatestVersionFetcher
     public const XML_PATH_ENABLED = 'system/version_check/enabled';
     public const XML_PATH_CACHE_LIFETIME = 'system/version_check/cache_lifetime';
 
+    /**
+     * @param ClientInterface $httpClient
+     * @param CacheInterface $cache
+     * @param LoggerInterface $logger
+     * @param SystemPackageResolver $packageResolver
+     * @param ComposerInformation $composerInformation
+     * @param ScopeConfigInterface $scopeConfig
+     * @param VersionParser $versionParser
+     */
     public function __construct(
         private readonly ClientInterface $httpClient,
         private readonly CacheInterface $cache,
@@ -35,8 +44,11 @@ class LatestVersionFetcher
     }
 
     /**
-     * Read-only: returns cached latest version or null if cache is cold/empty.
+     * Read-only: returns cached latest version or null if cache is cold/empty
+     *
      * Never makes HTTP calls — safe for use during page render.
+     *
+     * @return string|null
      */
     public function getLatestVersion(): ?string
     {
@@ -64,8 +76,11 @@ class LatestVersionFetcher
     }
 
     /**
-     * Fetch latest version via HTTP and write to cache.
+     * Fetch latest version via HTTP and write to cache
+     *
      * Called by cron — skips HTTP if cache is already warm.
+     *
+     * @return string|null
      */
     public function fetchAndCache(): ?string
     {
@@ -149,6 +164,12 @@ class LatestVersionFetcher
         return $latestStable;
     }
 
+    /**
+     * Find the latest stable version from a list of package version entries
+     *
+     * @param array $versions
+     * @return string|null
+     */
     private function findLatestStable(array $versions): ?string
     {
         $parser = $this->versionParser;
