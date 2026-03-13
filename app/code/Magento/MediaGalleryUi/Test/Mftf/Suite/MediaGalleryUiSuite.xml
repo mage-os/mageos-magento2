@@ -24,7 +24,6 @@
             <actionGroup ref="AdminOpenMediaGalleryFromPageNoEditorActionGroup" stepKey="openMediaGalleryForPage"/>
             <conditionalClick selector="{{AdminEnhancedMediaGalleryFiltersSection.clearFilters}}" dependentSelector="{{AdminEnhancedMediaGalleryFiltersSection.clearFilters}}" visible="true" stepKey="clearExistingFilters2"/>
             <waitForPageLoad stepKey="waitForPageToLoadAfterClearingFilters2"/>
-            <pause stepKey="pauseToCreateMediaGalleryDirectories21"/>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
         </before>
         <after>
