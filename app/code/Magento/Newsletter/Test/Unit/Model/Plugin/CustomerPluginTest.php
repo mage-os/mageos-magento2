@@ -11,10 +11,11 @@ use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Customer\Api\Data\CustomerExtensionInterface;
 use Magento\Customer\Api\Data\CustomerInterface;
 use Magento\Customer\Model\Config\Share;
-use Magento\Customer\Model\ResourceModel\CustomerRepository;
 use Magento\Framework\Api\ExtensionAttributesFactory;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+use Magento\Framework\Api\SearchResults;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Newsletter\Model\CustomerSubscriberCache;
 use Magento\Newsletter\Model\Plugin\CustomerPlugin;
 use Magento\Newsletter\Model\ResourceModel\Subscriber\Collection;
 use Magento\Newsletter\Model\ResourceModel\Subscriber\CollectionFactory;
@@ -27,16 +28,16 @@ use Magento\Store\Model\Website;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
 /**
  * Class to test Newsletter Plugin for customer
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @covers \Magento\Newsletter\Model\Plugin\CustomerPlugin
  */
 class CustomerPluginTest extends TestCase
 {
-    use MockCreationTrait;
-
     /**
      * @var SubscriberFactory|MockObject
      */
@@ -68,6 +69,16 @@ class CustomerPluginTest extends TestCase
     private $storeManager;
 
     /**
+     * @var LoggerInterface|MockObject
+     */
+    private $logger;
+
+    /**
+     * @var CustomerSubscriberCache|MockObject
+     */
+    private $customerSubscriberCache;
+
+    /**
      * @var ObjectManager
      */
     private $objectManager;
@@ -88,6 +99,8 @@ class CustomerPluginTest extends TestCase
         $this->subscriptionManager = $this->createMock(SubscriptionManagerInterface::class);
         $this->shareConfig = $this->createMock(Share::class);
         $this->storeManager = $this->createMock(StoreManagerInterface::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
+        $this->customerSubscriberCache = $this->createMock(CustomerSubscriberCache::class);
         $this->objectManager = new ObjectManager($this);
         $this->plugin = $this->objectManager->getObject(
             CustomerPlugin::class,
@@ -98,6 +111,8 @@ class CustomerPluginTest extends TestCase
                 'subscriptionManager' => $this->subscriptionManager,
                 'shareConfig' => $this->shareConfig,
                 'storeManager' => $this->storeManager,
+                'logger' => $this->logger,
+                'customerSubscriberCache' => $this->customerSubscriberCache,
             ]
         );
     }
@@ -105,17 +120,21 @@ class CustomerPluginTest extends TestCase
     /**
      * Test to update customer subscription after save customer
      *
+     * @covers \Magento\Newsletter\Model\Plugin\CustomerPlugin::afterSave()
      * @param int|null $originalStatus
      * @param bool|null $newValue
      * @param bool|null $expectedSubscribe
+     * @return void
      */
     #[DataProvider('afterSaveDataProvider')]
-    public function testAfterSave(?int $originalStatus, ?bool $newValue, ?bool $expectedSubscribe)
+    public function testAfterSave(?int $originalStatus, ?bool $newValue, ?bool $expectedSubscribe): void
     {
         $storeId = 2;
         $websiteId = 1;
         $customerId = 3;
         $customerEmail = 'email@example.com';
+
+        $this->customerSubscriberCache->method('getCustomerSubscriber')->with($customerId)->willReturn(null);
 
         $store = $this->createMock(StoreInterface::class);
         $store->method('getId')->willReturn($storeId);
@@ -140,10 +159,8 @@ class CustomerPluginTest extends TestCase
         }
         $this->subscriberFactory->method('create')->willReturn($subscriber);
 
-        $customerExtension = $this->createPartialMockWithReflection(
-            CustomerExtensionInterface::class,
-            ['getIsSubscribed']
-        );
+        /** @var CustomerExtensionInterface|MockObject $customerExtension */
+        $customerExtension = $this->createMock(CustomerExtensionInterface::class);
         $customerExtension->method('getIsSubscribed')->willReturn($newValue);
         /** @var CustomerInterface|MockObject $customer */
         $customer = $this->createMock(CustomerInterface::class);
@@ -157,14 +174,18 @@ class CustomerPluginTest extends TestCase
                 ->method($expectedSubscribe ? 'subscribeCustomer' : 'unsubscribeCustomer')
                 ->with($customerId, $storeId)
                 ->willReturn($resultSubscriber);
+            $this->customerSubscriberCache->expects($this->exactly(2))
+                ->method('setCustomerSubscriber')
+                ->with($customerId, $this->isInstanceOf(Subscriber::class));
         } else {
             $this->subscriptionManager->expects($this->never())->method('subscribeCustomer');
             $this->subscriptionManager->expects($this->never())->method('unsubscribeCustomer');
+            $this->customerSubscriberCache->expects($this->once())
+                ->method('setCustomerSubscriber')
+                ->with($customerId, $subscriber);
         }
-        $resultExtension = $this->createPartialMockWithReflection(
-            CustomerExtensionInterface::class,
-            ['setIsSubscribed']
-        );
+        /** @var CustomerExtensionInterface|MockObject $resultExtension */
+        $resultExtension = $this->createMock(CustomerExtensionInterface::class);
         $resultExtension->expects($this->once())->method('setIsSubscribed')->with($resultIsSubscribed);
         /** @var CustomerInterface|MockObject $result */
         $result = $this->createMock(CustomerInterface::class);
@@ -172,15 +193,15 @@ class CustomerPluginTest extends TestCase
         $result->method('getEmail')->willReturn($customerEmail);
         $result->method('getExtensionAttributes')->willReturn($resultExtension);
 
-        /** @var CustomerRepository|MockObject $subject */
+        /** @var CustomerRepositoryInterface|MockObject $subject */
         $subject = $this->createMock(CustomerRepositoryInterface::class);
-        $this->assertEquals($result, $this->plugin->afterSave($subject, $result, $customer));
+        $this->assertSame($result, $this->plugin->afterSave($subject, $result, $customer));
     }
 
     /**
      * Data provider for testAfterSave()
      *
-     * @return array
+     * @return array<string, array<int|null, bool|null, bool|null>>
      */
     public static function afterSaveDataProvider(): array
     {
@@ -202,8 +223,11 @@ class CustomerPluginTest extends TestCase
 
     /**
      * Test to delete subscriptions after delete customer
+     *
+     * @covers \Magento\Newsletter\Model\Plugin\CustomerPlugin::afterDelete()
+     * @return void
      */
-    public function testAfterDelete()
+    public function testAfterDelete(): void
     {
         $customerEmail = 'email@example.com';
         $websiteId = 1;
@@ -234,8 +258,11 @@ class CustomerPluginTest extends TestCase
 
     /**
      * Test to delete subscriptions after delete customer by id
+     *
+     * @covers \Magento\Newsletter\Model\Plugin\CustomerPlugin::aroundDeleteById()
+     * @return void
      */
-    public function testAroundDeleteById()
+    public function testAroundDeleteById(): void
     {
         $customerId = 1;
         $customerEmail = 'test@test.com';
@@ -268,7 +295,10 @@ class CustomerPluginTest extends TestCase
     }
 
     /**
-     * Test to load extension attribute after get by id
+     * Test to load extension attribute after get by id when not set
+     *
+     * @covers \Magento\Newsletter\Model\Plugin\CustomerPlugin::afterGetById()
+     * @return void
      */
     public function testAfterGetByIdCreatesExtensionAttributes(): void
     {
@@ -277,6 +307,11 @@ class CustomerPluginTest extends TestCase
         $customerId = 3;
         $customerEmail = 'email@example.com';
         $subscribed = true;
+
+        $this->customerSubscriberCache->method('getCustomerSubscriber')->with($customerId)->willReturn(null);
+        $this->customerSubscriberCache->expects($this->once())
+            ->method('setCustomerSubscriber')
+            ->with($customerId, $this->isInstanceOf(Subscriber::class));
 
         $store = $this->createMock(StoreInterface::class);
         $store->method('getId')->willReturn($storeId);
@@ -287,6 +322,7 @@ class CustomerPluginTest extends TestCase
         $customer = $this->createMock(CustomerInterface::class);
         $customer->method('getId')->willReturn($customerId);
         $customer->method('getEmail')->willReturn($customerEmail);
+        $customer->method('getExtensionAttributes')->willReturn(null);
 
         $subscriber = $this->createMock(Subscriber::class);
         $subscriber->method('getEmail')->willReturn($customerEmail);
@@ -301,19 +337,169 @@ class CustomerPluginTest extends TestCase
             ->willReturnSelf();
         $this->subscriberFactory->method('create')->willReturn($subscriber);
 
-        $customerExtension = $this->createPartialMockWithReflection(
-            CustomerExtensionInterface::class,
-            ['setIsSubscribed']
-        );
+        /** @var CustomerExtensionInterface|MockObject $customerExtension */
+        $customerExtension = $this->createMock(CustomerExtensionInterface::class);
         $customerExtension->expects($this->once())->method('setIsSubscribed')->with($subscribed);
         $this->extensionFactory->expects($this->once())->method('create')->willReturn($customerExtension);
         $customer->expects($this->once())->method('setExtensionAttributes')->with($customerExtension);
 
         /** @var CustomerRepositoryInterface|MockObject $subject */
         $subject = $this->createMock(CustomerRepositoryInterface::class);
-        $this->assertEquals(
+        $this->assertSame(
             $customer,
             $this->plugin->afterGetById($subject, $customer)
         );
+    }
+
+    /**
+     * Test afterGetById does not overwrite when extension attribute is_subscribed already set
+     *
+     * @covers \Magento\Newsletter\Model\Plugin\CustomerPlugin::afterGetById()
+     * @return void
+     */
+    public function testAfterGetByIdDoesNotOverwriteWhenExtensionAttributeAlreadySet(): void
+    {
+        /** @var CustomerExtensionInterface|MockObject $customerExtension */
+        $customerExtension = $this->createMock(CustomerExtensionInterface::class);
+        $customerExtension->method('getIsSubscribed')->willReturn(true);
+        $customerExtension->expects($this->never())->method('setIsSubscribed');
+
+        /** @var CustomerInterface|MockObject $customer */
+        $customer = $this->createMock(CustomerInterface::class);
+        $customer->method('getExtensionAttributes')->willReturn($customerExtension);
+
+        $this->subscriberFactory->expects($this->never())->method('create');
+        $this->extensionFactory->expects($this->never())->method('create');
+
+        /** @var CustomerRepositoryInterface|MockObject $subject */
+        $subject = $this->createMock(CustomerRepositoryInterface::class);
+        $this->assertSame($customer, $this->plugin->afterGetById($subject, $customer));
+    }
+
+    /**
+     * Test afterGetList adds subscription status to each customer in search results
+     *
+     * @covers \Magento\Newsletter\Model\Plugin\CustomerPlugin::afterGetList()
+     * @return void
+     */
+    public function testAfterGetListAddsSubscriptionStatusToCustomers(): void
+    {
+        $customer1Id = '1';
+        $customer2Id = '2';
+        $email1 = 'customer1@example.com';
+        $email2 = 'customer2@example.com';
+
+        /** @var CustomerInterface|MockObject $customer1 */
+        $customer1 = $this->createMock(CustomerInterface::class);
+        $customer1->method('getId')->willReturn($customer1Id);
+        $customer1->method('getEmail')->willReturn($email1);
+        /** @var CustomerExtensionInterface|MockObject $extension1 */
+        $extension1 = $this->createMock(CustomerExtensionInterface::class);
+        $extension1->expects($this->once())->method('setIsSubscribed')->with(true);
+        $customer1->method('getExtensionAttributes')->willReturn($extension1);
+
+        /** @var CustomerInterface|MockObject $customer2 */
+        $customer2 = $this->createMock(CustomerInterface::class);
+        $customer2->method('getId')->willReturn($customer2Id);
+        $customer2->method('getEmail')->willReturn($email2);
+        /** @var CustomerExtensionInterface|MockObject $extension2 */
+        $extension2 = $this->createMock(CustomerExtensionInterface::class);
+        $extension2->expects($this->once())->method('setIsSubscribed')->with(false);
+        $customer2->method('getExtensionAttributes')->willReturn($extension2);
+
+        $subscriber1 = $this->createMock(Subscriber::class);
+        $subscriber1->method('getStatus')->willReturn(Subscriber::STATUS_SUBSCRIBED);
+        $subscriber2 = $this->createMock(Subscriber::class);
+        $subscriber2->method('getStatus')->willReturn(Subscriber::STATUS_UNSUBSCRIBED);
+
+        $collection = $this->createMock(Collection::class);
+        $collection->expects($this->once())
+            ->method('addFieldToFilter')
+            ->with('subscriber_email', ['in' => [$email1, $email2]])
+            ->willReturnSelf();
+        $collection->method('getItemByColumnValue')
+            ->willReturnMap([
+                ['customer_id', $customer1Id, $subscriber1],
+                ['customer_id', $customer2Id, $subscriber2],
+            ]);
+        $this->collectionFactory->expects($this->once())->method('create')->willReturn($collection);
+
+        $searchResults = $this->createMock(SearchResults::class);
+        $searchResults->method('getItems')->willReturn([$customer1, $customer2]);
+
+        /** @var CustomerRepositoryInterface|MockObject $subject */
+        $subject = $this->createMock(CustomerRepositoryInterface::class);
+        $this->assertSame(
+            $searchResults,
+            $this->plugin->afterGetList($subject, $searchResults)
+        );
+    }
+
+    /**
+     * Test afterDelete logs exception when website scope is enabled and website not found
+     *
+     * @covers \Magento\Newsletter\Model\Plugin\CustomerPlugin::afterDelete()
+     * @return void
+     */
+    public function testAfterDeleteWithWebsiteScopeLogsExceptionWhenWebsiteNotFound(): void
+    {
+        $customerEmail = 'email@example.com';
+        $websiteId = 1;
+
+        $collection = $this->createMock(Collection::class);
+        $collection->expects($this->once())
+            ->method('addFieldToFilter')
+            ->with('subscriber_email', $customerEmail)
+            ->willReturnSelf();
+        $collection->method('getIterator')->willReturn(new \ArrayIterator([]));
+        $this->collectionFactory->expects($this->once())->method('create')->willReturn($collection);
+
+        $this->shareConfig->method('isWebsiteScope')->willReturn(true);
+        $exception = new NoSuchEntityException(__('Website not found'));
+        $this->storeManager->method('getWebsite')->with($websiteId)->willThrowException($exception);
+        $this->logger->expects($this->once())->method('error')->with($exception);
+
+        /** @var CustomerInterface|MockObject $customer */
+        $customer = $this->createMock(CustomerInterface::class);
+        $customer->method('getEmail')->willReturn($customerEmail);
+        $customer->method('getWebsiteId')->willReturn($websiteId);
+
+        /** @var CustomerRepositoryInterface|MockObject $subject */
+        $subject = $this->createMock(CustomerRepositoryInterface::class);
+        $this->assertTrue($this->plugin->afterDelete($subject, true, $customer));
+    }
+
+    /**
+     * Test afterDelete with website scope filters collection by store ids
+     *
+     * @covers \Magento\Newsletter\Model\Plugin\CustomerPlugin::afterDelete()
+     * @return void
+     */
+    public function testAfterDeleteWithWebsiteScopeFiltersByStoreIds(): void
+    {
+        $customerEmail = 'email@example.com';
+        $websiteId = 1;
+        $storeIds = [1, 2];
+
+        $subscriber = $this->createMock(Subscriber::class);
+        $subscriber->expects($this->once())->method('delete');
+        $collection = $this->createMock(Collection::class);
+        $collection->expects($this->exactly(2))->method('addFieldToFilter')->willReturnSelf();
+        $collection->method('getIterator')->willReturn(new \ArrayIterator([$subscriber]));
+        $this->collectionFactory->expects($this->once())->method('create')->willReturn($collection);
+
+        $this->shareConfig->method('isWebsiteScope')->willReturn(true);
+        $website = $this->createMock(Website::class);
+        $website->method('getStoreIds')->willReturn($storeIds);
+        $this->storeManager->method('getWebsite')->with($websiteId)->willReturn($website);
+
+        /** @var CustomerInterface|MockObject $customer */
+        $customer = $this->createMock(CustomerInterface::class);
+        $customer->method('getEmail')->willReturn($customerEmail);
+        $customer->method('getWebsiteId')->willReturn($websiteId);
+
+        /** @var CustomerRepositoryInterface|MockObject $subject */
+        $subject = $this->createMock(CustomerRepositoryInterface::class);
+        $this->assertTrue($this->plugin->afterDelete($subject, true, $customer));
     }
 }
