@@ -3,17 +3,22 @@ declare(strict_types=1);
 
 namespace Magento\Backend\Test\Unit\Block\Page;
 
-use Magento\Backend\Api\VersionComparisonInterface;
 use Magento\Backend\Block\Page\Footer;
 use Magento\Backend\Block\Template\Context;
+use Magento\Backend\Model\VersionCheck\VersionComparisonInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Framework\App\ProductMetadataInterface;
-use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\App\ObjectManager;
+use Magento\Framework\App\ProductMetadataInterface;
+use Magento\Framework\App\State;
+use Magento\Framework\ObjectManagerInterface;
+use Magento\Framework\UrlInterface;
+use Magento\Framework\View\Element\Template\File\Resolver;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
+use stdClass;
 
 class FooterTest extends TestCase
 {
@@ -24,7 +29,7 @@ class FooterTest extends TestCase
     protected function setUp(): void
     {
         $objectManager = $this->getMockForAbstractClass(ObjectManagerInterface::class);
-        $objectManager->method('get')->willReturn(new \stdClass());
+        $objectManager->method('get')->willReturn(new stdClass());
         ObjectManager::setInstance($objectManager);
 
         $this->scopeConfig = $this->createMock(ScopeConfigInterface::class);
@@ -111,7 +116,7 @@ class FooterTest extends TestCase
     {
         $versionComparison = $this->createMock(VersionComparisonInterface::class);
         $versionComparison->method('getLatestVersion')
-            ->willThrowException(new \RuntimeException('broken'));
+            ->willThrowException(new RuntimeException('broken'));
 
         $block = $this->createFooterBlockForCacheTest($versionComparison);
         $cacheKeyInfo = $block->getCacheKeyInfo();
@@ -127,13 +132,13 @@ class FooterTest extends TestCase
         $storeManager = $this->createMock(StoreManagerInterface::class);
         $storeManager->method('getStore')->willReturn($store);
 
-        $appState = $this->createMock(\Magento\Framework\App\State::class);
+        $appState = $this->createMock(State::class);
         $appState->method('getAreaCode')->willReturn('adminhtml');
 
-        $resolver = $this->createMock(\Magento\Framework\View\Element\Template\File\Resolver::class);
+        $resolver = $this->createMock(Resolver::class);
         $resolver->method('getTemplateFileName')->willReturn('');
 
-        $urlBuilder = $this->createMock(\Magento\Framework\UrlInterface::class);
+        $urlBuilder = $this->createMock(UrlInterface::class);
         $urlBuilder->method('getBaseUrl')->willReturn('https://example.com/');
 
         $context = $this->createMock(Context::class);

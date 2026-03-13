@@ -1,12 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace Magento\Backend\Api;
+namespace Magento\Backend\Model\VersionCheck;
 
 /**
  * Compares current installed version against the latest available version.
- *
- * @api
  */
 interface VersionComparisonInterface
 {

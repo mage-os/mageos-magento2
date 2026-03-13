@@ -24,7 +24,7 @@ use Magento\Framework\Escaper;
                target="_blank"
                rel="noopener noreferrer"
                title="<?= $escaper->escapeHtmlAttr(__('View %1 releases', $block->getName())) ?>"
-               class="distro-update-notice<?= $isMajorMinor ? ' distro-update-notice--major' : '' ?>">
+               class="distro-update-notice<?= $isMajorMinor ? ' major' : '' ?>">
                 <?= $escaper->escapeHtml(__('Update available: %1', $latestVersion)) ?>
             </a>
         <?php endif; ?>

@@ -6,9 +6,9 @@
 namespace Magento\Backend\Block\Page;
 
 use Exception;
-use Magento\Backend\Api\VersionComparisonInterface;
 use Magento\Backend\Block\Template;
 use Magento\Backend\Block\Template\Context;
+use Magento\Backend\Model\VersionCheck\VersionComparisonInterface;
 use Magento\Framework\App\DistributionMetadataInterface;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\App\ProductMetadataInterface;
