@@ -15,7 +15,7 @@ class AbstractCart extends \Magento\Framework\View\Element\Template
     /**
      * Block alias fallback
      */
-    const DEFAULT_TYPE = 'default';
+    public const DEFAULT_TYPE = 'default';
 
     /**
      * @var Quote|null
@@ -107,6 +107,12 @@ class AbstractCart extends \Magento\Framework\View\Element\Template
     {
         if (null === $this->_quote) {
             $this->_quote = $this->_checkoutSession->getQuote();
+
+            if ($this->_quote->getId() && !$this->_quote->getData('_checkout_cart_totals_recollected')) {
+                $this->_quote->setData('_checkout_cart_totals_recollected', true);
+                $this->_quote->setTotalsCollectedFlag(false);
+                $this->_quote->collectTotals();
+            }
         }
         return $this->_quote;
     }
@@ -135,6 +141,8 @@ class AbstractCart extends \Magento\Framework\View\Element\Template
     }
 
     /**
+     * Retrieve totals.
+     *
      * @return array
      * @codeCoverageIgnore
      */
@@ -144,6 +152,8 @@ class AbstractCart extends \Magento\Framework\View\Element\Template
     }
 
     /**
+     * Retrieve cached totals.
+     *
      * @return array
      */
     public function getTotalsCache()
