@@ -58,8 +58,14 @@ class Helper extends \Magento\Framework\DB\Helper implements \Magento\Reports\Mo
             $ratingSubSelect = $connection->select();
             $ratingSelect = $connection->select();
 
-            $tableName = $connection->getTableName($aggregationTable);
-            $columnExists = $connection->tableColumnExists($tableName, 'period_month');
+            $columnExists = $connection->tableColumnExists($mainTable, 'period_month');
+            $columns = [
+                'period' => 't.period',
+                'store_id' => 't.store_id',
+                'product_id' => 't.product_id',
+                'product_name' => 't.product_name',
+                'product_price' => 't.product_price'
+            ];
 
             switch ($type) {
                 case 'year':
@@ -68,6 +74,8 @@ class Helper extends \Magento\Framework\DB\Helper implements \Magento\Reports\Mo
                 case 'month':
                     if ($columnExists) {
                         $periodCol = 't.period_month';
+                        $columns['period_month'] = $periodCol;
+                        unset($columns['period']);
                     } else {
                         $periodCol = $connection->getDateFormatSql('t.period', '%Y-%m-01');
                     }
@@ -75,17 +83,6 @@ class Helper extends \Magento\Framework\DB\Helper implements \Magento\Reports\Mo
                 default:
                     $periodCol = 't.period';
                     break;
-            }
-
-            $columns = [
-                'period' => 't.period',
-                'store_id' => 't.store_id',
-                'product_id' => 't.product_id',
-                'product_name' => 't.product_name',
-                'product_price' => 't.product_price'
-            ];
-            if ($columnExists) {
-                $columns['period_month'] = 't.period_month';
             }
 
             if ($type == 'day') {
@@ -114,11 +111,15 @@ class Helper extends \Magento\Framework\DB\Helper implements \Magento\Reports\Mo
 
             $cols = $columns;
             $cols['period'] = $periodCol;
+            if (isset($cols['period_month'])) {
+                unset($cols['period_month']);
+            }
             $cols[$column] = 't.' . $column;
             $cols['rating_pos'] = 't.rating_pos';
 
             $ratingSubSelect->where('t.store_id = ' . $store->getId());
             $ratingSelect->from($ratingSubSelect, $cols);
+
             $sql = $ratingSelect->insertFromSelect($aggregationTable, array_keys($cols));
             $connection->query("SET @pos = 0, @prevStoreId = -1, @prevPeriod = '0000-00-00'");
             $connection->query($sql);

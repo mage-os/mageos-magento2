@@ -134,11 +134,11 @@ class HelperTest extends TestCase
     public static function typesDataProvider()
     {
         $mResult = [
-            'period',
             'store_id',
             'product_id',
             'product_name',
             'product_price',
+            'period',
             'column',
             'rating_pos'
         ];
@@ -148,15 +148,14 @@ class HelperTest extends TestCase
             'product_id',
             'product_name',
             'product_price',
-            'period_month',
             'id',
             'column',
             'rating_pos'
         ];
         return [
             ['type' => 'year', 'result' => $mResult, 'exists' => false],
-            ['type' => 'month', 'result' => $mResult, 'exists' => false],
-            ['type' => 'day', 'result' => $dResult, 'exists' => true],
+            ['type' => 'month', 'result' => $mResult, 'exists' => true],
+            ['type' => 'day', 'result' => $dResult, 'exists' => false],
             ['type' => null, 'result' => $mResult, 'exists' => false]
         ];
     }
