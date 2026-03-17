@@ -36,5 +36,6 @@
         <element name="changeShippingAddressButton" type="button" selector="#change-shipping"/>
         <element name="shippingAddressDropdown" type="select" selector="#shippingDropdown"/>
         <element name="selectedShippingAddress" type="text" selector="//div/p[contains(text(), '{{selectedAddress}}')]" parameterized="true"/>
+        <element name="usePasswordInsteadButton" type="button" selector="(//button[text()='Use Password Instead'] | //a[text()='Try another way'])[1]"/>
     </section>
 </sections>
