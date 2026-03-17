@@ -110,8 +110,14 @@ class AbstractCart extends \Magento\Framework\View\Element\Template
 
             if ($this->_quote->getId() && !$this->_quote->getData('_checkout_cart_totals_recollected')) {
                 $this->_quote->setData('_checkout_cart_totals_recollected', true);
+                $existingItemsCount = $this->_quote->getItemsCount();
+                $existingItemsQty = $this->_quote->getItemsQty();
+                $existingVirtualItemsQty = $this->_quote->getVirtualItemsQty();
                 $this->_quote->setTotalsCollectedFlag(false);
                 $this->_quote->collectTotals();
+                $this->_quote->setItemsCount($existingItemsCount);
+                $this->_quote->setItemsQty($existingItemsQty);
+                $this->_quote->setVirtualItemsQty($existingVirtualItemsQty);
             }
         }
         return $this->_quote;
