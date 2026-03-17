@@ -14,6 +14,11 @@ require_once __DIR__ . '/../../../../app/bootstrap.php';
 require_once __DIR__ . '/autoload.php';
 
 error_reporting(E_ALL);
+
+if (extension_loaded('xdebug')) {
+    ini_set('xdebug.max_nesting_level', '200');
+}
+
 // phpcs:ignore Magento2.Functions.DiscouragedFunction
 $testsBaseDir = dirname(__DIR__);
 $fixtureBaseDir = $testsBaseDir. '/testsuite';
