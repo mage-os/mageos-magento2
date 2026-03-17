@@ -21,15 +21,13 @@
         <before>
             <magentoCLI command="config:set {{StorefrontPaypalExpressAuthorizationPaymentActionOptionConfigData.path}} {{StorefrontPaypalExpressAuthorizationPaymentActionOptionConfigData.value}}" stepKey="setPaymentActionAuthorization"/>
             <magentoCLI command="config:set {{StorefrontPaypalEnableTransferCartLineConfigData.path}} {{StorefrontPaypalEnableTransferCartLineConfigData.value}}" stepKey="enableTransferCartLine"/>
-            <!-- New Customer -->
-            <createData entity="Simple_US_Customer" stepKey="createCustomer">
-                <field key="firstname">John1</field>
-                <field key="lastname">Doe1</field>
-            </createData>
             <createData entity="SimpleProduct2" stepKey="simpleProduct">
                 <field key="price">1</field>
             </createData>
             <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <actionGroup ref="AdminCreateCustomerWithWebSiteAndGroupActionGroup" stepKey="createCustomer">
+                <argument name="customerData" value="Simple_US_Customer"/>
+            </actionGroup>
         </before>
         <after>
             <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="logoutCustomer" />
@@ -38,7 +36,7 @@
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
         </after>
         <actionGroup ref="LoginToStorefrontActionGroup" stepKey="signUpNewUser">
-            <argument name="Customer" value="$$createCustomer$$"/>
+            <argument name="Customer" value="Simple_US_Customer"/>
         </actionGroup>
         <actionGroup ref="AddSimpleProductToCartActionGroup" stepKey="addSimpleProductToCart">
             <argument name="product" value="$simpleProduct$"/>
