@@ -294,15 +294,22 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      */
     private function addDefaultCountryToOptions(array &$options)
     {
-        $defaultCountry = $this->_scopeConfig->getValue(
-            Data::XML_PATH_DEFAULT_COUNTRY,
-            ScopeInterface::SCOPE_WEBSITES,
-            $this->storeManager->getWebsite()
-        );
+        $defaultCountry = [];
+        foreach ($this->storeManager->getWebsites() as $website) {
+            $defaultCountryConfig = $this->_scopeConfig->getValue(
+                \Magento\Directory\Helper\Data::XML_PATH_DEFAULT_COUNTRY,
+                ScopeInterface::SCOPE_WEBSITES,
+                $website
+            ) ?? '';
+            $defaultCountry[$defaultCountryConfig][] = $website->getId();
+        }
 
         foreach ($options as $key => $option) {
-            $options[$key]['is_default'] = $defaultCountry == $option['value'];
+            if (isset($defaultCountry[$option['value']])) {
+                $options[$key]['is_default'] = !empty($defaultCountry[$option['value']]);
+            }
         }
+
     }
 
     /**
