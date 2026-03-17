@@ -11,6 +11,7 @@ use Magento\Backend\Block\Template\Context;
 use Magento\Checkout\Block\Cart\AbstractCart;
 use Magento\Checkout\Block\Cart\Item\Renderer as ItemRenderer;
 use Magento\Checkout\Model\Session;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Element\RendererList;
 use Magento\Framework\View\Layout;
@@ -202,49 +203,47 @@ class AbstractCartTest extends TestCase
         $checkoutSessionMock = $this->createMock(Session::class);
         $quoteMock = $this->createPartialMock(
             Quote::class,
-            ['getId', 'getData', 'setData', 'collectTotals']
+            [
+                'getId',
+                'getItemsCount',
+                'getItemsQty',
+                'getData',
+                'collectTotals',
+                'setItemsCount',
+                'setItemsQty',
+            ]
         );
+        $scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
 
         $checkoutSessionMock->expects($this->once())
             ->method('getQuote')
             ->willReturn($quoteMock);
-
-        $quoteMock->expects($this->once())
-            ->method('getId')
-            ->willReturn(123);
-        $quoteMock->expects($this->once())
+        $checkoutSessionMock->expects($this->once())
             ->method('getData')
-            ->with('_checkout_cart_totals_recollected')
-            ->willReturn(null);
+            ->with('last_cart_totals_recollect_at')
+            ->willReturn(0);
 
-        $setDataCalls = [];
-        $quoteMock->expects($this->exactly(2))
-            ->method('setData')
-            ->willReturnCallback(function ($key, $value = null) use (&$setDataCalls, $quoteMock) {
-                $setDataCalls[] = [$key, $value];
-                return $quoteMock;
-            });
-        $quoteMock->expects($this->once())
-            ->method('collectTotals')
-            ->willReturnSelf();
+        $quoteMock->expects($this->once())->method('getId')->willReturn(123);
+        $quoteMock->method('getItemsCount')->willReturn(2);
+        $quoteMock->method('getItemsQty')->willReturn(2.0);
+        $quoteMock->method('getData')->willReturnMap([['virtual_items_qty', null, 0]]);
+        $quoteMock->expects($this->once())->method('collectTotals')->willReturnSelf();
+        $quoteMock->expects($this->once())->method('setItemsCount')->with(2)->willReturnSelf();
+        $quoteMock->expects($this->once())->method('setItemsQty')->with(2.0)->willReturnSelf();
+
+        $scopeConfigMock->expects($this->never())->method('getValue');
 
         /** @var AbstractCart $model */
         $model = $this->_objectManager->getObject(
             AbstractCart::class,
-            ['checkoutSession' => $checkoutSessionMock]
-        );
-
-        $this->assertSame($quoteMock, $model->getQuote());
-        // second call should use cached quote and not trigger recollect again
-        $this->assertSame($quoteMock, $model->getQuote());
-
-        $this->assertSame(
             [
-                ['_checkout_cart_totals_recollected', true],
-                ['totals_collected_flag', false],
-            ],
-            $setDataCalls
+                'checkoutSession' => $checkoutSessionMock,
+                'scopeConfig' => $scopeConfigMock,
+            ]
         );
+
+        $this->assertSame($quoteMock, $model->getQuote());
+        $this->assertSame($quoteMock, $model->getQuote());
     }
 
     public function testGetQuoteDoesNotRecollectTotalsWhenQuoteIsNotPersisted(): void
@@ -278,29 +277,32 @@ class AbstractCartTest extends TestCase
     public function testGetQuoteDoesNotRecollectTotalsWhenAlreadyRecollected(): void
     {
         $checkoutSessionMock = $this->createMock(Session::class);
-        $quoteMock = $this->createPartialMock(
-            Quote::class,
-            ['getId', 'getData', 'setData', 'collectTotals']
-        );
+        $quoteMock = $this->createPartialMock(Quote::class, ['getId', 'collectTotals']);
+        $scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
 
         $checkoutSessionMock->expects($this->once())
             ->method('getQuote')
             ->willReturn($quoteMock);
-
-        $quoteMock->expects($this->once())
-            ->method('getId')
-            ->willReturn(123);
-        $quoteMock->expects($this->once())
+        $checkoutSessionMock->expects($this->once())
             ->method('getData')
-            ->with('_checkout_cart_totals_recollected')
-            ->willReturn(true);
-        $quoteMock->expects($this->never())->method('setData');
+            ->with('last_cart_totals_recollect_at')
+            ->willReturn(2000);
+
+        $quoteMock->expects($this->once())->method('getId')->willReturn(123);
         $quoteMock->expects($this->never())->method('collectTotals');
+
+        $scopeConfigMock->expects($this->once())
+            ->method('getValue')
+            ->with(\Magento\Checkout\Observer\CatalogRuleSaveAfterObserver::CONFIG_PATH_CATALOG_RULES_UPDATED_VERSION)
+            ->willReturn('1000');
 
         /** @var AbstractCart $model */
         $model = $this->_objectManager->getObject(
             AbstractCart::class,
-            ['checkoutSession' => $checkoutSessionMock]
+            [
+                'checkoutSession' => $checkoutSessionMock,
+                'scopeConfig' => $scopeConfigMock,
+            ]
         );
 
         $this->assertSame($quoteMock, $model->getQuote());
