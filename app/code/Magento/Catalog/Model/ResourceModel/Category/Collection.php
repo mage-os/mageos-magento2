@@ -427,14 +427,14 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Collection\Abstrac
                     ];
 
                     if (count($insertData) >= $writeBatchSize) {
-                        $connection->insertOnDuplicate($tempTableName, $insertData);
+                        $connection->insertMultiple($tempTableName, $insertData);
                         $insertData = [];
                     }
                 }
             }
 
             if ($insertData) {
-                $connection->insertOnDuplicate($tempTableName, $insertData);
+                $connection->insertMultiple($tempTableName, $insertData);
             }
         }
 
