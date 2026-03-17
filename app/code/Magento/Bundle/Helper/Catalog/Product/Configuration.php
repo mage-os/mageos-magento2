@@ -63,7 +63,7 @@ class Configuration extends AbstractHelper implements ConfigurationInterface
     /**
      * @var PriceCurrencyInterface
      */
-    protected $priceCurrency;
+    private $priceCurrency;
 
     /**
      * @param Context $context
