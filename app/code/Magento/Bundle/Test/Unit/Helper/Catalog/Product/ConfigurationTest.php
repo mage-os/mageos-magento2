@@ -25,6 +25,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Wishlist\Model\Item as WishlistItem;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\Pricing\PriceCurrencyInterface;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -69,6 +70,11 @@ class ConfigurationTest extends TestCase
     private $taxHelper;
 
     /**
+     * @var PriceCurrencyInterface|MockObject
+     */
+    private $priceCurrency;
+
+    /**
      * @inheritDoc
      */
     protected function setUp(): void
@@ -83,6 +89,7 @@ class ConfigurationTest extends TestCase
         );
         $this->serializer = $this->createMock(Json::class);
         $this->taxHelper = $this->createPartialMock(TaxPrice::class, ['displayCartPricesBoth', 'getTaxPrice']);
+        $this->priceCurrency = $this->createMock(PriceCurrencyInterface::class);
 
         $this->serializer->expects($this->any())
             ->method('unserialize')
@@ -98,6 +105,7 @@ class ConfigurationTest extends TestCase
                 'pricingHelper' => $this->pricingHelper,
                 'productConfiguration' => $this->productConfiguration,
                 'escaper' => $this->escaper,
+                'priceCurrency' => $this->priceCurrency,
                 'serializer' => $this->serializer,
                 'taxHelper' => $this->taxHelper
             ]
@@ -297,7 +305,18 @@ class ConfigurationTest extends TestCase
                 ->willReturn(15.00);
         }
         $this->taxHelper->method('displayCartPricesBoth')->willReturn((bool)$displayCartPriceBoth);
-        $this->pricingHelper->expects($this->atLeastOnce())->method('currency')->with(15.00)
+        if ($displayCartPriceBoth) {
+            $this->pricingHelper->expects($this->once())->method('currency')
+                ->with(15.00)
+                ->willReturn('<span class="price">$15.00</span>');
+        } else {
+            $this->pricingHelper->expects($this->never())->method('currency');
+        }
+        $this->priceCurrency->expects($this->atLeastOnce())->method('convertAndRound')
+            ->with(15.00)
+            ->willReturn(15.00);
+        $this->priceCurrency->expects($this->atLeastOnce())->method('format')
+            ->with(15.00)
             ->willReturn('<span class="price">$15.00</span>');
         $priceModel->expects($this->once())->method('getSelectionFinalTotalPrice')->willReturn(15.00);
         $selectionQty->method('getValue')->willReturn(1);

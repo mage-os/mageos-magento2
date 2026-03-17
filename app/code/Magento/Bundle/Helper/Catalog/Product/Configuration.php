@@ -20,6 +20,7 @@ use Magento\Framework\Escaper;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Pricing\Helper\Data;
 use Magento\Framework\Serialize\Serializer\Json;
+use Magento\Framework\Pricing\PriceCurrencyInterface;
 
 /**
  * Helper for fetching properties by product configuration item
@@ -60,10 +61,16 @@ class Configuration extends AbstractHelper implements ConfigurationInterface
     private $taxHelper;
 
     /**
+     * @var PriceCurrencyInterface
+     */
+    protected $priceCurrency;
+
+    /**
      * @param Context $context
      * @param ProductConfiguration $productConfiguration
      * @param Data $pricingHelper
      * @param Escaper $escaper
+     * @param PriceCurrencyInterface $priceCurrency
      * @param Json|null $serializer
      * @param TaxPrice|null $taxHelper
      */
@@ -72,12 +79,14 @@ class Configuration extends AbstractHelper implements ConfigurationInterface
         ProductConfiguration $productConfiguration,
         Data                 $pricingHelper,
         Escaper              $escaper,
+        PriceCurrencyInterface $priceCurrency,
         ?Json                 $serializer = null,
         ?TaxPrice $taxHelper = null
     ) {
         $this->productConfiguration = $productConfiguration;
         $this->pricingHelper = $pricingHelper;
         $this->escaper = $escaper;
+        $this->priceCurrency = $priceCurrency;
         $this->serializer = $serializer ?: ObjectManager::getInstance()
             ->get(Json::class);
         $this->taxHelper = $taxHelper ?? ObjectManager::getInstance()->get(TaxPrice::class);
@@ -197,12 +206,12 @@ class Configuration extends AbstractHelper implements ConfigurationInterface
         $qty = $this->getSelectionQty($item->getProduct(), $bundleSelection->getSelectionId()) * 1;
         if ($qty) {
             $selectionPrice = $this->getSelectionFinalPrice($item, $bundleSelection);
-
+            $selectionPriceInclTax = $this->priceCurrency->convertAndRound($selectionPrice);
             $displayCartPricesBoth = $this->taxHelper->displayCartPricesBoth();
             if ($displayCartPricesBoth) {
                 $selectionFinalPrice =
                     $this->taxHelper
-                        ->getTaxPrice($product, $selectionPrice, true);
+                        ->getTaxPrice($product, $selectionPriceInclTax, true);
                 $selectionFinalPriceExclTax =
                     $this->taxHelper
                         ->getTaxPrice($product, $selectionPrice, false);
@@ -212,9 +221,7 @@ class Configuration extends AbstractHelper implements ConfigurationInterface
             $option['value'][] = $qty . ' x '
                 . $this->escaper->escapeHtml($bundleSelection->getName())
                 . ' '
-                . $this->pricingHelper->currency(
-                    $selectionFinalPrice
-                )
+                . $this->priceCurrency->format($selectionFinalPrice)
                 . ($displayCartPricesBoth ? ' ' . __('Excl. tax:') . ' '
                     . $this->pricingHelper->currency(
                         $selectionFinalPriceExclTax
