@@ -34,13 +34,33 @@ class PopulatePeriodMonthColumn implements DataPatchInterface, PatchRevertableIn
         $connection = $this->resourceConnection->getConnection();
         $table = $this->resourceConnection->getTableName('sales_bestsellers_aggregated_daily');
 
-        $connection->query(
-            sprintf(
-                "UPDATE %s
-                 SET period_month = DATE_SUB(period, INTERVAL DAYOFMONTH(period)-1 DAY)",
-                $table
-            )
-        );
+        $lastId = 0;
+        $batchSize = 5000;
+        while (true) {
+            $ids = $connection->fetchCol(
+                $connection->select()
+                    ->from($table, ['id'])
+                    ->where('id > ?', $lastId)
+                    ->order('id ASC')
+                    ->limit($batchSize)
+            );
+
+            if (empty($ids)) {
+                break;
+            }
+
+            $connection->update(
+                $table,
+                [
+                    'period_month' => new \Zend_Db_Expr(
+                        'DATE_SUB(period, INTERVAL DAYOFMONTH(period) - 1 DAY)'
+                    )
+                ],
+                ['id IN (?)' => $ids]
+            );
+
+            $lastId = max($ids);
+        }
 
         return $this;
     }
@@ -69,12 +89,29 @@ class PopulatePeriodMonthColumn implements DataPatchInterface, PatchRevertableIn
         $connection = $this->resourceConnection->getConnection();
         $table = $this->resourceConnection->getTableName('sales_bestsellers_aggregated_daily');
 
-        $connection->query(
-            sprintf(
-                "UPDATE %s
-                 SET period_month = ''",
-                $table
-            )
-        );
+        $lastId = 0;
+        $batchSize = 5000;
+
+        while (true) {
+            $ids = $connection->fetchCol(
+                $connection->select()
+                    ->from($table, ['id'])
+                    ->where('id > ?', $lastId)
+                    ->order('id ASC')
+                    ->limit($batchSize)
+            );
+
+            if (empty($ids)) {
+                break;
+            }
+
+            $connection->update(
+                $table,
+                ['period_month' => null],
+                ['id IN (?)' => $ids]
+            );
+
+            $lastId = max($ids);
+        }
     }
 }
