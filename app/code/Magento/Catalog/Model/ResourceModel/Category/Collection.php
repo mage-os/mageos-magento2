@@ -401,25 +401,43 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Collection\Abstrac
                 ['type' => AdapterInterface::INDEX_TYPE_PRIMARY]
             );
         $connection->createTemporaryTable($tempTable);
-        $selectDescendants = $connection->select()
-            ->from(
-                ['ce' => $this->getTable('catalog_category_entity')],
-                ['category_id' => 'ce.entity_id', 'descendant_id' => 'ce2.entity_id']
-            )
-            ->joinInner(
-                ['ce2' => $this->getTable('catalog_category_entity')],
-                'ce2.path LIKE CONCAT(ce.path, \'/%\')',
-                []
-            )
-            ->where('ce.entity_id IN (?)', $categoryIds);
 
-        $connection->query(
-            $connection->insertFromSelect(
-                $selectDescendants,
-                $tempTableName,
-                ['category_id', 'descendant_id']
-            )
-        );
+        $readBatchSize = 500;
+        $writeBatchSize = 2000;
+        $categoryTable = $this->getTable('catalog_category_entity');
+        foreach (array_chunk($categoryIds, $readBatchSize) as $categoryIdsBatch) {
+            $rows = $connection->fetchAll(
+                $connection->select()
+                    ->from($categoryTable, ['entity_id', 'path'])
+                    ->where('entity_id IN (?)', $categoryIdsBatch)
+            );
+
+            $insertData = [];
+
+            foreach ($rows as $row) {
+                $descendantId = (int) $row['entity_id'];
+                $ancestorIds = array_filter(
+                    array_map('intval', explode('/', (string) $row['path']))
+                );
+
+                foreach ($ancestorIds as $ancestorId) {
+                    $insertData[] = [
+                        'category_id' => $ancestorId,
+                        'descendant_id' => $descendantId,
+                    ];
+
+                    if (count($insertData) >= $writeBatchSize) {
+                        $connection->insertOnDuplicate($tempTableName, $insertData);
+                        $insertData = [];
+                    }
+                }
+            }
+
+            if ($insertData) {
+                $connection->insertOnDuplicate($tempTableName, $insertData);
+            }
+        }
+
         $select = $connection->select()
             ->from(
                 ['t' => $tempTableName],
