@@ -34,13 +34,13 @@ class Payment extends Info implements OrderPaymentInterface
      *
      * @var string
      */
-    const REVIEW_ACTION_ACCEPT = 'accept';
+    public const REVIEW_ACTION_ACCEPT = 'accept';
 
-    const REVIEW_ACTION_DENY = 'deny';
+    public const REVIEW_ACTION_DENY = 'deny';
 
-    const REVIEW_ACTION_UPDATE = 'update';
+    public const REVIEW_ACTION_UPDATE = 'update';
 
-    const PARENT_TXN_ID = 'parent_transaction_id';
+    public const PARENT_TXN_ID = 'parent_transaction_id';
 
     /**
      * Order model object
@@ -393,7 +393,9 @@ class Payment extends Info implements OrderPaymentInterface
 
         $isCustomerNotified = $isCustomerNotified ?: $order->getCustomerNoteNotify();
 
-        if ($orderStatus === null || !array_key_exists($orderStatus, $order->getConfig()->getStateStatuses($orderState))) {
+        if ($orderStatus === null ||
+            !array_key_exists($orderStatus, $order->getConfig()->getStateStatuses($orderState))
+        ) {
             $orderStatus = $order->getConfig()->getStateDefaultStatus($orderState);
         }
 
@@ -1500,6 +1502,7 @@ class Payment extends Info implements OrderPaymentInterface
      * Get order state resolver instance.
      *
      * @deprecated 101.0.0
+     * @see we don't recommend this approach anymore
      * @return OrderStateResolverInterface
      */
     private function getOrderStateResolver()
@@ -1828,6 +1831,7 @@ class Payment extends Info implements OrderPaymentInterface
      *
      * @return string
      * @deprecated 100.1.0 unused
+     * @see we don't recommend this approach anymore
      */
     public function getCcSsIssue()
     {
@@ -1839,6 +1843,7 @@ class Payment extends Info implements OrderPaymentInterface
      *
      * @return string
      * @deprecated 100.1.0 unused
+     * @see we don't recommend this approach anymore
      */
     public function getCcSsStartMonth()
     {
@@ -1850,6 +1855,7 @@ class Payment extends Info implements OrderPaymentInterface
      *
      * @return string
      * @deprecated 100.1.0 unused
+     * @see we don't recommend this approach anymore
      */
     public function getCcSsStartYear()
     {
@@ -2215,6 +2221,7 @@ class Payment extends Info implements OrderPaymentInterface
     /**
      * @inheritdoc
      * @deprecated 100.1.0 unused
+     * @see we don't recommend this approach anymore
      */
     public function setCcSsStartYear($ccSsStartYear)
     {
@@ -2319,6 +2326,7 @@ class Payment extends Info implements OrderPaymentInterface
     /**
      * @inheritdoc
      * @deprecated 100.1.0 unused
+     * @see we don't recommend this approach anymore
      */
     public function setCcSsStartMonth($ccSsStartMonth)
     {
@@ -2424,6 +2432,7 @@ class Payment extends Info implements OrderPaymentInterface
     /**
      * @inheritdoc
      * @deprecated 100.1.0 unused
+     * @see we don't recommend this approach anymore
      */
     public function setCcSsIssue($ccSsIssue)
     {
