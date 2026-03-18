@@ -723,8 +723,6 @@ class Payment extends Info implements OrderPaymentInterface
                 $gateway->refund($this, $baseAmountToRefund);
             }
         }
-
-        // update self totals from creditmemo
         $this->_updateTotals(
             [
                 'amount_refunded' => $creditmemo->getGrandTotal(),
@@ -734,8 +732,6 @@ class Payment extends Info implements OrderPaymentInterface
                 'base_shipping_refunded' => $creditmemo->getBaseShippingAmount(),
             ]
         );
-
-        // update transactions and order state
         $transaction = $this->addTransaction(
             Transaction::TYPE_REFUND,
             $creditmemo,
