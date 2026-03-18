@@ -48,8 +48,7 @@
             <createData entity="DefaultShippingMethodsConfig" stepKey="defaultShippingMethodsConfig"/>
             <createData entity="DisableFreeShippingConfig" stepKey="disableFreeShippingConfig"/>
             <deleteData createDataKey="createCartPriceRule" stepKey="deleteSalesRule"/>
-            <amOnPage url="{{AdminOrdersPage.url.url}}" stepKey="openOrdersGrid"/>
-            <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="clearOrdersFilter"/>
+            <actionGroup ref="AdminOrdersGridClearFiltersActionGroup" stepKey="clearOrdersFilters"/>
             <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
                 <argument name="indices" value=""/>
             </actionGroup>

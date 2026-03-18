@@ -81,8 +81,7 @@
             <deleteData createDataKey="simpleProduct3" stepKey="deleteSimpleProduct3"/>
             <deleteData createDataKey="simpleProduct4" stepKey="deleteSimpleProduct4"/>
             <deleteData createDataKey="bundleProduct" stepKey="deleteBundleProduct"/>
-            <amOnPage url="{{AdminOrdersPage.url.url}}" stepKey="openOrdersGrid"/>
-            <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="clearOrdersFilter"/>
+            <actionGroup ref="AdminOrdersGridClearFiltersActionGroup" stepKey="clearOrdersFilters"/>
             <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="logoutCustomer" />
             <deleteData createDataKey="customer" stepKey="deleteCustomer"/>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>

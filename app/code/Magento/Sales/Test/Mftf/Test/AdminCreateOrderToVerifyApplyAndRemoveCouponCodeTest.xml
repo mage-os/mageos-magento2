@@ -41,8 +41,7 @@
             <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="logoutCustomer" />
             <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
             <deleteData createDataKey="createSimpleProduct" stepKey="deleteSimpleProduct"/>
-            <amOnPage url="{{AdminOrdersPage.url.url}}" stepKey="openOrdersGrid"/>
-            <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="clearOrdersFilter"/>
+            <actionGroup ref="AdminOrdersGridClearFiltersActionGroup" stepKey="clearOrdersFilters"/>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
         </after>
         <actionGroup ref="AdminNavigateToNewOrderPageExistingCustomerActionGroup" stepKey="goToCreateOrderPage">
