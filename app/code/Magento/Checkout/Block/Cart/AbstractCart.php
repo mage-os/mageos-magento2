@@ -7,6 +7,7 @@ namespace Magento\Checkout\Block\Cart;
 
 use Magento\Framework\App\ObjectManager;
 use Magento\Quote\Model\Quote;
+use Magento\Checkout\Observer\CatalogRuleSaveAfterObserver;
 
 /**
  * Shopping cart abstract block
@@ -61,7 +62,6 @@ class AbstractCart extends \Magento\Framework\View\Element\Template
      * @param \Magento\Checkout\Model\Session $checkoutSession
      * @param array $data
      * @param \Magento\Framework\App\CacheInterface|null $cache
-     * @codeCoverageIgnore
      */
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
@@ -133,7 +133,7 @@ class AbstractCart extends \Magento\Framework\View\Element\Template
                 $this->_quote->setData('virtual_items_qty', $existingVirtualItemsQty);
                 $this->_checkoutSession->setData(
                     self::SESSION_KEY_LAST_RECOLLECT_AT,
-                    $this->cache->load(\Magento\Checkout\Observer\CatalogRuleSaveAfterObserver::CACHE_KEY_CATALOG_RULES_UPDATED_AT)
+                    $this->cache->load(CatalogRuleSaveAfterObserver::CACHE_KEY_CATALOG_RULES_UPDATED_AT)
                 );
             }
         }
@@ -148,7 +148,7 @@ class AbstractCart extends \Magento\Framework\View\Element\Template
     private function shouldRecollectTotals(): bool
     {
         $rulesUpdatedAt = (int) ($this->cache->load(
-            \Magento\Checkout\Observer\CatalogRuleSaveAfterObserver::CACHE_KEY_CATALOG_RULES_UPDATED_AT
+            CatalogRuleSaveAfterObserver::CACHE_KEY_CATALOG_RULES_UPDATED_AT
         ) ?: 0);
         if ($rulesUpdatedAt <= 0) {
             return false;
@@ -161,7 +161,6 @@ class AbstractCart extends \Magento\Framework\View\Element\Template
      * Get all cart items
      *
      * @return array
-     * @codeCoverageIgnore
      */
     public function getItems()
     {
@@ -184,7 +183,6 @@ class AbstractCart extends \Magento\Framework\View\Element\Template
      * Retrieve totals.
      *
      * @return array
-     * @codeCoverageIgnore
      */
     public function getTotals()
     {
