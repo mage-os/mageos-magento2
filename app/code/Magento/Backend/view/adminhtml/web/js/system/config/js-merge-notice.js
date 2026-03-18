@@ -17,9 +17,8 @@ define([
         rowId = 'row_dev_js_merge_files',
         defaultText = $.mage.__('When disabled, each script is loaded separately.'),
         notRecommendedText = $.mage.__(
-            'This option is kept for backward compatibility only. With HTTP/2 and later, ' +
-            'browsers can request many files in parallel over one connection, so merging no longer ' +
-            'provides benefits. Not recommended for production.'
+            'Enabling JavaScript Merging is not recommended. With HTTP/2 and later, browsers can request many files ' +
+            'in parallel over one connection, so merging no longer provides any benefits.'
         );
 
     $(function () {
