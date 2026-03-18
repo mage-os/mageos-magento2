@@ -681,6 +681,11 @@ class Payment extends Info implements OrderPaymentInterface
                 $invoice = $creditmemo->getInvoice();
                 if ($invoice) {
                     $isOnline = true;
+                    if ((float)$baseAmountToRefund <= 0.0) {
+                        throw new \Magento\Framework\Exception\LocalizedException(
+                            __('Online refund amount must be greater than zero.')
+                        );
+                    }
                     $captureTxn = $this->transactionRepository->getByTransactionId(
                         $invoice->getTransactionId(),
                         $this->getId(),

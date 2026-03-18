@@ -39,6 +39,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+use Magento\Framework\Exception\LocalizedException;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -1720,6 +1721,30 @@ class PaymentTest extends TestCase
 
         $this->payment->setShouldCloseParentTransaction(0);
         static::assertFalse($this->payment->getShouldCloseParentTransaction());
+    }
+
+    /**
+     * Verifies online refund throws an error when base amount to refund is <= 0.
+     *
+     * @return void
+     */
+    public function testRefundThrowsExceptionWithZeroAmount(): void
+    {
+        $this->creditMemoMock->expects(static::atLeastOnce())
+            ->method('getBaseGrandTotal')
+            ->willReturn(0.0);
+        $this->creditMemoMock->expects(static::atLeastOnce())
+            ->method('getDoTransaction')
+            ->willReturn(true);
+        $this->creditMemoMock->expects(static::atLeastOnce())
+            ->method('getInvoice')
+            ->willReturn($this->invoice);
+        $this->paymentMethod->expects(static::once())->method('canRefund')->willReturn(true);
+        $this->mockInvoice(self::TRANSACTION_ID, 0);
+        $this->paymentMethod->expects(static::never())->method('refund');
+        $this->expectException(LocalizedException::class);
+        $this->expectExceptionMessage('Online refund amount must be greater than zero.');
+        $this->payment->refund($this->creditMemoMock);
     }
 
     /**
