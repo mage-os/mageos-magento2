@@ -312,7 +312,6 @@ class Calculator implements BundleCalculatorInterface, ResetAfterRequestInterfac
         $baseAmount = $this->calculator->getAmount($basePriceValue, $bundleProduct, $exclude);
         $amountList[$i]['amount'] = $baseAmount;
         $amountList[$i]['quantity'] = 1;
-        $amountList[$i]['product'] = $bundleProduct;
         $amountList[$i]['priceValue'] = $baseAmount->getValue(['tax']);
 
         foreach ($selectionPriceList as $selectionPrice) {
@@ -320,7 +319,6 @@ class Calculator implements BundleCalculatorInterface, ResetAfterRequestInterfac
             if ($selectionPrice) {
                 $amountList[$i]['amount'] = $selectionPrice->getAmount();
                 $amountList[$i]['quantity'] = $selectionPrice->getQuantity();
-                $amountList[$i]['product'] = $selectionPrice->getProduct();
                 $amountList[$i]['priceValue'] = $selectionPrice->getValue();
             }
         }

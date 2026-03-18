@@ -70,7 +70,7 @@ class Configuration extends AbstractHelper implements ConfigurationInterface
      * @param ProductConfiguration $productConfiguration
      * @param Data $pricingHelper
      * @param Escaper $escaper
-     * @param PriceCurrencyInterface $priceCurrency
+     * @param PriceCurrencyInterface|null $priceCurrency
      * @param Json|null $serializer
      * @param TaxPrice|null $taxHelper
      */
@@ -79,14 +79,14 @@ class Configuration extends AbstractHelper implements ConfigurationInterface
         ProductConfiguration $productConfiguration,
         Data                 $pricingHelper,
         Escaper              $escaper,
-        PriceCurrencyInterface $priceCurrency,
+        ?PriceCurrencyInterface $priceCurrency = null,
         ?Json                 $serializer = null,
         ?TaxPrice $taxHelper = null
     ) {
         $this->productConfiguration = $productConfiguration;
         $this->pricingHelper = $pricingHelper;
         $this->escaper = $escaper;
-        $this->priceCurrency = $priceCurrency;
+        $this->priceCurrency = $priceCurrency ?? ObjectManager::getInstance()->get(PriceCurrencyInterface::class);
         $this->serializer = $serializer ?: ObjectManager::getInstance()
             ->get(Json::class);
         $this->taxHelper = $taxHelper ?? ObjectManager::getInstance()->get(TaxPrice::class);
