@@ -23,6 +23,9 @@ use Magento\Sales\Block\Items\AbstractItems;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class AbstractCartTest extends TestCase
 {
     /**
