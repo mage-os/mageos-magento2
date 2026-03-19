@@ -417,7 +417,7 @@ class EmailNotificationTest extends TestCase
     /**
      * Test credentialsChanged sends newAccount confirmation email when email changed and confirmation required
      *
-     * Covers emailChangedConfirmation() -> newAccount(..., NEW_ACCOUNT_EMAIL_CONFIRMATION, ...) at line 456
+     * Covers emailChangedConfirmation() -> newAccount(NEW_ACCOUNT_EMAIL_CONFIRMATION)
      *
      * @return void
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
@@ -574,7 +574,7 @@ class EmailNotificationTest extends TestCase
     }
 
     /**
-     * Test credentialsChanged with null store id triggers getWebsiteStoreId in emailChanged (covers lines 227-229)
+     * Test credentialsChanged with null store id triggers getWebsiteStoreId in emailChanged
      *
      * @return void
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
@@ -608,7 +608,7 @@ class EmailNotificationTest extends TestCase
     }
 
     /**
-     * Test credentialsChanged with null store id triggers getWebsiteStoreId in passwordReset (covers lines 254-256)
+     * Test credentialsChanged with null store id triggers getWebsiteStoreId in passwordReset
      *
      * @return void
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
@@ -986,7 +986,7 @@ class EmailNotificationTest extends TestCase
     }
 
     /**
-     * Test password reset confirmation when customer has no store id (covers getWebsiteStoreId branch at line 387-389)
+     * Test password reset confirmation when customer has no store id
      *
      * @return void
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
