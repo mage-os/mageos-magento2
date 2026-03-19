@@ -24,10 +24,6 @@
             <createData entity="SimpleProduct2" stepKey="simpleProduct">
                 <field key="price">1</field>
             </createData>
-            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
-            <actionGroup ref="AdminCreateCustomerWithWebSiteAndGroupActionGroup" stepKey="createCustomer">
-                <argument name="customerData" value="Simple_US_Customer"/>
-            </actionGroup>
         </before>
         <after>
             <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="logoutCustomer" />
@@ -35,7 +31,8 @@
             <helper class="Magento\Catalog\Test\Mftf\Helper\ProductApiHelper" method="deleteAllProductsApi" stepKey="deleteSimpleProduct"/>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
         </after>
-        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="signUpNewUser">
+        <!--Create new customer in storefront-->
+        <actionGroup ref="SignUpNewUserFromStorefrontActionGroup" stepKey="createCustomerFromStorefront">
             <argument name="Customer" value="Simple_US_Customer"/>
         </actionGroup>
         <actionGroup ref="AddSimpleProductToCartActionGroup" stepKey="addSimpleProductToCart">
@@ -59,6 +56,7 @@
         <actionGroup ref="AssertStorefrontCheckoutSuccessActionGroup" stepKey="assertCheckoutSuccess"/>
         <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber22}}" stepKey="grabOrderNumber"/>
         <!--Go to Admin and check order information-->
+        <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
         <actionGroup ref="FilterOrderGridByIdActionGroup" stepKey="filterOrderGrid">
             <argument name="orderId" value="$grabOrderNumber"/>
         </actionGroup>
