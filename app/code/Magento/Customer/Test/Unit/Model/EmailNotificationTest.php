@@ -585,7 +585,6 @@ class EmailNotificationTest extends TestCase
             'old@example.com',
             'new@example.com',
             false,
-            EmailNotification::XML_PATH_CHANGE_EMAIL_TEMPLATE,
             2
         );
     }
@@ -602,7 +601,6 @@ class EmailNotificationTest extends TestCase
             'old@example.com',
             'new@example.com',
             true,
-            EmailNotification::XML_PATH_CHANGE_EMAIL_AND_PASSWORD_TEMPLATE,
             2
         );
     }
@@ -619,7 +617,6 @@ class EmailNotificationTest extends TestCase
             'same@example.com',
             'same@example.com',
             true,
-            EmailNotification::XML_PATH_RESET_PASSWORD_TEMPLATE,
             1
         );
     }
@@ -630,7 +627,6 @@ class EmailNotificationTest extends TestCase
      * @param string $oldEmail
      * @param string $newEmail
      * @param bool $isPasswordChanged
-     * @param string $xmlPathTemplate
      * @param int $emailCount
      * @return void
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
@@ -639,7 +635,6 @@ class EmailNotificationTest extends TestCase
         string $oldEmail,
         string $newEmail,
         bool $isPasswordChanged,
-        string $xmlPathTemplate,
         int $emailCount
     ): void {
         $customerStoreId = null;
@@ -647,7 +642,6 @@ class EmailNotificationTest extends TestCase
         $resolvedStoreId = reset($storeIds);
         $customerData = ['key' => 'value'];
         $senderValues = ['name' => self::STUB_SENDER, 'email' => self::STUB_SENDER];
-        $expects = $this->exactly($emailCount);
         $expectsAtLeast = $this->atLeast($emailCount);
 
         $this->senderResolverMock->expects($expectsAtLeast)
