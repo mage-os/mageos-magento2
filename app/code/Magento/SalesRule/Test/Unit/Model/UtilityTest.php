@@ -22,6 +22,7 @@ use Magento\SalesRule\Model\Rule;
 use Magento\SalesRule\Model\Rule\Action\Discount\Data;
 use Magento\SalesRule\Model\Rule\Customer;
 use Magento\SalesRule\Model\Rule\CustomerFactory;
+use Magento\Rule\Model\Condition\Combine as RuleCombine;
 use Magento\SalesRule\Model\Utility;
 use Magento\SalesRule\Model\ValidateCoupon;
 use Magento\Store\Model\Store;
@@ -299,6 +300,39 @@ class UtilityTest extends TestCase
         $this->validateCoupon->method('execute')
             ->willReturn(true);
         $this->assertTrue($this->utility->canProcessRule($this->rule, $this->address));
+    }
+
+    /**
+     * When rule has item-level actions (e.g. exclude SKU), subtotal condition is evaluated
+     * against eligible items only. Rule validation sees the eligible-only totals and
+     * canProcessRule returns the correct result (e.g. false when condition fails).
+     *
+     * @return void
+     */
+    public function testCanProcessRuleUsesEligibleItemsSubtotalWhenRuleHasItemRestrictions(): void
+    {
+        $actionsCombine = $this->createMock(RuleCombine::class);
+        $actionsCombine->method('getConditions')->willReturn([1]);
+
+        $rule = $this->createPartialMock(Rule::class, [
+            'getActions', 'validate', 'hasIsValidForAddress', 'getIsValidForAddress',
+            'setIsValidForAddress', 'afterLoad'
+        ]);
+        $rule->setCouponType(Rule::COUPON_TYPE_NO_COUPON);
+        $rule->method('hasIsValidForAddress')->willReturn(false);
+        $rule->method('getActions')->willReturn($actionsCombine);
+        $rule->method('validate')->willReturn(false);
+        $rule->method('afterLoad');
+
+        $address = $this->getMockBuilder(Address::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $address->method('getQuote')->willReturn($this->quote);
+        $address->method('getAllItems')->willReturn([]);
+
+        $this->validateCoupon->method('execute')->willReturn(true);
+
+        $this->assertFalse($this->utility->canProcessRule($rule, $address));
     }
 
     /**
