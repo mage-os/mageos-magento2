@@ -410,7 +410,10 @@ class CustomerPluginTest extends TestCase
         $customer1->method('getEmail')->willReturn($email1);
         $customer1->method('getStoreId')->willReturn(1);
         /** @var CustomerExtensionInterface|MockObject $extension1 */
-        $extension1 = $this->createMock(CustomerExtensionInterface::class);
+        $extension1 = $this->createPartialMockWithReflection(
+            CustomerExtensionInterface::class,
+            ['setIsSubscribed']
+        );
         $extension1->expects($this->once())->method('setIsSubscribed')->with(true);
         $customer1->method('getExtensionAttributes')->willReturn($extension1);
 
@@ -420,7 +423,10 @@ class CustomerPluginTest extends TestCase
         $customer2->method('getEmail')->willReturn($email2);
         $customer2->method('getStoreId')->willReturn(2);
         /** @var CustomerExtensionInterface|MockObject $extension2 */
-        $extension2 = $this->createMock(CustomerExtensionInterface::class);
+        $extension2 = $this->createPartialMockWithReflection(
+            CustomerExtensionInterface::class,
+            ['setIsSubscribed']
+        );
         $extension2->expects($this->once())->method('setIsSubscribed')->with(false);
         $customer2->method('getExtensionAttributes')->willReturn($extension2);
 
@@ -474,8 +480,11 @@ class CustomerPluginTest extends TestCase
         $customer->method('getEmail')->willReturn($email);
         $customer->method('getStoreId')->willReturn($customerStoreId);
         /** @var CustomerExtensionInterface|MockObject $extension */
-        $extension = $this->createMock(CustomerExtensionInterface::class);
-        $extension->expects($this->once())->method('setIsSubscribed')->with(false);
+        $extension = $this->createPartialMockWithReflection(
+            CustomerExtensionInterface::class,
+            ['setIsSubscribed']
+        );
+        $extension->expects($this->once())->method('setIsSubscribed')->with(true);
         $customer->method('getExtensionAttributes')->willReturn($extension);
 
         $subscriberStore1 = $this->createMock(Subscriber::class);
