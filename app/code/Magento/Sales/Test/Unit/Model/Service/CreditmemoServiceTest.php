@@ -16,6 +16,7 @@ use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Payment\Model\MethodInterface;
 use Magento\Sales\Api\CreditmemoCommentRepositoryInterface;
 use Magento\Sales\Api\CreditmemoRepositoryInterface;
 use Magento\Sales\Api\Data\CreditmemoInterface;
@@ -27,6 +28,7 @@ use Magento\Sales\Model\Order\CreditmemoNotifier;
 use Magento\Sales\Model\Order\RefundAdapterInterface;
 use Magento\Sales\Model\Service\CreditmemoService;
 use Magento\Sales\Model\Order\Invoice;
+use Magento\Sales\Model\Order\Payment;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -386,9 +388,14 @@ class CreditmemoServiceTest extends TestCase
         $this->expectException(\Magento\Framework\Exception\LocalizedException::class);
         $this->expectExceptionMessage('Online refund amount must be greater than zero.');
         $invoiceMock = $this->createMock(Invoice::class);
+        $paymentMethodMock = $this->createMock(MethodInterface::class);
+        $paymentMethodMock->method('isOffline')->willReturn(false);
+        $paymentMock = $this->createMock(Payment::class);
+        $paymentMock->method('getMethodInstance')->willReturn($paymentMethodMock);
         $orderMock = $this->createMock(Order::class);
         $orderMock->method('getBaseTotalRefunded')->willReturn(0);
         $orderMock->method('getBaseTotalPaid')->willReturn(10);
+        $orderMock->method('getPayment')->willReturn($paymentMock);
         $this->priceCurrency->method('round')->willReturnArgument(0);
         $creditMemoMock = $this->createPartialMock(
             Creditmemo::class,

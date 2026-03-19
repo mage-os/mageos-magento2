@@ -219,11 +219,14 @@ class CreditmemoService implements \Magento\Sales\Api\CreditmemoManagementInterf
         }
 
         if (!$offlineRequested && $creditmemo->getInvoice() && (float)$creditmemo->getBaseGrandTotal() <= 0.0) {
-            throw new \Magento\Framework\Exception\LocalizedException(
-                __('Online refund amount must be greater than zero.')
-            );
+            $payment = $creditmemo->getOrder()->getPayment();
+            $method = $payment->getMethodInstance();
+            if (!$method->isOffline()) {
+                throw new \Magento\Framework\Exception\LocalizedException(
+                    __('Online refund amount must be greater than zero.')
+                );
+            }
         }
-
         return true;
     }
 
