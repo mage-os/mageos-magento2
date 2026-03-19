@@ -34,13 +34,13 @@ class Payment extends Info implements OrderPaymentInterface
      *
      * @var string
      */
-    public const REVIEW_ACTION_ACCEPT = 'accept';
+    const REVIEW_ACTION_ACCEPT = 'accept';
 
-    public const REVIEW_ACTION_DENY = 'deny';
+    const REVIEW_ACTION_DENY = 'deny';
 
-    public const REVIEW_ACTION_UPDATE = 'update';
+    const REVIEW_ACTION_UPDATE = 'update';
 
-    public const PARENT_TXN_ID = 'parent_transaction_id';
+    const PARENT_TXN_ID = 'parent_transaction_id';
 
     /**
      * Order model object
@@ -393,9 +393,7 @@ class Payment extends Info implements OrderPaymentInterface
 
         $isCustomerNotified = $isCustomerNotified ?: $order->getCustomerNoteNotify();
 
-        if ($orderStatus === null ||
-            !array_key_exists($orderStatus, $order->getConfig()->getStateStatuses($orderState))
-        ) {
+        if ($orderStatus === null || !array_key_exists($orderStatus, $order->getConfig()->getStateStatuses($orderState))) {
             $orderStatus = $order->getConfig()->getStateDefaultStatus($orderState);
         }
 
@@ -683,11 +681,6 @@ class Payment extends Info implements OrderPaymentInterface
                 $invoice = $creditmemo->getInvoice();
                 if ($invoice) {
                     $isOnline = true;
-                    if ((float)$baseAmountToRefund <= 0.0) {
-                        throw new \Magento\Framework\Exception\LocalizedException(
-                            __('Online refund amount must be greater than zero.')
-                        );
-                    }
                     $captureTxn = $this->transactionRepository->getByTransactionId(
                         $invoice->getTransactionId(),
                         $this->getId(),
@@ -723,6 +716,8 @@ class Payment extends Info implements OrderPaymentInterface
                 $gateway->refund($this, $baseAmountToRefund);
             }
         }
+
+        // update self totals from creditmemo
         $this->_updateTotals(
             [
                 'amount_refunded' => $creditmemo->getGrandTotal(),
@@ -732,6 +727,8 @@ class Payment extends Info implements OrderPaymentInterface
                 'base_shipping_refunded' => $creditmemo->getBaseShippingAmount(),
             ]
         );
+
+        // update transactions and order state
         $transaction = $this->addTransaction(
             Transaction::TYPE_REFUND,
             $creditmemo,
@@ -1498,7 +1495,6 @@ class Payment extends Info implements OrderPaymentInterface
      * Get order state resolver instance.
      *
      * @deprecated 101.0.0
-     * @see we don't recommend this approach anymore
      * @return OrderStateResolverInterface
      */
     private function getOrderStateResolver()
@@ -1827,7 +1823,6 @@ class Payment extends Info implements OrderPaymentInterface
      *
      * @return string
      * @deprecated 100.1.0 unused
-     * @see we don't recommend this approach anymore
      */
     public function getCcSsIssue()
     {
@@ -1839,7 +1834,6 @@ class Payment extends Info implements OrderPaymentInterface
      *
      * @return string
      * @deprecated 100.1.0 unused
-     * @see we don't recommend this approach anymore
      */
     public function getCcSsStartMonth()
     {
@@ -1851,7 +1845,6 @@ class Payment extends Info implements OrderPaymentInterface
      *
      * @return string
      * @deprecated 100.1.0 unused
-     * @see we don't recommend this approach anymore
      */
     public function getCcSsStartYear()
     {
@@ -2217,7 +2210,6 @@ class Payment extends Info implements OrderPaymentInterface
     /**
      * @inheritdoc
      * @deprecated 100.1.0 unused
-     * @see we don't recommend this approach anymore
      */
     public function setCcSsStartYear($ccSsStartYear)
     {
@@ -2322,7 +2314,6 @@ class Payment extends Info implements OrderPaymentInterface
     /**
      * @inheritdoc
      * @deprecated 100.1.0 unused
-     * @see we don't recommend this approach anymore
      */
     public function setCcSsStartMonth($ccSsStartMonth)
     {
@@ -2428,7 +2419,6 @@ class Payment extends Info implements OrderPaymentInterface
     /**
      * @inheritdoc
      * @deprecated 100.1.0 unused
-     * @see we don't recommend this approach anymore
      */
     public function setCcSsIssue($ccSsIssue)
     {

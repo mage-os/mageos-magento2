@@ -26,7 +26,7 @@ use Magento\Sales\Model\Order\Creditmemo;
 use Magento\Sales\Model\Order\CreditmemoNotifier;
 use Magento\Sales\Model\Order\RefundAdapterInterface;
 use Magento\Sales\Model\Service\CreditmemoService;
-
+use Magento\Sales\Model\Order\Invoice;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -376,6 +376,31 @@ class CreditmemoServiceTest extends TestCase
         $creditMemoMock->expects($this->once())->method('getId')->willReturn(null);
         $creditMemoMock->expects($this->once())->method('getOrderId')->willReturn(null);
         $this->creditmemoService->refund($creditMemoMock, true);
+    }
+
+    /**
+     * Verifies online refund throws an exception when grand total is <= 0
+     */
+    public function testRefundThrowsExceptionWhenOnlineRefundAmountIsZero(): void
+    {
+        $this->expectException(\Magento\Framework\Exception\LocalizedException::class);
+        $this->expectExceptionMessage('Online refund amount must be greater than zero.');
+        $invoiceMock = $this->createMock(Invoice::class);
+        $orderMock = $this->createMock(Order::class);
+        $orderMock->method('getBaseTotalRefunded')->willReturn(0);
+        $orderMock->method('getBaseTotalPaid')->willReturn(10);
+        $this->priceCurrency->method('round')->willReturnArgument(0);
+        $creditMemoMock = $this->createPartialMock(
+            Creditmemo::class,
+            ['getId', 'getState', 'getOrderId', 'getOrder', 'getBaseGrandTotal', 'getInvoice']
+        );
+        $creditMemoMock->method('getId')->willReturn(null);
+        $creditMemoMock->method('getState')->willReturn(Creditmemo::STATE_OPEN);
+        $creditMemoMock->method('getOrderId')->willReturn(1);
+        $creditMemoMock->method('getOrder')->willReturn($orderMock);
+        $creditMemoMock->method('getBaseGrandTotal')->willReturn(0.0);
+        $creditMemoMock->method('getInvoice')->willReturn($invoiceMock);
+        $this->creditmemoService->refund($creditMemoMock, false);
     }
 
     public function testMultiCurrencyRefundExpectsMoneyAvailableToReturn()
