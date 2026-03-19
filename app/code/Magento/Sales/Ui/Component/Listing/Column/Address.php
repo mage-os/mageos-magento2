@@ -13,9 +13,6 @@ use Magento\Sales\Model\ResourceModel\Order\Status\CollectionFactory;
 use Magento\Directory\Api\CountryInformationAcquirerInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 
-/**
- * Class Address
- */
 class Address extends Column
 {
     /**

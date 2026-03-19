@@ -36,6 +36,8 @@ class CountryNameToCodeFilter
      * @param string $field
      * @param mixed $condition
      * @return mixed
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function aroundAddFieldToFilter(
         Collection $subject,
