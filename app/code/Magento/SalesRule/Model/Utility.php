@@ -124,7 +124,7 @@ class Utility
          * only, so that excluded items do not count toward the condition threshold.
          */
         $savedTotals = null;
-        if ($this->ruleHasItemRestrictions($rule)) {
+        if ($this->ruleHasItemRestrictions($rule) && $this->hasEligibleLineItemsForRule($rule, $address)) {
             $savedTotals = $this->setEligibleItemsTotalsOnAddress($rule, $address);
         }
         try {
@@ -166,6 +166,24 @@ class Utility
     }
 
     /**
+     * Whether at least one cart line item matches the rule's actions (eligible for the discount on items)
+     *
+     * @param Rule $rule
+     * @param Address $address
+     * @return bool
+     */
+    private function hasEligibleLineItemsForRule(Rule $rule, Address $address): bool
+    {
+        foreach ($address->getAllItems() as $item) {
+            if ($this->isItemEligibleForRuleTotals($item, $rule)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Compute totals for matching items, set them on the address, and return saved totals for later restoration
      *
      * @param Rule $rule
@@ -174,10 +192,7 @@ class Utility
      */
     private function setEligibleItemsTotalsOnAddress(Rule $rule, Address $address): array
     {
-        $baseSubtotal = 0.0;
-        $baseSubtotalInclTax = 0.0;
-        $totalQty = 0.0;
-        $weight = 0.0;
+        $baseSubtotal = $baseSubtotalInclTax = $totalQty = $weight = 0;
 
         foreach ($address->getAllItems() as $item) {
             if (!$this->isItemEligibleForRuleTotals($item, $rule)) {
