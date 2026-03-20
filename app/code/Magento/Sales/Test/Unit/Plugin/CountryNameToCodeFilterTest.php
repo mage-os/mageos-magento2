@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\Sales\Test\Unit\Plugin\OrderGrid;
+namespace Magento\Sales\Test\Unit\Plugin;
 
 use Magento\Framework\Locale\ListsInterface;
 use Magento\Sales\Model\ResourceModel\Order\Grid\Collection;
