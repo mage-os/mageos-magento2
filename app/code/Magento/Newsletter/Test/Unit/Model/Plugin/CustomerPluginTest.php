@@ -162,7 +162,6 @@ class CustomerPluginTest extends TestCase
         }
         $this->subscriberFactory->method('create')->willReturn($subscriber);
 
-        /** @var CustomerExtensionInterface|MockObject $customerExtension */
         $customerExtension = $this->createPartialMockWithReflection(
             CustomerExtensionInterface::class,
             ['getIsSubscribed', 'setIsSubscribed']
@@ -190,7 +189,7 @@ class CustomerPluginTest extends TestCase
                 ->method('setCustomerSubscriber')
                 ->with($customerId, $subscriber);
         }
-        /** @var CustomerExtensionInterface|MockObject $resultExtension */
+
         $resultExtension = $this->createPartialMockWithReflection(
             CustomerExtensionInterface::class,
             ['getIsSubscribed', 'setIsSubscribed']
@@ -346,7 +345,6 @@ class CustomerPluginTest extends TestCase
             ->willReturnSelf();
         $this->subscriberFactory->method('create')->willReturn($subscriber);
 
-        /** @var CustomerExtensionInterface|MockObject $customerExtension */
         $customerExtension = $this->createPartialMockWithReflection(
             CustomerExtensionInterface::class,
             ['getIsSubscribed', 'setIsSubscribed']
@@ -371,7 +369,6 @@ class CustomerPluginTest extends TestCase
      */
     public function testAfterGetByIdDoesNotOverwriteWhenExtensionAttributeAlreadySet(): void
     {
-        /** @var CustomerExtensionInterface|MockObject $customerExtension */
         $customerExtension = $this->createPartialMockWithReflection(
             CustomerExtensionInterface::class,
             ['getIsSubscribed', 'setIsSubscribed']
@@ -399,8 +396,8 @@ class CustomerPluginTest extends TestCase
      */
     public function testAfterGetListAddsSubscriptionStatusToCustomers(): void
     {
-        $customer1Id = '1';
-        $customer2Id = '2';
+        $customer1Id = 1;
+        $customer2Id = 2;
         $email1 = 'customer1@example.com';
         $email2 = 'customer2@example.com';
 
@@ -408,8 +405,7 @@ class CustomerPluginTest extends TestCase
         $customer1 = $this->createMock(CustomerInterface::class);
         $customer1->method('getId')->willReturn($customer1Id);
         $customer1->method('getEmail')->willReturn($email1);
-        $customer1->method('getStoreId')->willReturn(1);
-        /** @var CustomerExtensionInterface|MockObject $extension1 */
+
         $extension1 = $this->createPartialMockWithReflection(
             CustomerExtensionInterface::class,
             ['setIsSubscribed']
@@ -421,8 +417,7 @@ class CustomerPluginTest extends TestCase
         $customer2 = $this->createMock(CustomerInterface::class);
         $customer2->method('getId')->willReturn($customer2Id);
         $customer2->method('getEmail')->willReturn($email2);
-        $customer2->method('getStoreId')->willReturn(2);
-        /** @var CustomerExtensionInterface|MockObject $extension2 */
+
         $extension2 = $this->createPartialMockWithReflection(
             CustomerExtensionInterface::class,
             ['setIsSubscribed']
@@ -459,27 +454,94 @@ class CustomerPluginTest extends TestCase
     }
 
     /**
-     * Test afterGetList with same customer having subscriber rows in multiple stores.
-     * Guards against 'first record from DB' bug: when customer has store_id, the subscriber
-     * matching that store should be used, not the first matching record.
-     * This test documents expected store-scoped behavior; it will fail until the plugin
-     * implements store scope when resolving subscribers.
+     * Test afterGetList uses customer subscriber row when same email has guest and customer rows.
+     *
+     * Scenario: a guest is subscribed in one store, and a customer with the same email is
+     * unsubscribed in another store. For customer API search results, is_subscribed must be resolved
+     * from the customer row, not from the guest row.
      *
      * @covers \Magento\Newsletter\Model\Plugin\CustomerPlugin::afterGetList()
      * @return void
      */
-    public function testAfterGetListWithSameCustomerInMultipleStores(): void
+    public function testAfterGetListIgnoresSubscribedGuestRowWhenCustomerRowIsUnsubscribed(): void
     {
-        $customerId = '1';
+        $customerId = 2;
         $email = 'customer@example.com';
-        $customerStoreId = 2;
 
         /** @var CustomerInterface|MockObject $customer */
         $customer = $this->createMock(CustomerInterface::class);
         $customer->method('getId')->willReturn($customerId);
         $customer->method('getEmail')->willReturn($email);
-        $customer->method('getStoreId')->willReturn($customerStoreId);
-        /** @var CustomerExtensionInterface|MockObject $extension */
+        $customer->method('getStoreId')->willReturn(2);
+
+        $extension = $this->createPartialMockWithReflection(
+            CustomerExtensionInterface::class,
+            ['setIsSubscribed']
+        );
+        $extension->expects($this->once())->method('setIsSubscribed')->with(false);
+        $customer->method('getExtensionAttributes')->willReturn($extension);
+
+        $guestSubscriber = $this->createMock(Subscriber::class);
+        $guestSubscriber->method('getStatus')->willReturn(Subscriber::STATUS_SUBSCRIBED);
+
+        $customerSubscriber = $this->createMock(Subscriber::class);
+        $customerSubscriber->method('getStatus')->willReturn(Subscriber::STATUS_UNSUBSCRIBED);
+
+        $collection = $this->createMock(Collection::class);
+        $collection->expects($this->once())
+            ->method('addFieldToFilter')
+            ->with('subscriber_email', ['in' => [$email]])
+            ->willReturnSelf();
+        $collection->expects($this->never())->method('getFirstItem');
+        $collection->expects($this->once())
+            ->method('getItemByColumnValue')
+            ->willReturnCallback(function (
+                string $field,
+                int|string $value
+            ) use (
+                $customerId,
+                $guestSubscriber,
+                $customerSubscriber
+            ) {
+                $this->assertSame('customer_id', $field);
+                $this->assertSame($customerId, $value);
+                $this->assertSame(Subscriber::STATUS_SUBSCRIBED, (int)$guestSubscriber->getStatus());
+
+                return $customerSubscriber;
+            });
+        $this->collectionFactory->expects($this->once())->method('create')->willReturn($collection);
+
+        $searchResults = $this->createMock(SearchResults::class);
+        $searchResults->method('getItems')->willReturn([$customer]);
+
+        /** @var CustomerRepositoryInterface|MockObject $subject */
+        $subject = $this->createMock(CustomerRepositoryInterface::class);
+        $this->assertSame(
+            $searchResults,
+            $this->plugin->afterGetList($subject, $searchResults)
+        );
+    }
+
+    /**
+     * Test afterGetList ignores guest row status when customer row is subscribed.
+     *
+     * This is the inverse guest/customer status combination to ensure we do not accidentally pick
+     * guest data when rows share the same email across stores.
+     *
+     * @covers \Magento\Newsletter\Model\Plugin\CustomerPlugin::afterGetList()
+     * @return void
+     */
+    public function testAfterGetListIgnoresUnsubscribedGuestRowWhenCustomerRowIsSubscribed(): void
+    {
+        $customerId = 2;
+        $email = 'customer@example.com';
+
+        /** @var CustomerInterface|MockObject $customer */
+        $customer = $this->createMock(CustomerInterface::class);
+        $customer->method('getId')->willReturn($customerId);
+        $customer->method('getEmail')->willReturn($email);
+        $customer->method('getStoreId')->willReturn(2);
+
         $extension = $this->createPartialMockWithReflection(
             CustomerExtensionInterface::class,
             ['setIsSubscribed']
@@ -487,23 +549,130 @@ class CustomerPluginTest extends TestCase
         $extension->expects($this->once())->method('setIsSubscribed')->with(true);
         $customer->method('getExtensionAttributes')->willReturn($extension);
 
-        $subscriberStore1 = $this->createMock(Subscriber::class);
-        $subscriberStore1->method('getStatus')->willReturn(Subscriber::STATUS_SUBSCRIBED);
-        $subscriberStore2 = $this->createMock(Subscriber::class);
-        $subscriberStore2->method('getStatus')->willReturn(Subscriber::STATUS_UNSUBSCRIBED);
+        $guestSubscriber = $this->createMock(Subscriber::class);
+        $guestSubscriber->method('getStatus')->willReturn(Subscriber::STATUS_UNSUBSCRIBED);
+
+        $customerSubscriber = $this->createMock(Subscriber::class);
+        $customerSubscriber->method('getStatus')->willReturn(Subscriber::STATUS_SUBSCRIBED);
 
         $collection = $this->createMock(Collection::class);
         $collection->expects($this->once())
             ->method('addFieldToFilter')
             ->with('subscriber_email', ['in' => [$email]])
             ->willReturnSelf();
-        $collection->method('getItemByColumnValue')
-            ->with('customer_id', $customerId)
-            ->willReturn($subscriberStore1);
+        $collection->expects($this->never())->method('getFirstItem');
+        $collection->expects($this->once())
+            ->method('getItemByColumnValue')
+            ->willReturnCallback(function (
+                string $field,
+                int|string $value
+            ) use (
+                $customerId,
+                $guestSubscriber,
+                $customerSubscriber
+            ) {
+                $this->assertSame('customer_id', $field);
+                $this->assertSame($customerId, $value);
+                $this->assertSame(Subscriber::STATUS_UNSUBSCRIBED, (int)$guestSubscriber->getStatus());
+
+                return $customerSubscriber;
+            });
         $this->collectionFactory->expects($this->once())->method('create')->willReturn($collection);
 
         $searchResults = $this->createMock(SearchResults::class);
         $searchResults->method('getItems')->willReturn([$customer]);
+
+        /** @var CustomerRepositoryInterface|MockObject $subject */
+        $subject = $this->createMock(CustomerRepositoryInterface::class);
+        $this->assertSame(
+            $searchResults,
+            $this->plugin->afterGetList($subject, $searchResults)
+        );
+    }
+
+    /**
+     * Test afterGetList when the same email exists in multiple stores.
+     *
+     * This guards against the original regression where resolving by subscriber_email could pick
+     * the wrong row for a customer returned by searchCriteria when the same email exists in more
+     * than one store. The plugin must resolve by customer_id so that each customer gets the
+     * subscription status from the correct row.
+     *
+     * @covers \Magento\Newsletter\Model\Plugin\CustomerPlugin::afterGetList()
+     * @return void
+     */
+    public function testAfterGetListUsesCustomerIdSubscriberWhenSameEmailExistsAcrossStores(): void
+    {
+        $customer1Id = 1;
+        $customer2Id = 2;
+        $email = 'customer@example.com';
+        $store1Id = 1;
+        $store2Id = 2;
+
+        /** @var CustomerInterface|MockObject $customerFromStore1 */
+        $customerFromStore1 = $this->createMock(CustomerInterface::class);
+        $customerFromStore1->method('getId')->willReturn($customer1Id);
+        $customerFromStore1->method('getEmail')->willReturn($email);
+        $customerFromStore1->method('getStoreId')->willReturn($store1Id);
+
+        $store1Extension = $this->createPartialMockWithReflection(
+            CustomerExtensionInterface::class,
+            ['setIsSubscribed']
+        );
+        $store1Extension->expects($this->once())->method('setIsSubscribed')->with(true);
+        $customerFromStore1->method('getExtensionAttributes')->willReturn($store1Extension);
+
+        /** @var CustomerInterface|MockObject $customerFromStore2 */
+        $customerFromStore2 = $this->createMock(CustomerInterface::class);
+        $customerFromStore2->method('getId')->willReturn($customer2Id);
+        $customerFromStore2->method('getEmail')->willReturn($email);
+        $customerFromStore2->method('getStoreId')->willReturn($store2Id);
+
+        $store2Extension = $this->createPartialMockWithReflection(
+            CustomerExtensionInterface::class,
+            ['setIsSubscribed']
+        );
+        $store2Extension->expects($this->once())->method('setIsSubscribed')->with(false);
+        $customerFromStore2->method('getExtensionAttributes')->willReturn($store2Extension);
+
+        $customerSubscriberFromStore1 = $this->createMock(Subscriber::class);
+        $customerSubscriberFromStore1->method('getStatus')->willReturn(Subscriber::STATUS_SUBSCRIBED);
+
+        $customerSubscriberFromStore2 = $this->createMock(Subscriber::class);
+        $customerSubscriberFromStore2->method('getStatus')->willReturn(Subscriber::STATUS_UNSUBSCRIBED);
+
+        $collection = $this->createMock(Collection::class);
+        $collection->expects($this->once())
+            ->method('addFieldToFilter')
+            ->with('subscriber_email', ['in' => [$email, $email]])
+            ->willReturnSelf();
+        $collection->expects($this->exactly(2))
+            ->method('getItemByColumnValue')
+            ->willReturnCallback(function (
+                string $field,
+                int|string $value
+            ) use (
+                $customer1Id,
+                $customer2Id,
+                $customerSubscriberFromStore1,
+                $customerSubscriberFromStore2
+            ) {
+                $this->assertSame('customer_id', $field);
+
+                if ($field === 'customer_id' && $value === $customer1Id) {
+                    return $customerSubscriberFromStore1;
+                }
+
+                if ($field === 'customer_id' && $value === $customer2Id) {
+                    return $customerSubscriberFromStore2;
+                }
+
+                return null;
+            });
+        $this->collectionFactory->expects($this->once())->method('create')->willReturn($collection);
+
+        $searchResults = $this->createMock(SearchResults::class);
+        $searchResults->method('getItems')->willReturn([$customerFromStore1, $customerFromStore2]);
 
         /** @var CustomerRepositoryInterface|MockObject $subject */
         $subject = $this->createMock(CustomerRepositoryInterface::class);
