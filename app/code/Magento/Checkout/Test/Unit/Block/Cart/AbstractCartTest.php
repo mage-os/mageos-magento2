@@ -11,6 +11,8 @@ use Magento\Backend\Block\Template\Context;
 use Magento\Checkout\Block\Cart\AbstractCart;
 use Magento\Checkout\Block\Cart\Item\Renderer as ItemRenderer;
 use Magento\Checkout\Model\Session;
+use Magento\Checkout\Observer\CatalogRuleSaveAfterObserver;
+use Magento\Framework\App\CacheInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Element\RendererList;
 use Magento\Framework\View\Layout;
@@ -21,6 +23,9 @@ use Magento\Sales\Block\Items\AbstractItems;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class AbstractCartTest extends TestCase
 {
     /**
@@ -48,7 +53,8 @@ class AbstractCartTest extends TestCase
             'getRenderer'
         )->with(
             $expectedType,
-            AbstractCart::DEFAULT_TYPE
+            AbstractCart::DEFAULT_TYPE,
+            $this->anything()
         )->willReturn(
             'rendererObject'
         );
@@ -171,8 +177,11 @@ class AbstractCartTest extends TestCase
         $addressMock = $this->createMock(Address::class);
         $checkoutSessionMock = $this->createMock(Session::class);
         $quoteMock = $this->createMock(Quote::class);
+        $cacheMock = $this->createMock(CacheInterface::class);
+        $cacheMock->method('load')->willReturn(false);
         $checkoutSessionMock->expects($this->once())->method('getQuote')->willReturn($quoteMock);
 
+        $quoteMock->expects($this->once())->method('getId')->willReturn(null);
         $quoteMock->expects($this->once())->method('isVirtual')->willReturn($isVirtual);
         $quoteMock->method('getShippingAddress')->willReturn($addressMock);
         $quoteMock->method('getBillingAddress')->willReturn($addressMock);
@@ -181,9 +190,31 @@ class AbstractCartTest extends TestCase
         /** @var \Magento\Checkout\Block\Cart\AbstractCart $model */
         $model = $this->_objectManager->getObject(
             AbstractCart::class,
-            ['checkoutSession' => $checkoutSessionMock]
+            ['checkoutSession' => $checkoutSessionMock, 'cache' => $cacheMock]
         );
         $this->assertEquals($expectedResult, $model->getTotalsCache());
+    }
+
+    public function testGetTotalsReturnsSameAsGetTotalsCache(): void
+    {
+        $totals = ['grand_total' => []];
+        $addressMock = $this->createMock(Address::class);
+        $checkoutSessionMock = $this->createMock(Session::class);
+        $quoteMock = $this->createMock(Quote::class);
+        $cacheMock = $this->createMock(CacheInterface::class);
+        $cacheMock->method('load')->willReturn(false);
+        $checkoutSessionMock->method('getQuote')->willReturn($quoteMock);
+        $quoteMock->method('getId')->willReturn(null);
+        $quoteMock->method('isVirtual')->willReturn(true);
+        $quoteMock->method('getBillingAddress')->willReturn($addressMock);
+        $addressMock->method('getTotals')->willReturn($totals);
+
+        /** @var AbstractCart $model */
+        $model = $this->_objectManager->getObject(
+            AbstractCart::class,
+            ['checkoutSession' => $checkoutSessionMock, 'cache' => $cacheMock]
+        );
+        $this->assertSame($model->getTotalsCache(), $model->getTotals());
     }
 
     /**
@@ -197,54 +228,99 @@ class AbstractCartTest extends TestCase
         ];
     }
 
-    public function testGetQuoteRecollectsTotalsOnceForPersistedQuote(): void
+    public function testGetQuoteRecollectsTotalsWhenCatalogRuleCacheIsNewerThanSession(): void
     {
+        $cacheTimestamp = '1700000500';
+        $cacheMock = $this->createMock(CacheInterface::class);
+        $cacheMock->expects($this->exactly(2))
+            ->method('load')
+            ->with(CatalogRuleSaveAfterObserver::CACHE_KEY_CATALOG_RULES_UPDATED_AT)
+            ->willReturn($cacheTimestamp);
+
         $checkoutSessionMock = $this->createMock(Session::class);
         $quoteMock = $this->createPartialMock(
             Quote::class,
-            ['getId', 'getData', 'setData', 'collectTotals']
+            [
+                'getId',
+                'getItemsCount',
+                'getItemsQty',
+                'getData',
+                'collectTotals',
+                'setItemsCount',
+                'setItemsQty',
+            ]
         );
 
         $checkoutSessionMock->expects($this->once())
             ->method('getQuote')
             ->willReturn($quoteMock);
-
-        $quoteMock->expects($this->once())
-            ->method('getId')
-            ->willReturn(123);
-        $quoteMock->expects($this->once())
+        $checkoutSessionMock->expects($this->once())
             ->method('getData')
-            ->with('_checkout_cart_totals_recollected')
-            ->willReturn(null);
+            ->with('last_cart_totals_recollect_at')
+            ->willReturn(1700000000);
+        // Session::setData is final; recollect path still exercised via collectTotals.
 
-        $setDataCalls = [];
-        $quoteMock->expects($this->exactly(2))
-            ->method('setData')
-            ->willReturnCallback(function ($key, $value = null) use (&$setDataCalls, $quoteMock) {
-                $setDataCalls[] = [$key, $value];
-                return $quoteMock;
-            });
-        $quoteMock->expects($this->once())
-            ->method('collectTotals')
-            ->willReturnSelf();
+        $quoteMock->expects($this->once())->method('getId')->willReturn(123);
+        $quoteMock->method('getItemsCount')->willReturn(2);
+        $quoteMock->method('getItemsQty')->willReturn(2.0);
+        $quoteMock->method('getData')->willReturnMap([['virtual_items_qty', null, 1]]);
+        $quoteMock->expects($this->once())->method('collectTotals')->willReturnSelf();
+        $quoteMock->expects($this->once())->method('setItemsCount')->with(2)->willReturnSelf();
+        $quoteMock->expects($this->once())->method('setItemsQty')->with(2.0)->willReturnSelf();
 
         /** @var AbstractCart $model */
         $model = $this->_objectManager->getObject(
             AbstractCart::class,
-            ['checkoutSession' => $checkoutSessionMock]
-        );
-
-        $this->assertSame($quoteMock, $model->getQuote());
-        // second call should use cached quote and not trigger recollect again
-        $this->assertSame($quoteMock, $model->getQuote());
-
-        $this->assertSame(
             [
-                ['_checkout_cart_totals_recollected', true],
-                ['totals_collected_flag', false],
-            ],
-            $setDataCalls
+                'checkoutSession' => $checkoutSessionMock,
+                'cache' => $cacheMock,
+            ]
         );
+
+        $this->assertSame($quoteMock, $model->getQuote());
+    }
+
+    public function testGetQuoteRecollectsTotalsWhenSessionNeverRecordedRecollect(): void
+    {
+        $cacheTimestamp = '1700000500';
+        $cacheMock = $this->createMock(CacheInterface::class);
+        $cacheMock->method('load')->willReturn($cacheTimestamp);
+
+        $checkoutSessionMock = $this->createMock(Session::class);
+        $quoteMock = $this->createPartialMock(
+            Quote::class,
+            [
+                'getId',
+                'getItemsCount',
+                'getItemsQty',
+                'getData',
+                'collectTotals',
+                'setItemsCount',
+                'setItemsQty',
+            ]
+        );
+
+        $checkoutSessionMock->method('getQuote')->willReturn($quoteMock);
+        $checkoutSessionMock->method('getData')->with('last_cart_totals_recollect_at')->willReturn(null);
+
+        $quoteMock->method('getId')->willReturn(1);
+        $quoteMock->method('getItemsCount')->willReturn(0);
+        $quoteMock->method('getItemsQty')->willReturn(0.0);
+        $quoteMock->method('getData')->willReturnMap([['virtual_items_qty', null, null]]);
+        $quoteMock->expects($this->once())->method('collectTotals')->willReturnSelf();
+        $quoteMock->expects($this->once())->method('setItemsCount')->with(0)->willReturnSelf();
+        $quoteMock->expects($this->once())->method('setItemsQty')->with(0.0)->willReturnSelf();
+
+        /** @var AbstractCart $model */
+        $model = $this->_objectManager->getObject(
+            AbstractCart::class,
+            [
+                'checkoutSession' => $checkoutSessionMock,
+                'cache' => $cacheMock,
+            ]
+        );
+
+        $model->getQuote();
     }
 
     public function testGetQuoteDoesNotRecollectTotalsWhenQuoteIsNotPersisted(): void
@@ -252,8 +328,10 @@ class AbstractCartTest extends TestCase
         $checkoutSessionMock = $this->createMock(Session::class);
         $quoteMock = $this->createPartialMock(
             Quote::class,
-            ['getId', 'getData', 'setData', 'collectTotals']
+            ['getId', 'collectTotals']
         );
+        $cacheMock = $this->createMock(CacheInterface::class);
+        $cacheMock->method('load')->willReturn('9999999999');
 
         $checkoutSessionMock->expects($this->once())
             ->method('getQuote')
@@ -262,47 +340,82 @@ class AbstractCartTest extends TestCase
         $quoteMock->expects($this->once())
             ->method('getId')
             ->willReturn(null);
-        $quoteMock->expects($this->never())->method('getData');
-        $quoteMock->expects($this->never())->method('setData');
         $quoteMock->expects($this->never())->method('collectTotals');
 
         /** @var AbstractCart $model */
         $model = $this->_objectManager->getObject(
             AbstractCart::class,
-            ['checkoutSession' => $checkoutSessionMock]
+            ['checkoutSession' => $checkoutSessionMock, 'cache' => $cacheMock]
         );
 
         $this->assertSame($quoteMock, $model->getQuote());
     }
 
-    public function testGetQuoteDoesNotRecollectTotalsWhenAlreadyRecollected(): void
+    public function testGetQuoteDoesNotRecollectTotalsWhenCatalogRuleCacheIsEmpty(): void
     {
         $checkoutSessionMock = $this->createMock(Session::class);
-        $quoteMock = $this->createPartialMock(
-            Quote::class,
-            ['getId', 'getData', 'setData', 'collectTotals']
+        $quoteMock = $this->createPartialMock(Quote::class, ['getId', 'collectTotals']);
+        $cacheMock = $this->createMock(CacheInterface::class);
+        $cacheMock->method('load')->willReturn(false);
+
+        $checkoutSessionMock->method('getQuote')->willReturn($quoteMock);
+        $quoteMock->expects($this->once())->method('getId')->willReturn(99);
+        $quoteMock->expects($this->never())->method('collectTotals');
+        $checkoutSessionMock->expects($this->never())->method('getData');
+
+        /** @var AbstractCart $model */
+        $model = $this->_objectManager->getObject(
+            AbstractCart::class,
+            ['checkoutSession' => $checkoutSessionMock, 'cache' => $cacheMock]
         );
 
-        $checkoutSessionMock->expects($this->once())
-            ->method('getQuote')
-            ->willReturn($quoteMock);
+        $this->assertSame($quoteMock, $model->getQuote());
+    }
 
-        $quoteMock->expects($this->once())
-            ->method('getId')
-            ->willReturn(123);
-        $quoteMock->expects($this->once())
-            ->method('getData')
-            ->with('_checkout_cart_totals_recollected')
-            ->willReturn(true);
-        $quoteMock->expects($this->never())->method('setData');
+    public function testGetQuoteDoesNotRecollectTotalsWhenSessionAlreadySyncedWithCache(): void
+    {
+        $checkoutSessionMock = $this->createMock(Session::class);
+        $quoteMock = $this->createPartialMock(Quote::class, ['getId', 'collectTotals']);
+        $cacheMock = $this->createMock(CacheInterface::class);
+        $cacheMock->method('load')->willReturn('1700000000');
+
+        $checkoutSessionMock->method('getQuote')->willReturn($quoteMock);
+        $checkoutSessionMock->method('getData')->with('last_cart_totals_recollect_at')->willReturn('1700000000');
+
+        $quoteMock->expects($this->once())->method('getId')->willReturn(123);
         $quoteMock->expects($this->never())->method('collectTotals');
 
         /** @var AbstractCart $model */
         $model = $this->_objectManager->getObject(
             AbstractCart::class,
-            ['checkoutSession' => $checkoutSessionMock]
+            [
+                'checkoutSession' => $checkoutSessionMock,
+                'cache' => $cacheMock,
+            ]
         );
 
         $this->assertSame($quoteMock, $model->getQuote());
+    }
+
+    public function testGetItemsReturnsVisibleQuoteItems(): void
+    {
+        $items = [$this->createMock(QuoteItem::class)];
+        $quoteMock = $this->createMock(Quote::class);
+        $quoteMock->method('getId')->willReturn(null);
+        $quoteMock->expects($this->once())->method('getAllVisibleItems')->willReturn($items);
+
+        $checkoutSessionMock = $this->createMock(Session::class);
+        $checkoutSessionMock->method('getQuote')->willReturn($quoteMock);
+
+        $cacheMock = $this->createMock(CacheInterface::class);
+        $cacheMock->method('load')->willReturn(false);
+
+        /** @var AbstractCart $model */
+        $model = $this->_objectManager->getObject(
+            AbstractCart::class,
+            ['checkoutSession' => $checkoutSessionMock, 'cache' => $cacheMock]
+        );
+
+        $this->assertSame($items, $model->getItems());
     }
 }
