@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "86e862fe2f80a1a2004d1b284c55fc89",
+    "content-hash": "d1a938e083355483b9f4ec1ebb15d5b0",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -3266,6 +3266,79 @@
             "time": "2025-11-14T12:52:38+00:00"
         },
         {
+            "name": "laminas/laminas-soap",
+            "version": "2.15.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laminas/laminas-soap.git",
+                "reference": "f6a910e7f1ba7c526582fc179cbeaddfb816222f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laminas/laminas-soap/zipball/f6a910e7f1ba7c526582fc179cbeaddfb816222f",
+                "reference": "f6a910e7f1ba7c526582fc179cbeaddfb816222f",
+                "shasum": ""
+            },
+            "require": {
+                "ext-dom": "*",
+                "ext-soap": "*",
+                "laminas/laminas-server": "^2.15",
+                "laminas/laminas-stdlib": "^3.16",
+                "laminas/laminas-uri": "^2.10",
+                "php": "~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0"
+            },
+            "conflict": {
+                "amphp/amp": "<2.6.4",
+                "laminas/laminas-code": "<4.4",
+                "zendframework/zend-soap": "*"
+            },
+            "require-dev": {
+                "amphp/dns": "^2.4",
+                "amphp/socket": "^2.3.1",
+                "laminas/laminas-coding-standard": "^2.5",
+                "laminas/laminas-config": "^3.9",
+                "laminas/laminas-http": "^2.18",
+                "phpspec/prophecy-phpunit": "^2.0.2",
+                "phpunit/phpunit": "^11.5",
+                "psalm/plugin-phpunit": "^0.19.0",
+                "vimeo/psalm": "^6.13"
+            },
+            "suggest": {
+                "ext-curl": "Curl is required when .NET compatibility is required",
+                "laminas/laminas-http": "Laminas\\Http component"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Laminas\\Soap\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "homepage": "https://laminas.dev",
+            "keywords": [
+                "laminas",
+                "soap"
+            ],
+            "support": {
+                "chat": "https://laminas.dev/chat",
+                "docs": "https://docs.laminas.dev/laminas-soap/",
+                "forum": "https://discourse.laminas.dev",
+                "issues": "https://github.com/laminas/laminas-soap/issues",
+                "rss": "https://github.com/laminas/laminas-soap/releases.atom",
+                "source": "https://github.com/laminas/laminas-soap"
+            },
+            "funding": [
+                {
+                    "url": "https://funding.communitybridge.org/projects/laminas-project",
+                    "type": "community_bridge"
+                }
+            ],
+            "time": "2026-03-10T09:27:03+00:00"
+        },
+        {
             "name": "laminas/laminas-stdlib",
             "version": "3.21.0",
             "source": {
@@ -4151,76 +4224,6 @@
                 "source": "https://github.com/laminas/laminas-captcha"
             },
             "time": "2026-01-20T07:20:51+00:00"
-        },
-        {
-            "name": "magento/magento-zf-soap",
-            "version": "1.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/magento/magento-zf-soap.git",
-                "reference": "bd4c62d8efc1b14da0d6e8616ea3309cebba8251"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/magento/magento-zf-soap/zipball/bd4c62d8efc1b14da0d6e8616ea3309cebba8251",
-                "reference": "bd4c62d8efc1b14da0d6e8616ea3309cebba8251",
-                "shasum": ""
-            },
-            "require": {
-                "ext-dom": "*",
-                "ext-soap": "*",
-                "laminas/laminas-server": "^2.15",
-                "laminas/laminas-stdlib": "^3.16",
-                "laminas/laminas-uri": "^2.10",
-                "php": "~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0"
-            },
-            "conflict": {
-                "amphp/amp": "<2.6.4",
-                "laminas/laminas-code": "<4.4",
-                "zendframework/zend-soap": "*"
-            },
-            "replace": {
-                "laminas/laminas-soap": "^2.14"
-            },
-            "require-dev": {
-                "amphp/dns": "^2.4",
-                "amphp/socket": "^2.3.1",
-                "laminas/laminas-coding-standard": "^2.5",
-                "laminas/laminas-config": "^3.9",
-                "laminas/laminas-http": "^2.18",
-                "phpspec/prophecy-phpunit": "^2.0.2",
-                "phpunit/phpunit": "^11.5",
-                "psalm/plugin-phpunit": "^0.19.0",
-                "vimeo/psalm": "^6.13"
-            },
-            "suggest": {
-                "ext-curl": "Curl is required when .NET compatibility is required",
-                "laminas/laminas-http": "Laminas\\Http component"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Laminas\\Soap\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "homepage": "https://laminas.dev",
-            "keywords": [
-                "laminas",
-                "soap"
-            ],
-            "support": {
-                "chat": "https://laminas.dev/chat",
-                "docs": "https://docs.laminas.dev/laminas-soap/",
-                "forum": "https://discourse.laminas.dev",
-                "issues": "https://github.com/laminas/laminas-soap/issues",
-                "rss": "https://github.com/laminas/laminas-soap/releases.atom",
-                "source": "https://github.com/laminas/laminas-soap"
-            },
-            "time": "2026-01-20T07:38:37+00:00"
         },
         {
             "name": "magento/zend-cache",
