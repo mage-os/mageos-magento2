@@ -80,6 +80,9 @@ class Config implements \Magento\Framework\Interception\ConfigInterface
      */
     private $cacheManager;
 
+    /** @var array<string, array> */
+    private array $scopeReadCache = [];
+
     /**
      * Config constructor
      *
@@ -201,7 +204,10 @@ class Config implements \Magento\Framework\Interception\ConfigInterface
     {
         $config = [];
         foreach ($this->_scopeList->getAllScopes() as $scope) {
-            $config = array_replace_recursive($config, $this->_reader->read($scope));
+            if (!isset($this->scopeReadCache[$scope])) {
+                $this->scopeReadCache[$scope] = $this->_reader->read($scope);
+            }
+            $config = array_replace_recursive($config, $this->scopeReadCache[$scope]);
         }
         unset($config['preferences']);
         foreach ($config as $typeName => $typeConfig) {
