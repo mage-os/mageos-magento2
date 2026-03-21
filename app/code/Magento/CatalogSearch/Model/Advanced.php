@@ -61,7 +61,6 @@ class Advanced extends \Magento\Framework\Model\AbstractModel
 
     /**
      * @deprecated 101.0.2 No alternative available.
-     * @see Advanced::getAttributes()
      * @var Config
      */
     protected $_catalogConfig;
