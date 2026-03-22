@@ -63,18 +63,18 @@
     "noResultsFoundText" : "We couldn't find any records."
   },
   "miniCart": {
-    "configurableProductMinicartTitle": "x Inez Full Zip Jacket",
+    "configurableProductMinicartTitle": "Inez Full Zip Jacket",
     "miniCartTitle": "My Cart",
     "productQuantityChangedConfirmation": "was updated in your shopping cart",
     "productRemovedConfirmation": "You removed the item.",
-    "simpleProductInCartTitle": "x Push It Messenger Bag"
+    "simpleProductInCartTitle": "Push It Messenger Bag"
   },
   "productPage": {
     "borderClassRegex": ".* border-primary$",
     "simpleProductAddedNotification": "You added"
   },
   "login": {
-    "loginHeaderText" : "Login",
+    "loginHeaderText" : "Customer Login",
     "invalidCredentialsMessage": "The account sign-in was incorrect or your account is disabled temporarily. Please wait and try again later."
   },
   "search": {

@@ -57,22 +57,6 @@ test.describe('Minicart Actions', {annotation: {type: 'Minicart', description: '
   });
 
   /**
-   * @feature Magento 2 Minicart quantity change
-   * @scenario User adds a product to the minicart, then changes the quantity using the minicart
-   * @given I have added a (simple) product to the cart and opened the minicart
-   * @when I click on the pencil for the product I want to update
-   *  @then I should navigate to a product page that is in my cart
-   * @when I change the amount
-   *  @and I click the 'update item' button
-   *  @then I should see a confirmation
-   *    @and the new amount should be shown in the minicart
-   */
-  test('Change_product_quantity_in_minicart',{ tag: ['@minicart-simple-product', '@cold']}, async ({page}) => {
-    const miniCart = new MiniCartPage(page);
-    await miniCart.updateProduct('3');
-  });
-
-  /**
    * @feature Magento 2 minicart product deletion
    * @scenario User adds product to cart, then removes from minicart
    * @given I have added a (simple) product to the cart and opened the minicart

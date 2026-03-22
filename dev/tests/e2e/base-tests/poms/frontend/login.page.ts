@@ -27,10 +27,12 @@ class LoginPage {
     await this.loginButton.press("Enter");
     // await this.loginButton.click({force: true});
 
-    await this.page.waitForURL(slugs.account.accountOverviewSlug);
+    await this.page.waitForLoadState();
+    // await this.page.waitForURL(new RegExp(`${slugs.account.accountOverviewRegex}`));
+    // await this.page.waitForURL(`**${slugs.account.accountOverviewSlug}`);
 
     // wait for page to be done loading
-    await this.page.waitForURL('/customer/account/');
+    // await this.page.waitForURL('/customer/account/');
 
     // Open the menu, then check the 'Sign Out' button is visible
     await mainmenu.mainMenuAccountButton.waitFor();

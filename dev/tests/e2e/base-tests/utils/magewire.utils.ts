@@ -54,32 +54,40 @@ class MagewireUtils {
     throw new Error('[Magewire] Timeout: Still pending requests after wait');
   }
 
-  private async waitForMagewireDomIdle(): Promise<void> {
-    const element = this.page.locator('.magewire.messenger');
-
-    // LocatorHandler will keep looking for pop-up
-    await this.page.addLocatorHandler(element, async() => {
-      // Keep retrying, waiting for element to be hidden.
-      await expect(async () => {
-        await expect(element).toBeHidden();
-      }).toPass();
-    }, {noWaitAfter: true})
-  }
-
   // private async waitForMagewireDomIdle(): Promise<void> {
-  //   // 1. Check of de messenger height 0px is
-  //   await this.page.waitForFunction(() => {
-  //     const element = document.querySelector('.magewire\\.messenger');
-  //     return element && getComputedStyle(element).height === '0px';
-  //   }, { timeout: 30000 });
+  //   // look for the magewire pop-up
+  //   // const element = this.page.locator('.magewire.messenger');
+  //   const element = this.page.locator('#magewire-loader-notifications > div');
   //
-  //   // 2. Check if there is no processing ongoing
-  //   await this.page.waitForFunction(() => {
-  //     return !(window.magewire && (window.magewire as any).processing);
-  //   }, { timeout: 30000 });
-  //
-  //   await this.page.waitForTimeout(500);
+  //   // LocatorHandler will keep looking for pop-up
+  //   await this.page.addLocatorHandler(element, async() => {
+  //     // Keep retrying, waiting for element to be hidden.
+  //     await expect(async () => {
+	// 	  // await expect(element).toBeHidden();
+  //       await expect(element).toHaveCount(0);
+  //     }).toPass();
+  //   }, {noWaitAfter: true})
   // }
+
+  private async waitForMagewireDomIdle(): Promise<void> {
+    // 1. Check of de messenger height 0px is
+    // await this.page.waitForFunction(() => {
+    //   // const element = document.querySelector('#magewire-loader-notifications > div');
+      
+    //   // magewire element "Saving Shipping Method"
+    //   //#magewire-loader-notifications > div > div > div
+
+	  // const element = document.querySelector('.magewire\\.messenger');
+    //   return element && getComputedStyle(element).height === '0px';
+    // }, { timeout: 30000 });
+
+    // 2. Check if there is no processing ongoing
+    await this.page.waitForFunction(() => {
+      return !(window.magewire && (window.magewire as any).processing);
+    }, { timeout: 30000 });
+
+    await this.page.waitForTimeout(500);
+  }
 
   private isMagewireRequest(url: string): boolean {
     return url.includes('/magewire/message');

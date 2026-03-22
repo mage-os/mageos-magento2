@@ -24,11 +24,11 @@ class NewsletterSubscriptionPage {
       // user is already subscribed, test runs unsubscribe
       await this.newsletterCheckElement.uncheck();
       await this.saveSubscriptionsButton.click();
-      
+
     } else {
       // user is not yet subscribed, test runs subscribe
       subscriptionUpdatedNotification = outcomeMarker.account.newsletterSavedNotification;
-      
+
       await this.newsletterCheckElement.check();
       await this.saveSubscriptionsButton.click();
 
@@ -40,8 +40,10 @@ class NewsletterSubscriptionPage {
   }
 
   async footerSubscribeToNewsletter() {
-    await expect(this.page.getByRole('textbox', {name: UIReference.footerPage.newsletterInputElementLabel})).toBeVisible();
-    await this.page.getByRole('textbox', {name: UIReference.footerPage.newsletterInputElementLabel}).fill(faker.internet.email());
+    const form = this.page.locator('#newsletter-validate-detail');
+    const emailField = form.locator('input[name="email"]');
+    await expect(emailField).toBeVisible();
+    await emailField.fill(faker.internet.email());
     await this.page.getByRole('button', {name: UIReference.footerPage.newsletterSubscribeButtonLabel}).click();
   }
 }

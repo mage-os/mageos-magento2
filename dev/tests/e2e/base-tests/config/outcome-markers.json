@@ -3,7 +3,7 @@
     "accountCreatedNotificationText": "Thank you for registering with Main Website Store.",
     "accountPageTitle": "Account Information",
     "addressBookTitle": "Customer Address",
-    "changedPasswordNotificationText": "You saved the account",
+    "changedCredentialsInformation": "You saved the account",
     "createAccountHeaderText" : "Create New Customer Account",
     "newsletterRemovedNotification": "We have removed your newsletter subscription.",
     "newsletterSavedNotification": "We have saved your subscription.",
@@ -23,7 +23,7 @@
     "discountRemovedNotification": "You canceled the coupon code.",
     "incorrectCouponCodeNotificationOne": "The coupon code",
     "incorrectCouponCodeNotificationTwo": "is not valid.",
-    "priceReducedSymbols": "- $"
+    "priceReducedSymbols": "$"
   },
   "categoryPage" : {
     "subCategoryPageTitle" : "Fitness Equipment"

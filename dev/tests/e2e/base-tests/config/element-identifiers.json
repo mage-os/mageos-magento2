@@ -1,4 +1,10 @@
 {
+  "account" : {
+		"addressBookHeading": "Address Book",
+		"dashboardHeading" : "Account Information",
+		"editContactInfo": "Edit contact information",
+		"newAddressHeading" : "Add New Address"
+  },
   "accountCreation": {
     "createAccountButtonLabel": "Create an Account",
     "createAccountTitleText" : "Create New Customer Account"
@@ -16,8 +22,55 @@
     }
   },
   "address" : {
+    "addressField" : "Street Address",
+		"addressSavedText": "You saved the address.",
+		"cityField" : "City",
+		"companyField" : "Company",
+		"countryField" : "Country",
+		"phoneField" : "Phone Number",
+		"regionInputField": "State/Province",
+		"regionLocator": "#region_id",
+		"saveAddressButton": "Save Address",
+		"zipCodeField" : "Zip/Postal Code",
+    "TO_DEPRECATE": "addressBookTitle Below - moved to account",
     "addressBookTitle" : "Address Book"
   },
+  "admin" : {
+		"admin": "Admin",
+		"adminSharing": "Admin Account Sharing",
+		"advanced": "Advanced",
+		"captchaEnabled": "Enable CAPTCHA on Storefront",
+		"configuration": "Configuration",
+		"configTabLocator" : "#system_config_tabs",
+		"configurationSavedText": "You saved the configuration.",
+		"customerCAPTCHAInheritLocator": "#customer_captcha_enable_inherit",
+		"customerInheritLocator": "#admin_security_admin_account_sharing_inherit",
+		"customers": "Customers",
+		"customerConfiguration": "Customer Configuration",
+		"recordsFoundLocator": "#promo_quote_grid-total-count",
+		"storesButton" : "Stores"
+  },
+  "adminMarketing" : {
+		"cartPriceRules": "Cart Price Rules",
+		"couponSearchLocator": "#promo_quote_grid_filter_coupon_code",
+		"marketingButton" : "Marketing"
+	},
+	"authentication" : {
+		"adminUsernameFieldId": "#username",
+		"adminPasswordFieldId": "#login",
+		"adminLoginButtonClass": ".action-login",
+		"adminLoginText": "Welcome, please sign in",
+		"changePassword": "Change Password",
+		"currentPassword": "Current Password",
+		"newPassword": "New Password",
+		"newPasswordConfirm": "Confirm New Password"
+	},
+  "commerce" : {
+		"updateCartButton": "Update Shopping Cart"
+	},
+	"errors" : {
+		"captchaIncorrect" : "Incorrect CAPTCHA."
+	},
   "adminGeneral": {
     "tableSearchFieldLabel": "Search by keyword",
     "tableFilterResetLabel": "Clear All",
@@ -98,15 +151,16 @@
   },
   "categoryPage":{
     "activeViewLocator": ".active",
-    "categoryPageWithOptionsTitleText": "Top",
-    "categoryPageTitleText": "Tops",
-    "firstFilterOptionLocator": "#filter-option-2-title",
+    "categoryPageTitleText": "Women",
+    "firstFilterOptionLocator": "#filter-option-0-content",
     "itemsOnPageAmountLocator": ".toolbar-number",
     "itemsPerPageButtonLabel": "Show items per page",
     "productGridLocator": ".products-grid",
     "removeActiveFilterButtonLabel": "Remove active",
-    "sizeFilterButtonLabel": "Size",
-    "sizeLLinkLabel": "Filter Size L",
+    "sizeFilterButtonLabel": "Size filter",
+    "sizeXSLinkLabel": "XS",
+    "activeFilterButtonLabel": "Active filtering",
+    "clearAllFiltersLinkLabel": "Clear All",
     "sortByButtonLabel": "Sort by",
     "sortByButtonLocator": ".form-select.sorter-options",
     "viewSwitchLabel": "Products view mode",
@@ -142,7 +196,7 @@
     "applyDiscountButtonLabel": "Apply Coupon",
     "applyDiscountCodeLabel": "Apply Discount Code",
     "cancelDiscountButtonLabel": "Cancel Coupon",
-    "cartDetailsLocator": ".minicart-items-wrapper",
+    "cartDetailsLocator": "#checkout-cart-details div",
     "continueShoppingLabel": "Continue Shopping",
     "discountInputFieldLabel": "Enter discount code",
     "openCartButtonLabel": "Cart",
@@ -150,7 +204,7 @@
     "openCartButtonLabelContMultiple": "items",
     "openCartDetailsButtonLocator": "button[aria-controls=\"checkout-cart-details\"]",
     "openDiscountFormLabel": "Apply Discount Code",
-    "paymentOptionCheckLabel": "Check / Money order Free",
+    "paymentOptionCheckLabel": "Check / Money order",
     "paymentOptionCreditCardLabel": "Credit Card",
     "paymentOptionPaypalLabel": "PayPal",
     "checkoutCartDetailsLocator": "#checkout-cart-details",
@@ -160,7 +214,7 @@
     "creditCardNameLabel": "Name on Card",
     "placeOrderButtonLabel": "Place Order",
     "remove": "Remove",
-    "shippingAddressRadioLocator": "#checkout-step-shipping .shipping-address-item.selected-item",
+    "shippingAddressRadioLocator": "#shipping-details input[type='radio']",
     "shippingMethodFixedLabel": "Fixed",
     "shippingMethodTableRateLabel": "Table Rate",
     "shippingPriceText": "Shipping & Handling (Flat Rate - Fixed)",
@@ -216,23 +270,38 @@
     "newsletterSubscribeButtonLabel": "Subscribe"
   },
   "general": {
+    "adminMessageLocator": "#messages .message div",
+		"firstNameField": "First Name",
+		"general": "General",
+		"headingOneLocator": "h1.page-title",
+		"lastNameField": "Last Name",
+		"messageLocator" : "#messages div div.messages div div.message span",
+		"priceSymbol": "$",
+		"save": "Save",
+		"saveConfigButton": "Save Config",
+		"security" : "Security",
+		"search": "Search",
+		"quantityAbbr": "Qty",
+    "TO_BE_DEPRECATED_BELOW": "Try not to use",
     "addToCartLabel": "Add to Cart",
     "closeMessageLabel": "Close message",
     "errorMessageLocator": "#messages div .messages div .error span",
     "errorMessageStreetAddressRequiredFieldText": "Street Address field is required.",
     "genericPriceLabel": "Price",
-    "genericPriceSymbol": "£",
+    "genericPriceSymbol": "$",
     "genericSaveButtonLabel": "Save",
     "genericSubmitButtonLabel": "Submit",
     "headerLocator": "#header",
     "loadingSpinnerLocator": "#container .spinner",
-    "messageLocator": "#messages .messages div",
     "removeLabel": "Remove",
     "searchButtonLabel": "Search",
     "successMessageLocator": "div.message.success"
   },
   "homePage": {
     "homePageTitleText": "Hyvä Theme"
+  },
+  "menu" : {
+    "logoutLink" : "Sign Out"
   },
   "mainMenu": {
     "addressBookButtonLabel" : "Address Book",
@@ -271,6 +340,19 @@
     "searchResultsTitle": "Search results for:",
     "searchTermDropdownText" : "Search terms"
   },
+  "titles" : {
+		"accountHeading" : "My Account",
+		"adminDashboardHeading": "Dashboard",
+		"categoryHeading": "Women",
+		"cartHeading": "Shopping Cart",
+		"homeHeading" : "Hyvä Theme",
+		"loginHeading": "Customer Login",
+		"signedOutHeading": "You have signed out",
+		"simpleProductHeading": "Push It Messenger Bag"
+	},
+	"toasts" : {
+		"accountInfoSaved" : "You saved the account information."
+	},
   "orderHistoryPage" : {
     "orderHistoryTitle": "My Orders"
   },

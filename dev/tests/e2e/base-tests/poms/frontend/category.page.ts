@@ -22,9 +22,6 @@ class CategoryPage {
    */
   async goToCategoryPage(){
     await this.page.goto(slugs.categoryPage.categorySlug);
-    // Wait for the first filter option to be visible
-    const firstFilterOption = this.page.locator(UIReference.categoryPage.firstFilterOptionLocator);
-    await firstFilterOption.waitFor();
 
     this.page.waitForLoadState();
     await expect(this.categoryPageTitle).toBeVisible();
@@ -32,31 +29,39 @@ class CategoryPage {
 
   /**
    * @feature Filter category page
-   * @scenario User filters category page on size L
+   * @scenario User filters category page on size XS
    * @given I am on the category page
    * @when I open the Size filter category
-   * @and I click the size L button
+   * @and I click the size XS button
    * @then the URL should reflect this filter
-   * @and I should see fewer products
+   * @and I should see the active filtering button and Clear All link
    */
   async filterOnSize() {
-    const sizeFilterButton = this.page.getByRole('button', {name: UIReference.categoryPage.sizeFilterButtonLabel});
-    const sizeLButton = this.page.getByRole('link', {name: UIReference.categoryPage.sizeLLinkLabel});
-    const removeActiveFilterLink = this.page.getByRole('link', {name: UIReference.categoryPage.removeActiveFilterButtonLabel}).first();
-    const amountOfItemsBeforeFilter = parseInt(await this.page.locator(UIReference.categoryPage.itemsOnPageAmountLocator).last().innerText());
+    const filterRegion = this.page.getByRole('region', {name: 'Product filters'});
+    const sizeFilterButton = filterRegion.getByRole('button', {name: UIReference.categoryPage.sizeFilterButtonLabel});
+    const sizeXSButton = filterRegion.getByRole('link', {name: UIReference.categoryPage.sizeXSLinkLabel});
+    const activeFilteringButton = this.page.getByRole('button', {name: UIReference.categoryPage.activeFilterButtonLabel});
+    const clearAllLink = this.page.getByRole('link', {name: UIReference.categoryPage.clearAllFiltersLinkLabel});
 
-    await expect(async() => {
-      await sizeFilterButton.click();
-      await expect(sizeLButton).toBeVisible();
+    // Scroll to the size filter to trigger Alpine.js deferred initialization
+    await sizeFilterButton.scrollIntoViewIfNeeded();
+
+    // Check if the size filter is already opened, if not open it
+    await expect(async () => {
+      const isExpanded = await sizeFilterButton.getAttribute('aria-expanded');
+      if (isExpanded !== 'true') {
+        await sizeFilterButton.click();
+      }
+      await expect(sizeXSButton).toBeVisible();
     }).toPass();
 
-    await sizeLButton.click();
-    const sizeFilterRegex = new RegExp(`\\?size=L$`);
-    //await this.page.waitForURL(sizeFilterRegex);
+    // Click on the XS filter option
+    await sizeXSButton.click();
+    await this.page.waitForURL(/\?size=166/);
 
-    const amountOfItemsAfterFilter = parseInt(await this.page.locator(UIReference.categoryPage.itemsOnPageAmountLocator).last().innerText());
-    await expect(removeActiveFilterLink, 'Trash button to remove filter is visible').toBeVisible();
-    expect(amountOfItemsAfterFilter, `Amount of items shown with filter (${amountOfItemsAfterFilter}) is less than without (${amountOfItemsBeforeFilter})`).toBeLessThanOrEqual(amountOfItemsBeforeFilter);
+    // Verify active filtering is shown and Clear All link is available
+    await expect(activeFilteringButton, 'Active filtering button should be visible').toBeVisible();
+    await expect(clearAllLink, 'Clear All link should be visible').toBeVisible();
   }
 
   /**

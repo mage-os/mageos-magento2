@@ -1,13 +1,15 @@
 {
   "account": {
     "accountOverviewSlug": "/customer/account/",
+    "accountOverviewRegex": "/.*\\/customer\\/account\\/.*/",
     "addressBookSlug": "/customer/address",
     "addressIndexSlug": "/customer/address/index",
-    "addressNewSlug": "customer/address/new",
+    "addressNewSlug": "/customer/address/new",
     "accountEditSlug": "/customer/account/edit/",
     "changePasswordSlug": "/customer/account/edit/changepass/1/",
     "createAccountSlug": "/customer/account/create/",
     "loginSlug": "/customer/account/login/",
+    "loginSlugRegex": ".*\\/customer\\/account\\/login.*",
     "orderHistorySlug": "/sales/order/history/"
   },
   "cart": {
@@ -15,8 +17,8 @@
     "cartSlug": "/checkout/cart/"
   },
   "categoryPage": {
-    "categorySlug": "/men/tops-men.html",
-    "subcategorySlug" : "/men/tops-men.html?cat=14"
+    "categorySlug": "/women.html",
+    "subcategorySlug" : "/gear/fitness-equipment.html"
   },
   "checkout": {
     "checkoutSlug": "/checkout/",
@@ -35,7 +37,7 @@
     "resultsSlug": "/catalogsearch/result/"
   },
   "wishList": {
-    "wishListSlug": "wishlist/",
+    "wishListSlug": "/wishlist/",
     "wishListRegex": ".*wishlist.*"
   }
 }

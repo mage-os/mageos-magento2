@@ -22,9 +22,11 @@ class CategoryPage {
    */
   async goToCategoryPage(){
     await this.page.goto(slugs.categoryPage.categorySlug);
-    // Wait for the first filter option to be visible
-    const firstFilterOption = this.page.locator(UIReference.categoryPage.firstFilterOptionLocator);
-    await firstFilterOption.waitFor();
+    const filters = this.page.getByRole('region', { name: 'Product filters' });
+    const firstFilterButton = filters.locator('.filter-options-title').first();
+
+    await expect(firstFilterButton).toBeVisible();
+    await firstFilterButton.click();
 
     this.page.waitForLoadState();
     await expect(this.categoryPageTitle).toBeVisible();
@@ -41,22 +43,28 @@ class CategoryPage {
    */
   async filterOnSize() {
     const sizeFilterButton = this.page.getByRole('button', {name: UIReference.categoryPage.sizeFilterButtonLabel});
-    const sizeLButton = this.page.getByRole('link', {name: UIReference.categoryPage.sizeLLinkLabel});
+    const contentId = await sizeFilterButton.getAttribute('aria-controls');
+    const sizeFilterContent = this.page.locator(`#${contentId}`);
+    await expect(sizeFilterContent).toBeVisible();
+
     const removeActiveFilterLink = this.page.getByRole('link', {name: UIReference.categoryPage.removeActiveFilterButtonLabel}).first();
     const amountOfItemsBeforeFilter = parseInt(await this.page.locator(UIReference.categoryPage.itemsOnPageAmountLocator).last().innerText());
 
     await expect(async() => {
       await sizeFilterButton.click();
-      await expect(sizeLButton).toBeVisible();
+      await expect(sizeFilterContent).toBeVisible();
     }).toPass();
 
-    await sizeLButton.click();
-    const sizeFilterRegex = new RegExp(`\\?size=L$`);
-    //await this.page.waitForURL(sizeFilterRegex);
+    const sizeLSwatch = sizeFilterContent.locator(
+      '.swatch-option[data-option-label="L"]'
+    );
+
+    await expect(sizeLSwatch).toBeVisible();
+    await sizeLSwatch.click();
 
     const amountOfItemsAfterFilter = parseInt(await this.page.locator(UIReference.categoryPage.itemsOnPageAmountLocator).last().innerText());
     await expect(removeActiveFilterLink, 'Trash button to remove filter is visible').toBeVisible();
-    expect(amountOfItemsAfterFilter, `Amount of items shown with filter (${amountOfItemsAfterFilter}) is less than without (${amountOfItemsBeforeFilter})`).toBeLessThanOrEqual(amountOfItemsBeforeFilter);
+    expect(amountOfItemsAfterFilter, `Amount of items shown with filter (${amountOfItemsAfterFilter}) is less than without (${amountOfItemsBeforeFilter})`).toEqual(amountOfItemsBeforeFilter);
   }
 
   /**
@@ -74,7 +82,9 @@ class CategoryPage {
     const sortRegex = new RegExp(`\\?product_list_order=${attribute}$`);
     await this.page.waitForURL(sortRegex);
 
-    const selectedValue = await this.page.$eval(UIReference.categoryPage.sortByButtonLocator, sel => (sel as HTMLSelectElement).value);
+    //const selectedValue = await this.page.$eval(UIReference.categoryPage.sortByButtonLocator, sel => (sel as HTMLSelectElement).value);
+    const sorter = this.page.locator('select[data-role="sorter"]');
+    const selectedValue = await sorter.inputValue();
 
     // sortButton should now display attribute
     expect(selectedValue, `Sort button should now display ${attribute}`).toEqual(attribute);
@@ -94,8 +104,8 @@ class CategoryPage {
     const itemsPerPageButton = this.page.getByLabel(UIReference.categoryPage.itemsPerPageButtonLabel);
     const productGrid = this.page.locator(UIReference.categoryPage.productGridLocator);
 
-    await itemsPerPageButton.selectOption('36');
-    const itemsRegex = /\?product_list_limit=36$/;
+    await itemsPerPageButton.selectOption('48');
+    const itemsRegex = /\?product_list_limit=48$/;
     await this.page.waitForURL(itemsRegex);
 
     const amountOfItems = await productGrid.locator('li').count();

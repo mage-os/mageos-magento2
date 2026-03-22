@@ -55,8 +55,8 @@ class ApiClient {
 
     const response = await tempContext.post('/rest/V1/integration/admin/token', {
       data: {
-        username: requireEnv('MAGENTO_API_USERNAME'),
-        password: requireEnv('MAGENTO_API_PASSWORD'),
+        username: requireEnv('MAGENTO_ADMIN_USERNAME'),
+        password: requireEnv('MAGENTO_ADMIN_PASSWORD'),
       },
     });
 

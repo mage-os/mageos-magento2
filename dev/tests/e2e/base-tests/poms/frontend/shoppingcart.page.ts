@@ -70,7 +70,9 @@ class CartPage {
     await notificationBanner.waitFor();
 
     await expect.soft(this.page.getByText(`${outcomeMarker.cart.discountAppliedNotification} "${code}"`),`Notification that discount code ${code} has been applied`).toBeVisible();
-    await expect(this.page.getByText(outcomeMarker.cart.priceReducedSymbols),`'- $' should be visible on the page`).toBeVisible();
+    // WORKAROUND
+    // hardcoded '-' symbol because the space between - and $ is not always present.
+    await expect(this.page.getByText(`- ${outcomeMarker.cart.priceReducedSymbols}`),`'- $' should be visible on the page`).toBeVisible();
     //Close message to prevent difficulties with other tests.
     await this.page.getByLabel(UIReference.general.closeMessageLabel).click();
   }
@@ -86,7 +88,7 @@ class CartPage {
     await this.page.waitForLoadState();
 
     await expect.soft(this.page.getByText(outcomeMarker.cart.discountRemovedNotification),`Notification should be visible`).toBeVisible();
-    await expect(this.page.getByText(outcomeMarker.cart.priceReducedSymbols),`'- $' should not be on the page`).toBeHidden();
+    await expect(this.page.getByText(`-${outcomeMarker.cart.priceReducedSymbols}`),`'- $' should not be on the page`).toBeHidden();
   }
 
   async enterWrongCouponCode(code: string){
@@ -101,8 +103,10 @@ class CartPage {
     await applyDiscoundButton.click();
     await this.page.waitForLoadState();
 
+    let incorrectNotification = `${outcomeMarker.cart.incorrectCouponCodeNotificationOne} "${code}" ${outcomeMarker.cart.incorrectCouponCodeNotificationTwo}`;
+
     //Assertions: notification that code was incorrect & discount code field is still editable
-    this.page.locator('.message-error').getByText(outcomeMarker.cart.incorrectCouponCodeNotificationTwo)
+    await expect.soft(this.page.getByText(incorrectNotification), `Code should not work`).toBeVisible();
     await expect(discountField).toBeEditable();
   }
 
@@ -112,9 +116,8 @@ class CartPage {
   // ==============================================
 
   async getCheckoutValues(productName:string, pricePDP:string, amountPDP:string){
-    const checkoutCartDetails = this.page.locator(UIReference.checkout.cartDetailsLocator);
-    //const openCartDetailsButton = this.page.locator(UIReference.checkout.openCartDetailsButtonLocator);
-    const openCartDetailsButton = this.page.locator('.block.items-in-cart [data-role="title"]');
+    const checkoutCartDetails = this.page.locator(UIReference.checkout.checkoutCartDetailsLocator);
+    const openCartDetailsButton = this.page.locator(UIReference.checkout.openCartDetailsButtonLocator);
 
     if(await checkoutCartDetails.isHidden()) {
       await openCartDetailsButton.click();
@@ -127,16 +130,16 @@ class CartPage {
     // } else {
     //   await this.page.getByLabel(`${UIReference.checkout.openCartButtonLabel} ${cartItemAmount} ${UIReference.checkout.openCartButtonLabelContMultiple}`).click();
     // }
-    await checkoutCartDetails.isVisible()
 
     // Get values from checkout page
-    let productInCheckout = checkoutCartDetails.filter({ hasText: productName }).nth(0);
+    let productInCheckout = this.page.locator(UIReference.checkout.cartDetailsLocator).filter({ hasText: productName }).nth(1);
     this.productPriceInCheckout = await productInCheckout.getByText(UIReference.general.genericPriceSymbol).last().innerText();
     this.productPriceInCheckout = this.productPriceInCheckout.trim();
     // let productImage = this.page.locator(UIReference.checkout.cartDetailsLocator)
     // .filter({ has: this.page.getByRole('img', { name: productName })});
     // this.productQuantityInCheckout = await productImage.locator('> span').innerText();
-    this.productQuantityInCheckout = await productInCheckout.locator('.details-qty .value').innerText();
+    this.productQuantityInCheckout = await productInCheckout.locator('.product-price').getByText('x').innerText();
+    this.productQuantityInCheckout = this.productQuantityInCheckout.substring(0,1);
     return [this.productPriceInCheckout, this.productQuantityInCheckout];
   }
 

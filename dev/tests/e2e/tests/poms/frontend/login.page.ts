@@ -12,8 +12,10 @@ class LoginPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.loginEmailField = page.getByRole('textbox', {name: UIReference.credentials.emailFieldLabel, exact: true});
-    this.loginPasswordField = page.getByRole('textbox', {name: UIReference.credentials.passwordFieldLabel});
+    //this.loginEmailField = page.getByRole('textbox', {name: UIReference.credentials.emailFieldLabel, exact: true});
+    //this.loginPasswordField = page.getByRole('textbox', {name: UIReference.credentials.passwordFieldLabel});
+    this.loginEmailField = page.locator('input[name="login[username]"]');
+    this.loginPasswordField = page.locator('input[name="login[password]"]');
     this.loginButton = page.getByRole('button', { name: UIReference.credentials.loginButtonLabel });
   }
 

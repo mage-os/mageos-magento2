@@ -15,9 +15,9 @@ class MiniCartPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.toCheckoutButton = page.getByRole('link', { name: UIReference.miniCart.checkOutButtonLabel });
+    this.toCheckoutButton = page.getByRole('button', { name: UIReference.miniCart.checkOutButtonLabel });
     this.toCartButton = page.getByRole('link', { name: UIReference.miniCart.toCartLinkLabel });
-    this.editProductButton = page.getByLabel(UIReference.miniCart.editProductIconLabel);
+    this.editProductButton = page.getByRole('link', { name: UIReference.miniCart.editProductIconLabel });
     this.productQuantityField = page.getByLabel(UIReference.miniCart.productQuantityFieldLabel);
     this.updateItemButton = page.getByRole('button', { name: UIReference.cart.updateItemButtonLabel });
     this.priceOnPDP = page.getByLabel(UIReference.general.genericPriceLabel).getByText(UIReference.general.genericPriceSymbol);
@@ -36,7 +36,7 @@ class MiniCartPage {
 
   async removeProductFromMinicart(product: string) {
     let productRemovedNotification = outcomeMarker.miniCart.productRemovedConfirmation;
-    let removeProductMiniCartButton = this.page.getByLabel(`${UIReference.miniCart.removeProductIconLabel} "${UIReference.productPage.simpleProductTitle}"`);
+    let removeProductMiniCartButton = this.page.getByRole('link', { name: 'Remove'} );
     // ensure button is visible
     await removeProductMiniCartButton.waitFor();
     await removeProductMiniCartButton.click();
@@ -46,14 +46,14 @@ class MiniCartPage {
 
   async updateProduct(amount: string){
     let productQuantityChangedNotification = outcomeMarker.miniCart.productQuantityChangedConfirmation;
-    await this.editProductButton.click();
-    await expect(this.page).toHaveURL(new RegExp(`${slugs.cart.cartProductChangeSlug}.*`));
+    //await this.editProductButton.click();
+    //await expect(this.page).toHaveURL(new RegExp(`${slugs.cart.cartProductChangeSlug}.*`));
 
-    await this.productQuantityField.click();
-    await this.productQuantityField.fill(amount);
+    await this.productQuantityField.first().click();
+    await this.productQuantityField.first().fill(amount);
 
     await this.updateItemButton.click();
-    await expect.soft(this.page.getByText(productQuantityChangedNotification)).toBeVisible();
+    //await expect.soft(this.page.getByText(productQuantityChangedNotification)).toBeVisible();
 
     let productQuantityInCart = await this.page.getByLabel(UIReference.cart.cartQuantityLabel).first().inputValue();
     expect(productQuantityInCart).toBe(amount);

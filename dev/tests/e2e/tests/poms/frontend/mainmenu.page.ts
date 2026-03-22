@@ -21,9 +21,12 @@ class MainMenuPage {
   constructor(page: Page) {
     this.page = page;
     this.mainMenuElement = page.locator(UIReference.general.headerLocator);
-    this.mainMenuAccountButton = this.mainMenuElement.getByRole('button', { name: UIReference.mainMenu.myAccountButtonLabel });
+    //this.mainMenuAccountButton = this.mainMenuElement.getByRole('button', { name: UIReference.mainMenu.myAccountButtonLabel });
+    this.mainMenuAccountButton = page.locator('header #customer-menu');
     // this.mainMenuMiniCartButton = this.mainMenuElement.getByLabel(UIReference.mainMenu.miniCartLabel);
-    this.mainMenuMiniCartButton = this.mainMenuElement.getByRole('button', {name: UIReference.mainMenu.miniCartLabel});
+    //this.mainMenuMiniCartButton = this.mainMenuElement.getByRole('button', {name: UIReference.mainMenu.miniCartLabel});
+    //this.mainMenuMiniCartButton = this.mainMenuElement.locator('#menu-cart-icon');
+    this.mainMenuMiniCartButton = page.getByRole('button', { name: /toggle minicart/i });
     this.mainMenuMyAccountItem = this.mainMenuElement.getByTitle(UIReference.mainMenu.myAccountButtonLabel);
     this.mainMenuSearchButton = this.mainMenuElement.getByRole('button', {name: UIReference.mainMenu.searchButtonLabel});
 
@@ -33,6 +36,7 @@ class MainMenuPage {
     this.mainMenuMyOrdersButton = this.mainMenuElement.getByRole('link', {name: UIReference.mainMenu.myOrdersButtonLabel});
     this.mainMenuAddressBookButton = this.mainMenuElement.getByRole('link', {name: UIReference.mainMenu.addressBookButtonLabel});
     this.mainMenuLogoutItem = this.mainMenuElement.getByTitle(UIReference.mainMenu.myAccountLogoutItem);
+    //this.mainMenuLogoutItem = this.mainMenuElement.getByRole('link', {name: UIReference.mainMenu.myAccountLogoutItem});
   }
 
   /**
@@ -40,8 +44,10 @@ class MainMenuPage {
    */
   async goToCategoryPage() {
     await this.page.goto(requireEnv('PLAYWRIGHT_BASE_URL'));
-    await this.mainMenuAccountButton.waitFor();
-    await this.page.getByRole('link', { name: UIReference.categoryPage.categoryPageTitleText, exact: true }).click();
+    //await this.page.getByRole('link', { name: UIReference.categoryPage.categoryPageTitleText, exact: true }).click();
+    const menMenu = this.page.getByRole('link', { name: 'Men', exact: true });
+    await menMenu.click();
+    await this.page.getByRole('link', { name: UIReference.categoryPage.categoryPageTitleText }).click();
 
     await this.page.waitForURL(slugs.categoryPage.categorySlug);
     await expect(
@@ -54,12 +60,9 @@ class MainMenuPage {
    */
   async goToSubCategoryPage() {
     await this.page.goto(requireEnv('PLAYWRIGHT_BASE_URL'));
-    await this.mainMenuAccountButton.waitFor();
     const categoryLink = this.page.getByRole('link', { name: UIReference.mainMenu.categoryItemText, exact: true });
 
-    await categoryLink.hover();
-    await expect(this.page.getByRole('link', {name: UIReference.mainMenu.subCategoryItemText})).toBeVisible();
-
+    await categoryLink.click();
     await this.page.getByRole('link', {name: UIReference.mainMenu.subCategoryItemText}).click();
     await this.page.waitForURL(slugs.categoryPage.subcategorySlug);
 
@@ -86,8 +89,6 @@ class MainMenuPage {
   async goToLoginPage() {
     const loginHeader = this.page.getByRole('heading', {name: outcomeMarker.login.loginHeaderText, exact:true});
     await this.page.goto(requireEnv('PLAYWRIGHT_BASE_URL'));
-    await this.mainMenuAccountButton.waitFor();
-    await this.mainMenuAccountButton.click();
 
     await this.mainMenuLoginItem.click();
     await this.page.waitForURL(`${slugs.account.loginSlug}**`);
@@ -100,8 +101,6 @@ class MainMenuPage {
   async goToCreateAccountPage() {
     const createAccountHeader = this.page.getByRole('heading', {name: outcomeMarker.account.createAccountHeaderText, exact:true});
     await this.page.goto(requireEnv('PLAYWRIGHT_BASE_URL'));
-    await this.mainMenuAccountButton.waitFor();
-    await this.mainMenuAccountButton.click();
 
     await this.mainMenuCreateAccountButton.click();
     await this.page.waitForURL(slugs.account.createAccountSlug);
@@ -161,7 +160,7 @@ class MainMenuPage {
   /**
    * Function for the test Open_the_minicart
    */
-  async openMiniCart() {
+  async openMiniCartEmpty() {
     await this.mainMenuMiniCartButton.waitFor();
     // Trial first, since 'force' skips the actionability check
     await this.mainMenuMiniCartButton.click({trial: true});
@@ -170,7 +169,27 @@ class MainMenuPage {
 
     let miniCartDrawer = this.page.locator(UIReference.miniCart.cartDrawerLocator);
     await expect(async() => {
-      await expect(miniCartDrawer.getByText(outcomeMarker.miniCart.miniCartTitle)).toBeVisible();
+      await expect(miniCartDrawer.getByText('You have no items in your shopping cart.')).toBeVisible();
+    }).toPass();
+  }
+
+  /**
+   * Function for the test Open_the_minicart
+   */
+  async openMiniCart() {
+    await this.mainMenuMiniCartButton.waitFor();
+    // Trial first, since 'force' skips the actionability check
+    await this.mainMenuMiniCartButton.click({trial: true});
+    // By adding 'force', we can bypass the 'aria-disabled' tag.
+    await this.mainMenuMiniCartButton.click({force: true});
+
+    //let miniCartDrawer = this.page.locator(UIReference.miniCart.cartDrawerLocator);
+    const miniCartDrawer = this.page.getByRole('dialog', { name: /my cart/i });
+
+    await expect(miniCartDrawer).toBeVisible();
+
+    await expect(async() => {
+      await expect(miniCartDrawer.getByText('Checkout')).toBeVisible();
     }).toPass();
   }
 
@@ -179,13 +198,14 @@ class MainMenuPage {
    * @param searchTerm
    */
   async searchForProduct(searchTerm :string) {
-    const searchField = this.page.getByPlaceholder(UIReference.search.searchBoxPlaceholderText);
+    const searchField = this.page.getByRole('searchbox', { name: UIReference.search.searchBoxPlaceholderText });
     await this.page.goto(requireEnv('PLAYWRIGHT_BASE_URL'));
     await this.mainMenuAccountButton.waitFor();
 
     await this.mainMenuSearchButton.click();
     await expect(searchField, 'Search field is visible').toBeVisible();
     await searchField.fill(searchTerm);
+    await expect(this.page.getByText(UIReference.search.searchTermDropdownText, { exact: true }), 'Dropdown with results is visible').toBeVisible();
     await searchField.press('Enter');
 
     await this.page.waitForURL(`**/?q=${searchTerm}`);

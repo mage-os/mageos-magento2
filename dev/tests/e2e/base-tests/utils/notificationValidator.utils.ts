@@ -14,31 +14,42 @@ class NotificationValidatorUtils {
     }
 
     /**
-     * @param notificationType
-     * @param value
-     * @return json object
+     * @param value - the expected notification
      */
-    async validate(notificationType: string, value: string) {
-      return;
-        // await this.page.locator(UIReference.general.messageLocator).waitFor({ state: 'visible' });
-        // const notificationText = await this.page.locator(UIReference.general.messageLocator).textContent();
-        // let message = { success: true, message: 'Action was successful, but notification text could not be extracted.'};
-        //
-        // if(
-        //   notificationText !== null
-        // ) {
-        //   message = { success: true, message: notificationText.trim()};
-        // }
-        //
-        // if (
-        //     ! expect.soft(this.page.locator(UIReference.general.messageLocator)).toContainText(value)
-        // ) {
-        //     message = { success: false, message: `Notification text not found: ${value}. Found notification text: ${notificationText}` };
-        // }
-        //
-        // this.testInfo.annotations.push({ type: `Notification: ${notificationType}`, description: message.message });
-        //
-        // return message;
+    async validate(value: string) {
+		const messages = await this.page.locator(UIReference.general.messageLocator).all();
+		let iteration = messages.length;
+
+		for (const memo of messages) {
+			let reportAnnotation = `Action was successful, but notification text could not be extracted.`;
+
+			// wait for item to be visible
+			await memo.waitFor({state: 'visible'});
+			let msgContent = await memo.textContent();
+
+			if(msgContent !== null) {
+				reportAnnotation = msgContent.trim();
+
+				if (msgContent.includes(value)) {
+					// message equals expected message!
+					// Push to report...
+					this.testInfo.annotations.push({ type: `Validator Note`, description: msgContent });
+
+					// ... then confirm
+					expect(msgContent, `Message should be ${value}`).toEqual(expect.stringContaining(value));
+
+				} else {
+					if(!--iteration) {
+						// the message did not equal our value, and we've reached the last item in list.
+						// Push to report...
+						this.testInfo.annotations.push({ type: `Validator Note`, description: msgContent });
+
+						// ... then confirm
+						expect(msgContent, `Message should be ${value}`).toEqual(expect.stringContaining(value));
+					}
+				}
+			}
+		}
     }
 }
 

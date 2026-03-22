@@ -1,4 +1,8 @@
 {
+  "account" : {
+		"firstName": "Playwright",
+		"lastName": "TestAccount"
+  },
   "accountCreation": {
     "emailHandleValue":"test-user",
     "emailHostValue": "gmail.com",
@@ -24,6 +28,9 @@
     "United Kingdom",
     "United States"
   ],
+  "admin" : {
+		"simpleProductSKU" : "24-WB04"
+	},
   "editedAddress": {
     "editCityValue": "Pallet Town",
     "editfirstNameValue": "Ash",

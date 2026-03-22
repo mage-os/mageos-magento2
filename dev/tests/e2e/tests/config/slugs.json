@@ -29,7 +29,8 @@
     "configurableProductSlug": "/inez-full-zip-jacket.html",
     "productComparisonSlug": "/catalog/product_compare/index/",
     "secondSimpleProductSlug": "/aim-analog-watch.html",
-    "simpleProductSlug": "/push-it-messenger-bag.html"
+    "simpleProductSlug": "/push-it-messenger-bag.html",
+    "searchProductSlug": "catalogsearch/result/?q=Push+It+Messenger+Bag"
   },
   "search": {
     "resultsSlug": "/catalogsearch/result/"

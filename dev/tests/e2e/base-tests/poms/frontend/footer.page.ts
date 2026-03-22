@@ -14,7 +14,7 @@ class Footer {
     }
 
     async goToFooterElement () {
-        await this.page.getByText('Newsletter').scrollIntoViewIfNeeded();
+        await this.page.getByText(UIReference.footerPage.currencyLabel).scrollIntoViewIfNeeded();
         await expect(
           this.footerElement,
           'Footer is visible'

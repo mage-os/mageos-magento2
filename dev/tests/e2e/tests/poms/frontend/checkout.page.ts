@@ -68,12 +68,8 @@ class CheckoutPage extends MagewireUtils {
       await this.waitForMagewireRequests();
     }
 
-    const continueButton = this.page.getByRole('button', { name: 'Next' });
-    await expect(continueButton).toBeVisible();
-    await continueButton.click();
-
-    //await this.paymentMethodOptionCheck.check();
-    //await this.waitForMagewireRequests();
+    await this.paymentMethodOptionCheck.check();
+    await this.waitForMagewireRequests();
 
     await this.placeOrderButton.click();
     await this.waitForMagewireRequests();

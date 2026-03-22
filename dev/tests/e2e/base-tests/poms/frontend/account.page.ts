@@ -256,26 +256,26 @@ class AccountPage {
   }
 
   async updatePassword(currentPassword: string, newPassword: string) {
-    let passwordUpdatedNotification = outcomeMarker.account.changedPasswordNotificationText;
+    let passwordUpdatedNotification = outcomeMarker.account.changedCredentialsInformation;
     await this.changePasswordSwitch.check();
     await this.currentPasswordField.fill(currentPassword);
     await this.newPasswordField.fill(newPassword);
     await this.confirmNewPasswordField.fill(newPassword);
     await this.genericSaveButton.click();
 
-    await this.page.waitForURL(slugs.account.loginSlug);
+    await this.page.waitForURL(new RegExp(slugs.account.loginSlug));
     await expect(this.page.getByText(passwordUpdatedNotification)).toBeVisible();
   }
 
   async updateEmail(currentPassword: string, newEmail: string) {
-    let accountUpdatedNotification = outcomeMarker.account.changedPasswordNotificationText;
+    let accountUpdatedNotification = outcomeMarker.account.changedCredentialsInformation;
     await this.changeEmailCheck.check();
     await this.accountCreationEmailField.fill(newEmail);
     await this.currentPasswordField.fill(currentPassword);
     await this.genericSaveButton.click();
-    await this.page.waitForLoadState();
-    await this.loginPage.login(newEmail, currentPassword);
-    await expect(this.accountInformationField, `Account information should contain email: ${newEmail}`).toContainText(newEmail);
+
+	await this.page.waitForURL(new RegExp(slugs.account.loginSlug));
+    await expect(this.page.getByText(accountUpdatedNotification)).toBeVisible();
   }
 
   async deleteAllAddresses() {

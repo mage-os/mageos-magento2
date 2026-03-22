@@ -27,10 +27,8 @@ test.describe('Cart functionalities (guest)', () => {
 
     const productAddedNotification = `${outcomeMarker.productPage.simpleProductAddedNotification} ${UIReference.productPage.simpleProductTitle}`;
     const notificationValidator = new NotificationValidatorUtils(page, testInfo);
-    await notificationValidator.validate('beforeEach add product to cart', productAddedNotification);
-
-    // await mainMenu.openMiniCart();
-    // await expect(page.getByText(outcomeMarker.miniCart.simpleProductInCartTitle)).toBeVisible();
+    await notificationValidator.validate(productAddedNotification);
+    
     await page.goto(slugs.cart.cartSlug);
   });
 

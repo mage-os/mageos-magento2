@@ -13,6 +13,7 @@ class ContactPage {
 
   constructor(page: Page){
     this.page = page;
+    const form = page.locator('#contact-form');
     this.nameField = this.page.getByLabel(UIReference.credentials.nameFieldLabel);
     this.emailField = this.page.getByPlaceholder(UIReference.credentials.emailFieldLabel, { exact: true });
     this.messageField = this.page.locator(UIReference.contactPage.messageFieldSelector);

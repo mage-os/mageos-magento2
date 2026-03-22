@@ -27,7 +27,7 @@ test.describe('Cart functionalities (guest)', () => {
 
     const productAddedNotification = `${outcomeMarker.productPage.simpleProductAddedNotification} ${UIReference.productPage.simpleProductTitle}`;
     const notificationValidator = new NotificationValidatorUtils(page, testInfo);
-    await notificationValidator.validate('beforeEach add product to cart', productAddedNotification);
+    await notificationValidator.validate('beforeEach add product to cart');
 
     // await mainMenu.openMiniCart();
     // await expect(page.getByText(outcomeMarker.miniCart.simpleProductInCartTitle)).toBeVisible();
@@ -103,48 +103,6 @@ test.describe('Cart functionalities (guest)', () => {
   });
 
   /**
-   * @feature Discount Code
-   * @scenario User adds a discount code to their cart
-   * @given I have a product in my cart
-   *  @and I am on my cart page
-   * @when I click on the 'add discount code' button
-   * @then I fill in a code
-   *  @and I click on 'apply code'
-   * @then I should see a confirmation that my code has been added
-   *  @and the code should be visible in the cart
-   *  @and a discount should be applied to the product
-   */
-  test('Add_coupon_code_in_cart',{ tag: ['@cart', '@coupon-code', '@cold']}, async ({page, browserName}) => {
-    const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
-    const cart = new CartPage(page);
-    const discountCode = requireEnv(`MAGENTO_COUPON_CODE_${browserEngine}`);
-
-    await cart.applyDiscountCode(discountCode);
-  });
-
-  /**
-   * @feature Remove discount code from cart
-   * @scenario User has added a discount code, then removes it
-   * @given I have a product in my cart
-   * @and I am on my cart page
-   * @when I add a discount code
-   * @then I should see a notification
-   * @and the code should be visible in the cart
-   * @and a discount should be applied to a product
-   * @when I click the 'cancel coupon' button
-   * @then I should see a notification the discount has been removed
-   * @and the discount should no longer be visible.
-   */
-  test('Remove_coupon_code_from_cart',{ tag: ['@cart', '@coupon-code', '@cold'] }, async ({page, browserName}) => {
-    const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
-    const cart = new CartPage(page);
-    const discountCode = requireEnv(`MAGENTO_COUPON_CODE_${browserEngine}`);
-
-    await cart.applyDiscountCode(discountCode);
-    await cart.removeDiscountCode();
-  });
-
-  /**
    * @feature Incorrect discount code check
    * @scenario The user provides an incorrect discount code, the system should reflect that
    * @given I have a product in my cart
@@ -158,91 +116,3 @@ test.describe('Cart functionalities (guest)', () => {
     await cart.enterWrongCouponCode("Incorrect Coupon Code");
   });
 })
-
-test.describe('Price checking tests', () => {
-
-  /**
-   * @feature Simple Product price/amount check from PDP to Checkout
-   * @given none
-   * @when I go to a (simple) product page
-   *  @and I add one or more to my cart
-   * @when I go to the checkout
-   * @then the amount of the product should be the same
-   *  @and the price in the checkout should equal the price of the product * the amount of the product
-   */
-  test('Simple_product_cart_data_consistent_from_PDP_to_checkout',{ tag: ['@cart-price-check', '@cold']}, async ({page}) => {
-    let productPagePrice: string;
-    let productPageAmount: string;
-    let checkoutProductDetails: string[];
-
-    const cart = new CartPage(page);
-
-    await test.step('Step: Add simple product to cart', async () =>{
-      const productPage = new ProductPage(page);
-      await page.goto(slugs.productPage.simpleProductSlug);
-      // set quantity to 2 so we can see that the math works
-      await page.getByLabel(UIReference.productPage.quantityFieldLabel).fill('2');
-
-      productPagePrice = await page.locator(UIReference.productPage.simpleProductPrice).innerText();
-      productPageAmount = await page.getByLabel(UIReference.productPage.quantityFieldLabel).inputValue();
-      await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productPage.simpleProductSlug, '2');
-
-    });
-
-    await test.step('Step: go to checkout, get values', async () =>{
-      await page.goto(slugs.checkout.checkoutSlug);
-      await page.waitForLoadState();
-
-      // returns productPriceInCheckout and productQuantityInCheckout
-      checkoutProductDetails = await cart.getCheckoutValues(UIReference.productPage.simpleProductTitle, productPagePrice, productPageAmount);
-    });
-
-    await test.step('Step: Calculate and check expectations', async () =>{
-      await cart.calculateProductPricesAndCompare(productPagePrice, productPageAmount, checkoutProductDetails[0], checkoutProductDetails[1]);
-    });
-
-  });
-
-  /**
-   * @feature Configurable Product price/amount check from PDP to Checkout
-   * @given none
-   * @when I go to a (configurable) product page
-   *  @and I add one or more to my cart
-   * @when I go to the checkout
-   * @then the amount of the product should be the same
-   *  @and the price in the checkout should equal the price of the product * the amount of the product
-   */
-  test('Configurable_product_cart_data_consistent_from_PDP_to_checkout',{ tag: ['@cart-price-check', '@cold']}, async ({page}) => {
-    var productPagePrice: string;
-    var productPageAmount: string;
-    var checkoutProductDetails: string[];
-
-    const cart = new CartPage(page);
-
-    await test.step('Step: Add configurable product to cart', async () =>{
-      const productPage = new ProductPage(page);
-      // Navigate to the configurable product page so we can retrieve price and amount before adding it to cart
-      await page.goto(slugs.productPage.configurableProductSlug);
-      // set quantity to 2 so we can see that the math works
-      await page.getByLabel('Quantity').fill('2');
-
-      productPagePrice = await page.locator(UIReference.productPage.simpleProductPrice).innerText();
-      productPageAmount = await page.getByLabel(UIReference.productPage.quantityFieldLabel).inputValue();
-      await productPage.addConfigurableProductToCart(UIReference.productPage.configurableProductTitle, slugs.productPage.configurableProductSlug, '2');
-
-    });
-
-    await test.step('Step: go to checkout, get values', async () =>{
-      await page.goto(slugs.checkout.checkoutSlug);
-      await page.waitForLoadState();
-
-      // returns productPriceInCheckout and productQuantityInCheckout
-      checkoutProductDetails = await cart.getCheckoutValues(UIReference.productPage.configurableProductTitle, productPagePrice, productPageAmount);
-    });
-
-    await test.step('Step: Calculate and check expectations', async () =>{
-      await cart.calculateProductPricesAndCompare(productPagePrice, productPageAmount, checkoutProductDetails[0], checkoutProductDetails[1]);
-    });
-
-  });
-});

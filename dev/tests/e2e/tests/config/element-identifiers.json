@@ -98,13 +98,12 @@
   },
   "categoryPage":{
     "activeViewLocator": ".active",
-    "categoryPageWithOptionsTitleText": "Top",
-    "categoryPageTitleText": "Tops",
-    "firstFilterOptionLocator": "#filter-option-2-title",
+    "categoryPageTitleText": "Top",
+    "firstFilterOptionLocator": "#filter-option-2-content",
     "itemsOnPageAmountLocator": ".toolbar-number",
     "itemsPerPageButtonLabel": "Show items per page",
     "productGridLocator": ".products-grid",
-    "removeActiveFilterButtonLabel": "Remove active",
+    "removeActiveFilterButtonLabel": "Remove This Item",
     "sizeFilterButtonLabel": "Size",
     "sizeLLinkLabel": "Filter Size L",
     "sortByButtonLabel": "Sort by",
@@ -120,7 +119,7 @@
     "cartQuantityLabel": "Qty",
     "discountInputFieldLabel": "Enter discount code",
     "showDiscountFormButtonLabel": "Apply Discount Code",
-    "updateItemButtonLabel": "Update item",
+    "updateItemButtonLabel": "Update",
     "updateShoppingCartButtonLabel": "Update Shopping Cart"
   },
   "cartPriceRulesPage": {
@@ -142,7 +141,7 @@
     "applyDiscountButtonLabel": "Apply Coupon",
     "applyDiscountCodeLabel": "Apply Discount Code",
     "cancelDiscountButtonLabel": "Cancel Coupon",
-    "cartDetailsLocator": ".minicart-items-wrapper",
+    "cartDetailsLocator": "#checkout-cart-details div",
     "continueShoppingLabel": "Continue Shopping",
     "discountInputFieldLabel": "Enter discount code",
     "openCartButtonLabel": "Cart",
@@ -150,7 +149,7 @@
     "openCartButtonLabelContMultiple": "items",
     "openCartDetailsButtonLocator": "button[aria-controls=\"checkout-cart-details\"]",
     "openDiscountFormLabel": "Apply Discount Code",
-    "paymentOptionCheckLabel": "Check / Money order Free",
+    "paymentOptionCheckLabel": "Check / Money order",
     "paymentOptionCreditCardLabel": "Credit Card",
     "paymentOptionPaypalLabel": "PayPal",
     "checkoutCartDetailsLocator": "#checkout-cart-details",
@@ -160,7 +159,7 @@
     "creditCardNameLabel": "Name on Card",
     "placeOrderButtonLabel": "Place Order",
     "remove": "Remove",
-    "shippingAddressRadioLocator": "#checkout-step-shipping .shipping-address-item.selected-item",
+    "shippingAddressRadioLocator": "#shipping-details input[type='radio']",
     "shippingMethodFixedLabel": "Fixed",
     "shippingMethodTableRateLabel": "Table Rate",
     "shippingPriceText": "Shipping & Handling (Flat Rate - Fixed)",
@@ -213,23 +212,24 @@
     "currencyDollar": "USD - US Dollar",
     "currencyEuro": "EUR - Euro",
     "newsletterInputElementLabel": "Email Address",
-    "newsletterSubscribeButtonLabel": "Subscribe"
+    "newsletterSubscribeButtonLabel": "Subscribe",
+    "newsletterLabel": "Newsletter"
   },
   "general": {
     "addToCartLabel": "Add to Cart",
     "closeMessageLabel": "Close message",
     "errorMessageLocator": "#messages div .messages div .error span",
-    "errorMessageStreetAddressRequiredFieldText": "Street Address field is required.",
+    "errorMessageStreetAddressRequiredFieldText": "This is a required field.",
     "genericPriceLabel": "Price",
-    "genericPriceSymbol": "£",
+    "genericPriceSymbol": "$",
     "genericSaveButtonLabel": "Save",
     "genericSubmitButtonLabel": "Submit",
-    "headerLocator": "#header",
+    "headerLocator": "header",
     "loadingSpinnerLocator": "#container .spinner",
     "messageLocator": "#messages .messages div",
     "removeLabel": "Remove",
     "searchButtonLabel": "Search",
-    "successMessageLocator": "div.message.success"
+    "successMessageLocator": "[ui-id=\"message-success\"]"
   },
   "homePage": {
     "homePageTitleText": "Hyvä Theme"
@@ -240,7 +240,7 @@
     "subCategoryItemText" : "Fitness Equipment",
     "categoryItemText" : "Gear",
     "loginButtonLabel" : "Sign In",
-    "miniCartLabel": "Toggle minicart",
+    "miniCartLabel": "My Cart",
     "myAccountButtonLabel": "My Account",
     "myAccountLogoutItem": "Sign Out",
     "myOrdersButtonLabel" : "My Orders",
@@ -248,10 +248,10 @@
     "wishListButtonLabel" : "My Wish List"
   },
   "miniCart": {
-    "cartDrawerLocator": "#cart-drawer-title",
-    "cartEmptyText": "Cart is empty",
+    "cartDrawerLocator": "#minicart-content-wrapper",
+    "cartEmptyText": "You have no items in your shopping cart.",
     "checkOutButtonLabel": "Checkout",
-    "editProductIconLabel": "Edit product",
+    "editProductIconLabel": "Edit item",
     "minicartButtonLocator": "#menu-cart-icon",
     "minicartAmountBubbleLocator": "#menu-cart-icon > span",
     "minicartPriceFieldClass": ".price-excluding-tax .minicart-price .price",
@@ -259,8 +259,8 @@
     "miniCartToggleLabelMultiItem": "items",
     "miniCartToggleLabelOneItem": "1 item",
     "miniCartToggleLabelPrefix": "Toggle minicart,",
-    "productQuantityFieldLabel": "Quantity",
-    "removeProductIconLabel": "Remove product",
+    "productQuantityFieldLabel": "Qty",
+    "removeProductIconLabel": "Remove item",
     "toCartLinkLabel": "View and Edit Cart"
   },
   "search": {
