@@ -265,6 +265,7 @@ class Renderer extends \Magento\Tax\Block\Item\Price\Renderer
      * The Weee amount will be added to row total depending on Weee display setting.
      *
      * @return float
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function getRowDisplayPriceExclTax()
     {
