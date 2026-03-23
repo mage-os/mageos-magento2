@@ -18,6 +18,7 @@ use Magento\Weee\Model\Tax as WeeeDisplayConfig;
  * Item price render block
  *
  * @api
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @since 100.0.2
  */
 class Renderer extends \Magento\Tax\Block\Item\Price\Renderer
@@ -613,6 +614,7 @@ class Renderer extends \Magento\Tax\Block\Item\Price\Renderer
      * Dynamic bundle children only (fixed bundle keeps row totals on parent).
      *
      * @return \Magento\Quote\Model\Quote\Item\AbstractItem[]|\Magento\Sales\Model\Order\Item[]
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     private function getDynamicBundleChildren(): array
     {
@@ -643,6 +645,8 @@ class Renderer extends \Magento\Tax\Block\Item\Price\Renderer
      *
      * @param float $amount
      * @return float
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     private function reconcileCartRowInclTaxWithQuoteTotal($amount)
     {

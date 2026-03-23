@@ -22,8 +22,7 @@
         "magento/module-store": "*",
         "magento/module-tax": "*",
         "magento/module-ui": "*",
-        "magento/module-directory": "*",
-        "magento/module-bundle": "*"
+        "magento/module-directory": "*"
     },
     "suggest": {
         "magento/module-webapi": "*",
