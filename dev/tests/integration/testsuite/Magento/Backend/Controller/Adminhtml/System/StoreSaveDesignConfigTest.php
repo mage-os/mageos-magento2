@@ -28,6 +28,8 @@ use Magento\Theme\Model\ResourceModel\Theme\CollectionFactory as ThemeCollection
 
 /**
  * Integration coverage for store view code changes with design configuration (scoped theme).
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class StoreSaveDesignConfigTest extends AbstractBackendController
 {
