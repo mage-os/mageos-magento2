@@ -18,6 +18,7 @@ use Magento\Framework\Filesystem\Directory\ReadInterface;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\Filesystem\Directory\WriteInterface;
 use Magento\Framework\Filesystem\DriverInterface;
+use Magento\Framework\Filesystem\Io\File;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\ImportExport\Controller\Adminhtml\Export\File\Download;
 use Magento\ImportExport\Model\Export\ConfigInterface;
@@ -136,6 +137,14 @@ class DownloadTest extends TestCase
             ->method('getDirectoryWrite')
             ->willReturn($this->exportDirectoryMock);
 
+        $fileIoMock = $this->createMock(File::class);
+        $fileIoMock->method('getPathInfo')
+            ->willReturnCallback(
+                static fn (string $fileName): array => [
+                    'extension' => substr(strrchr($fileName, '.') ?: '', 1),
+                ]
+            );
+
         $this->objectManagerHelper = new ObjectManagerHelper($this);
         $this->downloadControllerMock = $this->objectManagerHelper->getObject(
             Download::class,
@@ -144,7 +153,8 @@ class DownloadTest extends TestCase
                 'filesystem' => $this->fileSystemMock,
                 'fileFactory' => $this->fileFactoryMock,
                 'fileInfo' => new FileInfo(
-                    $this->createConfiguredMock(ConfigInterface::class, ['getFileFormats' => ['csv' => []]])
+                    $this->createConfiguredMock(ConfigInterface::class, ['getFileFormats' => ['csv' => []]]),
+                    $fileIoMock
                 )
             ]
         );

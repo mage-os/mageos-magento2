@@ -55,6 +55,13 @@ class ExportFileDataProviderTest extends TestCase
         $filesystemMock->method('getDirectoryWrite')
             ->willReturn($this->directoryMock);
         $this->fileIOMock = $this->createMock(File::class);
+        $fileInfoIoMock = $this->createMock(File::class);
+        $fileInfoIoMock->method('getPathInfo')
+            ->willReturnCallback(
+                fn ($path) => [
+                    'extension' => pathinfo($path, PATHINFO_EXTENSION),
+                ]
+            );
 
         $this->model = new ExportFileDataProvider(
             'export_grid_data_source',
@@ -67,7 +74,10 @@ class ExportFileDataProviderTest extends TestCase
             $fileMock,
             $filesystemMock,
             $this->fileIOMock,
-            new FileInfo($this->createConfiguredMock(ConfigInterface::class, ['getFileFormats' => ['csv' => []]]))
+            new FileInfo(
+                $this->createConfiguredMock(ConfigInterface::class, ['getFileFormats' => ['csv' => []]]),
+                $fileInfoIoMock
+            )
         );
     }
 

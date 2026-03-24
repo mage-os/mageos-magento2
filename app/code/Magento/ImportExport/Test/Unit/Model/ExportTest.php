@@ -12,6 +12,7 @@ namespace Magento\ImportExport\Test\Unit\Model;
 
 use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Directory\WriteInterface;
+use Magento\Framework\Filesystem\Io\File;
 use Magento\ImportExport\Model\Export;
 use Magento\ImportExport\Model\Export\FileInfo;
 use Magento\ImportExport\Model\Export\AbstractEntity;
@@ -23,6 +24,9 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class ExportTest extends TestCase
 {
     /**
@@ -116,7 +120,10 @@ class ExportTest extends TestCase
         $this->exportAdapterFactoryMock->method('create')
             ->willReturn($this->exportAdapterMock);
         $this->localeEmulator = $this->createMock(LocaleEmulatorInterface::class);
-        $this->fileInfo = new FileInfo($this->exportConfigMock);
+        $fileIoMock = $this->createMock(File::class);
+        $fileIoMock->method('getPathInfo')
+            ->willReturnCallback(fn (string $fileName) => ['extension' => pathinfo($fileName, PATHINFO_EXTENSION)]);
+        $this->fileInfo = new FileInfo($this->exportConfigMock, $fileIoMock);
 
         $this->model = new Export(
             $logger,

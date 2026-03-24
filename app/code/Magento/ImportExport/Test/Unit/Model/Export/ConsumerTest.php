@@ -10,6 +10,7 @@ namespace Magento\ImportExport\Test\Unit\Model\Export;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Directory\WriteInterface;
+use Magento\Framework\Filesystem\Io\File;
 use Magento\Framework\Locale\ResolverInterface;
 use Magento\Framework\Notification\NotifierInterface;
 use Magento\ImportExport\Api\Data\LocalizedExportInfoInterface;
@@ -59,7 +60,10 @@ class ConsumerTest extends TestCase
             $this->exportManagementMock,
             $this->filesystemMock,
             $this->notifierMock,
-            new FileInfo($this->createConfiguredMock(ConfigInterface::class, ['getFileFormats' => ['csv' => []]]))
+            new FileInfo(
+                $this->createConfiguredMock(ConfigInterface::class, ['getFileFormats' => ['csv' => []]]),
+                $this->createConfiguredMock(File::class, ['getPathInfo' => ['extension' => 'csv']])
+            )
         );
     }
 

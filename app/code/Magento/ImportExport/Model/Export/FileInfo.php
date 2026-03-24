@@ -7,6 +7,9 @@ declare(strict_types=1);
 
 namespace Magento\ImportExport\Model\Export;
 
+use Magento\Framework\App\ObjectManager;
+use Magento\Framework\Filesystem\Io\File;
+
 /**
  * Export file naming and filtering rules.
  */
@@ -23,11 +26,18 @@ class FileInfo
     private $exportConfig;
 
     /**
-     * @param ConfigInterface $exportConfig
+     * @var File
      */
-    public function __construct(ConfigInterface $exportConfig)
+    private $fileIo;
+
+    /**
+     * @param ConfigInterface $exportConfig
+     * @param File|null $fileIo
+     */
+    public function __construct(ConfigInterface $exportConfig, ?File $fileIo = null)
     {
         $this->exportConfig = $exportConfig;
+        $this->fileIo = $fileIo ?? ObjectManager::getInstance()->get(File::class);
     }
 
     /**
@@ -60,6 +70,6 @@ class FileInfo
      */
     public function isExportFile(string $fileName): bool
     {
-        return isset($this->exportConfig->getFileFormats()[pathinfo($fileName, PATHINFO_EXTENSION)]);
+        return isset($this->exportConfig->getFileFormats()[$this->fileIo->getPathInfo($fileName)['extension'] ?? '']);
     }
 }
