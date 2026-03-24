@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\Backend\Controller\Adminhtml\System;
 
 use Magento\Backend\Controller\Adminhtml\System\Store\Save as StoreSaveController;
+use Magento\Backend\Test\Fixture\StoreDesignConfig;
 use Magento\Framework\App\Cache\TypeListInterface;
 use Magento\Framework\App\Config\ReinitableConfigInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
@@ -22,6 +23,7 @@ use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\TestFramework\Fixture\AppArea;
+use Magento\TestFramework\Fixture\DataFixture;
 use Magento\TestFramework\Fixture\DbIsolation;
 use Magento\TestFramework\TestCase\AbstractBackendController;
 use Magento\Theme\Model\ResourceModel\Theme\CollectionFactory as ThemeCollectionFactory;
@@ -33,7 +35,7 @@ use Magento\Theme\Model\ResourceModel\Theme\CollectionFactory as ThemeCollection
  */
 class StoreSaveDesignConfigTest extends AbstractBackendController
 {
-    private const ORIGINAL_STORE_CODE = 'design_cfg_test_sv';
+    private const ORIGINAL_STORE_CODE = StoreDesignConfig::STORE_CODE;
 
     private const RENAMED_STORE_CODE = 'design_cfg_test_sv_rn';
 
@@ -41,10 +43,12 @@ class StoreSaveDesignConfigTest extends AbstractBackendController
      * After renaming a store view code, scoped design/theme configuration must still resolve for the new code.
      *
      * @return void
-     * @magentoDataFixture Magento/Backend/_files/store_design_config_test.php
      */
-    #[DbIsolation(false)]
-    #[AppArea('adminhtml')]
+    #[
+        DataFixture(StoreDesignConfig::class),
+        DbIsolation(false),
+        AppArea('adminhtml'),
+    ]
     public function testDesignThemeConfigRemainsAfterStoreViewCodeChange(): void
     {
         try {
