@@ -338,7 +338,7 @@ class UtilityTest extends TestCase
     }
 
     /**
-     * When actions are not a Rule Combine, ruleHasItemRestrictions is false (no eligible-totals override).
+     * When actions are not a Rule Combine, ruleHasItemRestrictions is false.
      *
      * @return void
      */
@@ -374,48 +374,96 @@ class UtilityTest extends TestCase
      */
     public function testCanProcessRuleEligibleLineItemTotalsExcludeIneligibleAndRestoreAddress(): void
     {
-        $actionsCombine = $this->createMock(RuleCombine::class);
-        $actionsCombine->method('getConditions')->willReturn([$this->createStub(AbstractCondition::class)]);
+        $fixtures = $this->buildEligibleItemTotalsCanProcessRuleFixtures();
+        $addressState = $this->defaultEligibleTotalsAddressState();
+        $address = $this->createAddressMockWithTrackedTotals($addressState, $fixtures['lineItems']);
 
-        $configurableParent = $this->getMockBuilder(Item::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getProductType'])
-            ->getMock();
-        $configurableParent->method('getProductType')->willReturn('configurable');
-        $itemConfigurableChild = $this->eligibleTotalsItemStub(
-            [
-                'getParentItem' => $configurableParent,
-                'getHasChildren' => false,
-                'getChildren' => [],
-                'isChildrenCalculated' => false,
-                'getNoDiscount' => false,
-            ]
-        );
+        $this->validateCoupon->method('execute')->willReturn(true);
 
-        $itemNoDiscount = $this->eligibleTotalsItemStub([
-            'getParentItem' => null,
-            'getHasChildren' => false,
-            'getChildren' => [],
-            'isChildrenCalculated' => false,
-            'getNoDiscount' => true,
+        $this->assertTrue($this->utility->canProcessRule($fixtures['rule'], $address));
+
+        $this->assertSame(500.0, $addressState['base_subtotal']);
+        $this->assertSame(490.0, $addressState['base_subtotal_with_discount']);
+        $this->assertSame(550.0, $addressState['base_subtotal_total_incl_tax']);
+        $this->assertSame(10.0, $addressState['total_qty']);
+        $this->assertSame(20.0, $addressState['weight']);
+    }
+
+    /**
+     * @return array<string, float>
+     */
+    private function defaultEligibleTotalsAddressState(): array
+    {
+        return [
+            'base_subtotal' => 500.0,
+            'base_subtotal_with_discount' => 490.0,
+            'base_subtotal_total_incl_tax' => 550.0,
+            'total_qty' => 10.0,
+            'weight' => 20.0,
+        ];
+    }
+
+    /**
+     * @param array<string, float> $addressState
+     * @param list<AbstractItem|MockObject> $lineItems
+     * @return Address&MockObject
+     */
+    private function createAddressMockWithTrackedTotals(array &$addressState, array $lineItems): MockObject
+    {
+        $address = $this->createPartialMockWithReflection(Address::class, [
+            'isObjectNew',
+            'getQuote',
+            'getAllItems',
+            'getBaseSubtotal',
+            'setBaseSubtotal',
+            'getBaseSubtotalWithDiscount',
+            'setBaseSubtotalWithDiscount',
+            'getBaseSubtotalTotalInclTax',
+            'setBaseSubtotalTotalInclTax',
+            'getTotalQty',
+            'setTotalQty',
+            'getWeight',
+            'setWeight',
         ]);
+        $address->method('isObjectNew')->willReturn(false);
+        $address->method('getQuote')->willReturn($this->quote);
+        $address->method('getAllItems')->willReturn($lineItems);
+        $this->stubAddressQuoteTotalsOnMock($address, $addressState);
 
-        $itemParentChildrenCalculated = $this->eligibleTotalsItemStub([
-            'getParentItem' => null,
-            'getHasChildren' => true,
-            'getChildren' => [$this->createStub(AbstractItem::class)],
-            'isChildrenCalculated' => true,
-            'getNoDiscount' => false,
-        ]);
+        return $address;
+    }
 
-        $itemExcludedByActions = $this->eligibleTotalsItemStub([
-            'getParentItem' => null,
-            'getHasChildren' => false,
-            'getChildren' => [],
-            'isChildrenCalculated' => false,
-            'getNoDiscount' => false,
-        ]);
+    /**
+     * @param array<string, float> $addressState
+     */
+    private function stubAddressQuoteTotalsOnMock(MockObject $address, array &$addressState): void
+    {
+        $pairs = [
+            ['getBaseSubtotal', 'setBaseSubtotal', 'base_subtotal'],
+            ['getBaseSubtotalWithDiscount', 'setBaseSubtotalWithDiscount', 'base_subtotal_with_discount'],
+            ['getBaseSubtotalTotalInclTax', 'setBaseSubtotalTotalInclTax', 'base_subtotal_total_incl_tax'],
+            ['getTotalQty', 'setTotalQty', 'total_qty'],
+            ['getWeight', 'setWeight', 'weight'],
+        ];
+        foreach ($pairs as [$getter, $setter, $key]) {
+            $address->method($getter)->willReturnCallback(
+                function () use (&$addressState, $key): float {
+                    return $addressState[$key];
+                }
+            );
+            $address->method($setter)->willReturnCallback(
+                function ($v) use (&$addressState, $key): void {
+                    $addressState[$key] = (float) $v;
+                }
+            );
+        }
+    }
 
+    /**
+     * @return array{rule: Rule&MockObject, lineItems: list<AbstractItem|MockObject>}
+     */
+    private function buildEligibleItemTotalsCanProcessRuleFixtures(): array
+    {
         $itemEligible = $this->eligibleTotalsItemStub([
             'getParentItem' => null,
             'getHasChildren' => false,
@@ -428,9 +476,49 @@ class UtilityTest extends TestCase
             'getRowWeight' => 3.0,
         ]);
 
+        $actionsCombine = $this->createMock(RuleCombine::class);
+        $actionsCombine->method('getConditions')->willReturn([$this->createStub(AbstractCondition::class)]);
         $actionsCombine->method('validate')->willReturnCallback(
-            static fn ($item): bool => $item === $itemEligible
+            fn ($item): bool => $item === $itemEligible
         );
+
+        $configurableParent = $this->getMockBuilder(Item::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getProductType'])
+            ->getMock();
+        $configurableParent->method('getProductType')->willReturn('configurable');
+
+        $lineItems = [
+            $this->eligibleTotalsItemStub([
+                'getParentItem' => $configurableParent,
+                'getHasChildren' => false,
+                'getChildren' => [],
+                'isChildrenCalculated' => false,
+                'getNoDiscount' => false,
+            ]),
+            $this->eligibleTotalsItemStub([
+                'getParentItem' => null,
+                'getHasChildren' => false,
+                'getChildren' => [],
+                'isChildrenCalculated' => false,
+                'getNoDiscount' => true,
+            ]),
+            $this->eligibleTotalsItemStub([
+                'getParentItem' => null,
+                'getHasChildren' => true,
+                'getChildren' => [$this->createStub(AbstractItem::class)],
+                'isChildrenCalculated' => true,
+                'getNoDiscount' => false,
+            ]),
+            $this->eligibleTotalsItemStub([
+                'getParentItem' => null,
+                'getHasChildren' => false,
+                'getChildren' => [],
+                'isChildrenCalculated' => false,
+                'getNoDiscount' => false,
+            ]),
+            $itemEligible,
+        ];
 
         $rule = $this->createPartialMock(Rule::class, [
             'getActions',
@@ -449,98 +537,7 @@ class UtilityTest extends TestCase
             ->method('setIsValidForAddress')
             ->with($this->isInstanceOf(Address::class), true);
 
-        $addressState = [
-            'base_subtotal' => 500.0,
-            'base_subtotal_with_discount' => 490.0,
-            'base_subtotal_total_incl_tax' => 550.0,
-            'total_qty' => 10.0,
-            'weight' => 20.0,
-        ];
-
-        $address = $this->createPartialMockWithReflection(Address::class, [
-            'isObjectNew',
-            'getQuote',
-            'getAllItems',
-            'getBaseSubtotal',
-            'setBaseSubtotal',
-            'getBaseSubtotalWithDiscount',
-            'setBaseSubtotalWithDiscount',
-            'getBaseSubtotalTotalInclTax',
-            'setBaseSubtotalTotalInclTax',
-            'getTotalQty',
-            'setTotalQty',
-            'getWeight',
-            'setWeight',
-        ]);
-        $address->method('isObjectNew')->willReturn(false);
-        $address->method('getQuote')->willReturn($this->quote);
-        $address->method('getAllItems')->willReturn([
-            $itemConfigurableChild,
-            $itemNoDiscount,
-            $itemParentChildrenCalculated,
-            $itemExcludedByActions,
-            $itemEligible,
-        ]);
-        $address->method('getBaseSubtotal')->willReturnCallback(
-            function () use (&$addressState): float {
-                return $addressState['base_subtotal'];
-            }
-        );
-        $address->method('setBaseSubtotal')->willReturnCallback(
-            function ($v) use (&$addressState): void {
-                $addressState['base_subtotal'] = (float) $v;
-            }
-        );
-        $address->method('getBaseSubtotalWithDiscount')->willReturnCallback(
-            function () use (&$addressState): float {
-                return $addressState['base_subtotal_with_discount'];
-            }
-        );
-        $address->method('setBaseSubtotalWithDiscount')->willReturnCallback(
-            function ($v) use (&$addressState): void {
-                $addressState['base_subtotal_with_discount'] = (float) $v;
-            }
-        );
-        $address->method('getBaseSubtotalTotalInclTax')->willReturnCallback(
-            function () use (&$addressState): float {
-                return $addressState['base_subtotal_total_incl_tax'];
-            }
-        );
-        $address->method('setBaseSubtotalTotalInclTax')->willReturnCallback(
-            function ($v) use (&$addressState): void {
-                $addressState['base_subtotal_total_incl_tax'] = (float) $v;
-            }
-        );
-        $address->method('getTotalQty')->willReturnCallback(
-            function () use (&$addressState): float {
-                return $addressState['total_qty'];
-            }
-        );
-        $address->method('setTotalQty')->willReturnCallback(
-            function ($v) use (&$addressState): void {
-                $addressState['total_qty'] = (float) $v;
-            }
-        );
-        $address->method('getWeight')->willReturnCallback(
-            function () use (&$addressState): float {
-                return $addressState['weight'];
-            }
-        );
-        $address->method('setWeight')->willReturnCallback(
-            function ($v) use (&$addressState): void {
-                $addressState['weight'] = (float) $v;
-            }
-        );
-
-        $this->validateCoupon->method('execute')->willReturn(true);
-
-        $this->assertTrue($this->utility->canProcessRule($rule, $address));
-
-        $this->assertSame(500.0, $addressState['base_subtotal']);
-        $this->assertSame(490.0, $addressState['base_subtotal_with_discount']);
-        $this->assertSame(550.0, $addressState['base_subtotal_total_incl_tax']);
-        $this->assertSame(10.0, $addressState['total_qty']);
-        $this->assertSame(20.0, $addressState['weight']);
+        return ['rule' => $rule, 'lineItems' => $lineItems];
     }
 
     /**
