@@ -15,6 +15,8 @@ use Magento\Framework\Notification\NotifierInterface;
 use Magento\ImportExport\Api\Data\LocalizedExportInfoInterface;
 use Magento\ImportExport\Api\ExportManagementInterface;
 use Magento\ImportExport\Model\Export\Consumer;
+use Magento\ImportExport\Model\Export\ConfigInterface;
+use Magento\ImportExport\Model\Export\FileInfo;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -56,7 +58,8 @@ class ConsumerTest extends TestCase
             $this->loggerMock,
             $this->exportManagementMock,
             $this->filesystemMock,
-            $this->notifierMock
+            $this->notifierMock,
+            new FileInfo($this->createConfiguredMock(ConfigInterface::class, ['getFileFormats' => ['csv' => []]]))
         );
     }
 
@@ -82,6 +85,39 @@ class ConsumerTest extends TestCase
             ->method('writeFile')
             ->with('export/file_name.csv', $data)
             ->willReturn(5);
+
+        $this->notifierMock->expects($this->once())
+            ->method('addMajor')
+            ->willReturn($this->notifierMock);
+
+        $this->consumer->process($exportInfoMock);
+    }
+
+    public function testProcessPublishesTemporaryFileForQueueFlow(): void
+    {
+        $exportInfoMock = $this->createMock(LocalizedExportInfoInterface::class);
+        $exportInfoMock->expects($this->atLeastOnce())
+            ->method('getFileName')
+            ->willReturn('file_name.csv');
+
+        $this->exportManagementMock->expects($this->once())
+            ->method('export')
+            ->with($exportInfoMock)
+            ->willReturn('__RESULT_WRITTEN_TO_FILE__');
+
+        $directoryMock = $this->createMock(WriteInterface::class);
+        $this->filesystemMock->expects($this->once())
+            ->method('getDirectoryWrite')
+            ->with(DirectoryList::VAR_IMPORT_EXPORT)
+            ->willReturn($directoryMock);
+        $directoryMock->expects($this->once())
+            ->method('isFile')
+            ->with('export/file_name.csv.tmp')
+            ->willReturn(true);
+        $directoryMock->expects($this->once())
+            ->method('renameFile')
+            ->with('export/file_name.csv.tmp', 'export/file_name.csv')
+            ->willReturn(true);
 
         $this->notifierMock->expects($this->once())
             ->method('addMajor')

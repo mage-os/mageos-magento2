@@ -14,6 +14,7 @@ use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Io\File;
 use Magento\Framework\Filesystem\Directory\WriteInterface;
+use Magento\ImportExport\Model\Export\FileInfo;
 
 /**
  * Data provider for export grid.
@@ -41,6 +42,11 @@ class ExportFileDataProvider extends DataProvider
     private $fileSystem;
 
     /**
+     * @var FileInfo
+     */
+    private $fileInfo;
+
+    /**
      * @param string $name
      * @param string $primaryFieldName
      * @param string $requestFieldName
@@ -51,6 +57,7 @@ class ExportFileDataProvider extends DataProvider
      * @param DriverInterface $file
      * @param Filesystem $filesystem
      * @param File|null $fileIO
+     * @param FileInfo|null $fileInfo
      * @param array $meta
      * @param array $data
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
@@ -67,6 +74,7 @@ class ExportFileDataProvider extends DataProvider
         DriverInterface $file,
         Filesystem $filesystem,
         ?File $fileIO = null,
+        ?FileInfo $fileInfo = null,
         array $meta = [],
         array $data = []
     ) {
@@ -85,6 +93,7 @@ class ExportFileDataProvider extends DataProvider
         );
 
         $this->fileIO = $fileIO ?: ObjectManager::getInstance()->get(File::class);
+        $this->fileInfo = $fileInfo ?: ObjectManager::getInstance()->get(FileInfo::class);
         $this->directory = $filesystem->getDirectoryWrite(DirectoryList::VAR_IMPORT_EXPORT);
     }
 
@@ -107,7 +116,11 @@ class ExportFileDataProvider extends DataProvider
         }
         $result = [];
         foreach ($files as $file) {
-            $result['items'][]['file_name'] = $this->getPathToExportFile($this->fileIO->getPathInfo($file));
+            $pathInfo = $this->fileIO->getPathInfo($file);
+            if ($this->shouldSkipFile($file, $pathInfo)) {
+                continue;
+            }
+            $result['items'][]['file_name'] = $this->getPathToExportFile($pathInfo);
         }
 
         $paging = $this->request->getParam('paging');
@@ -171,5 +184,21 @@ class ExportFileDataProvider extends DataProvider
         );
 
         return $sortedFiles;
+    }
+
+    /**
+     * Check whether file should be hidden from export grid.
+     *
+     * @param string $file
+     * @param array $pathInfo
+     * @return bool
+     */
+    private function shouldSkipFile(string $file, array $pathInfo): bool
+    {
+        if ($this->fileInfo->isInProgressFile($file)) {
+            return true;
+        }
+
+        return !$this->fileInfo->isExportFile($pathInfo['basename'] ?? '');
     }
 }
