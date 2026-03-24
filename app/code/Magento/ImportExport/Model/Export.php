@@ -10,6 +10,7 @@ use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Filesystem;
 use Magento\ImportExport\Model\Export\ConfigInterface;
 use Magento\ImportExport\Model\Export\Entity\Factory;
+use Magento\ImportExport\Model\Export\FileInfo;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -89,7 +90,7 @@ class Export extends \Magento\ImportExport\Model\AbstractModel
     private $localeEmulator;
 
     /**
-     * @var \Magento\ImportExport\Model\Export\FileInfo
+     * @var FileInfo
      */
     private $fileInfo;
 
@@ -106,7 +107,7 @@ class Export extends \Magento\ImportExport\Model\AbstractModel
      * @param \Magento\ImportExport\Model\Export\Adapter\Factory $exportAdapterFac
      * @param array $data
      * @param LocaleEmulatorInterface|null $localeEmulator
-     * @param \Magento\ImportExport\Model\Export\FileInfo|null $fileInfo
+     * @param FileInfo|null $fileInfo
      */
     public function __construct(
         \Psr\Log\LoggerInterface $logger,
@@ -116,7 +117,7 @@ class Export extends \Magento\ImportExport\Model\AbstractModel
         \Magento\ImportExport\Model\Export\Adapter\Factory $exportAdapterFac,
         array $data = [],
         ?LocaleEmulatorInterface $localeEmulator = null,
-        ?\Magento\ImportExport\Model\Export\FileInfo $fileInfo = null
+        ?FileInfo $fileInfo = null
     ) {
         $this->_exportConfig = $exportConfig;
         $this->_entityFactory = $entityFactory;
@@ -124,7 +125,7 @@ class Export extends \Magento\ImportExport\Model\AbstractModel
         parent::__construct($logger, $filesystem, $data);
         $this->localeEmulator = $localeEmulator ?? ObjectManager::getInstance()->get(LocaleEmulatorInterface::class);
         $this->fileInfo = $fileInfo ?? ObjectManager::getInstance()->get(
-            \Magento\ImportExport\Model\Export\FileInfo::class
+            FileInfo::class
         );
     }
 
