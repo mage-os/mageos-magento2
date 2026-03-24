@@ -14,15 +14,19 @@ use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Payment;
 use Magento\Sales\Model\Order\ShipmentFactory;
+use Magento\TestFramework\Fixture\AppArea;
+use Magento\TestFramework\Fixture\AppIsolation;
+use Magento\TestFramework\Fixture\DataFixture;
+use Magento\TestFramework\Fixture\DbIsolation;
 use Magento\TestFramework\Helper\Bootstrap;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Ensures a bundle configured as ship-together can reach complete state after invoice and shipment.
- *
- * @magentoAppIsolation enabled
- * @magentoDbIsolation enabled
  */
+#[AppArea('adminhtml')]
+#[AppIsolation(true)]
+#[DbIsolation(true)]
 class ShipTogetherOrderCompleteTest extends TestCase
 {
     /**
@@ -53,10 +57,8 @@ class ShipTogetherOrderCompleteTest extends TestCase
 
     /**
      * After full invoice and shipping the bundle parent, order must not stay in processing because of child lines.
-     *
-     * @return void
-     * @magentoDataFixture Magento/Bundle/_files/order_with_bundle_shipped_together.php
      */
+    #[DataFixture('Magento/Bundle/_files/order_with_bundle_shipped_together.php')]
     public function testOrderStateCompleteAfterInvoiceAndShipment(): void
     {
         $order = $this->loadOrderByIncrementId('100000001');
