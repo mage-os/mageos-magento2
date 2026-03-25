@@ -154,7 +154,7 @@ class Utility
     {
         try {
             $actions = $rule->getActions();
-        } catch (\Throwable $e) {
+        } catch (\Exception $e) {
             return false;
         }
         if (!$actions instanceof \Magento\Rule\Model\Condition\Combine) {
@@ -230,13 +230,9 @@ class Utility
      */
     private function isItemEligibleForRuleTotals(AbstractItem $item, Rule $rule): bool
     {
-        if ($item->getParentItem() && $item->getParentItem()->getProductType() === 'configurable') {
-            return false;
-        }
-        if (($item->getHasChildren() || $item->getChildren()) && $item->isChildrenCalculated()) {
-            return false;
-        }
-        if ($item->getNoDiscount()) {
+        if (($item->getParentItem() && $item->getParentItem()->getProductType() === 'configurable') ||
+            (($item->getHasChildren() || $item->getChildren()) && $item->isChildrenCalculated()) ||
+            ($item->getNoDiscount())) {
             return false;
         }
 
