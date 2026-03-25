@@ -41,6 +41,7 @@ use PHPUnit\Framework\TestCase;
  * @magentoDbIsolation disabled
  * @magentoAppIsolation enabled
  * @magentoAppArea frontend
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class PlaceOrderWithDhlUsCarrierTest extends TestCase
 {
