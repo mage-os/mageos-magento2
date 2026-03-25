@@ -5,11 +5,11 @@
  */
 declare(strict_types=1);
 
-namespace Magento\Ui\Test\Unit\Model\Validation;
+namespace Magento\Ui\Test\Unit\Model\ResourceModel;
 
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
-use Magento\Ui\Model\Validation\Utf8mb4Support;
+use Magento\Ui\Model\ResourceModel\Utf8mb4Support;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -17,19 +17,19 @@ use Psr\Log\LoggerInterface;
 class Utf8mb4SupportTest extends TestCase
 {
     /**
-     * @var ResourceConnection|MockObject
+     * @var ResourceConnection&MockObject
      */
     private ResourceConnection $resourceConnection;
 
     /**
-     * @var AdapterInterface|MockObject
+     * @var AdapterInterface&MockObject
      */
-    private AdapterInterface|MockObject $connection;
+    private AdapterInterface $connection;
 
     /**
-     * @var LoggerInterface|MockObject
+     * @var LoggerInterface&MockObject
      */
-    private LoggerInterface|MockObject $logger;
+    private LoggerInterface $logger;
 
     /**
      * @var Utf8mb4Support

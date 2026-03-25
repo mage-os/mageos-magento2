@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\Ui\Model\Validation;
+namespace Magento\Ui\Model\ResourceModel;
 
 interface Utf8mb4SupportInterface
 {

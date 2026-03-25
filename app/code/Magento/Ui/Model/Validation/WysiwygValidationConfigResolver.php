@@ -7,6 +7,8 @@ declare(strict_types=1);
 
 namespace Magento\Ui\Model\Validation;
 
+use Magento\Ui\Model\ResourceModel\Utf8mb4SupportInterface;
+
 class WysiwygValidationConfigResolver
 {
     /**
