@@ -154,7 +154,7 @@ class Utility
     {
         try {
             $actions = $rule->getActions();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return false;
         }
         if (!$actions instanceof \Magento\Rule\Model\Condition\Combine) {
