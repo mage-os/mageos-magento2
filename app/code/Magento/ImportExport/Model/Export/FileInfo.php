@@ -7,7 +7,6 @@ declare(strict_types=1);
 
 namespace Magento\ImportExport\Model\Export;
 
-use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Filesystem\Io\File;
 
 /**
@@ -32,12 +31,12 @@ class FileInfo
 
     /**
      * @param ConfigInterface $exportConfig
-     * @param File|null $fileIo
+     * @param File $fileIo
      */
-    public function __construct(ConfigInterface $exportConfig, ?File $fileIo = null)
+    public function __construct(ConfigInterface $exportConfig, File $fileIo)
     {
         $this->exportConfig = $exportConfig;
-        $this->fileIo = $fileIo ?? ObjectManager::getInstance()->get(File::class);
+        $this->fileIo = $fileIo;
     }
 
     /**
