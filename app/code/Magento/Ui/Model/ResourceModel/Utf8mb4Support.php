@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\Ui\Model\Validation;
+namespace Magento\Ui\Model\ResourceModel;
 
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
@@ -55,7 +55,7 @@ class Utf8mb4Support implements Utf8mb4SupportInterface
             $connection = $this->resourceConnection->getConnection();
 
             $this->columnSupportCache[$cacheKey] = $this->isConnectionUtf8mb4($connection)
-                && $this->isColumnUtf8mb4($connection, $table, $column);
+                && $this->isColumnCharsetUtf8mb4($connection, $table, $column);
         } catch (\Throwable $exception) {
             $this->logger->warning($exception->getMessage());
             $this->columnSupportCache[$cacheKey] = false;
@@ -90,7 +90,7 @@ class Utf8mb4Support implements Utf8mb4SupportInterface
      * @param string $column
      * @return bool
      */
-    private function isColumnUtf8mb4(AdapterInterface $connection, string $table, string $column): bool
+    private function isColumnCharsetUtf8mb4(AdapterInterface $connection, string $table, string $column): bool
     {
         $row = $connection->fetchRow(
             sprintf(
