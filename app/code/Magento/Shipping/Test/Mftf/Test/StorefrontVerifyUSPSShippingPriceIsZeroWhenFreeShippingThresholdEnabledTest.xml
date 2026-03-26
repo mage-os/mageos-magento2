@@ -17,7 +17,7 @@
             <testCaseId value="AC-15004"/>
             <severity value="MAJOR"/>
             <group value="3rd_party_integration"/>
-            <group value="EnableUSPSShippingSuite"/>
+            <group value="EnableUSPSShippingForRestAPISuite"/>
             <group value="pr_exclude"/>
         </annotations>
         <before>
