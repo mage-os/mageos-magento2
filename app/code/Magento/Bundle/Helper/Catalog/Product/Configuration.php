@@ -214,7 +214,7 @@ class Configuration extends AbstractHelper implements ConfigurationInterface
                         ->getTaxPrice($product, $convertedSelectionPrice, true);
                 $selectionFinalPriceExclTax =
                     $this->taxHelper
-                        ->getTaxPrice($product, $selectionPrice, false);
+                        ->getTaxPrice($product, $convertedSelectionPrice, false);
             } else {
                 $selectionFinalPrice = $this->taxHelper->getTaxPrice($item->getProduct(), $convertedSelectionPrice);
             }
@@ -224,7 +224,7 @@ class Configuration extends AbstractHelper implements ConfigurationInterface
                 . $this->priceCurrency->format($selectionFinalPrice)
                 . ($displayCartPricesBoth ? ' ' . __('Excl. tax:') . ' '
                     . $this->priceCurrency->format(
-                        $convertedSelectionPrice
+                        $selectionFinalPriceExclTax
                     ) : '');
             $option['has_html'] = true;
         }
