@@ -206,25 +206,25 @@ class Configuration extends AbstractHelper implements ConfigurationInterface
         $qty = $this->getSelectionQty($item->getProduct(), $bundleSelection->getSelectionId()) * 1;
         if ($qty) {
             $selectionPrice = $this->getSelectionFinalPrice($item, $bundleSelection);
-            $selectionPriceInclTax = $this->priceCurrency->convertAndRound($selectionPrice);
+            $convertedSelectionPrice = $this->priceCurrency->convertAndRound($selectionPrice);
             $displayCartPricesBoth = $this->taxHelper->displayCartPricesBoth();
             if ($displayCartPricesBoth) {
                 $selectionFinalPrice =
                     $this->taxHelper
-                        ->getTaxPrice($product, $selectionPriceInclTax, true);
+                        ->getTaxPrice($product, $convertedSelectionPrice, true);
                 $selectionFinalPriceExclTax =
                     $this->taxHelper
                         ->getTaxPrice($product, $selectionPrice, false);
             } else {
-                $selectionFinalPrice = $this->taxHelper->getTaxPrice($item->getProduct(), $selectionPrice);
+                $selectionFinalPrice = $this->taxHelper->getTaxPrice($item->getProduct(), $convertedSelectionPrice);
             }
             $option['value'][] = $qty . ' x '
                 . $this->escaper->escapeHtml($bundleSelection->getName())
                 . ' '
                 . $this->priceCurrency->format($selectionFinalPrice)
                 . ($displayCartPricesBoth ? ' ' . __('Excl. tax:') . ' '
-                    . $this->pricingHelper->currency(
-                        $selectionFinalPriceExclTax
+                    . $this->priceCurrency->format(
+                        $convertedSelectionPrice
                     ) : '');
             $option['has_html'] = true;
         }
