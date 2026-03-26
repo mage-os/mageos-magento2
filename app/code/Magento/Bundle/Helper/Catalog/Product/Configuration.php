@@ -30,13 +30,6 @@ use Magento\Framework\Pricing\PriceCurrencyInterface;
 class Configuration extends AbstractHelper implements ConfigurationInterface
 {
     /**
-     * Core data
-     *
-     * @var Data
-     */
-    protected $pricingHelper;
-
-    /**
      * Catalog product configuration
      *
      * @var ProductConfiguration
@@ -68,7 +61,6 @@ class Configuration extends AbstractHelper implements ConfigurationInterface
     /**
      * @param Context $context
      * @param ProductConfiguration $productConfiguration
-     * @param Data $pricingHelper
      * @param Escaper $escaper
      * @param Json|null $serializer
      * @param TaxPrice|null $taxHelper
@@ -77,14 +69,12 @@ class Configuration extends AbstractHelper implements ConfigurationInterface
     public function __construct(
         Context              $context,
         ProductConfiguration $productConfiguration,
-        Data                 $pricingHelper,
         Escaper              $escaper,
         ?Json                 $serializer = null,
         ?TaxPrice $taxHelper = null,
         ?PriceCurrencyInterface $priceCurrency = null,
     ) {
         $this->productConfiguration = $productConfiguration;
-        $this->pricingHelper = $pricingHelper;
         $this->escaper = $escaper;
         $this->serializer = $serializer ?: ObjectManager::getInstance()
             ->get(Json::class);

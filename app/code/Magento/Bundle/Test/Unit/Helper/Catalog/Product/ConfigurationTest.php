@@ -35,11 +35,6 @@ class ConfigurationTest extends TestCase
     use MockCreationTrait;
 
     /**
-     * @var Data|MockObject
-     */
-    private $pricingHelper;
-
-    /**
      * @var Configuration|MockObject
      */
     private $productConfiguration;
@@ -79,7 +74,6 @@ class ConfigurationTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->pricingHelper = $this->createPartialMock(Data::class, ['currency']);
         $this->productConfiguration = $this->createMock(Configuration::class);
         $this->escaper = $this->createPartialMock(Escaper::class, ['escapeHtml']);
         /** @var WishlistItem|MockObject */
@@ -102,7 +96,6 @@ class ConfigurationTest extends TestCase
         $this->helper = (new ObjectManager($this))->getObject(
             \Magento\Bundle\Helper\Catalog\Product\Configuration::class,
             [
-                'pricingHelper' => $this->pricingHelper,
                 'productConfiguration' => $this->productConfiguration,
                 'escaper' => $this->escaper,
                 'priceCurrency' => $this->priceCurrency,
@@ -305,13 +298,6 @@ class ConfigurationTest extends TestCase
                 ->willReturn(15.00);
         }
         $this->taxHelper->method('displayCartPricesBoth')->willReturn((bool)$displayCartPriceBoth);
-        if ($displayCartPriceBoth) {
-            $this->pricingHelper->expects($this->once())->method('currency')
-                ->with(15.00)
-                ->willReturn('<span class="price">$15.00</span>');
-        } else {
-            $this->pricingHelper->expects($this->never())->method('currency');
-        }
         $this->priceCurrency->expects($this->atLeastOnce())->method('convertAndRound')
             ->with(15.00)
             ->willReturn(15.00);
