@@ -475,6 +475,7 @@ class ViewTest extends TestCase
             'integer min and higher preconfigured' => [5, 10, 10],
             'integer min wins over lower preconfigured' => [5, 2, 5],
             'decimal min sale qty' => [2.5, 1.0, 2.5],
+            'decimal min below one uses min not one' => [0.5, 1.0, 1.0],
             'decimal preconfigured qty above min' => [1.0, 4.25, 4.25],
             'decimal preconfigured higher than decimal min' => [2.0, 3.5, 3.5],
             'decimal min higher than preconfigured' => [5.5, 3.0, 5.5],

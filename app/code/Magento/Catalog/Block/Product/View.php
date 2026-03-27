@@ -272,9 +272,7 @@ class View extends AbstractProduct implements \Magento\Framework\DataObject\Iden
     }
 
     /**
-     * Get default qty - either as preconfigured, or as 1.
-     *
-     * Also restricts it by minimal qty.
+     * Get default qty — preconfigured value if higher, else positive minimum sale qty, else 1.
      *
      * @param null|\Magento\Catalog\Model\Product $product
      * @return int|float
@@ -283,7 +281,12 @@ class View extends AbstractProduct implements \Magento\Framework\DataObject\Iden
     {
         $product = $product ?: $this->getProduct();
 
-        $qty = max((float) $this->getMinimalQty($product), 1);
+        $minSaleQty = $this->getMinimalQty($product);
+        if ($minSaleQty !== null && (float) $minSaleQty > 0) {
+            $qty = (float) $minSaleQty;
+        } else {
+            $qty = 1.0;
+        }
 
         $configQty = $product->getPreconfiguredValues()->getQty();
         if (is_numeric($configQty)) {
