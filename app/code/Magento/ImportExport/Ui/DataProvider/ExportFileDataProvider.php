@@ -114,21 +114,26 @@ class ExportFileDataProvider extends DataProvider
         if (empty($files)) {
             return $emptyResponse;
         }
-        $result = [];
+        $items = [];
         foreach ($files as $file) {
             $pathInfo = $this->fileIO->getPathInfo($file);
             if ($this->shouldSkipFile($file, $pathInfo)) {
                 continue;
             }
-            $result['items'][]['file_name'] = $this->getPathToExportFile($pathInfo);
+            $items[]['file_name'] = $this->getPathToExportFile($pathInfo);
+        }
+
+        if (empty($items)) {
+            return $emptyResponse;
         }
 
         $paging = $this->request->getParam('paging');
         $pageSize = (int) ($paging['pageSize'] ?? 0);
         $pageCurrent = (int) ($paging['current'] ?? 0);
         $pageOffset = ($pageCurrent - 1) * $pageSize;
-        $result['totalRecords'] = count($result['items']);
-        $result['items'] = array_slice($result['items'], $pageOffset, $pageSize);
+        $result = [];
+        $result['totalRecords'] = count($items);
+        $result['items'] = array_slice($items, $pageOffset, $pageSize);
 
         return $result;
     }

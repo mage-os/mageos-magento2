@@ -131,4 +131,44 @@ class ExportFileDataProviderTest extends TestCase
             array_column($data['items'], 'file_name')
         );
     }
+
+    public function testGetDataReturnsEmptyWhenAllFilesAreInProgress(): void
+    {
+        $this->directoryMock->method('getAbsolutePath')
+            ->willReturnCallback(fn ($path) => $path ?: '/var/');
+        $this->directoryMock->expects(self::once())
+            ->method('isExist')
+            ->with('/var/export/')
+            ->willReturn(true);
+        $driverMock = $this->createMock(DriverInterface::class);
+        $this->directoryMock->method('getDriver')
+            ->willReturn($driverMock);
+        $files = [
+            '/var/export/file1.csv.tmp' => ['mtime' => 1000000001],
+            '/var/export/file2.csv.tmp' => ['mtime' => 1000000002],
+        ];
+        $driverMock->expects(self::once())
+            ->method('readDirectoryRecursively')
+            ->with('/var/export/')
+            ->willReturn(array_keys($files));
+        $this->directoryMock->expects(self::exactly(count($files)))
+            ->method('isFile')
+            ->willReturn(true);
+        $this->directoryMock->method('stat')
+            ->willReturnCallback(fn ($path) => $files[$path]);
+        $this->fileIOMock->expects(self::exactly(count($files)))
+            ->method('getPathInfo')
+            ->willReturnCallback(
+                fn ($path) => [
+                    'dirname' => '/var/export',
+                    'basename' => str_replace('/var/export/', '', $path),
+                    'extension' => pathinfo($path, PATHINFO_EXTENSION),
+                    'filename' => pathinfo($path, PATHINFO_FILENAME),
+                ]
+            );
+
+        $data = $this->model->getData();
+        self::assertEquals(0, $data['totalRecords']);
+        self::assertEmpty($data['items']);
+    }
 }
