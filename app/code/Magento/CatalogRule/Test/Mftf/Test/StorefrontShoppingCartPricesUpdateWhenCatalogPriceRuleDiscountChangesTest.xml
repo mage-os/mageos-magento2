@@ -11,8 +11,8 @@
         <annotations>
             <features value="CatalogRule"/>
             <stories value="Apply catalog price rule"/>
-            <title value="Shopping cart prices reflect catalog price rule discount changes after reindex"/>
-            <description value="Cart prices update after the catalog rule discount changes and relevant indexers are run."/>
+            <title value="Shopping cart prices reflect catalog price rule discount changes"/>
+            <description value="Cart prices update after the catalog rule discount changes"/>
             <severity value="MAJOR"/>
             <testCaseId value="ACP2E-3955"/>
             <group value="catalogRule"/>
