@@ -39,15 +39,12 @@ use Magento\TestFramework\ObjectManager;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Backend scenario translated from MFTF AdminCreatingShippingLabelTest (MC-20287).
+ * Backend scenario translated from MFTF AdminCreatingShippingLabelTest.
  *
- * Excludes UI (admin grid, buttons, storefront clicks). Covers:
- * FedEx configuration, product country of manufacture (DE), checkout addresses aligned with MFTF data,
+ * Covers:
+ * FedEx configuration, product country of manufacture (DE), checkout addresses,
  * order placed with FedEx shipping method, invoice, shipment with packages and shipping label + tracking,
- * assertions on carrier title "Federal Express" as in the MFTF test.
- *
- * FedEx REST API is not called: a FedEx quote rate is injected so {@see SetDeliveryMethod} is not required
- * (that API validates collected rates, which would require live FedEx).
+ * assertions on carrier title "Federal Express".
  *
  * @magentoAppIsolation enabled
  * @magentoDbIsolation enabled
@@ -70,22 +67,49 @@ class AdminCreatingShippingLabelTest extends TestCase
      */
     private $objectManager;
 
+    /**
+     * @var ShipmentRepositoryInterface
+     */
     private ShipmentRepositoryInterface $shipmentRepository;
 
+    /**
+     * @var OrderRepositoryInterface
+     */
     private OrderRepositoryInterface $orderRepository;
 
+    /**
+     * @var ShipmentFactory
+     */
     private ShipmentFactory $shipmentFactory;
 
+    /**
+     * @var InvoiceService
+     */
     private InvoiceService $invoiceService;
 
+    /**
+     * @var InvoiceRepositoryInterface
+     */
     private InvoiceRepositoryInterface $invoiceRepository;
 
+    /**
+     * @var CartRepositoryInterface
+     */
     private CartRepositoryInterface $quoteRepository;
 
+    /**
+     * @var QuoteAddressRateFactory
+     */
     private QuoteAddressRateFactory $quoteAddressRateFactory;
 
+    /**
+     * @var RateResultMethodFactory
+     */
     private RateResultMethodFactory $rateResultMethodFactory;
 
+    /**
+     * @var DataFixtureStorage
+     */
     private DataFixtureStorage $fixtures;
 
     /**
@@ -106,7 +130,7 @@ class AdminCreatingShippingLabelTest extends TestCase
     }
 
     /**
-     * Mirrors AdminCreatingShippingLabelTest: FedEx order, invoice, shipment with label; track shows Federal Express.
+     * FedEx order, invoice, shipment with label; track shows Federal Express.
      *
      * @return void
      */
@@ -195,10 +219,6 @@ class AdminCreatingShippingLabelTest extends TestCase
         $quote = $this->quoteRepository->getActive($cart->getId());
         $this->injectFedExGroundRate($quote);
         $quote->collectTotals();
-        // Use model save — not CartRepository::save(). SaveHandler would run ShippingAssignmentPersister
-        // → ShippingAddressManagement::assign(), which forces setCollectShippingRates(true); the subsequent
-        // resource save + collectTotals() would recollect carrier rates, wipe the injected FedEx rate, and
-        // fail submit validation (shipping method missing).
         $quote->save();
 
         $quoteManagement = $this->objectManager->get(QuoteManagement::class);
@@ -286,11 +306,7 @@ class AdminCreatingShippingLabelTest extends TestCase
     /**
      * Add a FedEx Ground rate without calling the FedEx API.
      *
-     * {@see \Magento\Quote\Model\Quote\Address\Total\Shipping::collect} always calls collectShippingRates().
-     * When that runs with {@see \Magento\Quote\Model\Quote\Address::getCollectShippingRates()} true (default after
-     * checkout fixtures), carriers run and FedEx fails offline — the address loses rates/method and submit validation
-     * fails. Setting collectShippingRates to false makes collectShippingRates() return immediately so injected rates
-     * and shipping method survive {@see \Magento\Quote\Model\QuoteManagement::placeOrder()} totals collection.
+     * @return void
      */
     private function injectFedExGroundRate(Quote $quote): void
     {
