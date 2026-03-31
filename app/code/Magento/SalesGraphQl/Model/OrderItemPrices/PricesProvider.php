@@ -10,6 +10,7 @@ namespace Magento\SalesGraphQl\Model\OrderItemPrices;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Sales\Model\Order\Item;
 use Magento\QuoteGraphQl\Model\GetOptionsRegularPrice;
+use Magento\Tax\Model\Config as TaxConfig;
 
 /**
  * Prices data provider for order item
@@ -21,10 +22,12 @@ class PricesProvider
      *
      * @param PriceCurrencyInterface $priceCurrency
      * @param GetOptionsRegularPrice $getOptionsRegularPrice
+     * @param TaxConfig $taxConfig
      */
     public function __construct(
         private readonly PriceCurrencyInterface $priceCurrency,
-        private readonly GetOptionsRegularPrice $getOptionsRegularPrice
+        private readonly GetOptionsRegularPrice $getOptionsRegularPrice,
+        private readonly TaxConfig $taxConfig
     ) {
     }
 
@@ -86,6 +89,9 @@ class PricesProvider
      */
     private function getOriginalPriceInclTax(Item $orderItem): float
     {
+        if ($this->taxConfig->priceIncludesTax($orderItem->getOrder()->getStore())) {
+            return (float) $orderItem->getOriginalPrice();
+        }
         return $orderItem->getOriginalPrice() * (1 + ($orderItem->getTaxPercent() / 100));
     }
 
@@ -97,7 +103,11 @@ class PricesProvider
      */
     private function getOriginalRowTotalInclTax(Item $orderItem): float
     {
-        return $this->getOriginalRowTotal($orderItem) * (1 + ($orderItem->getTaxPercent() / 100));
+        $originalRowTotal = $this->getOriginalRowTotal($orderItem);
+        if ($this->taxConfig->priceIncludesTax($orderItem->getOrder()->getStore())) {
+            return $originalRowTotal;
+        }
+        return $originalRowTotal * (1 + ($orderItem->getTaxPercent() / 100));
     }
 
     /**
