@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright 2026 Adobe
+ * All Rights Reserved.
+ */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminVerifyDefaultStorefrontPropertiesForVisualSwatchAttributeTest">
+        <annotations>
+            <features value="Swatches"/>
+            <stories value="Default storefront properties for visual swatch attribute"/>
+            <title value="Verify default storefront properties for visual swatch attribute"/>
+            <description value="Verify defaults on attribute create page and create-configurations new attribute iframe: Use Product Image for Swatch if Possible=No, Update Product Preview Image=Yes, Visible on Catalog Pages on Frontend=Yes, Used in Product Listing=Yes."/>
+            <severity value="MAJOR"/>
+            <testCaseId value="AC-DEFAULT-SWATCH-PROPERTIES"/>
+            <group value="swatches"/>
+            <group value="catalog"/>
+        </annotations>
+
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+
+        <after>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
+        </after>
+
+        <!-- Step 1: Attribute create page defaults -->
+        <actionGroup ref="AdminOpenProductAttributePageActionGroup" stepKey="openProductAttributeGrid"/>
+        <waitForElementClickable selector="{{AdminProductAttributeGridSection.createNewAttributeBtn}}" stepKey="waitCreateNewAttributeButton"/>
+        <click selector="{{AdminProductAttributeGridSection.createNewAttributeBtn}}" stepKey="clickCreateNewAttributeButton"/>
+        <waitForElementVisible selector="{{AttributePropertiesSection.InputType}}" stepKey="waitInputTypeSelect"/>
+        <selectOption selector="{{AttributePropertiesSection.InputType}}" userInput="Visual Swatch" stepKey="setVisualSwatchInputType"/>
+        <waitForElementVisible selector="{{AttributePropertiesSection.UpdateProductPreviewImage}}" stepKey="waitUpdatePreviewImageField"/>
+        <waitForElementVisible selector="{{AttributePropertiesSection.UseProductImageForSwatch}}" stepKey="waitUseProductImageForSwatchField"/>
+        <seeOptionIsSelected selector="{{AttributePropertiesSection.UpdateProductPreviewImage}}" userInput="No" stepKey="assertUpdateProductPreviewImageDefaultYes"/>
+        <seeOptionIsSelected selector="{{AttributePropertiesSection.UseProductImageForSwatch}}" userInput="No" stepKey="assertUseProductImageForSwatchDefaultNo"/>
+        <waitForElementClickable selector="{{StorefrontPropertiesSection.StoreFrontPropertiesTab}}" stepKey="waitStorefrontPropertiesTab"/>
+        <click selector="{{StorefrontPropertiesSection.StoreFrontPropertiesTab}}" stepKey="openStorefrontPropertiesTab"/>
+        <waitForElementVisible selector="{{StorefrontPropertiesSection.visibleOnCatalogPagesOnStorefront}}" stepKey="waitVisibleOnCatalogPagesField"/>
+        <seeOptionIsSelected selector="{{StorefrontPropertiesSection.visibleOnCatalogPagesOnStorefront}}" userInput="No" stepKey="assertVisibleOnCatalogPagesDefaultYes"/>
+        <waitForElementVisible selector="{{AdvancedAttributePropertiesSection.UseInProductListing}}" stepKey="waitUseInProductListingField"/>
+        <seeOptionIsSelected selector="{{AdvancedAttributePropertiesSection.UseInProductListing}}" userInput="No" stepKey="assertUseInProductListingDefaultYes"/>
+
+        <!-- Step 2: Configurable product create configurations -> Create New Attribute iframe defaults -->
+        <actionGroup ref="AdminOpenProductIndexPageActionGroup" stepKey="openProductGrid"/>
+        <actionGroup ref="GoToCreateProductPageActionGroup" stepKey="openCreateConfigurableProductPage">
+            <argument name="product" value="BaseConfigurableProduct"/>
+        </actionGroup>
+        <actionGroup ref="FillMainProductFormActionGroup" stepKey="fillConfigurableProductRequiredFields">
+            <argument name="product" value="BaseConfigurableProduct"/>
+        </actionGroup>
+        <waitForElementClickable selector="{{AdminProductFormConfigurationsSection.createConfigurations}}" stepKey="waitCreateConfigurationsButton"/>
+        <click selector="{{AdminProductFormConfigurationsSection.createConfigurations}}" stepKey="clickCreateConfigurationsButton"/>
+        <waitForElementVisible selector="{{AdminCreateProductConfigurationsPanel.createNewAttribute}}" stepKey="waitCreateNewAttributeInWizard"/>
+        <waitForElementClickable selector="{{AdminCreateProductConfigurationsPanel.createNewAttribute}}" stepKey="waitCreateNewAttributeInWizardClickable"/>
+        <click selector="{{AdminCreateProductConfigurationsPanel.createNewAttribute}}" stepKey="clickCreateNewAttributeInWizard"/>
+        <waitForPageLoad stepKey="waitForWizardNewAttributeIFrameLoad"/>
+        <switchToIFrame selector="{{AdminNewAttributePanel.newAttributeIFrame}}" stepKey="switchToNewAttributeIFrame"/>
+        <waitForElementVisible selector="{{AttributePropertiesSection.InputType}}" stepKey="waitIFrameInputTypeSelect"/>
+        <selectOption selector="{{AttributePropertiesSection.InputType}}" userInput="Visual Swatch" stepKey="setIFrameVisualSwatchInputType"/>
+        <waitForElementVisible selector="{{AttributePropertiesSection.UpdateProductPreviewImage}}" stepKey="waitIFrameUpdatePreviewImageField"/>
+        <waitForElementVisible selector="{{AttributePropertiesSection.UseProductImageForSwatch}}" stepKey="waitIFrameUseProductImageForSwatchField"/>
+        <seeOptionIsSelected selector="{{AttributePropertiesSection.UpdateProductPreviewImage}}" userInput="No" stepKey="assertIFrameUpdateProductPreviewImageDefaultYes"/>
+        <seeOptionIsSelected selector="{{AttributePropertiesSection.UseProductImageForSwatch}}" userInput="No" stepKey="assertIFrameUseProductImageForSwatchDefaultNo"/>
+        <waitForElementClickable selector="{{StorefrontPropertiesSection.StorefrontPropertiesSectionToggle}}" stepKey="waitIFrameStorefrontPropertiesTab"/>
+        <click selector="{{StorefrontPropertiesSection.StorefrontPropertiesSectionToggle}}" stepKey="openIFrameStorefrontPropertiesTab"/>
+        <waitForElementVisible selector="{{StorefrontPropertiesSection.visibleOnCatalogPagesOnStorefront}}" stepKey="waitIFrameVisibleOnCatalogPagesField"/>
+        <seeOptionIsSelected selector="{{StorefrontPropertiesSection.visibleOnCatalogPagesOnStorefront}}" userInput="No" stepKey="assertIFrameVisibleOnCatalogPagesDefaultYes"/>
+        <waitForElementClickable selector="{{AdvancedAttributePropertiesSection.AdvancedAttributePropertiesSectionToggle}}" stepKey="waitIFrameAdvancedAttributePropertiesToggle"/>
+        <click selector="{{AdvancedAttributePropertiesSection.AdvancedAttributePropertiesSectionToggle}}" stepKey="openIFrameAdvancedAttributeProperties"/>
+        <waitForElementVisible selector="{{AdvancedAttributePropertiesSection.UseInProductListing}}" stepKey="waitIFrameUseInProductListingField"/>
+        <seeOptionIsSelected selector="{{AdvancedAttributePropertiesSection.UseInProductListing}}" userInput="No" stepKey="assertIFrameUseInProductListingDefaultYes"/>
+    </test>
+</tests>
