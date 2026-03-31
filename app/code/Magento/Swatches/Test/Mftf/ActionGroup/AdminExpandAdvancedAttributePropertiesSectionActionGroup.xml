@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright 2026 Adobe
+ * All Rights Reserved.
+ */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminExpandAdvancedAttributePropertiesSectionActionGroup">
+        <annotations>
+            <description>Expand Advanced Attribute Properties (e.g. new attribute iframe in configurable wizard).</description>
+        </annotations>
+        <waitForElementClickable selector="{{AdvancedAttributePropertiesSection.AdvancedAttributePropertiesSectionToggle}}" stepKey="waitAdvancedAttributePropertiesToggle"/>
+        <click selector="{{AdvancedAttributePropertiesSection.AdvancedAttributePropertiesSectionToggle}}" stepKey="openAdvancedAttributeProperties"/>
+    </actionGroup>
+</actionGroups>
