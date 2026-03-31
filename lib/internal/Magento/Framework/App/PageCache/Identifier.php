@@ -101,7 +101,7 @@ class Identifier implements IdentifierInterface
      * @param string $url
      * @return array
      */
-    private function reconstructUrl(string $url): array
+    public function reconstructUrl(string $url): array
     {
         if (empty($url)) {
             return [$url, ''];
