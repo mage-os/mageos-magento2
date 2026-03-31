@@ -80,7 +80,7 @@ class ProductOptionValidator extends AbstractHelper
             throw new LocalizedException(__("Invalid order path."));
         }
 
-        $expectedOrderPath = str_replace(self::QUOTE_PATH, self::ORDER_PATH , $quotePath);
+        $expectedOrderPath = str_replace(self::QUOTE_PATH, self::ORDER_PATH, $quotePath);
 
         if ($orderPath !== $expectedOrderPath) {
             throw new LocalizedException(__("Invalid file path."));

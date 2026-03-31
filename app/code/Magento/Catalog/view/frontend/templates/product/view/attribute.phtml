@@ -51,6 +51,9 @@ if ($_attributeType && $_attributeType == 'text') {
 } else {
     $_attributeValue = $_helper->productAttribute($_product, $_product->$_call(), $_code);
 }
+$processedAttributeString = !empty($_attributeAddAttribute)
+    ? ' ' . $_helper->processString($_attributeAddAttribute)
+    : '';
 ?>
 
 <?php if ($_attributeValue):?>
@@ -58,9 +61,6 @@ if ($_attributeType && $_attributeType == 'text') {
     <?php if ($renderLabel):?>
         <strong class="type"><?= $escaper->escapeHtml($_attributeLabel) ?></strong>
     <?php endif; ?>
-    <div class="value"<?php if ($_attributeAddAttribute): ?>
-        <?= /* @noEscape */ ' ' . $_helper->processString($_attributeAddAttribute) ?><?php endif; ?>>
-        <?= /* @noEscape */ $_attributeValue ?>
-    </div>
+    <div class="value"<?= /* @noEscape */ $processedAttributeString ?>><?= /* @noEscape */ $_attributeValue ?></div>
 </div>
 <?php endif; ?>
