@@ -37,7 +37,7 @@ class Reader
      */
     public function __construct(
         \Magento\Framework\App\Config\ConfigSourceInterface $source,
-        \Magento\Store\Model\Config\Processor\Fallback $fallback,
+        \Magento\Framework\App\Config\Spi\PostProcessorInterface $fallback,
         \Magento\Framework\App\Config\Spi\PreProcessorInterface $preProcessor,
         \Magento\Framework\App\Config\Spi\PostProcessorInterface $postProcessor
     ) {
