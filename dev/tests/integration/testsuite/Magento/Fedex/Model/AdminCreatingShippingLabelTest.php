@@ -49,6 +49,7 @@ use PHPUnit\Framework\TestCase;
  * @magentoAppIsolation enabled
  * @magentoDbIsolation enabled
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.StaticAccess)
  */
 class AdminCreatingShippingLabelTest extends TestCase
 {
@@ -100,12 +101,12 @@ class AdminCreatingShippingLabelTest extends TestCase
     /**
      * @var QuoteAddressRateFactory
      */
-    private QuoteAddressRateFactory $quoteAddressRateFactory;
+    private QuoteAddressRateFactory $addressRateFactory;
 
     /**
      * @var RateResultMethodFactory
      */
-    private RateResultMethodFactory $rateResultMethodFactory;
+    private RateResultMethodFactory $resultMethodFactory;
 
     /**
      * @var DataFixtureStorage
@@ -124,8 +125,8 @@ class AdminCreatingShippingLabelTest extends TestCase
         $this->invoiceService = $this->objectManager->get(InvoiceService::class);
         $this->invoiceRepository = $this->objectManager->get(InvoiceRepositoryInterface::class);
         $this->quoteRepository = $this->objectManager->get(CartRepositoryInterface::class);
-        $this->quoteAddressRateFactory = $this->objectManager->get(QuoteAddressRateFactory::class);
-        $this->rateResultMethodFactory = $this->objectManager->get(RateResultMethodFactory::class);
+        $this->addressRateFactory = $this->objectManager->get(QuoteAddressRateFactory::class);
+        $this->resultMethodFactory = $this->objectManager->get(RateResultMethodFactory::class);
         $this->fixtures = $this->objectManager->get(DataFixtureStorageManager::class)->getStorage();
     }
 
@@ -313,14 +314,14 @@ class AdminCreatingShippingLabelTest extends TestCase
         $address = $quote->getShippingAddress();
         $address->removeAllShippingRates();
 
-        $carrierMethod = $this->rateResultMethodFactory->create();
+        $carrierMethod = $this->resultMethodFactory->create();
         $carrierMethod->setCarrier('fedex');
         $carrierMethod->setCarrierTitle('Federal Express');
         $carrierMethod->setMethod('FEDEX_GROUND');
         $carrierMethod->setMethodTitle('Ground');
         $carrierMethod->setPrice(10.0);
 
-        $rate = $this->quoteAddressRateFactory->create()->importShippingRate($carrierMethod);
+        $rate = $this->addressRateFactory->create()->importShippingRate($carrierMethod);
         $address->addShippingRate($rate);
         $address->setShippingMethod('fedex_FEDEX_GROUND');
         $address->setShippingDescription('Federal Express - Ground');
