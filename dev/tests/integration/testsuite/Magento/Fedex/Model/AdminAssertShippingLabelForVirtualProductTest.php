@@ -239,7 +239,8 @@ class AdminAssertShippingLabelForVirtualProductTest extends TestCase
         $configProduct = $this->fixtures->get('configProduct');
         $cart = $this->fixtures->get('cart');
 
-        $simpleReloaded = $this->objectManager->get(ProductRepositoryInterface::class)->getById($simpleProduct->getId());
+        $simpleReloaded = $this->objectManager->get(ProductRepositoryInterface::class)
+            ->getById($simpleProduct->getId());
         $countryAttr = $simpleReloaded->getCustomAttribute('country_of_manufacture');
         $this->assertNotNull($countryAttr);
         $this->assertSame('DE', $countryAttr->getValue());
