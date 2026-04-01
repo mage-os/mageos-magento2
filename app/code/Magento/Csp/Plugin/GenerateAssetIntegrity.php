@@ -132,6 +132,27 @@ class GenerateAssetIntegrity
     }
 
     /**
+     * Generates integrity for '.min' files resolver.
+     *
+     * @param FileManager $subject
+     * @param File $result
+     *
+     * @return File
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function afterCreateMinResolverAsset(
+        FileManager $subject,
+        File $result
+    ): File {
+        if (PHP_SAPI === 'cli') {
+            $this->generateHash($result);
+        }
+
+        return $result;
+    }
+
+    /**
      * Generates hash for the given file result if it matches the supported content types.
      *
      * @param File $result
