@@ -9,14 +9,14 @@ namespace Magento\Csp\Plugin;
 
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\App\State;
-use Magento\Deploy\Package\Package;
-use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\View\Asset\AssetInterface;
 use Magento\Framework\View\Asset\LocalInterface;
 use Magento\Framework\View\Asset\GroupedCollection;
 use Magento\Csp\Model\SubresourceIntegrityRepositoryPool;
 use Magento\Framework\App\Request\Http;
 use Magento\Csp\Model\SubresourceIntegrity\SriEnabledActions;
+use Magento\Csp\Model\SubresourceIntegrity\HashResolver\HashResolverInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Plugin to add integrity to assets on page load.
@@ -25,11 +25,15 @@ class AddDefaultPropertiesToGroupPlugin
 {
     /**
      * @var State
+     * @deprecated Hash resolution logic has been refactored to use HashResolverInterface.
+     * @see HashResolverInterface
      */
     private State $state;
 
     /**
      * @var SubresourceIntegrityRepositoryPool
+     * @deprecated Hash resolution logic has been refactored to use HashResolverInterface.
+     * @see HashResolverInterface
      */
     private SubresourceIntegrityRepositoryPool $integrityRepositoryPool;
 
@@ -44,21 +48,37 @@ class AddDefaultPropertiesToGroupPlugin
     private SriEnabledActions $action;
 
     /**
+     * @var HashResolverInterface
+     */
+    private HashResolverInterface $hashResolver;
+
+    /**
+     * @var LoggerInterface
+     */
+    private LoggerInterface $logger;
+
+    /**
      * @param State $state
      * @param SubresourceIntegrityRepositoryPool $integrityRepositoryPool
      * @param Http|null $request
      * @param SriEnabledActions|null $action
+     * @param HashResolverInterface|null $hashResolver
+     * @param LoggerInterface|null $logger
      */
     public function __construct(
         State $state,
         SubresourceIntegrityRepositoryPool $integrityRepositoryPool,
         ?Http $request = null,
-        ?SriEnabledActions $action = null
+        ?SriEnabledActions $action = null,
+        ?HashResolverInterface $hashResolver = null,
+        ?LoggerInterface $logger = null
     ) {
         $this->state = $state;
         $this->integrityRepositoryPool = $integrityRepositoryPool;
         $this->request = $request ?? ObjectManager::getInstance()->get(Http::class);
         $this->action = $action ?? ObjectManager::getInstance()->get(SriEnabledActions::class);
+        $this->hashResolver = $hashResolver ?? ObjectManager::getInstance()->get(HashResolverInterface::class);
+        $this->logger = $logger ?? ObjectManager::getInstance()->get(LoggerInterface::class);
     }
 
     /**
@@ -69,32 +89,30 @@ class AddDefaultPropertiesToGroupPlugin
      * @param array $properties
      * @return array
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     * @throws LocalizedException
      */
     public function beforeGetFilteredProperties(
         GroupedCollection $subject,
         AssetInterface $asset,
         array $properties = []
     ): array {
-        if ($this->canExecute($asset)) {
-            $integrityRepository = $this->integrityRepositoryPool->get(
-                Package::BASE_AREA
+        try {
+            if ($this->canExecute($asset)) {
+                $hash = $this->hashResolver->getHashByPath($asset->getPath());
+
+                if ($hash) {
+                    $properties['attributes']['integrity'] = $hash;
+                    $properties['attributes']['crossorigin'] = 'anonymous';
+                }
+            }
+        } catch (\Exception $e) {
+            // Skip adding SRI attributes on failure - assets still load normally
+            $this->logger->warning(
+                'SRI: Failed to get integrity hash for asset',
+                [
+                    'asset_path' => $asset->getPath(),
+                    'exception' => $e->getMessage()
+                ]
             );
-
-            $integrity = $integrityRepository->getByPath($asset->getPath());
-
-            if (!$integrity) {
-                $integrityRepository = $this->integrityRepositoryPool->get(
-                    $this->state->getAreaCode()
-                );
-
-                $integrity = $integrityRepository->getByPath($asset->getPath());
-            }
-
-            if ($integrity && $integrity->getHash()) {
-                $properties['attributes']['integrity'] = $integrity->getHash();
-                $properties['attributes']['crossorigin'] = 'anonymous';
-            }
         }
 
         return [$asset, $properties];

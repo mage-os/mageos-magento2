@@ -22,7 +22,6 @@ use Magento\Deploy\Package\PackageFile;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Directory\ReadInterface;
 use Psr\Log\LoggerInterface;
-use Magento\Framework\View\Asset\Minification;
 
 /**
  * Unit tests for Integrity post-processor
@@ -71,11 +70,6 @@ class IntegrityTest extends TestCase
      */
     private MockObject $directoryMock;
 
-    /**
-     * @var MockObject|Minification
-     */
-    private MockObject $minificationMock;
-
     protected function setUp(): void
     {
         $this->filesystemMock = $this->createMock(Filesystem::class);
@@ -85,7 +79,6 @@ class IntegrityTest extends TestCase
         $this->repositoryPoolMock = $this->createMock(SubresourceIntegrityRepositoryPool::class);
         $this->loggerMock = $this->createMock(LoggerInterface::class);
         $this->directoryMock = $this->createMock(ReadInterface::class);
-        $this->minificationMock = $this->createMock(Minification::class);
 
         $this->filesystemMock->method('getDirectoryRead')->willReturn($this->directoryMock);
 
@@ -95,22 +88,21 @@ class IntegrityTest extends TestCase
             $this->integrityFactoryMock,
             $this->integrityCollectorMock,
             $this->loggerMock,
-            $this->repositoryPoolMock,
-            $this->minificationMock
+            $this->repositoryPoolMock
         );
     }
 
     /**
-     * Test that repository is selected by area code extracted from package path
+     * Test that context is the full package path (area/theme/locale)
      */
-    public function testProcessUsesAreaCodeForRepository(): void
+    public function testProcessUsesFullPackagePathAsContext(): void
     {
-        $packagePath = 'frontend/Magento/luma/en_US';
+        $expectedContext = 'frontend/Magento/luma/en_US';
 
         $packageMock = $this->createMock(Package::class);
         $packageMock->expects($this->once())
             ->method('getPath')
-            ->willReturn($packagePath);
+            ->willReturn($expectedContext);
         $packageMock->method('getFiles')->willReturn([]);
 
         $integrityMock = $this->createMock(SubresourceIntegrity::class);
@@ -121,7 +113,7 @@ class IntegrityTest extends TestCase
 
         $this->repositoryPoolMock->expects($this->once())
             ->method('get')
-            ->with('frontend')
+            ->with($expectedContext)
             ->willReturn($repositoryMock);
 
         $this->processor->process($packageMock, []);
@@ -131,7 +123,7 @@ class IntegrityTest extends TestCase
      * Test with different theme/locale combinations
      */
     #[DataProvider('packagePathProvider')]
-    public function testProcessWithVariousPackagePaths(string $packagePath, string $expectedArea): void
+    public function testProcessWithVariousPackagePaths(string $packagePath): void
     {
         $packageMock = $this->createMock(Package::class);
         $packageMock->method('getPath')->willReturn($packagePath);
@@ -143,7 +135,7 @@ class IntegrityTest extends TestCase
         $repositoryMock = $this->createMock(SubresourceIntegrityRepository::class);
         $this->repositoryPoolMock->expects($this->once())
             ->method('get')
-            ->with($expectedArea)
+            ->with($packagePath)
             ->willReturn($repositoryMock);
 
         $this->processor->process($packageMock, []);
@@ -157,13 +149,13 @@ class IntegrityTest extends TestCase
     public static function packagePathProvider(): array
     {
         return [
-            'luma_en_US' => ['frontend/Magento/luma/en_US', 'frontend'],
-            'luma_de_DE' => ['frontend/Magento/luma/de_DE', 'frontend'],
-            'blank_en_US' => ['frontend/Magento/blank/en_US', 'frontend'],
-            'adminhtml_backend' => ['adminhtml/Magento/backend/en_US', 'adminhtml'],
-            'custom_theme' => ['frontend/Vendor/custom/fr_FR', 'frontend'],
-            'arabic_locale' => ['frontend/Magento/luma/ar_SA', 'frontend'],
-            'chinese_locale' => ['frontend/Magento/luma/zh_Hans_CN', 'frontend'],
+            'luma_en_US' => ['frontend/Magento/luma/en_US'],
+            'luma_de_DE' => ['frontend/Magento/luma/de_DE'],
+            'blank_en_US' => ['frontend/Magento/blank/en_US'],
+            'adminhtml_backend' => ['adminhtml/Magento/backend/en_US'],
+            'custom_theme' => ['frontend/Vendor/custom/fr_FR'],
+            'arabic_locale' => ['frontend/Magento/luma/ar_SA'],
+            'chinese_locale' => ['frontend/Magento/luma/zh_Hans_CN'],
         ];
     }
 
@@ -248,7 +240,7 @@ class IntegrityTest extends TestCase
     }
 
     /**
-     * Test with very long theme path extracts area correctly
+     * Test with very long theme path
      */
     public function testProcessWithLongThemePath(): void
     {
@@ -264,7 +256,7 @@ class IntegrityTest extends TestCase
         $repositoryMock = $this->createMock(SubresourceIntegrityRepository::class);
         $this->repositoryPoolMock->expects($this->once())
             ->method('get')
-            ->with('frontend')
+            ->with($longPath)
             ->willReturn($repositoryMock);
 
         $this->processor->process($packageMock, []);

@@ -11,12 +11,10 @@ use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 use Magento\Csp\Block\Sri\Hashes;
 use Magento\Csp\Model\SubresourceIntegrityRepositoryPool;
-use Magento\Csp\Model\SubresourceIntegrityRepository;
-use Magento\Csp\Model\SubresourceIntegrity;
+use Magento\Csp\Model\SubresourceIntegrity\HashResolver\HashResolverInterface;
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Framework\Serialize\SerializerInterface;
-use Magento\Framework\UrlInterface;
-use Magento\Framework\App\State;
+use Psr\Log\LoggerInterface;
 
 /**
  * Unit tests for Hashes block
@@ -27,6 +25,11 @@ class HashesTest extends TestCase
      * @var Hashes
      */
     private Hashes $block;
+
+    /**
+     * @var MockObject|HashResolverInterface
+     */
+    private MockObject $hashResolverMock;
 
     /**
      * @var MockObject|SerializerInterface
@@ -44,74 +47,46 @@ class HashesTest extends TestCase
     private MockObject $repositoryPoolMock;
 
     /**
-     * @var MockObject|UrlInterface
+     * @var MockObject|LoggerInterface
      */
-    private MockObject $urlBuilderMock;
-
-    /**
-     * @var MockObject|State
-     */
-    private MockObject $appStateMock;
+    private MockObject $loggerMock;
 
     protected function setUp(): void
     {
+        $this->hashResolverMock = $this->createMock(HashResolverInterface::class);
         $this->serializerMock = $this->createMock(SerializerInterface::class);
-        $this->repositoryPoolMock = $this->createMock(SubresourceIntegrityRepositoryPool::class);
-        $this->urlBuilderMock = $this->createMock(UrlInterface::class);
-        $this->appStateMock = $this->createMock(State::class);
-
         $this->contextMock = $this->createMock(Context::class);
-        $this->contextMock->method('getUrlBuilder')->willReturn($this->urlBuilderMock);
-        $this->contextMock->method('getAppState')->willReturn($this->appStateMock);
+        $this->repositoryPoolMock = $this->createMock(SubresourceIntegrityRepositoryPool::class);
+        $this->loggerMock = $this->createMock(LoggerInterface::class);
 
         $this->block = new Hashes(
             $this->contextMock,
             [],
             $this->repositoryPoolMock,
-            $this->serializerMock
+            $this->serializerMock,
+            $this->hashResolverMock,
+            $this->loggerMock
         );
     }
 
     /**
-     * Test getSerialized returns serialized hashes from repository
+     * Test getSerialized returns serialized hashes from resolver
      */
-    public function testGetSerializedReturnsHashesFromRepository(): void
+    public function testGetSerializedReturnsHashesFromResolver(): void
     {
-        $baseUrl = 'https://example.com/static/';
-
-        $integrity1 = $this->createMock(SubresourceIntegrity::class);
-        $integrity1->method('getPath')->willReturn('frontend/Magento/luma/en_US/js/file1.js');
-        $integrity1->method('getHash')->willReturn('sha256-abc123');
-
-        $integrity2 = $this->createMock(SubresourceIntegrity::class);
-        $integrity2->method('getPath')->willReturn('frontend/Magento/luma/en_US/js/file2.js');
-        $integrity2->method('getHash')->willReturn('sha256-def456');
-
-        $repositoryMock = $this->createMock(SubresourceIntegrityRepository::class);
-        $repositoryMock->method('getAll')->willReturn([$integrity1, $integrity2]);
-
-        $this->urlBuilderMock->expects($this->once())
-            ->method('getBaseUrl')
-            ->with(['_type' => UrlInterface::URL_TYPE_STATIC])
-            ->willReturn($baseUrl);
-
-        $this->appStateMock->expects($this->once())
-            ->method('getAreaCode')
-            ->willReturn('frontend');
-
-        $this->repositoryPoolMock->expects($this->exactly(2))
-            ->method('get')
-            ->willReturn($repositoryMock);
-
-        $expectedHashes = [
-            'https://example.com/static/frontend/Magento/luma/en_US/js/file1.js' => 'sha256-abc123',
-            'https://example.com/static/frontend/Magento/luma/en_US/js/file2.js' => 'sha256-def456'
+        $hashes = [
+            'https://example.com/static/js/file1.js' => 'sha256-abc123',
+            'https://example.com/static/js/file2.js' => 'sha256-def456'
         ];
 
-        $expectedJson = json_encode($expectedHashes);
+        $this->hashResolverMock->expects($this->once())
+            ->method('getAllHashes')
+            ->willReturn($hashes);
+
+        $expectedJson = json_encode($hashes);
         $this->serializerMock->expects($this->once())
             ->method('serialize')
-            ->with($expectedHashes)
+            ->with($hashes)
             ->willReturn($expectedJson);
 
         $result = $this->block->getSerialized();
@@ -123,27 +98,61 @@ class HashesTest extends TestCase
      */
     public function testGetSerializedWithEmptyHashes(): void
     {
-        $baseUrl = 'https://example.com/static/';
-
-        $repositoryMock = $this->createMock(SubresourceIntegrityRepository::class);
-        $repositoryMock->method('getAll')->willReturn([]);
-
-        $this->urlBuilderMock->expects($this->once())
-            ->method('getBaseUrl')
-            ->willReturn($baseUrl);
-
-        $this->appStateMock->expects($this->once())
-            ->method('getAreaCode')
-            ->willReturn('frontend');
-
-        $this->repositoryPoolMock->expects($this->exactly(2))
-            ->method('get')
-            ->willReturn($repositoryMock);
+        $this->hashResolverMock->expects($this->once())
+            ->method('getAllHashes')
+            ->willReturn([]);
 
         $this->serializerMock->expects($this->once())
             ->method('serialize')
             ->with([])
             ->willReturn('{}');
+
+        $result = $this->block->getSerialized();
+        $this->assertEquals('{}', $result);
+    }
+
+    /**
+     * Test getSerialized returns empty object on exception
+     */
+    public function testGetSerializedReturnsEmptyOnException(): void
+    {
+        $this->hashResolverMock->expects($this->once())
+            ->method('getAllHashes')
+            ->willThrowException(new \Exception('Test exception'));
+
+        $this->serializerMock->expects($this->never())
+            ->method('serialize');
+
+        $this->loggerMock->expects($this->once())
+            ->method('warning')
+            ->with(
+                'SRI: Failed to retrieve hashes',
+                ['exception' => 'Test exception']
+            );
+
+        $result = $this->block->getSerialized();
+        $this->assertEquals('{}', $result);
+    }
+
+    /**
+     * Test getSerialized handles serializer exception
+     */
+    public function testGetSerializedHandlesSerializerException(): void
+    {
+        $this->hashResolverMock->expects($this->once())
+            ->method('getAllHashes')
+            ->willReturn(['url' => 'hash']);
+
+        $this->serializerMock->expects($this->once())
+            ->method('serialize')
+            ->willThrowException(new \Exception('Serialization failed'));
+
+        $this->loggerMock->expects($this->once())
+            ->method('warning')
+            ->with(
+                'SRI: Failed to retrieve hashes',
+                ['exception' => 'Serialization failed']
+            );
 
         $result = $this->block->getSerialized();
         $this->assertEquals('{}', $result);
