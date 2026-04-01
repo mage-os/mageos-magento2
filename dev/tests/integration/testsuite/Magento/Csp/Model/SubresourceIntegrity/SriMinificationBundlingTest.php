@@ -29,7 +29,6 @@ use Magento\Framework\Filesystem;
  * (quick, standard, compact), all JS assets in the SRI repository have .min.js extensions
  * and bundle files are properly created.
  *
- * @magentoAppIsolation enabled
  * @magentoDbIsolation disabled
  * @group sri_renderer
  */
@@ -66,11 +65,6 @@ class SriMinificationBundlingTest extends TestCase
     private Filesystem $filesystem;
 
     /**
-     * @var Hashes
-     */
-    private Hashes $hashesBlock;
-
-    /**
      * @inheritdoc
      */
     protected function setUp(): void
@@ -81,7 +75,6 @@ class SriMinificationBundlingTest extends TestCase
         $this->appState = $objectManager->get(State::class);
         $this->design = $objectManager->get(DesignInterface::class);
         $this->request = $objectManager->get(Http::class);
-        $this->hashesBlock = $objectManager->get(Hashes::class);
         $this->filesystem = $objectManager->get(Filesystem::class);
         $this->serializer = $objectManager->get(SerializerInterface::class);
 
@@ -114,6 +107,7 @@ class SriMinificationBundlingTest extends TestCase
      * Tests with bundling enabled and merging disabled, using quick strategy.
      *
      * @magentoAppArea frontend
+     * @magentoAppIsolation enabled
      * @magentoConfigFixture current_store dev/js/minify_files 1
      * @magentoConfigFixture current_store dev/js/enable_js_bundling 1
      * @magentoConfigFixture current_store dev/js/merge_files 0
@@ -129,6 +123,7 @@ class SriMinificationBundlingTest extends TestCase
      * Tests with bundling enabled and merging disabled, using standard strategy.
      *
      * @magentoAppArea frontend
+     * @magentoAppIsolation enabled
      * @magentoConfigFixture current_store dev/js/minify_files 1
      * @magentoConfigFixture current_store dev/js/enable_js_bundling 1
      * @magentoConfigFixture current_store dev/js/merge_files 0
@@ -144,6 +139,7 @@ class SriMinificationBundlingTest extends TestCase
      * Tests with bundling enabled and merging disabled, using compact strategy.
      *
      * @magentoAppArea frontend
+     * @magentoAppIsolation enabled
      * @magentoConfigFixture current_store dev/js/minify_files 1
      * @magentoConfigFixture current_store dev/js/enable_js_bundling 1
      * @magentoConfigFixture current_store dev/js/merge_files 0
@@ -172,9 +168,11 @@ class SriMinificationBundlingTest extends TestCase
 
         $this->deployStaticContent($strategy);
 
-        // Get all deployed assets with SRI hashes from the repository
-        $serializedHashes = $this->hashesBlock->getSerialized();
-        $deployedAssets = $this->serializer->unserialize($serializedHashes);
+        // Create the Hashes block fresh after deployment so it reads from the same
+        // repository pool that the deploy plugins wrote to, rather than a pool that
+        // was captured in setUp() before the OM may have been reset by annotations.
+        $hashesBlock = Bootstrap::getObjectManager()->get(Hashes::class);
+        $deployedAssets = $this->serializer->unserialize($hashesBlock->getSerialized());
 
         $this->assertNotEmpty($deployedAssets, 'Should have deployed JS assets');
 

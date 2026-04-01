@@ -68,7 +68,13 @@ class RemoveAllAssetIntegrityHashes
     }
 
     /**
-     * Removes existing integrity hashes before static content deploy
+     * Removes existing integrity hashes before static content deploy.
+     *
+     * For a full deploy (no area/theme/locale constraints) all sri-hashes.json files
+     * are deleted. For a partial deploy only the files matching the requested scope
+     * are removed so that other deployed themes and locales retain their SRI coverage.
+     * The merged-asset cache file is always deleted because it is invalidated whenever
+     * any static file changes.
      *
      * @param DeployStaticContent $subject
      * @param array $options
@@ -80,17 +86,29 @@ class RemoveAllAssetIntegrityHashes
         DeployStaticContent $subject,
         array $options
     ): void {
-        if (PHP_SAPI === 'cli' && !$this->isRefreshContentVersionOnly($options)) {
-            // Clear stored integrity hashes from all areas
-            $this->deleteAllSriFiles();
-
-            // Clear any leftover in-memory integrity hashes from previous runs
-            $this->integrityCollector->clear();
+        if (PHP_SAPI !== 'cli' || $this->isRefreshContentVersionOnly($options)) {
+            return;
         }
+
+        $areas = $options[DeployStaticOptions::AREA] ?? [];
+        $themes = $options[DeployStaticOptions::THEME] ?? [];
+        $locales = $options[DeployStaticOptions::LANGUAGE] ?? [];
+
+        if (empty($areas) && empty($themes) && empty($locales)) {
+            $this->deleteAllSriFiles();
+        } else {
+            $this->deleteSriFilesForScope(
+                (array) $areas,
+                (array) $themes,
+                (array) $locales
+            );
+        }
+
+        $this->integrityCollector->clear();
     }
 
     /**
-     * Deletes all sri-hashes.json files from static directory
+     * Deletes all sri-hashes.json files from the static directory.
      *
      * @return void
      */
@@ -100,11 +118,10 @@ class RemoveAllAssetIntegrityHashes
             /** @var WriteInterface $staticDir */
             $staticDir = $this->filesystem->getDirectoryWrite(DirectoryList::STATIC_VIEW);
 
-            // Search recursively for all sri-hashes.json files using multiple patterns
             $patterns = [
-                '*/*/*/*/' . self::SRI_FILENAME,  // frontend/Vendor/theme/locale/sri-hashes.json
-                '*/' . self::SRI_FILENAME,         // frontend/sri-hashes.json (old style)
-                self::SRI_FILENAME,                // sri-hashes.json in root (if any)
+                '*/*/*/*/' . self::SRI_FILENAME,
+                '*/' . self::SRI_FILENAME,
+                self::SRI_FILENAME,
             ];
 
             foreach ($patterns as $pattern) {
@@ -112,9 +129,76 @@ class RemoveAllAssetIntegrityHashes
                     $staticDir->delete($file);
                 }
             }
+
+            $mergedFile = '_cache/merged/' . self::SRI_FILENAME;
+            if ($staticDir->isFile($mergedFile)) {
+                $staticDir->delete($mergedFile);
+            }
         } catch (\Exception $e) {
-            // Log but don't fail - files will be overwritten during deploy
             $this->logger->warning('Failed to delete SRI files: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Deletes sri-hashes.json files matching the given deploy scope.
+     *
+     * Each dimension defaults to a wildcard when not constrained so that, for
+     * example, specifying only a theme still clears every locale of that theme.
+     * The merged-asset cache is always deleted because it covers all themes.
+     *
+     * @param string[] $areas
+     * @param string[] $themes  Values are in "Vendor/theme" format, e.g. "Magento/luma"
+     * @param string[] $locales
+     * @return void
+     */
+    private function deleteSriFilesForScope(array $areas, array $themes, array $locales): void
+    {
+        try {
+            /** @var WriteInterface $staticDir */
+            $staticDir = $this->filesystem->getDirectoryWrite(DirectoryList::STATIC_VIEW);
+
+            $areaPatterns   = empty($areas)   ? ['*']   : $areas;
+            $localePatterns = empty($locales) ? ['*']   : $locales;
+            // Themes arrive as "Vendor/theme"; use "*/*" when unconstrained so the
+            // pattern still has the correct number of path segments.
+            $themePatterns  = empty($themes)  ? ['*/*'] : $themes;
+
+            $this->deleteFilesMatchingPatterns($staticDir, $areaPatterns, $themePatterns, $localePatterns);
+
+            // The merged cache is always invalid after any deploy
+            $mergedFile = '_cache/merged/' . self::SRI_FILENAME;
+            if ($staticDir->isFile($mergedFile)) {
+                $staticDir->delete($mergedFile);
+            }
+        } catch (\Exception $e) {
+            $this->logger->warning('Failed to delete SRI files for scope: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Deletes all sri-hashes.json files matching the given area/theme/locale pattern combinations.
+     *
+     * @param WriteInterface $staticDir
+     * @param string[] $areaPatterns
+     * @param string[] $themePatterns
+     * @param string[] $localePatterns
+     * @return void
+     */
+    private function deleteFilesMatchingPatterns(
+        WriteInterface $staticDir,
+        array $areaPatterns,
+        array $themePatterns,
+        array $localePatterns
+    ): void {
+        foreach ($areaPatterns as $area) {
+            foreach ($themePatterns as $theme) {
+                foreach ($localePatterns as $locale) {
+                    $pattern = $area . '/' . $theme . '/' . $locale . '/' . self::SRI_FILENAME;
+                    foreach ($staticDir->search($pattern) as $file) {
+                        $staticDir->delete($file);
+                    }
+                }
+            }
         }
     }
 

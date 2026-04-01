@@ -10,6 +10,7 @@ namespace Magento\Csp\Plugin;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\App\State;
 use Magento\Framework\View\Asset\AssetInterface;
+use Magento\Framework\View\Asset\ConfigInterface as AssetConfig;
 use Magento\Framework\View\Asset\LocalInterface;
 use Magento\Framework\View\Asset\GroupedCollection;
 use Magento\Csp\Model\SubresourceIntegrityRepositoryPool;
@@ -58,12 +59,18 @@ class AddDefaultPropertiesToGroupPlugin
     private LoggerInterface $logger;
 
     /**
+     * @var AssetConfig
+     */
+    private AssetConfig $assetConfig;
+
+    /**
      * @param State $state
      * @param SubresourceIntegrityRepositoryPool $integrityRepositoryPool
      * @param Http|null $request
      * @param SriEnabledActions|null $action
      * @param HashResolverInterface|null $hashResolver
      * @param LoggerInterface|null $logger
+     * @param AssetConfig|null $assetConfig
      */
     public function __construct(
         State $state,
@@ -71,7 +78,8 @@ class AddDefaultPropertiesToGroupPlugin
         ?Http $request = null,
         ?SriEnabledActions $action = null,
         ?HashResolverInterface $hashResolver = null,
-        ?LoggerInterface $logger = null
+        ?LoggerInterface $logger = null,
+        ?AssetConfig $assetConfig = null
     ) {
         $this->state = $state;
         $this->integrityRepositoryPool = $integrityRepositoryPool;
@@ -79,6 +87,7 @@ class AddDefaultPropertiesToGroupPlugin
         $this->action = $action ?? ObjectManager::getInstance()->get(SriEnabledActions::class);
         $this->hashResolver = $hashResolver ?? ObjectManager::getInstance()->get(HashResolverInterface::class);
         $this->logger = $logger ?? ObjectManager::getInstance()->get(LoggerInterface::class);
+        $this->assetConfig = $assetConfig ?? ObjectManager::getInstance()->get(AssetConfig::class);
     }
 
     /**
@@ -126,7 +135,12 @@ class AddDefaultPropertiesToGroupPlugin
      */
     private function canExecute(AssetInterface $asset): bool
     {
-        return $asset instanceof LocalInterface &&
+        // When JS merging is enabled, individual assets are combined into a merged bundle.
+        // Adding integrity attributes here would make each asset its own group (groups require
+        // identical properties), breaking merging entirely. Merged files get their SRI hashes
+        // via GenerateMergedAssetIntegrity + AddIntegrityToAssetHtml instead.
+        return !$this->assetConfig->isMergeJsFiles() &&
+            $asset instanceof LocalInterface &&
             $this->action->isPaymentPageAction(
                 $this->request->getFullActionName()
             );

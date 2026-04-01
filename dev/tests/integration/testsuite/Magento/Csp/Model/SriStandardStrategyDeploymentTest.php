@@ -24,6 +24,8 @@ use PHPUnit\Framework\TestCase;
  * @magentoDataFixture Magento/Deploy/_files/theme.php
  * @group slow
  * @group sri_deployment
+ * @SuppressWarnings(PHPMD.StaticAccess)
+ * @SuppressWarnings(PHPMD.CamelCaseVariableName)
  */
 class SriStandardStrategyDeploymentTest extends TestCase
 {

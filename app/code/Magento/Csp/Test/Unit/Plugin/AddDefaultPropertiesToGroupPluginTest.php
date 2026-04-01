@@ -15,13 +15,17 @@ use Magento\Csp\Model\SubresourceIntegrity\HashResolver\HashResolverInterface;
 use Magento\Csp\Model\SubresourceIntegrity\SriEnabledActions;
 use Magento\Framework\App\State;
 use Magento\Framework\App\Request\Http;
+use Magento\Framework\View\Asset\ConfigInterface as AssetConfig;
 use Magento\Framework\View\Asset\GroupedCollection;
 use Magento\Framework\View\Asset\LocalInterface;
 use Magento\Framework\View\Asset\AssetInterface;
 use Psr\Log\LoggerInterface;
+use Exception;
 
 /**
  * Unit tests for AddDefaultPropertiesToGroupPlugin
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class AddDefaultPropertiesToGroupPluginTest extends TestCase
 {
@@ -60,6 +64,11 @@ class AddDefaultPropertiesToGroupPluginTest extends TestCase
      */
     private MockObject $loggerMock;
 
+    /**
+     * @var MockObject|AssetConfig
+     */
+    private MockObject $assetConfigMock;
+
     protected function setUp(): void
     {
         $this->stateMock = $this->createMock(State::class);
@@ -68,6 +77,8 @@ class AddDefaultPropertiesToGroupPluginTest extends TestCase
         $this->requestMock = $this->createMock(Http::class);
         $this->actionMock = $this->createMock(SriEnabledActions::class);
         $this->loggerMock = $this->createMock(LoggerInterface::class);
+        $this->assetConfigMock = $this->createMock(AssetConfig::class);
+        $this->assetConfigMock->method('isMergeJsFiles')->willReturn(false);
 
         $this->plugin = new AddDefaultPropertiesToGroupPlugin(
             $this->stateMock,
@@ -75,7 +86,8 @@ class AddDefaultPropertiesToGroupPluginTest extends TestCase
             $this->requestMock,
             $this->actionMock,
             $this->hashResolverMock,
-            $this->loggerMock
+            $this->loggerMock,
+            $this->assetConfigMock
         );
     }
 
@@ -183,6 +195,37 @@ class AddDefaultPropertiesToGroupPluginTest extends TestCase
     }
 
     /**
+     * Test plugin skips adding integrity when JS merging is enabled
+     */
+    public function testBeforeGetFilteredPropertiesSkipsWhenMergingEnabled(): void
+    {
+        $assetConfigMergingOn = $this->createMock(AssetConfig::class);
+        $assetConfigMergingOn->method('isMergeJsFiles')->willReturn(true);
+
+        $plugin = new AddDefaultPropertiesToGroupPlugin(
+            $this->stateMock,
+            $this->repositoryPoolMock,
+            $this->requestMock,
+            $this->actionMock,
+            $this->hashResolverMock,
+            $this->loggerMock,
+            $assetConfigMergingOn
+        );
+
+        $this->requestMock->method('getFullActionName')->willReturn('checkout_index_index');
+        $this->actionMock->method('isPaymentPageAction')->willReturn(true);
+
+        $assetMock = $this->createMock(LocalInterface::class);
+        $subjectMock = $this->createMock(GroupedCollection::class);
+
+        $this->hashResolverMock->expects($this->never())->method('getHashByPath');
+
+        $result = $plugin->beforeGetFilteredProperties($subjectMock, $assetMock, []);
+
+        $this->assertArrayNotHasKey('attributes', $result[1]);
+    }
+
+    /**
      * Test exception handling - logs warning and continues
      */
     public function testBeforeGetFilteredPropertiesHandlesException(): void
@@ -196,7 +239,7 @@ class AddDefaultPropertiesToGroupPluginTest extends TestCase
         $subjectMock = $this->createMock(GroupedCollection::class);
 
         $this->hashResolverMock->method('getHashByPath')
-            ->willThrowException(new \Exception('Test exception'));
+            ->willThrowException(new Exception('Test exception'));
 
         $this->loggerMock->expects($this->once())
             ->method('warning')

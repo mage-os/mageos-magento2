@@ -7,8 +7,8 @@ declare(strict_types=1);
 
 namespace Magento\Csp\Test\Unit\Plugin;
 
-use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Magento\Csp\Plugin\RemoveAllAssetIntegrityHashes;
 use Magento\Csp\Model\SubresourceIntegrityCollector;
 use Magento\Csp\Model\SubresourceIntegrityRepositoryPool;
@@ -152,8 +152,6 @@ class RemoveAllAssetIntegrityHashesTest extends TestCase
             ->willThrowException(new FileSystemException(__('Search failed')));
 
         $this->loggerMock->expects($this->once())->method('warning');
-
-        // Collector should still be cleared even if search fails
         $this->integrityCollectorMock->expects($this->once())->method('clear');
 
         $this->plugin->beforeDeploy($subjectMock, []);
@@ -175,5 +173,105 @@ class RemoveAllAssetIntegrityHashesTest extends TestCase
         $this->loggerMock->expects($this->once())->method('warning');
 
         $this->plugin->beforeDeploy($subjectMock, []);
+    }
+
+    /**
+     * Test scoped deploy with area only uses wildcards for theme and locale
+     */
+    public function testBeforeDeployWithAreaOnlySearchesWildcardThemeAndLocale(): void
+    {
+        $subjectMock = $this->createMock(DeployStaticContent::class);
+
+        $this->directoryMock->expects($this->once())
+            ->method('search')
+            ->with('frontend/*/*/*/sri-hashes.json')
+            ->willReturn([]);
+
+        $this->directoryMock->method('isFile')->willReturn(false);
+
+        $options = [DeployStaticOptions::AREA => ['frontend']];
+        $this->plugin->beforeDeploy($subjectMock, $options);
+    }
+
+    /**
+     * Test scoped deploy with theme only uses wildcards for area and locale
+     */
+    public function testBeforeDeployWithThemeOnlySearchesWildcardAreaAndLocale(): void
+    {
+        $subjectMock = $this->createMock(DeployStaticContent::class);
+
+        $this->directoryMock->expects($this->once())
+            ->method('search')
+            ->with('*/Magento/luma/*/sri-hashes.json')
+            ->willReturn([]);
+
+        $this->directoryMock->method('isFile')->willReturn(false);
+
+        $options = [DeployStaticOptions::THEME => ['Magento/luma']];
+        $this->plugin->beforeDeploy($subjectMock, $options);
+    }
+
+    /**
+     * Test scoped deploy with locale only uses wildcards for area and theme
+     */
+    public function testBeforeDeployWithLocaleOnlySearchesWildcardAreaAndTheme(): void
+    {
+        $subjectMock = $this->createMock(DeployStaticContent::class);
+
+        $this->directoryMock->expects($this->once())
+            ->method('search')
+            ->with('*/*/*/en_US/sri-hashes.json')
+            ->willReturn([]);
+
+        $this->directoryMock->method('isFile')->willReturn(false);
+
+        $options = [DeployStaticOptions::LANGUAGE => ['en_US']];
+        $this->plugin->beforeDeploy($subjectMock, $options);
+    }
+
+    /**
+     * Test scoped deploy with all three constraints builds exact pattern
+     */
+    public function testBeforeDeployWithFullScopeSearchesExactPattern(): void
+    {
+        $subjectMock = $this->createMock(DeployStaticContent::class);
+
+        $matchedFile = 'frontend/Magento/luma/en_US/sri-hashes.json';
+
+        $this->directoryMock->expects($this->once())
+            ->method('search')
+            ->with('frontend/Magento/luma/en_US/sri-hashes.json')
+            ->willReturn([$matchedFile]);
+
+        $this->directoryMock->expects($this->once())
+            ->method('delete')
+            ->with($matchedFile);
+
+        $this->directoryMock->method('isFile')->willReturn(false);
+
+        $options = [
+            DeployStaticOptions::AREA => ['frontend'],
+            DeployStaticOptions::THEME => ['Magento/luma'],
+            DeployStaticOptions::LANGUAGE => ['en_US'],
+        ];
+        $this->plugin->beforeDeploy($subjectMock, $options);
+    }
+
+    /**
+     * Test scoped deploy deletes the merged cache file when present
+     */
+    public function testBeforeDeployWithScopeDeletesMergedCacheFile(): void
+    {
+        $subjectMock = $this->createMock(DeployStaticContent::class);
+
+        $this->directoryMock->method('search')->willReturn([]);
+        $this->directoryMock->method('isFile')->willReturn(true);
+
+        $this->directoryMock->expects($this->once())
+            ->method('delete')
+            ->with('_cache/merged/sri-hashes.json');
+
+        $options = [DeployStaticOptions::AREA => ['frontend']];
+        $this->plugin->beforeDeploy($subjectMock, $options);
     }
 }

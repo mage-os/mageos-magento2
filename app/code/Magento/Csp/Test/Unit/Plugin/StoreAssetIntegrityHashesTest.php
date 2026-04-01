@@ -15,11 +15,15 @@ use Magento\Csp\Model\SubresourceIntegrityCollector;
 use Magento\Csp\Model\SubresourceIntegrityRepositoryPool;
 use Magento\Csp\Model\SubresourceIntegrityRepository;
 use Magento\Csp\Model\SubresourceIntegrity;
+use Magento\Deploy\Console\DeployStaticOptions;
 use Magento\Deploy\Service\DeployStaticContent;
 use Psr\Log\LoggerInterface;
+use Exception;
 
 /**
  * Unit tests for StoreAssetIntegrityHashes plugin
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class StoreAssetIntegrityHashesTest extends TestCase
 {
@@ -266,7 +270,7 @@ class StoreAssetIntegrityHashesTest extends TestCase
         $this->integrityCollectorMock->method('release')->willReturn([$integrityMock]);
 
         $this->repositoryPoolMock->method('get')
-            ->willThrowException(new \Exception('Save failed'));
+            ->willThrowException(new Exception('Save failed'));
 
         $this->loggerMock->expects($this->once())
             ->method('error')

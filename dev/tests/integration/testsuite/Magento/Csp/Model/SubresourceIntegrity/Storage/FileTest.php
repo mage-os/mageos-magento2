@@ -488,14 +488,11 @@ class FileTest extends TestCase
     }
 
     /**
-     * Test save() returns false when FileSystemException occurs during write.
-     *
-     * saveHashesToFile() catches and logs write errors and returns false,
-     * so save() propagates false to the caller when a write fails.
+     * Test save() catches FileSystemException when writeFile fails and returns false.
      *
      * @return void
      */
-    public function testSaveReturnsFalseOnFileSystemException(): void
+    public function testSaveCatchesFileSystemExceptionAndReturnsFalse(): void
     {
         $testContext = 'test/context/save-exception';
         $testFile = $testContext . '/sri-hashes.json';
@@ -510,10 +507,11 @@ class FileTest extends TestCase
         $this->testFiles[] = $filePath;
         $this->fileDriver->changePermissions($filePath, 0444);
 
+        // Try to save - should catch FileSystemException and return false
         $newData = ['js/new.js' => 'sha256-NEW'];
         $result = $this->storage->save($this->serializer->serialize($newData), $testContext);
 
-        $this->assertFalse($result, 'save() should return false when write fails');
+        $this->assertFalse($result, 'save() should catch FileSystemException and return false');
 
         // Restore permissions for cleanup
         $this->fileDriver->changePermissions($filePath, 0644);
@@ -665,8 +663,10 @@ class FileTest extends TestCase
         $testFile = $testContext . '/sri-hashes.json';
         $this->testDirs[] = $testContext;
 
+        // Create file with invalid JSON that will cause serializer to throw
         $this->staticDir->writeFile($testFile, '{broken json [[[}}}');
 
+        // Should catch InvalidArgumentException in loadHashesFromFile and return null
         $result = $this->storage->load($testContext);
 
         $this->assertNull($result, 'load() should return null when JSON parsing throws InvalidArgumentException');

@@ -10,8 +10,8 @@ namespace Magento\Csp\Plugin;
 use Magento\Deploy\Service\DeployStaticContent;
 use Magento\Csp\Model\SubresourceIntegrityCollector;
 use Magento\Csp\Model\SubresourceIntegrityRepositoryPool;
-use Psr\Log\LoggerInterface;
 use Magento\Framework\App\ObjectManager;
+use Psr\Log\LoggerInterface;
 
 /**
  * Plugin that stores generated integrity hashes for all assets.

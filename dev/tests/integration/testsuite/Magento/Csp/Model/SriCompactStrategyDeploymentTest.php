@@ -7,6 +7,8 @@ declare(strict_types=1);
 
 namespace Magento\Csp\Model;
 
+use Magento\Csp\Model\SubresourceIntegrity\HashResolver\HashResolverInterface;
+use Magento\Csp\Model\SubresourceIntegrityRepositoryPool;
 use Magento\Deploy\Service\DeployStaticContent;
 use Magento\Deploy\Strategy\DeployStrategyFactory;
 use Magento\Deploy\Console\DeployStaticOptions as Options;
@@ -14,16 +16,24 @@ use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\App\State;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Directory\WriteInterface;
+use Magento\Framework\Filesystem\Glob;
+use Magento\Framework\View\Asset\RepositoryMap;
+use Magento\Framework\View\DesignInterface;
 use Magento\TestFramework\Helper\Bootstrap;
+use Magento\Theme\Model\ResourceModel\Theme\Collection as ThemeCollection;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Integration test verifying SRI files with COMPACT deployment strategy.
  *
  * @magentoAppArea frontend
+ * @magentoAppIsolation enabled
  * @magentoDataFixture Magento/Deploy/_files/theme.php
  * @group slow
  * @group sri_deployment
+ * @SuppressWarnings(PHPMD.StaticAccess)
+ * @SuppressWarnings(PHPMD.CamelCaseVariableName)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class SriCompactStrategyDeploymentTest extends TestCase
 {
@@ -89,9 +99,10 @@ class SriCompactStrategyDeploymentTest extends TestCase
     }
 
     /**
-     * Test SRI files with COMPACT strategy - parallel deployment.
+     * Test SRI files with COMPACT strategy.
      *
      * @magentoDbIsolation disabled
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function testCompactStrategyCreatesValidSriFiles(): void
     {
@@ -175,6 +186,53 @@ class SriCompactStrategyDeploymentTest extends TestCase
         $this->assertTrue(
             $hasDefaultFiles,
             'Compact strategy MUST create at least one /default/ directory file for shared assets'
+        );
+
+        $resultMapPaths = [
+            'frontend/Magento/zoom1/en_US/' . RepositoryMap::RESULT_MAP_NAME,
+            'frontend/Magento/zoom1/de_DE/' . RepositoryMap::RESULT_MAP_NAME,
+            'frontend/Magento/zoom2/en_US/' . RepositoryMap::RESULT_MAP_NAME,
+            'frontend/Magento/zoom2/de_DE/' . RepositoryMap::RESULT_MAP_NAME,
+        ];
+        foreach ($resultMapPaths as $resultMapPath) {
+            $this->assertTrue(
+                $this->staticDir->isExist($resultMapPath),
+                "Compact deploy must produce {$resultMapPath}"
+            );
+        }
+
+        // === QA regression check: parent-theme hashes must appear in getAllHashes() ===
+        // zoom2 extends zoom1. On compact deploy the HashResolver must walk the full
+        // parent chain, so zoom1 hashes must be visible when zoom2 is the active theme.
+        // This directly reproduces the QA finding where blank/default was absent from
+        // window.sriHashes after a compact SCD run.
+        $themeCollection = $objectManager->create(ThemeCollection::class);
+        $zoom2Theme = $themeCollection->getThemeByFullPath('frontend/Magento/zoom2');
+        $this->assertNotNull($zoom2Theme, 'zoom2 theme must be registered');
+
+        $design = $objectManager->get(DesignInterface::class);
+        $design->setDesignTheme($zoom2Theme, 'frontend');
+
+        // Create a fresh resolver with a fresh repository pool so getAllHashes() reads
+        // from disk (not in-memory deploy-time state).
+        Glob::clearCache();
+        $freshPool = $objectManager->create(SubresourceIntegrityRepositoryPool::class);
+        $hashResolver = $objectManager->create(
+            HashResolverInterface::class,
+            ['repositoryPool' => $freshPool]
+        );
+        $allHashes = $hashResolver->getAllHashes();
+
+        // Verify parent theme (zoom1) hashes appear in getAllHashes() regardless of locale.
+        // The locale changes during deploy (iterating en_US, de_DE, etc.) so we cannot
+        // assert a specific locale context — just that zoom1 is represented at all.
+        $zoom1Keys = array_filter(
+            array_keys($allHashes),
+            static fn(string $hashUrl): bool => str_contains($hashUrl, 'Magento/zoom1/')
+        );
+        $this->assertNotEmpty(
+            $zoom1Keys,
+            'Parent theme (zoom1) hashes must appear in getAllHashes() when zoom2 is active — QA regression'
         );
     }
 }

@@ -30,6 +30,7 @@ use Psr\Log\LoggerInterface;
  *
  * @magentoAppIsolation enabled
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.StaticAccess)
  */
 class AddDefaultPropertiesToGroupPluginTest extends TestCase
 {
@@ -463,6 +464,39 @@ class AddDefaultPropertiesToGroupPluginTest extends TestCase
             []
         );
         $this->assertArrayHasKey('integrity', $resultProperties['attributes']);
+    }
+
+    /**
+     * When JS merging is enabled, the plugin must not add integrity attributes to individual
+     * assets — each asset would form its own group, breaking the merge entirely.
+     *
+     * @magentoAppArea frontend
+     * @magentoConfigFixture current_store dev/js/merge_files 1
+     */
+    public function testSkipsIntegrityWhenJsMergingIsEnabled(): void
+    {
+        $context = 'frontend/Magento/luma/en_US';
+        $assetPath = 'js/merge-test.js';
+        $fullPath = $context . '/' . $assetPath;
+        $this->createSriHashFile($context, [$fullPath => self::TEST_HASH]);
+
+        // Set request to payment page — integrity would normally be added here
+        $this->request->setActionName('index');
+        $this->request->setControllerName('index');
+        $this->request->setRouteName('checkout');
+
+        $asset = $this->createLocalJsAsset($assetPath);
+        [, $resultProperties] = $this->plugin->beforeGetFilteredProperties(
+            $this->groupedCollection,
+            $asset,
+            []
+        );
+
+        $this->assertArrayNotHasKey(
+            'integrity',
+            $resultProperties['attributes'] ?? [],
+            'integrity attribute must not be added when JS merging is enabled'
+        );
     }
 
     /**

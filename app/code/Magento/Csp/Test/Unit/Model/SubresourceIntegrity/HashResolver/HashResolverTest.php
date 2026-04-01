@@ -21,6 +21,7 @@ use Magento\Framework\UrlInterface;
 use Magento\Framework\View\DesignInterface;
 use Magento\Framework\View\Design\ThemeInterface;
 use Psr\Log\LoggerInterface;
+use Exception;
 
 /**
  * Unit tests for HashResolver
@@ -81,7 +82,7 @@ class HashResolverTest extends TestCase
         $this->serializerMock = $this->createMock(SerializerInterface::class);
 
         $staticDirMock = $this->createMock(ReadInterface::class);
-        $staticDirMock->method('isFile')->willReturn(false);
+        $staticDirMock->method('search')->willReturn([]);
         $this->filesystemMock->method('getDirectoryRead')->willReturn($staticDirMock);
 
         $this->resolver = new HashResolver(
@@ -91,6 +92,32 @@ class HashResolverTest extends TestCase
             $this->urlBuilderMock,
             $this->loggerMock,
             $this->filesystemMock,
+            $this->serializerMock
+        );
+    }
+
+    /**
+     * Creates a HashResolver configured for compact deploy.
+     *
+     * Mocks search() to return a non-empty map.json result so resolveCompactDeploy() returns true.
+     *
+     * @return HashResolver
+     */
+    private function createCompactResolver(): HashResolver
+    {
+        $staticDirMock = $this->createMock(ReadInterface::class);
+        $staticDirMock->method('search')->willReturn(['frontend/Magento/luma/en_US/result_map.json']);
+
+        $filesystemMock = $this->createMock(Filesystem::class);
+        $filesystemMock->method('getDirectoryRead')->willReturn($staticDirMock);
+
+        return new HashResolver(
+            $this->repositoryPoolMock,
+            $this->appStateMock,
+            $this->designMock,
+            $this->urlBuilderMock,
+            $this->loggerMock,
+            $filesystemMock,
             $this->serializerMock
         );
     }
@@ -210,10 +237,12 @@ class HashResolverTest extends TestCase
     }
 
     /**
-     * Test getHashByPath checks theme hierarchy
+     * Test getHashByPath checks full theme hierarchy on compact deploy
      */
-    public function testGetHashByPathChecksThemeHierarchy(): void
+    public function testGetHashByPathChecksThemeHierarchyOnCompactDeploy(): void
     {
+        $resolver = $this->createCompactResolver();
+
         $this->appStateMock->method('getAreaCode')->willReturn('frontend');
         $this->designMock->method('getLocale')->willReturn('en_US');
 
@@ -244,14 +273,13 @@ class HashResolverTest extends TestCase
 
         $this->repositoryPoolMock->method('get')
             ->willReturnCallback(function ($context) use ($emptyRepo, $blankRepo) {
-                // 4th context (blank) returns the hash
                 if ($context === 'frontend/Magento/blank/en_US') {
                     return $blankRepo;
                 }
                 return $emptyRepo;
             });
 
-        $result = $this->resolver->getHashByPath('theme.js');
+        $result = $resolver->getHashByPath('theme.js');
 
         $this->assertEquals('sha256-from-blank', $result);
     }
@@ -283,7 +311,7 @@ class HashResolverTest extends TestCase
             ->willReturnCallback(function () use ($goodRepo, &$callCount) {
                 $callCount++;
                 if ($callCount === 1) {
-                    throw new \Exception('Repository error');
+                    throw new Exception('Repository error');
                 }
                 return $goodRepo;
             });
@@ -302,7 +330,7 @@ class HashResolverTest extends TestCase
     public function testGetHashByPathHandlesExceptionGracefully(): void
     {
         $this->appStateMock->method('getAreaCode')
-            ->willThrowException(new \Exception('Area not set'));
+            ->willThrowException(new Exception('Area not set'));
 
         $this->loggerMock->expects($this->atLeastOnce())->method('debug');
 
@@ -324,7 +352,7 @@ class HashResolverTest extends TestCase
     public function testGetAllHashesReturnsEmptyOnCompleteFailure(): void
     {
         $this->urlBuilderMock->method('getBaseUrl')
-            ->willThrowException(new \Exception('URL builder error'));
+            ->willThrowException(new Exception('URL builder error'));
 
         $this->loggerMock->expects($this->once())
             ->method('warning')
@@ -354,12 +382,109 @@ class HashResolverTest extends TestCase
         $this->designMock->method('getThemePath')->willReturn('Magento/luma');
 
         $this->repositoryPoolMock->method('get')
-            ->willThrowException(new \Exception('Repository pool error'));
+            ->willThrowException(new Exception('Repository pool error'));
 
         $this->loggerMock->expects($this->atLeastOnce())->method('debug');
 
         $result = $this->resolver->getHashByPath('file.js');
 
         $this->assertNull($result);
+    }
+
+    /**
+     * Test getAllHashes does not walk parent themes on standard/quick deploy
+     */
+    public function testGetAllHashesDoesNotWalkParentThemesOnStandardDeploy(): void
+    {
+        // Default setUp uses non-compact deploy (search returns empty array — no map.json files)
+        $this->appStateMock->method('getAreaCode')->willReturn('frontend');
+        $this->designMock->method('getLocale')->willReturn('en_US');
+        $this->urlBuilderMock->method('getBaseUrl')->willReturn('https://example.com/static/');
+
+        $parentThemeMock = $this->createMock(ThemeInterface::class);
+        $parentThemeMock->method('getParentTheme')->willReturn(null);
+
+        $themeMock = $this->createMock(ThemeInterface::class);
+        $themeMock->method('getParentTheme')->willReturn($parentThemeMock);
+
+        $this->designMock->method('getDesignTheme')->willReturn($themeMock);
+        $this->designMock->method('getThemePath')
+            ->willReturnCallback(function ($theme) use ($themeMock) {
+                return $theme === $themeMock ? 'Magento/luma' : 'Magento/blank';
+            });
+
+        $parentIntegrity = $this->createMock(SubresourceIntegrity::class);
+        $parentIntegrity->method('getPath')->willReturn('frontend/Magento/blank/default/parent.js');
+        $parentIntegrity->method('getHash')->willReturn('sha256-parent');
+
+        $parentRepo = $this->createMock(SubresourceIntegrityRepository::class);
+        $parentRepo->method('getAll')->willReturn([$parentIntegrity]);
+
+        $emptyRepo = $this->createMock(SubresourceIntegrityRepository::class);
+        $emptyRepo->method('getAll')->willReturn([]);
+
+        $this->repositoryPoolMock->method('get')
+            ->willReturnCallback(function ($context) use ($parentRepo, $emptyRepo) {
+                return str_contains($context, 'Magento/blank') ? $parentRepo : $emptyRepo;
+            });
+
+        $result = $this->resolver->getAllHashes();
+
+        // Parent theme (blank) context must NOT be loaded on non-compact deploy
+        $this->assertArrayNotHasKey(
+            'https://example.com/static/frontend/Magento/blank/default/parent.js',
+            $result
+        );
+    }
+
+    /**
+     * Test getAllHashes walks full parent theme chain on compact deploy
+     */
+    public function testGetAllHashesWalksParentThemesOnCompactDeploy(): void
+    {
+        $resolver = $this->createCompactResolver();
+
+        $this->appStateMock->method('getAreaCode')->willReturn('frontend');
+        $this->designMock->method('getLocale')->willReturn('en_US');
+        $this->urlBuilderMock->method('getBaseUrl')->willReturn('https://example.com/static/');
+
+        $parentThemeMock = $this->createMock(ThemeInterface::class);
+        $parentThemeMock->method('getParentTheme')->willReturn(null);
+
+        $themeMock = $this->createMock(ThemeInterface::class);
+        $themeMock->method('getParentTheme')->willReturn($parentThemeMock);
+
+        $this->designMock->method('getDesignTheme')->willReturn($themeMock);
+        $this->designMock->method('getThemePath')
+            ->willReturnCallback(function ($theme) use ($themeMock) {
+                return $theme === $themeMock ? 'Magento/luma' : 'Magento/blank';
+            });
+
+        $parentIntegrity = $this->createMock(SubresourceIntegrity::class);
+        $parentIntegrity->method('getPath')->willReturn('frontend/Magento/blank/default/parent.js');
+        $parentIntegrity->method('getHash')->willReturn('sha256-parent');
+
+        $parentRepo = $this->createMock(SubresourceIntegrityRepository::class);
+        $parentRepo->method('getAll')->willReturn([$parentIntegrity]);
+
+        $emptyRepo = $this->createMock(SubresourceIntegrityRepository::class);
+        $emptyRepo->method('getAll')->willReturn([]);
+
+        $this->repositoryPoolMock->method('get')
+            ->willReturnCallback(function ($context) use ($parentRepo, $emptyRepo) {
+                return str_contains($context, 'Magento/blank') ? $parentRepo : $emptyRepo;
+            });
+
+        $result = $resolver->getAllHashes();
+
+        // Parent theme (blank) context MUST be loaded on compact deploy
+        $this->assertArrayHasKey(
+            'https://example.com/static/frontend/Magento/blank/default/parent.js',
+            $result
+        );
+        $this->assertEquals(
+            'sha256-parent',
+            $result['https://example.com/static/frontend/Magento/blank/default/parent.js']
+        );
     }
 }
