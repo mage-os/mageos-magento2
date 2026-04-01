@@ -10,6 +10,7 @@ namespace Magento\CatalogRuleConfigurable\Model\Product\Type\Configurable;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Model\Product\Type\AbstractType;
+use Magento\CatalogRuleConfigurable\Test\Fixture\DisableConfigurableParentAfterChildrenCatalogRules;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable\Price;
 use Magento\Customer\Model\Group;
 use Magento\Framework\ObjectManagerInterface;
@@ -52,12 +53,6 @@ class PriceTest extends TestCase
      * @var GetPriceIndexDataByProductId
      */
     private $getPriceIndexDataByProductId;
-
-    /**
-     * Fix PHPCS long character limit violation by moving the fixture path to a constant.
-     */
-    private const DISABLED_PARENT_FIXTURE = 'Magento/CatalogRuleConfigurable/_files/'
-        . 'configurable_product_with_percent_attribute_rules_and_disabled_parent.php';
 
     /**
      * @inheritdoc
@@ -134,7 +129,7 @@ class PriceTest extends TestCase
      * Same per-SKU catalog rules as `configurable_product_with_percent_rules_for_children` (10% / 20%),
      * with configurable parent disabled — child price index must still reflect each rule.
      */
-    #[DataFixture(self::DISABLED_PARENT_FIXTURE)]
+    #[DataFixture(DisableConfigurableParentAfterChildrenCatalogRules::class)]
     public function testCatalogRulePercentConditionIsAppliedPerChildWithDisabledParent(): void
     {
         $firstChild = $this->productRepository->get('simple_10');
