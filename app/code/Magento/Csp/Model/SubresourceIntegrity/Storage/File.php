@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2025 Adobe
+ * Copyright 2026 Adobe
  * All Rights Reserved.
  */
 declare(strict_types=1);
@@ -211,16 +211,22 @@ class File implements StorageInterface
             return [];
         }
 
-        $content = $staticDir->readFile($filePath);
-        if (!$content) {
-            return [];
-        }
-
         try {
+            $content = $staticDir->readFile($filePath);
+            if (!$content) {
+                return [];
+            }
+
             $decoded = $this->serializer->unserialize($content);
             return is_array($decoded) ? $decoded : [];
         } catch (\InvalidArgumentException $e) {
             $this->logger->warning('Invalid JSON in ' . $filePath . ': ' . $e->getMessage());
+            return [];
+        } catch (\Exception $e) {
+            // Handle any file read errors (permissions, etc.) gracefully
+            $this->logger->warning(
+                'SRI: Could not read file ' . $filePath . ': ' . $e->getMessage()
+            );
             return [];
         }
     }

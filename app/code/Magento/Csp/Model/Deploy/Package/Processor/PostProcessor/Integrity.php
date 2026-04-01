@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2025 Adobe
+ * Copyright 2026 Adobe
  * All Rights Reserved.
  */
 declare(strict_types=1);
@@ -107,12 +107,12 @@ class Integrity implements ProcessorInterface
         // Save collected data directly to repository before process exits
         $collectedData = $this->integrityCollector->release();
         if (!empty($collectedData)) {
-            $area = explode('/', $package->getPath())[0];
+            $context = $package->getPath();
             try {
-                $this->repositoryPool->get($area)->saveBunch($collectedData);
+                $this->repositoryPool->get($context)->saveBunch($collectedData);
             } catch (\Exception $e) {
                 //phpcs:ignore
-                $this->logger->error('Integrity PostProcessor: Failed saving to ' . $area . ' repository: ' . $e->getMessage());
+                $this->logger->error('Integrity PostProcessor: Failed saving to ' . $context . ' repository: ' . $e->getMessage());
             }
 
             // Clear collector for next package (if any)
