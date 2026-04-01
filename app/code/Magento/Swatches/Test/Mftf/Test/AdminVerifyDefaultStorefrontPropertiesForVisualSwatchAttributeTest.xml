@@ -14,7 +14,7 @@
             <title value="Verify default storefront properties for visual swatch attribute"/>
             <description value="Visual Swatch: storefront-related fields default to No on the new-attribute form and on Create New Attribute in the configurable wizard."/>
             <severity value="MAJOR"/>
-            <testCaseId value="AC-DEFAULT-SWATCH-PROPERTIES"/>
+            <testCaseId value="AC-4151"/>
             <group value="swatches"/>
             <group value="catalog"/>
         </annotations>
