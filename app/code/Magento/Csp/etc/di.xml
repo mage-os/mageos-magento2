@@ -155,4 +155,5 @@
         </arguments>
     </type>
     <preference for="Magento\Csp\Model\SubresourceIntegrity\StorageInterface" type="Magento\Csp\Model\SubresourceIntegrity\Storage\File" />
+    <preference for="Magento\Csp\Model\SubresourceIntegrity\HashResolver\HashResolverInterface" type="Magento\Csp\Model\SubresourceIntegrity\HashResolver\HashResolver" />
 </config>
