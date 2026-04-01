@@ -575,6 +575,128 @@ class AbstractAddressTest extends TestCase
         $this->assertEquals(["Street Line 1 Street Line 2 Street Line 3 Street Line 4"], $result);
     }
 
+    public function testBeforeSaveTrimsStringFields(): void
+    {
+        $this->model->setData('firstname', '  John  ');
+        $this->model->setData('lastname', '  Doe  ');
+        $this->model->setData('middlename', '  M  ');
+        $this->model->setData('prefix', '  Mr  ');
+        $this->model->setData('suffix', '  Jr  ');
+        $this->model->setData('company', '  Acme Corp  ');
+        $this->model->setData('city', '  Burlington  ');
+        $this->model->setData('telephone', '  555-1234  ');
+        $this->model->setData('fax', '  555-5678  ');
+        $this->model->setData('postcode', '  05401  ');
+        $this->model->setData('vat_id', '  VAT123  ');
+        $this->model->setData('email', '  test@example.com  ');
+
+        $this->model->beforeSave();
+
+        $this->assertEquals('John', $this->model->getData('firstname'));
+        $this->assertEquals('Doe', $this->model->getData('lastname'));
+        $this->assertEquals('M', $this->model->getData('middlename'));
+        $this->assertEquals('Mr', $this->model->getData('prefix'));
+        $this->assertEquals('Jr', $this->model->getData('suffix'));
+        $this->assertEquals('Acme Corp', $this->model->getData('company'));
+        $this->assertEquals('Burlington', $this->model->getData('city'));
+        $this->assertEquals('555-1234', $this->model->getData('telephone'));
+        $this->assertEquals('555-5678', $this->model->getData('fax'));
+        $this->assertEquals('05401', $this->model->getData('postcode'));
+        $this->assertEquals('VAT123', $this->model->getData('vat_id'));
+        $this->assertEquals('test@example.com', $this->model->getData('email'));
+    }
+
+    public function testBeforeSaveTrimsStreetArrayImplodedToString(): void
+    {
+        // setData() implodes street arrays to newline-joined strings via _implodeArrayValues()
+        $this->model->setData('street', ['  123 Main St  ', '  Apt 4  ']);
+
+        $this->model->beforeSave();
+
+        // After implode + trim, stored as a newline-joined string with each line trimmed
+        $this->assertEquals("123 Main St\nApt 4", $this->model->getData('street'));
+    }
+
+    public function testBeforeSaveTrimsStreetString(): void
+    {
+        $this->model->setData('street', '  123 Main St  ');
+
+        $this->model->beforeSave();
+
+        $this->assertEquals('123 Main St', $this->model->getData('street'));
+    }
+
+    public function testBeforeSaveTrimsEachLineInStreetString(): void
+    {
+        $this->model->setData('street', "street 1\n street 2");
+
+        $this->model->beforeSave();
+
+        $this->assertEquals("street 1\nstreet 2", $this->model->getData('street'));
+    }
+
+    public function testBeforeSaveTrimsRegionField(): void
+    {
+        $this->model->setData('region', '  Vermont  ');
+
+        $this->model->beforeSave();
+
+        $this->assertEquals('Vermont', $this->model->getData('region'));
+    }
+
+    public function testBeforeSaveTrimsUnicodeWhitespace(): void
+    {
+        $nbsp = "\xC2\xA0"; // U+00A0 NON-BREAKING SPACE
+        $zeroWidth = "\xE2\x80\x8B"; // U+200B ZERO WIDTH SPACE
+
+        $this->model->setData('firstname', $nbsp . 'John' . $nbsp);
+        $this->model->setData('city', $zeroWidth . 'Burlington' . $zeroWidth);
+        $this->model->setData('street', $nbsp . '123 Main St' . $nbsp);
+
+        $this->model->beforeSave();
+
+        $this->assertEquals('John', $this->model->getData('firstname'));
+        $this->assertEquals('Burlington', $this->model->getData('city'));
+        $this->assertEquals('123 Main St', $this->model->getData('street'));
+    }
+
+    public function testBeforeSaveHandlesNullFields(): void
+    {
+        $this->model->setData('firstname', null);
+        $this->model->setData('company', null);
+        $this->model->setData('street', null);
+
+        $this->model->beforeSave();
+
+        $this->assertNull($this->model->getData('firstname'));
+        $this->assertNull($this->model->getData('company'));
+        $this->assertNull($this->model->getData('street'));
+    }
+
+    public function testBeforeSaveLeavesNonStringFieldsUntouched(): void
+    {
+        $this->model->setData('postcode', 12345);
+        $this->model->setData('firstname', '');
+
+        $this->model->beforeSave();
+
+        $this->assertSame(12345, $this->model->getData('postcode'));
+        $this->assertSame('', $this->model->getData('firstname'));
+    }
+
+    public function testBeforeSaveIsIdempotent(): void
+    {
+        $this->model->setData('firstname', 'John');
+        $this->model->setData('city', 'Burlington');
+        $this->model->setData('street', "123 Main St\nApt 4");
+
+        $this->model->beforeSave();
+
+        $this->assertEquals('John', $this->model->getData('firstname'));
+        $this->assertEquals('Burlington', $this->model->getData('city'));
+        $this->assertEquals("123 Main St\nApt 4", $this->model->getData('street'));
+    }
+
     protected function tearDown(): void
     {
         $this->objectManager->setBackwardCompatibleProperty(

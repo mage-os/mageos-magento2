@@ -611,8 +611,70 @@ class AbstractAddress extends AbstractExtensibleModel implements AddressModelInt
     public function beforeSave()
     {
         parent::beforeSave();
+        $this->trimAddressFields();
         $this->getRegion();
         return $this;
+    }
+
+    /**
+     * Trim leading and trailing whitespace (including Unicode) from all string address fields
+     *
+     * Street is stored as a newline-joined string by setData(), so only the
+     * string branch is needed — each line is trimmed individually.
+     *
+     * @return void
+     */
+    protected function trimAddressFields(): void
+    {
+        $stringFields = [
+            'firstname',
+            'lastname',
+            'middlename',
+            'prefix',
+            'suffix',
+            'company',
+            'city',
+            'region',
+            'telephone',
+            'fax',
+            'postcode',
+            'vat_id',
+            'email',
+        ];
+
+        foreach ($stringFields as $field) {
+            $value = $this->getData($field);
+
+            if (is_string($value)) {
+                $this->setData($field, $this->unicodeTrim($value));
+            }
+        }
+
+        $street = $this->getData('street');
+
+        if (is_string($street)) {
+            $lines = explode("\n", $street);
+            $this->setData('street', implode("\n", array_map([$this, 'unicodeTrim'], $lines)));
+        } elseif (is_array($street)) {
+            $this->setData('street', array_map(
+                fn ($line) => is_string($line) ? $this->unicodeTrim($line) : $line,
+                $street,
+            ));
+        }
+    }
+
+    /**
+     * Trim ASCII and Unicode whitespace from both ends of a string
+     *
+     * Handles non-breaking spaces (U+00A0), zero-width spaces (U+200B),
+     * and other Unicode whitespace that PHP's trim() does not strip.
+     *
+     * @param string $value
+     * @return string
+     */
+    protected function unicodeTrim(string $value): string
+    {
+        return preg_replace('/^\s+|\s+$/u', '', $value) ?? $value;
     }
 
     /**
