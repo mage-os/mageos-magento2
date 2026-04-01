@@ -9,6 +9,7 @@
        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
     <test name="StorefrontSingleInsufficientStockMessageAfterOutOfStockThresholdChangeTest">
         <annotations>
+            <features value="Checkout"/>
             <stories value="Cart"/>
             <title value="Single insufficient stock message after out-of-stock threshold is raised while product remains in cart"/>
             <description value="One insufficient-stock message when cart qty exceeds salable stock after the threshold changes."/>
@@ -71,18 +72,20 @@
         <!-- Open the shopping cart. -->
         <actionGroup ref="StorefrontCartPageOpenActionGroup" stepKey="goToShoppingCart"/>
         <!-- Set line quantity to 3 and update the cart. -->
+        <waitForElementVisible selector="{{CheckoutCartProductSection.qty($$simpleProduct.sku$$)}}" stepKey="waitForCartQtyInputVisible"/>
         <fillField selector="{{CheckoutCartProductSection.qty($$simpleProduct.sku$$)}}" userInput="3" stepKey="setCartQtyToThree"/>
+        <waitForElementClickable selector="{{CheckoutCartProductSection.updateShoppingCartButton}}" stepKey="waitForUpdateShoppingCartClickable"/>
         <click selector="{{CheckoutCartProductSection.updateShoppingCartButton}}" stepKey="clickUpdateShoppingCart"/>
         <!-- Dismiss the attention alert shown after failed cart validation before the cart reloads. -->
         <waitForElementVisible selector="{{CheckoutCartProductSection.modalMessage}}" stepKey="waitForValidationAlert"/>
-        <waitForText selector="{{CheckoutCartProductSection.modalMessage}}" userInput="Not enough items for sale" stepKey="waitForValidationAlertText"/>
+        <waitForText selector="{{CheckoutCartProductSection.modalMessage}}" userInput="{{NotEnoughItemsForSaleMessageData.message}}" stepKey="waitForValidationAlertText"/>
         <waitForElementVisible selector="{{CheckoutCartProductSection.modalConfirmButton}}" stepKey="waitForValidationAlertOk"/>
         <click selector="{{CheckoutCartProductSection.modalConfirmButton}}" stepKey="clickValidationAlertOk"/>
         <waitForPageLoad stepKey="waitAfterDismissValidationAlert"/>
         <waitForAjaxLoad stepKey="waitAfterDismissValidationAlertAjax"/>
         <!-- Assert the insufficient stock message is visible. -->
-        <waitForText selector="{{CheckoutCartMessageSection.errorMessage}}" userInput="Not enough items for sale" stepKey="assertInsufficientStockMessageVisible"/>
+        <waitForText selector="{{CheckoutCartMessageSection.errorMessage}}" userInput="{{NotEnoughItemsForSaleMessageData.message}}" stepKey="assertInsufficientStockMessageVisible"/>
         <!-- The quote-level banner for qty errors must not appear (only item-level copy is shown). -->
-        <dontSee userInput="The requested qty. is not available" stepKey="dontSeeRequestedQtyNotAvailableMessage"/>
+        <dontSee userInput="{{RequestedQtyNotAvailableMessageData.message}}" stepKey="dontSeeRequestedQtyNotAvailableMessage"/>
     </test>
 </tests>
