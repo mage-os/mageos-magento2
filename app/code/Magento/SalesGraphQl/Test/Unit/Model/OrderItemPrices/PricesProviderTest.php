@@ -77,7 +77,7 @@ class PricesProviderTest extends TestCase
             productOptions: []
         );
         $this->orderMock->method('getStore')->willReturn($this->storeMock);
-        $this->taxConfigMock->expects($this->exactly(2))
+        $this->taxConfigMock->expects($this->once())
             ->method('priceIncludesTax')
             ->with($this->storeMock)
             ->willReturn(false);
@@ -104,7 +104,7 @@ class PricesProviderTest extends TestCase
             productOptions: []
         );
         $this->orderMock->method('getStore')->willReturn($this->storeMock);
-        $this->taxConfigMock->expects($this->exactly(2))
+        $this->taxConfigMock->expects($this->once())
             ->method('priceIncludesTax')
             ->with($this->storeMock)
             ->willReturn(true);

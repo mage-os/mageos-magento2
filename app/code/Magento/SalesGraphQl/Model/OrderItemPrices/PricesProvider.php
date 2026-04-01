@@ -40,6 +40,9 @@ class PricesProvider
     public function execute(Item $orderItem): array
     {
         $currency = $orderItem->getOrder()->getOrderCurrencyCode();
+        $catalogPriceIncludesTax = $this->taxConfig->priceIncludesTax(
+            $orderItem->getOrder()->getStore()
+        );
         return [
             'model' => $orderItem,
             'price' => [
@@ -68,7 +71,7 @@ class PricesProvider
             ],
             'original_price_including_tax' => [
                 'currency' => $currency,
-                'value' => $this->getOriginalPriceInclTax($orderItem)
+                'value' => $this->getOriginalPriceInclTax($orderItem, $catalogPriceIncludesTax)
             ],
             'original_row_total' => [
                 'currency' => $currency,
@@ -76,7 +79,7 @@ class PricesProvider
             ],
             'original_row_total_including_tax' => [
                 'currency' => $currency,
-                'value' => $this->getOriginalRowTotalInclTax($orderItem)
+                'value' => $this->getOriginalRowTotalInclTax($orderItem, $catalogPriceIncludesTax)
             ]
         ];
     }
@@ -85,11 +88,12 @@ class PricesProvider
      * Calculate the original price including tax
      *
      * @param Item $orderItem
+     * @param bool $catalogPriceIncludesTax
      * @return float
      */
-    private function getOriginalPriceInclTax(Item $orderItem): float
+    private function getOriginalPriceInclTax(Item $orderItem, bool $catalogPriceIncludesTax): float
     {
-        if ($this->taxConfig->priceIncludesTax($orderItem->getOrder()->getStore())) {
+        if ($catalogPriceIncludesTax) {
             return (float) $orderItem->getOriginalPrice();
         }
         return $orderItem->getOriginalPrice() * (1 + ($orderItem->getTaxPercent() / 100));
@@ -99,12 +103,13 @@ class PricesProvider
      * Calculate the original row total price including tax
      *
      * @param Item $orderItem
+     * @param bool $catalogPriceIncludesTax
      * @return float
      */
-    private function getOriginalRowTotalInclTax(Item $orderItem): float
+    private function getOriginalRowTotalInclTax(Item $orderItem, bool $catalogPriceIncludesTax): float
     {
         $originalRowTotal = $this->getOriginalRowTotal($orderItem);
-        if ($this->taxConfig->priceIncludesTax($orderItem->getOrder()->getStore())) {
+        if ($catalogPriceIncludesTax) {
             return $originalRowTotal;
         }
         return $originalRowTotal * (1 + ($orderItem->getTaxPercent() / 100));
