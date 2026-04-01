@@ -18,15 +18,12 @@
             <group value="swatches"/>
             <group value="catalog"/>
         </annotations>
-
         <before>
             <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
         </before>
-
         <after>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
         </after>
-
         <!-- Step 1: Attribute create page defaults -->
         <actionGroup ref="AdminOpenProductAttributePageActionGroup" stepKey="openProductAttributeGrid"/>
         <waitForElementClickable selector="{{AdminProductAttributeGridSection.createNewAttributeBtn}}" stepKey="waitCreateNewAttributeButton"/>
@@ -37,7 +34,6 @@
             <argument name="storefrontOpenerSelector" value="{{StorefrontPropertiesSection.StoreFrontPropertiesTab}}"/>
         </actionGroup>
         <actionGroup ref="AdminAssertAttributeUseInProductListingDefaultIsNoActionGroup" stepKey="assertFormUseInProductListingDefaultNo"/>
-
         <!-- Step 2: Configurable product create configurations -> Create New Attribute iframe defaults -->
         <actionGroup ref="AdminOpenProductIndexPageActionGroup" stepKey="openProductGrid"/>
         <actionGroup ref="GoToCreateProductPageActionGroup" stepKey="openCreateConfigurableProductPage">
