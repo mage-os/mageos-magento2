@@ -20,8 +20,11 @@ use Magento\Eav\Model\Entity\Type;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface as Adapter;
 use Magento\Framework\DB\Select;
+use Magento\Framework\DataObject;
 use Magento\Framework\Event\ManagerInterface;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Serialize\Serializer\Json;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -33,6 +36,8 @@ use PHPUnit\Framework\TestCase;
  */
 class CategoryTest extends TestCase
 {
+    use MockCreationTrait;
+
     private const STUB_PRIMARY_KEY = 'PK';
 
     /**
@@ -216,6 +221,30 @@ class CategoryTest extends TestCase
             $property = $reflectionClass->getProperty($propertyName);
             $property->setValue($this->category, $value);
         }
+    }
+
+    /**
+     * @return void
+     * @throws Attribute\Exception
+     * @throws \PHPUnit\Framework\MockObject\Exception
+     */
+    public function testValidateCircularDependencyError(): void
+    {
+        $categoryId = 17;
+        $parentId = 2;
+        $category = $this->createMock(\Magento\Catalog\Model\Category::class);
+        $category->expects($this->once())->method('getId')->willReturn($categoryId);
+        $category->expects($this->once())->method('getParentId')->willReturn($parentId);
+
+        $this->selectMock->expects($this->once())->method('from')->willReturnSelf();
+        $this->selectMock->expects($this->once())->method('where')->willReturnSelf();
+
+        $this->connectionMock->expects($this->once())->method('fetchOne')->willReturn('1/2/17/20');
+
+        $this->expectException(LocalizedException::class);
+        $this->expectExceptionMessage('A category cannot be assigned to one of its own descendants.');
+
+        $this->category->validate($category);
     }
 
     /**
@@ -576,7 +605,6 @@ class CategoryTest extends TestCase
 
         $reflection = new \ReflectionClass(Category::class);
         $method = $reflection->getMethod('_savePath');
-
         $result = $method->invoke($this->category, $categoryMock);
         $this->assertInstanceOf(Category::class, $result);
     }
@@ -587,7 +615,6 @@ class CategoryTest extends TestCase
 
         $reflection = new \ReflectionClass(Category::class);
         $method = $reflection->getMethod('_getMaxPosition');
-
         $result = $method->invoke($this->category, '1/2');
         $this->assertEquals(10, $result);
     }
@@ -602,7 +629,6 @@ class CategoryTest extends TestCase
 
         $reflection = new \ReflectionClass(Category::class);
         $method = $reflection->getMethod('_saveCategoryProducts');
-
         $result = $method->invoke($this->category, $categoryMock);
         $this->assertInstanceOf(Category::class, $result);
     }
@@ -620,7 +646,6 @@ class CategoryTest extends TestCase
 
         $reflection = new \ReflectionClass(Category::class);
         $method = $reflection->getMethod('_saveCategoryProducts');
-
         $result = $method->invoke($this->category, $categoryMock);
         $this->assertInstanceOf(Category::class, $result);
     }
@@ -735,7 +760,6 @@ class CategoryTest extends TestCase
         $property->setValue($this->category, $aggregateCountMock);
 
         $method = $reflection->getMethod('_beforeDelete');
-
         try {
             $method->invoke($this->category, $categoryMock);
             $this->assertTrue(true);
@@ -760,7 +784,6 @@ class CategoryTest extends TestCase
         $property->setValue($this->category, $indexerProcessorMock);
 
         $method = $reflection->getMethod('_afterDelete');
-
         try {
             $method->invoke($this->category, $categoryMock);
             $this->assertTrue(true);
@@ -788,7 +811,6 @@ class CategoryTest extends TestCase
 
         $reflection = new \ReflectionClass(Category::class);
         $method = $reflection->getMethod('_beforeSave');
-
         try {
             $method->invoke($this->category, $categoryMock);
             $this->assertTrue(true);
@@ -811,7 +833,6 @@ class CategoryTest extends TestCase
 
         $reflection = new \ReflectionClass(Category::class);
         $method = $reflection->getMethod('_afterSave');
-
         try {
             $method->invoke($this->category, $categoryMock);
             $this->assertTrue(true);
@@ -930,7 +951,6 @@ class CategoryTest extends TestCase
 
         $reflection = new \ReflectionClass(Category::class);
         $method = $reflection->getMethod('_beforeSave');
-
         try {
             $method->invoke($this->category, $categoryMock);
             $this->assertTrue(true);
@@ -956,7 +976,6 @@ class CategoryTest extends TestCase
 
         $reflection = new \ReflectionClass(Category::class);
         $method = $reflection->getMethod('_beforeSave');
-
         try {
             $method->invoke($this->category, $categoryMock);
             $this->assertTrue(true);
@@ -1108,7 +1127,6 @@ class CategoryTest extends TestCase
 
         $reflection = new \ReflectionClass(Category::class);
         $method = $reflection->getMethod('_afterSave');
-
         try {
             $method->invoke($this->category, $categoryMock);
             $this->assertTrue(true);
@@ -1131,7 +1149,6 @@ class CategoryTest extends TestCase
 
         $reflection = new \ReflectionClass(Category::class);
         $method = $reflection->getMethod('_saveCategoryProducts');
-
         try {
             $method->invoke($this->category, $categoryMock);
             $this->assertTrue(true);
@@ -1159,7 +1176,6 @@ class CategoryTest extends TestCase
 
         $reflection = new \ReflectionClass(Category::class);
         $method = $reflection->getMethod('_getMaxPosition');
-
         $result = $method->invoke($this->category, '1/2');
         $this->assertEquals(0, $result);
     }
@@ -1225,7 +1241,6 @@ class CategoryTest extends TestCase
 
         $reflection = new \ReflectionClass(Category::class);
         $method = $reflection->getMethod('_processPositions');
-
         $result = $method->invoke($this->category, $categoryMock, $newParentMock, 5);
         $this->assertEquals(11, $result);
     }
@@ -1246,7 +1261,6 @@ class CategoryTest extends TestCase
 
         $reflection = new \ReflectionClass(Category::class);
         $method = $reflection->getMethod('_processPositions');
-
         $result = $method->invoke($this->category, $categoryMock, $newParentMock, null);
         $this->assertEquals(1, $result);
     }
@@ -1313,7 +1327,6 @@ class CategoryTest extends TestCase
 
         $reflection = new \ReflectionClass(Category::class);
         $method = $reflection->getMethod('_beforeSave');
-
         try {
             $method->invoke($this->category, $categoryMock);
             $this->assertTrue(true);
@@ -1341,7 +1354,6 @@ class CategoryTest extends TestCase
 
         $reflection = new \ReflectionClass(Category::class);
         $method = $reflection->getMethod('_beforeSave');
-
         try {
             $method->invoke($this->category, $categoryMock);
             $this->assertTrue(true);
@@ -1362,7 +1374,6 @@ class CategoryTest extends TestCase
 
         $reflection = new \ReflectionClass(Category::class);
         $method = $reflection->getMethod('_beforeSave');
-
         try {
             $method->invoke($this->category, $categoryMock);
             $this->assertTrue(true);
@@ -1417,16 +1428,18 @@ class CategoryTest extends TestCase
 
     public function testDeleteChildrenFullLoop(): void
     {
-        // Test deleteChildren with actual loop iteration using addMethods for magic methods
-        $childCategory1 = $this->getMockBuilder(\Magento\Framework\DataObject::class)
-            ->addMethods(['setSkipDeleteChildren', 'delete'])
-            ->getMock();
+        // Test deleteChildren with actual loop iteration using MockCreationTrait for magic methods
+        $childCategory1 = $this->createPartialMockWithReflection(
+            DataObject::class,
+            ['setSkipDeleteChildren', 'delete']
+        );
         $childCategory1->expects($this->once())->method('setSkipDeleteChildren')->with(true);
         $childCategory1->expects($this->once())->method('delete');
 
-        $childCategory2 = $this->getMockBuilder(\Magento\Framework\DataObject::class)
-            ->addMethods(['setSkipDeleteChildren', 'delete'])
-            ->getMock();
+        $childCategory2 = $this->createPartialMockWithReflection(
+            DataObject::class,
+            ['setSkipDeleteChildren', 'delete']
+        );
         $childCategory2->expects($this->once())->method('setSkipDeleteChildren')->with(true);
         $childCategory2->expects($this->once())->method('delete');
 
@@ -1503,27 +1516,24 @@ class CategoryTest extends TestCase
         // Note: parent::_beforeSave requires full EAV framework
         // Complete coverage is provided by integration tests
 
-        $categoryMock = $this->getMockBuilder(\Magento\Catalog\Model\Category::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([
-                'isObjectNew',
-                'getPosition',
-                'getPath',
-                'getId',
-                'getData',
-                'setPosition',
-                'setLevel',
-                'setParentId',
-                'setPath',
-                'getChildrenCount'
-            ])->addMethods([
-                'getAttributeSetId',
-                'setAttributeSetId',
-                'setChildrenCount',
-                'hasPosition',
-                'hasLevel',
-                'hasParentId'
-            ])->getMock();
+        $categoryMock = $this->createPartialMockWithReflection(\Magento\Catalog\Model\Category::class, [
+            'isObjectNew',
+            'getPosition',
+            'getPath',
+            'getId',
+            'getData',
+            'setPosition',
+            'setLevel',
+            'setParentId',
+            'setPath',
+            'getChildrenCount',
+            'getAttributeSetId',
+            'setAttributeSetId',
+            'setChildrenCount',
+            'hasPosition',
+            'hasLevel',
+            'hasParentId'
+        ]);
 
         $categoryMock->method('isObjectNew')->willReturn(true);
         $categoryMock->method('getChildrenCount')->willReturn(0);
@@ -1546,7 +1556,6 @@ class CategoryTest extends TestCase
 
         $reflection = new \ReflectionClass(Category::class);
         $method = $reflection->getMethod('_beforeSave');
-
         try {
             $method->invoke($this->category, $categoryMock);
         } catch (\Throwable $e) {

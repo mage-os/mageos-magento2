@@ -875,3 +875,4 @@ Details,Details
 "Use Default Order","Use Default Order"
 "Invalid quote path.","Invalid quote path."
 "Invalid order path.","Invalid order path."
+"A category cannot be assigned to one of its own descendants.","A category cannot be assigned to one of its own descendants."
