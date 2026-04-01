@@ -15,15 +15,17 @@ use Magento\Customer\Model\Group;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Store\Api\WebsiteRepositoryInterface;
 use Magento\TestFramework\Catalog\Model\Product\Price\GetPriceIndexDataByProductId;
+use Magento\TestFramework\Fixture\AppArea;
+use Magento\TestFramework\Fixture\DataFixture;
+use Magento\TestFramework\Fixture\DbIsolation;
 use Magento\TestFramework\Helper\Bootstrap;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Provides tests for configurable product pricing with catalog rules.
- *
- * @magentoDbIsolation disabled
- * @magentoAppArea frontend
  */
+#[AppArea('frontend')]
+#[DbIsolation(false)]
 class PriceTest extends TestCase
 {
     /**
@@ -52,6 +54,12 @@ class PriceTest extends TestCase
     private $getPriceIndexDataByProductId;
 
     /**
+     * Fix PHPCS long character limit violation by moving the fixture path to a constant.
+     */
+    private const DISABLED_PARENT_FIXTURE = 'Magento/CatalogRuleConfigurable/_files/'
+        . 'configurable_product_with_percent_attribute_rules_and_disabled_parent.php';
+
+    /**
      * @inheritdoc
      */
     protected function setUp(): void
@@ -64,10 +72,7 @@ class PriceTest extends TestCase
         $this->getPriceIndexDataByProductId = $this->objectManager->get(GetPriceIndexDataByProductId::class);
     }
 
-    /**
-     * @magentoDataFixture Magento/CatalogRuleConfigurable/_files/configurable_product_with_percent_rule.php
-     * @return void
-     */
+    #[DataFixture('Magento/CatalogRuleConfigurable/_files/configurable_product_with_percent_rule.php')]
     public function testGetFinalPriceWithCustomOptionAndCatalogRule(): void
     {
         $indexPrices = [
@@ -96,10 +101,7 @@ class PriceTest extends TestCase
         $this->assertConfigurableProductPrice(20, 25, $indexPrices);
     }
 
-    /**
-     * @magentoDataFixture Magento/CatalogRuleConfigurable/_files/configurable_product_with_percent_rules_for_children.php
-     * @return void
-     */
+    #[DataFixture('Magento/CatalogRuleConfigurable/_files/configurable_product_with_percent_rules_for_children.php')]
     public function testGetFinalPriceWithCustomOptionAndCatalogRulesForChildren(): void
     {
         $indexPrices = [
@@ -126,6 +128,40 @@ class PriceTest extends TestCase
             ],
         ];
         $this->assertConfigurableProductPrice(24, 30, $indexPrices);
+    }
+
+    /**
+     * Same per-SKU catalog rules as `configurable_product_with_percent_rules_for_children` (10% / 20%),
+     * with configurable parent disabled — child price index must still reflect each rule.
+     */
+    #[DataFixture(self::DISABLED_PARENT_FIXTURE)]
+    public function testCatalogRulePercentConditionIsAppliedPerChildWithDisabledParent(): void
+    {
+        $firstChild = $this->productRepository->get('simple_10');
+        $secondChild = $this->productRepository->get('simple_20');
+        $this->assertSame('simple_10', $firstChild->getSku());
+        $this->assertSame('simple_20', $secondChild->getSku());
+
+        $indexPrices = [
+            'simple_10' => [
+                'price' => 10,
+                'final_price' => 9,
+                'min_price' => 9,
+                'max_price' => 9,
+                'tier_price' => null,
+            ],
+            'simple_20' => [
+                'price' => 20,
+                'final_price' => 15,
+                'min_price' => 15,
+                'max_price' => 15,
+                'tier_price' => 15,
+            ],
+        ];
+
+        foreach ($indexPrices as $sku => $prices) {
+            $this->assertIndexTableData($sku, $prices);
+        }
     }
 
     /**
