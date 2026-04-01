@@ -60,7 +60,8 @@ class Advanced extends \Magento\Framework\Model\AbstractModel
     protected $_productCollection;
 
     /**
-     * @deprecated 101.0.2 No alternative available.
+     * @deprecated 101.0.2 No longer used internally; constructor argument retained for backward compatibility.
+     * @see \Magento\Catalog\Model\Config
      * @var Config
      */
     protected $_catalogConfig;
