@@ -43,6 +43,7 @@ class DirectiveValidator
             }
 
             if (isset($params['class'])) {
+                $class = trim((string)$params['class']);
                 $class = preg_replace('#\\\\+#', '\\', $class);
                 if (!preg_match('/^\\\\?[A-Za-z_][A-Za-z0-9_]*(\\\\[A-Za-z_][A-Za-z0-9_]*)*$/', $class)) {
                     return false;
