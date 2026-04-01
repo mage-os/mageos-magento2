@@ -17,6 +17,7 @@ use Magento\Deploy\Package\Processor\ProcessorInterface;
 use Magento\Csp\Model\SubresourceIntegrity\HashGenerator;
 use Magento\Framework\App\ObjectManager;
 use Psr\Log\LoggerInterface;
+use Magento\Framework\View\Asset\Minification;
 
 /**
  * Post-processor that generates integrity hashes after static content package deployed.
@@ -54,12 +55,18 @@ class Integrity implements ProcessorInterface
     private LoggerInterface $logger;
 
     /**
+     * @var Minification
+     */
+    private Minification $minification;
+
+    /**
      * @param Filesystem $filesystem
      * @param HashGenerator $hashGenerator
      * @param SubresourceIntegrityFactory $integrityFactory
      * @param SubresourceIntegrityCollector $integrityCollector
      * @param LoggerInterface|null $logger
      * @param SubresourceIntegrityRepositoryPool|null $repositoryPool
+     * @param Minification|null $minification
      */
     public function __construct(
         Filesystem $filesystem,
@@ -67,7 +74,8 @@ class Integrity implements ProcessorInterface
         SubresourceIntegrityFactory $integrityFactory,
         SubresourceIntegrityCollector $integrityCollector,
         ?LoggerInterface $logger = null,
-        ?SubresourceIntegrityRepositoryPool $repositoryPool = null
+        ?SubresourceIntegrityRepositoryPool $repositoryPool = null,
+        ?Minification $minification = null
     ) {
         $this->filesystem = $filesystem;
         $this->hashGenerator = $hashGenerator;
@@ -76,6 +84,8 @@ class Integrity implements ProcessorInterface
         $this->logger = $logger ?? ObjectManager::getInstance()->get(LoggerInterface::class);
         $this->repositoryPool = $repositoryPool ??
             ObjectManager::getInstance()->get(SubresourceIntegrityRepositoryPool::class);
+        $this->minification = $minification ??
+            ObjectManager::getInstance()->get(Minification::class);
     }
 
     /**
@@ -84,23 +94,33 @@ class Integrity implements ProcessorInterface
     public function process(Package $package, array $options): bool
     {
         $staticDir = $this->filesystem->getDirectoryRead(
-            DirectoryList::ROOT
+            DirectoryList::STATIC_VIEW
         );
 
         foreach ($package->getFiles() as $file) {
             if (strtolower($file->getExtension()) === "js") {
-                $integrity = $this->integrityFactory->create(
-                    [
-                        "data" => [
-                            'hash' => $this->hashGenerator->generate(
-                                $staticDir->readFile($file->getSourcePath())
-                            ),
-                            'path' => $file->getDeployedFilePath()
-                        ]
-                    ]
-                );
+                try {
+                    $deployedFilePath = $this->minification->addMinifiedSign(
+                        $file->getDeployedFilePath()
+                    );
+                    $fileContent = $staticDir->readFile($deployedFilePath);
 
-                $this->integrityCollector->collect($integrity);
+                    $integrity = $this->integrityFactory->create(
+                        [
+                            "data" => [
+                                'hash' => $this->hashGenerator->generate($fileContent),
+                                'path' => $deployedFilePath
+                            ]
+                        ]
+                    );
+
+                    $this->integrityCollector->collect($integrity);
+                } catch (\Exception $e) {
+                    // Continue processing other files if this one fails
+                    $this->logger->warning(
+                        'Integrity PostProcessor: ' . $e->getMessage()
+                    );
+                }
             }
         }
 
@@ -111,8 +131,9 @@ class Integrity implements ProcessorInterface
             try {
                 $this->repositoryPool->get($area)->saveBunch($collectedData);
             } catch (\Exception $e) {
-                //phpcs:ignore
-                $this->logger->error('Integrity PostProcessor: Failed saving to ' . $area . ' repository: ' . $e->getMessage());
+                $this->logger->error(
+                    'Integrity PostProcessor: Failed saving to ' . $area . ' repository: ' . $e->getMessage()
+                );
             }
 
             // Clear collector for next package (if any)
