@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright 2026 Adobe
+  * All Rights Reserved.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminVisualSwatchColorPickerHexPersistsAfterEnterTest">
+        <annotations>
+            <features value="Swatches"/>
+            <stories value="Admin visual swatch color picker"/>
+            <title value="HEX remains in color picker # field after Enter on visual swatch"/>
+            <description value="Type HEX with pressKey (not fillField). Simulate Enter on the hex field, then click the picker OK control so the swatch hidden value updates (core onSubmit); reopen Choose a color and assert # shows cd0010."/>
+            <severity value="MAJOR"/>
+            <group value="Swatches"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+        <after>
+            <actionGroup ref="DeleteProductAttributeByAttributeCodeActionGroup" stepKey="deleteProductAttribute"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
+        </after>
+        <actionGroup ref="AdminOpenProductAttributePageActionGroup" stepKey="goToProductAttributes"/>
+        <actionGroup ref="AdminCreateProductAttributeWithSaveAndEditActionGroup" stepKey="createVisualSwatchAttribute">
+            <argument name="attribute" value="VisualSwatchProductAttributeForm"/>
+        </actionGroup>
+
+        <actionGroup ref="AdminClickAddVisualSwatchButtonActionGroup" stepKey="clickAddVisualSwatch"/>
+        <actionGroup ref="OpenSwatchMenuByIndexActionGroup" stepKey="openSwatchMenuForColorPicker">
+            <argument name="index" value="0"/>
+        </actionGroup>
+        <waitForElementClickable selector="{{AdminManageSwatchSection.nthChooseColor('1')}}" stepKey="waitForChooseColorMenuItem"/>
+        <click selector="{{AdminManageSwatchSection.nthChooseColor('1')}}" stepKey="clickChooseColorInSwatchMenu"/>
+        <waitForElementVisible selector="{{AdminColorPickerSection.hexByIndex('1')}}" stepKey="waitForColorPickerHexInput"/>
+        <actionGroup ref="SetColorPickerHexWithEnterActionGroup" stepKey="enterHexAndPressEnter">
+            <argument name="nthColorPicker" value="1"/>
+            <argument name="hexColor" value="CD0010"/>
+        </actionGroup>
+        <!-- OK applies HEX to swatch hidden input; onShow on second open reads that value (Enter alone does not call onSubmit in jquery.colorpicker). -->
+        <click selector="{{AdminColorPickerSection.submitByIndex('1')}}" stepKey="clickColorPickerOkToPersistHex"/>
+        <actionGroup ref="OpenSwatchMenuByIndexActionGroup" stepKey="reopenSwatchMenuAfterEnter">
+            <argument name="index" value="0"/>
+        </actionGroup>
+        <waitForElementClickable selector="{{AdminManageSwatchSection.nthChooseColor('1')}}" stepKey="waitChooseColorAfterReopen"/>
+        <click selector="{{AdminManageSwatchSection.nthChooseColor('1')}}" stepKey="clickChooseColorSecondTime"/>
+        <waitForElementVisible selector="{{AdminColorPickerSection.hexInLastColorPicker}}" stepKey="waitHexFieldAfterReopenChooseColor"/>
+        <seeInField selector="{{AdminColorPickerSection.hexInLastColorPicker}}" userInput="cd0010" stepKey="assertHexInFieldAfterReopenChooseColor"/>
+    </test>
+</tests>
