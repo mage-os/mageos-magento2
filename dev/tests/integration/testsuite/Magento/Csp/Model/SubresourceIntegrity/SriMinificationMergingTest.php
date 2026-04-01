@@ -69,7 +69,7 @@ class SriMinificationMergingTest extends TestCase
     /**
      * @var Filesystem
      */
-    private $filesystem;
+    private Filesystem $filesystem;
 
     /**
      * @var Hashes

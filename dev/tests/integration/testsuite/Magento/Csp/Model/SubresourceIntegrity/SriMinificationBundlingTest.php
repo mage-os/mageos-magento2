@@ -14,7 +14,6 @@ use Magento\Deploy\Service\DeployStaticContent;
 use Magento\Framework\App\Area;
 use Magento\Framework\App\Request\Http;
 use Magento\Framework\App\State;
-use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Framework\View\DesignInterface;
@@ -64,7 +63,7 @@ class SriMinificationBundlingTest extends TestCase
     /**
      * @var Filesystem
      */
-    private $filesystem;
+    private Filesystem $filesystem;
 
     /**
      * @var Hashes

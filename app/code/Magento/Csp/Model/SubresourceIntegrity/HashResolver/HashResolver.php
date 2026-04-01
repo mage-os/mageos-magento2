@@ -8,7 +8,10 @@ declare(strict_types=1);
 namespace Magento\Csp\Model\SubresourceIntegrity\HashResolver;
 
 use Magento\Deploy\Package\Package;
+use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\App\State;
+use Magento\Framework\Filesystem;
+use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Framework\UrlInterface;
 use Magento\Framework\View\DesignInterface;
 use Magento\Csp\Model\SubresourceIntegrityRepositoryPool;
@@ -51,6 +54,11 @@ use Psr\Log\LoggerInterface;
 class HashResolver implements HashResolverInterface
 {
     /**
+     * Path to the merged assets SRI hashes file
+     */
+    private const MERGED_HASHES_FILE = '_cache/merged/sri-hashes.json';
+
+    /**
      * @var SubresourceIntegrityRepositoryPool
      */
     private SubresourceIntegrityRepositoryPool $repositoryPool;
@@ -76,24 +84,40 @@ class HashResolver implements HashResolverInterface
     private LoggerInterface $logger;
 
     /**
+     * @var Filesystem
+     */
+    private Filesystem $filesystem;
+
+    /**
+     * @var SerializerInterface
+     */
+    private SerializerInterface $serializer;
+
+    /**
      * @param SubresourceIntegrityRepositoryPool $repositoryPool
      * @param State $appState
      * @param DesignInterface $design
      * @param UrlInterface $urlBuilder
      * @param LoggerInterface $logger
+     * @param Filesystem $filesystem
+     * @param SerializerInterface $serializer
      */
     public function __construct(
         SubresourceIntegrityRepositoryPool $repositoryPool,
         State $appState,
         DesignInterface $design,
         UrlInterface $urlBuilder,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        Filesystem $filesystem,
+        SerializerInterface $serializer
     ) {
         $this->repositoryPool = $repositoryPool;
         $this->appState = $appState;
         $this->design = $design;
         $this->urlBuilder = $urlBuilder;
         $this->logger = $logger;
+        $this->filesystem = $filesystem;
+        $this->serializer = $serializer;
     }
 
     /**
@@ -111,6 +135,11 @@ class HashResolver implements HashResolverInterface
                 foreach ($this->loadHashesFromContext($context, $baseUrl) as $key => $value) {
                     $result[$key] = $value;
                 }
+            }
+
+            // AC-16113 introduces new way of storing hashes
+            foreach ($this->loadMergedHashes($baseUrl) as $key => $value) {
+                $result[$key] = $value;
             }
         } catch (\Exception $e) {
             $this->logger->warning(
@@ -145,6 +174,48 @@ class HashResolver implements HashResolverInterface
         }
 
         return null;
+    }
+
+    /**
+     * Read merged-asset hashes directly from disk, bypassing the repository in-memory cache.
+     *
+     * Merged files (_cache/merged/*.js) are created at request time by
+     * GenerateMergedAssetIntegrity::afterMerge(). Because SubresourceIntegrityRepository
+     * caches loaded data in memory, a repository instance that was populated before the
+     * merged file existed will not see the new hash. Reading the merged hashes file
+     * directly guarantees freshness on every call.
+     *
+     * @param string $baseUrl
+     * @return array<string, string>  URL => sha256 hash
+     */
+    private function loadMergedHashes(string $baseUrl): array
+    {
+        $result = [];
+
+        try {
+            $staticDir = $this->filesystem->getDirectoryRead(DirectoryList::STATIC_VIEW);
+
+            if (!$staticDir->isFile(self::MERGED_HASHES_FILE)) {
+                return $result;
+            }
+
+            $data = $this->serializer->unserialize($staticDir->readFile(self::MERGED_HASHES_FILE));
+
+            if (!is_array($data)) {
+                return $result;
+            }
+
+            foreach ($data as $path => $hash) {
+                $result[$baseUrl . $path] = $hash;
+            }
+        } catch (\Exception $e) {
+            $this->logger->debug(
+                'SRI: Failed to load merged hashes from disk',
+                ['exception' => $e->getMessage()]
+            );
+        }
+
+        return $result;
     }
 
     /**

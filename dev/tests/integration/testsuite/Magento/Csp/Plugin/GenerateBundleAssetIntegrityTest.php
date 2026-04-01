@@ -7,7 +7,6 @@ declare(strict_types=1);
 
 namespace Magento\Csp\Plugin;
 
-use Magento\Csp\Model\SubresourceIntegrityRepository;
 use Magento\Deploy\Service\Bundle;
 use Magento\Framework\App\Area;
 use Magento\Framework\App\Filesystem\DirectoryList;

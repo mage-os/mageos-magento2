@@ -80,7 +80,7 @@ class RemoveAllAssetIntegrityHashes
         DeployStaticContent $subject,
         array $options
     ): void {
-        if (PHP_SAPI == 'cli' && !$this->isRefreshContentVersionOnly($options)) {
+        if (PHP_SAPI === 'cli' && !$this->isRefreshContentVersionOnly($options)) {
             // Clear stored integrity hashes from all areas
             $this->deleteAllSriFiles();
 

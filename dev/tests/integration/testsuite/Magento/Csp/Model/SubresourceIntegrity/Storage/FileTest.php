@@ -460,11 +460,42 @@ class FileTest extends TestCase
     }
 
     /**
-     * Test save() catches FileSystemException when writeFile fails and returns false.
+     * Test load() and save() handle an empty (zero-byte) storage file gracefully.
+     *
+     * Simulates a file left empty after a truncate-then-crash scenario.
      *
      * @return void
      */
-    public function testSaveCatchesFileSystemExceptionAndReturnsFalse(): void
+    public function testEmptyFileIsHandledGracefully(): void
+    {
+        $testContext = 'test/context/empty-file';
+        $testFile = $testContext . '/sri-hashes.json';
+        $this->testDirs[] = $testContext;
+
+        $this->staticDir->writeFile($testFile, '');
+
+        $loadResult = $this->storage->load($testContext);
+        $this->assertNull($loadResult, 'load() should return null for an empty file');
+
+        $newData = ['js/recovered.js' => 'sha256-RECOVERED'];
+        $saveResult = $this->storage->save($this->serializer->serialize($newData), $testContext);
+        $this->assertTrue($saveResult, 'save() should succeed and repopulate an empty file');
+
+        $savedContent = $this->staticDir->readFile($testFile);
+        $this->assertJson($savedContent);
+        $decoded = $this->serializer->unserialize($savedContent);
+        $this->assertArrayHasKey('js/recovered.js', $decoded);
+    }
+
+    /**
+     * Test save() returns false when FileSystemException occurs during write.
+     *
+     * saveHashesToFile() catches and logs write errors and returns false,
+     * so save() propagates false to the caller when a write fails.
+     *
+     * @return void
+     */
+    public function testSaveReturnsFalseOnFileSystemException(): void
     {
         $testContext = 'test/context/save-exception';
         $testFile = $testContext . '/sri-hashes.json';
@@ -479,11 +510,10 @@ class FileTest extends TestCase
         $this->testFiles[] = $filePath;
         $this->fileDriver->changePermissions($filePath, 0444);
 
-        // Try to save - should catch FileSystemException and return false
         $newData = ['js/new.js' => 'sha256-NEW'];
         $result = $this->storage->save($this->serializer->serialize($newData), $testContext);
 
-        $this->assertFalse($result, 'save() should catch FileSystemException and return false');
+        $this->assertFalse($result, 'save() should return false when write fails');
 
         // Restore permissions for cleanup
         $this->fileDriver->changePermissions($filePath, 0644);
@@ -520,6 +550,78 @@ class FileTest extends TestCase
         $this->fileDriver->changePermissions($dirPath, 0755);
 
         $this->assertFalse($result, 'remove() should catch FileSystemException and return false');
+    }
+
+    /**
+     * Test save() creates a new file correctly when the file does not exist yet.
+     *
+     * @return void
+     */
+    public function testSaveCreatesNewFileWhenFileDoesNotExist(): void
+    {
+        $testContext = 'test/context/new-file';
+        $testFile = $testContext . '/sri-hashes.json';
+        $this->testDirs[] = $testContext;
+
+        $this->assertFalse($this->staticDir->isFile($testFile));
+
+        $data = ['js/new.js' => 'sha256-NEW'];
+        $result = $this->storage->save($this->serializer->serialize($data), $testContext);
+
+        $this->assertTrue($result);
+        $this->assertTrue($this->staticDir->isFile($testFile));
+        $decoded = $this->serializer->unserialize($this->staticDir->readFile($testFile));
+        $this->assertEquals($data, $decoded);
+    }
+
+    /**
+     * Test save() overwrites a corrupted existing file and returns true.
+     *
+     * InvalidArgumentException from deserializing a corrupt file is caught
+     * inside saveHashesToFile(), which logs a warning and falls back to an
+     * empty array so the new hashes are written cleanly.
+     *
+     * @return void
+     */
+    public function testSaveHandlesCorruptedJsonInExistingFile(): void
+    {
+        $testContext = 'test/context/corrupt-json';
+        $testFile = $testContext . '/sri-hashes.json';
+        $this->testDirs[] = $testContext;
+
+        $this->staticDir->writeFile($testFile, '{broken json [[[}}}');
+
+        $newData = ['js/new.js' => 'sha256-NEW'];
+        $result = $this->storage->save($this->serializer->serialize($newData), $testContext);
+
+        $this->assertTrue($result, 'save() should succeed and overwrite a corrupted existing file');
+        $savedContent = $this->staticDir->readFile($testFile);
+        $this->assertJson($savedContent, 'Overwritten file should contain valid JSON');
+        $decoded = json_decode($savedContent, true);
+        $this->assertArrayHasKey('js/new.js', $decoded, 'New hash should be present after overwrite');
+    }
+
+    /**
+     * Test save() does not write to disk when hashes are unchanged.
+     *
+     * @return void
+     */
+    public function testSaveDoesNotWriteWhenHashesUnchanged(): void
+    {
+        $testContext = 'test/context/no-change';
+        $testFile = $testContext . '/sri-hashes.json';
+        $this->testDirs[] = $testContext;
+
+        $data = ['js/app.js' => 'sha256-ABC'];
+        $this->staticDir->writeFile($testFile, $this->serializer->serialize($data));
+
+        $mtimeBefore = filemtime($this->staticDir->getAbsolutePath($testFile));
+        sleep(1);
+
+        $this->storage->save($this->serializer->serialize($data), $testContext);
+
+        $mtimeAfter = filemtime($this->staticDir->getAbsolutePath($testFile));
+        $this->assertEquals($mtimeBefore, $mtimeAfter, 'File should not be rewritten when hashes are unchanged');
     }
 
     /**
@@ -563,12 +665,158 @@ class FileTest extends TestCase
         $testFile = $testContext . '/sri-hashes.json';
         $this->testDirs[] = $testContext;
 
-        // Create file with invalid JSON that will cause serializer to throw
         $this->staticDir->writeFile($testFile, '{broken json [[[}}}');
 
-        // Should catch InvalidArgumentException in loadHashesFromFile and return null
         $result = $this->storage->load($testContext);
 
         $this->assertNull($result, 'load() should return null when JSON parsing throws InvalidArgumentException');
+    }
+
+    // ========================================================================
+    // DIRECTORY CREATION TEST
+    // ========================================================================
+
+    /**
+     * Test that save() creates the directory if it does not exist.
+     *
+     * @return void
+     */
+    public function testSaveCreatesDirectoryIfNotExists(): void
+    {
+        $testContext = 'test/context/deeply/nested/new/dir';
+        $testFile = $testContext . '/sri-hashes.json';
+        $this->testDirs[] = 'test/context/deeply';
+
+        $this->assertFalse($this->staticDir->isExist($testContext));
+
+        $data = ['js/app.js' => 'sha256-ABC'];
+        $result = $this->storage->save($this->serializer->serialize($data), $testContext);
+
+        $this->assertTrue($result);
+        $this->assertTrue($this->staticDir->isFile($testFile));
+    }
+
+    // ========================================================================
+    // MULTIPLE SEQUENTIAL SAVES TEST
+    // ========================================================================
+
+    /**
+     * Test that multiple sequential saves accumulate all hashes correctly.
+     *
+     * @return void
+     */
+    public function testMultipleSequentialSavesAccumulateHashes(): void
+    {
+        $testContext = 'test/context/sequential';
+        $this->testDirs[] = $testContext;
+
+        $this->storage->save($this->serializer->serialize(['js/first.js' => 'sha256-FIRST']), $testContext);
+        $this->storage->save($this->serializer->serialize(['js/second.js' => 'sha256-SECOND']), $testContext);
+        $this->storage->save($this->serializer->serialize(['js/third.js' => 'sha256-THIRD']), $testContext);
+
+        $result = $this->storage->load($testContext);
+        $this->assertNotNull($result);
+
+        $decoded = $this->serializer->unserialize($result);
+        $this->assertArrayHasKey('js/first.js', $decoded);
+        $this->assertArrayHasKey('js/second.js', $decoded);
+        $this->assertArrayHasKey('js/third.js', $decoded);
+    }
+
+    // ========================================================================
+    // isMergedFilePath() TESTS
+    // ========================================================================
+
+    /**
+     * Test that paths containing _cache/merged/ are routed to the merged storage file.
+     *
+     * @return void
+     */
+    public function testMergedFilePathRoutesToMergedStorage(): void
+    {
+        $mergedFile = '_cache/merged/sri-hashes.json';
+        $this->testDirs[] = '_cache/merged';
+
+        $data = ['_cache/merged/bundle.js' => 'sha256-MERGED'];
+        $this->storage->save($this->serializer->serialize($data), null);
+
+        $this->assertTrue(
+            $this->staticDir->isFile($mergedFile),
+            'Merged path should be written to _cache/merged/sri-hashes.json'
+        );
+
+        $content = $this->serializer->unserialize($this->staticDir->readFile($mergedFile));
+        $this->assertArrayHasKey('_cache/merged/bundle.js', $content);
+    }
+
+    /**
+     * Test that paths not containing _cache/merged/ are routed to the per-context storage file.
+     *
+     * @return void
+     */
+    public function testNonMergedFilePathRoutesToIndividualStorage(): void
+    {
+        $testContext = 'test/context/routing';
+        $testFile = $testContext . '/sri-hashes.json';
+        $this->testDirs[] = $testContext;
+
+        $data = ['js/app.js' => 'sha256-INDIVIDUAL'];
+        $this->storage->save($this->serializer->serialize($data), $testContext);
+
+        $this->assertTrue(
+            $this->staticDir->isFile($testFile),
+            'Non-merged path should be written to per-context sri-hashes.json'
+        );
+        $this->assertFalse(
+            $this->staticDir->isFile('_cache/merged/sri-hashes.json'),
+            'Non-merged path should not write to merged storage'
+        );
+    }
+
+    // ========================================================================
+    // load() EDGE CASE TESTS
+    // ========================================================================
+
+    /**
+     * Test that load() returns merged hashes when only the merged file exists.
+     *
+     * @return void
+     */
+    public function testLoadReturnsMergedHashesWhenOnlyMergedFileExists(): void
+    {
+        $testContext = 'test/context/merged-only';
+        $mergedFile = '_cache/merged/sri-hashes.json';
+        $this->testDirs[] = $testContext;
+        $this->testDirs[] = '_cache/merged';
+
+        $mergedData = ['_cache/merged/bundle.js' => 'sha256-MERGED'];
+        $this->staticDir->writeFile($mergedFile, $this->serializer->serialize($mergedData));
+
+        $result = $this->storage->load($testContext);
+
+        $this->assertNotNull($result);
+        $decoded = $this->serializer->unserialize($result);
+        $this->assertArrayHasKey('_cache/merged/bundle.js', $decoded);
+    }
+
+    /**
+     * Test that load() returns individual hashes when only the individual file exists.
+     *
+     * @return void
+     */
+    public function testLoadReturnsIndividualHashesWhenOnlyIndividualFileExists(): void
+    {
+        $testContext = 'test/context/individual-only';
+        $testFile = $testContext . '/sri-hashes.json';
+        $this->testDirs[] = $testContext;
+
+        $individualData = ['js/app.js' => 'sha256-INDIVIDUAL'];
+        $this->staticDir->writeFile($testFile, $this->serializer->serialize($individualData));
+
+        $result = $this->storage->load($testContext);
+
+        $this->assertNotNull($result);
+        $decoded = $this->serializer->unserialize($result);
+        $this->assertArrayHasKey('js/app.js', $decoded);
     }
 }

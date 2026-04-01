@@ -22,6 +22,7 @@ use Magento\Deploy\Package\PackageFile;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Directory\ReadInterface;
 use Psr\Log\LoggerInterface;
+use Magento\Framework\View\Asset\Minification;
 
 /**
  * Unit tests for Integrity post-processor
@@ -70,6 +71,11 @@ class IntegrityTest extends TestCase
      */
     private MockObject $directoryMock;
 
+    /**
+     * @var MockObject|Minification
+     */
+    private MockObject $minificationMock;
+
     protected function setUp(): void
     {
         $this->filesystemMock = $this->createMock(Filesystem::class);
@@ -79,6 +85,7 @@ class IntegrityTest extends TestCase
         $this->repositoryPoolMock = $this->createMock(SubresourceIntegrityRepositoryPool::class);
         $this->loggerMock = $this->createMock(LoggerInterface::class);
         $this->directoryMock = $this->createMock(ReadInterface::class);
+        $this->minificationMock = $this->createMock(Minification::class);
 
         $this->filesystemMock->method('getDirectoryRead')->willReturn($this->directoryMock);
 
@@ -88,7 +95,8 @@ class IntegrityTest extends TestCase
             $this->integrityFactoryMock,
             $this->integrityCollectorMock,
             $this->loggerMock,
-            $this->repositoryPoolMock
+            $this->repositoryPoolMock,
+            $this->minificationMock
         );
     }
 

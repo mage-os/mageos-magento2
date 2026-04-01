@@ -131,8 +131,9 @@ class Integrity implements ProcessorInterface
             try {
                 $this->repositoryPool->get($context)->saveBunch($collectedData);
             } catch (\Exception $e) {
-                //phpcs:ignore
-                $this->logger->error('Integrity PostProcessor: Failed saving to ' . $context . ' repository: ' . $e->getMessage());
+                $this->logger->error(
+                    'Integrity PostProcessor: Failed saving to ' . $context . ' repository: ' . $e->getMessage()
+                );
             }
 
             // Clear collector for next package (if any)

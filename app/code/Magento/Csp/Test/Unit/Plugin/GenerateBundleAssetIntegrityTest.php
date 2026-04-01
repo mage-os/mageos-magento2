@@ -116,7 +116,9 @@ class GenerateBundleAssetIntegrityTest extends TestCase
 
         $repository = $this->createMock(SubresourceIntegrityRepository::class);
         $repository->expects($this->once())->method('save')->with($integrity);
-        $this->repositoryPool->expects($this->once())->method('get')->with($area)->willReturn($repository);
+        $this->repositoryPool->expects($this->once())->method('get')
+            ->with($area . '/' . $theme . '/' . $locale)
+            ->willReturn($repository);
 
         $plugin = new GenerateBundleAssetIntegrity(
             $this->hashGenerator,

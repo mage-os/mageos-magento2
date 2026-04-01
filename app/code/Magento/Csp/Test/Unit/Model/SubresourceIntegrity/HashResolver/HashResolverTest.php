@@ -14,6 +14,9 @@ use Magento\Csp\Model\SubresourceIntegrityRepositoryPool;
 use Magento\Csp\Model\SubresourceIntegrityRepository;
 use Magento\Csp\Model\SubresourceIntegrity;
 use Magento\Framework\App\State;
+use Magento\Framework\Filesystem;
+use Magento\Framework\Filesystem\Directory\ReadInterface;
+use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Framework\UrlInterface;
 use Magento\Framework\View\DesignInterface;
 use Magento\Framework\View\Design\ThemeInterface;
@@ -21,6 +24,9 @@ use Psr\Log\LoggerInterface;
 
 /**
  * Unit tests for HashResolver
+ *
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class HashResolverTest extends TestCase
 {
@@ -54,6 +60,16 @@ class HashResolverTest extends TestCase
      */
     private MockObject $loggerMock;
 
+    /**
+     * @var MockObject|Filesystem
+     */
+    private MockObject $filesystemMock;
+
+    /**
+     * @var MockObject|SerializerInterface
+     */
+    private MockObject $serializerMock;
+
     protected function setUp(): void
     {
         $this->repositoryPoolMock = $this->createMock(SubresourceIntegrityRepositoryPool::class);
@@ -61,13 +77,21 @@ class HashResolverTest extends TestCase
         $this->designMock = $this->createMock(DesignInterface::class);
         $this->urlBuilderMock = $this->createMock(UrlInterface::class);
         $this->loggerMock = $this->createMock(LoggerInterface::class);
+        $this->filesystemMock = $this->createMock(Filesystem::class);
+        $this->serializerMock = $this->createMock(SerializerInterface::class);
+
+        $staticDirMock = $this->createMock(ReadInterface::class);
+        $staticDirMock->method('isFile')->willReturn(false);
+        $this->filesystemMock->method('getDirectoryRead')->willReturn($staticDirMock);
 
         $this->resolver = new HashResolver(
             $this->repositoryPoolMock,
             $this->appStateMock,
             $this->designMock,
             $this->urlBuilderMock,
-            $this->loggerMock
+            $this->loggerMock,
+            $this->filesystemMock,
+            $this->serializerMock
         );
     }
 

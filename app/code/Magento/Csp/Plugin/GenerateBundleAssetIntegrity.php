@@ -32,6 +32,8 @@ class GenerateBundleAssetIntegrity
 
     /**
      * @var SubresourceIntegrityCollector
+     * @deprecated Preserved for backward compatibility but no longer used
+     * @see $repositoryPool Used to save integrity hashes directly instead of collecting
      */
     private SubresourceIntegrityCollector $integrityCollector;
 
@@ -97,15 +99,15 @@ class GenerateBundleAssetIntegrity
      */
     public function afterDeploy(Bundle $subject, ?string $result, string $area, string $theme, string $locale)
     {
-        if (PHP_SAPI == 'cli') {
+        if (PHP_SAPI === 'cli') {
             try {
                 $pubStaticDir = $this->filesystem->getDirectoryRead(DirectoryList::STATIC_VIEW);
                 $files = $pubStaticDir->search(
                     $area . "/" . $theme . "/" . $locale . "/" . Bundle::BUNDLE_JS_DIR . "/*.js"
                 );
 
-                // TODO: Update storage mechanism when AC-16113 is merged (different hash context storage)
-                $repository = $this->repositoryPool->get($area);
+                $context = $area . '/' . $theme . '/' . $locale;
+                $repository = $this->repositoryPool->get($context);
 
                 foreach ($files as $file) {
                     try {

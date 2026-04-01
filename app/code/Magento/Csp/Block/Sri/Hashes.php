@@ -86,10 +86,10 @@ class Hashes extends Template
             return $this->serializer->serialize($this->hashResolver->getAllHashes());
         } catch (\Exception $e) {
             // Return empty object on failure - checkout works without SRI
-                $this->logger->warning(
-                    'SRI: Failed to retrieve hashes',
-                    ['exception' => $e->getMessage()]
-                );
+            $this->logger->warning(
+                'SRI: Failed to retrieve hashes',
+                ['exception' => $e->getMessage()]
+            );
             return '{}';
         }
     }
