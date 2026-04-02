@@ -675,7 +675,10 @@ class AbstractAddress extends AbstractExtensibleModel implements AddressModelInt
      */
     protected function unicodeTrim(string $value): string
     {
-        return preg_replace('/^[\s\x{200B}\x{200C}\x{200D}\x{FEFF}]+|[\s\x{200B}\x{200C}\x{200D}\x{FEFF}]+$/u', '', $value) ?? $value;
+        $pattern = '/^[\s\x{200B}\x{200C}\x{200D}\x{FEFF}]+'
+            . '|[\s\x{200B}\x{200C}\x{200D}\x{FEFF}]+$/u';
+
+        return preg_replace($pattern, '', $value) ?? $value;
     }
 
     /**
