@@ -667,14 +667,15 @@ class AbstractAddress extends AbstractExtensibleModel implements AddressModelInt
      * Trim ASCII and Unicode whitespace from both ends of a string
      *
      * Handles non-breaking spaces (U+00A0), zero-width spaces (U+200B),
-     * and other Unicode whitespace that PHP's trim() does not strip.
+     * zero-width joiners/non-joiners, byte order marks, and other
+     * Unicode whitespace that PHP's trim() does not strip.
      *
      * @param string $value
      * @return string
      */
     protected function unicodeTrim(string $value): string
     {
-        return preg_replace('/^\s+|\s+$/u', '', $value) ?? $value;
+        return preg_replace('/^[\s\x{200B}\x{200C}\x{200D}\x{FEFF}]+|[\s\x{200B}\x{200C}\x{200D}\x{FEFF}]+$/u', '', $value) ?? $value;
     }
 
     /**

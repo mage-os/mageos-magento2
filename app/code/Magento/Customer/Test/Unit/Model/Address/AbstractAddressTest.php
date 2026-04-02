@@ -81,7 +81,7 @@ class AbstractAddressTest extends TestCase
 
     protected function setUp(): void
     {
-        $eventManagerMock = $this->getMockForAbstractClass(\Magento\Framework\Event\ManagerInterface::class);
+        $eventManagerMock = $this->createMock(\Magento\Framework\Event\ManagerInterface::class);
         $this->contextMock = $this->createMock(Context::class);
         $this->contextMock->method('getEventDispatcher')->willReturn($eventManagerMock);
         $this->registryMock = $this->createMock(Registry::class);
