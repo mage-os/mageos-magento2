@@ -33,7 +33,7 @@ use PHPUnit\Framework\TestCase;
  *
  * @magentoAppArea frontend
  * @magentoAppIsolation enabled
- * @magentoComponentsDir Magento/Csp/_files/SriTestModule
+ * @magentoComponentsDir Magento/Csp/_modules
  * @magentoConfigFixture current_store general/locale/code en_US
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.StaticAccess)
@@ -188,11 +188,10 @@ class SriHeadRendererIntegrationTest extends TestCase
         // This guards against the degenerate case where two separate <script> tags each
         // satisfy one assertion but neither tag has both attributes.
         $this->assertMatchesRegularExpression(
-            '/<script\b[^>]*\bintegrity="' . preg_quote(self::TEST_HASH, '/') . '"[^>]*'
-            . '\bsrc="[^"]*' . preg_quote(self::CUSTOM_JS_FILENAME, '/') . '[^"]*"[^>]*>/'
-            . '|'
-            . '/<script\b[^>]*\bsrc="[^"]*' . preg_quote(self::CUSTOM_JS_FILENAME, '/') . '[^"]*"[^>]*'
-            . '\bintegrity="' . preg_quote(self::TEST_HASH, '/') . '"[^>]*>/',
+            '/(?:<script\b[^>]*\bintegrity="' . preg_quote(self::TEST_HASH, '/') . '"[^>]*'
+            . '\bsrc="[^"]*' . preg_quote(self::CUSTOM_JS_FILENAME, '/') . '[^"]*"[^>]*>'
+            . '|<script\b[^>]*\bsrc="[^"]*' . preg_quote(self::CUSTOM_JS_FILENAME, '/') . '[^"]*"[^>]*'
+            . '\bintegrity="' . preg_quote(self::TEST_HASH, '/') . '"[^>]*>)/',
             $html,
             sprintf(
                 'The integrity attribute and the src for "%s" must appear on the same <script> tag.',

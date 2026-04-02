@@ -16,8 +16,10 @@ use Magento\Framework\App\State;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Directory\WriteInterface;
 use Magento\Framework\Filesystem\Glob;
+use Magento\Framework\Module\ModuleList;
 use Magento\TestFramework\Helper\Bootstrap;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 /**
  * Verifies that a custom module's JS file has its SRI hash computed at deploy time
@@ -26,7 +28,7 @@ use PHPUnit\Framework\TestCase;
  *
  * @magentoAppArea frontend
  * @magentoAppIsolation enabled
- * @magentoComponentsDir Magento/Csp/_files/SriTestModule
+ * @magentoComponentsDir Magento/Csp/_modules
  * @magentoDataFixture Magento/Deploy/_files/theme.php
  * @group slow
  * @group sri_deployment
@@ -56,11 +58,36 @@ class SriCustomModuleJsIntegrityTest extends TestCase
     private string $prevMode;
 
     /**
+     * Saved ModuleList::$configData before test module injection, for tearDown restore.
+     *
+     * @var array|null
+     */
+    private ?array $originalModuleConfigData = null;
+
+    /**
+     * Inject the test module into ModuleList so Deploy\Collector::isEnabled() returns true.
+     *
+     * The Collector skips module files when the module is absent from the enabled list even
+     * when ComponentRegistrar knows about it. ModuleList::has() checks $configData (loaded
+     * lazily from DeploymentConfig), so we load that data first, then add the module to it
+     * via reflection. @magentoAppIsolation resets the DI container between tests, so the
+     * fresh ModuleList each test starts from does not retain modifications from prior tests.
+     *
      * @inheritdoc
      */
     protected function setUp(): void
     {
         $objectManager = Bootstrap::getObjectManager();
+
+        $moduleList = $objectManager->get(ModuleList::class);
+        // Trigger lazy load of $configData before we read it.
+        $moduleList->has(self::MODULE_NAME);
+        $reflection     = new ReflectionClass($moduleList);
+        $configDataProp = $reflection->getProperty('configData');
+        $configData     = $configDataProp->getValue($moduleList) ?? [];
+        $this->originalModuleConfigData = $configData;
+        $configData[self::MODULE_NAME]  = 1;
+        $configDataProp->setValue($moduleList, $configData);
 
         $this->prevMode = $objectManager->get(State::class)->getMode();
         $objectManager->get(State::class)->setMode(State::MODE_PRODUCTION);
@@ -78,6 +105,15 @@ class SriCustomModuleJsIntegrityTest extends TestCase
     protected function tearDown(): void
     {
         $objectManager = Bootstrap::getObjectManager();
+
+        if ($this->originalModuleConfigData !== null) {
+            $moduleList     = $objectManager->get(ModuleList::class);
+            $reflection     = new ReflectionClass($moduleList);
+            $configDataProp = $reflection->getProperty('configData');
+            $configDataProp->setValue($moduleList, $this->originalModuleConfigData);
+            $this->originalModuleConfigData = null;
+        }
+
         $objectManager->get(State::class)->setMode($this->prevMode);
 
         $this->filesystem->getDirectoryWrite(DirectoryList::PUB)->delete(DirectoryList::STATIC_VIEW);
@@ -94,7 +130,7 @@ class SriCustomModuleJsIntegrityTest extends TestCase
     public function testCustomModuleJsHashIsStoredOnStandardDeploy(): void
     {
         $this->runDeploy(DeployStrategyFactory::DEPLOY_STRATEGY_STANDARD);
-        $this->assertCustomJsHashInSriFile('base/Magento/base/en_US/' . self::SRI_FILENAME);
+        $this->assertCustomJsHashInSriFile('frontend/Magento/zoom1/en_US/' . self::SRI_FILENAME);
     }
 
     /**
@@ -108,9 +144,10 @@ class SriCustomModuleJsIntegrityTest extends TestCase
 
         // Compact deploys shared assets to base/default packages
         $sriFileCandidates = [
-            'base/Magento/base/default/' . self::SRI_FILENAME,
+            'frontend/Magento/zoom1/en_US/' . self::SRI_FILENAME,
+            'frontend/Magento/zoom1/default/' . self::SRI_FILENAME,
             'frontend/Magento/base/default/' . self::SRI_FILENAME,
-            'base/Magento/base/en_US/' . self::SRI_FILENAME,
+            'base/Magento/base/default/' . self::SRI_FILENAME,
         ];
 
         $found = false;
@@ -127,7 +164,8 @@ class SriCustomModuleJsIntegrityTest extends TestCase
         $this->assertTrue(
             $found,
             sprintf(
-                'Custom module JS "%s" hash must appear in at least one sri-hashes.json under compact deploy base packages',
+                'Custom module JS "%s" hash must appear in at least one sri-hashes.json'
+                . ' under compact deploy base packages',
                 self::CUSTOM_JS_PATH
             )
         );
@@ -197,7 +235,7 @@ class SriCustomModuleJsIntegrityTest extends TestCase
     {
         $this->runDeploy(DeployStrategyFactory::DEPLOY_STRATEGY_STANDARD);
 
-        $sriFilePath = 'base/Magento/base/en_US/' . self::SRI_FILENAME;
+        $sriFilePath = 'frontend/Magento/zoom1/en_US/' . self::SRI_FILENAME;
 
         if (!$this->staticDir->isExist($sriFilePath)) {
             $this->markTestSkipped("SRI file not found at {$sriFilePath} after standard deploy");
@@ -212,7 +250,7 @@ class SriCustomModuleJsIntegrityTest extends TestCase
         );
 
         $storedHash   = $data[$storedPath];
-        $deployedFile = 'base/Magento/base/en_US/' . $storedPath;
+        $deployedFile = $storedPath;
 
         $this->assertTrue(
             $this->staticDir->isExist($deployedFile),
