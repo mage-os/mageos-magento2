@@ -8,9 +8,10 @@ declare(strict_types=1);
 namespace Magento\Checkout\Model;
 
 use Magento\Checkout\Api\PaymentInformationManagementInterface;
-use Magento\Customer\Api\AddressRepositoryInterface;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\App\ResourceConnection;
+use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\Data\AddressInterfaceFactory;
 use Magento\Quote\Api\Data\PaymentInterface;
 use Magento\TestFramework\Helper\Bootstrap;
@@ -52,9 +53,14 @@ class PaymentInformationManagementTest extends TestCase
     private $customerRepository;
 
     /**
-     * @var AddressRepositoryInterface
+     * @var CartRepositoryInterface|mixed
      */
-    private $addressRepository;
+    private CartRepositoryInterface $quoteRepository;
+
+    /**
+     * @var ResourceConnection|mixed
+     */
+    private ResourceConnection $resourceConnection;
 
     /**
      * @inheritdoc
@@ -75,9 +81,8 @@ class PaymentInformationManagementTest extends TestCase
         $this->customerRepository = $objectManager->get(
             CustomerRepositoryInterface::class
         );
-        $this->addressRepository = $objectManager->get(
-            AddressRepositoryInterface::class
-        );
+        $this->quoteRepository = $objectManager->get(CartRepositoryInterface::class);
+        $this->resourceConnection = $objectManager->get(ResourceConnection::class);
     }
 
     /**
@@ -120,16 +125,34 @@ class PaymentInformationManagementTest extends TestCase
             $otherAddress->getId()
         );
 
-        $this->expectException(NoSuchEntityException::class);
-        $this->expectExceptionMessage(
-            'Invalid customer address id'
-        );
-
-        $this->paymentManagement
-            ->savePaymentInformationAndPlaceOrder(
+        try {
+            $this->paymentManagement->savePaymentInformationAndPlaceOrder(
                 $quote->getId(),
                 $this->payment,
                 $billingAddress
             );
+            $this->fail('NoSuchEntityException was expected.');
+        } catch (NoSuchEntityException $exception) {
+            $this->assertStringContainsString('Invalid customer address id', $exception->getMessage());
+        }
+
+        $this->assertEquals(0, $this->getOrderCountByQuoteId((int)$quote->getId()));
+        $this->assertTrue((bool)$this->quoteRepository->get($quote->getId())->getIsActive());
+    }
+
+    /**
+     * Returns the number of orders created for a quote.
+     *
+     * @param int $quoteId
+     * @return int
+     */
+    private function getOrderCountByQuoteId(int $quoteId): int
+    {
+        $connection = $this->resourceConnection->getConnection();
+        $select = $connection->select()
+            ->from($this->resourceConnection->getTableName('sales_order'), 'COUNT(*)')
+            ->where('quote_id = ?', $quoteId);
+
+        return (int)$connection->fetchOne($select);
     }
 }
