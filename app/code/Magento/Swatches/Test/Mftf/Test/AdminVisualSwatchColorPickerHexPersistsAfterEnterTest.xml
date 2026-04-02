@@ -12,42 +12,108 @@
         <annotations>
             <features value="Swatches"/>
             <stories value="Admin visual swatch color picker"/>
-            <title value="HEX remains in color picker # field after Enter on visual swatch"/>
-            <description value="Type HEX with pressKey (not fillField). Simulate Enter on the hex field, then click the picker OK control so the swatch hidden value updates (core onSubmit); reopen Choose a color and assert # shows cd0010."/>
+            <title value="HEX remains in color picker # field after Enter for multiple swatch rows"/>
+            <description value="Verify that HEX stays in color picker after pressing Enter and OK, and is asserted as lowercase."/>
             <severity value="MAJOR"/>
+            <testCaseId value="ACP2E-3559"/>
             <group value="Swatches"/>
         </annotations>
         <before>
             <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
         </before>
         <after>
+            <!-- Delete the visual swatch attribute -->
             <actionGroup ref="DeleteProductAttributeByAttributeCodeActionGroup" stepKey="deleteProductAttribute"/>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
         </after>
+        <!-- Open the product attribute page -->
         <actionGroup ref="AdminOpenProductAttributePageActionGroup" stepKey="goToProductAttributes"/>
         <actionGroup ref="AdminCreateProductAttributeWithSaveAndEditActionGroup" stepKey="createVisualSwatchAttribute">
             <argument name="attribute" value="VisualSwatchProductAttributeForm"/>
         </actionGroup>
-
-        <actionGroup ref="AdminClickAddVisualSwatchButtonActionGroup" stepKey="clickAddVisualSwatch"/>
-        <actionGroup ref="OpenSwatchMenuByIndexActionGroup" stepKey="openSwatchMenuForColorPicker">
+        <!-- Swatch row 1: CD0010 -->
+        <actionGroup ref="AdminAddEmptyVisualSwatchActionGroup" stepKey="addVisualSwatchRow1">
+            <argument name="swatchType" value="HexPersist1"/>
+            <argument name="adminInputByIndex" value="0"/>
+        </actionGroup>
+        <!-- Open the swatch menu -->
+        <actionGroup ref="OpenSwatchMenuByIndexActionGroup" stepKey="openSwatchMenuRow1">
             <argument name="index" value="0"/>
         </actionGroup>
-        <waitForElementClickable selector="{{AdminManageSwatchSection.nthChooseColor('1')}}" stepKey="waitForChooseColorMenuItem"/>
-        <click selector="{{AdminManageSwatchSection.nthChooseColor('1')}}" stepKey="clickChooseColorInSwatchMenu"/>
-        <waitForElementVisible selector="{{AdminColorPickerSection.hexByIndex('1')}}" stepKey="waitForColorPickerHexInput"/>
-        <actionGroup ref="SetColorPickerHexWithEnterActionGroup" stepKey="enterHexAndPressEnter">
+        <!-- Wait for the choose color menu item to be clickable -->
+        <waitForElementClickable selector="{{AdminManageSwatchSection.nthChooseColor('1')}}" stepKey="waitChooseColorRow1"/>
+        <click selector="{{AdminManageSwatchSection.nthChooseColor('1')}}" stepKey="clickChooseColorRow1"/>
+        <!-- Wait for the hex input field to be visible -->
+        <waitForElementVisible selector="{{AdminColorPickerSection.hexByIndex('1')}}" stepKey="waitHexInputRow1"/>
+        <!-- Enter the hex value -->
+        <actionGroup ref="SetColorPickerHexWithEnterActionGroup" stepKey="enterHexRow1">
             <argument name="nthColorPicker" value="1"/>
             <argument name="hexColor" value="CD0010"/>
         </actionGroup>
-        <!-- OK applies HEX to swatch hidden input; onShow on second open reads that value (Enter alone does not call onSubmit in jquery.colorpicker). -->
-        <click selector="{{AdminColorPickerSection.submitByIndex('1')}}" stepKey="clickColorPickerOkToPersistHex"/>
-        <actionGroup ref="OpenSwatchMenuByIndexActionGroup" stepKey="reopenSwatchMenuAfterEnter">
+        <!-- Click the submit button -->
+        <waitForElementClickable selector="{{AdminColorPickerSection.submitByIndex('1')}}" stepKey="waitColorPickerOkRow1"/>
+        <click selector="{{AdminColorPickerSection.submitByIndex('1')}}" stepKey="clickColorPickerOkRow1"/>
+        <!-- Open the swatch menu again -->
+        <actionGroup ref="OpenSwatchMenuByIndexActionGroup" stepKey="reopenSwatchMenuRow1">
             <argument name="index" value="0"/>
         </actionGroup>
-        <waitForElementClickable selector="{{AdminManageSwatchSection.nthChooseColor('1')}}" stepKey="waitChooseColorAfterReopen"/>
-        <click selector="{{AdminManageSwatchSection.nthChooseColor('1')}}" stepKey="clickChooseColorSecondTime"/>
-        <waitForElementVisible selector="{{AdminColorPickerSection.hexInLastColorPicker}}" stepKey="waitHexFieldAfterReopenChooseColor"/>
-        <seeInField selector="{{AdminColorPickerSection.hexInLastColorPicker}}" userInput="cd0010" stepKey="assertHexInFieldAfterReopenChooseColor"/>
+        <waitForElementClickable selector="{{AdminManageSwatchSection.nthChooseColor('1')}}" stepKey="waitChooseColorReopenRow1"/>
+        <click selector="{{AdminManageSwatchSection.nthChooseColor('1')}}" stepKey="clickChooseColorSecondTimeRow1"/>
+        <waitForElementVisible selector="{{AdminColorPickerSection.hexInLastColorPicker}}" stepKey="waitHexAfterReopenRow1"/>
+        <!-- Assert the hex value -->
+        <seeInField selector="{{AdminColorPickerSection.hexInLastColorPicker}}" userInput="cd0010" stepKey="assertHexCd0010AfterReopen"/>
+        <!-- Swatch row 2: CD0012 -->
+        <!-- Add an empty visual swatch -->
+        <actionGroup ref="AdminAddEmptyVisualSwatchActionGroup" stepKey="addVisualSwatchRow2">
+            <argument name="swatchType" value="HexPersist2"/>
+            <argument name="adminInputByIndex" value="1"/>
+        </actionGroup>
+        <!-- Open the swatch menu -->
+        <actionGroup ref="OpenSwatchMenuByIndexActionGroup" stepKey="openSwatchMenuRow2">
+            <argument name="index" value="1"/>
+        </actionGroup>
+        <!-- Wait for the choose color menu item to be clickable -->
+        <waitForElementClickable selector="{{AdminManageSwatchSection.nthChooseColor('2')}}" stepKey="waitChooseColorRow2"/>
+        <click selector="{{AdminManageSwatchSection.nthChooseColor('2')}}" stepKey="clickChooseColorRow2"/>
+        <waitForElementVisible selector="{{AdminColorPickerSection.hexByIndex('2')}}" stepKey="waitHexInputRow2"/>
+        <actionGroup ref="SetColorPickerHexWithEnterActionGroup" stepKey="enterHexRow2">
+            <argument name="nthColorPicker" value="2"/>
+            <argument name="hexColor" value="CD0012"/>
+        </actionGroup>
+        <waitForElementClickable selector="{{AdminColorPickerSection.submitByIndex('2')}}" stepKey="waitColorPickerOkRow2"/>
+        <click selector="{{AdminColorPickerSection.submitByIndex('2')}}" stepKey="clickColorPickerOkRow2"/>
+        <actionGroup ref="OpenSwatchMenuByIndexActionGroup" stepKey="reopenSwatchMenuRow2">
+            <argument name="index" value="1"/>
+        </actionGroup>
+        <waitForElementClickable selector="{{AdminManageSwatchSection.nthChooseColor('2')}}" stepKey="waitChooseColorReopenRow2"/>
+        <click selector="{{AdminManageSwatchSection.nthChooseColor('2')}}" stepKey="clickChooseColorSecondTimeRow2"/>
+        <waitForElementVisible selector="{{AdminColorPickerSection.hexInLastColorPicker}}" stepKey="waitHexAfterReopenRow2"/>
+        <!-- Assert the hex value -->
+        <seeInField selector="{{AdminColorPickerSection.hexInLastColorPicker}}" userInput="cd0012" stepKey="assertHexCd0012AfterReopen"/>
+        <!-- Swatch row 3: CD0013 -->
+        <actionGroup ref="AdminAddEmptyVisualSwatchActionGroup" stepKey="addVisualSwatchRow3">
+            <argument name="swatchType" value="HexPersist3"/>
+            <argument name="adminInputByIndex" value="2"/>
+        </actionGroup>
+        <actionGroup ref="OpenSwatchMenuByIndexActionGroup" stepKey="openSwatchMenuRow3">
+            <argument name="index" value="2"/>
+        </actionGroup>
+        <waitForElementClickable selector="{{AdminManageSwatchSection.nthChooseColor('3')}}" stepKey="waitChooseColorRow3"/>
+        <click selector="{{AdminManageSwatchSection.nthChooseColor('3')}}" stepKey="clickChooseColorRow3"/>
+        <waitForElementVisible selector="{{AdminColorPickerSection.hexByIndex('3')}}" stepKey="waitHexInputRow3"/>
+        <actionGroup ref="SetColorPickerHexWithEnterActionGroup" stepKey="enterHexRow3">
+            <argument name="nthColorPicker" value="3"/>
+            <argument name="hexColor" value="CD0013"/>
+        </actionGroup>
+        <waitForElementClickable selector="{{AdminColorPickerSection.submitByIndex('3')}}" stepKey="waitColorPickerOkRow3"/>
+        <click selector="{{AdminColorPickerSection.submitByIndex('3')}}" stepKey="clickColorPickerOkRow3"/>
+        <actionGroup ref="OpenSwatchMenuByIndexActionGroup" stepKey="reopenSwatchMenuRow3">
+            <argument name="index" value="2"/>
+        </actionGroup>
+        <waitForElementClickable selector="{{AdminManageSwatchSection.nthChooseColor('3')}}" stepKey="waitChooseColorReopenRow3"/>
+        <click selector="{{AdminManageSwatchSection.nthChooseColor('3')}}" stepKey="clickChooseColorSecondTimeRow3"/>
+        <waitForElementVisible selector="{{AdminColorPickerSection.hexInLastColorPicker}}" stepKey="waitHexAfterReopenRow3"/>
+        <!-- Assert the hex value -->
+        <seeInField selector="{{AdminColorPickerSection.hexInLastColorPicker}}" userInput="cd0013" stepKey="assertHexCd0013AfterReopen"/>
     </test>
 </tests>
