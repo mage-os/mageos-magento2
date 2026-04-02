@@ -42,11 +42,11 @@ use Magento\TestFramework\ObjectManager;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Integration coverage for AC-9286 / MFTF AdminAssertShippingLabelForVirtualProductTest.
+ * Integration test for FedEx shipping label generation with a mixed cart (simple + virtual + configurable).
  *
- * Mirrors the extended AdminCreatingShippingLabelTest flow with a mixed cart (simple + virtual + configurable).
- * Asserts shipment contains only shippable lines: virtual order items are excluded (same rule as admin
- * packaging grid), while simple and configurable physical lines are present.
+ * Validates that when creating a shipment for FedEx, virtual items are properly excluded from the
+ * shipment, matching the admin packaging grid behavior, while physical items (simple and configurable)
+ * are included and available for shipping.
  *
  * @magentoAppIsolation enabled
  * @magentoDbIsolation enabled
