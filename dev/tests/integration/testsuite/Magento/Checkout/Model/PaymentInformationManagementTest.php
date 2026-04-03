@@ -7,152 +7,148 @@ declare(strict_types=1);
 
 namespace Magento\Checkout\Model;
 
+use Magento\Catalog\Test\Fixture\Product as ProductFixture;
 use Magento\Checkout\Api\PaymentInformationManagementInterface;
-use Magento\Customer\Api\CustomerRepositoryInterface;
+use Magento\Checkout\Test\Fixture\SetBillingAddress as SetBillingAddressFixture;
+use Magento\Checkout\Test\Fixture\SetDeliveryMethod as SetDeliveryMethodFixture;
+use Magento\Checkout\Test\Fixture\SetPaymentMethod as SetPaymentMethodFixture;
+use Magento\Checkout\Test\Fixture\SetShippingAddress as SetShippingAddressFixture;
+use Magento\Customer\Test\Fixture\Customer as CustomerFixture;
 use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Framework\App\ResourceConnection;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\Data\AddressInterfaceFactory;
 use Magento\Quote\Api\Data\PaymentInterface;
+use Magento\Quote\Test\Fixture\AddProductToCart as AddProductToCartFixture;
+use Magento\Quote\Test\Fixture\CustomerCart as CustomerCartFixture;
+use Magento\TestFramework\Fixture\DataFixture;
+use Magento\TestFramework\Fixture\DataFixtureStorage;
+use Magento\TestFramework\Fixture\DataFixtureStorageManager;
 use Magento\TestFramework\Helper\Bootstrap;
-use Magento\TestFramework\Quote\Model\GetQuoteByReservedOrderId;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Integration test for billing address ownership validation
- * during payment information save.
- *
- * @magentoDbIsolation enabled
- * @magentoAppIsolation enabled
+ * Verifies that checkout rejects billing addresses belonging to other customers.
+ * @suppressWarning(PHPMD.CouplingBetweenObjects)
  */
+#[
+    DataFixture(
+        CustomerFixture::class,
+        ['email' => 'owner_customer@example.com'],
+        as: 'owner_customer'
+    ),
+    DataFixture(
+        CustomerFixture::class,
+        ['email' => 'other_customer@example.com', 'addresses' => [[]]],
+        as: 'other_customer'
+    ),
+    DataFixture(ProductFixture::class, as: 'product'),
+    DataFixture(
+        CustomerCartFixture::class,
+        ['customer_id' => '$owner_customer.id$'],
+        as: 'cart'
+    ),
+    DataFixture(
+        AddProductToCartFixture::class,
+        ['cart_id' => '$cart.id$', 'product_id' => '$product.id$']
+    ),
+    DataFixture(SetBillingAddressFixture::class, ['cart_id' => '$cart.id$']),
+    DataFixture(SetShippingAddressFixture::class, ['cart_id' => '$cart.id$']),
+    DataFixture(SetDeliveryMethodFixture::class, ['cart_id' => '$cart.id$']),
+    DataFixture(
+        SetPaymentMethodFixture::class,
+        ['cart_id' => '$cart.id$', 'method' => 'checkmo']
+    )
+]
 class PaymentInformationManagementTest extends TestCase
 {
     /**
      * @var PaymentInformationManagementInterface
      */
-    private $paymentManagement;
-
-    /**
-     * @var GetQuoteByReservedOrderId
-     */
-    private $getQuoteByReservedOrderId;
-
-    /**
-     * @var PaymentInterface
-     */
-    private $payment;
+    private PaymentInformationManagementInterface $paymentManagement;
 
     /**
      * @var AddressInterfaceFactory
      */
-    private $addressFactory;
+    private AddressInterfaceFactory $addressFactory;
 
     /**
-     * @var CustomerRepositoryInterface
-     */
-    private $customerRepository;
-
-    /**
-     * @var CartRepositoryInterface|mixed
+     * @var CartRepositoryInterface
      */
     private CartRepositoryInterface $quoteRepository;
 
     /**
-     * @var ResourceConnection|mixed
+     * @var DataFixtureStorage
      */
-    private ResourceConnection $resourceConnection;
+    private DataFixtureStorage $fixtures;
 
-    /**
-     * @inheritdoc
-     */
     protected function setUp(): void
     {
         $objectManager = Bootstrap::getObjectManager();
         $this->paymentManagement = $objectManager->get(
             PaymentInformationManagementInterface::class
         );
-        $this->getQuoteByReservedOrderId = $objectManager->get(
-            GetQuoteByReservedOrderId::class
-        );
-        $this->payment = $objectManager->get(PaymentInterface::class);
         $this->addressFactory = $objectManager->get(
             AddressInterfaceFactory::class
         );
-        $this->customerRepository = $objectManager->get(
-            CustomerRepositoryInterface::class
+        $this->quoteRepository = $objectManager->get(
+            CartRepositoryInterface::class
         );
-        $this->quoteRepository = $objectManager->get(CartRepositoryInterface::class);
-        $this->resourceConnection = $objectManager->get(ResourceConnection::class);
+        $this->fixtures = DataFixtureStorageManager::getStorage();
     }
 
-    /**
-     * Verify that order placement is rejected when billing
-     * address has a customerAddressId that does not belong
-     * to the quote's customer.
-     *
-     * @magentoDataFixture Magento/Sales/_files/quote_with_customer.php
-     * @magentoDataFixture Magento/Customer/_files/customer_with_addresses.php
-     * @magentoDbIsolation disabled
-     */
-    public function testRejectsInvalidCustomerAddressId(): void
+    public function testRejectsInvalidCustomerAddressIdInRequestPayload(): void
     {
-        $quote = $this->getQuoteByReservedOrderId->execute('test01');
-        $quote->getShippingAddress()
-            ->setShippingMethod('flatrate_flatrate')
-            ->setCollectShippingRates(true);
-        $this->payment->setMethod('checkmo');
-        $quote->save();
-
-        // Get an address that belongs to a different customer
-        $otherCustomer = $this->customerRepository->get(
-            'customer_with_addresses@test.com'
+        $cartId = (int)$this->fixtures->get('cart')->getId();
+        $otherAddressId = $this->getFirstAddressIdFromFixtureCustomer(
+            'other_customer'
         );
-        $otherCustomerAddresses = $otherCustomer->getAddresses();
-        $otherAddress = reset($otherCustomerAddresses);
 
-        // Build billing address with the other customer's
-        // address ID
         $billingAddress = $this->addressFactory->create();
-        $billingAddress->setFirstname('John');
-        $billingAddress->setLastname('Smith');
-        $billingAddress->setCity('CityM');
-        $billingAddress->setCountryId('US');
-        $billingAddress->setPostcode('75477');
-        $billingAddress->setTelephone('3468676');
-        $billingAddress->setStreet(['Green str, 67']);
-        $billingAddress->setRegionId(1);
-        $billingAddress->setCustomerAddressId(
-            $otherAddress->getId()
-        );
+        $billingAddress->setCustomerAddressId($otherAddressId);
+
+        $payment = $this->createPayment();
 
         try {
             $this->paymentManagement->savePaymentInformationAndPlaceOrder(
-                $quote->getId(),
-                $this->payment,
+                $cartId,
+                $payment,
                 $billingAddress
             );
             $this->fail('NoSuchEntityException was expected.');
         } catch (NoSuchEntityException $exception) {
-            $this->assertStringContainsString('Invalid customer address id', $exception->getMessage());
+            $this->assertStringContainsString(
+                'Invalid customer address id',
+                $exception->getMessage()
+            );
         }
 
-        $this->assertEquals(0, $this->getOrderCountByQuoteId((int)$quote->getId()));
-        $this->assertTrue((bool)$this->quoteRepository->get($quote->getId())->getIsActive());
+        $this->assertTrue(
+            (bool)$this->quoteRepository->get($cartId)->getIsActive(),
+            'Quote should remain active after rejected payment.'
+        );
     }
 
-    /**
-     * Returns the number of orders created for a quote.
-     *
-     * @param int $quoteId
-     * @return int
-     */
-    private function getOrderCountByQuoteId(int $quoteId): int
+    private function createPayment(): PaymentInterface
     {
-        $connection = $this->resourceConnection->getConnection();
-        $select = $connection->select()
-            ->from($this->resourceConnection->getTableName('sales_order'), 'COUNT(*)')
-            ->where('quote_id = ?', $quoteId);
+        $payment = Bootstrap::getObjectManager()->create(
+            PaymentInterface::class
+        );
+        $payment->setMethod('checkmo');
+        return $payment;
+    }
 
-        return (int)$connection->fetchOne($select);
+    private function getFirstAddressIdFromFixtureCustomer(
+        string $fixtureKey
+    ): int {
+        $customer = $this->fixtures->get($fixtureKey);
+        $addresses = $customer->getAddresses();
+        $address = reset($addresses);
+
+        $this->assertNotFalse(
+            $address,
+            'Expected fixture customer to have at least one address.'
+        );
+
+        return (int)$address->getId();
     }
 }
