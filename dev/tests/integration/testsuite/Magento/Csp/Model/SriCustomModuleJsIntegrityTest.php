@@ -15,8 +15,11 @@ use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\App\State;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Directory\WriteInterface;
+use Magento\Framework\App\Utility\Files as UtilityFiles;
+use Magento\Framework\Component\ComponentRegistrar;
 use Magento\Framework\Filesystem\Glob;
 use Magento\Framework\Module\ModuleList;
+use Magento\Framework\ObjectManagerInterface;
 use Magento\TestFramework\Helper\Bootstrap;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
@@ -37,9 +40,16 @@ use ReflectionClass;
  */
 class SriCustomModuleJsIntegrityTest extends TestCase
 {
+    /** @var string SRI hash manifest written by the deploy process. */
     private const SRI_FILENAME = 'sri-hashes.json';
+
+    /** @var string Module name as registered in ComponentRegistrar and ModuleList. */
     private const MODULE_NAME = 'Magento_SriTestModule';
+
+    /** @var string Basename of the JS asset deployed by the test module. */
     private const CUSTOM_JS_FILENAME = 'sri-test-widget.js';
+
+    /** @var string Require.js path used to load the JS asset. */
     private const CUSTOM_JS_PATH = 'Magento_SriTestModule/js/sri-test-widget.js';
 
     /**
@@ -65,36 +75,24 @@ class SriCustomModuleJsIntegrityTest extends TestCase
     private ?array $originalModuleConfigData = null;
 
     /**
-     * Inject the test module into ModuleList so Deploy\Collector::isEnabled() returns true.
+     * Whether setUp() registered the test module in ComponentRegistrar (needs tearDown cleanup).
      *
-     * The Collector skips module files when the module is absent from the enabled list even
-     * when ComponentRegistrar knows about it. ModuleList::has() checks $configData (loaded
-     * lazily from DeploymentConfig), so we load that data first, then add the module to it
-     * via reflection. @magentoAppIsolation resets the DI container between tests, so the
-     * fresh ModuleList each test starts from does not retain modifications from prior tests.
-     *
+     * @var bool
+     */
+    private bool $registeredTestModule = false;
+
+    /**
      * @inheritdoc
      */
     protected function setUp(): void
     {
         $objectManager = Bootstrap::getObjectManager();
-
-        $moduleList = $objectManager->get(ModuleList::class);
-        // Trigger lazy load of $configData before we read it.
-        $moduleList->has(self::MODULE_NAME);
-        $reflection     = new ReflectionClass($moduleList);
-        $configDataProp = $reflection->getProperty('configData');
-        $configData     = $configDataProp->getValue($moduleList) ?? [];
-        $this->originalModuleConfigData = $configData;
-        $configData[self::MODULE_NAME]  = 1;
-        $configDataProp->setValue($moduleList, $configData);
-
-        $this->prevMode = $objectManager->get(State::class)->getMode();
-        $objectManager->get(State::class)->setMode(State::MODE_PRODUCTION);
-
+        $this->injectModuleIntoModuleList($objectManager);
+        $this->ensureModuleInComponentRegistrar();
+        $this->clearStaticFilesCache();
+        $this->initAppState($objectManager);
         $this->filesystem = $objectManager->get(Filesystem::class);
         $this->staticDir  = $this->filesystem->getDirectoryWrite(DirectoryList::STATIC_VIEW);
-
         $this->filesystem->getDirectoryWrite(DirectoryList::PUB)->delete(DirectoryList::STATIC_VIEW);
         $this->filesystem->getDirectoryWrite(DirectoryList::VAR_DIR)->delete(DirectoryList::TMP_MATERIALIZATION_DIR);
     }
@@ -105,20 +103,11 @@ class SriCustomModuleJsIntegrityTest extends TestCase
     protected function tearDown(): void
     {
         $objectManager = Bootstrap::getObjectManager();
-
-        if ($this->originalModuleConfigData !== null) {
-            $moduleList     = $objectManager->get(ModuleList::class);
-            $reflection     = new ReflectionClass($moduleList);
-            $configDataProp = $reflection->getProperty('configData');
-            $configDataProp->setValue($moduleList, $this->originalModuleConfigData);
-            $this->originalModuleConfigData = null;
-        }
-
+        $this->restoreModuleList($objectManager);
+        $this->restoreComponentRegistrar();
         $objectManager->get(State::class)->setMode($this->prevMode);
-
         $this->filesystem->getDirectoryWrite(DirectoryList::PUB)->delete(DirectoryList::STATIC_VIEW);
         $this->staticDir->getDriver()->createDirectory($this->staticDir->getAbsolutePath());
-
         parent::tearDown();
     }
 
@@ -241,8 +230,8 @@ class SriCustomModuleJsIntegrityTest extends TestCase
             $this->markTestSkipped("SRI file not found at {$sriFilePath} after standard deploy");
         }
 
-        $data         = $this->readSriFile($sriFilePath);
-        $storedPath   = $this->findCustomJsKey($data);
+        $data       = $this->readSriFile($sriFilePath);
+        $storedPath = $this->findCustomJsKey($data);
 
         $this->assertNotNull(
             $storedPath,
@@ -269,6 +258,113 @@ class SriCustomModuleJsIntegrityTest extends TestCase
                 $storedPath
             )
         );
+    }
+
+    /**
+     * Injects the test module into ModuleList::$configData so Deploy\Collector::isEnabled() passes.
+     *
+     * The sandbox config.php does not list Magento_SriTestModule; without this the deploy skips it.
+     * @magentoAppIsolation resets the DI container between tests, so each setUp starts fresh.
+     *
+     * @param ObjectManagerInterface $objectManager
+     */
+    private function injectModuleIntoModuleList(ObjectManagerInterface $objectManager): void
+    {
+        $moduleList = $objectManager->get(ModuleList::class);
+        $moduleList->has(self::MODULE_NAME);
+        $reflection     = new ReflectionClass($moduleList);
+        $configDataProp = $reflection->getProperty('configData');
+        $configData     = $configDataProp->getValue($moduleList) ?? [];
+        $this->originalModuleConfigData = $configData;
+        $configData[self::MODULE_NAME]  = 1;
+        $configDataProp->setValue($moduleList, $configData);
+    }
+
+    /**
+     * Restores ModuleList::$configData to its pre-test state.
+     *
+     * @param ObjectManagerInterface $objectManager
+     */
+    private function restoreModuleList(ObjectManagerInterface $objectManager): void
+    {
+        if ($this->originalModuleConfigData === null) {
+            return;
+        }
+        $moduleList     = $objectManager->get(ModuleList::class);
+        $reflection     = new ReflectionClass($moduleList);
+        $configDataProp = $reflection->getProperty('configData');
+        $configDataProp->setValue($moduleList, $this->originalModuleConfigData);
+        $this->originalModuleConfigData = null;
+    }
+
+    /**
+     * Ensures Magento_SriTestModule is registered in ComponentRegistrar::$paths.
+     *
+     * @magentoComponentsDir registers the module via ComponentRegistrarFixture::startTest, but in
+     * suite sequences the registration can be absent at setUp() time. Injecting directly is reliable.
+     */
+    private function ensureModuleInComponentRegistrar(): void
+    {
+        $reflection = new ReflectionClass(ComponentRegistrar::class);
+        $pathsProp  = $reflection->getProperty('paths');
+        $paths      = $pathsProp->getValue(null) ?? [];
+        if (isset($paths[ComponentRegistrar::MODULE][self::MODULE_NAME])) {
+            return;
+        }
+        $paths[ComponentRegistrar::MODULE][self::MODULE_NAME] = dirname(__DIR__) . '/_modules/SriTestModule';
+        $pathsProp->setValue(null, $paths);
+        $this->registeredTestModule = true;
+    }
+
+    /**
+     * Removes the test module from ComponentRegistrar::$paths if setUp() added it.
+     */
+    private function restoreComponentRegistrar(): void
+    {
+        if (!$this->registeredTestModule) {
+            return;
+        }
+        $reflection = new ReflectionClass(ComponentRegistrar::class);
+        $pathsProp  = $reflection->getProperty('paths');
+        $paths      = $pathsProp->getValue(null) ?? [];
+        unset($paths[ComponentRegistrar::MODULE][self::MODULE_NAME]);
+        $pathsProp->setValue(null, $paths);
+        $this->registeredTestModule = false;
+    }
+
+    /**
+     * Clears the Files::$_cache entry for getStaticPreProcessingFiles.
+     *
+     * This static cache persists across @magentoAppIsolation resets. An earlier deploy test may
+     * have populated it before our module was registered, causing the asset scanner to skip it.
+     */
+    private function clearStaticFilesCache(): void
+    {
+        $reflection = new ReflectionClass(UtilityFiles::class);
+        $cacheProp  = $reflection->getProperty('_cache');
+        $cache      = $cacheProp->getValue(null) ?? [];
+        unset($cache[UtilityFiles::class . '::getStaticPreProcessingFiles|*']);
+        $cacheProp->setValue(null, $cache);
+    }
+
+    /**
+     * Sets production mode and ensures area code is 'frontend'.
+     *
+     * In suite context @magentoAppArea does not always set _areaCode before setUp() runs.
+     * HashResolver::buildThemeContextPaths() requires a non-null string area.
+     *
+     * @param ObjectManagerInterface $objectManager
+     */
+    private function initAppState(ObjectManagerInterface $objectManager): void
+    {
+        $appState       = $objectManager->get(State::class);
+        $this->prevMode = $appState->getMode();
+        $appState->setMode(State::MODE_PRODUCTION);
+        $stateRef     = new ReflectionClass($appState);
+        $areaCodeProp = $stateRef->getProperty('_areaCode');
+        if ($areaCodeProp->getValue($appState) === null) {
+            $areaCodeProp->setValue($appState, 'frontend');
+        }
     }
 
     /**
