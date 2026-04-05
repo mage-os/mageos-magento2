@@ -7,8 +7,8 @@
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
     <system>
-          <section id="system">
-              <group id="backup" showInDefault="0" showInWebsite="0" showInStore="0"/>
-          </section>
+        <section id="system">
+            <group id="backup" showInDefault="0" showInWebsite="0" showInStore="0"/>
+        </section>
     </system>
 </config>
