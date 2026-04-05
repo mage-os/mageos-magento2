@@ -303,6 +303,6 @@ class Data extends AbstractHelper
      */
     public function isEnabled(): bool
     {
-        return $this->scopeConfig->isSetFlag('system/backup/functionality_enabled');
+        return false;
     }
 }
