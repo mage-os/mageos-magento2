@@ -9,44 +9,78 @@ namespace Magento\CatalogRuleConfigurable\Test\Fixture;
 
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Model\Product\Attribute\Source\Status;
+use Magento\CatalogRule\Api\CatalogRuleRepositoryInterface;
+use Magento\CatalogRule\Model\Indexer\IndexBuilder;
+use Magento\CatalogRule\Model\ResourceModel\Rule\CollectionFactory as RuleCollectionFactory;
+use Magento\CatalogRule\Model\Rule;
+use Magento\CatalogRule\Model\RuleFactory;
+use Magento\Customer\Model\Group;
 use Magento\Framework\App\Area;
 use Magento\Framework\DataObject;
+use Magento\Store\Api\WebsiteRepositoryInterface;
 use Magento\TestFramework\Fixture\RevertibleDataFixtureInterface;
 use Magento\TestFramework\Helper\Bootstrap;
-use Magento\TestFramework\Workaround\Override\Fixture\Resolver;
 
 /**
- * Loads per-child catalog rule products and rules, then disables the configurable parent.
+ * Creates parent 50% and per-child 10% / 20% catalog price rules (requires product fixture).
+ *
+ * Pass {@see self::DISABLE_CONFIGURABLE_PARENT} => true to disable SKU configurable after rules
+ * (e.g. child index tests). Omit or set false when the parent must stay enabled.
+ *
+ * Apply together with
+ * {@see \Magento\ConfigurableProduct\Test\Fixture\ConfigurableProductWithCustomOptionAndSimpleTierPrice}.
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class DisableConfigurableParentAfterChildrenCatalogRules implements RevertibleDataFixtureInterface
 {
-    /**
-     * @var ProductRepositoryInterface
-     */
-    private ProductRepositoryInterface $productRepository;
+    public const DISABLE_CONFIGURABLE_PARENT = 'disable_configurable_parent';
+
+    private const RESULT_DISABLED_CONFIGURABLE_PARENT = 'disabled_configurable_parent';
+
+    private const CONFIGURABLE_RULE_NAME = 'Percent rule for configurable product';
+
+    private const FIRST_SIMPLE_RULE_NAME = 'Percent rule for first simple product';
+
+    private const SECOND_SIMPLE_RULE_NAME = 'Percent rule for second simple product';
 
     /**
+     * @param CatalogRuleRepositoryInterface $ruleRepository
+     * @param RuleFactory $ruleFactory
+     * @param WebsiteRepositoryInterface $websiteRepository
+     * @param RuleCollectionFactory $ruleCollectionFactory
+     * @param IndexBuilder $indexBuilder
      * @param ProductRepositoryInterface $productRepository
      */
-    public function __construct(ProductRepositoryInterface $productRepository)
-    {
-        $this->productRepository = $productRepository;
+    public function __construct(
+        private CatalogRuleRepositoryInterface $ruleRepository,
+        private RuleFactory $ruleFactory,
+        private WebsiteRepositoryInterface $websiteRepository,
+        private RuleCollectionFactory $ruleCollectionFactory,
+        private IndexBuilder $indexBuilder,
+        private ProductRepositoryInterface $productRepository
+    ) {
     }
 
     /**
-     * @inheritdoc
+     * @param array $data
+     * @return DataObject
      */
-    public function apply(array $data = []): ?DataObject
+    public function apply(array $data = []): DataObject
     {
-        Resolver::getInstance()->requireDataFixture(
-            'Magento/CatalogRuleConfigurable/_files/configurable_product_with_percent_rules_for_children.php'
-        );
         Bootstrap::getInstance()->loadArea(Area::AREA_ADMINHTML);
-        $configurable = $this->productRepository->get('configurable');
-        $configurable->setStatus(Status::STATUS_DISABLED);
-        $this->productRepository->save($configurable);
+        $websiteId = (int) $this->websiteRepository->get('base')->getId();
 
-        return new DataObject(['sku' => $configurable->getSku()]);
+        $this->savePercentRuleMatchingSku(self::CONFIGURABLE_RULE_NAME, $websiteId, 'configurable', 50);
+        $this->savePercentRuleMatchingSku(self::FIRST_SIMPLE_RULE_NAME, $websiteId, 'simple_10', 10);
+        $this->savePercentRuleMatchingSku(self::SECOND_SIMPLE_RULE_NAME, $websiteId, 'simple_20', 20);
+        $this->indexBuilder->reindexFull();
+
+        return new DataObject(
+            [
+                self::RESULT_DISABLED_CONFIGURABLE_PARENT => $this->disableConfigurableParentIfRequested($data),
+            ]
+        );
     }
 
     /**
@@ -54,8 +88,97 @@ class DisableConfigurableParentAfterChildrenCatalogRules implements RevertibleDa
      */
     public function revert(DataObject $data): void
     {
-        Resolver::getInstance()->requireDataFixture(
-            'Magento/CatalogRuleConfigurable/_files/configurable_product_with_percent_rules_for_children_rollback.php'
+        if ($data->getData(self::RESULT_DISABLED_CONFIGURABLE_PARENT)) {
+            Bootstrap::getInstance()->loadArea(Area::AREA_ADMINHTML);
+            $configurable = $this->productRepository->get('configurable');
+            $configurable->setStatus(Status::STATUS_ENABLED);
+            $this->productRepository->save($configurable);
+        }
+
+        $this->deleteRuleByName(self::CONFIGURABLE_RULE_NAME);
+        $this->deleteRuleByName(self::FIRST_SIMPLE_RULE_NAME);
+        $this->deleteRuleByName(self::SECOND_SIMPLE_RULE_NAME);
+        $this->indexBuilder->reindexFull();
+    }
+
+    /**
+     * Persists a percent catalog rule whose condition is a single SKU equality match.
+     *
+     * @param string $ruleName
+     * @param int $websiteId
+     * @param string $sku
+     * @param int $discountPercent
+     * @return void
+     */
+    private function savePercentRuleMatchingSku(
+        string $ruleName,
+        int $websiteId,
+        string $sku,
+        int $discountPercent
+    ): void {
+        $combineType = \Magento\CatalogRule\Model\Rule\Condition\Combine::class;
+        $productConditionType = \Magento\CatalogRule\Model\Rule\Condition\Product::class;
+
+        $rule = $this->ruleFactory->create();
+        $rule->loadPost(
+            [
+                'name' => $ruleName,
+                'is_active' => '1',
+                'stop_rules_processing' => 0,
+                'website_ids' => [$websiteId],
+                'customer_group_ids' => Group::NOT_LOGGED_IN_ID,
+                'discount_amount' => $discountPercent,
+                'simple_action' => 'by_percent',
+                'from_date' => '',
+                'to_date' => '',
+                'sort_order' => 0,
+                'sub_is_enable' => 0,
+                'sub_discount_amount' => 0,
+                'conditions' => [
+                    '1' => ['type' => $combineType, 'aggregator' => 'all', 'value' => '1', 'new_child' => ''],
+                    '1--1' => [
+                        'type' => $productConditionType,
+                        'attribute' => 'sku',
+                        'operator' => '==',
+                        'value' => $sku,
+                    ],
+                ],
+            ]
         );
+        $this->ruleRepository->save($rule);
+    }
+
+    /**
+     * @param array $data
+     * @return bool Whether the parent was disabled
+     */
+    private function disableConfigurableParentIfRequested(array $data): bool
+    {
+        if (empty($data[self::DISABLE_CONFIGURABLE_PARENT])) {
+            return false;
+        }
+        $configurable = $this->productRepository->get('configurable');
+        $configurable->setStatus(Status::STATUS_DISABLED);
+        $this->productRepository->save($configurable);
+
+        return true;
+    }
+
+    /**
+     * Deletes a catalog rule by exact name when present.
+     *
+     * @param string $name
+     * @return void
+     */
+    private function deleteRuleByName(string $name): void
+    {
+        $collection = $this->ruleCollectionFactory->create()
+            ->addFieldToFilter('name', ['eq' => $name])
+            ->setPageSize(1);
+        /** @var Rule $rule */
+        $rule = $collection->getFirstItem();
+        if ($rule->getId()) {
+            $this->ruleRepository->delete($rule);
+        }
     }
 }
