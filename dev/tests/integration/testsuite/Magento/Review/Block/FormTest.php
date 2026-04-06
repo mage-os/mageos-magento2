@@ -22,6 +22,12 @@ use Magento\TestFramework\ObjectManager;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Integration tests for {@see Form}.
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.StaticAccess)
+ */
 class FormTest extends TestCase
 {
     /**
