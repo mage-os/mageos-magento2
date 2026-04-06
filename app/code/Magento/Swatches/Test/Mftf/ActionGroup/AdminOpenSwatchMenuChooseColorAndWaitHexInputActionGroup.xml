@@ -5,18 +5,16 @@
  * All Rights Reserved.
  */
 -->
-
 <actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
     <actionGroup name="AdminOpenSwatchMenuChooseColorAndWaitHexInputActionGroup" extends="OpenSwatchMenuByIndexActionGroup">
         <annotations>
-            <description>Admin: open swatch menu by index, click Choose color for the nth row, wait for hex input. Extends OpenSwatchMenuByIndexActionGroup.</description>
-        </annotations>
+            <description>Open swatch menu by index, click choose color for the nth row.</description>
         <arguments>
             <argument name="nthColorPicker" type="string" defaultValue="1"/>
         </arguments>
-        <waitForElementClickable selector="{{AdminManageSwatchSection.nthChooseColor(nthColorPicker)}}" time="60" stepKey="waitChooseColor"/>
+        <waitForElementClickable selector="{{AdminManageSwatchSection.nthChooseColor(nthColorPicker)}}" stepKey="waitChooseColor"/>
         <click selector="{{AdminManageSwatchSection.nthChooseColor(nthColorPicker)}}" stepKey="clickChooseColor"/>
-        <waitForElementVisible selector="{{AdminColorPickerSection.hexByIndex(nthColorPicker)}}" time="60" stepKey="waitHexInputVisible"/>
+        <waitForElementVisible selector="{{AdminColorPickerSection.hexByIndex(nthColorPicker)}}" stepKey="waitHexInputVisible"/>
     </actionGroup>
 </actionGroups>
