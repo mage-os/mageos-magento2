@@ -12,6 +12,7 @@
 namespace Magento\Catalog\Block\Product\View;
 
 use Magento\Catalog\Model\Product;
+use Magento\Directory\Helper\Data as DirectoryHelper;
 use Magento\Framework\Phrase;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 
@@ -41,19 +42,28 @@ class Attributes extends \Magento\Framework\View\Element\Template
     protected $priceCurrency;
 
     /**
+     * @var DirectoryHelper
+     */
+    private DirectoryHelper $directoryHelper;
+
+    /**
      * @param \Magento\Framework\View\Element\Template\Context $context
      * @param \Magento\Framework\Registry $registry
      * @param PriceCurrencyInterface $priceCurrency
      * @param array $data
+     * @param DirectoryHelper|null $directoryHelper
      */
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
         \Magento\Framework\Registry $registry,
         PriceCurrencyInterface $priceCurrency,
-        array $data = []
+        array $data = [],
+        ?DirectoryHelper $directoryHelper = null
     ) {
         $this->priceCurrency = $priceCurrency;
         $this->_coreRegistry = $registry;
+        $this->directoryHelper = $directoryHelper
+            ?? \Magento\Framework\App\ObjectManager::getInstance()->get(DirectoryHelper::class);
         parent::__construct($context, $data);
     }
 
@@ -90,6 +100,11 @@ class Attributes extends \Magento\Framework\View\Element\Template
                     $value = (string)$value;
                 } elseif ($attribute->getFrontendInput() == 'price' && is_string($value)) {
                     $value = $this->priceCurrency->convertAndFormat($value);
+                } elseif ($attribute->getAttributeCode() === 'weight' && is_string($value)) {
+                    $weightUnit = $this->directoryHelper->getWeightUnit();
+                    if ($weightUnit) {
+                        $value = $value . ' ' . $weightUnit;
+                    }
                 }
 
                 if (is_string($value) && strlen(trim($value))) {
