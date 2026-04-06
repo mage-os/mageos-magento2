@@ -14,10 +14,8 @@ use Magento\CatalogRule\Model\Indexer\IndexBuilder;
 use Magento\CatalogRule\Model\ResourceModel\Rule\CollectionFactory as RuleCollectionFactory;
 use Magento\CatalogRule\Model\Rule;
 use Magento\CatalogRule\Model\RuleFactory;
-use Magento\Customer\Model\Group;
 use Magento\Framework\App\Area;
 use Magento\Framework\DataObject;
-use Magento\Store\Api\WebsiteRepositoryInterface;
 use Magento\TestFramework\Fixture\RevertibleDataFixtureInterface;
 use Magento\TestFramework\Helper\Bootstrap;
 
@@ -45,9 +43,13 @@ class DisableConfigurableParentAfterChildrenCatalogRules implements RevertibleDa
     private const SECOND_SIMPLE_RULE_NAME = 'Percent rule for second simple product';
 
     /**
+     * Customer group "NOT LOGGED IN" (avoids hard dependency on Magento_Customer in this module).
+     */
+    private const CUSTOMER_GROUP_ID_NOT_LOGGED_IN = 0;
+
+    /**
      * @param CatalogRuleRepositoryInterface $ruleRepository
      * @param RuleFactory $ruleFactory
-     * @param WebsiteRepositoryInterface $websiteRepository
      * @param RuleCollectionFactory $ruleCollectionFactory
      * @param IndexBuilder $indexBuilder
      * @param ProductRepositoryInterface $productRepository
@@ -55,7 +57,6 @@ class DisableConfigurableParentAfterChildrenCatalogRules implements RevertibleDa
     public function __construct(
         private CatalogRuleRepositoryInterface $ruleRepository,
         private RuleFactory $ruleFactory,
-        private WebsiteRepositoryInterface $websiteRepository,
         private RuleCollectionFactory $ruleCollectionFactory,
         private IndexBuilder $indexBuilder,
         private ProductRepositoryInterface $productRepository
@@ -69,7 +70,7 @@ class DisableConfigurableParentAfterChildrenCatalogRules implements RevertibleDa
     public function apply(array $data = []): DataObject
     {
         Bootstrap::getInstance()->loadArea(Area::AREA_ADMINHTML);
-        $websiteId = (int) $this->websiteRepository->get('base')->getId();
+        $websiteId = $this->getWebsiteIdForConfigurableSku();
 
         $this->savePercentRuleMatchingSku(self::CONFIGURABLE_RULE_NAME, $websiteId, 'configurable', 50);
         $this->savePercentRuleMatchingSku(self::FIRST_SIMPLE_RULE_NAME, $websiteId, 'simple_10', 10);
@@ -126,7 +127,7 @@ class DisableConfigurableParentAfterChildrenCatalogRules implements RevertibleDa
                 'is_active' => '1',
                 'stop_rules_processing' => 0,
                 'website_ids' => [$websiteId],
-                'customer_group_ids' => Group::NOT_LOGGED_IN_ID,
+                'customer_group_ids' => self::CUSTOMER_GROUP_ID_NOT_LOGGED_IN,
                 'discount_amount' => $discountPercent,
                 'simple_action' => 'by_percent',
                 'from_date' => '',
@@ -146,6 +147,24 @@ class DisableConfigurableParentAfterChildrenCatalogRules implements RevertibleDa
             ]
         );
         $this->ruleRepository->save($rule);
+    }
+
+    /**
+     * Website ID from the configurable product (requires prior product fixture; avoids Magento_Store).
+     *
+     * @return int
+     */
+    private function getWebsiteIdForConfigurableSku(): int
+    {
+        $websiteIds = $this->productRepository->get('configurable')->getWebsiteIds();
+        $firstId = (int) (array_values($websiteIds)[0] ?? 0);
+        if ($firstId === 0) {
+            throw new \RuntimeException(
+                'Configurable product must be assigned to a website; apply the product fixture first.'
+            );
+        }
+
+        return $firstId;
     }
 
     /**
