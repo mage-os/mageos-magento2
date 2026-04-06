@@ -519,6 +519,47 @@ class ProductRepositoryTest extends TestCase
     }
 
     /**
+     * Verify that getById returns the correct product for a valid numeric ID
+     */
+    #[
+        DataFixture(ProductFixture::class, as: 'product'),
+    ]
+    public function testGetByIdWithValidId(): void
+    {
+        $product = $this->fixtures->get('product');
+        $result = $this->productRepository->getById((int)$product->getId());
+
+        $this->assertInstanceOf(ProductInterface::class, $result);
+        $this->assertSame((int)$product->getId(), (int)$result->getId());
+        $this->assertSame($product->getSku(), $result->getSku());
+    }
+
+    /**
+     * Verify that getById throws NoSuchEntityException for non-numeric product IDs
+     *
+     * @param string $invalidId
+     */
+    #[DataProvider('nonNumericProductIdDataProvider')]
+    public function testGetByIdWithNonNumericProductId(string $invalidId): void
+    {
+        $this->expectException(NoSuchEntityException::class);
+        $this->productRepository->getById($invalidId);
+    }
+
+    /**
+     * Data provider for completely non-numeric product ID values
+     *
+     * @return array
+     */
+    public static function nonNumericProductIdDataProvider(): array
+    {
+        return [
+            'Alphabetic string' => ['abc'],
+            'Special characters only' => ['!@#$%'],
+        ];
+    }
+
+    /**
      * Get Simple Product Data
      *
      * @param array $data
