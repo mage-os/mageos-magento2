@@ -11,6 +11,5 @@
     <section name="AdminColorPickerSection">
         <element name="hexByIndex" type="input" selector="//div[@class='colorpicker'][{{var}}]/div[@class='colorpicker_hex']/input" parameterized="true"/>
         <element name="submitByIndex" type="button" selector="//div[@class='colorpicker'][{{var}}]/div[@class='colorpicker_submit']" parameterized="true"/>
-        <element name="hexInLastColorPicker" type="input" selector="//div[@class='colorpicker'][last()]/div[@class='colorpicker_hex']/input"/>
     </section>
 </sections>
