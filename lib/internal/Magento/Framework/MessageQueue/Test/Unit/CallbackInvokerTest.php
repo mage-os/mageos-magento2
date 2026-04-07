@@ -72,7 +72,8 @@ class CallbackInvokerTest extends TestCase
             ->with($this->isType('callable'), 50, 0);
         $queue->expects($this->never())->method('dequeue');
 
-        $this->invoker->invoke($queue, 50, function () {});
+        $this->invoker->invoke($queue, 50, function () {
+        });
     }
 
     /**
@@ -91,7 +92,8 @@ class CallbackInvokerTest extends TestCase
             ->method('subscribeWithLimit')
             ->with($this->isType('callable'), 10, 1);
 
-        $this->invoker->invoke($queue, 10, function () {});
+        $this->invoker->invoke($queue, 10, function () {
+        });
     }
 
     /**
@@ -110,7 +112,8 @@ class CallbackInvokerTest extends TestCase
             ->method('subscribeWithLimit')
             ->with($this->isType('callable'), 10, 0);
 
-        $this->invoker->invoke($queue, 10, function () {});
+        $this->invoker->invoke($queue, 10, function () {
+        });
     }
 
     /**
