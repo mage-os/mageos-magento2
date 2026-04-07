@@ -91,7 +91,8 @@ class QueueTest extends TestCase
             ->method('getChannel')
             ->willReturn($amqpChannel);
 
-        $this->model->subscribeWithLimit(function () {}, 10);
+        $this->model->subscribeWithLimit(function () {
+        }, 10);
     }
 
     /**
@@ -103,7 +104,8 @@ class QueueTest extends TestCase
         // getChannel must never be called — no AMQP interaction should occur.
         $this->config->expects($this->never())->method('getChannel');
 
-        $this->model->subscribeWithLimit(function () {}, 0);
+        $this->model->subscribeWithLimit(function () {
+        }, 0);
     }
 
     /**
@@ -116,7 +118,8 @@ class QueueTest extends TestCase
         $amqpChannel->method('basic_qos');
         $amqpChannel->method('basic_consume')
             ->willReturnCallback(function () use ($amqpChannel) {
-                $amqpChannel->callbacks = ['test-consumer-tag' => function () {}];
+                $amqpChannel->callbacks = ['test-consumer-tag' => function () {
+                }];
                 return 'test-consumer-tag';
             });
         $amqpChannel->expects($this->once())
@@ -125,6 +128,7 @@ class QueueTest extends TestCase
         $this->config->method('getChannel')->willReturn($amqpChannel);
 
         // Must not throw; AMQPTimeoutException signals empty queue, not a failure.
-        $this->model->subscribeWithLimit(function () {}, 10, 1);
+        $this->model->subscribeWithLimit(function () {
+        }, 10, 1);
     }
 }
