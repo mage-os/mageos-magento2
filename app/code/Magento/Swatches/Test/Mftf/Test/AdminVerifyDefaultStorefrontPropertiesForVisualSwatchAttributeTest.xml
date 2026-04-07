@@ -30,10 +30,9 @@
         <click selector="{{AdminProductAttributeGridSection.createNewAttributeBtn}}" stepKey="clickCreateNewAttributeButton"/>
         <waitForElementVisible selector="{{AttributePropertiesSection.InputType}}" stepKey="waitInputTypeSelect"/>
         <selectOption selector="{{AttributePropertiesSection.InputType}}" userInput="Visual Swatch" stepKey="setVisualSwatchInputType"/>
-        <actionGroup ref="AdminAssertVisualSwatchDefaultSwatchAndStorefrontCatalogSelectionsActionGroup" stepKey="assertFormVisualSwatchStorefrontDefaults">
+        <actionGroup ref="AdminAssertVisualSwatchStorefrontAndListingDefaultsActionGroup" stepKey="assertFormVisualSwatchStorefrontAndListingDefaults">
             <argument name="storefrontOpenerSelector" value="{{StorefrontPropertiesSection.StoreFrontPropertiesTab}}"/>
         </actionGroup>
-        <actionGroup ref="AdminAssertAttributeUseInProductListingDefaultIsNoActionGroup" stepKey="assertFormUseInProductListingDefaultNo"/>
         <!-- Step 2: Configurable product create configurations -> Create New Attribute iframe defaults -->
         <actionGroup ref="AdminOpenProductIndexPageActionGroup" stepKey="openProductGrid"/>
         <actionGroup ref="GoToCreateProductPageActionGroup" stepKey="openCreateConfigurableProductPage">
@@ -51,10 +50,8 @@
         <switchToIFrame selector="{{AdminNewAttributePanel.newAttributeIFrame}}" stepKey="switchToNewAttributeIFrame"/>
         <waitForElementVisible selector="{{AttributePropertiesSection.InputType}}" stepKey="waitIFrameInputTypeSelect"/>
         <selectOption selector="{{AttributePropertiesSection.InputType}}" userInput="Visual Swatch" stepKey="setIFrameVisualSwatchInputType"/>
-        <actionGroup ref="AdminAssertVisualSwatchDefaultSwatchAndStorefrontCatalogSelectionsActionGroup" stepKey="assertIframeVisualSwatchStorefrontDefaults">
+        <actionGroup ref="AdminAssertVisualSwatchStorefrontAndListingDefaultsActionGroup" stepKey="assertIframeVisualSwatchStorefrontAndListingDefaults">
             <argument name="storefrontOpenerSelector" value="{{StorefrontPropertiesSection.StorefrontPropertiesSectionToggle}}"/>
         </actionGroup>
-        <actionGroup ref="AdminExpandAdvancedAttributePropertiesSectionActionGroup" stepKey="expandIframeAdvancedAttributeProperties"/>
-        <actionGroup ref="AdminAssertAttributeUseInProductListingDefaultIsNoActionGroup" stepKey="assertIframeUseInProductListingDefaultNo"/>
     </test>
 </tests>
