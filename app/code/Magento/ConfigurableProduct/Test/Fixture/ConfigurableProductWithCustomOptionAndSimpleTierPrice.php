@@ -48,6 +48,9 @@ use Magento\TestFramework\Fixture\RevertibleDataFixtureInterface;
  * @see dev/tests/integration/testsuite/Magento/ConfigurableProduct/_files/product_configurable.php
  * @see dev/tests/integration/testsuite/Magento/ConfigurableProduct/_files/product_configurable_with_custom_option_type_text.php
  * @see dev/tests/integration/testsuite/Magento/ConfigurableProduct/_files/configurable_product_with_custom_option_and_simple_tier_price.php
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.ExcessiveParameterList)
  */
 class ConfigurableProductWithCustomOptionAndSimpleTierPrice implements RevertibleDataFixtureInterface
 {
