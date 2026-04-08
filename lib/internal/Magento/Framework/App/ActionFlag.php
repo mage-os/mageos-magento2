@@ -59,7 +59,7 @@ class ActionFlag implements ResetAfterRequestInterface
      *
      * @param string|null $action
      * @param string|null $flag
-     * @return array|bool
+     * @return bool
      *
      * @SuppressWarnings(PHPMD.BooleanGetMethodName)
      */
