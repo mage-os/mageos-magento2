@@ -176,11 +176,18 @@ class ProductRepositoryInterfaceTest extends WebapiAbstract
     }
 
     /**
-     * Test get() method with invalid sku
+     * Test get() with non-existent SKU returns not found (REST 404, SOAP fault).
+     *
+     * REST exposes products by SKU in the path (/V1/products/:sku), not by numeric entity id,
+     * so this approximates "bad product reference → error" for the WebAPI layer. It complements integration
+     * coverage for {@see \Magento\Catalog\Api\ProductRepositoryInterface::getById()} where the id string shape
+     * differs.
+     *
+     * @param string $invalidSku SKU that must not exist in the catalog
      */
-    public function testGetNoSuchEntityException()
+    #[DataProvider('getNotExistingProductSkuDataProvider')]
+    public function testGetNoSuchEntityException(string $invalidSku): void
     {
-        $invalidSku = '(nonExistingSku)';
         $serviceInfo = [
             'rest' => [
                 'resourcePath' => self::RESOURCE_PATH . '/' . $invalidSku,
@@ -196,18 +203,32 @@ class ProductRepositoryInterfaceTest extends WebapiAbstract
         $expectedMessage = 'The product with SKU "%1" does not exist.';
         try {
             $this->_webApiCall($serviceInfo, ['sku' => $invalidSku]);
-            $this->fail("Expected throwing exception");
+            $this->fail('Expected throwing exception');
         } catch (\SoapFault $e) {
             $this->assertStringContainsString(
                 $expectedMessage,
                 $e->getMessage(),
-                "SoapFault does not contain expected message."
+                'SoapFault does not contain expected message.'
             );
         } catch (\Exception $e) {
             $errorObj = $this->processRestExceptionResult($e);
             $this->assertEquals($expectedMessage, $errorObj['message']);
             $this->assertEquals(HTTPExceptionCodes::HTTP_NOT_FOUND, $e->getCode());
         }
+    }
+
+    /**
+     * Non-existent SKUs for {@see testGetNoSuchEntityException} (characters safe for URL path segment).
+     *
+     * @return array<string, array{string}>
+     */
+    public static function getNotExistingProductSkuDataProvider(): array
+    {
+        return [
+            'Non-existent SKU with parentheses' => ['(nonExistingSku)'],
+            'Non-existent SKU with numeric-looking token' => ['123abc'],
+            'Random missing SKU' => ['missing-product-webapi-bad-ref'],
+        ];
     }
 
     /**
