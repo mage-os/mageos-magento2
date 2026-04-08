@@ -40,15 +40,15 @@ class ActionFlag implements ResetAfterRequestInterface
     /**
      * Setting flag value
      *
-     * @param string $action
-     * @param string $flag
+     * @param string|null $action
+     * @param string|null $flag
      * @param string $value
      * @return void
      */
     public function set($action, $flag, $value)
     {
         if ('' === $action) {
-            $action = $this->_request->getActionName();
+            $action = $this->_request->getActionName() ?? '';
         }
         $actionKey = is_string($action) ? $action : '';
         $flagKey = is_string($flag) ? $flag : '';
@@ -58,16 +58,16 @@ class ActionFlag implements ResetAfterRequestInterface
     /**
      * Retrieve flag value
      *
-     * @param   string $action
-     * @param   string $flag
-     * @return  bool
+     * @param string|null $action
+     * @param string|null $flag
+     * @return bool
      *
      * @SuppressWarnings(PHPMD.BooleanGetMethodName)
      */
     public function get($action, $flag = '')
     {
         if ('' === $action) {
-            $action = $this->_request->getActionName();
+            $action = $this->_request->getActionName() ?? '';
         }
         $actionKey = is_string($action) ? $action : '';
         if ('' === $flag) {
