@@ -90,7 +90,7 @@ class ChangelogBatchWalker implements ChangelogBatchWalkerInterface
             # Prepare list of changed entries to return
             $connection->createTable($idsTable);
 
-            $select = $this->idsSelectBuilder->build($changelog);
+            $baseSelect = $this->idsSelectBuilder->build($changelog)->distinct(true);
 
             # Insert in batches is recommended to avoid db going away
             do {
@@ -100,9 +100,9 @@ class ChangelogBatchWalker implements ChangelogBatchWalkerInterface
                     $toVersionId = $lastVersionId; # Avoid set more than last version id
                 }
 
-                $select
-                    ->distinct(true)
-                    ->where('version_id > ?', $fromVersionId)
+                $select = clone $baseSelect;
+                
+                $select->where('version_id > ?', $fromVersionId)
                     ->where('version_id <= ?', $toVersionId);
 
                 $connection->query(
