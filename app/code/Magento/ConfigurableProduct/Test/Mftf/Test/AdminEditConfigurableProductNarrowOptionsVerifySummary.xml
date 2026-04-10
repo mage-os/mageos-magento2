@@ -18,13 +18,14 @@
         </annotations>
         <before>
             <!-- Step 1: Login as admin to backend -->
-            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <createData entity="_defaultCategory" stepKey="createCategoryForConfigurableParent"/>
+            <createData entity="BaseConfigurableProduct" stepKey="createConfigurableParentProduct">
+                <requiredEntity createDataKey="createCategoryForConfigurableParent"/>
+            </createData>
         </before>
         <after>
-            <actionGroup ref="DeleteProductBySkuActionGroup" stepKey="deleteConfigurableProduct">
-                <argument name="sku" value="{{BaseConfigurableProduct.sku}}"/>
-            </actionGroup>
-            <actionGroup ref="ResetAdminDataGridToDefaultViewActionGroup" stepKey="clearProductFilters"/>
+            <helper class="Magento\Catalog\Test\Mftf\Helper\ProductApiHelper" method="deleteAllProductsApi" stepKey="deleteAllProductsViaApi"/>
+            <deleteData createDataKey="createCategoryForConfigurableParent" stepKey="deleteCategoryForConfigurableParent"/>
             <actionGroup ref="AdminDeleteProductAttributeByLabelActionGroup" stepKey="deleteSizeAttribute">
                 <argument name="productAttributeLabel" value="{{ProductSizeAttribute.frontend_label}}"/>
             </actionGroup>
@@ -39,16 +40,15 @@
             <actionGroup ref="SaveProductAttributeActionGroup" stepKey="saveColorAttributeAfterCleanup"/>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
         </after>
+        <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
         <!-- Step 2: Navigate to Products - Catalog -->
         <actionGroup ref="AdminOpenProductIndexPageActionGroup" stepKey="navigateToProductIndex"/>
-        <!-- Step 3: Start to create configurable product -->
-        <actionGroup ref="GoToCreateProductPageActionGroup" stepKey="goToCreateConfigurableProduct">
-            <argument name="product" value="BaseConfigurableProduct"/>
+        <!-- Step 3-4: Open API-created configurable parent product for edit -->
+        <actionGroup ref="FilterProductGridBySkuActionGroup" stepKey="filterConfigurableParentBySku">
+            <argument name="product" value="$$createConfigurableParentProduct$$"/>
         </actionGroup>
-        <!-- Step 4: Fill out required fields | Test Data: product name: conf1, sku: conf1, price: 10 -->
-        <actionGroup ref="FillMainProductFormActionGroup" stepKey="fillConfigurableProductValues">
-            <argument name="product" value="BaseConfigurableProduct"/>
-        </actionGroup>
+        <waitForElementClickable selector="{{AdminProductGridSection.productGridXRowYColumnButton('1', '2')}}" stepKey="waitForConfigurableParentEditButton"/>
+        <actionGroup ref="OpenProductForEditByClickingRowXColumnYInProductGridActionGroup" stepKey="openConfigurableParentForEdit"/>
         <!-- Step 5: Click 'Create Configurations' button -->
         <waitForElementClickable selector="{{AdminProductFormConfigurationsSection.createConfigurations}}" stepKey="waitForCreateConfigurationsButton"/>
         <click selector="{{AdminProductFormConfigurationsSection.createConfigurations}}" stepKey="clickCreateConfigurations"/>
@@ -282,18 +282,18 @@
         <click selector="{{AdminCreateProductConfigurationsPanel.next}}" stepKey="clickNextToSummaryOnSecondPass"/>
         <waitForText userInput="Step 4: Summary" stepKey="waitForSummaryStepTitle"/>
         <waitForText userInput="Associated Products" stepKey="seeAssociatedProductsHeading"/>
-        <waitForText userInput="{{BaseConfigurableProduct.sku}}-{{SizeOption8.label}}-{{ColorOptionBlack.label}}" stepKey="seeAssociatedSkuBlack8"/>
-        <waitForText userInput="{{BaseConfigurableProduct.sku}}-{{SizeOption10.label}}-{{ColorOptionBlack.label}}" stepKey="seeAssociatedSkuBlack10"/>
-        <waitForText userInput="{{BaseConfigurableProduct.sku}}-{{SizeOption8.label}}-{{ColorOptionRed.label}}" stepKey="seeAssociatedSkuRed8"/>
-        <waitForText userInput="{{BaseConfigurableProduct.sku}}-{{SizeOption10.label}}-{{ColorOptionRed.label}}" stepKey="seeAssociatedSkuRed10"/>
+        <waitForText userInput="$$createConfigurableParentProduct.sku$$-{{SizeOption8.label}}-{{ColorOptionBlack.label}}" stepKey="seeAssociatedSkuBlack8"/>
+        <waitForText userInput="$$createConfigurableParentProduct.sku$$-{{SizeOption10.label}}-{{ColorOptionBlack.label}}" stepKey="seeAssociatedSkuBlack10"/>
+        <waitForText userInput="$$createConfigurableParentProduct.sku$$-{{SizeOption8.label}}-{{ColorOptionRed.label}}" stepKey="seeAssociatedSkuRed8"/>
+        <waitForText userInput="$$createConfigurableParentProduct.sku$$-{{SizeOption10.label}}-{{ColorOptionRed.label}}" stepKey="seeAssociatedSkuRed10"/>
         <waitForText userInput="Disassociated Products" stepKey="seeDisassociatedProductsHeading"/>
         <waitForElementClickable selector="{{AdminProductFormConfigurationsSection.summaryDisassociatedPerPageMenuToggle}}" stepKey="waitForDisassociatedPerPageMenu"/>
         <click selector="{{AdminProductFormConfigurationsSection.summaryDisassociatedPerPageMenuToggle}}" stepKey="openDisassociatedPerPageMenu"/>
         <waitForElementClickable selector="{{AdminProductFormConfigurationsSection.summaryDisassociatedPerPageOption30}}" stepKey="waitForDisassociatedPerPage30"/>
         <click selector="{{AdminProductFormConfigurationsSection.summaryDisassociatedPerPageOption30}}" stepKey="setDisassociatedPerPageToThirty"/>
         <waitForPageLoad stepKey="waitAfterDisassociatedPageSizeChange"/>
-        <waitForText userInput="{{BaseConfigurableProduct.sku}}-{{SizeOption8.label}}-{{ColorOptionBlue.label}}" stepKey="seeDisassociatedSampleBlue8"/>
-        <waitForText userInput="{{BaseConfigurableProduct.sku}}-{{SizeOption16.label}}-{{ColorOptionWhite.label}}" stepKey="seeDisassociatedSampleWhite16"/>
+        <waitForText userInput="$$createConfigurableParentProduct.sku$$-{{SizeOption8.label}}-{{ColorOptionBlue.label}}" stepKey="seeDisassociatedSampleBlue8"/>
+        <waitForText userInput="$$createConfigurableParentProduct.sku$$-{{SizeOption16.label}}-{{ColorOptionWhite.label}}" stepKey="seeDisassociatedSampleWhite16"/>
         <!-- Step 27: Click 'Generate Products' -->
         <waitForElementClickable selector="{{AdminCreateProductConfigurationsPanel.next}}" stepKey="waitForGenerateProductsOnSecondPass"/>
         <click selector="{{AdminCreateProductConfigurationsPanel.next}}" stepKey="clickGenerateProductsOnSecondPass"/>
@@ -301,7 +301,7 @@
         <!-- Step 28: Click 'Save' product | Expected Result: 'You saved the product.' message appears -->
         <actionGroup ref="AdminProductFormSaveActionGroup" stepKey="saveConfigurableProductAfterNarrow"/>
         <waitForElementVisible selector="{{AdminProductMessagesSection.successMessage}}" stepKey="seeSuccessMessageAfterFinalSave"/>
-        <!-- Step 29: Verify only narrowed variations remain on product page -->
+        <!-- Step 28 Assertion: Verify only narrowed variations remain on product page -->
         <waitForElementVisible selector="{{AdminProductFormConfigurationsSection.variationProductLinkByName(ColorOptionBlack.label)}}" stepKey="verifyFinalVariationContainsBlack"/>
         <waitForElementVisible selector="{{AdminProductFormConfigurationsSection.variationProductLinkByName(ColorOptionRed.label)}}" stepKey="verifyFinalVariationContainsRed"/>
     </test>
