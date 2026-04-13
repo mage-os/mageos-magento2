@@ -25,6 +25,7 @@ use Magento\Framework\Validator\UniversalFactory;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -92,9 +93,7 @@ class AbstractCollectionTest extends TestCase
         $this->collection = $collection;
     }
 
-    /**
-     * @dataProvider setStoreIdDataProvider
-     */
+    #[DataProvider('setStoreIdDataProvider')]
     public function testSetStoreIdAcceptsIntegerAndReturnsCollection(int $storeId): void
     {
         $result = $this->collection->setStoreId($storeId);

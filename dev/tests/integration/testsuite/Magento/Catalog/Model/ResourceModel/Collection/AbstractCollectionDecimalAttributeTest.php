@@ -10,6 +10,8 @@ declare(strict_types=1);
 namespace Magento\Catalog\Model\ResourceModel\Collection;
 
 use Magento\Catalog\Model\ResourceModel\Product\Collection;
+use Magento\Catalog\Test\Fixture\ProductWithStoreScopedDecimalAttribute;
+use Magento\TestFramework\Fixture\DataFixture;
 use Magento\TestFramework\Helper\Bootstrap;
 use PHPUnit\Framework\TestCase;
 
@@ -23,7 +25,7 @@ use PHPUnit\Framework\TestCase;
  * instead of the requested store view's value.
  *
  * @magentoAppArea frontend
- * @magentoDbIsolation enabled
+ * @magentoDbIsolation disabled
  * @magentoAppIsolation enabled
  */
 class AbstractCollectionDecimalAttributeTest extends TestCase
@@ -46,9 +48,8 @@ class AbstractCollectionDecimalAttributeTest extends TestCase
      *
      * Before the fix, including price (global scope) in the attribute select caused all attributes to
      * be loaded from the default store, so the store-specific value (200.00) was never returned.
-     *
-     * @magentoDataFixture Magento/Catalog/_files/product_with_store_scoped_decimal_attribute.php
      */
+    #[DataFixture(ProductWithStoreScopedDecimalAttribute::class)]
     public function testStoreScopedDecimalAttributeIsNotOverriddenByGlobalPrice(): void
     {
         $this->collection->setStoreId(1);
@@ -74,9 +75,8 @@ class AbstractCollectionDecimalAttributeTest extends TestCase
 
     /**
      * Verify that a store-scoped decimal attribute without price selected also works correctly.
-     *
-     * @magentoDataFixture Magento/Catalog/_files/product_with_store_scoped_decimal_attribute.php
      */
+    #[DataFixture(ProductWithStoreScopedDecimalAttribute::class)]
     public function testStoreScopedDecimalAttributeWithoutPrice(): void
     {
         $this->collection->setStoreId(1);
