@@ -28,6 +28,8 @@ use Magento\TestFramework\Fixture\RevertibleDataFixtureInterface;
  * Creates catalog_product attribute decimal_store_scoped (store scope) and a simple product using it.
  *
  * Used by integration tests for issue #40218.
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class ProductWithStoreScopedDecimalAttribute implements RevertibleDataFixtureInterface
 {
