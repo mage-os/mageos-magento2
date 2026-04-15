@@ -104,6 +104,7 @@ class OrderRepositoryInterfaceTest extends WebapiAbstract
             ]
         ];
         $this->makeAsyncRequest($serviceInfo, $requestData);
+        sleep(10);
         try {
             $this->publisherConsumerController->waitForAsynchronousResult(
                 function (Order $beforeUpdateOrder, array $data) {
