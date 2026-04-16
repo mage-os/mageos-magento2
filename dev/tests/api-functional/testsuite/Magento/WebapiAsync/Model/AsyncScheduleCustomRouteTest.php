@@ -110,7 +110,6 @@ class AsyncScheduleCustomRouteTest extends WebapiAbstract
     public function testAsyncScheduleBulkByCustomRoute($product)
     {
         $this->_markTestAsRestOnly();
-        // Reset SKUs per data set: appending would keep prior case SKUs and make assertProductCreation expect too many rows.
         $this->skus = [$product['product'][ProductInterface::SKU]];
         $this->clearProducts();
 
