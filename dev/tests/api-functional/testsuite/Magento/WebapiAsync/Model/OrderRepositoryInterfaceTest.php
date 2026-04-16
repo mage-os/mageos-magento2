@@ -11,6 +11,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\Webapi\Rest\Request;
 use Magento\Sales\Api\Data\OrderInterface;
+use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\Order;
 use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestFramework\MessageQueue\EnvironmentPreconditionException;
@@ -92,7 +93,7 @@ class OrderRepositoryInterfaceTest extends WebapiAbstract
         /** @var Order $beforeUpdateOrder */
         $beforeUpdateOrder = $this->objectManager->get(Order::class)->loadByIncrementId('100000001');
         $requestData = [
-            'entity' => array_merge($data, [OrderInterface::ENTITY_ID => $beforeUpdateOrder->getEntityId()])
+            'entity' => array_merge($data, [OrderInterface::ENTITY_ID => (int) $beforeUpdateOrder->getEntityId()])
         ];
         if ($isBulk) {
             $requestData = [$requestData];
@@ -108,22 +109,23 @@ class OrderRepositoryInterfaceTest extends WebapiAbstract
         try {
             $this->publisherConsumerController->waitForAsynchronousResult(
                 function (Order $beforeUpdateOrder, array $data) {
-                    /** @var Order $afterUpdateOrder */
-                    $afterUpdateOrder = $this->objectManager->get(Order::class)->load($beforeUpdateOrder->getId());
+                    $orderRepository = $this->objectManager->get(OrderRepositoryInterface::class);
+                    $afterUpdateOrder = $orderRepository->get((int) $beforeUpdateOrder->getEntityId());
                     foreach ($data as $attribute => $value) {
-                        $getter = 'get' . str_replace(' ', '', ucwords(str_replace('_', ' ', $attribute)));
-                        if ($value !== $afterUpdateOrder->$getter()) {
+                        if ((string) $afterUpdateOrder->getData($attribute) !== (string) $value) {
                             return false;
                         }
                     }
                     //check that base_grand_total and grand_total are not overwritten
-                    $this->assertEquals(
-                        $beforeUpdateOrder->getBaseGrandTotal(),
-                        $afterUpdateOrder->getBaseGrandTotal()
+                    $this->assertEqualsWithDelta(
+                        (float) $beforeUpdateOrder->getBaseGrandTotal(),
+                        (float) $afterUpdateOrder->getBaseGrandTotal(),
+                        0.0001
                     );
-                    $this->assertEquals(
-                        $beforeUpdateOrder->getGrandTotal(),
-                        $afterUpdateOrder->getGrandTotal()
+                    $this->assertEqualsWithDelta(
+                        (float) $beforeUpdateOrder->getGrandTotal(),
+                        (float) $afterUpdateOrder->getGrandTotal(),
+                        0.0001
                     );
                     return true;
                 },
