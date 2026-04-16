@@ -284,7 +284,7 @@ class RowCustomizer implements RowCustomizerInterface
      * @param string $optionValues
      * @param SelectionCollection $selections
      * @return string
-     * @deprecared Not used anymore
+     * @deprecated Not used anymore
      */
     protected function getFormattedBundleSelections($optionValues, SelectionCollection $selections)
     {

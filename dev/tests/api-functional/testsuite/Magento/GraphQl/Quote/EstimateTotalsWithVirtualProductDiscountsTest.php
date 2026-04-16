@@ -49,7 +49,7 @@ class EstimateTotalsWithVirtualProductDiscountsTest extends GraphQlAbstract
     private $fixtures;
 
     /**
-     * @inheridoc
+     * @inheritDoc
      */
     protected function setUp(): void
     {

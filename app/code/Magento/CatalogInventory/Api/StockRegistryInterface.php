@@ -65,7 +65,7 @@ interface StockRegistryInterface
      * @param string $productSku
      * @param int $scopeId
      * @return int
-     * @throw \Magento\Framework\Exception\NoSuchEntityException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     public function getProductStockStatusBySku($productSku, $scopeId = null);
 

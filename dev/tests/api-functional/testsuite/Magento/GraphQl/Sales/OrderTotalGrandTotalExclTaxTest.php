@@ -53,7 +53,7 @@ class OrderTotalGrandTotalExclTaxTest extends GraphQlAbstract
     private $fixtures;
 
     /**
-     * @inheridoc
+     * @inheritDoc
      */
     protected function setUp(): void
     {

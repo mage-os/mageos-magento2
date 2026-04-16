@@ -64,7 +64,7 @@ class CreatedatTest extends TestCase
     private $reportCollection;
 
     /**
-     * @inheirtDoc
+     * @inheritDoc
      */
     protected function setUp(): void
     {

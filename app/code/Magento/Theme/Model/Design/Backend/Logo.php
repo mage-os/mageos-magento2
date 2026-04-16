@@ -17,7 +17,7 @@ class Logo extends Image
      * Return path to directory for upload file
      *
      * @return string
-     * @throw \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\LocalizedException
      */
     protected function _getUploadDir()
     {
