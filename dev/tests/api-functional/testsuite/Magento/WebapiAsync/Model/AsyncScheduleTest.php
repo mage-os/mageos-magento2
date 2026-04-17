@@ -117,7 +117,6 @@ class AsyncScheduleTest extends WebapiAbstract
         $this->clearProducts();
 
         $response = $this->saveProductAsync($product);
-        sleep(5);
         $this->assertArrayHasKey(self::BULK_UUID_KEY, $response);
         $this->assertNotNull($response[self::BULK_UUID_KEY]);
 
