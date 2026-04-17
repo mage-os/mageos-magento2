@@ -116,21 +116,16 @@ class OrderRepositoryInterfaceTest extends WebapiAbstract
                             return false;
                         }
                     }
-                    // Totals on the reloaded order can be 0.0 in some environments until totals are recalculated;
-                    // still require equality when the API returns non-zero totals (not overwritten by the async save).
-                    $afterBaseGrandTotal = (float) $afterUpdateOrder->getBaseGrandTotal();
-                    $beforeBaseGrandTotal = (float) $beforeUpdateOrder->getBaseGrandTotal();
-                    $this->assertTrue(
-                        $afterBaseGrandTotal === 0.0
-                        || abs($beforeBaseGrandTotal - $afterBaseGrandTotal) < 0.0001,
-                        'base_grand_total should match the pre-update order when present on the reloaded entity'
+                    //check that base_grand_total and grand_total are not overwritten
+                    $this->assertEqualsWithDelta(
+                        (float) $beforeUpdateOrder->getBaseGrandTotal(),
+                        (float) $afterUpdateOrder->getBaseGrandTotal(),
+                        0.0001
                     );
-                    $afterGrandTotal = (float) $afterUpdateOrder->getGrandTotal();
-                    $beforeGrandTotal = (float) $beforeUpdateOrder->getGrandTotal();
-                    $this->assertTrue(
-                        $afterGrandTotal === 0.0
-                        || abs($beforeGrandTotal - $afterGrandTotal) < 0.0001,
-                        'grand_total should match the pre-update order when present on the reloaded entity'
+                    $this->assertEqualsWithDelta(
+                        (float) $beforeUpdateOrder->getGrandTotal(),
+                        (float) $afterUpdateOrder->getGrandTotal(),
+                        0.0001
                     );
                     return true;
                 },
