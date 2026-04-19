@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\SalesRule\Test\Unit\Model\Plugin;
+namespace Magento\SalesRule\Test\Unit\Model;
 
 use Magento\SalesRule\Model\ReadRequestFlag;
 use PHPUnit\Framework\TestCase;

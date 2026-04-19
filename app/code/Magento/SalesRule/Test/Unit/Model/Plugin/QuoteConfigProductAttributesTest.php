@@ -16,9 +16,12 @@ use Magento\SalesRule\Model\ReadRequestFlag;
 use Magento\SalesRule\Model\ResourceModel\Rule;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 class QuoteConfigProductAttributesTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var QuoteConfigProductAttributes|MockObject
      */
@@ -58,7 +61,10 @@ class QuoteConfigProductAttributesTest extends TestCase
     {
         $this->ruleResource = $this->createMock(Rule::class);
         $this->readRequestFlag = $this->createMock(ReadRequestFlag::class);
-        $this->requestInterface = $this->createMock(RequestInterface::class);
+        $this->requestInterface = $this->createPartialMockWithReflection(
+            RequestInterface::class,
+            ['getMethod']
+        );
         $this->cache = $this->createMock(CacheInterface::class);
         $this->serializer = $this->createMock(SerializerInterface::class);
         $this->subject = $this->createMock(Config::class);
@@ -81,6 +87,10 @@ class QuoteConfigProductAttributesTest extends TestCase
         $this->readRequestFlag->expects($this->once())
             ->method('isReadRequest')
             ->willReturn(false);
+
+        $this->requestInterface->expects($this->once())
+            ->method('getMethod')
+            ->willReturn('POST');
 
         $this->cache->expects($this->once())
             ->method('load')
@@ -108,6 +118,10 @@ class QuoteConfigProductAttributesTest extends TestCase
             ->method('isReadRequest')
             ->willReturn(false);
 
+        $this->requestInterface->expects($this->once())
+            ->method('getMethod')
+            ->willReturn('POST');
+
         $this->cache->expects($this->once())
             ->method('load')
             ->with('salesrule_active_product_attributes')
@@ -133,11 +147,54 @@ class QuoteConfigProductAttributesTest extends TestCase
         $this->assertEquals($expected, $this->plugin->afterGetProductAttributes($this->subject, []));
     }
 
-    public function testAfterGetProductAttributesRequestTypePostOrMutation()
+    public function testAfterGetProductAttributesIsReadTrueAndGetRequest()
     {
         $this->readRequestFlag->expects($this->once())
             ->method('isReadRequest')
             ->willReturn(true);
+
+        $this->requestInterface->expects($this->once())
+            ->method('getMethod')
+            ->willReturn('GET');
+
+        $this->assertEquals([], $this->plugin->afterGetProductAttributes($this->subject, []));
+    }
+
+    public function testAfterGetProductAttributesIsReadFalseAndGetRequest()
+    {
+        $this->readRequestFlag->expects($this->once())
+            ->method('isReadRequest')
+            ->willReturn(false);
+
+        $this->requestInterface->expects($this->once())
+            ->method('getMethod')
+            ->willReturn('GET');
+
+        $this->assertEquals([], $this->plugin->afterGetProductAttributes($this->subject, []));
+    }
+
+    public function testAfterGetProductAttributesIsReadTrueAndPostRequest()
+    {
+        $this->readRequestFlag->expects($this->once())
+            ->method('isReadRequest')
+            ->willReturn(true);
+
+        $this->requestInterface->expects($this->once())
+            ->method('getMethod')
+            ->willReturn('Post');
+
+        $this->assertEquals([], $this->plugin->afterGetProductAttributes($this->subject, []));
+    }
+
+    public function testAfterGetProductAttributesIsReadFalseAndPostRequest()
+    {
+        $this->readRequestFlag->expects($this->once())
+            ->method('isReadRequest')
+            ->willReturn(false);
+
+        $this->requestInterface->expects($this->once())
+            ->method('getMethod')
+            ->willReturn('Post');
 
         $this->assertEquals([], $this->plugin->afterGetProductAttributes($this->subject, []));
     }
