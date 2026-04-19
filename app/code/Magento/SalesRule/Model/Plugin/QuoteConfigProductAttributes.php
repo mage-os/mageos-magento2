@@ -74,7 +74,7 @@ class QuoteConfigProductAttributes
         $method = strtoupper($this->request->getMethod());
         $isReadOnly = ($method === 'GET');
 
-        if ($isReadOnly || $this->readRequestFlag->isreadRequest()) {
+        if ($isReadOnly || $this->readRequestFlag->isReadRequest()) {
             return $attributeKeys;
         }
 
