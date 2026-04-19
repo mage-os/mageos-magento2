@@ -11,7 +11,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Magento\SalesRule\Model\Plugin\QuoteItemCollection;
 use Magento\Quote\Model\ResourceModel\Quote\Item\Collection;
-use Magento\SalesRule\Model\Plugin\RequestTypeRegistry;
+use Magento\SalesRule\Model\ReadRequestFlag;
 use Magento\Quote\Model\Quote;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
@@ -23,9 +23,9 @@ class QuoteItemCollectionTest extends TestCase
     use MockCreationTrait;
 
     /**
-     * @var RequestTypeRegistry|MockObject
+     * @var ReadRequestFlag|MockObject
      */
-    private $requestTypeRegistry;
+    private $readRequestFlag;
 
     /**
      * @var QuoteItemCollectionPlugin
@@ -47,8 +47,8 @@ class QuoteItemCollectionTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->requestTypeRegistry = $this->createMock(RequestTypeRegistry::class);
-        $this->plugin = new QuoteItemCollection($this->requestTypeRegistry);
+        $this->readRequestFlag = $this->createMock(ReadRequestFlag::class);
+        $this->plugin = new QuoteItemCollection($this->readRequestFlag);
         $this->quoteItemCollection = $this->getMockBuilder(Collection::class)
                                     ->disableOriginalConstructor()
                                     ->getMock();
@@ -68,14 +68,14 @@ class QuoteItemCollectionTest extends TestCase
             ->method('getTriggerRecollect')
             ->willReturn(1);
 
-        // Set up the request type registry to indicate this is a GET request
-        $this->requestTypeRegistry->expects($this->once())
-            ->method('isGetRequestOrQuery')
+        // Set up the request type flag to indicate this is a GET request
+        $this->readRequestFlag->expects($this->once())
+            ->method('isReadRequest')
             ->willReturn(true);
 
-        // Expect setIsGetRequestOrQuery to be called with false
-        $this->requestTypeRegistry->expects($this->once())
-            ->method('setIsGetRequestOrQuery')
+        // Expect setIsReadRequest to be called with false
+        $this->readRequestFlag->expects($this->once())
+            ->method('setIsReadRequest')
             ->with(false);
 
         // Execute the method
@@ -92,9 +92,9 @@ class QuoteItemCollectionTest extends TestCase
             ->method('getTriggerRecollect')
             ->willReturn(0);
 
-        // Expect setIsGetRequestOrQuery NOT to be called
-        $this->requestTypeRegistry->expects($this->never())
-            ->method('setIsGetRequestOrQuery');
+        // Expect setIsReadRequest NOT to be called
+        $this->readRequestFlag->expects($this->never())
+            ->method('setIsReadRequest');
 
         // Execute the method
         $this->plugin->beforeSetQuote($this->quoteItemCollection, $this->quote);
@@ -111,13 +111,13 @@ class QuoteItemCollectionTest extends TestCase
             ->willReturn(1);
 
         // Set up the request type registry to indicate this is NOT a GET request
-        $this->requestTypeRegistry->expects($this->once())
-            ->method('isGetRequestOrQuery')
+        $this->readRequestFlag->expects($this->once())
+            ->method('isReadRequest')
             ->willReturn(false);
 
-        // Expect setIsGetRequestOrQuery NOT to be called
-        $this->requestTypeRegistry->expects($this->never())
-            ->method('setIsGetRequestOrQuery');
+        // Expect setIsReadRequest NOT to be called
+        $this->readRequestFlag->expects($this->never())
+            ->method('setIsReadRequest');
 
         // Execute the method
         $this->plugin->beforeSetQuote($this->quoteItemCollection, $this->quote);

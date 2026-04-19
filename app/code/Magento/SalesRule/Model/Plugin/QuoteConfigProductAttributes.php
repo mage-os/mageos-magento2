@@ -8,6 +8,8 @@ declare(strict_types=1);
 namespace Magento\SalesRule\Model\Plugin;
 
 use Magento\Framework\App\CacheInterface;
+use Magento\Framework\App\ObjectManager;
+use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Quote\Model\Quote\Config;
 use Magento\SalesRule\Model\ResourceModel\Rule as RuleResource;
@@ -27,17 +29,33 @@ class QuoteConfigProductAttributes
 
     /**
      * @param RuleResource $ruleResource
-     * @param RequestTypeRegistry $requestTypeRegistry
+     * @param RequestInterface $request
+     * @param ReadRequestFlag $readRequestFlag
      * @param CacheInterface $cache
      * @param SerializerInterface $serializer
      */
     public function __construct(
         RuleResource $ruleResource,
-        private RequestTypeRegistry $requestTypeRegistry,
-        private CacheInterface $cache,
-        private SerializerInterface $serializer
+        private ?RequestInterface $request = null,
+        private ?ReadRequestFlag $readRequestFlag = null,
+        private ?CacheInterface $cache = null,
+        private ?SerializerInterface $serializer = null
     ) {
         $this->ruleResource = $ruleResource;
+
+        $om = ObjectManager::getInstance();
+
+        $this->request = $request
+            ?? $om->get(RequestInterface::class);
+
+        $this->readRequestFlag = $readRequestFlag
+            ?? $om->get(ReadRequestFlag::class);
+
+        $this->cache = $cache
+            ?? $om->get(CacheInterface::class);
+
+        $this->serializer = $serializer
+            ?? $om->get(SerializerInterface::class);
     }
 
     /**
@@ -51,7 +69,11 @@ class QuoteConfigProductAttributes
      */
     public function afterGetProductAttributes(Config $subject, array $attributeKeys): array
     {
-        if ($this->requestTypeRegistry->isGetRequestOrQuery()) {
+        
+        $method = strtoupper($this->request->getMethod());
+        $isReadOnly = ($method === 'GET');
+
+        if ($isReadOnly || $this->readRequestFlag->IsreadRequest()) {
             return $attributeKeys;
         }
 

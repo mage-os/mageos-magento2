@@ -11,7 +11,7 @@ use Magento\Framework\App\CacheInterface;
 use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Quote\Model\Quote\Config;
 use Magento\SalesRule\Model\Plugin\QuoteConfigProductAttributes;
-use Magento\SalesRule\Model\Plugin\RequestTypeRegistry;
+use Magento\SalesRule\Model\ReadRequestFlag;
 use Magento\SalesRule\Model\ResourceModel\Rule;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -29,9 +29,9 @@ class QuoteConfigProductAttributesTest extends TestCase
     protected $ruleResource;
 
     /**
-     * @var RequestTypeRegistry|MockObject
+     * @var ReadRequestFlag|MockObject
      */
-    protected $requestTypeRegistry;
+    protected $readRequestFlag;
 
     /**
      * @var CacheInterface|MockObject
@@ -51,7 +51,7 @@ class QuoteConfigProductAttributesTest extends TestCase
     protected function setUp(): void
     {
         $this->ruleResource = $this->createMock(Rule::class);
-        $this->requestTypeRegistry = $this->createMock(RequestTypeRegistry::class);
+        $this->readRequestFlag = $this->createMock(ReadRequestFlag::class);
         $this->cache = $this->createMock(CacheInterface::class);
         $this->serializer = $this->createMock(SerializerInterface::class);
         $this->subject = $this->createMock(Config::class);
@@ -70,8 +70,8 @@ class QuoteConfigProductAttributesTest extends TestCase
         $expected = [0 => $attributeCode];
         $serializedData = '["' . $attributeCode . '"]';
 
-        $this->requestTypeRegistry->expects($this->once())
-            ->method('isGetRequestOrQuery')
+        $this->readRequestFlag->expects($this->once())
+            ->method('isReadRequest')
             ->willReturn(false);
 
         $this->cache->expects($this->once())
@@ -96,8 +96,8 @@ class QuoteConfigProductAttributesTest extends TestCase
         $expected = [0 => $attributeCode];
         $serializedData = '["' . $attributeCode . '"]';
 
-        $this->requestTypeRegistry->expects($this->once())
-            ->method('isGetRequestOrQuery')
+        $this->readRequestFlag->expects($this->once())
+            ->method('isReadRequest')
             ->willReturn(false);
 
         $this->cache->expects($this->once())
@@ -127,8 +127,8 @@ class QuoteConfigProductAttributesTest extends TestCase
 
     public function testAfterGetProductAttributesRequestTypePostOrMutation()
     {
-        $this->requestTypeRegistry->expects($this->once())
-            ->method('isGetRequestOrQuery')
+        $this->readRequestFlag->expects($this->once())
+            ->method('isReadRequest')
             ->willReturn(true);
 
         $this->assertEquals([], $this->plugin->afterGetProductAttributes($this->subject, []));

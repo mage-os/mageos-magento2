@@ -8,17 +8,17 @@ declare(strict_types=1);
 namespace Magento\SalesRule\Model\Plugin;
 
 /**
- * Tracks whether the request is http post or mutation
+ * Tracks whether its a read request
  *
  * This class is used to optimize performance by only loading salesrule product attributes
  * when they're actually needed during totals collection, rather than on every quote load.
  */
-class RequestTypeRegistry
+class ReadRequestFlag
 {
     /**
      * @var bool
      */
-    private $isGetRequestOrQuery= false;
+    private $isReadRequest= false;
 
     /**
      * Set Request state
@@ -26,28 +26,28 @@ class RequestTypeRegistry
      * @param bool $state
      * @return void
      */
-    public function setIsGetRequestOrQuery(bool $state): void
+    public function setIsReadRequest(bool $state): void
     {
-        $this->isGetRequestOrQuery = $state;
+        $this->isReadRequest = $state;
     }
 
     /**
-     * Check if request is a get or query
+     * Check if request is a read or write
      *
      * @return bool
      */
-    public function isGetRequestOrQuery(): bool
+    public function isReadRequest(): bool
     {
-        return $this->isGetRequestOrQuery;
+        return $this->isReadRequest;
     }
 
     /**
-     * Resets the state of the object by setting the isGetRequestOrQuery property to false.
+     * Resets the state of the object by setting the isReadRequest property to false.
      *
      * @return void
      */
     public function reset(): void
     {
-        $this->isGetRequestOrQuery = false;
+        $this->isReadRequest = false;
     }
 }

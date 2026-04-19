@@ -10,10 +10,10 @@ namespace Magento\SalesRule\Model\Plugin;
 class QuoteItemCollection
 {
     /**
-     * @param RequestTypeRegistry     $requestTypeRegistry
+     * @param ReadRequestFlag     $readRequestFlag
      */
     public function __construct(
-        private RequestTypeRegistry $requestTypeRegistry
+        private ReadRequestFlag $readRequestFlag
     ) {
     }
 
@@ -29,8 +29,8 @@ class QuoteItemCollection
         \Magento\Quote\Model\ResourceModel\Quote\Item\Collection $subject,
         \Magento\Quote\Model\Quote $quote
     ) {
-        if ($quote->getTriggerRecollect() == 1 && $this->requestTypeRegistry->isGetRequestOrQuery()) {
-            $this->requestTypeRegistry->setIsGetRequestOrQuery(false);
+        if ($quote->getTriggerRecollect() == 1 && $this->readRequestFlag->isreadRequest()) {
+            $this->readRequestFlag->setIsReadRequest(false);
         }
     }
 }
