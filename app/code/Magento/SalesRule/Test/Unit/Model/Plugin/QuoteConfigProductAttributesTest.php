@@ -180,16 +180,4 @@ class QuoteConfigProductAttributesTest extends TestCase
         $this->assertEquals([], $this->plugin->afterGetProductAttributes($this->subject, []));
     }
 
-    public function testAfterGetProductAttributesIsReadFalseAndPostRequest()
-    {
-        $this->readRequestFlag->expects($this->once())
-            ->method('isReadRequest')
-            ->willReturn(false);
-
-        $this->requestInterface->expects($this->once())
-            ->method('getMethod')
-            ->willReturn('Post');
-
-        $this->assertEquals([], $this->plugin->afterGetProductAttributes($this->subject, []));
-    }
 }

@@ -92,7 +92,6 @@ class RuleTest extends TestCase
 
         $reflection = new \ReflectionClass($this->plugin);
         $prop = $reflection->getProperty('attributes');
-        $prop->setAccessible(true);
 
         $this->assertEquals($attributes, $prop->getValue($this->plugin));
     }
