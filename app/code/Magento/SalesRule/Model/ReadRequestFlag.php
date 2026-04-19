@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\SalesRule\Model\Plugin;
+namespace Magento\SalesRule\Model;
 
 /**
  * Tracks whether its a read request

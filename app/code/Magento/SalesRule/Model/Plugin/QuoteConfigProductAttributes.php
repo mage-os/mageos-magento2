@@ -43,19 +43,19 @@ class QuoteConfigProductAttributes
     ) {
         $this->ruleResource = $ruleResource;
 
-        $om = ObjectManager::getInstance();
+        $objectManager = ObjectManager::getInstance();
 
         $this->request = $request
-            ?? $om->get(RequestInterface::class);
+            ?? $objectManager->get(RequestInterface::class);
 
         $this->readRequestFlag = $readRequestFlag
-            ?? $om->get(ReadRequestFlag::class);
+            ?? $objectManager->get(ReadRequestFlag::class);
 
         $this->cache = $cache
-            ?? $om->get(CacheInterface::class);
+            ?? $objectManager->get(CacheInterface::class);
 
         $this->serializer = $serializer
-            ?? $om->get(SerializerInterface::class);
+            ?? $objectManager->get(SerializerInterface::class);
     }
 
     /**

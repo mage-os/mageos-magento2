@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2025 Adobe
+ * Copyright 2015 Adobe
  * All Rights Reserved.
  */
 declare(strict_types=1);
@@ -9,6 +9,7 @@ namespace Magento\SalesRule\Test\Unit\Model\Plugin;
 
 use Magento\Framework\App\CacheInterface;
 use Magento\Framework\Serialize\SerializerInterface;
+use Magento\Framework\App\RequestInterface;
 use Magento\Quote\Model\Quote\Config;
 use Magento\SalesRule\Model\Plugin\QuoteConfigProductAttributes;
 use Magento\SalesRule\Model\ReadRequestFlag;
@@ -44,6 +45,11 @@ class QuoteConfigProductAttributesTest extends TestCase
     protected $serializer;
 
     /**
+     * @var RequestInterface|MockObject
+     */
+    protected $requestInterface;
+
+    /**
      * @var Config|MockObject
      */
     protected $subject;
@@ -52,13 +58,15 @@ class QuoteConfigProductAttributesTest extends TestCase
     {
         $this->ruleResource = $this->createMock(Rule::class);
         $this->readRequestFlag = $this->createMock(ReadRequestFlag::class);
+        $this->requestInterface = $this->createMock(RequestInterface::class);
         $this->cache = $this->createMock(CacheInterface::class);
         $this->serializer = $this->createMock(SerializerInterface::class);
         $this->subject = $this->createMock(Config::class);
 
         $this->plugin = new QuoteConfigProductAttributes(
             $this->ruleResource,
-            $this->requestTypeRegistry,
+            $this->requestInterface,
+            $this->readRequestFlag,
             $this->cache,
             $this->serializer
         );
