@@ -7,7 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\SalesRule\Model\Plugin;
 
-use Magento\Quote\Model\ReadRequestFlag;
+use Magento\SalesRule\Model\ReadRequestFlag;
 
 class QuoteItemCollection
 {

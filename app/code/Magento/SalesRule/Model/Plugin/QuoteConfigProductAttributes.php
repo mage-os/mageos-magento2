@@ -12,7 +12,7 @@ use Magento\Framework\App\ObjectManager;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Quote\Model\Quote\Config;
-use Magento\Quote\Model\ReadRequestFlag;
+use Magento\SalesRule\Model\ReadRequestFlag;
 use Magento\SalesRule\Model\ResourceModel\Rule as RuleResource;
 use Magento\SalesRule\Model\Plugin\ResourceModel\Rule as ResourceRulePlugin;
 
