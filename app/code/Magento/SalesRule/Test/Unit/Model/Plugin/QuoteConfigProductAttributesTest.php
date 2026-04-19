@@ -9,19 +9,16 @@ namespace Magento\SalesRule\Test\Unit\Model\Plugin;
 
 use Magento\Framework\App\CacheInterface;
 use Magento\Framework\Serialize\SerializerInterface;
-use Magento\Framework\App\RequestInterface;
+use Magento\Framework\App\Request\Http;
 use Magento\Quote\Model\Quote\Config;
 use Magento\SalesRule\Model\Plugin\QuoteConfigProductAttributes;
 use Magento\SalesRule\Model\ReadRequestFlag;
 use Magento\SalesRule\Model\ResourceModel\Rule;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 class QuoteConfigProductAttributesTest extends TestCase
 {
-    use MockCreationTrait;
-
     /**
      * @var QuoteConfigProductAttributes|MockObject
      */
@@ -61,10 +58,7 @@ class QuoteConfigProductAttributesTest extends TestCase
     {
         $this->ruleResource = $this->createMock(Rule::class);
         $this->readRequestFlag = $this->createMock(ReadRequestFlag::class);
-        $this->requestInterface = $this->createPartialMockWithReflection(
-            RequestInterface::class,
-            ['getMethod']
-        );
+        $this->requestInterface = $this->createMock(Http::class);
         $this->cache = $this->createMock(CacheInterface::class);
         $this->serializer = $this->createMock(SerializerInterface::class);
         $this->subject = $this->createMock(Config::class);
