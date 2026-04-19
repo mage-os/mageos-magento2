@@ -31,7 +31,7 @@ class QuoteItemCollection
         \Magento\Quote\Model\ResourceModel\Quote\Item\Collection $subject,
         \Magento\Quote\Model\Quote $quote
     ) {
-        if ($quote->getTriggerRecollect() == 1 && $this->readRequestFlag->isreadRequest()) {
+        if ($quote->getTriggerRecollect() == 1 && $this->readRequestFlag->isReadRequest()) {
             $this->readRequestFlag->setIsReadRequest(false);
         }
     }
