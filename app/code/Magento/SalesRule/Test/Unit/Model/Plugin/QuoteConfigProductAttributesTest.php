@@ -143,26 +143,27 @@ class QuoteConfigProductAttributesTest extends TestCase
 
     public function testAfterGetProductAttributesIsReadTrueAndGetRequest()
     {
-        $this->readRequestFlag->expects($this->once())
-            ->method('isReadRequest')
-            ->willReturn(true);
-
         $this->requestInterface->expects($this->once())
             ->method('getMethod')
             ->willReturn('GET');
+
+        $this->readRequestFlag->expects($this->never())
+            ->method('isReadRequest')
+            ->willReturn(true);
 
         $this->assertEquals([], $this->plugin->afterGetProductAttributes($this->subject, []));
     }
 
     public function testAfterGetProductAttributesIsReadFalseAndGetRequest()
     {
-        $this->readRequestFlag->expects($this->once())
-            ->method('isReadRequest')
-            ->willReturn(false);
-
         $this->requestInterface->expects($this->once())
             ->method('getMethod')
             ->willReturn('GET');
+            
+        $this->readRequestFlag->expects($this->never())
+            ->method('isReadRequest')
+            ->willReturn(false);
+
 
         $this->assertEquals([], $this->plugin->afterGetProductAttributes($this->subject, []));
     }
