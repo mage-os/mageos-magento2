@@ -12,6 +12,7 @@ use Magento\Framework\App\ObjectManager;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Quote\Model\Quote\Config;
+use Magento\Quote\Model\ReadRequestFlag;
 use Magento\SalesRule\Model\ResourceModel\Rule as RuleResource;
 use Magento\SalesRule\Model\Plugin\ResourceModel\Rule as ResourceRulePlugin;
 
@@ -73,7 +74,7 @@ class QuoteConfigProductAttributes
         $method = strtoupper($this->request->getMethod());
         $isReadOnly = ($method === 'GET');
 
-        if ($isReadOnly || $this->readRequestFlag->IsreadRequest()) {
+        if ($isReadOnly || $this->readRequestFlag->isreadRequest()) {
             return $attributeKeys;
         }
 

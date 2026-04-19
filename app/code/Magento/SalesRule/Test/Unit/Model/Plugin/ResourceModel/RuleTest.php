@@ -47,8 +47,6 @@ class RuleTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->ruleResource = $this->createMock(RuleResource::class);
-
         $this->ruleResource = $this->getMockBuilder(\Magento\SalesRule\Model\ResourceModel\Rule::class)
             ->disableOriginalConstructor()
             ->getMock();
