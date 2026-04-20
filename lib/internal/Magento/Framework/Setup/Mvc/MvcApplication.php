@@ -168,7 +168,7 @@ class MvcApplication
         // Load global.php and local.php configurations from config_glob_paths
         if (isset($configuration['module_listener_options']['config_glob_paths'])) {
             foreach ($configuration['module_listener_options']['config_glob_paths'] as $globPath) {
-                $files = glob($globPath, GlobWrapper::GLOB_BRACE);
+                $files = GlobWrapper::glob($globPath, GlobWrapper::GLOB_BRACE);
                 foreach ($files as $file) {
                     if (is_readable($file)) {
                         $autoloadConfig = include $file;
