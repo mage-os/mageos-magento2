@@ -193,7 +193,9 @@ define([
          * @param {jQuery} $area
          */
         triggerFileBrowser: function ($area) {
-            let $browseBtn = $area.find('.uppy-Dashboard-browse').first();
+            let $browseBtn = $area.find('.uppy-Dashboard-browse').first(),
+                $dashboard,
+                $fileInput;
 
             if (!$browseBtn.length) {
                 $browseBtn = $area.closest('[data-role=drop-zone]').find('.uppy-Dashboard-browse').first();
@@ -204,8 +206,8 @@ define([
                 return;
             }
 
-            let $dashboard = $area.find('.uppy-Dashboard-inner'),
-                $fileInput = $dashboard.find('input[type="file"]:visible').first();
+            $dashboard = $area.find('.uppy-Dashboard-inner');
+            $fileInput = $dashboard.find('input[type="file"]:visible').first();
 
             if ($fileInput.length > 0) {
                 $fileInput[0].click();
