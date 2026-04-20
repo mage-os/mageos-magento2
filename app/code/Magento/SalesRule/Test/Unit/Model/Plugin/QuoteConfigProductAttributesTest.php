@@ -164,7 +164,6 @@ class QuoteConfigProductAttributesTest extends TestCase
             ->method('isReadRequest')
             ->willReturn(false);
 
-
         $this->assertEquals([], $this->plugin->afterGetProductAttributes($this->subject, []));
     }
 
@@ -180,5 +179,4 @@ class QuoteConfigProductAttributesTest extends TestCase
 
         $this->assertEquals([], $this->plugin->afterGetProductAttributes($this->subject, []));
     }
-
 }
