@@ -9,6 +9,7 @@ namespace Magento\CatalogInventoryGraphQl\Model\Resolver;
 
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Model\Product;
+use Magento\CatalogInventory\Model\Config\Source\NotAvailableMessage;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
@@ -16,10 +17,13 @@ use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Quote\Model\Quote\Item;
 use Magento\QuoteGraphQl\Model\CartItem\ProductStock;
+use Magento\Store\Model\ScopeInterface;
 
 /**
  * Resolver for ProductInterface quantity
- * Returns the available stock quantity based on cataloginventory/options/not_available_message
+ * Returns the salable quantity for the current store's assigned stock.
+ * Null is returned only when the product has no available stock and the store
+ * is configured to show a generic "Not enough items for sale" message.
  */
 class QuantityResolver implements ResolverInterface
 {
@@ -27,6 +31,11 @@ class QuantityResolver implements ResolverInterface
      * Configurable product type code
      */
     private const PRODUCT_TYPE_CONFIGURABLE = "configurable";
+
+    /**
+     * Scope config path for not_available_message
+     */
+    private const CONFIG_PATH_NOT_AVAILABLE_MESSAGE = "cataloginventory/options/not_available_message";
 
     /**
      * QuantityResolver Constructor
@@ -70,6 +79,17 @@ class QuantityResolver implements ResolverInterface
             $product = $this->productRepositoryInterface->get($product->getSku());
         }
 
-        return $this->productStock->getSaleableQty($product, null);
+        $saleableQty = $this->productStock->getSaleableQty($product, null);
+
+        if ($saleableQty <= 0
+            && (int) $this->scopeConfig->getValue(
+                self::CONFIG_PATH_NOT_AVAILABLE_MESSAGE,
+                ScopeInterface::SCOPE_STORE
+            ) === NotAvailableMessage::VALUE_NOT_ENOUGH_ITEMS
+        ) {
+            return null;
+        }
+
+        return $saleableQty;
     }
 }

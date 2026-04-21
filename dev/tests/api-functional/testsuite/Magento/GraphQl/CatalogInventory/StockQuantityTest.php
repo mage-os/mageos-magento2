@@ -156,6 +156,18 @@ class StockQuantityTest extends GraphQlAbstract
     }
 
     #[
+        Config('cataloginventory/options/not_available_message', 2),
+        DataFixture(ProductFixture::class, as: 'product'),
+        DataFixture(ProductStockFixture::class, ['prod_id' => '$product.id$', 'prod_qty' => 0]),
+    ]
+    public function testQuantityNullWhenOutOfStockAndNotAvailableMessageIsNotEnoughItems(): void
+    {
+        $productQuery = $this->getProductQuery($this->fixtures->get('product')->getSku());
+        $productResponse = $this->graphQlMutation($productQuery);
+        self::assertNull((new DataObject($productResponse))->getData('products/items/0/quantity'));
+    }
+
+    #[
         DataFixture(SourceFixture::class, as: 'source'),
         DataFixture(StockFixture::class, as: 'stock'),
         DataFixture(
