@@ -9,7 +9,6 @@ namespace Magento\CatalogInventoryGraphQl\Model\Resolver;
 
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Model\Product;
-use Magento\CatalogInventory\Model\Config\Source\NotAvailableMessage;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
@@ -28,11 +27,6 @@ class QuantityResolver implements ResolverInterface
      * Configurable product type code
      */
     private const PRODUCT_TYPE_CONFIGURABLE = "configurable";
-
-    /**
-     * Scope config path for not_available_message
-     */
-    private const CONFIG_PATH_NOT_AVAILABLE_MESSAGE = "cataloginventory/options/not_available_message";
 
     /**
      * QuantityResolver Constructor
@@ -60,12 +54,6 @@ class QuantityResolver implements ResolverInterface
         ?array $value = null,
         ?array $args = null
     ): ?float {
-
-        if ((int) $this->scopeConfig->getValue(
-            self::CONFIG_PATH_NOT_AVAILABLE_MESSAGE
-        ) === NotAvailableMessage::VALUE_NOT_ENOUGH_ITEMS) {
-            return null;
-        }
 
         if (isset($value['cart_item']) && $value['cart_item'] instanceof Item) {
             return $this->productStock->getSaleableQtyByCartItem($value['cart_item'], null);
