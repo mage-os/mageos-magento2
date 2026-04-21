@@ -57,6 +57,9 @@ class View extends \Magento\Backend\Block\Widget\Form\Container
                 $this->escapeHtml(__('Are you sure you want to send a Shipment email to customer?'))
             );
             $this->buttonList->update('save', 'label', __('Send Tracking Information'));
+            $confirmMessage = $this->escapeJs(
+                $this->escapeHtml(__('Are you sure you want to send a Shipment email to customer?'))
+            );
             $this->buttonList->update(
                 'save',
                 'onclick',

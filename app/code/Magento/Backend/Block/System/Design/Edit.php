@@ -30,7 +30,7 @@ class Edit extends \Magento\Backend\Block\Widget
      *
      * @var Escaper
      */
-    protected $escaper;
+    private $escaper;
 
     /**
      * @inheritdoc
