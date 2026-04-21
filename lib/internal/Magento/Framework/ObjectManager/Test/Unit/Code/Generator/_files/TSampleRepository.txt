@@ -28,7 +28,7 @@ class TSampleRepository implements TSampleRepositoryInterface
      * @var array
      */
     protected $registry = [
-        
+
     ];
 
     /**
