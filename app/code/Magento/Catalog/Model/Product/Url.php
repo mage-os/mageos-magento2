@@ -109,7 +109,7 @@ class Url extends \Magento\Framework\DataObject
     /**
      * Format Key for URL
      *
-     * @param string $str
+     * @param ?string $str
      * @return string
      */
     public function formatUrlKey($str)
