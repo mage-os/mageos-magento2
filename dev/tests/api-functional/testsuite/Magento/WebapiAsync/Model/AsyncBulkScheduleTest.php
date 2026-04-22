@@ -135,7 +135,8 @@ class AsyncBulkScheduleTest extends WebapiAbstract
         try {
             $this->publisherConsumerController->waitForAsynchronousResult(
                 [$this, 'assertProductCreation'],
-                [$products]
+                [$products],
+                30
             );
         } catch (PreconditionFailedException $e) {
             $this->fail("Not all products were created");
@@ -148,7 +149,9 @@ class AsyncBulkScheduleTest extends WebapiAbstract
     {
         $this->_markTestAsRestOnly();
         $this->skus = [];
-        $this->skus[] = $products[0]['product'][ProductInterface::SKU];
+        foreach ($products as $product) {
+            $this->skus[] = $product['product'][ProductInterface::SKU];
+        }
         $this->clearProducts();
 
         $response = $this->saveProductAsync($products);
@@ -163,7 +166,8 @@ class AsyncBulkScheduleTest extends WebapiAbstract
         try {
             $this->publisherConsumerController->waitForAsynchronousResult(
                 [$this, 'assertProductCreation'],
-                [$products]
+                [$products],
+                30
             );
         } catch (PreconditionFailedException $e) {
             $this->fail("Not all products were created");
@@ -433,14 +437,19 @@ class AsyncBulkScheduleTest extends WebapiAbstract
         return $this->_webApiCall($serviceInfo, $requestData, null, $storeCode);
     }
 
-    public function assertProductCreation()
+    public function assertProductCreation(): bool
     {
-        $collection = $this->objectManager->create(Collection::class)
-            ->addAttributeToFilter('sku', ['in' => $this->skus])
-            ->load();
-        $size = $collection->getSize();
-
-        return $size == count($this->skus);
+        if ($this->skus === []) {
+            return false;
+        }
+        foreach ($this->skus as $sku) {
+            try {
+                $this->productRepository->get($sku, false, null, true);
+            } catch (NoSuchEntityException $e) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
