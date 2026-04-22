@@ -20,10 +20,8 @@ use Magento\QuoteGraphQl\Model\CartItem\ProductStock;
 use Magento\Store\Model\ScopeInterface;
 
 /**
- * Resolver for ProductInterface quantity
- * Returns the salable quantity for the current store's assigned stock.
- * Null is returned only when the product has no available stock and the store
- * is configured to show a generic "Not enough items for sale" message.
+ * Resolves the salable quantity for a product returns null
+ * when unavailable and store shows "Not enough items" message.
  */
 class QuantityResolver implements ResolverInterface
 {
@@ -81,7 +79,7 @@ class QuantityResolver implements ResolverInterface
 
         $saleableQty = $this->productStock->getSaleableQty($product, null);
 
-        if ($saleableQty <= 0
+        if (!$this->productStock->checkIfProductIsAvailable($product)
             && (int) $this->scopeConfig->getValue(
                 self::CONFIG_PATH_NOT_AVAILABLE_MESSAGE,
                 ScopeInterface::SCOPE_STORE
