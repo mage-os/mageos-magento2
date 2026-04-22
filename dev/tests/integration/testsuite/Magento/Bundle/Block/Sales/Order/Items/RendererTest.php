@@ -27,12 +27,15 @@ use Magento\Customer\Model\Session;
 use Magento\Customer\Test\Fixture\Customer;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\ObjectManagerInterface;
+use Magento\Framework\Registry;
 use Magento\Framework\View\LayoutInterface;
 use Magento\Framework\View\Result\PageFactory;
 use Magento\Quote\Test\Fixture\GuestCart as GuestCartFixture;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Email\Sender\OrderSender;
 use Magento\Sales\Model\Order\Address as OrderAddress;
+use Magento\Sales\Test\Fixture\Invoice as InvoiceFixture;
+use Magento\Sales\Test\Fixture\Shipment as ShipmentFixture;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\TestFramework\Fixture\AppArea;
 use Magento\TestFramework\Fixture\Config;
@@ -276,7 +279,7 @@ class RendererTest extends TestCase
         $b1 = $this->fixtures->get('b1');
         $this->assertEquals(Price::PRICE_TYPE_DYNAMIC, $b1->getPriceType());
         $this->assertEquals(AbstractType::SHIPMENT_TOGETHER, $b1->getShipmentType());
-        $this->assertOrderedQty();
+        $this->assertQty(['b1' => 2, 'p1' => 6, 'p2' => 10]);
     }
 
     #[
@@ -331,7 +334,7 @@ class RendererTest extends TestCase
         $b1 = $this->fixtures->get('b1');
         $this->assertEquals(Price::PRICE_TYPE_DYNAMIC, $b1->getPriceType());
         $this->assertEquals(AbstractType::SHIPMENT_SEPARATELY, $b1->getShipmentType());
-        $this->assertOrderedQty();
+        $this->assertQty(['b1' => 2, 'p1' => 6, 'p2' => 10]);
     }
 
     #[
@@ -386,7 +389,7 @@ class RendererTest extends TestCase
         $b1 = $this->fixtures->get('b1');
         $this->assertEquals(Price::PRICE_TYPE_FIXED, $b1->getPriceType());
         $this->assertEquals(AbstractType::SHIPMENT_TOGETHER, $b1->getShipmentType());
-        $this->assertOrderedQty();
+        $this->assertQty(['b1' => 2, 'p1' => 6, 'p2' => 10]);
     }
 
     #[
@@ -441,7 +444,75 @@ class RendererTest extends TestCase
         $b1 = $this->fixtures->get('b1');
         $this->assertEquals(Price::PRICE_TYPE_FIXED, $b1->getPriceType());
         $this->assertEquals(AbstractType::SHIPMENT_SEPARATELY, $b1->getShipmentType());
-        $this->assertOrderedQty();
+        $this->assertQty(['b1' => 2, 'p1' => 6, 'p2' => 10]);
+    }
+
+    #[
+        AppArea('frontend'),
+        DataFixture(ProductFixture::class, ['price' => 10], 'p1'),
+        DataFixture(ProductFixture::class, ['price' => 20], 'p2'),
+        DataFixture(
+            BundleOptionFixture::class,
+            [
+                'product_links' => [['sku' => '$p1.sku$', 'can_change_quantity' => 1]]
+            ],
+            'opt1'
+        ),
+        DataFixture(
+            BundleOptionFixture::class,
+            [
+                'product_links' => [['sku' => '$p2.sku$', 'can_change_quantity' => 1]]
+            ],
+            'opt2'
+        ),
+        DataFixture(
+            BundleProductFixture::class,
+            [
+                '_options' => ['$opt1$', '$opt2$'],
+                'price_type' => Price::PRICE_TYPE_FIXED,
+                'shipment_type' => AbstractType::SHIPMENT_SEPARATELY,
+            ],
+            'b1'
+        ),
+        DataFixture(GuestCartFixture::class, as: 'cart'),
+        DataFixture(
+            AddBundleProductToCartFixture::class,
+            [
+                'cart_id' => '$cart.id$',
+                'product_id' => '$b1.id$',
+                'qty' => '2',
+                'selections' => [
+                    [['product_id' => '$p1.id$', 'qty' => 3]],
+                    [['product_id' => '$p2.id$', 'qty' => 5]],
+                ]
+            ],
+        ),
+        DataFixture(SetBillingAddressFixture::class, ['cart_id' => '$cart.id$']),
+        DataFixture(SetShippingAddressFixture::class, ['cart_id' => '$cart.id$']),
+        DataFixture(SetGuestEmailFixture::class, ['cart_id' => '$cart.id$']),
+        DataFixture(SetDeliveryMethodFixture::class, ['cart_id' => '$cart.id$']),
+        DataFixture(SetPaymentMethodFixture::class, ['cart_id' => '$cart.id$']),
+        DataFixture(PlaceOrderFixture::class, ['cart_id' => '$cart.id$'], 'order'),
+        DataFixture(InvoiceFixture::class, ['order_id' => '$order.id$']),
+        DataFixture(
+            ShipmentFixture::class,
+            [
+                'order_id' => '$order.id$',
+                'items' => [
+                    ['sku' => '$p1.sku$', 'qty' => 4], // Shipping 4 of 6
+                    ['sku' => '$p2.sku$', 'qty' => 7], // Shipping 7 of 10
+                ]
+            ]
+        ),
+    ]
+    public function testOrderViewForBundleFixedPriceShipSeparatelyAfterShipment(): void
+    {
+        $b1 = $this->fixtures->get('b1');
+        $this->assertEquals(Price::PRICE_TYPE_FIXED, $b1->getPriceType());
+        $this->assertEquals(AbstractType::SHIPMENT_SEPARATELY, $b1->getShipmentType());
+        $this->assertQty(['b1' => 2, 'p1' => 6, 'p2' => 10], 'Ordered');
+        // Shipped qty does not show for bundle product when shipment type is separate
+        $this->assertQty(['b1' => '', 'p1' => 4, 'p2' => 7], 'Shipped');
     }
 
     private function getQtyFromOrderItemsGrid(\DOMXPath $xpath, string $name, string $label = 'Ordered'): string
@@ -468,30 +539,26 @@ class RendererTest extends TestCase
         return $page->getLayout()->getBlock($name);
     }
     
-    private function assertOrderedQty(): void
-    {
-        $p1 = $this->fixtures->get('p1');
-        $p2 = $this->fixtures->get('p2');
-        $b1 = $this->fixtures->get('b1');
+    private function assertQty(
+        array $expected,
+        string $label = 'Ordered'
+    ): void {
         $order = $this->fixtures->get('order');
-        $this->objectManager->get(\Magento\Framework\Registry::class)->register('current_order', $order);
+        $this->objectManager->get(Registry::class)->unregister('current_order');
+        $this->objectManager->get(Registry::class)->register('current_order', $order);
         $this->block = $this->getBlock('sales.order.items.renderers.bundle');
         $this->block->setItem($this->fixtures->get('order')->getAllItems()[0]);
         $html = $this->block->toHtml();
 
         $xpath = Xpath::getDOMXpath($html);
-        $this->assertEquals(
-            '2',
-            trim($this->getQtyFromOrderItemsGrid($xpath, $b1->getName()))
-        );
-        $this->assertEquals(
-            '6',
-            trim($this->getQtyFromOrderItemsGrid($xpath, $p1->getName()))
-        );
-        $this->assertEquals(
-            '10',
-            trim($this->getQtyFromOrderItemsGrid($xpath, $p2->getName()))
-        );
+        foreach ($expected as $id => $qty) {
+            $product = $this->fixtures->get($id);
+            $this->assertEquals(
+                $qty,
+                trim($this->getQtyFromOrderItemsGrid($xpath, $product->getName(), $label)),
+                "$label qty for product $id does not match expected"
+            );
+        }
     }
 
     /**
@@ -499,7 +566,7 @@ class RendererTest extends TestCase
      */
     protected function tearDown(): void
     {
-        $this->objectManager->get(\Magento\Framework\Registry::class)->unregister('current_order');
+        $this->objectManager->get(Registry::class)->unregister('current_order');
         parent::tearDown();
     }
 }
