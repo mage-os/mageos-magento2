@@ -124,7 +124,7 @@ class ThemeConfig
         $projectKey = text(
             label: 'Hyva project key',
             placeholder: 'your-project-key',
-            hint: 'Used in your repo URL: https://hyva-themes.repo.packagist.com/{project-key}/', 
+            hint: 'Used in your repo URL: https://hyva-themes.repo.packagist.com/{project-key}/',
             validate: fn (string $value) => empty($value)
                 ? 'Project key is required for Hyva installation'
                 : null
