@@ -1042,8 +1042,19 @@ class SaveTest extends AttributeTest
 
         $data = [
             'attribute_options_select' => [
-                ['record_id' => 0, 'position' => 2, 'value_option_0' => 'B', 'value_option_1' => 'b'],
-                ['record_id' => 1, 'position' => 1, 'value_option_0' => 'A', 'value_option_1' => 'a', 'is_default' => '1'],
+                [
+                    'record_id' => 0,
+                    'position' => 2,
+                    'value_option_0' => 'B',
+                    'value_option_1' => 'b'
+                ],
+                [
+                    'record_id' => 1,
+                    'position' => 1,
+                    'value_option_0' => 'A',
+                    'value_option_1' => 'a',
+                    'is_default' => '1'
+                ],
             ],
             'option' => [
                 'value' => [
