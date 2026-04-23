@@ -17,8 +17,8 @@ class Street extends AbstractAddressFieldValidator
     /** Constrained by quote_address.street varchar(255), the narrowest column across all address tables. */
     private const MAX_STREET_LENGTH = 255;
 
-    /** Blocks control characters and HTML angle brackets (<>) to prevent XSS; allows all printable characters. */
-    private const PATTERN_STREET_CHARSET = '/^[^\x00-\x08\x0B\x0C\x0E-\x1F\x7F<>]*$/u';
+    /** Allows Unicode letters/marks, digits, common address punctuation (.,#&/-), quotes (' ' '), parentheses, and whitespace (space/tab/newline). */
+    private const PATTERN_STREET_CHARSET = "/^[\p{L}\p{M}\d \t\n\-'\u{2018}\u{2019}\.,&#\/\(\)]*\$/u";
 
     /**
      * @inheritdoc
@@ -68,6 +68,13 @@ class Street extends AbstractAddressFieldValidator
      */
     public function getFieldValues(mixed $value): array
     {
-        return $value->getStreet() ?? [];
+        $street = $value->getStreet() ?? [];
+        if (count($street) === 1) {
+            $decoded = json_decode($street[0], true);
+            if (is_array($decoded)) {
+                $street = $decoded;
+            }
+        }
+        return [implode("\n", $street)];
     }
 }

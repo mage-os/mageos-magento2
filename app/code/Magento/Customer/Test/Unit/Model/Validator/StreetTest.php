@@ -107,8 +107,8 @@ class StreetTest extends TestCase
             [
                 'street' => [
                     'O\'Connell Street',
-                    'O`Connell Street',
-                    '321 Birch Boulevard ’Willow Retreat’'
+                    "\u{2018}O’Connell Street\u{2019}",
+                    '321 Birch Boulevard ‘Willow Retreat’'
                 ],
                 'message' => 'quotes must be allowed in street'
             ],
@@ -191,5 +191,32 @@ class StreetTest extends TestCase
             'Invalid Street Address',
             (string)($messages[0]['street'] ?? '')
         );
+    }
+
+    public function testTwoStreetLinesCombinedExceeding255CharactersIsRejected(): void
+    {
+        $addressMock = $this->createPartialMockWithReflection(Address::class, ['getStreet']);
+        $addressMock->expects($this->once())
+            ->method('getStreet')
+            ->willReturn([str_repeat('A', 200), str_repeat('B', 60)]);
+
+        $isValid = $this->nameValidator->isValid($addressMock);
+
+        $this->assertFalse($isValid);
+        $messages = $this->nameValidator->getMessages();
+        $this->assertStringContainsString(
+            'street address is too long',
+            (string)($messages[0]['street'] ?? '')
+        );
+    }
+
+    public function testJsonEncodedStreetIsAccepted(): void
+    {
+        $addressMock = $this->createPartialMockWithReflection(Address::class, ['getStreet']);
+        $addressMock->expects($this->once())
+            ->method('getStreet')
+            ->willReturn(['["7700 W Parmer Ln","Bld D"]']);
+
+        $this->assertTrue($this->nameValidator->isValid($addressMock));
     }
 }
