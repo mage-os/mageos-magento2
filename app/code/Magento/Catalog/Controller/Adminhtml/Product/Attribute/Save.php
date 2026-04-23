@@ -405,6 +405,7 @@ class Save extends Attribute implements HttpPostActionInterface
      * @param string $rowsKey attribute_options_select|attribute_options_multiselect
      * @return void
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     private function hydrateOptionDataFromDynamicRows(array &$data, string $rowsKey): void
     {
