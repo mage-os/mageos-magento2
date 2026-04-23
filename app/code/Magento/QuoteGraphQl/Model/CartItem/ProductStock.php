@@ -293,7 +293,7 @@ class ProductStock
     }
 
     /**
-     * Get product saleable qty when "Catalog > Inventory > Stock Options > Only X left Threshold" is greater than 0
+     * Get product salable qty when "Catalog > Inventory > Stock Options > Only X left Threshold" is greater than 0
      *
      * @param ProductInterface $product
      * @param float|null $thresholdQty
