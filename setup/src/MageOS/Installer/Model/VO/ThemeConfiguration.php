@@ -14,25 +14,36 @@ class ThemeConfiguration
     /**
      * @param bool $install
      * @param string $theme
+     * @param string $hyvaProjectKey
+     * @param string $hyvaApiToken
      */
     public function __construct(
         public readonly bool $install,
-        public readonly string $theme = ''
+        public readonly string $theme = '',
+        public readonly string $hyvaProjectKey = '',
+        public readonly string $hyvaApiToken = ''
     ) {
     }
 
     /**
      * Convert to array
      *
-     * @param bool $includeSensitive Whether to include sensitive fields (none here)
+     * @param bool $includeSensitive Whether to include sensitive fields like API tokens
      * @return array<string, mixed>
      */
     public function toArray(bool $includeSensitive = false): array
     {
-        return [
+        $data = [
             'install' => $this->install,
-            'theme' => $this->theme
+            'theme' => $this->theme,
+            'hyva_project_key' => $this->hyvaProjectKey,
         ];
+
+        if ($includeSensitive) {
+            $data['hyva_api_token'] = $this->hyvaApiToken;
+        }
+
+        return $data;
     }
 
     /**
@@ -45,7 +56,9 @@ class ThemeConfiguration
     {
         return new self(
             $data['install'] ?? false,
-            $data['theme'] ?? ''
+            $data['theme'] ?? '',
+            $data['hyva_project_key'] ?? '',
+            $data['hyva_api_token'] ?? ''
         );
     }
 }

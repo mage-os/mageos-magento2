@@ -119,8 +119,9 @@ class PostInstallConfigStage extends AbstractStage
 
         // Apply selected theme to store view
         $theme = $context->getTheme();
-        if ($theme) {
-            $this->themeConfigurer->apply($theme, BP, $output);
+        $db = $context->getDatabase();
+        if ($theme && $db) {
+            $this->themeConfigurer->apply($theme, $db, BP, $output);
         }
 
         // Set indexers to schedule mode for better performance

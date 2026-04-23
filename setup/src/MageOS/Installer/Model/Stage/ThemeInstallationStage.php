@@ -81,8 +81,8 @@ class ThemeInstallationStage extends AbstractStage
 
         $baseDir = BP;
 
-        // Install theme
-        $this->themeInstaller->install($baseDir, $theme->toArray(), $output);
+        // Install theme (pass sensitive=true so Hyva credentials are included)
+        $this->themeInstaller->install($baseDir, $theme->toArray(true), $output);
 
         return StageResult::continue();
     }

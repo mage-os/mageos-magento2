@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MageOS\Installer\Model\Command;
 
+use MageOS\Installer\Model\VO\DatabaseConfiguration;
 use MageOS\Installer\Model\VO\ThemeConfiguration;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -24,12 +25,17 @@ class ThemeConfigurer
      * Apply selected theme to default store view
      *
      * @param ThemeConfiguration $themeConfig
+     * @param DatabaseConfiguration $dbConfig
      * @param string $baseDir
      * @param OutputInterface $output
      * @return bool True if successful
      */
-    public function apply(ThemeConfiguration $themeConfig, string $baseDir, OutputInterface $output): bool
-    {
+    public function apply(
+        ThemeConfiguration $themeConfig,
+        DatabaseConfiguration $dbConfig,
+        string $baseDir,
+        OutputInterface $output
+    ): bool {
         if (!$themeConfig->install || empty($themeConfig->theme)) {
             return true; // No theme to apply
         }
@@ -38,7 +44,7 @@ class ThemeConfigurer
         $output->write('<comment>🎨 Applying theme...</comment>');
 
         // Get theme ID from theme table
-        $themeId = $this->getThemeId($themeConfig->theme, $baseDir);
+        $themeId = $this->getThemeId($themeConfig->theme, $dbConfig);
 
         if ($themeId === null) {
             $output->writeln(' <comment>⚠️</comment>');
@@ -77,56 +83,31 @@ class ThemeConfigurer
     }
 
     /**
-     * Get theme ID from theme code
+     * Get theme ID by querying the database directly
      *
-     * @param string $themeCode Theme code (e.g., 'hyva-default', 'Hyva/default')
-     * @param string $baseDir
+     * @param string $themeCode Theme code (e.g., 'hyva', 'Hyva/default')
+     * @param DatabaseConfiguration $dbConfig
      * @return int|null Theme ID or null if not found
      */
-    private function getThemeId(string $themeCode, string $baseDir): ?int
+    private function getThemeId(string $themeCode, DatabaseConfiguration $dbConfig): ?int
     {
-        // Try to find theme using CLI
-        $result = $this->processRunner->runMagentoCommand(
-            ['theme:list'],
-            $baseDir,
-            timeout: 30
-        );
+        try {
+            $pdo = new \PDO(
+                sprintf('mysql:host=%s;dbname=%s;charset=utf8mb4', $dbConfig->host, $dbConfig->name),
+                $dbConfig->user,
+                $dbConfig->password,
+                [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION, \PDO::ATTR_TIMEOUT => 5]
+            );
 
-        if (!$result->isSuccess()) {
+            $stmt = $pdo->prepare(
+                "SELECT theme_id FROM theme WHERE area = 'frontend' AND theme_path LIKE :path LIMIT 1"
+            );
+            $stmt->execute([':path' => '%' . $themeCode . '%']);
+            $id = (int) $stmt->fetchColumn();
+
+            return $id > 0 ? $id : null;
+        } catch (\PDOException $e) {
             return null;
         }
-
-        // Parse output to find theme ID
-        // Format: "| <id> | <area> | <theme_path> | ... |"
-        $lines = explode("\n", $result->output);
-
-        foreach ($lines as $line) {
-            // Match lines with theme data (contains pipe separators)
-            if (!str_contains($line, '|')) {
-                continue;
-            }
-
-            // Split by pipe and trim
-            $parts = array_map('trim', explode('|', $line));
-
-            if (count($parts) < 4) {
-                continue;
-            }
-
-            // Check if this is our theme
-            // Match on theme code or path (handles 'hyva-default' or 'Hyva/default')
-            $themePath = $parts[3] ?? '';
-
-            if (stripos($themePath, $themeCode) !== false ||
-                stripos($themePath, str_replace('-', '/', $themeCode)) !== false
-            ) {
-                $themeId = (int) $parts[1];
-                if ($themeId > 0) {
-                    return $themeId;
-                }
-            }
-        }
-
-        return null;
     }
 }
