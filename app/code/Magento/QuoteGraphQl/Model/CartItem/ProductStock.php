@@ -284,11 +284,12 @@ class ProductStock
      */
     public function checkIfProductIsAvailable(ProductInterface $product): bool
     {
-        $stockItem = $this->stockRegistry->getStockItem($product->getId());
-        $stockStatus = $this->stockRegistry->getStockStatus($product->getId(), $product->getStore()->getWebsiteId());
-        return $stockStatus->getStockStatus()
-            && $stockItem->getIsInStock()
-            && (float) $stockItem->getQty() >= max(1.0, (float) $stockItem->getMinSaleQty());
+        $stockItem = $this->stockRegistry->getStockItem(
+            $product->getId(),
+            $product->getStore()->getWebsiteId()
+        );
+        return $stockItem->getIsInStock()
+            && (float) $stockItem->getQty() >= (float) $stockItem->getMinSaleQty();
     }
 
     /**

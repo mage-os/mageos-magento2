@@ -77,8 +77,6 @@ class QuantityResolver implements ResolverInterface
             $product = $this->productRepositoryInterface->get($product->getSku());
         }
 
-        $saleableQty = $this->productStock->getSaleableQty($product, null);
-
         if (!$this->productStock->checkIfProductIsAvailable($product)
             && (int) $this->scopeConfig->getValue(
                 self::CONFIG_PATH_NOT_AVAILABLE_MESSAGE,
@@ -88,6 +86,6 @@ class QuantityResolver implements ResolverInterface
             return null;
         }
 
-        return $saleableQty;
+        return $this->productStock->getSaleableQty($product, null);
     }
 }
