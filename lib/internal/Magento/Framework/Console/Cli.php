@@ -413,7 +413,7 @@ class Cli extends Console\Application
      *
      * @return string
      */
-    public function getLongVersion()
+    public function getLongVersion(): string
     {
         if (isset($this->productMetadata)
             && $this->productMetadata instanceof DistributionMetadataInterface
