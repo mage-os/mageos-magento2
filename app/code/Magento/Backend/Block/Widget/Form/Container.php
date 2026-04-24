@@ -15,6 +15,7 @@ use Magento\Framework\View\Helper\SecureHtmlRenderer;
  * @api
  * @deprecated 100.2.0 Use UI components for form rendering instead of this legacy form container
  * @see \Magento\Ui\Component\Form
+ * @SuppressWarnings(PHPMD.NumberOfChildren)
  * @since 100.0.2
  */
 class Container extends \Magento\Backend\Block\Widget\Container

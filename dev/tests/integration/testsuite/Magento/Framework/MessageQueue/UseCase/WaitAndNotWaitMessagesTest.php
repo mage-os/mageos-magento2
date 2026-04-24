@@ -9,6 +9,8 @@ use Magento\Framework\App\DeploymentConfig\FileReader;
 use Magento\Framework\App\DeploymentConfig\Writer;
 use Magento\Framework\Config\File\ConfigFilePool;
 use Magento\Framework\Filesystem;
+use Magento\Framework\MessageQueue\DefaultValueProvider;
+use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestModuleAsyncAmqp\Model\AsyncTestData;
 use Magento\Framework\MessageQueue\DefaultValueProvider;
 use Magento\TestFramework\Helper\Bootstrap;
@@ -181,6 +183,8 @@ class WaitAndNotWaitMessagesTest extends QueueTestCaseAbstract
     protected function tearDown(): void
     {
         parent::tearDown();
-        $this->writeConfig($this->config);
+        if ($this->config !== null) {
+            $this->writeConfig($this->config);
+        }
     }
 }

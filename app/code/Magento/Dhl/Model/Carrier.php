@@ -121,32 +121,6 @@ class Carrier extends AbstractDhl implements CarrierInterface
     public const DHL_REST_API_VERSION = '2.12.0';
 
     /**
-     * DHL API type codes
-     */
-    public const SHIPPER = 'shipper';
-    public const ALL_VALUE_ADDED_SERVICES = 'allValueAddedServices';
-
-    /**
-     * DHL package type - 3BX stands for "Box" (standard DHL box packaging)
-     */
-    public const PACKAGE_TYPE_3BX = '3BX';
-
-    /**
-     * Unit of measurement for quantity
-     */
-    public const UNIT_OF_MEASUREMENT_PCS = 'PCS';
-
-    /**
-     * Delivered At Place
-     */
-    public const INCOTERM_DAP = 'DAP';
-
-    /**
-     * Value‑added service code for Insurance
-     */
-    public const SERVICES_CODE_I_I = 'II';
-
-    /**
      * Rate request data
      *
      * @var RateRequest|null
@@ -535,15 +509,11 @@ class Carrier extends AbstractDhl implements CarrierInterface
         $this->setStore($request->getStoreId());
 
         $requestObject = new DataObject();
-
         $requestObject->setIsGenerateLabelReturn($request->getIsGenerateLabelReturn());
-
         $requestObject->setStoreId($request->getStoreId());
-
         if ($request->getLimitMethod()) {
             $requestObject->setService($request->getLimitMethod());
         }
-
         $requestObject = $this->_addParams($requestObject);
 
         /** setting destination city name in case of guest customer specific to DHL REST API */
@@ -629,7 +599,6 @@ class Carrier extends AbstractDhl implements CarrierInterface
         }
 
         $requestObject->setBaseSubtotalInclTax($request->getBaseSubtotalInclTax());
-
         $this->setRawRequest($requestObject);
 
         return $this;
@@ -1670,6 +1639,269 @@ class Carrier extends AbstractDhl implements CarrierInterface
     }
 
     /**
+     * DHL REST API for Quote Data
+     *
+     * @return Result\ProxyDeferred
+     * @throws LocalizedException
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
+    protected function _getQuotesRest()
+    {
+        $rawRequest = $this->_rawRequest;
+        $url = $this->getGatewayURL();
+        $packageWeightUnit = $this->_getRestPackageWeightUnit();
+
+        /** Dutiable */
+        $dutiable = ["isCustomsDeclarable" => false];
+        if ($this->isDutiable($rawRequest->getOrigCountryId(), $rawRequest->getDestCountryId())) {
+            $declaredValue = (int) $rawRequest->getValue();
+            $baseCurrencyCode = $this->_storeManager
+                ->getWebsite($this->_request->getWebsiteId())
+                ->getBaseCurrencyCode();
+            $dutiable = [
+                "isCustomsDeclarable" => true,
+                "monetaryAmount" => [
+                    [
+                        "typeCode" => "declaredValue",
+                        "value" => $declaredValue,
+                        "currency" => $baseCurrencyCode
+                    ]
+                ]
+            ];
+        }
+
+        $rateParams = array_merge([
+            "customerDetails" => [
+                "shipperDetails" => [
+                    "postalCode" => $rawRequest->getOrigPostal(),
+                    "cityName" => $rawRequest->getOrigCity(),
+                    "countryCode" => $rawRequest->getOrigCountryId()
+                ],
+                "receiverDetails" => [
+                    "postalCode" => $rawRequest->getDestPostal(),
+                    "cityName" => $rawRequest->getDestCity(),
+                    "countryCode" => $rawRequest->getDestCountryId()
+                ]
+            ],
+            "accounts" => [
+                [
+                    "typeCode" => "shipper",
+                    "number" => $this->getConfigData('account')
+                ]
+            ],
+            "plannedShippingDateAndTime" => date('Y-m-d\TH:i:s\Z', strtotime($this->_getShipDate())),
+            "unitOfMeasurement" => $packageWeightUnit,
+            "getAdditionalInformation" => [
+                [
+                    "typeCode" => "allValueAddedServices",
+                    "isRequested" => true
+                ]
+            ],
+            "packages" => [
+                [
+                    "typeCode" => "3BX",
+                    "weight" => (float) $this->_getWeight($rawRequest->getWeight()),
+                    "dimensions" => [
+                        // If no value is provided for the dimension, a default size of 3 will be used
+                        "length" => $this->_getDimension(max(3, $this->getConfigData('depth'))),
+                        "width" => $this->_getDimension(max(3, $this->getConfigData('width'))),
+                        "height" => $this->_getDimension(max(3, $this->getConfigData('height')))
+                    ]
+                ]
+            ]
+        ], $dutiable);
+
+        $ratePayload = json_encode($rateParams, JSON_PRETTY_PRINT);
+
+        $httpResponse = $this->httpClient->request(
+            new Request($url . '/rates', Request::METHOD_POST, $this->getRestHeaders(), $ratePayload)
+        );
+        $debugData['request'] = $ratePayload;
+
+        return $this->proxyDeferredFactory->create(
+            [
+                'deferred' => new CallbackDeferred(
+                    function () use ($httpResponse, $debugData) {
+                        $responseResult = null;
+                        $jsonResponse = '';
+                        try {
+                            $responseResult = $httpResponse->get();
+                        } catch (HttpException $e) {
+                            $debugData['result'] = ['error' => $e->getMessage(), 'code' => $e->getCode()];
+                            $this->_logger->critical($e);
+                        }
+                        if ($responseResult) {
+                            $jsonResponse = $responseResult->getStatusCode() >= 400 ? '' : $responseResult->getBody();
+                        }
+                        $debugData['result'] = $jsonResponse;
+                        $this->_debug($debugData);
+                        return $this->_parseRestResponse($jsonResponse);
+                    }
+                )
+            ]
+        );
+    }
+
+    /**
+     * DHL REST Auth Token
+     *
+     * @return string
+     */
+    private function getDhlAccessToken() : string
+    {
+        $username = (string) $this->getConfigData('api_key');
+        $password = (string) $this->getConfigData('api_secret');
+        $access_token = base64_encode($username . ":" . $password);
+        return $access_token;
+    }
+
+    /**
+     * Rest API Headers
+     *
+     * @return string[]
+     */
+    private function getRestHeaders(): array
+    {
+        return [
+            "Authorization" => "Basic " . $this->getDhlAccessToken(),
+            "Content-Type" => "application/json",
+            "x-version" => self::DHL_REST_API_VERSION
+        ];
+    }
+
+    /**
+     * Parse response from DHL REST API
+     *
+     * @param string $rateResponse
+     * @return Result
+     * @throws LocalizedException
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     */
+    protected function _parseRestResponse($rateResponse): Result
+    {
+        $responseError = __('The response is in wrong format.');
+        if ($rateResponse !== null && strlen($rateResponse) > 0) {
+            $rateResponseData = json_decode($rateResponse, true);
+            if (isset($rateResponseData['products']) && isset($rateResponseData['exchangeRates'])) {
+                foreach ($rateResponseData['products'] as $product) {
+                    $this->_addRestRate($product, $rateResponseData['exchangeRates']);
+                }
+            } else {
+                $this->_errors[] = $responseError;
+            }
+        }
+
+        /* @var $result Result */
+        $result = $this->_rateFactory->create();
+        if ($this->_rates) {
+            foreach ($this->_rates as $rate) {
+                $method = $rate['service'];
+                $data = $rate['data'];
+                /* @var $rate Method */
+                $rate = $this->_rateMethodFactory->create();
+                $rate->setCarrier(self::CODE);
+                $rate->setCarrierTitle($this->getConfigData('title'));
+                $rate->setMethod($method);
+                $rate->setMethodTitle($data['term']);
+                $rate->setCost($data['price_total']);
+                $rate->setPrice($data['price_total']);
+                $result->append($rate);
+            }
+        } else {
+            if (!empty($this->_errors)) {
+                if ($this->_isShippingLabelFlag) {
+                    throw new LocalizedException($responseError);
+                }
+                $this->debugErrors($this->_errors);
+            }
+            $result->append($this->getErrorMessage());
+        }
+
+        return $result;
+    }
+
+    /**
+     * DHL Quote Data calculating rates
+     *
+     * @param array $product
+     * @param array $exchangeRates
+     * @return $this
+     * @throws LocalizedException
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     */
+    protected function _addRestRate(array $product, array $exchangeRates): self
+    {
+        if (isset($product['productName'])
+            && isset($product['productCode'])
+            && isset($exchangeRates[0]['currency'])
+            && array_key_exists((string)$product['productCode'], $this->getAllowedMethods())
+        ) {
+            // DHL product code, e.g. '3', 'A', 'N', etc.
+            $dhlProduct = (string)$product['productCode'];
+            $totalPrice = $product['totalPrice'];
+            $billic_price = array_column(
+                array_filter($totalPrice, fn ($price) => $price['currencyType'] === 'BILLC'),
+                'price'
+            );
+
+            $totalEstimate = (float)(string) $billic_price[0] ?? null;
+            $currencyCode = (string)$exchangeRates[0]['currency'];
+            $baseCurrencyCode = $this->_storeManager->getWebsite($this->_request->getWebsiteId())
+                ->getBaseCurrencyCode();
+            $dhlProductDescription = $this->getDhlProductTitle($dhlProduct);
+
+            if ($currencyCode != $baseCurrencyCode) {
+                /* @var $currency Currency */
+                $currency = $this->_currencyFactory->create();
+                $rates = $currency->getCurrencyRates($currencyCode, [$baseCurrencyCode]);
+                if (!empty($rates) && isset($rates[$baseCurrencyCode])) {
+                    // Convert to store display currency using store exchange rate
+                    $totalEstimate = $totalEstimate * $rates[$baseCurrencyCode];
+                } else {
+                    $rates = $currency->getCurrencyRates($baseCurrencyCode, [$currencyCode]);
+                    if (!empty($rates) && isset($rates[$currencyCode])) {
+                        $totalEstimate = $totalEstimate / $rates[$currencyCode];
+                    }
+                    if (!isset($rates[$currencyCode]) || !$totalEstimate) {
+                        $totalEstimate = false;
+                        $this->_errors[] = __(
+                            'We had to skip DHL method %1 because we couldn\'t find exchange rate %2 (Base Currency).',
+                            $currencyCode,
+                            $baseCurrencyCode
+                        );
+                    }
+                }
+            }
+            if ($totalEstimate) {
+                $data = [
+                    'term' => $dhlProductDescription,
+                    'price_total' => $this->getMethodPrice($totalEstimate, $dhlProduct),
+                ];
+                if (!empty($this->_rates)) {
+                    foreach ($this->_rates as $product) {
+                        if ($product['data']['term'] == $data['term']
+                            && $product['data']['price_total'] == $data['price_total']
+                        ) {
+                            return $this;
+                        }
+                    }
+                }
+                $this->_rates[] = ['service' => $dhlProduct, 'data' => $data];
+            } else {
+                $this->_errors[] = __("Zero shipping charge for '%1'", $dhlProductDescription);
+            }
+        } else {
+            $dhlProductDescription = false;
+            if (isset($product['productCode'])) {
+                $dhlProductDescription = $this->getDhlProductTitle((string)$product['productCode']);
+            }
+            $dhlProductDescription = $dhlProductDescription ? $dhlProductDescription : __("DHL");
+            $this->_errors[] = __("Zero shipping charge for '%1'", $dhlProductDescription);
+        }
+        return $this;
+    }
+
+    /**
      * Returns dimension unit (cm or inch)
      *
      * @return string
@@ -2261,7 +2493,7 @@ class Carrier extends AbstractDhl implements CarrierInterface
                     $nodeExportItem['description'] = $itemData['name'];
                     $nodeExportItem['price'] = (int)$itemData['price'];
                     $nodeExportItem['quantity']['value'] = (int)$itemData['qty'];
-                    $nodeExportItem['quantity']['unitOfMeasurement'] = self::UNIT_OF_MEASUREMENT_PCS;
+                    $nodeExportItem['quantity']['unitOfMeasurement'] = 'PCS';
                     $nodeExportItem['weight']['netValue'] = (int)$itemData['weight'];
                     $nodeExportItem['weight']['grossValue'] = (int)$itemData['weight'];
                     $nodeExportItem['manufacturerCountry'] = $rawRequest->getShipperAddressCountryCode();
@@ -2293,13 +2525,13 @@ class Carrier extends AbstractDhl implements CarrierInterface
             "productCode" => $rawRequest->getShippingMethod(),
             "accounts" => [
                 [
-                    "typeCode" => self::SHIPPER,
+                    "typeCode" => "shipper",
                     "number" => $this->getConfigData('account'),
                 ]
             ],
             "valueAddedServices" => [
                 [
-                    "serviceCode" => self::SERVICES_CODE_I_I,
+                    "serviceCode" => "II",
                     "value" => 10
                 ]
             ],
@@ -2332,7 +2564,7 @@ class Carrier extends AbstractDhl implements CarrierInterface
             "content" => array_merge([
                 "packages" => $packages,
                 "description" => "Shipment",
-                "incoterm" => self::INCOTERM_DAP,
+                "incoterm" => "DAP",
                 "unitOfMeasurement" => $packageWeightUnit
             ], $dutiable)
         ];

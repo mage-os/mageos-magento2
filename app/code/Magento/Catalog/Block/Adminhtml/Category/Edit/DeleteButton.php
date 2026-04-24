@@ -55,8 +55,7 @@ class DeleteButton extends AbstractCategory implements ButtonProviderInterface
             return [
                 'id' => 'delete',
                 'label' => __('Delete'),
-                'on_click' => "deleteConfirm('" . $confirmMessage ."', '"
-                    . $this->getDeleteUrl() . "', {data: {}})",
+                'on_click' => "deleteConfirm('" . $confirmMessage . "', '" . $this->getDeleteUrl() . "', {data: {}})",
                 'class' => 'delete',
                 'sort_order' => 10
             ];

@@ -9,10 +9,6 @@ namespace Magento\Dhl\Model\Config\Source;
 
 use Magento\Framework\Data\OptionSourceInterface;
 
-/**
- * Provides available DHL integration types as options
- * for Magento system configuration fields.
- */
 class Type implements OptionSourceInterface
 {
     /**

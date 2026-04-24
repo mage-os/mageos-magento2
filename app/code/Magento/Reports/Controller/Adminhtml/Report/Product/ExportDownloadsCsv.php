@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2011 Adobe
+ * Copyright 2014 Adobe
  * All Rights Reserved.
  */
 declare(strict_types=1);
@@ -9,7 +9,6 @@ namespace Magento\Reports\Controller\Adminhtml\Report\Product;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\App\ResponseInterface;
-use Magento\Reports\Block\Adminhtml\Product\Downloads\Grid;
 use Magento\Reports\Controller\Adminhtml\Report\Product;
 
 /**
@@ -24,7 +23,7 @@ class ExportDownloadsCsv extends Product
      *
      * @see _isAllowed()
      */
-    public const ADMIN_RESOURCE = 'Magento_Reports::downloads';
+    public const ADMIN_RESOURCE = 'Magento_Reports::report_products';
 
     /**
      * Export products downloads report to CSV format
@@ -35,7 +34,7 @@ class ExportDownloadsCsv extends Product
     {
         $fileName = 'products_downloads.csv';
         $content = $this->_view->getLayout()->createBlock(
-            Grid::class
+            \Magento\Reports\Block\Adminhtml\Product\Downloads\Grid::class
         )->setSaveParametersInSession(
             true
         )->getCsv();

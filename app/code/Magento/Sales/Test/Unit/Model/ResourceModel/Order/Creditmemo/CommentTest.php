@@ -21,6 +21,7 @@ use Magento\Sales\Model\ResourceModel\Order\Creditmemo\Comment;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Magento\Sales\Model\Order\Creditmemo as OrderCreditmemo;
+use Magento\Sales\Model\Order\Creditmemo\Comment as CreditmemoComment;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -33,7 +34,7 @@ class CommentTest extends TestCase
     protected $commentResource;
 
     /**
-     * @var \Magento\Sales\Model\Order\Creditmemo\Comment|MockObject
+     * @var CreditmemoComment|MockObject
      */
     protected $commentModelMock;
 
@@ -72,7 +73,7 @@ class CommentTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->commentModelMock = $this->createMock(\Magento\Sales\Model\Order\Creditmemo\Comment::class);
+        $this->commentModelMock = $this->createMock(CreditmemoComment::class);
         $this->appResourceMock = $this->createMock(ResourceConnection::class);
         $this->connectionMock = $this->createMock(Mysql::class);
         $this->validatorMock = $this->createMock(Validator::class);

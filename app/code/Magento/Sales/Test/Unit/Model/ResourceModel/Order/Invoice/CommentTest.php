@@ -21,6 +21,7 @@ use Magento\Sales\Model\ResourceModel\Order\Invoice\Comment;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Magento\Sales\Model\Order\Invoice as OrderInvoice;
+use Magento\Sales\Model\Order\Invoice\Comment as InvoiceComment;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -33,7 +34,7 @@ class CommentTest extends TestCase
     protected $commentResource;
 
     /**
-     * @var \Magento\Sales\Model\Order\Invoice\Comment|MockObject
+     * @var InvoiceComment|MockObject
      */
     protected $commentModelMock;
 
@@ -71,7 +72,7 @@ class CommentTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->commentModelMock = $this->createMock(\Magento\Sales\Model\Order\Invoice\Comment::class);
+        $this->commentModelMock = $this->createMock(InvoiceComment::class);
         $this->appResourceMock = $this->createMock(ResourceConnection::class);
         $this->connectionMock = $this->createMock(Mysql::class);
         $this->validatorMock = $this->createMock(Validator::class);

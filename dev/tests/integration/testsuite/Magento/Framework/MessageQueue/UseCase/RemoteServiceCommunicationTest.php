@@ -26,11 +26,6 @@ class RemoteServiceCommunicationTest extends QueueTestCaseAbstract
      */
     protected function setUp(): void
     {
-        if ($this->connectionType === 'stomp') {
-            $this->markTestSkipped('AMQP test skipped because STOMP connection is available.
-            This test is AMQP-specific.');
-        }
-
         $this->objectManager = Bootstrap::getObjectManager();
         /** @var DefaultValueProvider $defaultValueProvider */
         $defaultValueProvider = $this->objectManager->get(DefaultValueProvider::class);

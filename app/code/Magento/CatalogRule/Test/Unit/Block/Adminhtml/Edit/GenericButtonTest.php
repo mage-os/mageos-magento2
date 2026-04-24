@@ -38,9 +38,14 @@ class GenericButtonTest extends TestCase
      */
     protected $contextMock;
 
+    /**
+     * @var MockObject
+     */
+    protected $contextMock;
+
     protected function setUp(): void
     {
-        $this->urlBuilderMock = $this->getMockForAbstractClass(UrlInterface::class);
+        $this->urlBuilderMock = $this->createMock(UrlInterface::class);
         $this->registryMock = $this->createMock(Registry::class);
         $this->contextMock = $this->createMock(Context::class);
 

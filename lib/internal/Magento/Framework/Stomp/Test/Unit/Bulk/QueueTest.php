@@ -48,7 +48,7 @@ class QueueTest extends TestCase
         $this->stompClientFactory
             ->method('create')
             ->willReturn($this->stompClient);
-
+            
         $this->communicationConfig
             ->method('getTopic')
             ->with('some.topic')

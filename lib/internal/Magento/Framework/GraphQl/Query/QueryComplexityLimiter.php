@@ -184,10 +184,10 @@ class QueryComplexityLimiter
     /**
      * Performs counting of aliases in a graphql request
      *
-     * @param SelectionSetNode $selectionSet
+     * @param ?SelectionSetNode $selectionSet
      * @return int
      */
-    private function countAliasesInSelectionSet(SelectionSetNode $selectionSet): int
+    private function countAliasesInSelectionSet(?SelectionSetNode $selectionSet): int
     {
         if ($selectionSet === null) {
             return 0;
