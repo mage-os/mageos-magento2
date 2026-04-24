@@ -610,8 +610,8 @@ class AbstractAddress extends AbstractExtensibleModel implements AddressModelInt
      */
     public function beforeSave()
     {
-        parent::beforeSave();
         $this->trimAddressFields();
+        parent::beforeSave();
         $this->getRegion();
         return $this;
     }
