@@ -36,7 +36,7 @@ class TRepositoryInterfaceRemote implements TRepositoryInterface
     /**
      * @inheritdoc
      */
-    public function get(string $attribute, int $typeId = null): \Magento\Framework\MessageQueue\Code\Generator\TInterface
+    public function get(string $attribute, ?int $typeId = null): \Magento\Framework\MessageQueue\Code\Generator\TInterface
     {
         return $this->publisher->publish(
             'magento.framework.messageQueue.code.generator.tRepositoryInterface.get',
