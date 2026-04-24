@@ -192,7 +192,7 @@ class PreviewTest extends TestCase
             ->method('getDesignConfig');
         $this->storeManager->expects($this->atLeastOnce())
             ->method('getDefaultStoreView');
-        $this->maliciousCode->expects($this->once())
+        $this->maliciousCode->expects($this->exactly(2))
             ->method('filter')
             ->with($requestParamMap[1][2])
             ->willReturn(self::MALICIOUS_TEXT);
