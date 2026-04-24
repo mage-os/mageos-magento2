@@ -12,6 +12,7 @@
     <preference for="Magento\Backend\Model\Auth\Credential\StorageInterface" type="Magento\User\Model\User" />
     <preference for="Magento\Backend\App\ConfigInterface" type="Magento\Backend\App\Config" />
     <preference for="Magento\Backend\Model\UrlInterface" type="Magento\Backend\Model\Url" />
+    <preference for="Magento\Backend\Model\VersionCheck\VersionComparisonInterface" type="Magento\Backend\Model\VersionCheck\VersionComparison" />
     <preference for="Magento\Backend\Block\Widget\Button\ToolbarInterface" type="Magento\Backend\Block\Widget\Button\Toolbar" />
     <preference for="Magento\Backend\Service\V1\ModuleServiceInterface" type="Magento\Backend\Service\V1\ModuleService" />
     <type name="Magento\Backend\Block\Widget\Button\ButtonList" shared="false" />
@@ -194,6 +195,16 @@
                 <item name="frontNameValidator" xsi:type="object">Magento\Backend\Model\Validator\UrlKey\FrontName</item>
                 <item name="restrictedWordsValidator" xsi:type="object">Magento\Backend\Model\Validator\UrlKey\RestrictedWords</item>
             </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Backend\Block\Page\Footer">
+        <arguments>
+            <argument name="versionComparison" xsi:type="object">Magento\Backend\Model\VersionCheck\VersionComparison\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Backend\Model\VersionCheck\LatestVersionFetcher">
+        <arguments>
+            <argument name="httpClient" xsi:type="object">Magento\Framework\HTTP\Client\Curl</argument>
         </arguments>
     </type>
 </config>

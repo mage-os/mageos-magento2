@@ -13,5 +13,8 @@
         <job name="backend_clean_locks" instance="Magento\Backend\Cron\CleanLocks" method="execute">
             <schedule>20 2 * * *</schedule>
         </job>
+        <job name="backend_version_check" instance="Magento\Backend\Cron\VersionCheck" method="execute">
+            <schedule>0 * * * *</schedule>
+        </job>
     </group>
 </config>
