@@ -5,8 +5,7 @@
  */
 namespace Magento\Sales\Cron;
 
-use Exception;
-use Magento\Quote\Model\QuoteRepository;
+use Magento\Framework\App\ResourceConnection;
 use Magento\Quote\Model\ResourceModel\Quote\Collection as QuoteCollection;
 use Magento\Sales\Model\ResourceModel\Collection\ExpiredQuotesCollection;
 use Magento\Store\Api\Data\StoreInterface;
@@ -34,9 +33,9 @@ class CleanExpiredQuotes
     private $storeManager;
 
     /**
-     * @var QuoteRepository
+     * @var ResourceConnection
      */
-    private $quoteRepository;
+    private $resourceConnection;
 
     /**
      * @var LoggerInterface
@@ -51,20 +50,20 @@ class CleanExpiredQuotes
     /**
      * @param StoreManagerInterface $storeManager
      * @param ExpiredQuotesCollection $expiredQuotesCollection
-     * @param QuoteRepository $quoteRepository
+     * @param ResourceConnection $resourceConnection
      * @param LoggerInterface $logger
      * @param int $batchSize
      */
     public function __construct(
         StoreManagerInterface $storeManager,
         ExpiredQuotesCollection $expiredQuotesCollection,
-        QuoteRepository $quoteRepository,
+        ResourceConnection $resourceConnection,
         LoggerInterface $logger,
         int $batchSize = self::DEFAULT_BATCH_SIZE
     ) {
         $this->storeManager = $storeManager;
         $this->expiredQuotesCollection = $expiredQuotesCollection;
-        $this->quoteRepository = $quoteRepository;
+        $this->resourceConnection = $resourceConnection;
         $this->logger = $logger;
         $this->batchSize = $batchSize > 0 ? $batchSize : self::DEFAULT_BATCH_SIZE;
     }
@@ -104,7 +103,7 @@ class CleanExpiredQuotes
     }
 
     /**
-     * Deletes all quotes in a collection and advances last processed id.
+     * Deletes all quotes in a collection via a single bulk DELETE and advances last processed id.
      *
      * @param QuoteCollection $quoteCollection
      * @param int $lastProcessedId
@@ -112,23 +111,24 @@ class CleanExpiredQuotes
      */
     private function deleteQuotes(QuoteCollection $quoteCollection, int &$lastProcessedId): int
     {
-        $processedCount = 0;
-        foreach ($quoteCollection as $quote) {
-            $processedCount++;
-            $lastProcessedId = (int)$quote->getId();
-            try {
-                $this->quoteRepository->delete($quote);
-            } catch (Exception $e) {
-                $message = sprintf(
-                    'Unable to delete expired quote (ID: %s): %s',
-                    $quote->getId(),
-                    (string)$e
-                );
-                $this->logger->error($message);
-            }
+        $ids = $quoteCollection->getColumnValues('entity_id');
+        if (empty($ids)) {
+            return 0;
         }
 
-        $quoteCollection->clear();
-        return $processedCount;
+        $lastProcessedId = (int)max($ids);
+
+        try {
+            $this->resourceConnection->getConnection()->delete(
+                $quoteCollection->getMainTable(),
+                ['entity_id IN (?)' => $ids]
+            );
+        } catch (\Exception $e) {
+            $this->logger->error(
+                sprintf('Unable to delete expired quotes (IDs: %s): %s', implode(', ', $ids), (string)$e)
+            );
+        }
+
+        return count($ids);
     }
 }
