@@ -79,6 +79,7 @@
         <arguments>
             <argument name="commands" xsi:type="array">
                 <item name="theme_uninstall" xsi:type="object">Magento\Theme\Console\Command\ThemeUninstallCommand</item>
+                <item name="theme_registration_status" xsi:type="object">Magento\Theme\Console\Command\ThemeRegistrationStatusCommand</item>
             </argument>
         </arguments>
     </type>

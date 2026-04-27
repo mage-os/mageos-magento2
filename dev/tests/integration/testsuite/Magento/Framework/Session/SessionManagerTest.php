@@ -70,6 +70,8 @@ namespace Magento\Framework\Session {
         return call_user_func_array('\session_set_save_handler', func_get_args());
     }
 
+    use PHPUnit\Framework\Attributes\DataProvider;
+
     /**
      * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
      */
@@ -244,7 +246,6 @@ namespace Magento\Framework\Session {
             $this->model->start();
 
             $reflection = new \ReflectionMethod($this->model, '_addHost');
-            $reflection->setAccessible(true);
             $reflection->invoke($this->model);
 
             $this->assertFalse($this->model->isValidForHost('test.com'));
@@ -285,10 +286,10 @@ namespace Magento\Framework\Session {
 
         /**
          * @param string $saveMethod
-         * @dataProvider dataConstructor
          *
          * @return void
          */
+        #[DataProvider('dataConstructor')]
         public function testConstructor(string $saveMethod): void
         {
             global $mockPHPFunctions;
@@ -296,8 +297,7 @@ namespace Magento\Framework\Session {
 
             if ($this->isComposerBaseInstallation()) {
                 $this->markTestSkipped(
-                    'Skipping: In Composer-based installations, ' .
-                    'the php_ini global method does not invoke the session value.'
+                    'Skipping: Composer-based installation, php_ini global method does not invoke the session value.'
                 );
             }
 
@@ -365,11 +365,6 @@ namespace Magento\Framework\Session {
             );
         }
 
-        /**
-         * Check if is a composer based installation
-         *
-         * @return bool
-         */
         private function isComposerBaseInstallation(): bool
         {
             $isComposerBased = file_exists(BP . '/vendor/magento/magento2-base');

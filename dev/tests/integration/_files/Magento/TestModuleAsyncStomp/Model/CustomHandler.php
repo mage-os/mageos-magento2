@@ -24,7 +24,7 @@ class CustomHandler
     /**
      * @param AsyncTestData[] $simpleDataItems
      */
-    public function processArray(array $simpleDataItems): void
+    public function processArray($simpleDataItems): void
     {
         foreach ($simpleDataItems as $objItem) {
             file_put_contents(

@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Framework\Interception\PluginList;
 
@@ -203,7 +203,7 @@ class PluginList extends Scoped implements InterceptionPluginList
      */
     protected function _loadScopedData()
     {
-        $scope = $this->_configScope->getCurrentScope();
+        $scope = $this->_configScope->getCurrentScope() ?? '';
         if (false === isset($this->_loadedScopes[$scope])) {
             $index = array_search($scope, $this->_scopePriorityScheme, true);
             /**
@@ -217,7 +217,10 @@ class PluginList extends Scoped implements InterceptionPluginList
             }
             $this->_scopePriorityScheme[] = $scope;
 
-            $cacheId = implode('|', $this->_scopePriorityScheme) . "|" . $this->_cacheId;
+            // Normalize cache ID by sorting scopes - ensures consistent ID regardless of processing order
+            $sortedScheme = array_values($this->_scopePriorityScheme);
+            sort($sortedScheme);
+            $cacheId = implode('|', $sortedScheme) . "|" . $this->_cacheId;
             $configData = $this->configLoader->load($cacheId);
 
             if ($configData) {

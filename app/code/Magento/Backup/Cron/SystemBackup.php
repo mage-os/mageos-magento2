@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Backup\Cron;
 
@@ -104,55 +104,6 @@ class SystemBackup
      */
     public function execute()
     {
-        if (!$this->_backupData->isEnabled()) {
-            return $this;
-        }
-
-        if (!$this->_scopeConfig->isSetFlag(self::XML_PATH_BACKUP_ENABLED, ScopeInterface::SCOPE_STORE)) {
-            return $this;
-        }
-
-        if ($this->_scopeConfig->isSetFlag(self::XML_PATH_BACKUP_MAINTENANCE_MODE, ScopeInterface::SCOPE_STORE)) {
-            $this->maintenanceMode->set(true);
-        }
-
-        $type = $this->_scopeConfig->getValue(self::XML_PATH_BACKUP_TYPE, ScopeInterface::SCOPE_STORE);
-
-        $this->_errors = [];
-        try {
-            $backupManager = $this->_backupFactory->create(
-                $type
-            )->setBackupExtension(
-                $this->_backupData->getExtensionByType($type)
-            )->setTime(
-                time()
-            )->setBackupsDir(
-                $this->_backupData->getBackupsDir()
-            );
-
-            $this->_coreRegistry->register('backup_manager', $backupManager);
-
-            if ($type != \Magento\Framework\Backup\Factory::TYPE_DB) {
-                $backupManager->setRootDir(
-                    $this->_filesystem->getDirectoryRead(DirectoryList::ROOT)->getAbsolutePath()
-                )->addIgnorePaths(
-                    $this->_backupData->getBackupIgnorePaths()
-                );
-            }
-
-            $backupManager->create();
-            $message = $this->_backupData->getCreateSuccessMessageByType($type);
-            $this->_logger->info($message);
-        } catch (\Exception $e) {
-            $this->_errors[] = $e->getMessage();
-            $this->_errors[] = $e->getTrace();
-            throw $e;
-        }
-
-        if ($this->_scopeConfig->isSetFlag(self::XML_PATH_BACKUP_MAINTENANCE_MODE, ScopeInterface::SCOPE_STORE)) {
-            $this->maintenanceMode->set(false);
-        }
-
         return $this;
     }
 }

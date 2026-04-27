@@ -612,4 +612,7 @@
             </argument>
         </arguments>
     </type>
+    <type name="Magento\Framework\Webapi\ErrorProcessor">
+        <plugin name="processValidatorException" type="Magento\Customer\Model\Plugin\Webapi\ErrorProcessorPlugin" sortOrder="10"/>
+    </type>
 </config>
