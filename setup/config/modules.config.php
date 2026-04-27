@@ -10,5 +10,6 @@
  */
 return [
     'Magento\Setup',
+    'MageOS\Installer',
     'Laminas\Di',
 ];

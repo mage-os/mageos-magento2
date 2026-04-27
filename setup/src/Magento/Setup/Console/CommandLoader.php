@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\Setup\Console;
 
 use Laminas\ServiceManager\ServiceManager;
+use MageOS\Installer\Console\Command\InstallCommand as MageOSInstallCommand;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\CommandLoader\CommandLoaderInterface;
 use Symfony\Component\Console\Exception\CommandNotFoundException;
@@ -57,7 +58,8 @@ class CommandLoader implements CommandLoaderInterface
         Command\RollbackCommand::NAME => Command\RollbackCommand::class,
         Command\UpgradeCommand::NAME => Command\UpgradeCommand::class,
         Command\UninstallCommand::NAME => Command\UninstallCommand::class,
-        Command\DeployStaticContentCommand::NAME => Command\DeployStaticContentCommand::class
+        Command\DeployStaticContentCommand::NAME => Command\DeployStaticContentCommand::class,
+        MageOSInstallCommand::NAME => MageOSInstallCommand::class
     ];
 
     /**
