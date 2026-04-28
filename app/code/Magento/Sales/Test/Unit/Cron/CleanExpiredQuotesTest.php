@@ -7,12 +7,11 @@ declare(strict_types=1);
 
 namespace Magento\Sales\Test\Unit\Cron;
 
-use Magento\Framework\App\ResourceConnection;
-use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Select;
 use Magento\Quote\Model\ResourceModel\Quote\Collection as QuoteCollection;
 use Magento\Sales\Cron\CleanExpiredQuotes;
 use Magento\Sales\Model\ResourceModel\Collection\ExpiredQuotesCollection;
+use Magento\Sales\Model\ResourceModel\Quote\Delete;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -37,14 +36,9 @@ class CleanExpiredQuotesTest extends TestCase
     private ExpiredQuotesCollection|MockObject $expiredQuotesCollection;
 
     /**
-     * @var ResourceConnection|MockObject
+     * @var Delete|MockObject
      */
-    private ResourceConnection|MockObject $resourceConnection;
-
-    /**
-     * @var AdapterInterface|MockObject
-     */
-    private AdapterInterface|MockObject $connection;
+    private Delete|MockObject $quoteDelete;
 
     /**
      * @var LoggerInterface|MockObject
@@ -63,16 +57,13 @@ class CleanExpiredQuotesTest extends TestCase
     {
         $this->storeManager            = $this->createMock(StoreManagerInterface::class);
         $this->expiredQuotesCollection = $this->createMock(ExpiredQuotesCollection::class);
-        $this->resourceConnection      = $this->createMock(ResourceConnection::class);
-        $this->connection              = $this->createMock(AdapterInterface::class);
+        $this->quoteDelete            = $this->createMock(Delete::class);
         $this->logger                  = $this->createMock(LoggerInterface::class);
-
-        $this->resourceConnection->method('getConnection')->willReturn($this->connection);
 
         $this->cron = new CleanExpiredQuotes(
             $this->storeManager,
             $this->expiredQuotesCollection,
-            $this->resourceConnection,
+            $this->quoteDelete,
             $this->logger,
             self::BATCH_SIZE
         );
@@ -82,7 +73,7 @@ class CleanExpiredQuotesTest extends TestCase
      * Builds a QuoteCollection mock that returns the given entity IDs.
      *
      * @param string[] $ids
-     * @return QuoteCollection|MockObject
+     * @return QuoteCollection&MockObject
      */
     private function buildCollectionMock(array $ids): QuoteCollection&MockObject
     {
@@ -97,7 +88,6 @@ class CleanExpiredQuotesTest extends TestCase
         $collection->method('setCurPage')->willReturnSelf();
         $collection->method('getSelect')->willReturn($select);
         $collection->method('getColumnValues')->with('entity_id')->willReturn($ids);
-        $collection->method('getMainTable')->willReturn('quote');
 
         return $collection;
     }
@@ -114,16 +104,16 @@ class CleanExpiredQuotesTest extends TestCase
         $this->expiredQuotesCollection->method('getExpiredQuotes')
             ->willReturn($this->buildCollectionMock($ids));
 
-        $this->connection->expects($this->once())
-            ->method('delete')
-            ->with('quote', ['entity_id IN (?)' => $ids]);
+        $this->quoteDelete->expects($this->once())
+            ->method('deleteByIds')
+            ->with($ids);
 
         $this->cron->execute();
     }
 
     /**
      * When a batch fills the batchSize the loop continues; each full batch and
-     * the final partial batch each produce exactly one bulk DELETE call.
+     * the final partial batch each produce exactly one deleteByIds call.
      */
     public function testExecuteProcessesMultipleBatches(): void
     {
@@ -139,11 +129,10 @@ class CleanExpiredQuotesTest extends TestCase
             );
 
         $deletedIdSets = [];
-        $this->connection->expects($this->exactly(2))
-            ->method('delete')
-            ->willReturnCallback(function ($table, $condition) use (&$deletedIdSets) {
-                $this->assertEquals('quote', $table);
-                $deletedIdSets[] = $condition['entity_id IN (?)'];
+        $this->quoteDelete->expects($this->exactly(2))
+            ->method('deleteByIds')
+            ->willReturnCallback(function ($ids) use (&$deletedIdSets) {
+                $deletedIdSets[] = $ids;
             });
 
         $this->cron->execute();
@@ -153,7 +142,7 @@ class CleanExpiredQuotesTest extends TestCase
     }
 
     /**
-     * When a store has no expired quotes the DELETE is never called.
+     * When a store has no expired quotes deleteByIds is never called.
      */
     public function testExecuteSkipsDeleteWhenNoExpiredQuotes(): void
     {
@@ -162,7 +151,7 @@ class CleanExpiredQuotesTest extends TestCase
         $this->expiredQuotesCollection->method('getExpiredQuotes')
             ->willReturn($this->buildCollectionMock([]));
 
-        $this->connection->expects($this->never())->method('delete');
+        $this->quoteDelete->expects($this->never())->method('deleteByIds');
 
         $this->cron->execute();
     }
@@ -181,8 +170,6 @@ class CleanExpiredQuotesTest extends TestCase
         $store = $this->createMock(StoreInterface::class);
         $this->storeManager->method('getStores')->willReturn([$store]);
 
-        // Build the second (terminating) collection manually so we can capture
-        // the addFieldToFilter argument before buildCollectionMock stubs it.
         $select = $this->createMock(Select::class);
         $select->method('distinct')->willReturnSelf();
 
@@ -193,7 +180,6 @@ class CleanExpiredQuotesTest extends TestCase
         $secondCollection->method('setCurPage')->willReturnSelf();
         $secondCollection->method('getSelect')->willReturn($select);
         $secondCollection->method('getColumnValues')->with('entity_id')->willReturn([]);
-        $secondCollection->method('getMainTable')->willReturn('quote');
 
         $capturedCursor = null;
         $secondCollection->method('addFieldToFilter')
@@ -212,7 +198,7 @@ class CleanExpiredQuotesTest extends TestCase
                 $secondCollection
             );
 
-        $this->connection->method('delete');
+        $this->quoteDelete->method('deleteByIds');
 
         $this->cron->execute();
 

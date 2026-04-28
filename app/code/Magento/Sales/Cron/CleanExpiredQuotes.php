@@ -5,9 +5,10 @@
  */
 namespace Magento\Sales\Cron;
 
-use Magento\Framework\App\ResourceConnection;
+use Exception;
 use Magento\Quote\Model\ResourceModel\Quote\Collection as QuoteCollection;
 use Magento\Sales\Model\ResourceModel\Collection\ExpiredQuotesCollection;
+use Magento\Sales\Model\ResourceModel\Quote\Delete;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -33,9 +34,9 @@ class CleanExpiredQuotes
     private $storeManager;
 
     /**
-     * @var ResourceConnection
+     * @var Delete
      */
-    private $resourceConnection;
+    private $quoteDelete;
 
     /**
      * @var LoggerInterface
@@ -50,20 +51,20 @@ class CleanExpiredQuotes
     /**
      * @param StoreManagerInterface $storeManager
      * @param ExpiredQuotesCollection $expiredQuotesCollection
-     * @param ResourceConnection $resourceConnection
+     * @param Delete $quoteDelete
      * @param LoggerInterface $logger
      * @param int $batchSize
      */
     public function __construct(
         StoreManagerInterface $storeManager,
         ExpiredQuotesCollection $expiredQuotesCollection,
-        ResourceConnection $resourceConnection,
+        Delete $quoteDelete,
         LoggerInterface $logger,
         int $batchSize = self::DEFAULT_BATCH_SIZE
     ) {
         $this->storeManager = $storeManager;
         $this->expiredQuotesCollection = $expiredQuotesCollection;
-        $this->resourceConnection = $resourceConnection;
+        $this->quoteDelete = $quoteDelete;
         $this->logger = $logger;
         $this->batchSize = $batchSize > 0 ? $batchSize : self::DEFAULT_BATCH_SIZE;
     }
@@ -119,13 +120,10 @@ class CleanExpiredQuotes
         $lastProcessedId = (int)max($ids);
 
         try {
-            $this->resourceConnection->getConnection()->delete(
-                $quoteCollection->getMainTable(),
-                ['entity_id IN (?)' => $ids]
-            );
-        } catch (\Exception $e) {
+            $this->quoteDelete->deleteByIds($ids);
+        } catch (Exception $e) {
             $this->logger->error(
-                sprintf('Unable to delete expired quotes (IDs: %s): %s', implode(', ', $ids), (string)$e)
+                sprintf('Unable to delete expired quotes (IDs: %s): %s', implode(', ', $ids), $e->getMessage())
             );
         }
 
