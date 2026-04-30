@@ -1,11 +1,6 @@
 {
     "name": "magento/module-new-relic-reporting",
     "description": "N/A",
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
-    ],
     "config": {
         "sort-packages": true
     },
@@ -19,6 +14,11 @@
         "magento/module-customer": "*",
         "magento/module-store": "*"
     },
+    "type": "magento2-module",
+    "license": [
+        "OSL-3.0",
+        "AFL-3.0"
+    ],
     "autoload": {
         "files": [
             "registration.php"
