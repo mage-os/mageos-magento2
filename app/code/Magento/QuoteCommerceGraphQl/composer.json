@@ -1,5 +1,5 @@
 {
-    "name": "magento/module-quote-commerce-graph-ql-ce",
+    "name": "magento/module-quote-commerce-ce-graph-ql",
     "description": "N/A",
     "type": "magento2-module",
     "require": {
