@@ -5,7 +5,13 @@
  */
 namespace Magento\Backend\Block\Page;
 
+use Exception;
+use Magento\Backend\Block\Template;
+use Magento\Backend\Block\Template\Context;
+use Magento\Backend\Model\VersionCheck\VersionComparisonInterface;
 use Magento\Framework\App\DistributionMetadataInterface;
+use Magento\Framework\App\ObjectManager;
+use Magento\Framework\App\ProductMetadataInterface;
 
 /**
  * Adminhtml footer block
@@ -13,30 +19,42 @@ use Magento\Framework\App\DistributionMetadataInterface;
  * @api
  * @since 100.0.2
  */
-class Footer extends \Magento\Backend\Block\Template
+class Footer extends Template
 {
+    private const XML_PATH_RELEASES_URL = 'system/version_check/releases_url';
+
     /**
      * @var string
      */
     protected $_template = 'Magento_Backend::page/footer.phtml';
 
     /**
-     * @var \Magento\Framework\App\ProductMetadataInterface|DistributionMetadataInterface
+     * @var ProductMetadataInterface|DistributionMetadataInterface
      * @since 100.1.0
      */
     protected $productMetadata;
 
     /**
-     * @param \Magento\Backend\Block\Template\Context $context
-     * @param \Magento\Framework\App\ProductMetadataInterface $productMetadata
+     * @var VersionComparisonInterface|null
+     */
+    private $versionComparison;
+
+    /**
+     * @param Context $context
+     * @param ProductMetadataInterface $productMetadata
+     * @param VersionComparisonInterface|null $versionComparison
      * @param array $data
      */
     public function __construct(
-        \Magento\Backend\Block\Template\Context $context,
-        \Magento\Framework\App\ProductMetadataInterface $productMetadata,
+        Context $context,
+        ProductMetadataInterface $productMetadata,
+        ?VersionComparisonInterface $versionComparison = null,
         array $data = []
     ) {
         $this->productMetadata = $productMetadata;
+        $this->versionComparison = $versionComparison
+            ?: ObjectManager::getInstance()->get(VersionComparisonInterface::class);
+
         parent::__construct($context, $data);
     }
 
@@ -67,6 +85,60 @@ class Footer extends \Magento\Backend\Block\Template
     public function getName()
     {
         return $this->productMetadata->getDistributionName();
+    }
+
+    /**
+     * Check if a newer version is available
+     *
+     * @return bool
+     */
+    public function isUpdateAvailable(): bool
+    {
+        return $this->versionComparison !== null && $this->versionComparison->isUpdateAvailable();
+    }
+
+    /**
+     * Get the latest available version
+     *
+     * @return string|null
+     */
+    public function getLatestVersion(): ?string
+    {
+        return $this->versionComparison?->getLatestVersion();
+    }
+
+    /**
+     * Check if the update is a major or minor version bump
+     *
+     * @return bool
+     */
+    public function isMajorOrMinorUpdate(): bool
+    {
+        return $this->versionComparison !== null && $this->versionComparison->isMajorOrMinorUpdate();
+    }
+
+    /**
+     * Get the URL to the Mage-OS releases page
+     *
+     * @return string
+     */
+    public function getReleasesUrl(): string
+    {
+        return (string) $this->_scopeConfig->getValue(self::XML_PATH_RELEASES_URL);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getCacheKeyInfo(): array
+    {
+        $info = parent::getCacheKeyInfo();
+        try {
+            $info[] = 'latest_version_' . ($this->versionComparison?->getLatestVersion() ?? 'none');
+        } catch (Exception $e) {
+            $info[] = 'latest_version_error';
+        }
+        return $info;
     }
 
     /**
