@@ -53,14 +53,17 @@ class Compiled implements ConfigInterface, LazyTypeAwareInterface
     /**
      * Whether the given concrete type was flagged at compile-time as incompatible with PHP 8.4 lazy ghosts.
      *
-     * Returns true (= non-lazy) when no compile-time data is present, so a stale cache
-     * generated on PHP < 8.4 won't accidentally lazify incompatible types after a PHP upgrade.
+     * Fails safe: Returns true (= non-lazy) if no compile-time data is present.
+     *
+     * @param string $type
+     * @return bool
      */
     public function isNonLazyType(string $type): bool
     {
         if ($this->nonLazyTypes === []) {
             return true;
         }
+
         return isset($this->nonLazyTypes[$type]);
     }
 
