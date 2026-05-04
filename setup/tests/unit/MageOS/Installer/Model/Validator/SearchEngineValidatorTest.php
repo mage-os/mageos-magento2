@@ -79,13 +79,10 @@ class SearchEngineValidatorTest extends TestCase
         }
     }
 
-    public function testUsesHttpProtocol(): void
+    public function test_error_message_references_host_and_port_on_failure(): void
     {
-        // Verify the URL construction uses http:// (not https)
-        // This is implicit in the implementation but important for port 9200
         $result = $this->validator->testConnection('opensearch', 'localhost', 9200);
 
-        // The error should reference the connection attempt
         if (!$result['success']) {
             $this->assertStringContainsString('localhost:9200', $result['error']);
         }

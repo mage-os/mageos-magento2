@@ -12,7 +12,7 @@ namespace MageOS\Installer\Model\Validator;
 class SearchEngineValidator
 {
     /**
-     * Test search engine connection
+     * Test search engine connection — tries HTTP first, then HTTPS
      *
      * @param string $engine
      * @param string $host
@@ -21,33 +21,45 @@ class SearchEngineValidator
      */
     public function testConnection(string $engine, string $host, int $port): array
     {
-        $url = sprintf('http://%s:%d', $host, $port);
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
+        $context = stream_context_create([
+            'http' => [
+                'method' => 'GET',
+                'timeout' => 5,
+                'ignore_errors' => true
+            ],
+            'ssl' => [
+                'verify_peer' => false,
+                'verify_peer_name' => false,
+            ]
+        ]);
+
+        $url = null;
+        $response = false;
+
+        foreach (['http', 'https'] as $scheme) {
+            $candidate = sprintf('%s://%s:%d', $scheme, $host, $port);
+            // phpcs:ignore Magento2.Functions.DiscouragedFunction, Generic.PHP.NoSilencedErrors.Discouraged
+            $response = @file_get_contents($candidate, false, $context);
+            if ($response !== false) {
+                $url = $candidate;
+                break;
+            }
+        }
+
+        if ($response === false) {
+            return [
+                'success' => false,
+                'error' => sprintf(
+                    'Could not connect to %s at %s:%d. Verify the host and port are correct.',
+                    $engine,
+                    $host,
+                    $port
+                )
+            ];
+        }
 
         try {
-            // phpcs:ignore Magento2.Functions.DiscouragedFunction
-            $context = stream_context_create([
-                'http' => [
-                    'method' => 'GET',
-                    'timeout' => 5,
-                    'ignore_errors' => true
-                ]
-            ]);
-
-            // phpcs:ignore Magento2.Functions.DiscouragedFunction, Generic.PHP.NoSilencedErrors.Discouraged
-            $response = @file_get_contents($url, false, $context);
-
-            if ($response === false) {
-                return [
-                    'success' => false,
-                    'error' => sprintf(
-                        'Could not connect to %s at %s:%d. Verify the host and port are correct.',
-                        $engine,
-                        $host,
-                        $port
-                    )
-                ];
-            }
-
             $data = json_decode($response, true);
 
             if (!is_array($data)) {

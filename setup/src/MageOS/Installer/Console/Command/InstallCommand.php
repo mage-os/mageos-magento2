@@ -6,33 +6,8 @@ declare(strict_types=1);
 
 namespace MageOS\Installer\Console\Command;
 
+use MageOS\Installer\Console\Command\InstallCommand\Context;
 use MageOS\Installer\Model;
-use MageOS\Installer\Model\Checker\PermissionChecker;
-use MageOS\Installer\Model\Command\CronConfigurer;
-use MageOS\Installer\Model\Command\EmailConfigurer;
-use MageOS\Installer\Model\Command\IndexerConfigurer;
-use MageOS\Installer\Model\Command\ModeConfigurer;
-use MageOS\Installer\Model\Command\ProcessRunner;
-use MageOS\Installer\Model\Command\ThemeConfigurer;
-use MageOS\Installer\Model\Command\TwoFactorAuthConfigurer;
-use MageOS\Installer\Model\Config\AdminConfig;
-use MageOS\Installer\Model\Config\BackendConfig;
-use MageOS\Installer\Model\Config\CronConfig;
-use MageOS\Installer\Model\Config\DatabaseConfig;
-use MageOS\Installer\Model\Config\EmailConfig;
-use MageOS\Installer\Model\Config\EnvironmentConfig;
-use MageOS\Installer\Model\Config\LoggingConfig;
-use MageOS\Installer\Model\Config\RabbitMQConfig;
-use MageOS\Installer\Model\Config\RedisConfig;
-use MageOS\Installer\Model\Config\SampleDataConfig;
-use MageOS\Installer\Model\Config\SearchEngineConfig;
-use MageOS\Installer\Model\Config\StoreConfig;
-use MageOS\Installer\Model\Config\ThemeConfig;
-use MageOS\Installer\Model\Detector\DocumentRootDetector;
-use MageOS\Installer\Model\Theme\ThemeInstaller;
-use MageOS\Installer\Model\Validator\PasswordValidator;
-use MageOS\Installer\Model\Writer\ConfigFileManager;
-use MageOS\Installer\Model\Writer\EnvConfigWriter;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -46,61 +21,11 @@ class InstallCommand extends Command
     public const NAME = 'install';
 
     /**
-     * @param EnvironmentConfig $environmentConfig
-     * @param DatabaseConfig $databaseConfig
-     * @param AdminConfig $adminConfig
-     * @param StoreConfig $storeConfig
-     * @param SearchEngineConfig $searchEngineConfig
-     * @param BackendConfig $backendConfig
-     * @param RedisConfig $redisConfig
-     * @param RabbitMQConfig $rabbitMQConfig
-     * @param LoggingConfig $loggingConfig
-     * @param SampleDataConfig $sampleDataConfig
-     * @param ThemeConfig $themeConfig
-     * @param CronConfig $cronConfig
-     * @param EmailConfig $emailConfig
-     * @param DocumentRootDetector $documentRootDetector
-     * @param EnvConfigWriter $envConfigWriter
-     * @param ThemeInstaller $themeInstaller
-     * @param PermissionChecker $permissionChecker
-     * @param ConfigFileManager $configFileManager
-     * @param PasswordValidator $passwordValidator
-     * @param ProcessRunner $processRunner
-     * @param CronConfigurer $cronConfigurer
-     * @param EmailConfigurer $emailConfigurer
-     * @param ModeConfigurer $modeConfigurer
-     * @param ThemeConfigurer $themeConfigurer
-     * @param IndexerConfigurer $indexerConfigurer
-     * @param TwoFactorAuthConfigurer $twoFactorAuthConfigurer
+     * @param Context $context
      * @param string|null $name
      */
     public function __construct(
-        private readonly EnvironmentConfig $environmentConfig,
-        private readonly DatabaseConfig $databaseConfig,
-        private readonly AdminConfig $adminConfig,
-        private readonly StoreConfig $storeConfig,
-        private readonly SearchEngineConfig $searchEngineConfig,
-        private readonly BackendConfig $backendConfig,
-        private readonly RedisConfig $redisConfig,
-        private readonly RabbitMQConfig $rabbitMQConfig,
-        private readonly LoggingConfig $loggingConfig,
-        private readonly SampleDataConfig $sampleDataConfig,
-        private readonly ThemeConfig $themeConfig,
-        private readonly CronConfig $cronConfig,
-        private readonly EmailConfig $emailConfig,
-        private readonly DocumentRootDetector $documentRootDetector,
-        private readonly EnvConfigWriter $envConfigWriter,
-        private readonly ThemeInstaller $themeInstaller,
-        private readonly PermissionChecker $permissionChecker,
-        private readonly ConfigFileManager $configFileManager,
-        private readonly PasswordValidator $passwordValidator,
-        private readonly ProcessRunner $processRunner,
-        private readonly CronConfigurer $cronConfigurer,
-        private readonly EmailConfigurer $emailConfigurer,
-        private readonly ModeConfigurer $modeConfigurer,
-        private readonly ThemeConfigurer $themeConfigurer,
-        private readonly IndexerConfigurer $indexerConfigurer,
-        private readonly TwoFactorAuthConfigurer $twoFactorAuthConfigurer,
+        private readonly Context $context,
         ?string $name = null
     ) {
         parent::__construct($name);
@@ -118,48 +43,48 @@ class InstallCommand extends Command
             new Model\Stage\WelcomeStage(),
 
             // Configuration stages
-            new Model\Stage\EnvironmentConfigStage($this->environmentConfig),
-            new Model\Stage\DatabaseConfigStage($this->databaseConfig),
-            new Model\Stage\AdminConfigStage($this->adminConfig, $this->passwordValidator),
-            new Model\Stage\StoreConfigStage($this->storeConfig),
-            new Model\Stage\BackendConfigStage($this->backendConfig),
-            new Model\Stage\DocumentRootInfoStage($this->documentRootDetector),
-            new Model\Stage\SearchEngineConfigStage($this->searchEngineConfig),
-            new Model\Stage\RedisConfigStage($this->redisConfig),
-            new Model\Stage\RabbitMQConfigStage($this->rabbitMQConfig),
-            new Model\Stage\LoggingConfigStage($this->loggingConfig),
-            new Model\Stage\SampleDataConfigStage($this->sampleDataConfig),
-            new Model\Stage\ThemeConfigStage($this->themeConfig),
+            new Model\Stage\EnvironmentConfigStage($this->context->environmentConfig),
+            new Model\Stage\DatabaseConfigStage($this->context->databaseConfig),
+            new Model\Stage\AdminConfigStage($this->context->adminConfig, $this->context->passwordValidator),
+            new Model\Stage\StoreConfigStage($this->context->storeConfig),
+            new Model\Stage\BackendConfigStage($this->context->backendConfig),
+            new Model\Stage\DocumentRootInfoStage($this->context->documentRootDetector),
+            new Model\Stage\SearchEngineConfigStage($this->context->searchEngineConfig),
+            new Model\Stage\RedisConfigStage($this->context->redisConfig),
+            new Model\Stage\RabbitMQConfigStage($this->context->rabbitMQConfig),
+            new Model\Stage\LoggingConfigStage($this->context->loggingConfig),
+            new Model\Stage\SampleDataConfigStage($this->context->sampleDataConfig),
+            new Model\Stage\ThemeConfigStage($this->context->themeConfig),
 
             // Summary and confirmation
             new Model\Stage\SummaryStage(),
 
             // Permission check
-            new Model\Stage\PermissionCheckStage($this->permissionChecker),
+            new Model\Stage\PermissionCheckStage($this->context->permissionChecker),
 
             // Theme installation (before Magento)
-            new Model\Stage\ThemeInstallationStage($this->themeInstaller),
+            new Model\Stage\ThemeInstallationStage($this->context->themeInstaller),
 
             // Main Magento installation
             new Model\Stage\MagentoInstallationStage($this->getApplication()),
 
             // Service configuration
-            new Model\Stage\ServiceConfigurationStage($this->envConfigWriter),
+            new Model\Stage\ServiceConfigurationStage($this->context->envConfigWriter),
 
             // Sample data installation
             new Model\Stage\SampleDataInstallationStage($this->getApplication()),
 
             // Post-install configuration
             new Model\Stage\PostInstallConfigStage(
-                $this->cronConfig,
-                $this->emailConfig,
-                $this->cronConfigurer,
-                $this->emailConfigurer,
-                $this->modeConfigurer,
-                $this->themeConfigurer,
-                $this->indexerConfigurer,
-                $this->twoFactorAuthConfigurer,
-                $this->processRunner
+                $this->context->cronConfig,
+                $this->context->emailConfig,
+                $this->context->cronConfigurer,
+                $this->context->emailConfigurer,
+                $this->context->modeConfigurer,
+                $this->context->themeConfigurer,
+                $this->context->indexerConfigurer,
+                $this->context->twoFactorAuthConfigurer,
+                $this->context->processRunner
             ),
 
             // Completion
@@ -195,7 +120,7 @@ class InstallCommand extends Command
             $context = new Model\InstallationContext();
 
             // Check for previous installation config and load into context
-            if ($this->configFileManager->exists($baseDir)) {
+            if ($this->context->configFileManager->exists($baseDir)) {
                 $savedContext = $this->handlePreviousConfig($input, $output, $baseDir);
                 if ($savedContext) {
                     $context = $savedContext;
@@ -211,7 +136,7 @@ class InstallCommand extends Command
 
             if (!$success) {
                 // Save config so user can resume
-                $this->configFileManager->saveContext($baseDir, $context);
+                $this->context->configFileManager->saveContext($baseDir, $context);
                 $output->writeln('');
                 $output->writeln('<comment>Installation cancelled.</comment>');
                 $resumeHint = 'Your configuration has been saved.'
@@ -222,10 +147,10 @@ class InstallCommand extends Command
 
             // Save configuration before installation (for resume capability)
             // This happens during navigation, but we save again at the end
-            $this->configFileManager->saveContext($baseDir, $context);
+            $this->context->configFileManager->saveContext($baseDir, $context);
 
             // Delete config file on success
-            $this->configFileManager->delete($baseDir);
+            $this->context->configFileManager->delete($baseDir);
 
             return Command::SUCCESS;
         } catch (\Exception $e) {
@@ -233,7 +158,7 @@ class InstallCommand extends Command
             try {
                 $baseDir = BP;
                 if (isset($context)) {
-                    $this->configFileManager->saveContext($baseDir, $context);
+                    $this->context->configFileManager->saveContext($baseDir, $context);
                 }
             } catch (\Exception $saveException) {
                 $output->writeln(
@@ -272,7 +197,7 @@ class InstallCommand extends Command
         $output->writeln('<fg=yellow>⚠️  Previous installation detected!</>');
         $output->writeln('');
 
-        $savedContext = $this->configFileManager->loadContext($baseDir);
+        $savedContext = $this->context->configFileManager->loadContext($baseDir);
 
         if (!$savedContext) {
             $output->writeln('<comment>Configuration file exists but cannot be read. Starting fresh...</comment>');
@@ -291,7 +216,7 @@ class InstallCommand extends Command
 
         if (!$resume) {
             $output->writeln('<comment>Starting fresh installation...</comment>');
-            $this->configFileManager->delete($baseDir);
+            $this->context->configFileManager->delete($baseDir);
             return null;
         }
 
