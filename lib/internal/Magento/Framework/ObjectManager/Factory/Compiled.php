@@ -7,6 +7,7 @@ namespace Magento\Framework\ObjectManager\Factory;
 
 use Exception;
 use Magento\Framework\ObjectManager\ConfigInterface;
+use Magento\Framework\ObjectManager\LazyTypeAwareInterface;
 use ReflectionClass;
 
 use const PHP_VERSION_ID;
@@ -65,6 +66,7 @@ class Compiled extends AbstractFactory
 
         if (PHP_VERSION_ID >= 80400
             && $arguments === []
+            && $this->config instanceof LazyTypeAwareInterface
             && !$this->config->isNonLazyType($type)
         ) {
             $reflection = new ReflectionClass($type);
@@ -75,8 +77,11 @@ class Compiled extends AbstractFactory
             }
         }
 
-        $args = $this->resolveArguments($requestedType, $arguments);
-        return $args === [] ? new $type() : $this->createObject($type, $args);
+        if ($this->config->getArguments($requestedType) === []) {
+            return new $type();
+        }
+
+        return $this->createObject($type, $this->resolveArguments($requestedType, $arguments));
     }
 
     /**
