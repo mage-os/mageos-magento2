@@ -30,6 +30,11 @@ class Compiled implements ConfigInterface
     private $preferences;
 
     /**
+     * @var array<string,bool>
+     */
+    private array $nonLazyTypes = [];
+
+    /**
      * @param array $data
      */
     public function __construct($data)
@@ -40,6 +45,22 @@ class Compiled implements ConfigInterface
             ? $data['instanceTypes'] : [];
         $this->preferences = isset($data['preferences']) && is_array($data['preferences'])
             ? $data['preferences'] : [];
+        $this->nonLazyTypes = isset($data['nonLazyTypes']) && is_array($data['nonLazyTypes'])
+            ? $data['nonLazyTypes'] : [];
+    }
+
+    /**
+     * Whether the given concrete type was flagged at compile-time as incompatible with PHP 8.4 lazy ghosts.
+     *
+     * Returns true (= non-lazy) when no compile-time data is present, so a stale cache
+     * generated on PHP < 8.4 won't accidentally lazify incompatible types after a PHP upgrade.
+     */
+    public function isNonLazyType(string $type): bool
+    {
+        if ($this->nonLazyTypes === []) {
+            return true;
+        }
+        return isset($this->nonLazyTypes[$type]);
     }
 
     /**
@@ -147,6 +168,9 @@ class Compiled implements ConfigInterface
         $this->preferences = isset($configuration['preferences']) && is_array($configuration['preferences'])
             ? array_replace($this->preferences, $configuration['preferences'])
             : $this->preferences;
+        $this->nonLazyTypes = isset($configuration['nonLazyTypes']) && is_array($configuration['nonLazyTypes'])
+            ? array_replace($this->nonLazyTypes, $configuration['nonLazyTypes'])
+            : $this->nonLazyTypes;
     }
 
     /**
