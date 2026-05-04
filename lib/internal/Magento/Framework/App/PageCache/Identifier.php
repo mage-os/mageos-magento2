@@ -72,7 +72,6 @@ class Identifier implements IdentifierInterface
     public function getMarketingParameterPatterns(): array
     {
         return [
-            '/&?gad_source\=[^&]+/',
             '/&?gbraid\=[^&]+/',
             '/&?wbraid\=[^&]+/',
             '/&?_gl\=[^&]+/',
@@ -92,6 +91,7 @@ class Identifier implements IdentifierInterface
             '/&?mc_(.*?)\=[^&]+/',
             '/&?utm_(.*?)\=[^&]+/',
             '/&?_bta_(.*?)\=[^&]+/',
+            '/&?gad_(.*?)\=[^&]+/',
         ];
     }
 
