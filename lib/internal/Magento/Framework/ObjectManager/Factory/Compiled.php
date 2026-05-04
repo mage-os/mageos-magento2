@@ -66,7 +66,7 @@ class Compiled extends AbstractFactory
             $reflection = new \ReflectionClass($type);
             if ($reflection->getConstructor() !== null) {
                 return $reflection->newLazyGhost(
-                    function($obj) use ($requestedType) {
+                    function ($obj) use ($requestedType) {
                         $obj->__construct(...$this->resolveArguments($requestedType));
                     }
                 );
