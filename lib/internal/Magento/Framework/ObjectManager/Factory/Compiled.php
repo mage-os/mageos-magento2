@@ -5,8 +5,6 @@
  */
 namespace Magento\Framework\ObjectManager\Factory;
 
-use const PHP_VERSION_ID;
-
 class Compiled extends AbstractFactory
 {
     /**
@@ -56,11 +54,11 @@ class Compiled extends AbstractFactory
         $type = $this->config->getInstanceType($requestedType);
 
         /**
-         * On PHP 8.4 with no call-time overrides and a compile-time-eligible type,
+         * On PHP 8.4, with no call-time overrides and a compile-time-eligible type,
          * defer construction via ReflectionClass::newLazyGhost(); the constructor
          * is invoked in-place when the ghost's state is first observed.
          */
-        if (PHP_VERSION_ID >= 80400
+        if (\PHP_VERSION_ID >= 80400
             && $arguments === []
             && $this->config instanceof \Magento\Framework\ObjectManager\LazyTypeAwareInterface
             && !$this->config->isNonLazyType($type)
