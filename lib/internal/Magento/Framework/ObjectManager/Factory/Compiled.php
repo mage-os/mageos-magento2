@@ -5,11 +5,6 @@
  */
 namespace Magento\Framework\ObjectManager\Factory;
 
-use Exception;
-use Magento\Framework\ObjectManager\ConfigInterface;
-use Magento\Framework\ObjectManager\LazyTypeAwareInterface;
-use ReflectionClass;
-
 use const PHP_VERSION_ID;
 
 class Compiled extends AbstractFactory
@@ -17,7 +12,7 @@ class Compiled extends AbstractFactory
     /**
      * Object manager config
      *
-     * @var ConfigInterface
+     * @var \Magento\Framework\ObjectManager\ConfigInterface
      */
     protected $config;
 
@@ -34,12 +29,12 @@ class Compiled extends AbstractFactory
     private $sharedInstances;
 
     /**
-     * @param ConfigInterface $config
+     * @param \Magento\Framework\ObjectManager\ConfigInterface $config
      * @param array $sharedInstances
      * @param array $globalArguments
      */
     public function __construct(
-        ConfigInterface $config,
+        \Magento\Framework\ObjectManager\ConfigInterface $config,
         &$sharedInstances = [],
         $globalArguments = []
     ) {
@@ -51,25 +46,26 @@ class Compiled extends AbstractFactory
     /**
      * Create instance with call time arguments
      *
-     * On PHP 8.4 with no call-time overrides and a compile-time-eligible type,
-     * defer construction via ReflectionClass::newLazyGhost(); the constructor
-     * is invoked in-place when the ghost's state is first observed.
-     *
      * @param string $requestedType
      * @param array $arguments
      * @return object
-     * @throws Exception
+     * @throws \Exception
      */
     public function create($requestedType, array $arguments = [])
     {
         $type = $this->config->getInstanceType($requestedType);
 
+        /**
+         * On PHP 8.4 with no call-time overrides and a compile-time-eligible type,
+         * defer construction via ReflectionClass::newLazyGhost(); the constructor
+         * is invoked in-place when the ghost's state is first observed.
+         */
         if (PHP_VERSION_ID >= 80400
             && $arguments === []
-            && $this->config instanceof LazyTypeAwareInterface
+            && $this->config instanceof \Magento\Framework\ObjectManager\LazyTypeAwareInterface
             && !$this->config->isNonLazyType($type)
         ) {
-            $reflection = new ReflectionClass($type);
+            $reflection = new \ReflectionClass($type);
             if ($reflection->getConstructor() !== null) {
                 return $reflection->newLazyGhost(
                     function($obj) use ($requestedType) {
