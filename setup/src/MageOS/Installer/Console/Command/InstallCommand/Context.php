@@ -38,6 +38,37 @@ use MageOS\Installer\Model\Writer\EnvConfigWriter;
  */
 class Context
 {
+    /**
+     * Context constructor.
+     *
+     * @param \MageOS\Installer\Model\Config\EnvironmentConfig $environmentConfig
+     * @param \MageOS\Installer\Model\Config\DatabaseConfig $databaseConfig
+     * @param \MageOS\Installer\Model\Config\AdminConfig $adminConfig
+     * @param \MageOS\Installer\Model\Config\StoreConfig $storeConfig
+     * @param \MageOS\Installer\Model\Config\SearchEngineConfig $searchEngineConfig
+     * @param \MageOS\Installer\Model\Config\BackendConfig $backendConfig
+     * @param \MageOS\Installer\Model\Config\RedisConfig $redisConfig
+     * @param \MageOS\Installer\Model\Config\RabbitMQConfig $rabbitMQConfig
+     * @param \MageOS\Installer\Model\Config\LoggingConfig $loggingConfig
+     * @param \MageOS\Installer\Model\Config\SampleDataConfig $sampleDataConfig
+     * @param \MageOS\Installer\Model\Config\ThemeConfig $themeConfig
+     * @param \MageOS\Installer\Model\Config\CronConfig $cronConfig
+     * @param \MageOS\Installer\Model\Config\EmailConfig $emailConfig
+     * @param \MageOS\Installer\Model\Detector\DocumentRootDetector $documentRootDetector
+     * @param \MageOS\Installer\Model\Writer\EnvConfigWriter $envConfigWriter
+     * @param \MageOS\Installer\Model\Theme\ThemeInstaller $themeInstaller
+     * @param \MageOS\Installer\Model\Checker\PermissionChecker $permissionChecker
+     * @param \MageOS\Installer\Model\Writer\ConfigFileManager $configFileManager
+     * @param \MageOS\Installer\Model\Validator\PasswordValidator $passwordValidator
+     * @param \MageOS\Installer\Model\Command\ProcessRunner $processRunner
+     * @param \MageOS\Installer\Model\Command\CronConfigurer $cronConfigurer
+     * @param \MageOS\Installer\Model\Command\EmailConfigurer $emailConfigurer
+     * @param \MageOS\Installer\Model\Command\ModeConfigurer $modeConfigurer
+     * @param \MageOS\Installer\Model\Command\ThemeConfigurer $themeConfigurer
+     * @param \MageOS\Installer\Model\Command\IndexerConfigurer $indexerConfigurer
+     * @param \MageOS\Installer\Model\Command\TwoFactorAuthConfigurer $twoFactorAuthConfigurer
+     * @see \MageOS\Installer\Console\Command\InstallCommand
+     */
     public function __construct(
         public readonly EnvironmentConfig $environmentConfig,
         public readonly DatabaseConfig $databaseConfig,
