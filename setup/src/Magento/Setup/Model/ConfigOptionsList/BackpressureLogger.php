@@ -70,7 +70,7 @@ class BackpressureLogger implements ConfigOptionsListInterface
     /**
      * @var array
      */
-    private array $validLoggerTypes;
+    private array $validLoggerTypes = [];
 
     /**
      * @param RedisConnectionValidator $redisValidator
