@@ -79,7 +79,7 @@ class SearchEngineValidatorTest extends TestCase
         }
     }
 
-    public function test_error_message_references_host_and_port_on_failure(): void
+    public function testErrorMessageReferencesHostAndPortOnFailure(): void
     {
         $result = $this->validator->testConnection('opensearch', 'localhost', 9200);
 
