@@ -39,14 +39,6 @@ class BackpressureLogger implements ConfigOptionsListInterface
     private const INPUT_KEY_BACKPRESSURE_LOGGER_ID_PREFIX = 'backpressure-logger-id-prefix';
 
     /**
-     * Backpressure logger types
-     */
-    private const VALID_BACKPRESSURE_LOGGER_OPTIONS = [
-        RedisRequestLogger::BACKPRESSURE_LOGGER_REDIS,
-        RedisRequestLogger::BACKPRESSURE_LOGGER_VALKEY,
-    ];
-
-    /**
      * Config paths map to input keys
      */
     private const CONFIG_PATH_TO_INPUT_KEY_MAP = [
@@ -76,11 +68,18 @@ class BackpressureLogger implements ConfigOptionsListInterface
     private RedisConnectionValidator $redisValidator;
 
     /**
-     * @param RedisConnectionValidator $redisValidator
+     * @var array
      */
-    public function __construct(RedisConnectionValidator $redisValidator)
+    private array $validLoggerTypes;
+
+    /**
+     * @param RedisConnectionValidator $redisValidator
+     * @param array $validLoggerTypes
+     */
+    public function __construct(RedisConnectionValidator $redisValidator, array $validLoggerTypes = [])
     {
         $this->redisValidator = $redisValidator;
+        $this->validLoggerTypes = $validLoggerTypes;
     }
 
     /**
@@ -92,7 +91,7 @@ class BackpressureLogger implements ConfigOptionsListInterface
             new SelectConfigOption(
                 self::INPUT_KEY_BACKPRESSURE_LOGGER,
                 SelectConfigOption::FRONTEND_WIZARD_SELECT,
-                self::VALID_BACKPRESSURE_LOGGER_OPTIONS,
+                $this->validLoggerTypes,
                 RequestLoggerInterface::CONFIG_PATH_BACKPRESSURE_LOGGER,
                 'Backpressure logger handler'
             ),
@@ -190,7 +189,7 @@ class BackpressureLogger implements ConfigOptionsListInterface
         $requestLoggerType = $options[self::INPUT_KEY_BACKPRESSURE_LOGGER]
             ?? $deploymentConfig->get(RequestLoggerInterface::CONFIG_PATH_BACKPRESSURE_LOGGER);
 
-        if (!in_array($requestLoggerType, self::VALID_BACKPRESSURE_LOGGER_OPTIONS, true)) {
+        if (!in_array($requestLoggerType, $this->validLoggerTypes, true)) {
             return;
         }
 
@@ -248,7 +247,7 @@ class BackpressureLogger implements ConfigOptionsListInterface
             ?? $deploymentConfig->get(RequestLoggerInterface::CONFIG_PATH_BACKPRESSURE_LOGGER);
 
         if ($loggerType) {
-            if (in_array($loggerType, self::VALID_BACKPRESSURE_LOGGER_OPTIONS, true)) {
+            if (in_array($loggerType, $this->validLoggerTypes, true)) {
                 return !$this->validateRedisConfig($options, $deploymentConfig)
                     ? ['Invalid Redis configuration. Could not connect to Redis server.']
                     : [];

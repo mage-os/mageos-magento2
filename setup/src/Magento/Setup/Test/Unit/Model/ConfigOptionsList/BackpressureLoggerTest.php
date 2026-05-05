@@ -37,7 +37,10 @@ class BackpressureLoggerTest extends TestCase
         $this->validatorMock = $this->createMock(RedisConnectionValidator::class);
         $this->deploymentConfigMock = $this->createMock(DeploymentConfig::class);
 
-        $this->configList = new BackpressureLogger($this->validatorMock);
+        $this->configList = new BackpressureLogger(
+            $this->validatorMock,
+            ['redis' => 'redis', 'valkey' => 'valkey']
+        );
     }
 
     /**
