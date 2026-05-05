@@ -12,12 +12,16 @@ use Magento\Setup\Module\Di\Compiler\Config\ModificationInterface;
 /**
  * Compile-time scanner that flags concrete types as non-lazy when they are PHP-incompatible
  * with newLazyGhost: interfaces, abstracts, traits, final/enum/readonly classes, and classes
- * extending internal PHP classes (e.g. ArrayObject, DateTime). Variant F: cost filter removed
- * — every PHP-compatible class is lazy-eligible regardless of constructor arg count.
+ * extending internal PHP classes (e.g. ArrayObject, DateTime).
  */
 class NonLazyTypes implements ModificationInterface
 {
-
+    /**
+     * Supplement the DI config to record class types that are NOT eligible for lazy object loading
+     *
+     * @param array $config
+     * @return array
+     */
     public function modify(array $config): array
     {
         if (\PHP_VERSION_ID < 80400) {
@@ -50,6 +54,12 @@ class NonLazyTypes implements ModificationInterface
         return $config;
     }
 
+    /**
+     * Determine whether the given class is eligible for lazy object loading
+     *
+     * @param string $class
+     * @return bool
+     */
     private function isLazyEligible(string $class): bool
     {
         if (str_ends_with($class, '\\Proxy')) {
