@@ -28,6 +28,7 @@ class BackOrderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ObjectManagerInterface
+     * 
      */
     private $objectManager;
 
