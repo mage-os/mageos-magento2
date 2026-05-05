@@ -103,9 +103,6 @@ class ResetAfterRequestTest extends \PHPUnit\Framework\TestCase
                 if (\Magento\Catalog\Model\ResourceModel\Collection\AbstractCollection::class == $type) {
                     continue; // This class isn't abstract, but it can't be constructed itself without error
                 }
-                if ($type === 'Magento\Catalog\Test\Unit\Model\ResourceModel\Collection\Stub\ConcreteCollection') {
-                    continue; // Unit-test stub; not constructible via ObjectManager like real collections
-                }
                 if (\Magento\Eav\Model\ResourceModel\Form\Attribute\Collection::class == $type) {
                     continue; // Note: This class isn't abstract, but it cannot be constructed itself.
                     // It requires subclass to modify protected $_moduleName to be constructed.
