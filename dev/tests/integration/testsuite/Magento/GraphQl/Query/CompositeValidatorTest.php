@@ -11,6 +11,7 @@ use Magento\Framework\App\Area;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Query\Resolver\Argument\Validator\CompositeValidator;
+use Magento\Store\Model\ScopeInterface;
 use Magento\TestFramework\Fixture\AppArea;
 use Magento\TestFramework\Fixture\Config;
 use Magento\TestFramework\Fixture\DbIsolation;
@@ -51,8 +52,8 @@ class CompositeValidatorTest extends TestCase
      * Verify SearchCriteriaValidator in composite enforces pageSize when limiting is enabled.
      */
     #[
-        Config('graphql/validation/input_limit_enabled', 1),
-        Config('graphql/validation/maximum_page_size', 5)
+        Config('graphql/validation/input_limit_enabled', 1, ScopeInterface::SCOPE_STORE, 'default'),
+        Config('graphql/validation/maximum_page_size', 5, ScopeInterface::SCOPE_STORE, 'default')
     ]
     public function testSearchCriteriaValidatorEnforcesPageSizeLimit(): void
     {
@@ -69,8 +70,8 @@ class CompositeValidatorTest extends TestCase
      * @doesNotPerformAssertions
      */
     #[
-        Config('graphql/validation/input_limit_enabled', 1),
-        Config('graphql/validation/maximum_page_size', 5)
+        Config('graphql/validation/input_limit_enabled', 1, ScopeInterface::SCOPE_STORE, 'default'),
+        Config('graphql/validation/maximum_page_size', 5, ScopeInterface::SCOPE_STORE, 'default')
     ]
     public function testCompositeAllowsPageSizeWithinLimit(): void
     {
@@ -85,8 +86,8 @@ class CompositeValidatorTest extends TestCase
      * @doesNotPerformAssertions
      */
     #[
-        Config('graphql/validation/input_limit_enabled', 0),
-        Config('graphql/validation/maximum_page_size', 5)
+        Config('graphql/validation/input_limit_enabled', 0, ScopeInterface::SCOPE_STORE, 'default'),
+        Config('graphql/validation/maximum_page_size', 5, ScopeInterface::SCOPE_STORE, 'default')
     ]
     public function testSearchCriteriaValidatorSkipsEnforcementWhenDisabled(): void
     {
