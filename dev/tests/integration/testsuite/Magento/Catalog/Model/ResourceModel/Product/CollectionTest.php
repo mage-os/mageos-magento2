@@ -10,6 +10,7 @@ namespace Magento\Catalog\Model\ResourceModel\Product;
 use Magento\Catalog\Model\Product\Visibility;
 use Magento\Catalog\Test\Fixture\Category as CategoryFixture;
 use Magento\Catalog\Test\Fixture\Product as ProductFixture;
+use Magento\Catalog\Test\Fixture\ProductGlobalPriceStoreScopedDecimal;
 use Magento\Framework\App\Area;
 use Magento\Framework\App\State;
 use Magento\Store\Model\Store;
@@ -390,13 +391,13 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
      * collapse store scope for other attributes in that batch (see AC-40218 / PR 40419).
      *
      * DbIsolation disabled: fixture uses CategorySetup::addAttribute (DDL) and product save triggers indexers;
-     * wrapping those in a DB transaction causes MySQL ER_CANT_EXECUTE_WITH_PRIMARY_CHANGED / 1412 in MSI + ES pipelines.
-     *
-     * @magentoDataFixture Magento/Catalog/_files/product_global_price_with_store_scoped_decimal_second_store.php
+     * wrapping those in a DB transaction causes MySQL ER_CANT_EXECUTE_WITH_PRIMARY_CHANGED / 1412 in MSI + ES
+     * pipelines.
      */
     #[
         AppIsolation(true),
         DbIsolation(false),
+        DataFixture(ProductGlobalPriceStoreScopedDecimal::class),
     ]
     public function testStoreScopedDecimalLoadedWithGlobalPriceOnSameDecimalTable(): void
     {
