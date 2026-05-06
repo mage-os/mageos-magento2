@@ -139,7 +139,7 @@ class MessageControllerDecorator
     /**
      * Whether the failure may succeed after rolling back and retrying the transaction.
      *
-     * @param Throwable $exception
+     * @param Throwable $e
      * @return bool
      */
     private function isTransientBulkTransactionFailure(Throwable $e): bool
