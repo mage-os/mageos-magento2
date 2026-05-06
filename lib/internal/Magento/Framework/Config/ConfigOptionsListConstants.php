@@ -55,6 +55,13 @@ class ConfigOptionsListConstants
     public const CONFIG_PATH_FORCE_HTML_MINIFICATION = 'force_html_minification';
 
     /**
+     * Runtime kill-switch for the PHP 8.4 lazy-ghost object loading path in the compiled DI
+     * factory. Truthy value disables lazy construction without recompile; absent or falsy
+     * means the feature stays on.
+     */
+    public const CONFIG_PATH_LAZY_OBJECT_LOADING_DISABLED = 'lazy_object_loading_disabled';
+
+    /**
      * Default limiting input array size for synchronous Web API
      */
     public const CONFIG_PATH_WEBAPI_SYNC_DEFAULT_INPUT_ARRAY_SIZE_LIMIT = 'webapi/sync/default_input_array_size_limit';

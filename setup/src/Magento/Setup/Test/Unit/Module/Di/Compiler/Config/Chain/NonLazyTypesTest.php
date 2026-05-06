@@ -16,6 +16,7 @@ use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\NonLazyTypes\
 use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\NonLazyTypes\ATrait;
 use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\NonLazyTypes\ExtendsInternal;
 use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\NonLazyTypes\Foo\Proxy as FooProxy;
+use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\NonLazyTypes\MarkedNonLazy;
 use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\NonLazyTypes\PlainClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -100,6 +101,23 @@ class NonLazyTypesTest extends TestCase
         $output = (new NonLazyTypes())->modify([]);
 
         $this->assertSame([], $output['nonLazyTypes']);
+    }
+
+    /**
+     * Classes opt out of lazy ghost construction by declaring the
+     * Magento\Framework\ObjectManager\Attribute\NonLazy attribute. The compile-time scan
+     * must surface them in the deny-list even though they are otherwise PHP-compatible
+     * (concrete, non-final, plain inheritance).
+     */
+    public function testClassWithNonLazyAttributeIsAddedToDenyList(): void
+    {
+        $this->skipIfPhpBelow84();
+
+        $output = (new NonLazyTypes())->modify(
+            ['arguments' => [MarkedNonLazy::class => []]]
+        );
+
+        $this->assertArrayHasKey(MarkedNonLazy::class, $output['nonLazyTypes']);
     }
 
     private function skipIfPhpBelow84(): void

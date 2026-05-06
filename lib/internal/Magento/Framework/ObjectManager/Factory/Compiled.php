@@ -27,6 +27,13 @@ class Compiled extends AbstractFactory
     private $sharedInstances;
 
     /**
+     * Whether the env.php kill-switch has disabled lazy-ghost construction.
+     *
+     * @var bool
+     */
+    private bool $lazyDisabled;
+
+    /**
      * @param \Magento\Framework\ObjectManager\ConfigInterface $config
      * @param array $sharedInstances
      * @param array $globalArguments
@@ -39,6 +46,9 @@ class Compiled extends AbstractFactory
         $this->config = $config;
         $this->globalArguments = $globalArguments;
         $this->sharedInstances = &$sharedInstances;
+        $this->lazyDisabled = !empty($globalArguments[
+            \Magento\Framework\Config\ConfigOptionsListConstants::CONFIG_PATH_LAZY_OBJECT_LOADING_DISABLED
+        ]);
     }
 
     /**
@@ -59,6 +69,7 @@ class Compiled extends AbstractFactory
          * is invoked in-place when the ghost's state is first observed.
          */
         if (\PHP_VERSION_ID >= 80400
+            && !$this->lazyDisabled
             && $arguments === []
             && $this->config instanceof \Magento\Framework\ObjectManager\LazyTypeAwareInterface
             && !$this->config->isNonLazyType($type)

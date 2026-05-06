@@ -7,12 +7,14 @@ declare(strict_types=1);
 
 namespace Magento\Setup\Module\Di\Compiler\Config\Chain;
 
+use Magento\Framework\ObjectManager\Attribute\NonLazy;
 use Magento\Setup\Module\Di\Compiler\Config\ModificationInterface;
 
 /**
  * Compile-time scanner that flags concrete types as non-lazy when they are PHP-incompatible
  * with newLazyGhost: interfaces, abstracts, traits, final/enum/readonly classes, and classes
- * extending internal PHP classes (e.g. ArrayObject, DateTime).
+ * extending internal PHP classes (e.g. ArrayObject, DateTime). Also honors classes that
+ * opt out by declaring the #[NonLazy] attribute.
  */
 class NonLazyTypes implements ModificationInterface
 {
@@ -86,6 +88,10 @@ class NonLazyTypes implements ModificationInterface
             if ($current->isInternal()) {
                 return false;
             }
+        }
+
+        if ($ref->getAttributes(NonLazy::class) !== []) {
+            return false;
         }
 
         return true;

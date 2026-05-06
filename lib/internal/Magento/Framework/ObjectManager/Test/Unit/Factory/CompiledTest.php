@@ -492,6 +492,42 @@ class CompiledTest extends TestCase
     }
 
     /**
+     * Setting `lazy_object_loading_disabled => true` in env.php (forwarded into the factory's
+     * globalArguments at bootstrap) must short-circuit the lazy-ghost path entirely, even when
+     * the type is otherwise lazy-eligible. This is the runtime kill-switch — it has to take
+     * effect without recompiling the DI cache.
+     */
+    public function testCreateUsesEagerPathWhenKillSwitchIsTrue(): void
+    {
+        if (PHP_VERSION_ID < 80400) {
+            $this->markTestSkipped('Eager-vs-lazy distinction only matters on PHP 8.4+.');
+        }
+
+        $config = $this->createMockForIntersectionOfInterfaces(
+            [ConfigInterface::class, LazyTypeAwareInterface::class]
+        );
+        $config->method('getInstanceType')->willReturn(LazyEligibleType::class);
+        $config->method('getArguments')->willReturn(null);
+        $config->method('isNonLazyType')->willReturn(false);
+
+        $shared = [];
+        $factory = new Compiled($config, $shared, ['lazy_object_loading_disabled' => true]);
+        $factory->setObjectManager($this->objectManagerMock);
+        $this->objectManager->setBackwardCompatibleProperty($factory, 'definitions', $this->definitionsMock);
+        $this->definitionsMock->method('getParameters')->willReturn([]);
+
+        $result = $factory->create('requestedType', []);
+
+        $this->assertInstanceOf(LazyEligibleType::class, $result);
+        $reflection = new \ReflectionClass(LazyEligibleType::class);
+        $this->assertFalse(
+            $reflection->isUninitializedLazyObject($result),
+            'Expected an eagerly constructed instance when the kill-switch is set.'
+        );
+        $this->assertTrue($result->constructorCalled);
+    }
+
+    /**
      * When isNonLazyType returns true, even on PHP 8.4 the factory must take the eager
      * path and return a fully initialized instance (no ghost).
      */
