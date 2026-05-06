@@ -13,6 +13,9 @@ namespace Magento\Framework\ObjectManager\Test\Unit\Factory\Fixture\Compiled;
  */
 class LazyEligibleType
 {
+    /**
+     * @var bool Tracks whether the constructor has been invoked.
+     */
     public bool $constructorCalled = false;
 
     public function __construct()
