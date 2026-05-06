@@ -23,6 +23,8 @@ use Throwable;
 
 /**
  * Decorator for MessageController
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class MessageControllerDecorator
 {
