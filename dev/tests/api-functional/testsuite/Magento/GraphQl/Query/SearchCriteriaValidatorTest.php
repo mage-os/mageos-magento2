@@ -21,18 +21,16 @@ class SearchCriteriaValidatorTest extends GraphQlAbstract
 {
     /**
      * Verify that a pageSize argument exceeding the configured maximum returns an error.
-     *
-     * @magentoApiDataFixture Magento/GraphQl/Catalog/_files/simple_product.php
      */
     #[
         Config('graphql/validation/input_limit_enabled', 1),
         Config('graphql/validation/maximum_page_size', 5)
     ]
-    public function testProductsQueryExceedingPageSizeReturnsError(): void
+    public function testProductsQueryExceedingPageSizeReturnsError()
     {
         $query = <<<QUERY
         {
-            products(pageSize: 6, filter: {sku: {eq: "simple_product"}}) {
+            products(pageSize: 6, filter: {sku: {eq: "test"}}) {
                 total_count
             }
         }
@@ -45,18 +43,16 @@ class SearchCriteriaValidatorTest extends GraphQlAbstract
 
     /**
      * Verify that a pageSize argument within the configured maximum succeeds.
-     *
-     * @magentoApiDataFixture Magento/GraphQl/Catalog/_files/simple_product.php
      */
     #[
         Config('graphql/validation/input_limit_enabled', 1),
         Config('graphql/validation/maximum_page_size', 5)
     ]
-    public function testProductsQueryWithinPageSizeLimitSucceeds(): void
+    public function testProductsQueryWithinPageSizeLimitSucceeds()
     {
         $query = <<<QUERY
         {
-            products(pageSize: 5, filter: {sku: {eq: "simple_product"}}) {
+            products(pageSize: 5, filter: {sku: {eq: "test"}}) {
                 total_count
             }
         }
@@ -68,18 +64,16 @@ class SearchCriteriaValidatorTest extends GraphQlAbstract
 
     /**
      * Verify that pageSize is not enforced when input limiting is disabled.
-     *
-     * @magentoApiDataFixture Magento/GraphQl/Catalog/_files/simple_product.php
      */
     #[
         Config('graphql/validation/input_limit_enabled', 0),
         Config('graphql/validation/maximum_page_size', 5)
     ]
-    public function testProductsQueryPageSizeNotEnforcedWhenLimitingDisabled(): void
+    public function testProductsQueryPageSizeNotEnforcedWhenLimitingDisabled()
     {
         $query = <<<QUERY
         {
-            products(pageSize: 100, filter: {sku: {eq: "simple_product"}}) {
+            products(pageSize: 100, filter: {sku: {eq: "test"}}) {
                 total_count
             }
         }

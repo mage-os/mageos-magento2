@@ -5,12 +5,17 @@
  */
 declare(strict_types=1);
 
-namespace Magento\GraphQl\Query\Resolver\Argument\Validator;
+namespace Magento\GraphQl\Query;
 
+use Magento\Framework\App\Area;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Query\Resolver\Argument\Validator\CompositeValidator;
+use Magento\TestFramework\Fixture\AppArea;
+use Magento\TestFramework\Fixture\Config;
+use Magento\TestFramework\Fixture\DbIsolation;
 use Magento\TestFramework\Helper\Bootstrap;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -22,6 +27,11 @@ use PHPUnit\Framework\TestCase;
  * Regression: module-level di.xml array arguments replace global di.xml entries,
  * so SearchCriteriaValidator was silently dropped from CompositeValidator.
  */
+#[
+    CoversClass(CompositeValidator::class),
+    AppArea(Area::AREA_GRAPHQL),
+    DbIsolation(false),
+]
 class CompositeValidatorTest extends TestCase
 {
     /**
@@ -39,10 +49,11 @@ class CompositeValidatorTest extends TestCase
 
     /**
      * Verify SearchCriteriaValidator in composite enforces pageSize when limiting is enabled.
-     *
-     * @magentoConfigFixture default_store graphql/validation/input_limit_enabled 1
-     * @magentoConfigFixture default_store graphql/validation/maximum_page_size 5
      */
+    #[
+        Config('graphql/validation/input_limit_enabled', 1),
+        Config('graphql/validation/maximum_page_size', 5)
+    ]
     public function testSearchCriteriaValidatorEnforcesPageSizeLimit(): void
     {
         $field = $this->createMock(Field::class);
@@ -56,9 +67,11 @@ class CompositeValidatorTest extends TestCase
      * Verify composite does not throw when pageSize is within the configured limit.
      *
      * @doesNotPerformAssertions
-     * @magentoConfigFixture default_store graphql/validation/input_limit_enabled 1
-     * @magentoConfigFixture default_store graphql/validation/maximum_page_size 5
      */
+    #[
+        Config('graphql/validation/input_limit_enabled', 1),
+        Config('graphql/validation/maximum_page_size', 5)
+    ]
     public function testCompositeAllowsPageSizeWithinLimit(): void
     {
         $field = $this->createMock(Field::class);
@@ -70,9 +83,11 @@ class CompositeValidatorTest extends TestCase
      * Verify composite does not throw when input limiting is disabled.
      *
      * @doesNotPerformAssertions
-     * @magentoConfigFixture default_store graphql/validation/input_limit_enabled 0
-     * @magentoConfigFixture default_store graphql/validation/maximum_page_size 5
      */
+    #[
+        Config('graphql/validation/input_limit_enabled', 0),
+        Config('graphql/validation/maximum_page_size', 5)
+    ]
     public function testSearchCriteriaValidatorSkipsEnforcementWhenDisabled(): void
     {
         $field = $this->createMock(Field::class);
