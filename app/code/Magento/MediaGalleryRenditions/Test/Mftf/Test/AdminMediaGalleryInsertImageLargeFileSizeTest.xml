@@ -40,7 +40,7 @@
             <actionGroup ref="AdminEnhancedMediaGalleryClearGalleryFiltersForCategoryActionGroup" stepKey="clearStandaloneMediaGalleryFilters"/>
             <actionGroup ref="AdminOpenCategoryGridPageActionGroup" stepKey="openMediaGalleryCategoryGridPage"/>
             <actionGroup ref="ResetAdminDataGridToDefaultViewActionGroup" stepKey="clearGridFilters"/>
-            <actionGroup ref="NavigateToMediaGalleryActionGroup" stepKey="OpenMedaiGalleryForCategory"/>
+            <actionGroup ref="NavigateToMediaGalleryActionGroup" stepKey="OpenMediaGalleryForCategory"/>
             <actionGroup ref="AdminEnhancedMediaGalleryClearGalleryFiltersForCategoryActionGroup" stepKey="clearMediaGalleryFilters"/>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
         </after>
