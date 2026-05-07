@@ -40,7 +40,8 @@
             <waitForPageLoad stepKey="waitForGridLoadAfterClearingFilter"/>
             <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
-        </after>
+                <actionGroup ref="AdminOrdersGridClearFiltersActionGroup" stepKey="clearOrdersGridFilters"/>
+</after>
         <!-- Go to new order status page -->
         <actionGroup ref="AdminGoToOrderStatusPageActionGroup" stepKey="goToOrderStatusPage"/>
         <actionGroup ref="AdminClickCreateNewStatusButtonOnOrderStatusPageActionGroup" stepKey="clickCreateNewStatus"/>

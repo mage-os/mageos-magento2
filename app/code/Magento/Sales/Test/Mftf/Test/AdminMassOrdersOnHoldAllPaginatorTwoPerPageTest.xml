@@ -35,7 +35,8 @@
             <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
             <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
-        </after>
+                <actionGroup ref="AdminOrdersGridClearFiltersActionGroup" stepKey="clearOrdersGridFilters"/>
+</after>
 
         <!-- Create first order -->
         <actionGroup ref="CreateOrderActionGroup" stepKey="createFirstOrder">

@@ -68,7 +68,8 @@
             </actionGroup>
             <magentoCLI command="config:set {{AdminGeneralSetStreetAddress2ConfigData.path}} ''" stepKey="resetStoreInformationStreetAddress"/>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutAdmin"/>
-        </after>
+                <actionGroup ref="AdminOrdersGridClearFiltersActionGroup" stepKey="clearOrdersGridFilters"/>
+</after>
         <!-- Step 1:Navigate to storefront -->
         <actionGroup ref="LoginToStorefrontActionGroup" stepKey="customerLogin">
             <argument name="Customer" value="$createCustomer$" />
