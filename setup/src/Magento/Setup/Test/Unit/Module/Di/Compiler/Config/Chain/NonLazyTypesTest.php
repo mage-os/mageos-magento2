@@ -120,6 +120,27 @@ class NonLazyTypesTest extends TestCase
         $this->assertArrayHasKey(MarkedNonLazy::class, $output['nonLazyTypes']);
     }
 
+    /**
+     * The chain step is one of several modifiers that can contribute to nonLazyTypes.
+     * Pre-existing entries (from prior chain steps or upstream config sources) must be
+     * preserved; the scanner only adds to the set, never replaces it.
+     */
+    public function testPreExistingNonLazyTypesArePreserved(): void
+    {
+        $this->skipIfPhpBelow84();
+
+        $output = (new NonLazyTypes())->modify([
+            'arguments' => [AnInterface::class => []],
+            'nonLazyTypes' => [
+                'External\\PreSeeded\\Type' => true,
+                AnInterface::class => true,
+            ],
+        ]);
+
+        $this->assertArrayHasKey('External\\PreSeeded\\Type', $output['nonLazyTypes']);
+        $this->assertArrayHasKey(AnInterface::class, $output['nonLazyTypes']);
+    }
+
     private function skipIfPhpBelow84(): void
     {
         if (PHP_VERSION_ID < 80400) {

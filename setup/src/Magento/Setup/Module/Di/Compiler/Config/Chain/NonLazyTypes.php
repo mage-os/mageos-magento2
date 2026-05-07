@@ -52,7 +52,10 @@ class NonLazyTypes implements ModificationInterface
             }
         }
 
-        $config['nonLazyTypes'] = $nonLazy;
+        $existing = (isset($config['nonLazyTypes']) && is_array($config['nonLazyTypes']))
+            ? $config['nonLazyTypes']
+            : [];
+        $config['nonLazyTypes'] = array_replace($existing, $nonLazy);
         return $config;
     }
 
