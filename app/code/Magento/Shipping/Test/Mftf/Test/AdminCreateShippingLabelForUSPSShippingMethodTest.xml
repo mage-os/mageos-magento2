@@ -67,9 +67,9 @@
                 <argument name="street" value=""/>
             </actionGroup>
             <magentoCLI command="config:set {{AdminGeneralSetStreetAddress2ConfigData.path}} ''" stepKey="resetStoreInformationStreetAddress"/>
+            <actionGroup ref="AdminOrdersGridClearFiltersActionGroup" stepKey="clearOrdersGridFilters"/>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutAdmin"/>
-                <actionGroup ref="AdminOrdersGridClearFiltersActionGroup" stepKey="clearOrdersGridFilters"/>
-</after>
+        </after>
         <!-- Step 1:Navigate to storefront -->
         <actionGroup ref="LoginToStorefrontActionGroup" stepKey="customerLogin">
             <argument name="Customer" value="$createCustomer$" />

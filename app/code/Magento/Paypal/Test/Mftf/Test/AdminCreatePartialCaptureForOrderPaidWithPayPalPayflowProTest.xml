@@ -37,9 +37,9 @@
             <remove keyForRemoval="setPaymentActionAuthorization"/>
             <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
             <deleteData createDataKey="createSimpleProduct" stepKey="deleteSimpleProduct"/>
+            <actionGroup ref="AdminOrdersGridClearFiltersActionGroup" stepKey="clearOrdersGridFilters"/>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
-                <actionGroup ref="AdminOrdersGridClearFiltersActionGroup" stepKey="clearOrdersGridFilters"/>
-</after>
+        </after>
         <remove keyForRemoval="goToProductOnStorefront"/>
         <remove keyForRemoval="addToCartFromStorefrontProductPage"/>
         <remove keyForRemoval="assertGrandTotal"/>

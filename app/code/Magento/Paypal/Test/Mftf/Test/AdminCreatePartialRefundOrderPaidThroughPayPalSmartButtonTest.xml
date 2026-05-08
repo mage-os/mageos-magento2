@@ -147,13 +147,13 @@
             <!--  Disable PayPal Express Checkout and Basic setting change -->
             <actionGroup ref="AdminPayPalExpressCheckoutDisableActionGroup" stepKey="configPaypalExpressCheckoutDisable"/>
             <magentoCLI command="config:set {{StorefrontPaypalExpressAuthorizationPaymentActionOptionConfigData.path}} {{StorefrontPaypalExpressAuthorizationPaymentActionOptionConfigData.value}}" stepKey="paymentActionChangeToAuthorization"/>
+            <actionGroup ref="AdminOrdersGridClearFiltersActionGroup" stepKey="clearOrdersGridFilters"/>
+            <actionGroup ref="ClearInvoicesGridFiltersActionGroup" stepKey="clearInvoiceGridFilters"/>
+            <amOnPage url="{{AdminCreditMemosGridPage.url}}" stepKey="goToCreditMemoGridToClearFilters"/>
+            <waitForPageLoad stepKey="waitForCreditMemoGridToLoad"/>
+            <conditionalClick selector="{{AdminDataGridHeaderSection.clearFilters}}" dependentSelector="{{AdminDataGridHeaderSection.clearFilters}}" visible="true" stepKey="clearCreditMemoGridFilters"/>
+            <waitForPageLoad stepKey="waitAfterClearCreditMemoFilters"/>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
-                <actionGroup ref="AdminOrdersGridClearFiltersActionGroup" stepKey="clearOrdersGridFilters"/>
-        <actionGroup ref="ClearInvoicesGridFiltersActionGroup" stepKey="clearInvoiceGridFilters"/>
-        <amOnPage url="{{AdminCreditMemosGridPage.url}}" stepKey="goToCreditMemoGridToClearFilters"/>
-        <waitForPageLoad stepKey="waitForCreditMemoGridToLoad"/>
-        <conditionalClick selector="{{AdminDataGridHeaderSection.clearFilters}}" dependentSelector="{{AdminDataGridHeaderSection.clearFilters}}" visible="true" stepKey="clearCreditMemoGridFilters"/>
-        <waitForPageLoad stepKey="waitAfterClearCreditMemoFilters"/>
-</after>
+        </after>
     </test>
 </tests>
