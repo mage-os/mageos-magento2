@@ -14,7 +14,7 @@ class MergeTest extends \PHPUnit\Framework\TestCase
     /**
      * Fixture XML instruction(s) to be used in tests
      */
-    const FIXTURE_LAYOUT_XML
+    public const FIXTURE_LAYOUT_XML
         = '<block class="Magento\Framework\View\Element\Template" template="Magento_Framework::fixture.phtml"/>';
 
     /**
