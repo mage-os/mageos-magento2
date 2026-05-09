@@ -11,6 +11,7 @@ use Magento\Framework\DB\Platform\Quote;
 /**
  * Class ColumnsRenderer
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class ColumnsRenderer implements RendererInterface
 {
     /**

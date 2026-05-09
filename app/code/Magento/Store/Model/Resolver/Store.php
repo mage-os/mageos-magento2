@@ -6,6 +6,7 @@
 
 namespace Magento\Store\Model\Resolver;
 
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class Store implements \Magento\Framework\App\ScopeResolverInterface
 {
     /**

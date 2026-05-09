@@ -8,6 +8,7 @@ namespace Magento\Translation\Model\Inline;
 /**
  * Inline Translation config
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class Config implements \Magento\Framework\Translate\Inline\ConfigInterface
 {
     /**

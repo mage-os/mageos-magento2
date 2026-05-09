@@ -12,6 +12,7 @@ use Magento\Framework\App\DeploymentConfig;
 /**
  * In-memory readonly pool of all cache front-end instances known to the system
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class Pool implements \Iterator
 {
     /**

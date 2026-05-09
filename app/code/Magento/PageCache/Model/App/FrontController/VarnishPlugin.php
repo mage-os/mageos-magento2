@@ -16,6 +16,7 @@ use Magento\Framework\Controller\ResultInterface;
 /**
  * Varnish for processing builtin cache
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class VarnishPlugin
 {
     /**

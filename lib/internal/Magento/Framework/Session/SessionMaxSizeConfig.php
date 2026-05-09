@@ -17,6 +17,7 @@ use Magento\Framework\Exception\LocalizedException;
 /**
  * Magento session max size configuration
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class SessionMaxSizeConfig
 {
     /**

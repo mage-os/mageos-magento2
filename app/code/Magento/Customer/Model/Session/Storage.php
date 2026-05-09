@@ -5,6 +5,7 @@
  */
 namespace Magento\Customer\Model\Session;
 
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class Storage extends \Magento\Framework\Session\Storage
 {
     /**

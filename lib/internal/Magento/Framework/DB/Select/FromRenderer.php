@@ -8,6 +8,7 @@ namespace Magento\Framework\DB\Select;
 use Magento\Framework\DB\Select;
 use Magento\Framework\DB\Platform\Quote;
 
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class FromRenderer implements RendererInterface
 {
     /**

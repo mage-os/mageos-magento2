@@ -33,6 +33,7 @@ use Magento\Theme\Model\ResourceModel\Theme\Collection as ThemeCollection;
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class Theme extends \Magento\Framework\Model\AbstractModel implements ThemeInterface
 {
     /**

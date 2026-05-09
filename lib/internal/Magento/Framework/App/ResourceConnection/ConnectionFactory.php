@@ -10,6 +10,7 @@ use Magento\Framework\Model\ResourceModel\Type\Db\ConnectionFactory as ModelConn
 /**
  * Connection adapter factory
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class ConnectionFactory extends ModelConnectionFactory
 {
     /**

@@ -21,6 +21,7 @@ use Magento\Store\Model\Validation\StoreCodeValidator;
 /**
  * Gets the store from the path if valid
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class StorePathInfoValidator implements ResetAfterRequestInterface
 {
     /**

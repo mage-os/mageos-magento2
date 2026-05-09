@@ -8,6 +8,7 @@ namespace Magento\Framework\Flag;
 /**
  * Flag Resource model
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class FlagResource extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
     /**

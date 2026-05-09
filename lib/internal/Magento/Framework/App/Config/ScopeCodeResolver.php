@@ -11,6 +11,7 @@ use Magento\Framework\App\ScopeResolverPool;
 /**
  * Class for resolving scope code
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class ScopeCodeResolver
 {
     /**

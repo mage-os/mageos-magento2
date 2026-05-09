@@ -16,6 +16,7 @@ use Magento\Framework\App\RequestInterface;
  * @api
  * @since 100.0.2
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class PathInfoProcessor implements PathInfoProcessorInterface
 {
     /**

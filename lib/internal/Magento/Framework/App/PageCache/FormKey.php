@@ -14,6 +14,7 @@ use Magento\Framework\Stdlib\CookieManagerInterface;
  * Class Version
  *
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class FormKey
 {
     /**

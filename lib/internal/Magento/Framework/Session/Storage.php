@@ -10,6 +10,7 @@ use Magento\Framework\ObjectManager\ResetAfterRequestInterface;
 /**
  * Default session storage
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class Storage extends \Magento\Framework\DataObject implements StorageInterface, ResetAfterRequestInterface
 {
     /**

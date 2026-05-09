@@ -13,6 +13,7 @@ use Magento\Framework\App\RequestInterface;
 /**
  * Processes the path and looks for the store in the url and removes it and modifies the path accordingly.
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class PathInfoProcessor implements PathInfoProcessorInterface
 {
     /**

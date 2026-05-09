@@ -33,6 +33,7 @@ use Psr\Log\LoggerInterface;
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class System implements ConfigTypeInterface
 {
     /**

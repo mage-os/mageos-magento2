@@ -23,6 +23,7 @@ use Magento\Store\Model\Store;
  * @api
  * @since 100.0.2
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class FrontNameResolver implements FrontNameResolverInterface
 {
     public const XML_PATH_USE_CUSTOM_ADMIN_PATH = 'admin/url/use_custom_path';

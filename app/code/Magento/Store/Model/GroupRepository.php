@@ -14,6 +14,7 @@ use Magento\Framework\App\Config;
  *
  * @package Magento\Store\Model
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class GroupRepository implements \Magento\Store\Api\GroupRepositoryInterface
 {
     /**

@@ -19,6 +19,7 @@ use Magento\PageCache\Model\Cache\Type as CacheType;
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class BuiltinPlugin
 {
     /**

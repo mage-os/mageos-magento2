@@ -14,6 +14,7 @@ use Magento\Framework\App\State;
  * @api
  * @since 100.0.2
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class Structure extends DataStructure
 {
     /**

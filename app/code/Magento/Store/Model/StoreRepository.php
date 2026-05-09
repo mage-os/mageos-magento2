@@ -13,6 +13,7 @@ use Magento\Framework\App\Config;
 /**
  * Information Expert in stores handling
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class StoreRepository implements \Magento\Store\Api\StoreRepositoryInterface
 {
     /**

@@ -8,6 +8,7 @@ namespace Magento\Framework\Session;
 /**
  * Magento session save handler factory
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class SaveHandlerFactory
 {
     /**

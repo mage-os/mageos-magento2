@@ -18,6 +18,7 @@ use Magento\Framework\Session\Config\Validator\CookieSameSiteValidator;
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class Config implements ConfigInterface
 {
     /** Configuration path for session save method */
