@@ -23,6 +23,6 @@ use Attribute;
  * @api
  */
 #[Attribute(Attribute::TARGET_CLASS)]
-class NonLazy
+final class NonLazy
 {
 }
