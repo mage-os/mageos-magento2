@@ -28,6 +28,7 @@ use stdClass;
  * Test for ProductCustomAttributes resolver
  *
  * @see ProductCustomAttributes
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class ProductCustomAttributesTest extends TestCase
 {
