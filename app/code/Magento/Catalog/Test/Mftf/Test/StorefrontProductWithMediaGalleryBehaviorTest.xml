@@ -391,13 +391,11 @@
         </actionGroup>
         <!--Assert the fullscreen thumbnail ribbon drag actions step 12-->
         <!--Narrow the window so 17 thumbnails no longer fit in the ribbon, making it scrollable-->
-        <resizeWindow width="1024" height="768" stepKey="narrowWindowForFullscreenDrag"/>
         <actionGroup ref="AssertStorefrontProductPageGalleryFullscreenThumbnailDragActionGroup" stepKey="assertFullscreenThumbnailDragAction">
             <argument name="dragPointImage" value="{{TestImageNew.filename}}"/>
             <argument name="currentImage" value="{{AdobeSmallImage.filename}}"/>
             <argument name="firstImage" value="{{TestImageAdobe.filename}}"/>
         </actionGroup>
-        <resizeWindow width="1920" height="1080" stepKey="restoreWindowAfterFullscreenDrag"/>
         <!--Change fullscreen image by clicking on thumbnail ribbon. Step 15-->
         <actionGroup ref="AssertStorefrontProductPageGalleryChangingFullscreenImageByRibbonActionGroup" stepKey="assertThumbnailClickFullscreen">
             <argument name="startImage" value="{{AdobeSmallImage.filename}}"/>
