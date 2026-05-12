@@ -107,7 +107,7 @@ class Carrier extends AbstractCarrierOnline implements \Magento\Shipping\Model\C
      *
      * @var string
      */
-    protected $_defaultRestUrl = 'https://api.usps.com/';
+    protected $_defaultRestUrl = 'https://apis.usps.com/';
 
     /**
      * Container types that could be customized for USPS carrier
