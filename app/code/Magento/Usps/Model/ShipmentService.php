@@ -67,6 +67,11 @@ class ShipmentService
     private const ACCEPT_HEADER = 'application/vnd.usps.labels+json';
 
     /**
+     * Minimum US postal code length to trigger USPS API call.
+     */
+    private const US_POSTCODE_MIN_LENGTH = 4;
+
+    /**
      * @var CollectionFactory
      */
     private CollectionFactory $_productCollectionFactory;
@@ -193,37 +198,16 @@ class ShipmentService
             $responseBody = [];
             return $this->_parseJsonResponse($responseBody);
         }
-        $priceType = $this->carrierModel->getConfigData('price_type');
-        $requestParam = [
-            "originZIPCode" => $request->getOrigPostal(),
-            'pricingOptions' => [
-                [
-                    "priceType" => $priceType
-                ]
-            ],
-        ];
 
-        foreach ($request->getPackages() as $packageData) {
-            $requestParam['packageDescription'] = [
-                "weight" => $packageData['weight_pounds'] > 0 ? $packageData['weight_pounds'] : 1,
-                "mailClass" => 'ALL'
-            ];
-            $requestParam['packageDescription']['length'] = $request->getLength() ? (int) $request->getLength() : 1;
-            $requestParam['packageDescription']['height'] = $request->getHeight() ? (int) $request->getHeight() : 1;
-            $requestParam['packageDescription']['width']  = $request->getWidth()  ? (int) $request->getWidth()  : 1;
-
-            if ($request->getContainer() == 'NONRECTANGULAR' || $request->getContainer() == 'VARIABLE') {
-                $requestParam['packageDescription']['girth'] = $request->getGirth() ? (int) $request->getGirth() : 1;
-            }
-
-            if ($this->carrierModel->_isUSCountry($request->getDestCountryId())) {
-                $requestParam['destinationZIPCode'] = is_string($request->getDestPostal()) ?
-                    substr($request->getDestPostal(), 0, 5) : '';
-            } else {
-                $requestParam['destinationCountryCode'] = $request->getDestCountryId();
-                $requestParam['foreignPostalCode'] = $request->getDestPostal() ?? '';
+        // Skip USPS API when US postcode is too short - reduces quota usage while typing
+        if ($this->carrierModel->_isUSCountry($request->getDestCountryId())) {
+            $destPostal = $request->getDestPostal();
+            if (!is_string($destPostal) || strlen(trim($destPostal)) < self::US_POSTCODE_MIN_LENGTH) {
+                return $this->_parseJsonResponse([]);
             }
         }
+
+        $requestParam = $this->_buildJsonQuotesRequestParam($request);
 
         $headers = [
             'Content-Type' => self::CONTENT_TYPE_JSON,
@@ -268,6 +252,48 @@ class ShipmentService
             );
         }
         return $this->_parseJsonResponse(json_decode($responseBody, true));
+    }
+
+    /**
+     * Build request params for JSON rate quote API
+     *
+     * @param \Magento\Framework\DataObject $request
+     * @return array
+     */
+    private function _buildJsonQuotesRequestParam($request): array
+    {
+        $priceType = $this->carrierModel->getConfigData('price_type');
+        $requestParam = [
+            "originZIPCode" => $request->getOrigPostal(),
+            'pricingOptions' => [["priceType" => $priceType]],
+        ];
+        foreach ($request->getPackages() as $packageData) {
+            $weightInPounds = (float) ($packageData['weight'] ?? 0);
+            if ($weightInPounds <= 0) {
+                $weightPounds = (float) ($packageData['weight_pounds'] ?? 0);
+                $weightOunces = (float) ($packageData['weight_ounces'] ?? 0);
+                $weightInPounds = $weightPounds + ($weightOunces / Carrier::OUNCES_POUND);
+            }
+            $weightInPounds = max(0.01, round($weightInPounds, 2));
+            $requestParam['packageDescription'] = [
+                "weight" => $weightInPounds,
+                "mailClass" => 'ALL'
+            ];
+            $requestParam['packageDescription']['length'] = $request->getLength() ? (int) $request->getLength() : 1;
+            $requestParam['packageDescription']['height'] = $request->getHeight() ? (int) $request->getHeight() : 1;
+            $requestParam['packageDescription']['width'] = $request->getWidth() ? (int) $request->getWidth() : 1;
+            if ($request->getContainer() == 'NONRECTANGULAR' || $request->getContainer() == 'VARIABLE') {
+                $requestParam['packageDescription']['girth'] = $request->getGirth() ? (int) $request->getGirth() : 1;
+            }
+            if ($this->carrierModel->_isUSCountry($request->getDestCountryId())) {
+                $requestParam['destinationZIPCode'] = is_string($request->getDestPostal()) ?
+                    substr($request->getDestPostal(), 0, 5) : '';
+            } else {
+                $requestParam['destinationCountryCode'] = $request->getDestCountryId();
+                $requestParam['foreignPostalCode'] = $request->getDestPostal() ?? '';
+            }
+        }
+        return $requestParam;
     }
 
     /**
