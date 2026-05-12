@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2026 Adobe
+ * Copyright 2025 Adobe
  * All Rights Reserved.
  */
 
@@ -71,7 +71,11 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
     #[
         AppArea('frontend'),
         DbIsolation(true),
-        DataFixtureBeforeTransaction(StoreFixture::class, ['code' => 'test_fr_store', 'name' => 'French Store'], 'fr_store'),
+        DataFixtureBeforeTransaction(
+            StoreFixture::class,
+            ['code' => 'test_fr_store', 'name' => 'French Store'],
+            'fr_store'
+        ),
         DataFixture(ProductFixture::class, ['sku' => 'simple_compare_label_test'], 'product'),
     ]
     public function testGetComparableAttributesUsesCorrectStoreLabelWhenEavConfigPoisoned(): void
