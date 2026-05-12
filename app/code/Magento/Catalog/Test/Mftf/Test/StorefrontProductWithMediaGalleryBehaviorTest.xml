@@ -11,9 +11,9 @@
     <test name="StorefrontProductWithMediaGalleryBehaviorTest">
         <annotations>
             <features value="Catalog"/>
-            <stories value="Storefront Gallery behaviour for Product with media"/>
-            <title value="Assert media behaviour for product with different media on storefront"/>
-            <description value="Assert media behaviour for product with different media on storefront"/>
+            <stories value="Storefront Gallery behaviour for Product with images and video"/>
+            <title value="Assert gallery navigation and fullscreen behaviour for product with images and video"/>
+            <description value="Assert gallery navigation and fullscreen behaviour for product with images and video"/>
             <severity value="CRITICAL"/>
             <testCaseId value="MC-26305"/>
             <group value="catalog"/>
