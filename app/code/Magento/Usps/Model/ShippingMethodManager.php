@@ -404,4 +404,24 @@ class ShippingMethodManager
         $methodCode = strtoupper($methodCode);
         return $this->shippingMethods[$methodCode]['max_dimension'] ?? null;
     }
+
+    /**
+     * Find an allowed method code that matches the given mail class.
+     * USPS API returns multiple variants (e.g. "Media Mail Nonstandard Basic", "Media Mail Machinable 5-digit")
+     * but Magento config only has canonical codes. This maps API variants to allowed method codes.
+     *
+     * @param string $mailClass The mail class from the USPS API rate (e.g. MEDIA_MAIL)
+     * @param array $allowedMethodCodes List of allowed method codes from config
+     * @return string|null The first matching allowed method code, or null
+     */
+    public function findAllowedMethodByMailClass(string $mailClass, array $allowedMethodCodes): ?string
+    {
+        $mailClass = strtoupper($mailClass);
+        foreach ($allowedMethodCodes as $code) {
+            if ($this->getMethodMailClass($code) === $mailClass) {
+                return $code;
+            }
+        }
+        return null;
+    }
 }
