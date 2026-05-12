@@ -106,7 +106,7 @@ abstract class AbstractBackendController extends \Magento\TestFramework\TestCase
      */
     public function testAclHasAccess()
     {
-        if ($this->resource !== null && $this->uri !== null) {
+        if ($this->uri !== null) {
             if ($this->httpMethod) {
                 $this->getRequest()->setMethod($this->httpMethod);
             }
