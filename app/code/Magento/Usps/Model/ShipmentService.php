@@ -369,12 +369,28 @@ class ShipmentService
         }
         $productName = $rateElement['description'];
         $methodCode = strtoupper(substr($this->replaceSpaceWithUnderscore($productName), 0, 120));
-        $methodTitle = $this->shippingMethodManager->getMethodTitle($methodCode);
         $allowedMethods = $this->getRestAllowedMethods();
-        if (in_array($methodCode, array_keys($allowedMethods))) {
+        $allowedMethodCodes = array_keys($allowedMethods);
+
+        if (!in_array($methodCode, $allowedMethodCodes)) {
+            $rateMailClass = $rateElement['mailClass'] ?? '';
+            if ($rateMailClass) {
+                $methodCode = $this->shippingMethodManager->findAllowedMethodByMailClass(
+                    $rateMailClass,
+                    $allowedMethodCodes
+                );
+            }
+        }
+
+        if ($methodCode && in_array($methodCode, $allowedMethodCodes)) {
+            $methodTitle = $this->shippingMethodManager->getMethodTitle($methodCode);
             // Use totalPrice if available, otherwise use price
             $cost = isset($rateElement['totalPrice']) ?
                 (float)$rateElement['totalPrice'] : (float)$rateElement['price'];
+            // Keep lowest price when multiple API variants map to same method (e.g. Media Mail)
+            if (isset($costArr[$methodCode]) && $costArr[$methodCode]['price'] <= $cost) {
+                return;
+            }
             $costArr[$methodCode] = [
                 'price' => $cost,
                 'code' => $methodCode,
@@ -407,12 +423,8 @@ class ShipmentService
         $shippingOptions = function (array $response) use (&$foundValues, $searchKey, &$shippingOptions) {
             foreach ($response as $key => $value) {
                 if ($key === $searchKey) {
-                    // Include totalPrice in the rate data
-                    foreach ($value as &$rate) {
-                        if (isset($response['totalPrice'])) {
-                            $rate['totalPrice'] = $response['totalPrice'];
-                        }
-                    }
+                    // Use each rate's own price; do not copy rateOption-level totalPrice/totalBasePrice
+                    // to rates—that would override correct per-rate prices (e.g. Media Mail 3.26 vs 4.40)
                     $foundValues[] = $value;
                 }
                 if (is_array($value)) {
