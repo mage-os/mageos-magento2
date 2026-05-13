@@ -557,7 +557,6 @@ jobs:
             echo "Magento ruleset not available, falling back to local standalone ruleset."
             ruleset="${GITHUB_WORKSPACE}/.github/scripts/phpmd-ruleset.xml"
           else
-          else
             # Wrap the primary ruleset to exclude rules that require the full
             # vendor tree (Laminas etc.) and crash in the sparse-clone environment.
             wrapper="/tmp/phpmd-ruleset-ci.xml"
@@ -574,7 +573,6 @@ jobs:
             </ruleset>
             XML
             ruleset="$wrapper"
-          fi
           fi
           cat > "$prepend_file" <<'PHP'
           <?php
