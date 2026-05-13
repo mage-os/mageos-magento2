@@ -38,6 +38,7 @@ jobs:
     timeout-minutes: 5
     permissions:
       contents: read
+      pull-requests: read
     outputs:
       has_php: ${{ steps.check.outputs.has_php }}
       has_js: ${{ steps.check.outputs.has_js }}
