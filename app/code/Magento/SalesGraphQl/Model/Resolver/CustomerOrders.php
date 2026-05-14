@@ -120,7 +120,7 @@ class CustomerOrders implements ResolverInterface
             $maxPages = (int)ceil($searchResult->getTotalCount() / $searchResult->getPageSize());
         } catch (InputException $e) {
             throw new GraphQlInputException(__($e->getMessage()));
-        } catch (\InvalidArgumentException $e) {
+        } catch (\Exception $e) {
             $this->logger->critical($e);
             throw new GraphQlServerException(__('Unable to load one or more orders.'));
         }
