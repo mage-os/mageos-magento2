@@ -96,6 +96,8 @@ class StaticFilesTest extends \PHPUnit\Framework\TestCase
      * @param string $module
      * @param string $filePath
      * @param string $absolutePath
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     #[DataProvider('referencesFromStaticFilesDataProvider')]
     public function testReferencesFromStaticFiles($area, $themePath, $locale, $module, $filePath, $absolutePath)
