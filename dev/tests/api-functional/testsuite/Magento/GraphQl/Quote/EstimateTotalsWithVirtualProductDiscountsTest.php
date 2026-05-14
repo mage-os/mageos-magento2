@@ -29,6 +29,8 @@ use Magento\TestFramework\TestCase\GraphQlAbstract;
 
 /**
  * Test getting estimateTotals schema with discounts fields for virtual products
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class EstimateTotalsWithVirtualProductDiscountsTest extends GraphQlAbstract
 {

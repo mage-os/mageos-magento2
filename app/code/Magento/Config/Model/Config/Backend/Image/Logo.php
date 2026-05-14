@@ -19,7 +19,7 @@ class Logo extends \Magento\Config\Model\Config\Backend\Image
      * The tail part of directory path for uploading
      *
      */
-    const UPLOAD_DIR = 'logo';
+    public const UPLOAD_DIR = 'logo';
 
     /**
      * Return path to directory for upload file

@@ -30,6 +30,9 @@ use Magento\TestFramework\Fixture\DataFixtureStorageManager;
 use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestFramework\TestCase\GraphQlAbstract;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class OrderTotalDiscountsCouponTest extends GraphQlAbstract
 {
     private const PRODUCT_PRICE = 100;
