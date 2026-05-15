@@ -40,7 +40,6 @@ use Magento\Variable\Model\Source\Variables;
 use Magento\Variable\Model\Variable;
 use Magento\Variable\Model\VariableFactory;
 use Psr\Log\LoggerInterface;
-use Magento\Framework\View\Element\Template;
 
 /**
  * Core Email Template Filter Model
@@ -415,7 +414,11 @@ class Filter extends Template
         if (isset($blockParameters['class'])) {
             $block = $this->_layout->createBlock($blockParameters['class'], null, ['data' => $blockParameters]);
         } elseif (isset($blockParameters['template'])) {
-            $block = $this->_layout->createBlock(Template::class, null, ['data' => $blockParameters]);
+            $block = $this->_layout->createBlock(
+                \Magento\Framework\View\Element\Template::class,
+                null,
+                ['data' => $blockParameters]
+            );
         } elseif (isset($blockParameters['id'])) {
             $block = $this->_layout->createBlock(Block::class);
             if ($block) {
