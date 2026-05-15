@@ -76,21 +76,10 @@ class Utf8mb4Support implements Utf8mb4SupportInterface
             'SELECT @@character_set_connection AS charset, @@collation_connection AS collation'
         );
 
-        $isSupported = is_array($row)
+        return is_array($row)
             && isset($row['charset'], $row['collation'])
             && str_starts_with((string)$row['charset'], 'utf8mb4')
             && str_starts_with((string)$row['collation'], 'utf8mb4');
-
-        $this->logger->critical(
-            'WYSIWYG utf8mb4 connection support check',
-            [
-                'charset' => is_array($row) ? ($row['charset'] ?? null) : null,
-                'collation' => is_array($row) ? ($row['collation'] ?? null) : null,
-                'is_supported' => $isSupported,
-            ]
-        );
-
-        return $isSupported;
     }
 
     /**
@@ -112,21 +101,8 @@ class Utf8mb4Support implements Utf8mb4SupportInterface
         );
 
         // Text/blob columns without collation are not safe for utf8mb4 round-tripping.
-        $isSupported = is_array($row)
+        return is_array($row)
             && !empty($row['Collation'])
             && str_starts_with((string)$row['Collation'], 'utf8mb4');
-
-        $this->logger->critical(
-            'WYSIWYG utf8mb4 column support check',
-            [
-                'table' => $table,
-                'column' => $column,
-                'resolved_table' => $this->resourceConnection->getTableName($table),
-                'collation' => is_array($row) ? ($row['Collation'] ?? null) : null,
-                'is_supported' => $isSupported,
-            ]
-        );
-
-        return $isSupported;
     }
 }

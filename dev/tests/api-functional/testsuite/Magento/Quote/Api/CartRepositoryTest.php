@@ -275,7 +275,7 @@ class CartRepositoryTest extends WebapiAbstract
      * @magentoApiDataFixture Magento/Checkout/_files/quote_with_shipping_method.php
      */
     #[DataProvider('customerIdDataProvider')]
-    public function testSaveQuoteException($customerId)
+    public function testSaveQuoteWithCustomerData($customerId)
     {
         $token = $this->getToken();
 
