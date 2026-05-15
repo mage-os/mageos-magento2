@@ -56,6 +56,7 @@ use Magento\Framework\Filesystem\Driver\File as DriverFile;
 use Magento\Framework\Indexer\IndexerRegistry;
 use Magento\Downloadable\Model\Url\DomainValidator;
 use Magento\Framework\Json\Helper\Data;
+use Magento\Downloadable\Model\Url\DomainValidator;
 use Magento\Framework\Model\ResourceModel\Db\ObjectRelationProcessor;
 use Magento\Framework\Model\ResourceModel\Db\TransactionManagerInterface;
 use Magento\Framework\Stdlib\DateTime;

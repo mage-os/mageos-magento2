@@ -279,6 +279,10 @@ class FileTest extends TestCase
             ->method('validateOptionsFilePath')
             ->with([$quotePath, $orderPath]);
 
+        $this->productOptionValidator->expects($this->once())
+            ->method('validateOptionsFilePath')
+            ->with([$quotePath, $orderPath]);
+
         $fileObject = $this->getFileObject();
         $fileObject->setData('configuration_item_option', $optionMock);
 
