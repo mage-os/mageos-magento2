@@ -19,7 +19,7 @@
         </annotations>
         <before>
             <!-- Deploy static content with japanese locale -->
-            <magentoCLI command="setup:static-content:deploy -f ja_JP" timeout="3600" stepKey="deployStaticContentWithJapaneseLocale"/>
+            <magentoCLI command="setup:static-content:deploy -f ja_JP" stepKey="deployStaticContentWithJapaneseLocale"/>
             <!-- Step 1: Create customers and login as admin -->
             <createData entity="CustomerEntityOne" stepKey="createCustomer">
                 <field key="dob">01/01/2025</field>
