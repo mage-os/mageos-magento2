@@ -11,7 +11,6 @@ use Magento\Framework\Stdlib\DateTime;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\Framework\Validator\AbstractValidator;
 use Magento\Catalog\Model\Product\Attribute\Backend\Sku;
-use Magento\CatalogImportExport\Model\Import\Product\Validator\Price;
 
 /**
  * Product import model validator
@@ -539,20 +538,6 @@ class Validator extends AbstractValidator implements RowValidatorInterface
             $this->setInvalidAttribute(Product::COL_CATEGORY);
         }
         return $result;
-    }
-
-    /**
-     * Attribute that failed
-     */
-    public function getFailedPriceAttributeCode(): ?string
-    {
-        foreach ($this->validators as $validator) {
-            if ($validator instanceof Price) {
-                return $validator->getFailedField();
-            }
-        }
-
-        return null;
     }
 
     /**

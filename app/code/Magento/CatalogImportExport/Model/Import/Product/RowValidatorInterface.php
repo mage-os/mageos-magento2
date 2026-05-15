@@ -67,11 +67,6 @@ interface RowValidatorInterface extends \Magento\Framework\Validator\ValidatorIn
 
     const ERROR_INVALID_ATTRIBUTE_TYPE = 'invalidAttributeType';
 
-    /**
-     * Negative or invalid numeric value for a price-type attribute
-     */
-    const ERROR_NEGATIVE_PRICE_VALUE = 'invalidNegativePriceValue';
-
     const ERROR_INVALID_ATTRIBUTE_DECIMAL = 'invalidAttributeDecimal';
 
     const ERROR_ABSENT_REQUIRED_ATTRIBUTE = 'absentRequiredAttribute';

@@ -29,6 +29,7 @@ use Magento\CatalogImportExport\Model\Import\Product\TaxClassProcessor;
 use Magento\CatalogImportExport\Model\Import\Product\Type\AbstractType;
 use Magento\CatalogImportExport\Model\Import\Product\Type\Factory;
 use Magento\CatalogImportExport\Model\Import\Product\Validator;
+use Magento\CatalogImportExport\Model\Import\Product\Validator\Price as ImportPriceValidator;
 use Magento\CatalogImportExport\Model\Import\Proxy\Product\ResourceModel;
 use Magento\CatalogImportExport\Model\Import\Uploader;
 use Magento\CatalogInventory\Api\StockConfigurationInterface;
@@ -417,7 +418,6 @@ class ProductTest extends AbstractImportTestCase
                 'getMessages',
                 'isValid',
                 'init',
-                'getFailedPriceAttributeCode',
                 'getInvalidAttribute',
             ]
         );
@@ -893,7 +893,6 @@ class ProductTest extends AbstractImportTestCase
     {
         $messages = ['validator message'];
         $this->validator->expects($this->once())->method('isValid')->willReturn(false);
-        $this->validator->expects($this->once())->method('getFailedPriceAttributeCode')->willReturn(null);
         $this->validator->expects($this->once())->method('getMessages')->willReturn($messages);
         $this->validator->expects($this->once())->method('getInvalidAttribute')->willReturn(null);
         $rowData = [
@@ -932,15 +931,17 @@ class ProductTest extends AbstractImportTestCase
         $this->setPropertyValue($importProduct, 'skuProcessor', $this->skuProcessor);
         $this->_rewriteGetOptionEntityInImportProduct($importProduct);
         $this->validator->expects($this->once())->method('isValid')->willReturn(false);
-        $this->validator->expects($this->once())
-            ->method('getFailedPriceAttributeCode')
-            ->willReturn('special_price');
         $this->validator->expects($this->once())->method('getMessages')
-            ->willReturn([ValidatorInterface::ERROR_NEGATIVE_PRICE_VALUE]);
+            ->willReturn([ImportPriceValidator::ERROR_NEGATIVE_PRICE_VALUE]);
         $this->validator->expects($this->once())->method('getInvalidAttribute')->willReturn('price');
         $this->setPropertyValue($importProduct, 'validator', $this->validator);
+
+        $importFailedPriceField = new \ReflectionProperty(ImportPriceValidator::class, 'importFailedPriceField');
+        $importFailedPriceField->setAccessible(true);
+        $importFailedPriceField->setValue(null, 'special_price');
+
         $importProduct->expects($this->once())->method('addRowError')->with(
-            ValidatorInterface::ERROR_NEGATIVE_PRICE_VALUE,
+            ImportPriceValidator::ERROR_NEGATIVE_PRICE_VALUE,
             $rowNum,
             'special_price',
             null,
@@ -948,6 +949,7 @@ class ProductTest extends AbstractImportTestCase
         );
 
         $importProduct->validateRow($rowData, $rowNum);
+        $importFailedPriceField->setValue(null, null);
     }
 
     /**
@@ -979,15 +981,17 @@ class ProductTest extends AbstractImportTestCase
         $this->setPropertyValue($importProduct, 'skuProcessor', $this->skuProcessor);
         $this->_rewriteGetOptionEntityInImportProduct($importProduct);
         $this->validator->expects($this->once())->method('isValid')->willReturn(false);
-        $this->validator->expects($this->once())
-            ->method('getFailedPriceAttributeCode')
-            ->willReturn(null);
         $this->validator->expects($this->once())->method('getMessages')
-            ->willReturn([ValidatorInterface::ERROR_NEGATIVE_PRICE_VALUE]);
+            ->willReturn([ImportPriceValidator::ERROR_NEGATIVE_PRICE_VALUE]);
         $this->validator->expects($this->once())->method('getInvalidAttribute')->willReturn('cost');
         $this->setPropertyValue($importProduct, 'validator', $this->validator);
+
+        $importFailedPriceField = new \ReflectionProperty(ImportPriceValidator::class, 'importFailedPriceField');
+        $importFailedPriceField->setAccessible(true);
+        $importFailedPriceField->setValue(null, null);
+
         $importProduct->expects($this->once())->method('addRowError')->with(
-            ValidatorInterface::ERROR_NEGATIVE_PRICE_VALUE,
+            ImportPriceValidator::ERROR_NEGATIVE_PRICE_VALUE,
             $rowNum,
             'cost',
             null,
@@ -995,6 +999,7 @@ class ProductTest extends AbstractImportTestCase
         );
 
         $importProduct->validateRow($rowData, $rowNum);
+        $importFailedPriceField->setValue(null, null);
     }
 
     /**

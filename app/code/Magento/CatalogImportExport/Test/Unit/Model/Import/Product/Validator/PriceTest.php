@@ -8,7 +8,6 @@ declare(strict_types=1);
 namespace Magento\CatalogImportExport\Test\Unit\Model\Import\Product\Validator;
 
 use Magento\CatalogImportExport\Model\Import\Product;
-use Magento\CatalogImportExport\Model\Import\Product\RowValidatorInterface;
 use Magento\CatalogImportExport\Model\Import\Product\Validator\Price;
 use Magento\ImportExport\Model\Import;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -80,7 +79,7 @@ class PriceTest extends TestCase
     {
         $this->assertFalse($this->price->isValid(['price' => '-10']));
         $this->assertSame('price', $this->price->getFailedField());
-        $this->assertSame([RowValidatorInterface::ERROR_NEGATIVE_PRICE_VALUE], $this->price->getMessages());
+        $this->assertSame([Price::ERROR_NEGATIVE_PRICE_VALUE], $this->price->getMessages());
     }
 
     public function testGetFailedFieldWhenFirstFailingFieldIsSpecialPrice(): void

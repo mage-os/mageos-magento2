@@ -15,6 +15,18 @@ use Magento\CatalogImportExport\Model\Import\Product\RowValidatorInterface;
 class Price extends AbstractImportValidator implements RowValidatorInterface
 {
     /**
+     * Error code for negative / non-numeric price-type values
+     */
+    public const ERROR_NEGATIVE_PRICE_VALUE = 'invalidNegativePriceValue';
+
+    /**
+     * Last price column that failed validation for the current import row
+     *
+     * @var string|null
+     */
+    private static ?string $importFailedPriceField = null;
+
+    /**
      * Price-type fields that must not be negative
      */
     private const array PRICE_FIELDS = [
@@ -41,12 +53,21 @@ class Price extends AbstractImportValidator implements RowValidatorInterface
     }
 
     /**
+     * Column that failed price validation on the last import row
+     */
+    public static function getImportFailedPriceField(): ?string
+    {
+        return self::$importFailedPriceField;
+    }
+
+    /**
      * @inheritdoc
      */
     public function isValid($value)
     {
         $this->_clearMessages();
         $this->failedField = null;
+        self::$importFailedPriceField = null;
         $emptyConstant = $this->context->getEmptyAttributeValueConstant();
 
         foreach (self::PRICE_FIELDS as $field) {
@@ -59,7 +80,8 @@ class Price extends AbstractImportValidator implements RowValidatorInterface
             }
             if (!is_numeric($fieldValue) || (float)$fieldValue < 0) {
                 $this->failedField = $field;
-                $this->_addMessages([RowValidatorInterface::ERROR_NEGATIVE_PRICE_VALUE]);
+                self::$importFailedPriceField = $field;
+                $this->_addMessages([self::ERROR_NEGATIVE_PRICE_VALUE]);
                 return false;
             }
         }
