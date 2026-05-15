@@ -412,7 +412,14 @@ class ProductTest extends AbstractImportTestCase
         $this->categoryProcessor = $this->createMock(CategoryProcessor::class);
         $this->validator = $this->createPartialMock(
             Validator::class,
-            ['isAttributeValid', 'getMessages', 'isValid', 'init']
+            [
+                'isAttributeValid',
+                'getMessages',
+                'isValid',
+                'init',
+                'getFailedPriceAttributeCode',
+                'getInvalidAttribute',
+            ]
         );
         $this->objectRelationProcessor = $this->createMock(ObjectRelationProcessor::class);
         $this->transactionManager = $this->createMock(TransactionManagerInterface::class);
@@ -885,12 +892,109 @@ class ProductTest extends AbstractImportTestCase
     public function testValidateRowValidatorCheck(): void
     {
         $messages = ['validator message'];
+        $this->validator->expects($this->once())->method('isValid')->willReturn(false);
+        $this->validator->expects($this->once())->method('getFailedPriceAttributeCode')->willReturn(null);
         $this->validator->expects($this->once())->method('getMessages')->willReturn($messages);
+        $this->validator->expects($this->once())->method('getInvalidAttribute')->willReturn(null);
         $rowData = [
             Product::COL_SKU => 'sku',
         ];
         $rowNum = 0;
         $this->importProduct->validateRow($rowData, $rowNum);
+    }
+
+    /**
+     * @return void
+     */
+    public function testValidateRowNegativePriceUsesCriticalErrorLevelAndFailedPriceColumn(): void
+    {
+        $sku = 'sku';
+        $rowNum = 0;
+        $rowData = [Product::COL_SKU => $sku];
+        $typeId = 'simple';
+        $existingSkuData = [
+            'type_id' => $typeId,
+            'attr_set_id' => '1',
+        ];
+        $importProduct = $this->createModelMockWithErrorAggregator(
+            ['addRowError', 'getOptionEntity'],
+            ['isRowInvalid' => true]
+        );
+        $this->skuStorageMock->method('has')->willReturnCallback(static fn (string $s): bool => $s === $sku);
+        $this->skuStorageMock->method('get')->willReturnCallback(
+            static fn (string $s) => $s === $sku ? $existingSkuData : null
+        );
+        $this->setPrivatePropertyValue($importProduct, 'skuStorage', $this->skuStorageMock);
+        $productType = $this->createMock(AbstractType::class);
+        $this->setPropertyValue($importProduct, '_productTypeModels', [$typeId => $productType]);
+        $this->setPropertyValue($importProduct, '_attrSetIdToName', ['1' => 'Default']);
+        $this->skuProcessor->method('addNewSku')->willReturnSelf();
+        $this->setPropertyValue($importProduct, 'skuProcessor', $this->skuProcessor);
+        $this->_rewriteGetOptionEntityInImportProduct($importProduct);
+        $this->validator->expects($this->once())->method('isValid')->willReturn(false);
+        $this->validator->expects($this->once())
+            ->method('getFailedPriceAttributeCode')
+            ->willReturn('special_price');
+        $this->validator->expects($this->once())->method('getMessages')
+            ->willReturn([ValidatorInterface::ERROR_NEGATIVE_PRICE_VALUE]);
+        $this->validator->expects($this->once())->method('getInvalidAttribute')->willReturn('price');
+        $this->setPropertyValue($importProduct, 'validator', $this->validator);
+        $importProduct->expects($this->once())->method('addRowError')->with(
+            ValidatorInterface::ERROR_NEGATIVE_PRICE_VALUE,
+            $rowNum,
+            'special_price',
+            null,
+            ProcessingError::ERROR_LEVEL_CRITICAL
+        );
+
+        $importProduct->validateRow($rowData, $rowNum);
+    }
+
+    /**
+     * @return void
+     */
+    public function testValidateRowNegativePriceUsesInvalidAttributeWhenFailedPriceFieldEmpty(): void
+    {
+        $sku = 'sku';
+        $rowNum = 0;
+        $rowData = [Product::COL_SKU => $sku];
+        $typeId = 'simple';
+        $existingSkuData = [
+            'type_id' => $typeId,
+            'attr_set_id' => '1',
+        ];
+        $importProduct = $this->createModelMockWithErrorAggregator(
+            ['addRowError', 'getOptionEntity'],
+            ['isRowInvalid' => true]
+        );
+        $this->skuStorageMock->method('has')->willReturnCallback(static fn (string $s): bool => $s === $sku);
+        $this->skuStorageMock->method('get')->willReturnCallback(
+            static fn (string $s) => $s === $sku ? $existingSkuData : null
+        );
+        $this->setPrivatePropertyValue($importProduct, 'skuStorage', $this->skuStorageMock);
+        $productType = $this->createMock(AbstractType::class);
+        $this->setPropertyValue($importProduct, '_productTypeModels', [$typeId => $productType]);
+        $this->setPropertyValue($importProduct, '_attrSetIdToName', ['1' => 'Default']);
+        $this->skuProcessor->method('addNewSku')->willReturnSelf();
+        $this->setPropertyValue($importProduct, 'skuProcessor', $this->skuProcessor);
+        $this->_rewriteGetOptionEntityInImportProduct($importProduct);
+        $this->validator->expects($this->once())->method('isValid')->willReturn(false);
+        $this->validator->expects($this->once())
+            ->method('getFailedPriceAttributeCode')
+            ->willReturn(null);
+        $this->validator->expects($this->once())->method('getMessages')
+            ->willReturn([ValidatorInterface::ERROR_NEGATIVE_PRICE_VALUE]);
+        $this->validator->expects($this->once())->method('getInvalidAttribute')->willReturn('cost');
+        $this->setPropertyValue($importProduct, 'validator', $this->validator);
+        $importProduct->expects($this->once())->method('addRowError')->with(
+            ValidatorInterface::ERROR_NEGATIVE_PRICE_VALUE,
+            $rowNum,
+            'cost',
+            null,
+            ProcessingError::ERROR_LEVEL_CRITICAL
+        );
+
+        $importProduct->validateRow($rowData, $rowNum);
     }
 
     /**

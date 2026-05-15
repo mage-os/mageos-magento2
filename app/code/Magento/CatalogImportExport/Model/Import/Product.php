@@ -314,6 +314,7 @@ class Product extends AbstractEntity
         ValidatorInterface::ERROR_MEDIA_DATA_INCOMPLETE => 'Media data is incomplete',
         ValidatorInterface::ERROR_EXCEEDED_MAX_LENGTH => 'Attribute %s exceeded max length',
         ValidatorInterface::ERROR_INVALID_ATTRIBUTE_TYPE => 'Value for \'%s\' attribute contains incorrect value',
+        ValidatorInterface::ERROR_NEGATIVE_PRICE_VALUE => 'Value for \'%s\' attribute must be zero or greater',
         ValidatorInterface::ERROR_ABSENT_REQUIRED_ATTRIBUTE => 'Attribute %s is required',
         ValidatorInterface::ERROR_INVALID_ATTRIBUTE_OPTION => 'Value for \'%s\' attribute contains incorrect value, see acceptable values on settings specified for Admin',
         ValidatorInterface::ERROR_DUPLICATE_UNIQUE_ATTRIBUTE => 'Duplicated unique attribute',
@@ -2775,8 +2776,15 @@ class Product extends AbstractEntity
         $hasValidatedImportParent = $sku && $this->getNewSku($sku);
         $contextRowData = array_merge(['has_import_parent' => $hasValidatedImportParent], $rowData);
         if (!$this->validator->isValid($contextRowData)) {
+            $failedPriceField = $this->validator->getFailedPriceAttributeCode();
             foreach ($this->validator->getMessages() as $message) {
-                $this->skipRow($rowNum, $message, $errorLevel, $this->validator->getInvalidAttribute());
+                $rowErrorLevel = $errorLevel;
+                $columnName = $this->validator->getInvalidAttribute();
+                if ($message === ValidatorInterface::ERROR_NEGATIVE_PRICE_VALUE) {
+                    $rowErrorLevel = ProcessingError::ERROR_LEVEL_CRITICAL;
+                    $columnName = $failedPriceField ?? $columnName;
+                }
+                $this->skipRow($rowNum, $message, $rowErrorLevel, $columnName);
             }
         }
 
