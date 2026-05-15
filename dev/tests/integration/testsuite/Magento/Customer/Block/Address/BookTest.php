@@ -10,6 +10,9 @@ use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\TestFramework\Helper\Bootstrap;
 use PHPUnit\Framework\Attributes\DataProvider;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class BookTest extends \PHPUnit\Framework\TestCase
 {
     use MockCreationTrait;
