@@ -48,5 +48,6 @@
         <pressKey parameterArray="[\Facebook\WebDriver\WebDriverKeys::ENTER]" selector="{{AdminCustomerAddressesGridActionsSection.search}}" stepKey="pressEnterKey"/>
         <waitForPageLoad stepKey="waitForCustomerAddressesGridPageLoad"/>
         <seeNumberOfElements userInput="1" selector="{{AdminCustomerAddressesGridSection.rowsInGrid}}" stepKey="seeOnlyOneCustomerAddressesInGrid"/>
+        <actionGroup ref="AdminResetFilterInCustomerAddressGrid" stepKey="clearCustomerAddressGridFiltersAfterSearch"/>
     </test>
 </tests>
