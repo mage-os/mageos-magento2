@@ -631,6 +631,10 @@ class Create extends \Magento\Framework\DataObject implements \Magento\Checkout\
             $quote->setCouponCode($orderCouponCode);
         }
 
+        if ($order->getAppliedRuleIds() && !$order->getReordered()) {
+            $quote->setData('original_order_applied_rule_ids', $order->getAppliedRuleIds());
+        }
+
         if ($quote->getCouponCode()) {
             $quote->collectTotals();
         }

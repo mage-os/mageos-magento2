@@ -111,7 +111,9 @@ class Utility
             $ruleCustomer = $this->customerFactory->create();
             $ruleCustomer->loadByCustomerRule($customerId, $ruleId);
             if ($ruleCustomer->getId()) {
-                if ($ruleCustomer->getTimesUsed() >= $rule->getUsesPerCustomer()) {
+                $timesUsed = $ruleCustomer->getTimesUsed();
+                $timesUsed -= $this->getOriginalOrderRuleUsageCount($address, (int)$ruleId);
+                if ($timesUsed >= $rule->getUsesPerCustomer()) {
                     $rule->setIsValidForAddress($address, false);
                     return false;
                 }
@@ -142,6 +144,25 @@ class Utility
          */
         $rule->setIsValidForAddress($address, true);
         return true;
+    }
+
+    /**
+     * Get the number of times a rule was used in the original order being edited.
+     *
+     * During admin order edits, the original order's usage should not count against the limit
+     * because it will be canceled after the new order is placed.
+     *
+     * @param Address $address
+     * @param int $ruleId
+     * @return int
+     */
+    private function getOriginalOrderRuleUsageCount(Address $address, int $ruleId): int
+    {
+        $originalRuleIds = $address->getQuote()->getData('original_order_applied_rule_ids');
+        if ($originalRuleIds && in_array((string)$ruleId, explode(',', $originalRuleIds))) {
+            return 1;
+        }
+        return 0;
     }
 
     /**
