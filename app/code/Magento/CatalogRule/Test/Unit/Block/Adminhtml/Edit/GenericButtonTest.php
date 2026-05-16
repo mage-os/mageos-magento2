@@ -32,11 +32,6 @@ class GenericButtonTest extends TestCase
      * @var MockObject
      */
     protected $registryMock;
-    
-    /**
-     * @var MockObject
-     */
-    protected $contextMock;
 
     /**
      * @var MockObject

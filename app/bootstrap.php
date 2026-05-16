@@ -15,6 +15,7 @@ if (in_array('phar', \stream_get_wrappers())) {
 
 if (PHP_VERSION_ID < 80100) {
     if (PHP_SAPI === 'cli') {
+        // phpcs:ignore Magento2.Security.LanguageConstruct.DirectOutput
         echo 'Magento supports PHP 8.1.0 or later. ' .
             'Please read https://experienceleague.adobe.com/docs/commerce-operations/installation-guide/system-requirements.html';
     } else {

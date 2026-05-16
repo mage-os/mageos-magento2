@@ -39,7 +39,7 @@ class FooterTest extends TestCase
 
     protected function setUp(): void
     {
-        $objectManager = $this->getMockForAbstractClass(ObjectManagerInterface::class);
+        $objectManager = $this->createMock(ObjectManagerInterface::class);
         $objectManager->method('get')->willReturn(new stdClass());
         ObjectManager::setInstance($objectManager);
 
@@ -92,7 +92,7 @@ class FooterTest extends TestCase
     public function testBackwardCompatibleWithoutVersionComparison(): void
     {
         $versionComparison = $this->createMock(VersionComparisonInterface::class);
-        $objectManager = $this->getMockForAbstractClass(ObjectManagerInterface::class);
+        $objectManager = $this->createMock(ObjectManagerInterface::class);
         $objectManager->method('get')
             ->willReturnCallback(function (string $type) use ($versionComparison) {
                 if ($type === VersionComparisonInterface::class) {
