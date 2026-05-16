@@ -283,4 +283,55 @@ class CompiledTest extends TestCase
             ],
         ];
     }
+
+    /**
+     * Empty deny-list must report every type as non-lazy: protects the upgrade scenario where
+     * a cache compiled on PHP < 8.4 (no `nonLazyTypes` key) is read by a PHP 8.4 runtime, so
+     * incompatible types aren't accidentally lazified before recompile.
+     */
+    public function testIsNonLazyTypeReturnsTrueWhenDenyListIsEmpty(): void
+    {
+        /** @var Compiled $compiled */
+        $compiled = $this->objectManager->getObject(Compiled::class, ['data' => []]);
+
+        $this->assertTrue($compiled->isNonLazyType('Some\\Type'));
+        $this->assertTrue($compiled->isNonLazyType('Another\\Type'));
+    }
+
+    public function testIsNonLazyTypeReturnsTrueForListedType(): void
+    {
+        /** @var Compiled $compiled */
+        $compiled = $this->objectManager->getObject(
+            Compiled::class,
+            ['data' => ['nonLazyTypes' => ['Listed\\Type' => true]]]
+        );
+
+        $this->assertTrue($compiled->isNonLazyType('Listed\\Type'));
+    }
+
+    public function testIsNonLazyTypeReturnsFalseForUnlistedTypeWhenDenyListIsPopulated(): void
+    {
+        /** @var Compiled $compiled */
+        $compiled = $this->objectManager->getObject(
+            Compiled::class,
+            ['data' => ['nonLazyTypes' => ['Listed\\Type' => true]]]
+        );
+
+        $this->assertFalse($compiled->isNonLazyType('Unlisted\\Type'));
+    }
+
+    public function testExtendMergesNonLazyTypes(): void
+    {
+        /** @var Compiled $compiled */
+        $compiled = $this->objectManager->getObject(
+            Compiled::class,
+            ['data' => ['nonLazyTypes' => ['First\\Type' => true]]]
+        );
+
+        $compiled->extend(['nonLazyTypes' => ['Second\\Type' => true]]);
+
+        $this->assertTrue($compiled->isNonLazyType('First\\Type'));
+        $this->assertTrue($compiled->isNonLazyType('Second\\Type'));
+        $this->assertFalse($compiled->isNonLazyType('Other\\Type'));
+    }
 }
