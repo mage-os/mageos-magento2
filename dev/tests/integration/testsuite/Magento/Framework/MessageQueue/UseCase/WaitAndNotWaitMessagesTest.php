@@ -12,8 +12,6 @@ use Magento\Framework\Filesystem;
 use Magento\Framework\MessageQueue\DefaultValueProvider;
 use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestModuleAsyncAmqp\Model\AsyncTestData;
-use Magento\Framework\MessageQueue\DefaultValueProvider;
-use Magento\TestFramework\Helper\Bootstrap;
 
 class WaitAndNotWaitMessagesTest extends QueueTestCaseAbstract
 {
