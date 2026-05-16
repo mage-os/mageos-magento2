@@ -1011,6 +1011,7 @@ class Address extends AbstractAddress implements
         }
 
         $this->setCollectShippingRates(false);
+        $this->trimAddressFields();
 
         $this->removeAllShippingRates();
 
