@@ -204,6 +204,7 @@ class Reader
      *
      * @param string $className
      * @return bool
+     * @throws \ReflectionException
      */
     private function isPhpExtensionClass(string $className): bool
     {
