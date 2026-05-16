@@ -8,7 +8,7 @@ declare(strict_types=1);
 namespace Magento\SalesRule\Test\Unit\Model\Coupon;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Magento\Sales\Api\Data\OrderInterface;
+use Magento\Sales\Model\Order;
 use Magento\SalesRule\Model\Coupon\UpdateCouponUsages;
 use Magento\SalesRule\Model\Coupon\Usage\Processor as CouponUsageProcessor;
 use Magento\SalesRule\Model\Coupon\Usage\UpdateInfo;
@@ -69,9 +69,9 @@ class UpdateCouponUsagesTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->orderInterface = $this->getMockBuilder(OrderInterface::class)
-            ->addMethods(['getCoupon','getOrigData'])
-            ->getMockForAbstractClass();
+        $this->orderInterface = $this->getMockBuilder(Order::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->updateInfo = $this->getMockBuilder(UpdateInfo::class)->disableOriginalConstructor()->getMock();
 
