@@ -37,7 +37,6 @@ class CanViewNotificationTest extends TestCase
     protected function setUp(): void
     {
         $this->cacheStorageMock = $this->createMock(CacheInterface::class);
-        $this->logMock = $this->createMock(Log::class);
         $this->viewerLoggerMock = $this->createMock(Logger::class);
         $this->productMetadataMock = $this->createMock(ProductMetadataInterface::class);
         $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
