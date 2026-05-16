@@ -17,6 +17,7 @@ use Magento\Framework\View\Helper\SecureHtmlRenderer;
  * @see \Magento\Ui\Component\Form
  * @SuppressWarnings(PHPMD.NumberOfChildren)
  * @since 100.0.2
+ * @SuppressWarnings(PHPMD.NumberOfChildren)
  */
 class Container extends \Magento\Backend\Block\Widget\Container
 {
