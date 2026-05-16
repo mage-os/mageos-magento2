@@ -24,6 +24,7 @@ use Psr\Log\LoggerInterface;
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.CookieAndSessionMisuse)
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class PhpCookieManager implements CookieManagerInterface
 {
     /**#@+

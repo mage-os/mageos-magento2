@@ -17,6 +17,7 @@ use Magento\Framework\Stdlib\Cookie\CookieMetadataFactory;
 /**
  * Allow for registration of a form key through cookies.
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class RegisterFormKeyFromCookie
 {
     /**

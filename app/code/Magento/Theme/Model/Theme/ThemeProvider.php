@@ -15,6 +15,7 @@ use Magento\Framework\View\Design\Theme\ThemeProviderInterface;
 /**
  * Provide data for theme grid and for theme edit page
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class ThemeProvider implements ThemeProviderInterface, ResetAfterRequestInterface
 {
     /**

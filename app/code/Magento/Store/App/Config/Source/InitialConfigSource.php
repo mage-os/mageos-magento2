@@ -12,6 +12,7 @@ use Magento\Framework\App\DeploymentConfig\Reader;
 /**
  * Config source. Retrieve all configuration data from files for specified config type
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class InitialConfigSource implements ConfigSourceInterface
 {
     /**

@@ -18,6 +18,7 @@ use Psr\Log\LoggerInterface;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class SaveHandler implements SaveHandlerInterface, ResetAfterRequestInterface
 {
     /**

@@ -11,6 +11,7 @@ namespace Magento\Framework\View\Layout;
  * @api
  * @since 100.0.2
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class ScheduledStructure
 {
     /**#@+

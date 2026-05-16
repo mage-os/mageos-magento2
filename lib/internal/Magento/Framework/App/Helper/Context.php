@@ -18,6 +18,7 @@ namespace Magento\Framework\App\Helper;
  * As Magento moves from inheritance-based APIs all such classes will be deprecated together with
  * the classes they were introduced for.
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class Context implements \Magento\Framework\ObjectManager\ContextInterface
 {
     /**

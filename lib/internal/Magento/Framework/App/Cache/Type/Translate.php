@@ -8,6 +8,7 @@ namespace Magento\Framework\App\Cache\Type;
 /**
  * System / Cache Management / Cache type "Translations"
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class Translate extends \Magento\Framework\Cache\Frontend\Decorator\TagScope
 {
     /**

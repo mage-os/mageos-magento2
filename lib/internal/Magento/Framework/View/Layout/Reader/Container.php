@@ -10,6 +10,7 @@ use Magento\Framework\View\Layout;
 /**
  * Class Container
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class Container implements Layout\ReaderInterface
 {
     /**#@+

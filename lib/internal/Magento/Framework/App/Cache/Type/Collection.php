@@ -8,6 +8,7 @@ namespace Magento\Framework\App\Cache\Type;
 /**
  * System / Cache Management / Cache type "Collections Data"
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class Collection extends \Magento\Framework\Cache\Frontend\Decorator\TagScope
 {
     /**

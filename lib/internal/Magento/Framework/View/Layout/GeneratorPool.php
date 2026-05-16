@@ -16,6 +16,7 @@ use Psr\Log\LoggerInterface;
  * @since 100.0.2
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class GeneratorPool
 {
     /**

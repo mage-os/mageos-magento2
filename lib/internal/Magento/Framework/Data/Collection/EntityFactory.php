@@ -5,6 +5,7 @@
  */
 namespace Magento\Framework\Data\Collection;
 
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class EntityFactory implements EntityFactoryInterface
 {
     /**

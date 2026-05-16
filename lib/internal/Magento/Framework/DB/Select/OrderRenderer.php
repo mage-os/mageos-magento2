@@ -11,6 +11,7 @@ use Magento\Framework\DB\Platform\Quote;
 /**
  * Class OrderRenderer
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class OrderRenderer implements RendererInterface
 {
     /**

@@ -29,6 +29,7 @@ use UnexpectedValueException;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class Factory
 {
     /**

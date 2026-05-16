@@ -9,6 +9,7 @@ namespace Magento\Framework\App;
 /**
  * Provider of scope resolvers by type
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class ScopeResolverPool
 {
     /**

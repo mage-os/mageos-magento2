@@ -8,6 +8,7 @@ namespace Magento\Framework;
 /**
  * Factory class for \Magento\Framework\Flag
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class FlagFactory
 {
     /**

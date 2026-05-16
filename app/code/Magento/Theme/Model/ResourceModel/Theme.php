@@ -8,6 +8,7 @@ namespace Magento\Theme\Model\ResourceModel;
 /**
  * Theme resource model
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class Theme extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
     /**

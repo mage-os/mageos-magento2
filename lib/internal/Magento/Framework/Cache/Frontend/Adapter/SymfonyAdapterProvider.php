@@ -33,6 +33,7 @@ use Symfony\Component\Cache\Marshaller\DefaultMarshaller;
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class SymfonyAdapterProvider implements ResetAfterRequestInterface
 {
     /**

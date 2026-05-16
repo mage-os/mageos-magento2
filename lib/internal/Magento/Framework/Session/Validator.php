@@ -12,6 +12,7 @@ use Magento\Framework\Phrase;
 /**
  * Session Validator
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class Validator implements ValidatorInterface
 {
     const VALIDATOR_KEY = '_session_validator_data';

@@ -19,6 +19,7 @@ use Magento\Framework\Session\Generic;
  *
  * @SuppressWarnings(PHPMD.CookieAndSessionMisuse)
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class CutoffValidator implements ValidatorInterface
 {
     /**

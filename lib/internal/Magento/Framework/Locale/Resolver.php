@@ -13,6 +13,7 @@ use Magento\Framework\ObjectManager\ResetAfterRequestInterface;
 /**
  * Manages locale config information.
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class Resolver implements ResolverInterface, ResetAfterRequestInterface
 {
     /**

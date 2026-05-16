@@ -10,6 +10,7 @@ use \Magento\Framework\App\Response\Http;
 /**
  * Adds an X-FRAME-OPTIONS header to HTTP responses to safeguard against click-jacking.
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class XFrameOptions extends \Magento\Framework\App\Response\HeaderProvider\AbstractHeaderProvider
 {
     /** Deployment config key for frontend x-frame-options header value */

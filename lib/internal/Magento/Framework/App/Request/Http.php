@@ -24,6 +24,7 @@ use Magento\Framework\Stdlib\StringUtils;
  * @SuppressWarnings(PHPMD.CookieAndSessionMisuse)
  * @api
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class Http extends Request implements
     RequestContentInterface,
     RequestSafetyInterface,

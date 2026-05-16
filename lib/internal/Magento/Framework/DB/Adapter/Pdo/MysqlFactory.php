@@ -15,6 +15,7 @@ use Magento\Framework\ObjectManagerInterface;
  *
  * @api
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class MysqlFactory
 {
     /**

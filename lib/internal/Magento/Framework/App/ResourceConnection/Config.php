@@ -11,6 +11,7 @@ use Magento\Framework\Serialize\SerializerInterface;
 /**
  * Resource configuration, uses application configuration to retrieve resource connection information
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class Config extends \Magento\Framework\Config\Data\Scoped implements ConfigInterface
 {
     /**

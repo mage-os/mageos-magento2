@@ -21,6 +21,7 @@ namespace Magento\Framework\Model;
  * @api
  * @since 100.0.2
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class Context implements \Magento\Framework\ObjectManager\ContextInterface
 {
     /**

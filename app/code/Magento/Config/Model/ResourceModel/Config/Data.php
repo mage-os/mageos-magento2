@@ -12,6 +12,7 @@ namespace Magento\Config\Model\ResourceModel\Config;
  * @api
  * @since 100.0.2
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class Data extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
     /**

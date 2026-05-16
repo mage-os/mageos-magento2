@@ -19,6 +19,7 @@ use Magento\Framework\ObjectManager\ResetAfterRequestInterface;
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.TooManyFields)
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class Translate implements \Magento\Framework\TranslateInterface, ResetAfterRequestInterface
 {
     public const CONFIG_AREA_KEY = 'area';

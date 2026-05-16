@@ -10,6 +10,7 @@ use Magento\Framework\Serialize\SerializerInterface;
 /**
  * Provides event configuration
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class Data extends \Magento\Framework\Config\Data\Scoped
 {
     /**

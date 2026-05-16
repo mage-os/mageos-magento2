@@ -11,6 +11,7 @@ use Magento\Framework\App\Response\Http as ResponseHttp;
 /**
  * Plugin for processing builtin cache
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class BuiltinPlugin
 {
     /**

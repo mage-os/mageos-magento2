@@ -9,6 +9,7 @@ namespace Magento\Framework\Event;
 
 use Magento\Framework\Event\Config\Data;
 
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class Config implements ConfigInterface
 {
     /**

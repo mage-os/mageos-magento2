@@ -11,6 +11,7 @@ namespace Magento\Framework\Session;
 /**
  * Use sequence of validators to validate sessions.
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class CompositeValidator implements ValidatorInterface
 {
     /**

@@ -15,6 +15,7 @@ use Magento\Framework\DB\Adapter\AdapterInterface;
  * @api
  * @since 100.1.0
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class SelectFactory
 {
     /**

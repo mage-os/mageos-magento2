@@ -10,6 +10,7 @@ use Magento\Framework\App\AreaList;
 /**
  * Scope config
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class Scope implements ScopeInterface, ScopeListInterface
 {
     /**

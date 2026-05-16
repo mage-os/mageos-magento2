@@ -12,6 +12,7 @@ use Magento\Framework\App\ScopeResolverInterface;
 /**
  * Check that config flag is set to true,
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class ConfigCondition implements VisibilityConditionInterface
 {
     /**

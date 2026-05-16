@@ -15,6 +15,7 @@ use Magento\Framework\App\ObjectManager;
  * @api
  * @since 100.0.2
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class Data implements \Magento\Framework\Config\DataInterface
 {
     /**

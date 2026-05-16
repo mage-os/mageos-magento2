@@ -12,6 +12,7 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 /**
  * Backend config accessor.
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class Config implements ConfigInterface
 {
     /**

@@ -13,6 +13,7 @@ use Magento\Framework\ObjectManager\ResetAfterRequestInterface;
 /**
  * Cache State
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class State implements StateInterface, ResetAfterRequestInterface
 {
     /**

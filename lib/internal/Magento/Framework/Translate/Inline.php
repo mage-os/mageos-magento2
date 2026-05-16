@@ -24,6 +24,7 @@ use Magento\Framework\View\LayoutInterface;
  * Translate Inline Class
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class Inline implements InlineInterface, ResetAfterRequestInterface
 {
     /**
