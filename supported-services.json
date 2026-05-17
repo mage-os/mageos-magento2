@@ -10,7 +10,7 @@
             "mariadb:11.8"
         ],
         "search": [
-          "opensearch:3"
+          "opensearch:3.4"
         ],
         "message_queue": [
             "rabbitmq:4.2"
@@ -19,7 +19,7 @@
             "redis:7.4"
         ],
         "http_cache": [
-            "varnish:8"
+            "varnish:8.0"
         ]
     }
 }
