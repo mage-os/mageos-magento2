@@ -16,6 +16,7 @@ use Magento\CatalogImportExport\Model\Import\Product;
 use Magento\ConfigurableImportExport;
 use Magento\ConfigurableImportExport\Model\Import\Product\Type\Configurable;
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
+use Magento\Eav\Model\ResourceModel\Entity\Attribute\Option\CollectionFactory as AttributeOptionCollectionFactory;
 use Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\Collection;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DataObject;
@@ -298,6 +299,7 @@ class ConfigurableTest extends AbstractImportTestCase
 
         $productTypesConfig = $this->createMock(ConfigInterface::class);
         $resourceHelper = $this->createMock(\Magento\ImportExport\Model\ResourceModel\Helper::class);
+        $attributeOptionCollectionFactory = $this->createMock(AttributeOptionCollectionFactory::class);
 
         $this->configurable = $this->objectManagerHelper->getObject(
             Configurable::class,
@@ -310,7 +312,8 @@ class ConfigurableTest extends AbstractImportTestCase
                 'resourceHelper' => $resourceHelper,
                 'productColFac' => $this->productCollectionFactory,
                 'metadataPool' => $metadataPoolMock,
-                'skuStorage' => $this->skuStorage
+                'skuStorage' => $this->skuStorage,
+                'attributeOptionCollectionFactory' => $attributeOptionCollectionFactory
             ]
         );
     }
