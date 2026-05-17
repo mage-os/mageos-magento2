@@ -121,6 +121,32 @@ class Carrier extends AbstractDhl implements CarrierInterface
     public const DHL_REST_API_VERSION = '2.12.0';
 
     /**
+     * DHL API type codes
+     */
+    public const SHIPPER = 'shipper';
+    public const ALL_VALUE_ADDED_SERVICES = 'allValueAddedServices';
+
+    /**
+     * DHL package type - 3BX stands for "Box" (standard DHL box packaging)
+     */
+    public const PACKAGE_TYPE_3BX = '3BX';
+
+    /**
+     * Unit of measurement for quantity
+     */
+    public const UNIT_OF_MEASUREMENT_PCS = 'PCS';
+
+    /**
+     * Delivered At Place
+     */
+    public const INCOTERM_DAP = 'DAP';
+
+    /**
+     * Value‑added service code for Insurance
+     */
+    public const SERVICES_CODE_I_I = 'II';
+
+    /**
      * Rate request data
      *
      * @var RateRequest|null
