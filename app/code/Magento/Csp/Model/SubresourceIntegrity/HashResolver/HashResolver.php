@@ -267,6 +267,9 @@ class HashResolver implements HashResolverInterface
 
         try {
             $area   = $this->appState->getAreaCode();
+            if (!is_string($area) || $area === '') {
+                return array_unique($contexts);
+            }
             $locale = $this->design->getLocale();
             $theme  = $this->design->getDesignTheme();
 
