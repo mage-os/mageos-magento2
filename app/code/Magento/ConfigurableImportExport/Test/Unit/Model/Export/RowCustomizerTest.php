@@ -13,6 +13,7 @@ use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
 use Magento\CatalogImportExport\Model\Import\Product as ImportProduct;
 use Magento\ConfigurableImportExport\Model\Export\RowCustomizer as ExportRowCustomizer;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable as ConfigurableProductType;
+use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\ImportExport\Model\Import;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -176,33 +177,20 @@ class RowCustomizerTest extends TestCase
         $productIds = [1, 2, 3];
         $expectedConfigurableData = $this->getExpectedConfigurableData();
         $productMock = $this->createProductMock();
-        $productAttributesOptions = [
-            [
-                [
-                    'pricing_is_percent'    => true,
-                    'sku'                   => '_sku_',
-                    'attribute_code'        => 'code_of_attribute',
-                    'option_title'          => 'Option Title',
-                    'pricing_value'         => 112345,
-                    'super_attribute_label' => 'Super attribute label'
-                ],
-                [
-                    'pricing_is_percent'    => false,
-                    'sku'                   => '_sku_',
-                    'attribute_code'        => 'code_of_attribute',
-                    'option_title'          => 'Option Title',
-                    'pricing_value'         => 212345,
-                    'super_attribute_label' => ''
-                ],
-                [
-                    'pricing_is_percent'    => false,
-                    'sku'                   => '_sku_2',
-                    'attribute_code'        => 'code_of_attribute_2',
-                    'option_title'          => 'Option Title 2',
-                    'pricing_value'         => 312345,
-                    'super_attribute_label' => 'Super attribute label 2'
-                ]
-            ]
+
+        $superAttributes = [
+            $this->createSuperAttributeMock('code_of_attribute', 'Super attribute label'),
+            $this->createSuperAttributeMock('code_of_attribute_2', 'Super attribute label 2')
+        ];
+        $childProducts = [
+            $this->createChildProductMock(
+                '_sku_',
+                ['code_of_attribute' => 'Option Title', 'code_of_attribute_2' => 'Option Title 2']
+            ),
+            $this->createChildProductMock(
+                '_sku_2',
+                ['code_of_attribute' => 'Option Title A', 'code_of_attribute_2' => 'Option Title B']
+            )
         ];
 
         $productMock->expects(static::any())
@@ -212,8 +200,13 @@ class RowCustomizerTest extends TestCase
             ->method('getTypeInstance')
             ->willReturn($this->configurableProductTypeMock);
         $this->configurableProductTypeMock->expects(static::any())
-            ->method('getConfigurableOptions')
-            ->willReturn($productAttributesOptions);
+            ->method('getUsedProductAttributes')
+            ->with($productMock)
+            ->willReturn($superAttributes);
+        $this->configurableProductTypeMock->expects(static::any())
+            ->method('getUsedProducts')
+            ->with($productMock)
+            ->willReturn($childProducts);
         $this->productCollectionMock->expects(static::atLeastOnce())
             ->method('addAttributeToFilter')
             ->willReturnMap(
@@ -234,6 +227,35 @@ class RowCustomizerTest extends TestCase
     }
 
     /**
+     * @param string $code
+     * @param string $label
+     * @return AbstractAttribute|MockObject
+     */
+    private function createSuperAttributeMock(string $code, string $label)
+    {
+        $attribute = $this->createMock(AbstractAttribute::class);
+        $attribute->method('getAttributeCode')->willReturn($code);
+        $attribute->method('getDefaultFrontendLabel')->willReturn($label);
+        return $attribute;
+    }
+
+    /**
+     * @param string $sku
+     * @param array<string, string> $attributeTextMap
+     * @return Product|MockObject
+     */
+    private function createChildProductMock(string $sku, array $attributeTextMap)
+    {
+        $product = $this->createMock(Product::class);
+        $product->method('getSku')->willReturn($sku);
+        $product->method('getAttributeText')
+            ->willReturnCallback(
+                static fn (string $code): string => $attributeTextMap[$code] ?? ''
+            );
+        return $product;
+    }
+
+    /**
      * Return expected configurable data
      *
      * @return array
@@ -248,12 +270,12 @@ class RowCustomizerTest extends TestCase
                         '_sku_' => 'sku=_sku_' . Import::DEFAULT_GLOBAL_MULTI_VALUE_SEPARATOR
                             . implode(
                                 Import::DEFAULT_GLOBAL_MULTI_VALUE_SEPARATOR,
-                                ['code_of_attribute=Option Title', 'code_of_attribute=Option Title']
+                                ['code_of_attribute=Option Title', 'code_of_attribute_2=Option Title 2']
                             ),
                         '_sku_2' => 'sku=_sku_2' . Import::DEFAULT_GLOBAL_MULTI_VALUE_SEPARATOR
                             . implode(
                                 Import::DEFAULT_GLOBAL_MULTI_VALUE_SEPARATOR,
-                                ['code_of_attribute_2=Option Title 2']
+                                ['code_of_attribute=Option Title A', 'code_of_attribute_2=Option Title B']
                             )
                     ]
                 ),

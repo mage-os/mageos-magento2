@@ -10,6 +10,7 @@ namespace Magento\Checkout\Test\Unit\Block\Cart;
 use Magento\Checkout\Block\Cart\Grid;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface;
+use Magento\Framework\App\CacheInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Framework\View\LayoutInterface;
@@ -75,6 +76,11 @@ class GridTest extends TestCase
     private $pagerBlockMock;
 
     /**
+     * @var MockObject
+     */
+    private $cacheMock;
+
+    /**
      * @inheritDoc
      */
     protected function setUp(): void
@@ -101,6 +107,7 @@ class GridTest extends TestCase
         $this->pagerBlockMock = $this->getMockBuilder(Pager::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $this->cacheMock = $this->createMock(CacheInterface::class);
         $this->checkoutSessionMock->method('getQuote')->willReturn($this->quoteMock);
         $this->quoteMock->method('getAllVisibleItems')->willReturn([]);
         $this->block = $objectManagerHelper->getObject(
@@ -111,6 +118,7 @@ class GridTest extends TestCase
                 'scopeConfig' => $this->scopeConfigMock,
                 'checkoutSession' => $this->checkoutSessionMock,
                 'layout' => $this->layoutMock,
+                'cache' => $this->cacheMock,
                 'data' => ['template' => 'cart/form1.phtml']
             ]
         );
@@ -222,6 +230,7 @@ class GridTest extends TestCase
                 'scopeConfig' => $this->scopeConfigMock,
                 'checkoutSession' => $this->checkoutSessionMock,
                 'layout' => $this->layoutMock,
+                'cache' => $this->cacheMock,
                 'data' => ['custom_items' => [$itemMock]],
                 'storeManager' => $storeManager
             ]

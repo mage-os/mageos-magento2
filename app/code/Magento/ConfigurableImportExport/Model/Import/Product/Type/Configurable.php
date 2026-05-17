@@ -10,6 +10,7 @@ namespace Magento\ConfigurableImportExport\Model\Import\Product\Type;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\CatalogImportExport\Model\Import\Product as ImportProduct;
 use Magento\CatalogImportExport\Model\Import\Product\SkuStorage;
+use Magento\Eav\Model\ResourceModel\Entity\Attribute\Option\CollectionFactory as AttributeOptionCollectionFactory;
 use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Framework\Exception\LocalizedException;
 
@@ -219,6 +220,7 @@ class Configurable extends \Magento\CatalogImportExport\Model\Import\Product\Typ
      * @param \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $_productColFac
      * @param MetadataPool $metadataPool
      * @param SkuStorage $skuStorage
+     * @param AttributeOptionCollectionFactory|null $attributeOptionCollectionFactory
      */
     public function __construct(
         \Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\CollectionFactory $attrSetColFac,
@@ -229,9 +231,17 @@ class Configurable extends \Magento\CatalogImportExport\Model\Import\Product\Typ
         \Magento\ImportExport\Model\ResourceModel\Helper $resourceHelper,
         \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $_productColFac,
         ?MetadataPool $metadataPool = null,
-        ?SkuStorage $skuStorage = null
+        ?SkuStorage $skuStorage = null,
+        ?AttributeOptionCollectionFactory $attributeOptionCollectionFactory = null
     ) {
-        parent::__construct($attrSetColFac, $prodAttrColFac, $resource, $params, $metadataPool);
+        parent::__construct(
+            $attrSetColFac,
+            $prodAttrColFac,
+            $resource,
+            $params,
+            $metadataPool,
+            $attributeOptionCollectionFactory
+        );
         $this->_productTypesConfig = $productTypesConfig;
         $this->_resourceHelper = $resourceHelper;
         $this->_productColFac = $_productColFac;
