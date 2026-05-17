@@ -21,14 +21,16 @@ use PHPUnit\Framework\TestCase;
 class PluginListGeneratorTest extends TestCase
 {
     /**
-     * Generated plugin list config for frontend scope
+     * Generated plugin list config for frontend scope.
+     * Scopes are sorted alphabetically when composing the cache ID — see
+     * PluginListGenerator::write().
      */
-    const CACHE_ID_FRONTEND = 'primary|global|frontend|plugin-list';
+    const CACHE_ID_FRONTEND = 'frontend|global|primary|plugin-list';
 
     /**
-     * Generated plugin list config for dummy scope
+     * Generated plugin list config for dummy scope.
      */
-    const CACHE_ID_DUMMY = 'primary|global|dummy|plugin-list';
+    const CACHE_ID_DUMMY = 'dummy|global|primary|plugin-list';
 
     private $cacheIds = [self::CACHE_ID_FRONTEND, self::CACHE_ID_DUMMY];
 
