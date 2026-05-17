@@ -1020,7 +1020,10 @@ class Address extends AbstractAddress implements
 
         $found = $this->requestShippingRates();
         if (!$found) {
-            $this->setShippingAmount(0)->setBaseShippingAmount(0)->setShippingMethod('')->setShippingDescription('');
+            $this->setShippingAmount(0)->setBaseShippingAmount(0);
+            if (!$this->getShippingRatesCollection()->getSize()) {
+                $this->setShippingMethod('')->setShippingDescription('');
+            }
         }
 
         return $this;
