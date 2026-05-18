@@ -78,7 +78,7 @@ class GridAsyncInsertTest extends \PHPUnit\Framework\TestCase
 
         // to un-sync main table and grid table need to wait at least one second
         sleep(1);
-        $order->setStatus('complete');
+        $order->setStatus('processing');
         $this->orderRepository->save($order);
 
         $gridRow = $this->getGridRow($order->getEntityId());

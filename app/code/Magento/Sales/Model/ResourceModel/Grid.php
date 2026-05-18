@@ -145,7 +145,8 @@ class Grid extends AbstractGrid
         $iteration = 0;
         while ($iteration < self::MAX_REFRESH_ITERATIONS) {
             $iteration++;
-            $notSyncedIds = $this->notSyncedDataProvider->getIdsWithCutoff($this->mainTableName, $this->gridTableName, $cutoff);
+            $notSyncedIds = $this->notSyncedDataProvider
+                ->getIdsWithCutoff($this->mainTableName, $this->gridTableName, $cutoff);
             if (empty($notSyncedIds)) {
                 break;
             }

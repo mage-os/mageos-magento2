@@ -18,12 +18,11 @@ namespace Magento\Sales\Model\ResourceModel\Provider;
 interface NotSyncedDataProviderWithCutoffInterface
 {
     /**
-     * Returns id list of entities whose grid row is behind the main table,
-     * considering only rows with main.updated_at <= $cutoff.
+     * Returns id grid row is behind the main table, considering only rows with main.updated_at <= $cutoff.
      *
      * @param string $mainTableName source table name
      * @param string $gridTableName grid table name
-     * @param string $cutoff upper-bound timestamp (Y-m-d H:i:s, UTC); rows updated after this value are skipped as in-flight
+     * @param string $cutoff upper-bound timestamp rows updated after this value are skipped as in-flight
      * @return array
      */
     public function getIdsWithCutoff($mainTableName, $gridTableName, $cutoff);

@@ -15,7 +15,7 @@ use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\Grid\LastUpdateTimeCache;
 use Magento\Sales\Model\GridAsyncInsert;
-use Magento\Sales\Model\ResourceModel\Order\Grid;
+use Magento\Sales\Model\ResourceModel\Grid;
 use Magento\TestFramework\Helper\Bootstrap;
 use PHPUnit\Framework\TestCase;
 
