@@ -74,13 +74,22 @@ class GridTest extends TestCase
             $data,
             sprintf('%s = %d', $orderIdField, $order->getEntityId())
         );
+        $cutoff = (new \DateTimeImmutable('now', new \DateTimeZone('UTC')))
+            ->sub(new \DateInterval('PT1S'))
+            ->format('Y-m-d H:i:s');
         $grid->refreshBySchedule();
 
         $select = $connection->select()
             ->from($constructorArgs['gridTableName'], ['created_at', 'updated_at'])
             ->where($orderIdField, $order->getEntityId());
         $gridData = $connection->fetchRow($select);
-        $this->assertEquals($data, $gridData);
+        $this->assertEquals(
+            [
+                'created_at' => $data['created_at'],
+                'updated_at' => $cutoff,
+            ],
+            $gridData
+        );
 
         //refresh data with cached updated_at
         $this->assertNotEmpty($this->lastUpdateTimeCache->get($constructorArgs['gridTableName']));
@@ -91,13 +100,22 @@ class GridTest extends TestCase
             $data,
             sprintf('%s = %d', $orderIdField, $order->getEntityId())
         );
+        $cutoff = (new \DateTimeImmutable('now', new \DateTimeZone('UTC')))
+            ->sub(new \DateInterval('PT1S'))
+            ->format('Y-m-d H:i:s');
         $grid->refreshBySchedule();
 
         $select = $connection->select()
             ->from($constructorArgs['gridTableName'], ['created_at', 'updated_at'])
             ->where($orderIdField, $order->getEntityId());
         $gridData = $connection->fetchRow($select);
-        $this->assertEquals($data, $gridData);
+        $this->assertEquals(
+            [
+                'created_at' => $data['created_at'],
+                'updated_at' => $cutoff,
+            ],
+            $gridData
+        );
     }
 
     /**

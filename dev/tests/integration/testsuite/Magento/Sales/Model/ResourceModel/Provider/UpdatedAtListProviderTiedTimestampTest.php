@@ -36,11 +36,13 @@ use PHPUnit\Framework\TestCase;
  * between two such writes, grid.updated_at gets set equal to main.updated_at
  * and the strict `>` comparison locks the row out of every subsequent run.
  *
- * The fix introduces a 1-second cutoff buffer: getIds() only selects rows
- * whose main.updated_at <= (now - 1s), and Grid::refreshBySchedule() writes
- * that cutoff value (not main.updated_at) into grid.updated_at. This ensures
+ * The fix introduces a 1-second cutoff buffer: the provider selects rows whose
+ * main.updated_at is at or before the cutoff, and Grid::refreshBySchedule()
+ * writes that cutoff value (not main.updated_at) into grid.updated_at. This ensures
  * grid.updated_at is always strictly less than any subsequent same-second
  * write, breaking the tie permanently.
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class UpdatedAtListProviderTiedTimestampTest extends TestCase
 {
@@ -56,7 +58,11 @@ class UpdatedAtListProviderTiedTimestampTest extends TestCase
     /** @var OrderRepositoryInterface */
     private $orderRepository;
 
-    /** @var Grid */
+    /**
+     * Order grid indexer (configured virtual type; see Magento\Sales\Model\ResourceModel\Order\Grid in di.xml).
+     *
+     * @var Grid
+     */
     private $grid;
 
     /** @var LastUpdateTimeCache */
@@ -70,7 +76,7 @@ class UpdatedAtListProviderTiedTimestampTest extends TestCase
         $resourceConnection = $this->objectManager->get(ResourceConnection::class);
         $this->connection = $resourceConnection->getConnection('sales');
         $this->orderRepository = $this->objectManager->get(OrderRepositoryInterface::class);
-        $this->grid = $this->objectManager->get(Grid::class);
+        $this->grid = $this->objectManager->get('Magento\Sales\Model\ResourceModel\Order\Grid');
         $this->lastUpdateTimeCache = $this->objectManager->get(LastUpdateTimeCache::class);
 
         $this->gridAsyncInsert = $this->objectManager->create(

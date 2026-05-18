@@ -14,6 +14,8 @@ use Magento\Sales\Model\ResourceModel\Provider\NotSyncedDataProviderWithCutoffIn
 
 /**
  * Sales order grid resource model.
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Grid extends AbstractGrid
 {
