@@ -10,21 +10,14 @@ namespace Magento\CatalogImportExport\Model\Import\Product\Validator;
 use Magento\CatalogImportExport\Model\Import\Product\RowValidatorInterface;
 
 /**
- * Rejects negative or non-numeric values for product price-type fields during import
+ * Rejects negative values for product price-type fields during import
  */
 class Price extends AbstractImportValidator implements RowValidatorInterface
 {
     /**
-     * Error code for negative / non-numeric price-type values
+     * Error code for negative price-type values
      */
     public const ERROR_NEGATIVE_PRICE_VALUE = 'invalidNegativePriceValue';
-
-    /**
-     * Last price column that failed validation for the current import row
-     *
-     * @var string|null
-     */
-    private static ?string $importFailedPriceField = null;
 
     /**
      * Price-type fields that must not be negative
@@ -53,21 +46,12 @@ class Price extends AbstractImportValidator implements RowValidatorInterface
     }
 
     /**
-     * Column that failed price validation on the last import row
-     */
-    public static function getImportFailedPriceField(): ?string
-    {
-        return self::$importFailedPriceField;
-    }
-
-    /**
      * @inheritdoc
      */
     public function isValid($value)
     {
         $this->_clearMessages();
         $this->failedField = null;
-        self::$importFailedPriceField = null;
         $emptyConstant = $this->context->getEmptyAttributeValueConstant();
 
         foreach (self::PRICE_FIELDS as $field) {
@@ -75,12 +59,14 @@ class Price extends AbstractImportValidator implements RowValidatorInterface
                 continue;
             }
             $fieldValue = $value[$field];
+            if (is_string($fieldValue)) {
+                $fieldValue = trim($fieldValue);
+            }
             if ($fieldValue === '' || $fieldValue === null || $fieldValue === $emptyConstant) {
                 continue;
             }
-            if (!is_numeric($fieldValue) || (float)$fieldValue < 0) {
+            if (is_numeric($fieldValue) && (float)$fieldValue < 0) {
                 $this->failedField = $field;
-                self::$importFailedPriceField = $field;
                 $this->_addMessages([self::ERROR_NEGATIVE_PRICE_VALUE]);
                 return false;
             }

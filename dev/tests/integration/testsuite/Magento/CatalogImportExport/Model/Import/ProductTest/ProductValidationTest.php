@@ -382,6 +382,31 @@ class ProductValidationTest extends ProductTestBase
     }
 
     /**
+     * Test that a product with a negative price fails validation with the expected error.
+     */
+    public function testProductWithNegativePrice(): void
+    {
+        $filesystem = $this->objectManager->create(\Magento\Framework\Filesystem::class);
+        $directory = $filesystem->getDirectoryWrite(DirectoryList::ROOT);
+        $source = $this->objectManager->create(
+            \Magento\ImportExport\Model\Import\Source\Csv::class,
+            [
+                'file' => __DIR__ . '/../_files/product_with_negative_price.csv',
+                'directory' => $directory,
+            ]
+        );
+        $errors = $this->_model->setSource($source)
+            ->setParameters(['behavior' => \Magento\ImportExport\Model\Import::BEHAVIOR_APPEND])
+            ->validateData();
+
+        $this->assertTrue($errors->getErrorsCount() === 1);
+        $this->assertEquals(
+            "Value for 'price' attribute must be zero or greater",
+            $errors->getErrorByRowNumber(0)[0]->getErrorMessage()
+        );
+    }
+
+    /**
      * Test validate multiselect values with custom separator
      *
      * @magentoDataFixture Magento/Catalog/_files/products_with_multiselect_attribute.php

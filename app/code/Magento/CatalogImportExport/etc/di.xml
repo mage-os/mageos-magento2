@@ -12,9 +12,6 @@
     <type name="Magento\ImportExport\Model\Import">
         <plugin name="catalogProductFlatIndexerImport" type="Magento\CatalogImportExport\Model\Indexer\Product\Flat\Plugin\Import" />
         <plugin name="invalidateEavIndexerOnImport" type="Magento\CatalogImportExport\Model\Indexer\Product\Eav\Plugin\Import" />
-        <plugin name="catalog_import_validate_stop_on_fatal_errors"
-                type="Magento\CatalogImportExport\Plugin\ImportExport\Model\ImportValidateSourceFatalErrorsPlugin"
-                sortOrder="100"/>
     </type>
     <type name="Magento\CatalogImportExport\Model\Import\Product\StockProcessor">
         <arguments>

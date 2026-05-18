@@ -905,7 +905,7 @@ class ProductTest extends AbstractImportTestCase
     /**
      * @return void
      */
-    public function testValidateRowNegativePriceUsesCriticalErrorLevelAndFailedPriceColumn(): void
+    public function testValidateRowNegativePriceAddsValidationError(): void
     {
         $sku = 'sku';
         $rowNum = 0;
@@ -933,73 +933,22 @@ class ProductTest extends AbstractImportTestCase
         $this->validator->expects($this->once())->method('isValid')->willReturn(false);
         $this->validator->expects($this->once())->method('getMessages')
             ->willReturn([ImportPriceValidator::ERROR_NEGATIVE_PRICE_VALUE]);
-        $this->validator->expects($this->once())->method('getInvalidAttribute')->willReturn('price');
+        $this->validator->expects($this->never())->method('getInvalidAttribute');
         $this->setPropertyValue($importProduct, 'validator', $this->validator);
 
-        $importFailedPriceField = new \ReflectionProperty(ImportPriceValidator::class, 'importFailedPriceField');
-        $importFailedPriceField->setAccessible(true);
-        $importFailedPriceField->setValue(null, 'special_price');
+        $priceValidatorMock = $this->createMock(ImportPriceValidator::class);
+        $priceValidatorMock->method('getFailedField')->willReturn('price');
+        $this->setPrivatePropertyValue($importProduct, 'priceValidator', $priceValidatorMock);
 
         $importProduct->expects($this->once())->method('addRowError')->with(
             ImportPriceValidator::ERROR_NEGATIVE_PRICE_VALUE,
             $rowNum,
-            'special_price',
+            'price',
             null,
-            ProcessingError::ERROR_LEVEL_CRITICAL
+            ProcessingError::ERROR_LEVEL_NOT_CRITICAL
         );
 
         $importProduct->validateRow($rowData, $rowNum);
-        $importFailedPriceField->setValue(null, null);
-    }
-
-    /**
-     * @return void
-     */
-    public function testValidateRowNegativePriceUsesInvalidAttributeWhenFailedPriceFieldEmpty(): void
-    {
-        $sku = 'sku';
-        $rowNum = 0;
-        $rowData = [Product::COL_SKU => $sku];
-        $typeId = 'simple';
-        $existingSkuData = [
-            'type_id' => $typeId,
-            'attr_set_id' => '1',
-        ];
-        $importProduct = $this->createModelMockWithErrorAggregator(
-            ['addRowError', 'getOptionEntity'],
-            ['isRowInvalid' => true]
-        );
-        $this->skuStorageMock->method('has')->willReturnCallback(static fn (string $s): bool => $s === $sku);
-        $this->skuStorageMock->method('get')->willReturnCallback(
-            static fn (string $s) => $s === $sku ? $existingSkuData : null
-        );
-        $this->setPrivatePropertyValue($importProduct, 'skuStorage', $this->skuStorageMock);
-        $productType = $this->createMock(AbstractType::class);
-        $this->setPropertyValue($importProduct, '_productTypeModels', [$typeId => $productType]);
-        $this->setPropertyValue($importProduct, '_attrSetIdToName', ['1' => 'Default']);
-        $this->skuProcessor->method('addNewSku')->willReturnSelf();
-        $this->setPropertyValue($importProduct, 'skuProcessor', $this->skuProcessor);
-        $this->_rewriteGetOptionEntityInImportProduct($importProduct);
-        $this->validator->expects($this->once())->method('isValid')->willReturn(false);
-        $this->validator->expects($this->once())->method('getMessages')
-            ->willReturn([ImportPriceValidator::ERROR_NEGATIVE_PRICE_VALUE]);
-        $this->validator->expects($this->once())->method('getInvalidAttribute')->willReturn('cost');
-        $this->setPropertyValue($importProduct, 'validator', $this->validator);
-
-        $importFailedPriceField = new \ReflectionProperty(ImportPriceValidator::class, 'importFailedPriceField');
-        $importFailedPriceField->setAccessible(true);
-        $importFailedPriceField->setValue(null, null);
-
-        $importProduct->expects($this->once())->method('addRowError')->with(
-            ImportPriceValidator::ERROR_NEGATIVE_PRICE_VALUE,
-            $rowNum,
-            'cost',
-            null,
-            ProcessingError::ERROR_LEVEL_CRITICAL
-        );
-
-        $importProduct->validateRow($rowData, $rowNum);
-        $importFailedPriceField->setValue(null, null);
     }
 
     /**

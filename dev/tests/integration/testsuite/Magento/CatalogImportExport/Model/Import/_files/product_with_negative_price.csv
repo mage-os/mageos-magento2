@@ -1,0 +1,2 @@
+sku,store_view_code,name,price,special_price,product_type,attribute_set_code,weight
+simple-negative-price,,"Negative Price Product",-10,,simple,Default,1

@@ -55,6 +55,8 @@ class PriceTest extends TestCase
             'empty_string_price_skipped' => [true, ['price' => '']],
             'null_price_skipped' => [true, ['price' => null]],
             'empty_constant_price_skipped' => [true, ['price' => $empty]],
+            'whitespace_only_price_skipped' => [true, ['price' => ' ']],
+            'whitespace_only_special_price_skipped' => [true, ['special_price' => '   ']],
             'negative_price' => [false, ['price' => '-1']],
             'negative_price_float' => [false, ['price' => -150]],
             'negative_special_price_with_valid_price' => [false, ['price' => '10', 'special_price' => '-0.01']],
@@ -63,8 +65,8 @@ class PriceTest extends TestCase
             'negative_msrp_price' => [false, ['msrp_price' => '-3']],
             'negative_msrp' => [false, ['msrp' => '-4']],
             'negative_minimal_price' => [false, ['minimal_price' => '-1']],
-            'non_numeric_price' => [false, ['price' => 'abc']],
-            'non_numeric_special_price' => [false, ['price' => '1', 'special_price' => 'not-a-number']],
+            'non_numeric_price' => [true, ['price' => 'abc']],
+            'non_numeric_special_price' => [true, ['price' => '1', 'special_price' => 'not-a-number']],
         ];
     }
 
