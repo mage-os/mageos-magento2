@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Copyright 2017 Adobe
+ * Copyright 2024 Adobe
  * All Rights Reserved.
  */
 -->
@@ -99,6 +99,11 @@
                 <item name="interface_type" xsi:type="object">Magento\Framework\GraphQlSchemaStitching\GraphQlReader\Reader\InterfaceType</item>
                 <item name="scalar_type" xsi:type="object">Magento\Framework\GraphQlSchemaStitching\GraphQlReader\Reader\ScalarType</item>
             </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\GraphQl\Query\QueryParser">
+        <arguments>
+            <argument name="maxNestingDepth" xsi:type="number">200</argument>
         </arguments>
     </type>
     <type name="Magento\Framework\GraphQl\Query\QueryComplexityLimiter">
