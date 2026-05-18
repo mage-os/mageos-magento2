@@ -212,11 +212,11 @@ class View extends \Magento\Catalog\Block\Product\AbstractProduct
     {
         $customerId = $this->currentCustomer->getCustomerId();
         $review = $customerId ? $this->getReviewData() : null;
-
+        
         if (!$review || !$review->getId() || (int)$review->getCustomerId() !== (int)$customerId) {
             return '';
         }
-
+        
         return parent::_toHtml();
     }
 }

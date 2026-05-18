@@ -142,7 +142,7 @@ class UpgradeCommandTest extends TestCase
         $this->installerMock
             ->method('updateModulesSequence');
         $this->installerMock
-            ->method('installDataFixtures');
+        ->method('installDataFixtures');
 
         $this->assertSame(Cli::RETURN_SUCCESS, $this->commandTester->execute($options));
         $this->assertEquals($expectedString, $this->commandTester->getDisplay());
@@ -155,9 +155,9 @@ class UpgradeCommandTest extends TestCase
     {
         $cleanupMessage = "Cleaning up deprecated SET NAMES utf8 from database connections...\n";
         $mediaGalleryNotice = "Media files stored outside of 'Media Gallery Allowed' folders will not be available "
-            . "to the media gallery.\n"
-            . "Please refer to Developer Guide for more details.\n"
-            . "Upgrade completed successfully.\n";
+        . "to the media gallery.\n"
+        . "Please refer to Developer Guide for more details.\n"
+        . "Upgrade completed successfully.\n";
 
         return [
             [

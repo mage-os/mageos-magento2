@@ -187,7 +187,8 @@ class CustomerRepository implements CustomerRepositoryInterface
         $this->collectionProcessor = $collectionProcessor;
         $this->notificationStorage = $notificationStorage;
         $this->delegatedStorage = $delegatedStorage ?? ObjectManager::getInstance()->get(DelegatedStorage::class);
-        $this->groupRepository = $groupRepository ?: ObjectManager::getInstance()->get(GroupRepositoryInterface::class);
+        $this->groupRepository = $groupRepository
+            ?: ObjectManager::getInstance()->get(GroupRepositoryInterface::class);
     }
 
     /**
@@ -619,7 +620,7 @@ class CustomerRepository implements CustomerRepositoryInterface
             return true;
         }
 
-            $customerId = (int)($customer->getId() ?? 0);
+        $customerId = (int)($customer->getId() ?? 0);
         if (!$customerId && $prevCustomerData) {
             $customerId = (int)($prevCustomerData->getId() ?? 0);
         }

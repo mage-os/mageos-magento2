@@ -1,12 +1,11 @@
 <?php
 /**
- * Customer session storage
- *
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2013 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Customer\Model\Session;
 
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class Storage extends \Magento\Framework\Session\Storage
 {
     /**

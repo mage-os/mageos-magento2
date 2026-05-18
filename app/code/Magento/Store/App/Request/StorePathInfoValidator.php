@@ -21,6 +21,7 @@ use Magento\Store\Model\Validation\StoreCodeValidator;
 /**
  * Gets the store from the path if valid
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class StorePathInfoValidator implements ResetAfterRequestInterface
 {
     /**
@@ -77,17 +78,16 @@ class StorePathInfoValidator implements ResetAfterRequestInterface
      */
     public function getValidStoreCode(Http $request, string $pathInfo = '') : ?string
     {
-        $useStoreCodeInUrl = (bool) $this->config->getValue(Store::XML_PATH_STORE_IN_URL);
-        if (!$useStoreCodeInUrl) {
+        if (!$this->config->isSetFlag(Store::XML_PATH_STORE_IN_URL)) {
             return null;
         }
 
-        if (empty($pathInfo)) {
+        if ($pathInfo === '') {
             $pathInfo = $this->pathInfo->getPathInfo($request->getRequestUri(), $request->getBaseUrl());
         }
         $storeCode = $this->getStoreCode($pathInfo);
 
-        if (empty($storeCode) || $storeCode === Store::ADMIN_CODE || !$this->storeCodeValidator->isValid($storeCode)) {
+        if ($storeCode === '' || $storeCode === Store::ADMIN_CODE || !$this->storeCodeValidator->isValid($storeCode)) {
             return null;
         }
 
@@ -98,14 +98,9 @@ class StorePathInfoValidator implements ResetAfterRequestInterface
         try {
             $this->storeRepository->getActiveStoreByCode($storeCode);
 
-            $this->validatedStoreCodes[$storeCode] = $storeCode;
-            return $storeCode;
-        } catch (NoSuchEntityException $e) {
-            $this->validatedStoreCodes[$storeCode] = null;
-            return null;
-        } catch (StoreIsInactiveException $e) {
-            $this->validatedStoreCodes[$storeCode] = null;
-            return null;
+            return $this->validatedStoreCodes[$storeCode] = $storeCode;
+        } catch (NoSuchEntityException|StoreIsInactiveException) {
+            return $this->validatedStoreCodes[$storeCode] = null;
         }
     }
 

@@ -231,7 +231,7 @@ class InstallCommand extends AbstractSetupCommand
     /**
      * @inheritdoc
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $consoleLogger = new ConsoleLogger($output);
         $installer = $this->installerFactory->create($consoleLogger);
@@ -251,6 +251,13 @@ class InstallCommand extends AbstractSetupCommand
     protected function initialize(InputInterface $input, OutputInterface $output)
     {
         $inputOptions = $input->getOptions();
+
+        if (empty($inputOptions['db-host']) && empty($inputOptions['interactive'])) {
+            $output->writeln(
+                '<info>Tip: Run <comment>bin/magento install</comment>'
+                . ' for a guided interactive installation.</info>'
+            );
+        }
 
         if ($inputOptions['interactive']) {
             $configOptionsToValidate = $this->interactiveQuestions($input, $output);

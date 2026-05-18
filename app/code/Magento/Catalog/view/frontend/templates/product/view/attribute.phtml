@@ -10,8 +10,8 @@
 /**
  * Product view template
  *
- * @var $block \Magento\Catalog\Block\Product\View\Description
- * @var $escaper \Magento\Framework\Escaper
+ * @var $block Description
+ * @var $escaper Escaper
  */
 
 use Magento\Catalog\Block\Product\View\Description;
@@ -57,10 +57,10 @@ $processedAttributeString = !empty($_attributeAddAttribute)
 ?>
 
 <?php if ($_attributeValue):?>
-    <div class="product attribute <?= $escaper->escapeHtmlAttr($_className) ?>">
-        <?php if ($renderLabel):?>
-            <strong class="type"><?= $escaper->escapeHtml($_attributeLabel) ?></strong>
-        <?php endif; ?>
-        <div class="value"<?= /* @noEscape */ $processedAttributeString ?>><?= /* @noEscape */ $_attributeValue ?></div>
-    </div>
+<div class="product attribute <?= $escaper->escapeHtmlAttr($_className) ?>">
+    <?php if ($renderLabel):?>
+        <strong class="type"><?= $escaper->escapeHtml($_attributeLabel) ?></strong>
+    <?php endif; ?>
+    <div class="value"<?= /* @noEscape */ $processedAttributeString ?>><?= /* @noEscape */ $_attributeValue ?></div>
+</div>
 <?php endif; ?>

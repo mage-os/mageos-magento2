@@ -4,7 +4,7 @@ namespace Magento\Framework\Code\GeneratorTest\SourceClassWithNamespace;
 /**
  * Proxy class for @see \Magento\Framework\Code\GeneratorTest\SourceClassWithNamespace
  *
- * Copyright 2013 Adobe
+ * Copyright 2014 Adobe
  * All Rights Reserved.
  */
 class Proxy extends \Magento\Framework\Code\GeneratorTest\SourceClassWithNamespace implements \Magento\Framework\ObjectManager\NoninterceptableInterface

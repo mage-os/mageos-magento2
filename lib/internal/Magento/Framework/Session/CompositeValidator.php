@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2021 Adobe
+ * All Rights Reserved.
  */
 
 declare(strict_types=1);
@@ -11,6 +11,7 @@ namespace Magento\Framework\Session;
 /**
  * Use sequence of validators to validate sessions.
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class CompositeValidator implements ValidatorInterface
 {
     /**

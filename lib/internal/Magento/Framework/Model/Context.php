@@ -2,8 +2,8 @@
 /**
  * Abstract model context
  *
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Framework\Model;
 
@@ -21,6 +21,7 @@ namespace Magento\Framework\Model;
  * @api
  * @since 100.0.2
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class Context implements \Magento\Framework\ObjectManager\ContextInterface
 {
     /**

@@ -7,7 +7,6 @@ declare(strict_types=1);
 
 namespace Magento\Framework\GraphQl\Query;
 
-use GraphQL\Error\SyntaxError;
 use GraphQL\Language\AST\DocumentNode;
 use GraphQL\Language\Parser;
 use GraphQL\Language\Source;
@@ -24,7 +23,7 @@ class QueryParser implements ReloadProcessorInterface
     /**
      * @var DocumentNode[]
      */
-    private $parsedQueries = [];
+    private array $parsedQueries = [];
 
     /**
      * @param int $maxNestingDepth
@@ -40,8 +39,7 @@ class QueryParser implements ReloadProcessorInterface
      * @param string $query
      * @return DocumentNode
      * @throws GraphQlInputException
-     * @throws SyntaxError
-     * @throws \JsonException
+     * @throws \GraphQL\Error\SyntaxError
      */
     public function parse(string $query): DocumentNode
     {
@@ -51,14 +49,6 @@ class QueryParser implements ReloadProcessorInterface
             $this->parsedQueries[$cacheKey] = Parser::parse(new Source($query, 'GraphQL'));
         }
         return $this->parsedQueries[$cacheKey];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function reloadState(): void
-    {
-        $this->parsedQueries = [];
     }
 
     /**
@@ -79,7 +69,7 @@ class QueryParser implements ReloadProcessorInterface
             'escaped' => false,
         ];
         $len = strlen($query);
-
+        
         for ($i = 0; $i < $len; $i++) {
             $char = $query[$i];
 
@@ -142,5 +132,13 @@ class QueryParser implements ReloadProcessorInterface
                 __('Query is too deep. Reduce the nesting level of your query.')
             );
         }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function reloadState(): void
+    {
+        $this->parsedQueries = [];
     }
 }

@@ -8,8 +8,6 @@ declare(strict_types=1);
 namespace Magento\GraphQl\Model\GraphQl;
 
 use Magento\Framework\App\DeploymentConfig;
-use Magento\Framework\Exception\FileSystemException;
-use Magento\Framework\Exception\RuntimeException;
 
 /**
  * Reads GraphQL request limits from deployment configuration (app/etc/env.php).
@@ -35,8 +33,6 @@ class RequestConfiguration
      * including values smaller than 1 MiB (e.g. 524288 for 512 KiB).
      *
      * @return int
-     * @throws FileSystemException
-     * @throws RuntimeException
      */
     public function getMaxRequestBodySize(): int
     {

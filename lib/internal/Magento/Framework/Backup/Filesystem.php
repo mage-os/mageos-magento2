@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\Framework\Backup;
@@ -20,6 +20,8 @@ use Magento\Framework\Phrase;
 /**
  * Class to work with filesystem backups
  *
+ * @deprecated
+ * @see This class depended on the PHP ext-ftp extension, which has been removed.
  * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Filesystem extends AbstractBackup

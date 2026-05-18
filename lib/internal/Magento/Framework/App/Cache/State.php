@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Framework\App\Cache;
 
@@ -13,6 +13,7 @@ use Magento\Framework\ObjectManager\ResetAfterRequestInterface;
 /**
  * Cache State
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class State implements StateInterface, ResetAfterRequestInterface
 {
     /**

@@ -22,6 +22,8 @@ class DefaultCharsetCollationMap
     public const VERSION_10_11 = '10.11.';
     public const VERSION_11_4 = '11.4.';
     public const VERSION_11_8 = '11.8.';
+    public const VERSION_12_2 = '12.2.';
+    public const VERSION_12_3 = '12.3.';
     public const VERSION_MYSQL_8_29 = 'mysql_8_29';
     public const VERSION_DEFAULT = 'default';
 
@@ -38,6 +40,8 @@ class DefaultCharsetCollationMap
         self::VERSION_10_11 => 'utf8mb4',
         self::VERSION_11_4 => 'utf8mb4',
         self::VERSION_11_8 => 'utf8mb4',
+        self::VERSION_12_2 => 'utf8mb4',
+        self::VERSION_12_3 => 'utf8mb4',
         self::VERSION_MYSQL_8_29 => 'utf8mb4',
         self::VERSION_DEFAULT => 'utf8',
     ];
@@ -53,6 +57,8 @@ class DefaultCharsetCollationMap
         self::VERSION_10_11 => 'utf8mb4_general_ci',
         self::VERSION_11_4 => 'utf8mb4_general_ci',
         self::VERSION_11_8 => 'utf8mb4_general_ci',
+        self::VERSION_12_2 => 'utf8mb4_general_ci',
+        self::VERSION_12_3 => 'utf8mb4_general_ci',
         self::VERSION_MYSQL_8_29 => 'utf8mb4_general_ci',
         self::VERSION_DEFAULT => 'utf8_general_ci',
     ];
@@ -60,7 +66,7 @@ class DefaultCharsetCollationMap
     /**
      * Get default charset for a version key.
      *
-     * @param string $versionKey One of '10.4.', '10.6.', '10.11.', '11.4.', '11.8.', 'mysql_8_29', 'default'
+     * @param string $versionKey One of '10.4.', '10.6.', '10.11.', '11.4.', 'mysql_8_29', 'default'
      * @return string
      */
     public static function getCharset(string $versionKey): string
@@ -71,7 +77,7 @@ class DefaultCharsetCollationMap
     /**
      * Get default collation for a version key.
      *
-     * @param string $versionKey One of '10.4.', '10.6.', '10.11.', '11.4.', '11.8.', 'mysql_8_29', 'default'
+     * @param string $versionKey One of '10.4.', '10.6.', '10.11.', '11.4.', 'mysql_8_29', 'default'
      * @return string
      */
     public static function getCollation(string $versionKey): string
@@ -83,7 +89,7 @@ class DefaultCharsetCollationMap
      * Parse DB version string (e.g. from SELECT @@version) to version key for this map.
      *
      * @param string $versionString e.g. "8.0.30" or "10.4.0-MariaDB"
-     * @return string One of '10.4.', '10.6.', '10.11.', '11.4.', '11.8.', 'mysql_8_29', 'default'
+     * @return string One of '10.4.', '10.6.', '10.11.', '11.4.', 'mysql_8_29', 'default'
      */
     public static function parseVersionToKey(string $versionString): string
     {
@@ -101,14 +107,11 @@ class DefaultCharsetCollationMap
     /**
      * Map MariaDB version string to version key.
      *
-     * @param string $versionNum e.g. "10.4.0" or "11.8.0"
+     * @param string $versionNum e.g. "10.4.0"
      * @return string
      */
     private static function parseMariaDbVersionToKey(string $versionNum): string
     {
-        if (version_compare($versionNum, '11.8.0', '>=')) {
-            return self::VERSION_11_8;
-        }
         if (version_compare($versionNum, '11.4.0', '>=')) {
             return self::VERSION_11_4;
         }

@@ -1,9 +1,8 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2013 Adobe
+ * All Rights Reserved.
  */
-
 namespace Magento\Framework\Session;
 
 use Magento\Framework\App\Area;
@@ -17,9 +16,9 @@ use Magento\Framework\Session\Config\ConfigInterface;
 use Psr\Log\LoggerInterface;
 
 /**
- * Magento session save handler.
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class SaveHandler implements SaveHandlerInterface, ResetAfterRequestInterface
 {
     /**
@@ -127,7 +126,9 @@ class SaveHandler implements SaveHandlerInterface, ResetAfterRequestInterface
         $sessionMaxSize = $this->sessionMaxSizeConfig->getSessionMaxSize();
         $sessionSize = $sessionData !== null ? strlen($sessionData) : 0;
 
-        if ($sessionMaxSize !== null && $sessionMaxSize < $sessionSize) {
+        if ($sessionMaxSize !== null && $sessionMaxSize < $sessionSize
+            && $this->appState->getAreaCode() !== Area::AREA_ADMINHTML
+        ) {
             $sessionData = '';
             if ($this->appState->getAreaCode() === Area::AREA_FRONTEND) {
                 $this->messageManager->addErrorMessage(

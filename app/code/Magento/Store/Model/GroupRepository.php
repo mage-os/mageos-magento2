@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Store\Model;
 
@@ -14,6 +14,7 @@ use Magento\Framework\App\Config;
  *
  * @package Magento\Store\Model
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class GroupRepository implements \Magento\Store\Api\GroupRepositoryInterface
 {
     /**

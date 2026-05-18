@@ -1,8 +1,9 @@
 <?php
 /**
- * Copyright 2018 Adobe
+ * Copyright 2015 Adobe
  * All Rights Reserved.
  */
+
 declare(strict_types=1);
 
 namespace Magento\Downloadable\Api;
@@ -11,11 +12,6 @@ use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Framework\Api\ExtensibleDataInterface;
 use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestFramework\TestCase\WebapiAbstract;
-use Magento\Downloadable\Test\Fixture\DownloadableProduct as DownloadableProductFixture;
-use Magento\Framework\DataObject;
-use Magento\Framework\Webapi\Rest\Request;
-use Magento\TestFramework\Fixture\DataFixture;
-use Magento\TestFramework\Fixture\DataFixtureStorageManager;
 
 /**
  * Class ProductRepositoryTest for testing ProductRepository interface with Downloadable Product
@@ -29,11 +25,6 @@ class ProductRepositoryTest extends WebapiAbstract
 
     private const PRODUCT_SAMPLES = 'downloadable_product_samples';
     private const PRODUCT_LINKS = 'downloadable_product_links';
-
-    /**
-     * @var string|null
-     */
-    private ?string $productSkuToDeleteInTearDown = null;
 
     /**
      * @var string
@@ -57,33 +48,7 @@ class ProductRepositoryTest extends WebapiAbstract
     /**
      * Execute per test cleanup
      */
-    /**
-     * @inheritdoc
-     */
     protected function tearDown(): void
-    {
-        if ($this->productSkuToDeleteInTearDown !== null) {
-            $sku = $this->productSkuToDeleteInTearDown;
-            $this->productSkuToDeleteInTearDown = null;
-            try {
-                $this->deleteProductBySku($sku);
-            } catch (\Throwable $e) {
-                // Product may already be gone (e.g. HTTP vs CLI DB mismatch) or removed by fixture revert.
-            }
-        } else {
-            $this->deleteProductBySku(self::PRODUCT_SKU);
-        }
-
-        parent::tearDown();
-
-        $objectManager = Bootstrap::getObjectManager();
-
-        /** @var DomainManagerInterface $domainManager */
-        $domainManager = $objectManager->get(DomainManagerInterface::class);
-        $domainManager->removeDomains(['www.example.com']);
-    }
-
-    protected function bktearDown(): void
     {
         $this->deleteProductBySku(self::PRODUCT_SKU);
         parent::tearDown();
@@ -222,68 +187,44 @@ class ProductRepositoryTest extends WebapiAbstract
         return $response;
     }
 
-    #[
-        DataFixture(
-            DownloadableProductFixture::class,
-            [
-                'sku' => 'sku-test-product-downloadable-%uniqid%',
-                'name' => 'Fixture downloadable %uniqid%',
-                'price' => 10,
-                'extension_attributes' => [
-                    'website_ids' => [1],
-                    'stock_item' => [
-                        'use_config_manage_stock' => true,
-                        'qty' => 100,
-                        'is_qty_decimal' => false,
-                        'is_in_stock' => true,
-                    ],
-                    'downloadable_product_links' => [
-                        [
-                            'title' => 'link1',
-                            'link_type' => 'url',
-                            'price' => 2.0,
-                            'is_shareable' => 1,
-                            'number_of_downloads' => 0,
-                            'sort_order' => 10,
-                        ],
-                        [
-                            'title' => 'link2',
-                            'link_type' => 'url',
-                            'price' => 3.0,
-                            'is_shareable' => 0,
-                            'number_of_downloads' => 100,
-                            'sort_order' => 20,
-                        ],
-                    ],
-                    'downloadable_product_samples' => [
-                        [
-                            'title' => 'sample1',
-                            'sort_order' => 10,
-                            'sample_type' => 'url',
-                            'sample_url' => 'http://example.com/sample.jpg',
-                        ],
-                    ],
-                ],
-            ],
-            'downloadableProduct'
-        )
-    ]
-    public function testCreateDownloadableProduct(): void
+    /**
+     * Create a downloadable product with two links and two samples
+     */
+    public function testCreateDownloadableProduct()
     {
-        /** @var DataObject $productData */
-        $productData = DataFixtureStorageManager::getStorage()->get('downloadableProduct');
-        $sku = (string) $productData->getData(ProductInterface::SKU);
+        $response = $this->createDownloadableProduct();
+        $this->assertTrue(
+            isset($response[ExtensibleDataInterface::EXTENSION_ATTRIBUTES_KEY]["downloadable_product_links"])
+        );
+        $this->assertTrue(
+            isset($response[ExtensibleDataInterface::EXTENSION_ATTRIBUTES_KEY]["downloadable_product_samples"])
+        );
+        $resultLinks
+            = $response[ExtensibleDataInterface::EXTENSION_ATTRIBUTES_KEY]["downloadable_product_links"];
+        $this->assertCount(2, $resultLinks);
+        $this->assertTrue(isset($resultLinks[0]['id']));
+        $this->assertTrue(isset($resultLinks[0]['link_file']));
+        $this->assertTrue(isset($resultLinks[0]['sample_file']));
+        unset($resultLinks[0]['id']);
+        unset($resultLinks[0]['link_file']);
+        unset($resultLinks[0]['sample_file']);
+        $this->assertTrue(isset($resultLinks[1]['id']));
+        unset($resultLinks[1]['id']);
 
-        $this->productSkuToDeleteInTearDown = $sku;
+        $expectedLinkData = $this->getExpectedLinkData();
+        $this->assertEquals($expectedLinkData, $resultLinks);
 
-        $response = $this->getProduct($sku);
+        $resultSamples = $response[ExtensibleDataInterface::EXTENSION_ATTRIBUTES_KEY]["downloadable_product_samples"];
+        $this->assertCount(2, $resultSamples);
+        $this->assertTrue(isset($resultSamples[0]['id']));
+        unset($resultSamples[0]['id']);
+        $this->assertTrue(isset($resultSamples[1]['id']));
+        $this->assertTrue(isset($resultSamples[1]['sample_file']));
+        unset($resultSamples[1]['sample_file']);
+        unset($resultSamples[1]['id']);
 
-        $this->assertSame($sku, $response[ProductInterface::SKU]);
-        $this->assertSame('downloadable', $response['type_id']);
-
-        $ext = $response[ExtensibleDataInterface::EXTENSION_ATTRIBUTES_KEY] ?? [];
-        $this->assertNotEmpty($ext['downloadable_product_links'] ?? null);
-        $this->assertNotEmpty($ext['downloadable_product_samples'] ?? null);
+        $expectedSampleData = $this->getExpectedSampleData();
+        $this->assertEquals($expectedSampleData, $resultSamples);
     }
 
     /**

@@ -535,15 +535,11 @@ class Carrier extends AbstractDhl implements CarrierInterface
         $this->setStore($request->getStoreId());
 
         $requestObject = new DataObject();
-
         $requestObject->setIsGenerateLabelReturn($request->getIsGenerateLabelReturn());
-
         $requestObject->setStoreId($request->getStoreId());
-
         if ($request->getLimitMethod()) {
             $requestObject->setService($request->getLimitMethod());
         }
-
         $requestObject = $this->_addParams($requestObject);
 
         /** setting destination city name in case of guest customer specific to DHL REST API */
@@ -629,7 +625,6 @@ class Carrier extends AbstractDhl implements CarrierInterface
         }
 
         $requestObject->setBaseSubtotalInclTax($request->getBaseSubtotalInclTax());
-
         $this->setRawRequest($requestObject);
 
         return $this;
@@ -2261,7 +2256,7 @@ class Carrier extends AbstractDhl implements CarrierInterface
                     $nodeExportItem['description'] = $itemData['name'];
                     $nodeExportItem['price'] = (int)$itemData['price'];
                     $nodeExportItem['quantity']['value'] = (int)$itemData['qty'];
-                    $nodeExportItem['quantity']['unitOfMeasurement'] = self::UNIT_OF_MEASUREMENT_PCS;
+                    $nodeExportItem['quantity']['unitOfMeasurement'] = 'PCS';
                     $nodeExportItem['weight']['netValue'] = (int)$itemData['weight'];
                     $nodeExportItem['weight']['grossValue'] = (int)$itemData['weight'];
                     $nodeExportItem['manufacturerCountry'] = $rawRequest->getShipperAddressCountryCode();
@@ -2293,13 +2288,13 @@ class Carrier extends AbstractDhl implements CarrierInterface
             "productCode" => $rawRequest->getShippingMethod(),
             "accounts" => [
                 [
-                    "typeCode" => self::SHIPPER,
+                    "typeCode" => "shipper",
                     "number" => $this->getConfigData('account'),
                 ]
             ],
             "valueAddedServices" => [
                 [
-                    "serviceCode" => self::SERVICES_CODE_I_I,
+                    "serviceCode" => "II",
                     "value" => 10
                 ]
             ],
@@ -2332,7 +2327,7 @@ class Carrier extends AbstractDhl implements CarrierInterface
             "content" => array_merge([
                 "packages" => $packages,
                 "description" => "Shipment",
-                "incoterm" => self::INCOTERM_DAP,
+                "incoterm" => "DAP",
                 "unitOfMeasurement" => $packageWeightUnit
             ], $dutiable)
         ];

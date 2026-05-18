@@ -50,7 +50,7 @@ trait MockCreationTrait
         } else {
             $mockBuilder->setConstructorArgs($constructorArgs);
         }
-
+        
         return $mockBuilder->getMock();
     }
 

@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2016 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -17,9 +17,13 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\Builder\InvocationMocker;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 class ComposerInformationTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var ComposerInformation
      */
@@ -53,12 +57,11 @@ class ComposerInformationTest extends TestCase
         $this->lockerMock = $this->getMockBuilder(Locker::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->lockerRepositoryMock = $this->getMockBuilder(LockArrayRepository::class)
-            ->onlyMethods(['getPackages'])
-            ->addMethods(['getLockedRepository'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->packageMock = $this->getMockForAbstractClass(CompletePackageInterface::class);
+        $this->lockerRepositoryMock = $this->createPartialMockWithReflection(
+            LockArrayRepository::class,
+            ['getPackages', 'getLockedRepository']
+        );
+        $this->packageMock = $this->createMock(CompletePackageInterface::class);
         $this->lockerMock->method('getLockedRepository')->willReturn($this->lockerRepositoryMock);
         $this->packageMock->method('getType')->willReturn('metapackage');
         $this->packageMock->method('getPrettyName')->willReturn('mage-os/product-test-package-name-edition');
@@ -90,19 +93,18 @@ class ComposerInformationTest extends TestCase
 
     public function testGetRootPackage()
     {
-        $rootPackageMock = $this->getMockForAbstractClass(RootPackageInterface::class);
+        $rootPackageMock = $this->createMock(RootPackageInterface::class);
         $this->composerMock->expects($this->once())->method('getPackage')->willReturn($rootPackageMock);
         $this->assertEquals($rootPackageMock, $this->composerInformation->getRootPackage());
     }
 
     /**
      * @param string $packageName
-     * @param boolean $expected
-     * @dataProvider isMagentoRootDataProvider
-     */
+     * @param boolean $expected     */
+    #[DataProvider('isMagentoRootDataProvider')]
     public function testIsMagentoRoot($packageName, $expected)
     {
-        $rootPackageMock = $this->getMockForAbstractClass(RootPackageInterface::class);
+        $rootPackageMock = $this->createMock(RootPackageInterface::class);
         $this->composerMock->expects($this->once())->method('getPackage')->willReturn($rootPackageMock);
         $rootPackageMock->method('getName')->willReturn($packageName);
         $this->assertEquals($expected, $this->composerInformation->isMagentoRoot());
@@ -117,6 +119,33 @@ class ComposerInformationTest extends TestCase
             ['mage-os/magento2ce', true],
             ['mage-os/magento2ee', true],
             ['namespace/package', false],
+        ];
+    }
+
+    /**
+     * @param string $packageName
+     * @param boolean $expected
+     * @dataProvider isSystemPackageDataProvider
+     */
+    public function testIsSystemPackage($packageName, $expected)
+    {
+        $this->assertEquals($expected, $this->composerInformation->isSystemPackage($packageName));
+    }
+
+    /**
+     * @return array
+     */
+    public static function isSystemPackageDataProvider()
+    {
+        return [
+            ['mage-os/product-community-edition', true],
+            ['mage-os/product-enterprise-edition', true],
+            ['mage-os/product-minimal', true],
+            ['mage-os/product-custom-build', true],
+            ['magento/product-community-edition', false],
+            ['mage-os/module-something', false],
+            ['namespace/package', false],
+            ['mage-os/product-', false],
         ];
     }
 }

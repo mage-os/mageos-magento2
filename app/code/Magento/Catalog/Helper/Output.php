@@ -48,7 +48,7 @@ class Output extends AbstractHelper
     protected $_catalogData = null;
 
     /**
-     * Eav config helper
+     * Eav config model
      *
      * @var Config
      */
@@ -171,7 +171,7 @@ class Output extends AbstractHelper
             $attribute->getId() &&
             $attribute->getFrontendInput() !== 'media_image' &&
             (!$attribute->getIsHtmlAllowedOnFront() &&
-                !$attribute->getIsWysiwygEnabled())
+            !$attribute->getIsWysiwygEnabled())
         ) {
             if ($attribute->getFrontendInput() !== 'price') {
                 $attributeHtml = $this->_escaper->escapeHtml($attributeHtml);
@@ -213,7 +213,7 @@ class Output extends AbstractHelper
         if ($attribute &&
             $attribute->getFrontendInput() !== 'image' &&
             (!$attribute->getIsHtmlAllowedOnFront() &&
-                !$attribute->getIsWysiwygEnabled())
+            !$attribute->getIsWysiwygEnabled())
         ) {
             $attributeHtml = $this->_escaper->escapeHtml($attributeHtml);
         }
@@ -265,31 +265,24 @@ class Output extends AbstractHelper
         }
 
         $trimmed = trim($attributeString);
-        $hasQuotesOrEquals = strpos($trimmed, '=') !== false
-            || strpos($trimmed, '"') !== false
-            || strpos($trimmed, "'") !== false;
 
-        if (!$hasQuotesOrEquals) {
+        if (!preg_match_all('/([a-z0-9_-]+)(?:=(["\'])([^"\']*)\2)?/i', $trimmed, $matches, PREG_SET_ORDER)) {
             $attrName = strtolower($trimmed);
             if ($this->validatePattern($attrName)) {
-                return ' ' . $trimmed;
+                return $trimmed;
             }
-            return ' ' . $this->_escaper->escapeHtmlAttr($attributeString);
-        }
-
-        if (!preg_match_all('/([a-z0-9_-]+)(?:=(["\'])([^"\']*)\2)?/i', $attributeString, $matches, PREG_SET_ORDER)) {
-            return ' ' . $this->_escaper->escapeHtmlAttr($attributeString);
+            return $this->_escaper->escapeHtmlAttr($attributeString);
         }
 
         foreach ($matches as $match) {
             $attrName = strtolower(trim($match[1]));
 
             if (!$this->validatePattern($attrName)) {
-                return ' ' . $this->_escaper->escapeHtmlAttr($attributeString);
+                return $this->_escaper->escapeHtmlAttr($attributeString);
             }
 
             if (isset($match[3]) && $this->validateContent($match[3])) {
-                return ' ' . $this->_escaper->escapeHtmlAttr($attributeString);
+                return $this->_escaper->escapeHtmlAttr($attributeString);
             }
         }
 
@@ -301,7 +294,7 @@ class Output extends AbstractHelper
             $attributeString
         );
 
-        return ' ' . $parsed;
+        return $parsed;
     }
 
     /**

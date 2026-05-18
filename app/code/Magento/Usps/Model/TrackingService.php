@@ -241,6 +241,7 @@ class TrackingService
             // Fallback to original behavior if GMTOffset not available
             $eventTimestamp = new \DateTime($eventTimestampStr);
         }
+
         $date = $eventTimestamp->format('Y-m-d');
         $time = $eventTimestamp->format('H:i:s');
 

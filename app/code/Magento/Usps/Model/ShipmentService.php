@@ -2,6 +2,16 @@
 /**
  * Copyright 2025 Adobe
  * All Rights Reserved.
+ *
+ * NOTICE: All information contained herein is, and remains
+ * the property of Adobe and its suppliers, if any. The intellectual
+ * and technical concepts contained herein are proprietary to Adobe
+ * and its suppliers and are protected by all applicable intellectual
+ * property laws, including trade secret and copyright laws.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from Adobe.
+ *
  */
 
 declare(strict_types=1);
@@ -65,11 +75,6 @@ class ShipmentService
     private const AUTHORIZATION_BEARER = 'Bearer ';
     private const ERROR_LOG_MESSAGE = '---Exception from auth api---';
     private const ACCEPT_HEADER = 'application/vnd.usps.labels+json';
-
-    /**
-     * Minimum US postal code length to trigger USPS API call.
-     */
-    private const US_POSTCODE_MIN_LENGTH = 4;
 
     /**
      * @var CollectionFactory
@@ -189,6 +194,19 @@ class ShipmentService
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @throws LocalizedException
      */
+    /**
+     * Minimum US postal code length to trigger USPS API call.
+     *
+     */
+    private const US_POSTCODE_MIN_LENGTH = 4;
+
+    /**
+     * Get Quote response in JSON
+     *
+     * @return Result
+     * @throws LocalizedException
+     * @throws \Throwable
+     */
     public function getJsonQuotes(): Result
     {
         $request = $this->carrierModel->getRawRequest();
@@ -208,7 +226,6 @@ class ShipmentService
         }
 
         $requestParam = $this->_buildJsonQuotesRequestParam($request);
-
         $headers = [
             'Content-Type' => self::CONTENT_TYPE_JSON,
             'Authorization' => self::AUTHORIZATION_BEARER . $accessToken
@@ -710,6 +727,10 @@ class ShipmentService
         $errorMessage = [];
         if (isset($response['error'])) {
             $error = $response['error'];
+            // TEMPORARY: Log full USPS error structure to identify exact error code/source
+            $this->_logger->warning(
+                'USPS_LABEL_ERROR_FULL_RESPONSE: ' . json_encode($response)
+            );
             if (isset($error['errors']) && is_array($error['errors'])) {
                 foreach ($error['errors'] as $errorDetail) {
                     $errorMessage[] = $errorDetail['detail'];

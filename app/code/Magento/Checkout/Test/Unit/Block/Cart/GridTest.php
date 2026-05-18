@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2017 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -10,6 +10,7 @@ namespace Magento\Checkout\Test\Unit\Block\Cart;
 use Magento\Checkout\Block\Cart\Grid;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface;
+use Magento\Framework\App\CacheInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Framework\View\LayoutInterface;
@@ -75,6 +76,11 @@ class GridTest extends TestCase
     private $pagerBlockMock;
 
     /**
+     * @var MockObject
+     */
+    private $cacheMock;
+
+    /**
      * @inheritDoc
      */
     protected function setUp(): void
@@ -86,10 +92,8 @@ class GridTest extends TestCase
                 ->onlyMethods(['create'])
                 ->getMock();
         $this->joinAttributeProcessorMock =
-            $this->getMockBuilder(JoinProcessorInterface::class)
-                ->getMockForAbstractClass();
-        $this->scopeConfigMock = $this->getMockBuilder(ScopeConfigInterface::class)
-            ->getMockForAbstractClass();
+            $this->createMock(JoinProcessorInterface::class);
+        $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
         $this->checkoutSessionMock = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -99,13 +103,13 @@ class GridTest extends TestCase
             ->onlyMethods(['getAllVisibleItems', 'getItemsCount'])
             ->disableOriginalConstructor()
             ->getMock();
-        $this->layoutMock = $this->getMockBuilder(LayoutInterface::class)
-            ->getMockForAbstractClass();
+        $this->layoutMock = $this->createMock(LayoutInterface::class);
         $this->pagerBlockMock = $this->getMockBuilder(Pager::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->checkoutSessionMock->expects($this->any())->method('getQuote')->willReturn($this->quoteMock);
-        $this->quoteMock->expects($this->any())->method('getAllVisibleItems')->willReturn([]);
+        $this->cacheMock = $this->createMock(CacheInterface::class);
+        $this->checkoutSessionMock->method('getQuote')->willReturn($this->quoteMock);
+        $this->quoteMock->method('getAllVisibleItems')->willReturn([]);
         $this->block = $objectManagerHelper->getObject(
             Grid::class,
             [
@@ -114,6 +118,7 @@ class GridTest extends TestCase
                 'scopeConfig' => $this->scopeConfigMock,
                 'checkoutSession' => $this->checkoutSessionMock,
                 'layout' => $this->layoutMock,
+                'cache' => $this->cacheMock,
                 'data' => ['template' => 'cart/form1.phtml']
             ]
         );
@@ -194,7 +199,7 @@ class GridTest extends TestCase
             ->expects($this->once())
             ->method('create')
             ->willReturn($this->itemCollectionMock);
-        $this->checkoutSessionMock->expects($this->any())->method('getQuote')->willReturn($this->quoteMock);
+        $this->checkoutSessionMock->method('getQuote')->willReturn($this->quoteMock);
         $this->itemCollectionMock->expects($this->once())->method('setQuote')->with($this->quoteMock)->willReturnSelf();
         $this->itemCollectionMock
             ->expects($this->once())
@@ -213,10 +218,8 @@ class GridTest extends TestCase
         $itemMock = $this->getMockBuilder(Item::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $storeManager = $this->getMockBuilder(StoreManagerInterface::class)
-            ->getMockForAbstractClass();
-        $storeMock = $this->getMockBuilder(StoreInterface::class)
-            ->getMockForAbstractClass();
+        $storeManager = $this->createMock(StoreManagerInterface::class);
+        $storeMock = $this->createMock(StoreInterface::class);
         $storeManager->expects($this->once())->method('getStore')->willReturn($storeMock);
         $objectManagerHelper = new ObjectManagerHelper($this);
         $this->block = $objectManagerHelper->getObject(
@@ -227,6 +230,7 @@ class GridTest extends TestCase
                 'scopeConfig' => $this->scopeConfigMock,
                 'checkoutSession' => $this->checkoutSessionMock,
                 'layout' => $this->layoutMock,
+                'cache' => $this->cacheMock,
                 'data' => ['custom_items' => [$itemMock]],
                 'storeManager' => $storeManager
             ]

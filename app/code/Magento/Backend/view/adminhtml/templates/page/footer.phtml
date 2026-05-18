@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 
 use Magento\Backend\Block\Page\Footer;
@@ -13,4 +13,20 @@ use Magento\Framework\Escaper;
 <p class="magento-version">
     <strong><?= $escaper->escapeHtml(__($block->getName())); ?></strong>
     <?= $escaper->escapeHtml(__('ver. %1', $block->getMagentoVersion())); ?>
+    <?php if ($block->isUpdateAvailable()): ?>
+        <?php
+        $latestVersion = $block->getLatestVersion();
+        $releasesUrl = $block->getReleasesUrl();
+        $isMajorMinor = $block->isMajorOrMinorUpdate();
+        ?>
+        <?php if ($latestVersion && $releasesUrl): ?>
+            <a href="<?= $escaper->escapeUrl($releasesUrl) ?>"
+               target="_blank"
+               rel="noopener noreferrer"
+               title="<?= $escaper->escapeHtmlAttr(__('View %1 releases', $block->getName())) ?>"
+               class="distro-update-notice<?= $isMajorMinor ? ' major' : '' ?>">
+                <?= $escaper->escapeHtml(__('Update available: %1', $latestVersion)) ?>
+            </a>
+        <?php endif; ?>
+    <?php endif; ?>
 </p>

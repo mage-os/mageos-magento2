@@ -159,7 +159,7 @@ class ConfigOptionsList implements ConfigOptionsListInterface
                 TextConfigOption::FRONTEND_WIZARD_TEXT,
                 ConfigOptionsListConstants::CONFIG_PATH_DB_CONNECTION_DEFAULT .
                 '/' . ConfigOptionsListConstants::KEY_INIT_STATEMENTS,
-                'Database  initial set of commands'
+                'Database  initial set of commands',
             ),
             new FlagConfigOption(
                 ConfigOptionsListConstants::INPUT_KEY_SKIP_DB_VALIDATION,

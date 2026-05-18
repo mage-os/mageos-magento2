@@ -478,7 +478,7 @@ class ShipmentServiceTest extends TestCase
         $this->carrierHelperMock->expects($this->once())
             ->method('convertMeasureWeight')
             ->willThrowException(new
-            \Magento\Framework\Measure\Exception\MeasureException(__('Conversion failed')));
+                \Magento\Framework\Measure\Exception\MeasureException(__('Conversion failed')));
 
         $this->loggerMock->expects($this->once())
             ->method('error')

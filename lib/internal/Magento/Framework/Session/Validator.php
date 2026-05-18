@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\Framework\Session;
@@ -12,6 +12,7 @@ use Magento\Framework\Phrase;
 /**
  * Session Validator
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class Validator implements ValidatorInterface
 {
     const VALIDATOR_KEY = '_session_validator_data';

@@ -1,13 +1,14 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Translation\Model\Inline;
 
 /**
  * Inline Translation config
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class Config implements \Magento\Framework\Translate\Inline\ConfigInterface
 {
     /**

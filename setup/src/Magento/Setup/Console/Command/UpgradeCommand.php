@@ -151,7 +151,7 @@ class UpgradeCommand extends AbstractSetupCommand
         try {
             $request = $input->getOptions();
             $keepGenerated = $input->getOption(self::INPUT_KEY_KEEP_GENERATED);
-
+            
             // Clean up deprecated 'SET NAMES utf8;' from database connections
             $output->writeln('<info>Cleaning up deprecated SET NAMES utf8 from database connections...</info>');
             $this->dbInitStatementsCleanup->execute();

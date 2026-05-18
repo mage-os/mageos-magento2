@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Framework\Event\Config;
 
@@ -10,6 +10,7 @@ use Magento\Framework\Serialize\SerializerInterface;
 /**
  * Provides event configuration
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class Data extends \Magento\Framework\Config\Data\Scoped
 {
     /**

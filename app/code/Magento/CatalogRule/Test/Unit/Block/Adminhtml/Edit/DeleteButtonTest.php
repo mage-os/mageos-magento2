@@ -13,6 +13,7 @@ use Magento\CatalogRule\Controller\RegistryConstants;
 use Magento\Framework\DataObject;
 use Magento\Framework\Escaper;
 use Magento\Framework\Registry;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\UrlInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -34,9 +35,9 @@ class DeleteButtonTest extends TestCase
      */
     protected $registryMock;
 
-        /**
-         * @var MockObject
-         */
+    /**
+     * @var MockObject
+     */
     protected $contextMock;
 
     /**
@@ -49,12 +50,13 @@ class DeleteButtonTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->urlBuilderMock = $this->getMockForAbstractClass(UrlInterface::class);
+        $this->urlBuilderMock = $this->createMock(UrlInterface::class);
         $this->registryMock = $this->createMock(Registry::class);
         $this->contextMock = $this->createMock(Context::class);
         $this->escaperMock = $this->createMock(Escaper::class);
 
         $this->contextMock->expects($this->any())->method('getUrlBuilder')->willReturn($this->urlBuilderMock);
+        // Add escaper mock in case the fallback mechanism uses context->getEscaper()
         $this->contextMock->expects($this->any())->method('getEscaper')->willReturn($this->escaperMock);
 
         $this->model = new DeleteButton(
@@ -117,7 +119,7 @@ class DeleteButtonTest extends TestCase
     public function testConstructorUsesContextEscaper()
     {
         // Create a separate context mock to test escaper usage
-        $contextMockForTest = $this->createMock(\Magento\Backend\Block\Widget\Context::class);
+        $contextMockForTest = $this->createMock(Context::class);
         $contextMockForTest->expects($this->any())->method('getUrlBuilder')->willReturn($this->urlBuilderMock);
         $contextMockForTest->expects($this->once())->method('getEscaper')->willReturn($this->escaperMock);
 

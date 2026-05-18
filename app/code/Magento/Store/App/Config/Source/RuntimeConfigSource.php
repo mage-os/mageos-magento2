@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2016 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Store\App\Config\Source;
 
@@ -14,6 +14,7 @@ use Magento\Framework\DB\Adapter\TableNotFoundException;
 /**
  * Config source. Retrieve all configuration for scopes from db
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class RuntimeConfigSource implements ConfigSourceInterface
 {
     /**

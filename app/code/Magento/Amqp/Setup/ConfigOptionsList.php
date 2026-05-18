@@ -55,8 +55,6 @@ class ConfigOptionsList implements ConfigOptionsListInterface
     private $connectionValidator;
 
     /**
-     * Constructor
-     *
      * @param ConnectionValidator $connectionValidator
      */
     public function __construct(ConnectionValidator $connectionValidator)

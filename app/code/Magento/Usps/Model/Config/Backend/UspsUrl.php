@@ -69,7 +69,7 @@ class UspsUrl extends Value
         if (!$isValid || (!empty($host) && !preg_match("/(?:.+\.|^)(usps|shippingapis)\.com$/i", $host))) {
             throw new ValidatorException(__('USPS API endpoint URL\'s must use usps.com or shippingapis.com'));
         }
-
+        
         return parent::beforeSave();
     }
 }

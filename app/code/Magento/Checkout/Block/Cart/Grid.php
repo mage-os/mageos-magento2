@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2017 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\Checkout\Block\Cart;
@@ -56,6 +56,7 @@ class Grid extends \Magento\Checkout\Block\Cart
      * @param \Magento\Quote\Model\ResourceModel\Quote\Item\CollectionFactory $itemCollectionFactory
      * @param \Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface $joinProcessor
      * @param array $data
+     * @param \Magento\Framework\App\CacheInterface|null $cache
      */
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
@@ -66,7 +67,8 @@ class Grid extends \Magento\Checkout\Block\Cart
         \Magento\Framework\App\Http\Context $httpContext,
         \Magento\Quote\Model\ResourceModel\Quote\Item\CollectionFactory $itemCollectionFactory,
         \Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface $joinProcessor,
-        array $data = []
+        array $data = [],
+        ?\Magento\Framework\App\CacheInterface $cache = null
     ) {
         $this->itemCollectionFactory = $itemCollectionFactory;
         $this->joinAttributeProcessor = $joinProcessor;
@@ -77,7 +79,8 @@ class Grid extends \Magento\Checkout\Block\Cart
             $catalogUrlBuilder,
             $cartHelper,
             $httpContext,
-            $data
+            $data,
+            $cache
         );
     }
 

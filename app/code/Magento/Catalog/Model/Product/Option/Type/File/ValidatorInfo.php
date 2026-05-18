@@ -7,6 +7,7 @@
 namespace Magento\Catalog\Model\Product\Option\Type\File;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Exception\InputException;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\File\Size;
@@ -15,7 +16,6 @@ use Magento\Framework\Filesystem\Io\File as IoFile;
 use Magento\MediaStorage\Helper\File\Storage\Database;
 use Magento\MediaStorage\Model\File\Validator\NotProtectedExtension;
 use Magento\Catalog\Helper\Product\Validator\ProductOptionValidator;
-use Magento\Framework\App\ObjectManager;
 
 /**
  * Validator for existing files.
@@ -58,7 +58,7 @@ class ValidatorInfo extends Validator
     private $fileValidator;
 
     /**
-     * @var ProductOptionValidator|null
+     * @var ProductOptionValidator $productOptionValidator
      */
     private $productOptionValidator;
 
@@ -88,8 +88,8 @@ class ValidatorInfo extends Validator
         $this->validateFactory = $validateFactory;
         $this->fileValidator = $fileValidator;
         $this->ioFile = $ioFile;
-        $this->productOptionValidator = $productOptionValidator
-            ?? ObjectManager::getInstance()->get(ProductOptionValidator::class);
+        $this->productOptionValidator = $productOptionValidator ??
+            ObjectManager::getInstance()->get(ProductOptionValidator::class);
         parent::__construct($scopeConfig, $filesystem, $fileSize);
     }
 
@@ -186,6 +186,7 @@ class ValidatorInfo extends Validator
      *
      * @param array $optionValue
      * @return void
+     * @throws LocalizedException
      */
     protected function initFilePath($optionValue)
     {
@@ -196,6 +197,7 @@ class ValidatorInfo extends Validator
          *              check them.
          */
         $checkPaths = [];
+
         if (isset($optionValue['quote_path'])) {
             $checkPaths[] = $optionValue['quote_path'];
         }

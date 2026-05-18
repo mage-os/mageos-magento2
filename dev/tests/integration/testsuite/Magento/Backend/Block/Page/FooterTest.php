@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\Backend\Block\Page;
@@ -30,10 +30,9 @@ class FooterTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $productMetadataMock = $this->getMockBuilder(\Magento\Framework\App\ProductMetadataInterface::class)
-            ->setMethods(['getDistributionName', 'getDistributionVersion'])
+        $productMetadataMock = $this->getMockBuilder(ProductMetadata::class)
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->getMock();
         $productMetadataMock->expects($this->once())
             ->method('getDistributionVersion')
             ->willReturn($this::TEST_PRODUCT_VERSION);
