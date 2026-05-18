@@ -83,7 +83,7 @@ class WaitAndNotWaitMessagesTest extends QueueTestCaseAbstract
     {
         if ($this->connectionType === 'stomp') {
             $this->assertSame(
-                'amqp',
+                'stomp',
                 $this->connectionType,
                 'This test is AMQP-only.'
             );
@@ -124,7 +124,7 @@ class WaitAndNotWaitMessagesTest extends QueueTestCaseAbstract
     {
         if ($this->connectionType === 'stomp') {
             $this->assertSame(
-                'amqp',
+                'stomp',
                 $this->connectionType,
                 'This test is AMQP-only.'
             );
