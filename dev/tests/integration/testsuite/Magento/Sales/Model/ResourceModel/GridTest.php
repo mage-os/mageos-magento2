@@ -74,12 +74,13 @@ class GridTest extends TestCase
             $data,
             sprintf('%s = %d', $orderIdField, $order->getEntityId())
         );
-        $mainTimes = $connection->fetchRow(
-            $connection->select()
-                ->from($constructorArgs['mainTableName'], ['created_at', 'updated_at'])
-                ->where(sprintf('%s = ?', $orderIdField), $order->getEntityId())
+        $indexerProjection = $this->fetchGridIndexerProjection(
+            $grid,
+            $constructorArgs['mainTableName'],
+            $orderIdField,
+            (int)$order->getEntityId()
         );
-        $this->assertNotEmpty($mainTimes);
+        $this->assertNotEmpty($indexerProjection);
         $cutoff = (new \DateTimeImmutable('now', new \DateTimeZone('UTC')))
             ->sub(new \DateInterval('PT1S'))
             ->format('Y-m-d H:i:s');
@@ -91,7 +92,7 @@ class GridTest extends TestCase
         $gridData = $connection->fetchRow($select);
         $this->assertEquals(
             [
-                'created_at' => $mainTimes['created_at'],
+                'created_at' => $indexerProjection['created_at'],
                 'updated_at' => $cutoff,
             ],
             $gridData
@@ -106,12 +107,13 @@ class GridTest extends TestCase
             $data,
             sprintf('%s = %d', $orderIdField, $order->getEntityId())
         );
-        $mainTimes = $connection->fetchRow(
-            $connection->select()
-                ->from($constructorArgs['mainTableName'], ['created_at', 'updated_at'])
-                ->where(sprintf('%s = ?', $orderIdField), $order->getEntityId())
+        $indexerProjection = $this->fetchGridIndexerProjection(
+            $grid,
+            $constructorArgs['mainTableName'],
+            $orderIdField,
+            (int)$order->getEntityId()
         );
-        $this->assertNotEmpty($mainTimes);
+        $this->assertNotEmpty($indexerProjection);
         $cutoff = (new \DateTimeImmutable('now', new \DateTimeZone('UTC')))
             ->sub(new \DateInterval('PT1S'))
             ->format('Y-m-d H:i:s');
@@ -123,11 +125,33 @@ class GridTest extends TestCase
         $gridData = $connection->fetchRow($select);
         $this->assertEquals(
             [
-                'created_at' => $mainTimes['created_at'],
+                'created_at' => $indexerProjection['created_at'],
                 'updated_at' => $cutoff,
             ],
             $gridData
         );
+    }
+
+    /**
+     * Timestamps Grid::refreshBySchedule pulls from main (same SELECT as indexer, before cutoff overwrite).
+     *
+     * @param Grid $grid
+     * @param string $mainTableName
+     * @param string $idField Bare column present in data provider (entity_id/order_id etc.)
+     * @param int $entityId Identifier value matched against $mainTableName.$idField
+     * @return array
+     */
+    private function fetchGridIndexerProjection(Grid $grid, string $mainTableName, string $idField, int $entityId): array
+    {
+        $connection = $grid->getConnection();
+        $row = $connection->fetchRow(
+            $grid->getGridOriginSelect()->where(
+                sprintf('%s.%s = ?', $mainTableName, $idField),
+                $entityId
+            )
+        );
+
+        return \is_array($row) ? $row : [];
     }
 
     /**
