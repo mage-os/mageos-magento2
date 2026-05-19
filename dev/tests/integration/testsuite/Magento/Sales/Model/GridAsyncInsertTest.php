@@ -18,6 +18,8 @@ use Magento\TestFramework\ObjectManager;
 
 /**
  * Class for testing asynchronous inserts into grid.
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class GridAsyncInsertTest extends \PHPUnit\Framework\TestCase
 {
@@ -85,6 +87,11 @@ class GridAsyncInsertTest extends \PHPUnit\Framework\TestCase
 
         $gridRow = $this->getGridRow($order->getEntityId());
         self::assertNotEquals($order->getStatus(), $gridRow['status']);
+
+        // refreshBySchedule() only indexes rows whose main.updated_at is at/before UTC (now-1s);
+        // the hold save bumps updated_at to "now", so wait until the row is stale enough.
+        sleep(2);
+        $order = $this->getOrder('100000001');
 
         $expectedGridUpdatedAt = (new \DateTimeImmutable('now', new \DateTimeZone('UTC')))
             ->sub(new \DateInterval('PT1S'))

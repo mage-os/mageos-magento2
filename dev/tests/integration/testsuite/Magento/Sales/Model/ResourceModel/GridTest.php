@@ -74,6 +74,12 @@ class GridTest extends TestCase
             $data,
             sprintf('%s = %d', $orderIdField, $order->getEntityId())
         );
+        $mainTimes = $connection->fetchRow(
+            $connection->select()
+                ->from($constructorArgs['mainTableName'], ['created_at', 'updated_at'])
+                ->where(sprintf('%s = ?', $orderIdField), $order->getEntityId())
+        );
+        $this->assertNotEmpty($mainTimes);
         $cutoff = (new \DateTimeImmutable('now', new \DateTimeZone('UTC')))
             ->sub(new \DateInterval('PT1S'))
             ->format('Y-m-d H:i:s');
@@ -85,7 +91,7 @@ class GridTest extends TestCase
         $gridData = $connection->fetchRow($select);
         $this->assertEquals(
             [
-                'created_at' => $data['created_at'],
+                'created_at' => $mainTimes['created_at'],
                 'updated_at' => $cutoff,
             ],
             $gridData
@@ -100,6 +106,12 @@ class GridTest extends TestCase
             $data,
             sprintf('%s = %d', $orderIdField, $order->getEntityId())
         );
+        $mainTimes = $connection->fetchRow(
+            $connection->select()
+                ->from($constructorArgs['mainTableName'], ['created_at', 'updated_at'])
+                ->where(sprintf('%s = ?', $orderIdField), $order->getEntityId())
+        );
+        $this->assertNotEmpty($mainTimes);
         $cutoff = (new \DateTimeImmutable('now', new \DateTimeZone('UTC')))
             ->sub(new \DateInterval('PT1S'))
             ->format('Y-m-d H:i:s');
@@ -111,7 +123,7 @@ class GridTest extends TestCase
         $gridData = $connection->fetchRow($select);
         $this->assertEquals(
             [
-                'created_at' => $data['created_at'],
+                'created_at' => $mainTimes['created_at'],
                 'updated_at' => $cutoff,
             ],
             $gridData
@@ -161,8 +173,11 @@ class GridTest extends TestCase
      * @param string $orderIdIndex
      */
     #[DataProvider('shipmentGridDataProvider')]
-    public function testSalesShipmentGridOrderIdFieldIndex(array $constructorArgs, string $orderIdField, string $orderIdIndex)
-    {
+    public function testSalesShipmentGridOrderIdFieldIndex(
+        array $constructorArgs,
+        string $orderIdField,
+        string $orderIdIndex
+    ) {
         $constructorArgs['orderIdField'] = $constructorArgs['mainTableName'] . '.' . $orderIdField;
         $constructorArgs['columns'] = [
             $orderIdField => $constructorArgs['orderIdField'],
