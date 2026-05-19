@@ -31,6 +31,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
  * @magentoAppArea adminhtml
  * @magentoDataFixtureBeforeTransaction Magento/Catalog/_files/enable_reindex_schedule.php
  * @magentoDataFixtureBeforeTransaction Magento/Catalog/_files/enable_catalog_product_reindex_schedule.php
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class ProductValidationTest extends ProductTestBase
 {

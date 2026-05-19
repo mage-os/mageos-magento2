@@ -22,7 +22,7 @@ class Price extends AbstractImportValidator implements RowValidatorInterface
     /**
      * Price-type fields that must not be negative
      */
-    private const array PRICE_FIELDS = [
+    private const PRICE_FIELDS = [
         'price',
         'special_price',
         'cost',
