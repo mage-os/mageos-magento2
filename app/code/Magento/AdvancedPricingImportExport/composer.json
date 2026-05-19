@@ -1,33 +1,37 @@
 {
-    "name": "magento/module-advanced-pricing-import-export",
-    "description": "N/A",
-    "config": {
-        "sort-packages": true
-    },
-    "require": {
-        "php": "~8.3.0||~8.4.0||~8.5.0",
-        "magento/framework": "*",
-        "magento/module-backend": "*",
-        "magento/module-catalog": "*",
-        "magento/module-catalog-import-export": "*",
-        "magento/module-catalog-inventory": "*",
-        "magento/module-customer": "*",
-        "magento/module-eav": "*",
-        "magento/module-import-export": "*",
-        "magento/module-store": "*",
-        "magento/module-directory": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-advanced-pricing-import-export",
+  "description": "N/A",
+  "config": {
+    "sort-packages": true
+  },
+  "require": {
+    "php": "~8.3.0||~8.4.0||~8.5.0",
+    "mage-os/framework": "3.0.0",
+    "mage-os/module-backend": "3.0.0",
+    "mage-os/module-catalog": "3.0.0",
+    "mage-os/module-catalog-import-export": "3.0.0",
+    "mage-os/module-catalog-inventory": "3.0.0",
+    "mage-os/module-customer": "3.0.0",
+    "mage-os/module-eav": "3.0.0",
+    "mage-os/module-import-export": "3.0.0",
+    "mage-os/module-store": "3.0.0",
+    "mage-os/module-directory": "3.0.0"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\AdvancedPricingImportExport\\": ""
-        }
+    "psr-4": {
+      "Magento\\AdvancedPricingImportExport\\": ""
     }
+  },
+  "version": "3.0.0",
+  "replace": {
+    "magento/module-advanced-pricing-import-export": "100.4.9"
+  }
 }
