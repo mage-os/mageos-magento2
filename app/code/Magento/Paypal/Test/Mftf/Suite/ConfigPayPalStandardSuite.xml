@@ -12,6 +12,9 @@
             <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
             <!--Config PayPal Standard-->
             <actionGroup ref="AdminPayPalStandardEnableActionGroup" stepKey="ConfigPayPalStandard"/>
+            <!-- Disable PayPal Express shortcuts on product/cart pages so the PayPal SDK script does not block page load in CI -->
+            <magentoCLI command="config:set payment/paypal_express/visible_on_product 0" stepKey="disablePayPalOnProductPage"/>
+            <magentoCLI command="config:set payment/paypal_express/visible_on_cart 0" stepKey="disablePayPalOnCart"/>
             <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanFullPageCache">
                 <argument name="tags" value="config full_page"/>
             </actionGroup>
@@ -19,6 +22,8 @@
         <after>
             <!-- Cleanup PayPal Standard configurations -->
             <magentoCLI command="config:set {{DisablePaypalPayStandard.path}} {{DisablePaypalPayStandard.value}}" stepKey="deleteMerchantId"/>
+            <magentoCLI command="config:set payment/paypal_express/visible_on_product 1" stepKey="resetPayPalOnProductPage"/>
+            <magentoCLI command="config:set payment/paypal_express/visible_on_cart 1" stepKey="resetPayPalOnCart"/>
             <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanFullPageCache">
                 <argument name="tags" value="config full_page"/>
             </actionGroup>
