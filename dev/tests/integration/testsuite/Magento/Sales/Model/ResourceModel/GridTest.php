@@ -68,7 +68,8 @@ class GridTest extends TestCase
         $this->lastUpdateTimeCache->remove($constructorArgs['gridTableName']);
         $this->assertEmpty($this->lastUpdateTimeCache->get($constructorArgs['gridTableName']));
         sleep(1);
-        $data['created_at'] = $data['updated_at'] = date('Y-m-d H:i:s');
+        $stamp = $this->formatUtcDateTime();
+        $data['created_at'] = $data['updated_at'] = $stamp;
         $connection->update(
             $constructorArgs['mainTableName'],
             $data,
@@ -101,7 +102,8 @@ class GridTest extends TestCase
         //refresh data with cached updated_at
         $this->assertNotEmpty($this->lastUpdateTimeCache->get($constructorArgs['gridTableName']));
         sleep(1);
-        $data['created_at'] = $data['updated_at'] = date('Y-m-d H:i:s');
+        $stamp = $this->formatUtcDateTime();
+        $data['created_at'] = $data['updated_at'] = $stamp;
         $connection->update(
             $constructorArgs['mainTableName'],
             $data,
@@ -141,7 +143,7 @@ class GridTest extends TestCase
      * @param int $entityId Identifier value matched against $mainTableName.$idField
      * @return array
      */
-    private function fetchGridIndexerProjection(Grid $grid, string $mainTableName, string $idField, int $entityId): array
+    private function fetchGridIndexerProjection(Grid $grid, string $mainTableName, string $idField, int $entityId)
     {
         $connection = $grid->getConnection();
         $row = $connection->fetchRow(
@@ -152,6 +154,16 @@ class GridTest extends TestCase
         );
 
         return \is_array($row) ? $row : [];
+    }
+
+    /**
+     * Same clock basis as \Magento\Sales\Model\ResourceModel\Grid::refreshBySchedule (UTC).
+     *
+     * @return string
+     */
+    private function formatUtcDateTime(): string
+    {
+        return (new \DateTimeImmutable('now', new \DateTimeZone('UTC')))->format('Y-m-d H:i:s');
     }
 
     /**
