@@ -91,13 +91,7 @@ class GridTest extends TestCase
             ->from($constructorArgs['gridTableName'], ['created_at', 'updated_at'])
             ->where($orderIdField, $order->getEntityId());
         $gridData = $connection->fetchRow($select);
-        $this->assertEquals(
-            [
-                'created_at' => $indexerProjection['created_at'],
-                'updated_at' => $cutoff,
-            ],
-            $gridData
-        );
+        $this->assertGridTimestampsRoughlyMatch($cutoff, $indexerProjection, $gridData);
 
         //refresh data with cached updated_at
         $this->assertNotEmpty($this->lastUpdateTimeCache->get($constructorArgs['gridTableName']));
@@ -125,12 +119,38 @@ class GridTest extends TestCase
             ->from($constructorArgs['gridTableName'], ['created_at', 'updated_at'])
             ->where($orderIdField, $order->getEntityId());
         $gridData = $connection->fetchRow($select);
-        $this->assertEquals(
-            [
-                'created_at' => $indexerProjection['created_at'],
-                'updated_at' => $cutoff,
-            ],
-            $gridData
+        $this->assertGridTimestampsRoughlyMatch($cutoff, $indexerProjection, $gridData);
+    }
+
+    /**
+     * Grid stamps updated_at with UTC(now - 1s) computed inside refresh; tests compute cutoff outside first,
+     * so clocks can disagree by one second. created_at mirrors main via indexer SELECT but TIMESTAMP storage
+     * can shift reads by one second vs PHP-format expectations.
+     *
+     * @param string $approxCutoffUtc
+     * @param array $indexerProjection
+     * @param array|false $gridData
+     * @return void
+     */
+    private function assertGridTimestampsRoughlyMatch(string $approxCutoffUtc, array $indexerProjection, $gridData): void
+    {
+        $this->assertIsArray($gridData);
+        $this->assertArrayHasKey('created_at', $gridData);
+        $this->assertArrayHasKey('updated_at', $gridData);
+
+        $slackSeconds = 2.0;
+
+        $this->assertEqualsWithDelta(
+            strtotime($approxCutoffUtc),
+            strtotime((string)$gridData['updated_at']),
+            $slackSeconds,
+            'Grid updated_at should reflect UTC cutoff (± slack across refresh boundary).'
+        );
+        $this->assertEqualsWithDelta(
+            strtotime((string)$indexerProjection['created_at']),
+            strtotime((string)$gridData['created_at']),
+            $slackSeconds,
+            'Grid created_at should mirror indexer projection within TIMESTAMP slack.'
         );
     }
 
@@ -143,7 +163,7 @@ class GridTest extends TestCase
      * @param int $entityId Identifier value matched against $mainTableName.$idField
      * @return array
      */
-    private function fetchGridIndexerProjection(Grid $grid, string $mainTableName, string $idField, int $entityId)
+    private function fetchGridIndexerProjection(Grid $grid, string $mainTableName, string $idField, int $entityId): array
     {
         $connection = $grid->getConnection();
         $row = $connection->fetchRow(
