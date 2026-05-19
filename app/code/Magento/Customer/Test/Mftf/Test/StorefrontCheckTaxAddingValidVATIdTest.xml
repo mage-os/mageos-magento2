@@ -131,6 +131,7 @@
             <actionGroup ref="AdminDeleteCustomerGroupActionGroup" stepKey="deleteCustomerGroup">
                 <argument name="customerGroupName" value="test_UK"/>
             </actionGroup>
+            <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="clearCustomerGroupsGridFiltersAfter"/>
 
             <createData entity="SetCustomerCreateNewAccountOptionsDefaultConfig" stepKey="setCustomerCreateNewAccountOptionsDefaultConfig"/>
             <deleteData createDataKey="createProduct" stepKey="deleteSimpleProduct"/>
@@ -144,7 +145,6 @@
             <actionGroup ref="DeleteCustomerByEmailActionGroup" stepKey="deleteCustomer">
                 <argument name="email" value="{{CustomerEntityOne.email}}"/>
             </actionGroup>
-            <actionGroup ref="ResetAdminDataGridToDefaultViewActionGroup" stepKey="resetGrid"/>
 
            <!--Log Out-->
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
