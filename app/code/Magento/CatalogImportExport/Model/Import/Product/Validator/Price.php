@@ -22,19 +22,6 @@ class Price extends AbstractImportValidator implements RowValidatorInterface
     public const ERROR_NEGATIVE_PRICE_VALUE = 'invalidNegativePriceValue';
 
     /**
-     * Fallback list used when dynamic attribute discovery is unavailable
-     */
-    private const PRICE_FIELDS = [
-        'price',
-        'special_price',
-        'cost',
-        'map_price',
-        'minimal_price',
-        'msrp_price',
-        'msrp',
-    ];
-
-    /**
      * @var ProductAttributeRepositoryInterface
      */
     private ProductAttributeRepositoryInterface $attributeRepository;
@@ -74,9 +61,6 @@ class Price extends AbstractImportValidator implements RowValidatorInterface
             fn ($attr) => $attr->getAttributeCode(),
             $attributes
         );
-        if (empty($this->priceAttributeCodes)) {
-            $this->priceAttributeCodes = self::PRICE_FIELDS;
-        }
         return parent::init($context);
     }
 
@@ -88,7 +72,6 @@ class Price extends AbstractImportValidator implements RowValidatorInterface
         $this->_clearMessages();
         $valid = true;
         $emptyConstant = $this->context->getEmptyAttributeValueConstant();
-        $template = $this->context->retrieveMessageTemplate(self::ERROR_NEGATIVE_PRICE_VALUE);
 
         foreach ($this->priceAttributeCodes as $field) {
             if (!isset($value[$field])) {
@@ -102,7 +85,10 @@ class Price extends AbstractImportValidator implements RowValidatorInterface
                 continue;
             }
             if (is_numeric($fieldValue) && (float) $fieldValue < 0) {
-                $this->_addMessages([sprintf($template, $field)]);
+                $this->_addMessages([(string) __(
+                    'The %fieldName value of "%value" must be greater than or equal to %minValue.',
+                    ['fieldName' => $field, 'value' => $fieldValue, 'minValue' => 0]
+                )]);
                 $valid = false;
             }
         }

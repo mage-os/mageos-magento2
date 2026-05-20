@@ -52,8 +52,6 @@ class PriceTest extends TestCase
         $contextStub = $this->createMock(Product::class);
         $contextStub->method('getEmptyAttributeValueConstant')
             ->willReturn(Import::DEFAULT_EMPTY_ATTRIBUTE_VALUE_CONSTANT);
-        $contextStub->method('retrieveMessageTemplate')
-            ->willReturn("Value for '%s' attribute must be zero or greater");
         $this->price->init($contextStub);
     }
 
@@ -118,31 +116,5 @@ class PriceTest extends TestCase
     {
         $this->assertTrue($this->price->isValid(['price' => '99']));
         $this->assertSame([], $this->price->getMessages());
-    }
-
-    public function testFallbackToStaticListWhenRepositoryReturnsEmpty(): void
-    {
-        $searchCriteria = $this->createMock(SearchCriteria::class);
-
-        $searchCriteriaBuilder = $this->createMock(SearchCriteriaBuilder::class);
-        $searchCriteriaBuilder->method('addFilter')->willReturnSelf();
-        $searchCriteriaBuilder->method('create')->willReturn($searchCriteria);
-
-        $searchResult = $this->createMock(ProductAttributeSearchResultsInterface::class);
-        $searchResult->method('getItems')->willReturn([]);
-
-        $attributeRepository = $this->createMock(ProductAttributeRepositoryInterface::class);
-        $attributeRepository->method('getList')->willReturn($searchResult);
-
-        $price = new Price($attributeRepository, $searchCriteriaBuilder);
-
-        $contextStub = $this->createMock(Product::class);
-        $contextStub->method('getEmptyAttributeValueConstant')
-            ->willReturn(Import::DEFAULT_EMPTY_ATTRIBUTE_VALUE_CONSTANT);
-        $contextStub->method('retrieveMessageTemplate')
-            ->willReturn("Value for '%s' attribute must be zero or greater");
-        $price->init($contextStub);
-
-        $this->assertFalse($price->isValid(['price' => '-5']));
     }
 }

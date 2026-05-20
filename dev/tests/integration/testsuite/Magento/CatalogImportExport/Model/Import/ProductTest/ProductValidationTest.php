@@ -400,7 +400,7 @@ class ProductValidationTest extends ProductTestBase
         $errors = $this->createImportModel($pathToFile)->validateData();
         $this->assertErrorsCount(1, $errors);
         $this->assertStringContainsString(
-            "must be zero or greater",
+            "must be greater than or equal to",
             $errors->getErrorByRowNumber(0)[0]->getErrorMessage()
         );
     }
