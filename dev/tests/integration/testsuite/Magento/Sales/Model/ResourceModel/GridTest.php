@@ -133,14 +133,15 @@ class GridTest extends TestCase
      *
      * @param string $approxCutoffUtc
      * @param array $indexerProjection
-     * @param array|false $gridData
+     * @param mixed $gridData
      * @return void
      */
     private function assertGridTimestampsRoughlyMatch(
-        string $approxCutoffUtc, 
-        array $indexerProjection, 
-        $gridData
-    ) {
+        string $approxCutoffUtc,
+        array $indexerProjection,
+        mixed $gridData
+    ): void
+    {
         $this->assertIsArray($gridData);
         $this->assertArrayHasKey('created_at', $gridData);
         $this->assertArrayHasKey('updated_at', $gridData);
@@ -171,10 +172,11 @@ class GridTest extends TestCase
      * @return array
      */
     private function fetchGridIndexerProjection(
-        Grid $grid, 
-        string $mainTableName, 
-        string $idField, 
-        int $entityId): array
+        Grid $grid,
+        string $mainTableName,
+        string $idField,
+        int $entityId
+    ): array
     {
         $connection = $grid->getConnection();
         $row = $connection->fetchRow(
