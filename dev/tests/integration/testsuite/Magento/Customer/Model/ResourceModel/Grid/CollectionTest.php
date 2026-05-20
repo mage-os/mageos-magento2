@@ -55,10 +55,8 @@ class CollectionTest extends TestCase
         $this->assertNotEmpty($item);
         $this->assertSame($newCustomer->getEmail(), $item->getEmail());
         $this->assertSame('test street test city Armed Forces Middle East 01001', $item->getBillingFull());
-
         /** set customer grid indexer on schedule' mode */
         $indexer->setScheduled(true);
-
         /** Verify after update */
         $newCustomer->setEmail('customer_updated@example.com');
         $this->customerRepository->save($newCustomer);

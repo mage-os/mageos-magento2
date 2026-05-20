@@ -9,8 +9,8 @@ namespace Magento\AdminAnalytics\Test\Unit\Condition;
 
 use Magento\AdminAnalytics\Model\Condition\CanViewNotification;
 use Magento\AdminAnalytics\Model\ResourceModel\Viewer\Logger;
-use Magento\AdminAnalytics\Model\Viewer\Log;
 use Magento\Framework\App\CacheInterface;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\ProductMetadataInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -28,11 +28,11 @@ class CanViewNotificationTest extends TestCase
     /** @var ProductMetadataInterface|MockObject */
     private $productMetadataMock;
 
-    /** @var  Log|MockObject */
-    private $logMock;
-
     /** @var MockObject|CacheInterface $cacheStorageMock */
     private $cacheStorageMock;
+
+    /** @var (ScopeConfigInterface&MockObject)  */
+    private $scopeConfigMock;
 
     protected function setUp(): void
     {
@@ -40,6 +40,7 @@ class CanViewNotificationTest extends TestCase
         $this->logMock = $this->createMock(Log::class);
         $this->viewerLoggerMock = $this->createMock(Logger::class);
         $this->productMetadataMock = $this->createMock(ProductMetadataInterface::class);
+        $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
         $objectManager = new ObjectManager($this);
         $this->canViewNotification = $objectManager->getObject(
             CanViewNotification::class,
@@ -47,6 +48,7 @@ class CanViewNotificationTest extends TestCase
                 'viewerLogger' => $this->viewerLoggerMock,
                 'productMetadata' => $this->productMetadataMock,
                 'cacheStorage' => $this->cacheStorageMock,
+                'scopeConfig' => $this->scopeConfigMock,
             ]
         );
     }
@@ -57,7 +59,7 @@ class CanViewNotificationTest extends TestCase
      * @param $logExists
      */
     #[DataProvider('isVisibleProvider')]
-    public function testIsVisibleLoadDataFromLog($expected, $cacheResponse, $logExists)
+    public function testIsVisibleLoadDataFromLog($expected, $cacheResponse, $logExists, $configEnabled)
     {
         $this->cacheStorageMock->expects($this->once())
             ->method('load')
@@ -69,6 +71,7 @@ class CanViewNotificationTest extends TestCase
         $this->cacheStorageMock
             ->method('save')
             ->with('log-exists', 'admin-usage-notification-popup');
+        $this->scopeConfigMock->method('isSetFlag')->with('admin/usage/enabled')->willReturn($configEnabled);
         $this->assertEquals($expected, $this->canViewNotification->isVisible([]));
     }
 
@@ -78,9 +81,10 @@ class CanViewNotificationTest extends TestCase
     public static function isVisibleProvider()
     {
         return [
-            [true, false, false],
-            [false, 'log-exists', true],
-            [false, false, true],
+            [true, false, false, true], // first login, no cache, config enabled
+            [false, false, false, false], // first login, no cache, config disabled
+            [false, 'log-exists', true, true], // first login, cache exists, config enabled
+            [false, false, true, true], // first login, cache exists, config enabled
         ];
     }
 }

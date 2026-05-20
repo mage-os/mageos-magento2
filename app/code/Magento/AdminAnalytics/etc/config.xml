@@ -9,9 +9,7 @@
     <default>
         <admin>
             <usage>
-                <enabled>
-                    1
-                </enabled>
+                <enabled>0</enabled>
             </usage>
         </admin>
     </default>

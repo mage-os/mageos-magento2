@@ -56,10 +56,13 @@ class LoginTest extends TestCase
         $this->objectManager = Bootstrap::getObjectManager();
         $this->layout = $this->objectManager->get(LayoutInterface::class);
 
-        $buttonLock = $this->createConfiguredStub(ButtonLockInterface::class, [
-            'getCode' => self::LOGIN_SUBMIT_BUTTON_LOCK_CODE,
-            'isDisabled' => false,
-        ]);
+        $code = 'customer_login_form_submit';
+        $buttonLock = $this->getMockBuilder(ButtonLockInterface::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['isDisabled', 'getCode'])
+            ->getMock();
+        $buttonLock->expects($this->any())->method('getCode')->willReturn($code);
+        $buttonLock->expects($this->any())->method('isDisabled')->willReturn(false);
         $buttonLockManager = $this->objectManager->create(
             ButtonLockManager::class,
             ['buttonLockPool' => [self::LOGIN_SUBMIT_BUTTON_LOCK_CODE => $buttonLock]]

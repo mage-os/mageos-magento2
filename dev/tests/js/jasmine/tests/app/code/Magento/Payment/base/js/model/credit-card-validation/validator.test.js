@@ -20,5 +20,14 @@ define([
             expect($.validator.methods['validate-card-year']((year - 1).toString())).toBeFalsy();
             expect($.validator.methods['validate-card-year']((year + 1).toString())).toBeTruthy();
         });
+
+        it('Check credit card type validator.', function () {
+            var typeValidator = $.validator.methods['validate-card-type'];
+
+            expect(typeValidator('4111111111111111', null, [{type: 'Visa'}])).toBeTruthy();
+            expect(typeValidator('1111111111111111', null, [{type: 'Visa'}])).toBeFalsy();
+            expect(typeValidator('6759411100000008', null, [{type: 'Maestro Domestic'}])).toBeTruthy();
+            expect(typeValidator('4111676770111115', null, [{type: 'Maestro Domestic'}])).toBeFalsy();
+        });
     });
 });

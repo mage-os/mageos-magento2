@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\ConfigurableProduct\Model\Inventory;
 
+use Magento\Catalog\Model\Product\Type;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
 use Magento\Catalog\Api\Data\ProductInterface as Product;
 use Magento\CatalogInventory\Api\StockItemCriteriaInterfaceFactory;
@@ -20,10 +21,7 @@ use Magento\Framework\App\ObjectManager;
  */
 class ParentItemProcessor implements ParentItemProcessorInterface
 {
-    /**
-     * @var ChangeParentStockStatus
-     */
-    private $changeParentStockStatus;
+    private ChangeParentStockStatus $changeParentStockStatus;
 
     /**
      * @param Configurable $configurableType
@@ -50,8 +48,12 @@ class ParentItemProcessor implements ParentItemProcessorInterface
      * @param Product $product
      * @return void
      */
-    public function process(Product $product)
+    public function process(Product $product): void
     {
-        $this->changeParentStockStatus->execute([$product->getId()]);
+        if ($product->getTypeId() === Type::TYPE_SIMPLE) {
+            $this->changeParentStockStatus->execute([$product->getId()]);
+        } elseif ($product->getTypeId() === Configurable::TYPE_CODE) {
+            $this->changeParentStockStatus->executeFromParent((int)$product->getId());
+        }
     }
 }
