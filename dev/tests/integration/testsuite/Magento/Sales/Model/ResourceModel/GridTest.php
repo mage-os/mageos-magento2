@@ -75,6 +75,8 @@ class GridTest extends TestCase
             $data,
             sprintf('%s = %d', $orderIdField, $order->getEntityId())
         );
+        // Age past UTC(now-1s) cutoff used inside refreshBySchedule / getIdsWithCutoff.
+        sleep(2);
         $indexerProjection = $this->fetchGridIndexerProjection(
             $grid,
             $constructorArgs['mainTableName'],
@@ -103,6 +105,8 @@ class GridTest extends TestCase
             $data,
             sprintf('%s = %d', $orderIdField, $order->getEntityId())
         );
+        // Age past UTC(now-1s) cutoff used inside refreshBySchedule / getIdsWithCutoff.
+        sleep(2);
         $indexerProjection = $this->fetchGridIndexerProjection(
             $grid,
             $constructorArgs['mainTableName'],
@@ -132,8 +136,11 @@ class GridTest extends TestCase
      * @param array|false $gridData
      * @return void
      */
-    private function assertGridTimestampsRoughlyMatch(string $approxCutoffUtc, array $indexerProjection, $gridData): void
-    {
+    private function assertGridTimestampsRoughlyMatch(
+        string $approxCutoffUtc, 
+        array $indexerProjection, 
+        $gridData
+    ) {
         $this->assertIsArray($gridData);
         $this->assertArrayHasKey('created_at', $gridData);
         $this->assertArrayHasKey('updated_at', $gridData);
@@ -163,7 +170,11 @@ class GridTest extends TestCase
      * @param int $entityId Identifier value matched against $mainTableName.$idField
      * @return array
      */
-    private function fetchGridIndexerProjection(Grid $grid, string $mainTableName, string $idField, int $entityId): array
+    private function fetchGridIndexerProjection(
+        Grid $grid, 
+        string $mainTableName, 
+        string $idField, 
+        int $entityId): array
     {
         $connection = $grid->getConnection();
         $row = $connection->fetchRow(
