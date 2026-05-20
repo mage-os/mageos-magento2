@@ -140,8 +140,7 @@ class GridTest extends TestCase
         string $approxCutoffUtc,
         array $indexerProjection,
         mixed $gridData
-    ): void
-    {
+    ): void {
         $this->assertIsArray($gridData);
         $this->assertArrayHasKey('created_at', $gridData);
         $this->assertArrayHasKey('updated_at', $gridData);
@@ -176,8 +175,7 @@ class GridTest extends TestCase
         string $mainTableName,
         string $idField,
         int $entityId
-    ): array
-    {
+    ): array {
         $connection = $grid->getConnection();
         $row = $connection->fetchRow(
             $grid->getGridOriginSelect()->where(
