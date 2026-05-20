@@ -27,6 +27,11 @@
             </actionGroup>
         </before>
         <after>
+            <actionGroup ref="AdminOpenCustomerEditPageActionGroup" stepKey="openCustomerEditPageForCleanup">
+                <argument name="customerId" value="$createCustomer.id$"/>
+            </actionGroup>
+            <actionGroup ref="AdminOpenAddressesTabFromCustomerEditPageActionGroup" stepKey="openAddressesTabForCleanup"/>
+            <actionGroup ref="AdminResetFilterInCustomerAddressGrid" stepKey="clearCustomerAddressGridFiltersAfterSearch"/>
             <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="logoutCustomer" />
             <actionGroup ref="AdminClearCustomersFiltersActionGroup" stepKey="clearCustomersFilter"/>
             <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
@@ -48,6 +53,5 @@
         <pressKey parameterArray="[\Facebook\WebDriver\WebDriverKeys::ENTER]" selector="{{AdminCustomerAddressesGridActionsSection.search}}" stepKey="pressEnterKey"/>
         <waitForPageLoad stepKey="waitForCustomerAddressesGridPageLoad"/>
         <seeNumberOfElements userInput="1" selector="{{AdminCustomerAddressesGridSection.rowsInGrid}}" stepKey="seeOnlyOneCustomerAddressesInGrid"/>
-        <actionGroup ref="AdminResetFilterInCustomerAddressGrid" stepKey="clearCustomerAddressGridFiltersAfterSearch"/>
     </test>
 </tests>
