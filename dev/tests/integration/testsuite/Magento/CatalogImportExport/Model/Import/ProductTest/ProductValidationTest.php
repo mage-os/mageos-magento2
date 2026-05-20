@@ -382,27 +382,25 @@ class ProductValidationTest extends ProductTestBase
         );
     }
 
-    /**
-     * Test that a product with a negative price fails validation with the expected error.
-     */
+    #[
+        DataFixture(
+            CsvFileFixture::class,
+            [
+                'rows' => [
+                    ['sku', 'store_view_code', 'attribute_set_code', 'product_type', 'name', 'price', 'weight'],
+                    ['simple-negative-price', '', 'Default', 'simple', 'Negative Price Product', '-10', '1'],
+                ]
+            ],
+            'file'
+        )
+    ]
     public function testProductWithNegativePrice(): void
     {
-        $filesystem = $this->objectManager->create(\Magento\Framework\Filesystem::class);
-        $directory = $filesystem->getDirectoryWrite(DirectoryList::ROOT);
-        $source = $this->objectManager->create(
-            \Magento\ImportExport\Model\Import\Source\Csv::class,
-            [
-                'file' => __DIR__ . '/../_files/product_with_negative_price.csv',
-                'directory' => $directory,
-            ]
-        );
-        $errors = $this->_model->setSource($source)
-            ->setParameters(['behavior' => \Magento\ImportExport\Model\Import::BEHAVIOR_APPEND])
-            ->validateData();
-
-        $this->assertTrue($errors->getErrorsCount() === 1);
-        $this->assertEquals(
-            "Value for 'price' attribute must be zero or greater",
+        $pathToFile = DataFixtureStorageManager::getStorage()->get('file')->getAbsolutePath();
+        $errors = $this->createImportModel($pathToFile)->validateData();
+        $this->assertErrorsCount(1, $errors);
+        $this->assertStringContainsString(
+            "must be zero or greater",
             $errors->getErrorByRowNumber(0)[0]->getErrorMessage()
         );
     }

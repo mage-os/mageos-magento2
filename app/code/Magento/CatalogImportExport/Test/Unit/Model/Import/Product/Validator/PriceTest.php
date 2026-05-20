@@ -7,10 +7,16 @@ declare(strict_types=1);
 
 namespace Magento\CatalogImportExport\Test\Unit\Model\Import\Product\Validator;
 
+use Magento\Catalog\Api\Data\ProductAttributeInterface;
+use Magento\Catalog\Api\ProductAttributeRepositoryInterface;
+use Magento\Catalog\Api\Data\ProductAttributeSearchResultsInterface;
 use Magento\CatalogImportExport\Model\Import\Product;
 use Magento\CatalogImportExport\Model\Import\Product\Validator\Price;
+use Magento\Framework\Api\SearchCriteria;
+use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\ImportExport\Model\Import;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class PriceTest extends TestCase
@@ -22,11 +28,32 @@ class PriceTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->price = new Price();
+        $searchCriteria = $this->createMock(SearchCriteria::class);
+
+        $searchCriteriaBuilder = $this->createMock(SearchCriteriaBuilder::class);
+        $searchCriteriaBuilder->method('addFilter')->willReturnSelf();
+        $searchCriteriaBuilder->method('create')->willReturn($searchCriteria);
+
+        $priceFields = ['price', 'special_price', 'cost', 'map_price', 'minimal_price', 'msrp_price', 'msrp'];
+        $attributes = array_map(function (string $code): MockObject {
+            $attr = $this->createMock(ProductAttributeInterface::class);
+            $attr->method('getAttributeCode')->willReturn($code);
+            return $attr;
+        }, $priceFields);
+
+        $searchResult = $this->createMock(ProductAttributeSearchResultsInterface::class);
+        $searchResult->method('getItems')->willReturn($attributes);
+
+        $attributeRepository = $this->createMock(ProductAttributeRepositoryInterface::class);
+        $attributeRepository->method('getList')->willReturn($searchResult);
+
+        $this->price = new Price($attributeRepository, $searchCriteriaBuilder);
+
         $contextStub = $this->createMock(Product::class);
         $contextStub->method('getEmptyAttributeValueConstant')
             ->willReturn(Import::DEFAULT_EMPTY_ATTRIBUTE_VALUE_CONSTANT);
-        $contextStub->method('retrieveMessageTemplate')->willReturn('some template');
+        $contextStub->method('retrieveMessageTemplate')
+            ->willReturn("Value for '%s' attribute must be zero or greater");
         $this->price->init($contextStub);
     }
 
@@ -70,31 +97,52 @@ class PriceTest extends TestCase
         ];
     }
 
-    public function testGetFailedFieldIsNullWhenValid(): void
+    public function testMessagesContainFieldNameWhenNegativePrice(): void
+    {
+        $this->assertFalse($this->price->isValid(['price' => '-10']));
+        $messages = $this->price->getMessages();
+        $this->assertCount(1, $messages);
+        $this->assertStringContainsString('price', $messages[0]);
+    }
+
+    public function testAllNegativeFieldsReportedIndividually(): void
+    {
+        $this->assertFalse($this->price->isValid(['price' => '-1', 'special_price' => '-2']));
+        $messages = $this->price->getMessages();
+        $this->assertCount(2, $messages);
+        $this->assertStringContainsString('price', $messages[0]);
+        $this->assertStringContainsString('special_price', $messages[1]);
+    }
+
+    public function testNoMessagesWhenValid(): void
     {
         $this->assertTrue($this->price->isValid(['price' => '99']));
-        $this->assertNull($this->price->getFailedField());
         $this->assertSame([], $this->price->getMessages());
     }
 
-    public function testGetFailedFieldAndMessageWhenNegativePrice(): void
+    public function testFallbackToStaticListWhenRepositoryReturnsEmpty(): void
     {
-        $this->assertFalse($this->price->isValid(['price' => '-10']));
-        $this->assertSame('price', $this->price->getFailedField());
-        $this->assertSame([Price::ERROR_NEGATIVE_PRICE_VALUE], $this->price->getMessages());
-    }
+        $searchCriteria = $this->createMock(SearchCriteria::class);
 
-    public function testGetFailedFieldWhenFirstFailingFieldIsSpecialPrice(): void
-    {
-        $this->assertFalse($this->price->isValid(['price' => '5', 'special_price' => '-1']));
-        $this->assertSame('special_price', $this->price->getFailedField());
-    }
+        $searchCriteriaBuilder = $this->createMock(SearchCriteriaBuilder::class);
+        $searchCriteriaBuilder->method('addFilter')->willReturnSelf();
+        $searchCriteriaBuilder->method('create')->willReturn($searchCriteria);
 
-    public function testFailedFieldClearedOnSuccessfulSecondCall(): void
-    {
-        $this->assertFalse($this->price->isValid(['price' => '-1']));
-        $this->assertSame('price', $this->price->getFailedField());
-        $this->assertTrue($this->price->isValid(['price' => '10']));
-        $this->assertNull($this->price->getFailedField());
+        $searchResult = $this->createMock(ProductAttributeSearchResultsInterface::class);
+        $searchResult->method('getItems')->willReturn([]);
+
+        $attributeRepository = $this->createMock(ProductAttributeRepositoryInterface::class);
+        $attributeRepository->method('getList')->willReturn($searchResult);
+
+        $price = new Price($attributeRepository, $searchCriteriaBuilder);
+
+        $contextStub = $this->createMock(Product::class);
+        $contextStub->method('getEmptyAttributeValueConstant')
+            ->willReturn(Import::DEFAULT_EMPTY_ATTRIBUTE_VALUE_CONSTANT);
+        $contextStub->method('retrieveMessageTemplate')
+            ->willReturn("Value for '%s' attribute must be zero or greater");
+        $price->init($contextStub);
+
+        $this->assertFalse($price->isValid(['price' => '-5']));
     }
 }

@@ -29,7 +29,6 @@ use Magento\CatalogImportExport\Model\Import\Product\TaxClassProcessor;
 use Magento\CatalogImportExport\Model\Import\Product\Type\AbstractType;
 use Magento\CatalogImportExport\Model\Import\Product\Type\Factory;
 use Magento\CatalogImportExport\Model\Import\Product\Validator;
-use Magento\CatalogImportExport\Model\Import\Product\Validator\Price as ImportPriceValidator;
 use Magento\CatalogImportExport\Model\Import\Proxy\Product\ResourceModel;
 use Magento\CatalogImportExport\Model\Import\Uploader;
 use Magento\CatalogInventory\Api\StockConfigurationInterface;
@@ -900,55 +899,6 @@ class ProductTest extends AbstractImportTestCase
         ];
         $rowNum = 0;
         $this->importProduct->validateRow($rowData, $rowNum);
-    }
-
-    /**
-     * @return void
-     */
-    public function testValidateRowNegativePriceAddsValidationError(): void
-    {
-        $sku = 'sku';
-        $rowNum = 0;
-        $rowData = [Product::COL_SKU => $sku];
-        $typeId = 'simple';
-        $existingSkuData = [
-            'type_id' => $typeId,
-            'attr_set_id' => '1',
-        ];
-        $importProduct = $this->createModelMockWithErrorAggregator(
-            ['addRowError', 'getOptionEntity'],
-            ['isRowInvalid' => true]
-        );
-        $this->skuStorageMock->method('has')->willReturnCallback(static fn (string $s): bool => $s === $sku);
-        $this->skuStorageMock->method('get')->willReturnCallback(
-            static fn (string $s) => $s === $sku ? $existingSkuData : null
-        );
-        $this->setPrivatePropertyValue($importProduct, 'skuStorage', $this->skuStorageMock);
-        $productType = $this->createMock(AbstractType::class);
-        $this->setPropertyValue($importProduct, '_productTypeModels', [$typeId => $productType]);
-        $this->setPropertyValue($importProduct, '_attrSetIdToName', ['1' => 'Default']);
-        $this->skuProcessor->method('addNewSku')->willReturnSelf();
-        $this->setPropertyValue($importProduct, 'skuProcessor', $this->skuProcessor);
-        $this->_rewriteGetOptionEntityInImportProduct($importProduct);
-        $this->validator->expects($this->once())->method('isValid')->willReturn(false);
-        $this->validator->expects($this->once())->method('getMessages')
-            ->willReturn([ImportPriceValidator::ERROR_NEGATIVE_PRICE_VALUE]);
-        $this->validator->expects($this->never())->method('getInvalidAttribute');
-        $this->setPropertyValue($importProduct, 'validator', $this->validator);
-
-        $priceValidatorMock = $this->createMock(ImportPriceValidator::class);
-        $priceValidatorMock->method('getFailedField')->willReturn('price');
-        $this->setPrivatePropertyValue($importProduct, 'priceValidator', $priceValidatorMock);
-
-        $importProduct->expects($this->once())->method('addRowError')->with(
-            ImportPriceValidator::ERROR_NEGATIVE_PRICE_VALUE,
-            $rowNum,
-            'price',
-            null,
-            ProcessingError::ERROR_LEVEL_NOT_CRITICAL
-        );
-
-        $importProduct->validateRow($rowData, $rowNum);
     }
 
     /**

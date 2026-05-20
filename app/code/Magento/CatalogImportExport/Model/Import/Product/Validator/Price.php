@@ -7,7 +7,9 @@ declare(strict_types=1);
 
 namespace Magento\CatalogImportExport\Model\Import\Product\Validator;
 
+use Magento\Catalog\Api\ProductAttributeRepositoryInterface;
 use Magento\CatalogImportExport\Model\Import\Product\RowValidatorInterface;
+use Magento\Framework\Api\SearchCriteriaBuilder;
 
 /**
  * Rejects negative values for product price-type fields during import
@@ -20,7 +22,7 @@ class Price extends AbstractImportValidator implements RowValidatorInterface
     public const ERROR_NEGATIVE_PRICE_VALUE = 'invalidNegativePriceValue';
 
     /**
-     * Price-type fields that must not be negative
+     * Fallback list used when dynamic attribute discovery is unavailable
      */
     private const PRICE_FIELDS = [
         'price',
@@ -33,16 +35,49 @@ class Price extends AbstractImportValidator implements RowValidatorInterface
     ];
 
     /**
-     * @var string|null
+     * @var ProductAttributeRepositoryInterface
      */
-    private ?string $failedField = null;
+    private ProductAttributeRepositoryInterface $attributeRepository;
 
     /**
-     * Attribute code / column that failed negative-price validation on the last {@see isValid} call.
+     * @var SearchCriteriaBuilder
      */
-    public function getFailedField(): ?string
+    private SearchCriteriaBuilder $searchCriteriaBuilder;
+
+    /**
+     * @var string[]
+     */
+    private array $priceAttributeCodes = [];
+
+    /**
+     * @param ProductAttributeRepositoryInterface $attributeRepository
+     * @param SearchCriteriaBuilder $searchCriteriaBuilder
+     */
+    public function __construct(
+        ProductAttributeRepositoryInterface $attributeRepository,
+        SearchCriteriaBuilder $searchCriteriaBuilder
+    ) {
+        $this->attributeRepository = $attributeRepository;
+        $this->searchCriteriaBuilder = $searchCriteriaBuilder;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function init($context)
     {
-        return $this->failedField;
+        $searchCriteria = $this->searchCriteriaBuilder
+            ->addFilter('frontend_input', 'price')
+            ->create();
+        $attributes = $this->attributeRepository->getList($searchCriteria)->getItems();
+        $this->priceAttributeCodes = array_map(
+            fn ($attr) => $attr->getAttributeCode(),
+            $attributes
+        );
+        if (empty($this->priceAttributeCodes)) {
+            $this->priceAttributeCodes = self::PRICE_FIELDS;
+        }
+        return parent::init($context);
     }
 
     /**
@@ -51,10 +86,11 @@ class Price extends AbstractImportValidator implements RowValidatorInterface
     public function isValid($value)
     {
         $this->_clearMessages();
-        $this->failedField = null;
+        $valid = true;
         $emptyConstant = $this->context->getEmptyAttributeValueConstant();
+        $template = $this->context->retrieveMessageTemplate(self::ERROR_NEGATIVE_PRICE_VALUE);
 
-        foreach (self::PRICE_FIELDS as $field) {
+        foreach ($this->priceAttributeCodes as $field) {
             if (!isset($value[$field])) {
                 continue;
             }
@@ -65,13 +101,12 @@ class Price extends AbstractImportValidator implements RowValidatorInterface
             if ($fieldValue === '' || $fieldValue === null || $fieldValue === $emptyConstant) {
                 continue;
             }
-            if (is_numeric($fieldValue) && (float)$fieldValue < 0) {
-                $this->failedField = $field;
-                $this->_addMessages([self::ERROR_NEGATIVE_PRICE_VALUE]);
-                return false;
+            if (is_numeric($fieldValue) && (float) $fieldValue < 0) {
+                $this->_addMessages([sprintf($template, $field)]);
+                $valid = false;
             }
         }
 
-        return true;
+        return $valid;
     }
 }

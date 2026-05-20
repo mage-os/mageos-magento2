@@ -801,11 +801,6 @@ class Product extends AbstractEntity
     private ?DomainValidator $domainValidator;
 
     /**
-     * @var ImportPriceValidator|null
-     */
-    private ?ImportPriceValidator $priceValidator = null;
-
-    /**
      * @param \Magento\Framework\Json\Helper\Data $jsonHelper
      * @param \Magento\ImportExport\Helper\Data $importExportData
      * @param \Magento\ImportExport\Model\ResourceModel\Import\Data $importData
@@ -857,7 +852,6 @@ class Product extends AbstractEntity
      * @param StockItemProcessorInterface|null $stockItemProcessor
      * @param SkuStorage|null $skuStorage
      * @param DomainValidator|null $domainValidator
-     * @param ImportPriceValidator|null $priceValidator
      * @throws LocalizedException
      * @throws \Magento\Framework\Exception\FileSystemException
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
@@ -915,8 +909,7 @@ class Product extends AbstractEntity
         ?File $fileDriver = null,
         ?StockItemProcessorInterface $stockItemProcessor = null,
         ?SkuStorage $skuStorage = null,
-        ?DomainValidator $domainValidator = null,
-        ?ImportPriceValidator $priceValidator = null
+        ?DomainValidator $domainValidator = null
     ) {
         $this->_eventManager = $eventManager;
         $this->stockRegistry = $stockRegistry;
@@ -988,8 +981,6 @@ class Product extends AbstractEntity
             ->get(File::class);
         $this->domainValidator = $domainValidator ?? ObjectManager::getInstance()
             ->get(DomainValidator::class);
-        $this->priceValidator = $priceValidator ?? ObjectManager::getInstance()
-            ->get(ImportPriceValidator::class);
     }
 
     /**
@@ -2786,12 +2777,8 @@ class Product extends AbstractEntity
         $hasValidatedImportParent = $sku && $this->getNewSku($sku);
         $contextRowData = array_merge(['has_import_parent' => $hasValidatedImportParent], $rowData);
         if (!$this->validator->isValid($contextRowData)) {
-            $failedPriceField = $this->priceValidator?->getFailedField();
             foreach ($this->validator->getMessages() as $message) {
-                $columnName = $message === ImportPriceValidator::ERROR_NEGATIVE_PRICE_VALUE
-                    ? ($failedPriceField ?? $this->validator->getInvalidAttribute())
-                    : $this->validator->getInvalidAttribute();
-                $this->skipRow($rowNum, $message, $errorLevel, $columnName);
+                $this->skipRow($rowNum, $message, $errorLevel, $this->validator->getInvalidAttribute());
             }
         }
 
@@ -3169,25 +3156,6 @@ class Product extends AbstractEntity
             }
         }
         return $rowData;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function validateData()
-    {
-        $errorAggregator = parent::validateData();
-        if (($this->getParameters()[Import::FIELD_NAME_VALIDATION_STRATEGY] ?? '')
-            === ProcessingErrorAggregatorInterface::VALIDATION_STRATEGY_STOP_ON_ERROR
-            && $errorAggregator->hasFatalExceptions()
-            && !$errorAggregator->isErrorLimitExceeded()
-        ) {
-            $errorAggregator->initValidationStrategy(
-                ProcessingErrorAggregatorInterface::VALIDATION_STRATEGY_STOP_ON_ERROR,
-                0
-            );
-        }
-        return $errorAggregator;
     }
 
     /**
