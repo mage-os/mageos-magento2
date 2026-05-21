@@ -17,9 +17,6 @@
             <testCaseId value="MC-10899"/>
             <group value="mtf_migrated"/>
             <group value="cloud"/>
-            <skip>
-                <issueId value="ACQE-9990">Repeated mainline test failure</issueId>
-            </skip>
         </annotations>
 
         <before>
