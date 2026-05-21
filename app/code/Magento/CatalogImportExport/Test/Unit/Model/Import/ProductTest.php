@@ -412,13 +412,7 @@ class ProductTest extends AbstractImportTestCase
         $this->categoryProcessor = $this->createMock(CategoryProcessor::class);
         $this->validator = $this->createPartialMock(
             Validator::class,
-            [
-                'isAttributeValid',
-                'getMessages',
-                'isValid',
-                'init',
-                'getInvalidAttribute',
-            ]
+            ['isAttributeValid', 'getMessages', 'isValid', 'init']
         );
         $this->objectRelationProcessor = $this->createMock(ObjectRelationProcessor::class);
         $this->transactionManager = $this->createMock(TransactionManagerInterface::class);
@@ -891,9 +885,7 @@ class ProductTest extends AbstractImportTestCase
     public function testValidateRowValidatorCheck(): void
     {
         $messages = ['validator message'];
-        $this->validator->expects($this->once())->method('isValid')->willReturn(false);
         $this->validator->expects($this->once())->method('getMessages')->willReturn($messages);
-        $this->validator->expects($this->once())->method('getInvalidAttribute')->willReturn(null);
         $rowData = [
             Product::COL_SKU => 'sku',
         ];
