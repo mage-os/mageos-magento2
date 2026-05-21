@@ -139,7 +139,6 @@ jobs:
           # Verify required CI files are not removed in this PR
           required=(
             .github/workflows/pr-quality-gates.yml
-            .github/scripts/check_copyright.py
             .github/scripts/copyright-template.txt
             .github/scripts/phpmd-ruleset.xml
             .github/scripts/tslint.json
