@@ -12,7 +12,6 @@
             <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
             <!--Config PayPal Standard-->
             <actionGroup ref="AdminPayPalStandardEnableActionGroup" stepKey="ConfigPayPalStandard"/>
-            <!-- Disable PayPal Express shortcuts on product/cart pages so the PayPal SDK script does not block page load in CI -->
             <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanFullPageCache">
                 <argument name="tags" value="config full_page"/>
             </actionGroup>
