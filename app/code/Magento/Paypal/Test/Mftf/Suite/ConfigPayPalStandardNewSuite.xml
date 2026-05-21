@@ -13,9 +13,6 @@
             <!--Config PayPal Standard-->
             <actionGroup ref="AdminPayPalStandardEnableForGuestCheckoutActionGroup" stepKey="ConfigPayPalStandard"/>
             <magentoCLI command="config:set {{StorefrontPaypalExpressAuthorizationPaymentActionOptionConfigData.path}} {{StorefrontPaypalExpressAuthorizationPaymentActionOptionConfigData.value}}" stepKey="setPaymentAction"/>
-            <!-- Disable PayPal Express shortcuts on product/cart pages so the PayPal SDK script does not block page load in CI -->
-            <magentoCLI command="config:set payment/paypal_express/visible_on_product 0" stepKey="disablePayPalOnProductPage"/>
-            <magentoCLI command="config:set payment/paypal_express/visible_on_cart 0" stepKey="disablePayPalOnCart"/>
             <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindexConfig">
                 <argument name="indices" value=""/>
             </actionGroup>
@@ -27,8 +24,6 @@
             <!-- Cleanup PayPal Standard configurations -->
             <magentoCLI command="config:set {{DisablePaypalPayStandardNew.path}} {{DisablePaypalPayStandardNew.value}}" stepKey="disablePayPalStandard"/>
             <magentoCLI command="config:set {{StorefrontPaypalStandardAuthorizationPaymentActionOptionConfigDataToDefaultValue.path}} {{StorefrontPaypalStandardAuthorizationPaymentActionOptionConfigDataToDefaultValue.value}}" stepKey="setPaymentActionToOrder"/>
-            <magentoCLI command="config:set payment/paypal_express/visible_on_product 1" stepKey="resetPayPalOnProductPage"/>
-            <magentoCLI command="config:set payment/paypal_express/visible_on_cart 1" stepKey="resetPayPalOnCart"/>
             <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanFullPageCache">
                 <argument name="tags" value="config full_page"/>
             </actionGroup>
