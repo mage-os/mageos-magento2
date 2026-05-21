@@ -17,6 +17,10 @@ parameters:
         - */Fixtures/*
         - */tmp/*
         - .github/*
+        # Framework files in lib/internal/ have deep vendor dependencies
+        # (Laminas, Zend, Stomp, etc.) not installed in the sparse-clone.
+        # Jenkins covers these with the full vendor tree.
+        - */lib/internal/*
         # Test directories: PHPUnit and Magento test framework are not available
         # in the GHA sparse-clone environment. Jenkins has the full codebase so
         # it can analyze test files without unknown-class errors; we cannot.
@@ -42,6 +46,8 @@ parameters:
         - '#Call to an undefined static method#'
         # Constants defined in interfaces (stubs have no constants)
         - '#Access to undefined constant#'
+        # Constants on classes not present in the sparse-clone
+        - '#Access to constant [a-zA-Z0-9_]+ on an unknown class#'
         # Variable defined in phtml template context
         - '#Variable \$block might not be defined#'
         - '#Variable \$escaper might not be defined#'

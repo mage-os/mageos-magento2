@@ -84,8 +84,11 @@ def _normalize_copyright(text: str) -> str:
     between file types, matching the approach used by the Jenkins
     SanityCopyrightChecker.
     """
-    # Remove PHP inline declarations so that '<?php declare(strict_types=1)'
-    # and '<?php' normalize identically and the copyright substring check passes.
+    # Strip XML processing instructions entirely so encoding/version attribute
+    # differences (e.g. encoding="UTF-8" vs absent) do not affect comparison.
+    text = re.sub(r'<\?xml[^?]*\?>', '', text)
+    # Strip PHP declare() so '<?php declare(strict_types=1)' and '<?php'
+    # normalize identically.
     text = re.sub(r'\bdeclare\s*\([^)]*\)\s*;?', '', text)
     return re.sub(r'[\s#/\*\-<>!?\[\]]+', '', text).lower()
 
@@ -492,7 +495,8 @@ def should_exclude_file(file_path: str, exclude_list: List[str]) -> bool:
 
 
 def check_file(file_path: str, template: str, fix: bool = False, dry_run: bool = False,
-               debug: bool = False, pr_mode: bool = False, base_sha: str = '') -> bool:
+               debug: bool = False, pr_mode: bool = False, base_sha: str = '',
+               is_private: bool = False, requires_notice: bool = False) -> bool:
     """Check and optionally fix copyright header in a file."""
     ext = Path(file_path).suffix.lower()
 
@@ -512,70 +516,97 @@ def check_file(file_path: str, template: str, fix: bool = False, dry_run: bool =
             click.echo(f"  Skipping 3rd-party file (no Magento/Adobe reference): {file_path}")
         return True
 
+    # ── Confidentiality format check (derived from template) ─────────
+    has_confidential = 'ADOBE CONFIDENTIAL' in content
+    has_notice = 'NOTICE:' in content
+    if is_private and not has_confidential:
+        click.echo(f"  ERROR: Private repo: missing ADOBE CONFIDENTIAL header: {file_path}")
+        return False
+    if is_private and requires_notice and not has_notice:
+        click.echo(f"  ERROR: Private repo: missing NOTICE block in copyright header: {file_path}")
+        return False
+    if not is_private and has_confidential:
+        click.echo(f"  ERROR: Public repo: file must not contain ADOBE CONFIDENTIAL: {file_path}")
+        return False
+
     comment_style = COMMENT_STYLES[ext]
     existing_header, header_line_count = extract_existing_copyright(content, comment_style)
 
-    # ── Determine the year to validate against ────────────────────────
-    # On GitHub Actions we have full git history, so always use the
-    # authoritative git creation year.  The Jenkins checker trusts the
-    # year in the file because git is not available there, but here we
-    # can and should verify it.
-    year = str(get_git_creation_year(file_path, debug, use_current_year=pr_mode, base_sha=base_sha))
-
-    expected_header = format_copyright_header(template, file_path, comment_style, year, debug)
-
-    if debug:
-        click.echo(f"  Expected header preview:")
-        click.echo(f"   {expected_header[:100]}...")
-        click.echo(f"  Existing header preview:")
-        click.echo(f"   {existing_header[:100]}...")
-        click.echo(f"  Year used for comparison: {year}")
-
     # ── Comparison ────────────────────────────────────────────────────
-    # Use normalized comparison (strip all comment markers / whitespace)
-    # so minor formatting differences do not cause failures, matching the
-    # flexible approach of the Jenkins SanityCopyrightChecker.
-    expected_norm = _normalize_copyright(expected_header)
     existing_norm = _normalize_copyright(existing_header)
+    year = str(datetime.now().year)  # default; overridden in non-PR mode
+    expected_header = ''             # set for new files and non-PR mode
+    base_header_for_fix = None       # set for existing files whose copyright changed
 
-    # The expected template must appear within the existing header.
-    # (Not the reverse -- a nearly-empty header like "php" must not match.)
-    if ext in ['.xml', '.xsd']:
-        if '/**' in existing_header or '*/' in existing_header:
+    if pr_mode and base_sha:
+        try:
+            base_result = subprocess.run(
+                ['git', 'show', f'{base_sha}:{file_path}'],
+                capture_output=True, text=True, cwd=_GIT_ROOT
+            )
+        except Exception:
+            base_result = None
+
+        if base_result is not None and base_result.returncode == 0:
+            # Existing file: compare copyright directly against the base branch.
+            # No template involved — we only check that the developer did not
+            # modify the copyright header. If the base had no copyright, skip:
+            # migrating existing files to the Adobe format is a separate task.
+            base_header, _ = extract_existing_copyright(base_result.stdout, comment_style)
+            if not base_header:
+                if debug:
+                    click.echo(f"  Existing file has no copyright in base — skipping")
+                return True
+            base_norm = _normalize_copyright(base_header)
+            if base_norm == existing_norm:
+                return True
+            # Copyright was changed in this PR — fall through to report/fix.
+            base_header_for_fix = base_header
+        else:
+            # New file: must carry the current year and correct format.
+            expected_header = format_copyright_header(template, file_path, comment_style, year, debug)
+            expected_norm = _normalize_copyright(expected_header)
             if debug:
-                click.echo(f"  XML file has incorrect comment style: {file_path}")
-            # Fall through to fix / report
-        elif expected_norm and expected_norm in existing_norm:
-            return True
+                click.echo(f"  New file: year {year}")
+                click.echo(f"  Expected: {expected_header[:80]}...")
+            if ext in ['.xml', '.xsd']:
+                if '/**' in existing_header or '*/' in existing_header:
+                    if debug:
+                        click.echo(f"  XML file has incorrect comment style: {file_path}")
+                elif expected_norm and expected_norm in existing_norm:
+                    return True
+            else:
+                if expected_norm and expected_norm in existing_norm:
+                    return True
+
     else:
-        if expected_norm and expected_norm in existing_norm:
-            return True
+        # Non-PR mode (local scan / --fix): use git creation year.
+        year = str(get_git_creation_year(file_path, debug, use_current_year=pr_mode, base_sha=base_sha))
+        expected_header = format_copyright_header(template, file_path, comment_style, year, debug)
+        expected_norm = _normalize_copyright(expected_header)
+        if debug:
+            click.echo(f"  Expected header preview:")
+            click.echo(f"   {expected_header[:100]}...")
+            click.echo(f"  Existing header preview:")
+            click.echo(f"   {existing_header[:100]}...")
+            click.echo(f"  Year used for comparison: {year}")
+        if ext in ['.xml', '.xsd']:
+            if '/**' in existing_header or '*/' in existing_header:
+                if debug:
+                    click.echo(f"  XML file has incorrect comment style: {file_path}")
+            elif expected_norm and expected_norm in existing_norm:
+                return True
+        else:
+            if expected_norm and expected_norm in existing_norm:
+                return True
 
     # ── No match ──────────────────────────────────────────────────────
 
-    # For existing files in PR mode: if the copyright year already in the file
-    # is earlier than what git log reports, accept it. This handles files that
-    # predate the repository's available git history (e.g. Copyright 2011 when
-    # git log only goes back to 2015 due to history truncation or rebase).
-    # New files are excluded — they must carry the current year.
-    if pr_mode and base_sha and existing_header:
-        try:
-            cat_result = subprocess.run(
-                ['git', 'cat-file', '-e', f'{base_sha}:{file_path}'],
-                capture_output=True, cwd=_GIT_ROOT
-            )
-            if cat_result.returncode == 0:
-                existing_year_match = re.search(r'[Cc]opyright\s+(\d{4})', existing_header)
-                if existing_year_match and int(existing_year_match.group(1)) < int(year):
-                    if debug:
-                        click.echo(f'  Accepting copyright year {existing_year_match.group(1)}: '
-                                   f'predates git history (git reports {year})')
-                    return True
-        except Exception:
-            pass
-
     if dry_run:
-        click.echo(f"  Would fix: {file_path}")
+        if base_header_for_fix is not None:
+            click.echo(f"  Would restore: {file_path} (copyright was modified in this PR)")
+        else:
+            click.echo(f"  Would fix: {file_path}")
         return False
 
     if fix:
@@ -597,7 +628,16 @@ def check_file(file_path: str, template: str, fix: bool = False, dry_run: bool =
         new_content = '\n'.join(preserved_lines)
         if preserved_lines:
             new_content += '\n'
-        new_content += expected_header
+
+        if base_header_for_fix is not None:
+            # Existing file: restore the copyright to what it was in the base branch.
+            new_content += base_header_for_fix
+            fix_msg = f"  Fixed: {file_path} (restored base copyright)"
+        else:
+            # New file or non-PR mode: write the template-generated header.
+            new_content += expected_header
+            fix_msg = f"  Fixed: {file_path} (year: {year})"
+
         if not remaining_content.startswith('\n'):
             new_content += '\n'
         new_content += remaining_content.lstrip('\n')
@@ -605,13 +645,19 @@ def check_file(file_path: str, template: str, fix: bool = False, dry_run: bool =
         with open(file_path, 'w', encoding='utf-8') as f:
             f.write(new_content)
 
-        click.echo(f"  Fixed: {file_path} (year: {year})")
+        click.echo(fix_msg)
         return True
     else:
-        click.echo(f"  Missing/incorrect copyright: {file_path} (expected year: {year})")
-        click.echo(f"  To fix: python3 .github/scripts/check_copyright.py "
-                   f"--template .github/scripts/copyright-template.txt "
-                   f"--path '{file_path}' --pr-mode --fix")
+        if base_header_for_fix is not None:
+            click.echo(f"  Copyright was modified in this PR: {file_path}")
+            click.echo(f"  To fix: python3 .github/scripts/check_copyright.py "
+                       f"--template .github/scripts/copyright-template.txt "
+                       f"--path '{file_path}' --pr-mode --base-sha $BASE_SHA --fix")
+        else:
+            click.echo(f"  Missing/incorrect copyright: {file_path} (expected year: {year})")
+            click.echo(f"  To fix: python3 .github/scripts/check_copyright.py "
+                       f"--template .github/scripts/copyright-template.txt "
+                       f"--path '{file_path}' --pr-mode --fix")
         return False
 
 
@@ -661,6 +707,8 @@ def main(template: str, fix: bool, dry_run: bool, extensions: str, exclude: str,
         sys.exit(1)
 
     template_content = load_template(template)
+    is_private = 'ADOBE CONFIDENTIAL' in template_content
+    requires_notice = 'NOTICE:' in template_content
     extensions_list = [ext.strip() for ext in extensions.split(',')]
     exclude_list = [entry.strip() for entry in exclude.split(',') if entry.strip()]
 
@@ -678,7 +726,7 @@ def main(template: str, fix: bool, dry_run: bool, extensions: str, exclude: str,
                 continue
             if not any(file_path.endswith(ext) for ext in extensions_list):
                 continue
-            if not check_file(file_path, template_content, fix, dry_run, debug, pr_mode, base_sha):
+            if not check_file(file_path, template_content, fix, dry_run, debug, pr_mode, base_sha, is_private, requires_notice):
                 issues_found.append(file_path)
         if issues_found:
             click.echo(f"\n{len(issues_found)} file(s) have copyright issues")
@@ -741,7 +789,7 @@ def main(template: str, fix: bool, dry_run: bool, extensions: str, exclude: str,
                 if verbose or debug:
                     click.echo(f"Checking: {path}")
 
-                if not check_file(path, template_content, fix, dry_run, debug, pr_mode, base_sha):
+                if not check_file(path, template_content, fix, dry_run, debug, pr_mode, base_sha, is_private, requires_notice):
                     issues_found.append(path)
     else:
         if debug:
@@ -774,7 +822,7 @@ def main(template: str, fix: bool, dry_run: bool, extensions: str, exclude: str,
                     if verbose or debug:
                         click.echo(f"Checking: {file_path}")
 
-                    if not check_file(file_path, template_content, fix, dry_run, debug, pr_mode, base_sha):
+                    if not check_file(file_path, template_content, fix, dry_run, debug, pr_mode, base_sha, is_private, requires_notice):
                         issues_found.append(file_path)
 
         if debug:
