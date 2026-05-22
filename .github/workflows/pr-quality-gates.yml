@@ -380,6 +380,9 @@ jobs:
           git sparse-checkout set \
             dev/tests/static/framework \
             dev/tests/static/testsuite/Magento/Test/Php/_files/phpmd \
+            dev/tests/static/testsuite/Magento/Test/Js/_files/blacklist \
+            dev/tests/static/testsuite/Magento/Test/Js/_files/whitelist \
+            dev/tests/static/testsuite/Magento/Test/Less/_files/blacklist \
             lib/internal/Magento/Framework
 
           echo "Fetched Magento static PHPMD framework from ref: $ref"
@@ -505,7 +508,32 @@ jobs:
         if: always() && steps.gate.outputs.phpcs_less == 'true' && env.HAS_STATIC == 'true'
         run: |
           set -euo pipefail
-          .github/scripts/run-phpcs.sh "LESS" /tmp/changed_less.txt
+
+          # Filter against Jenkins LESS blacklist (legacy files with known violations)
+          bl="/tmp/magento2-static/dev/tests/static/testsuite/Magento/Test/Less/_files/blacklist"
+          {
+            cat "$bl/old.txt" 2>/dev/null || true
+            cat "$bl/ee.txt"  2>/dev/null || true
+          } > /tmp/less_blacklist.txt
+
+          filtered_less=$(mktemp)
+          python3 - /tmp/changed_less.txt /tmp/less_blacklist.txt "$filtered_less" <<'PYEOF'
+          import fnmatch, sys
+          with open(sys.argv[2]) as f:
+              patterns = [l.strip() for l in f if l.strip() and not l.strip().startswith('//')]
+          with open(sys.argv[1]) as f:
+              files = [l.strip() for l in f if l.strip()]
+          filtered = [fp for fp in files if not any(fnmatch.fnmatch(fp, p) for p in patterns)]
+          with open(sys.argv[3], 'w') as out:
+              out.write('\n'.join(filtered) + ('\n' if filtered else ''))
+          PYEOF
+
+          if [ ! -s "$filtered_less" ]; then
+            echo "All changed LESS files are blacklisted — skipping PHPCS LESS."
+            exit 0
+          fi
+
+          .github/scripts/run-phpcs.sh "LESS" "$filtered_less"
 
       # ── PHPMD ────────────────────────────────────────────────────
 
@@ -693,28 +721,73 @@ jobs:
         run: |
           set -euo pipefail
 
-          # Filter against Jenkins ESLint blacklist (blacklist files live in CE repo,
-          # fetched via the PHPMD sparse-checkout above)
-          bl="/tmp/magento2-static/dev/tests/static/testsuite/Magento/Test/Js/_files/blacklist"
+          # Apply Jenkins whitelist then blacklist — both live in CE repo sparse clone.
+          # Whitelist defines which files are expected to comply (app/code, app/design,
+          # lib/web/mage, etc.). Files outside it (grunt tasks, setup scripts) are not
+          # subject to ESLint in Jenkins and must be excluded here too.
+          jsd="/tmp/magento2-static/dev/tests/static/testsuite/Magento/Test/Js/_files"
           {
-            cat "$bl/magento.txt" 2>/dev/null || true
-            cat "$bl/ee.txt"      2>/dev/null || true
-            cat "$bl/b2b.txt"     2>/dev/null || true
+            cat "$jsd/whitelist/magento.txt" 2>/dev/null || true
+            cat "$jsd/whitelist/ee.txt"      2>/dev/null || true
+            cat "$jsd/whitelist/b2b.txt"     2>/dev/null || true
+          } > /tmp/eslint_whitelist.txt
+          {
+            cat "$jsd/blacklist/magento.txt" 2>/dev/null || true
+            cat "$jsd/blacklist/ee.txt"      2>/dev/null || true
+            cat "$jsd/blacklist/b2b.txt"     2>/dev/null || true
           } > /tmp/eslint_blacklist.txt
 
-          mapfile -t js_args < <(python3 - /tmp/changed_js.txt /tmp/eslint_blacklist.txt <<'PYEOF'
-          import fnmatch, sys
-          with open(sys.argv[2]) as f:
-              patterns = [l.strip() for l in f if l.strip() and not l.strip().startswith('//')]
+          mapfile -t js_args < <(python3 - /tmp/changed_js.txt /tmp/eslint_whitelist.txt /tmp/eslint_blacklist.txt <<'PYEOF'
+          import re, sys
+
+          def glob_to_regex(pattern):
+              result = ''
+              i = 0
+              while i < len(pattern):
+                  if pattern[i:i+3] == '**/':
+                      result += '(?:.+/)?'
+                      i += 3
+                  elif pattern[i:i+2] == '**':
+                      result += '.*'
+                      i += 2
+                  elif pattern[i] == '*':
+                      result += '[^/]*'
+                      i += 1
+                  elif pattern[i] == '?':
+                      result += '[^/]'
+                      i += 1
+                  else:
+                      result += re.escape(pattern[i])
+                      i += 1
+              return re.compile('^' + result + '$')
+
+          def load(path):
+              try:
+                  with open(path) as f:
+                      return [glob_to_regex(l.strip()) for l in f
+                              if l.strip() and not l.strip().startswith('#')
+                              and not l.strip().startswith('//')]
+              except FileNotFoundError:
+                  return []
+
           with open(sys.argv[1]) as f:
               files = [l.strip() for l in f if l.strip()]
-          filtered = [fp for fp in files if not any(fnmatch.fnmatch(fp, p) for p in patterns)]
-          print('\n'.join(filtered))
+          whitelist = load(sys.argv[2])
+          blacklist = load(sys.argv[3])
+
+          result = []
+          for fp in files:
+              if whitelist and not any(r.match(fp) for r in whitelist):
+                  continue
+              if any(r.match(fp) for r in blacklist):
+                  continue
+              result.append(fp)
+          print('\n'.join(result))
           PYEOF
           )
 
           if [ ${#js_args[@]} -eq 0 ]; then
-            echo "All changed JS files are blacklisted — skipping ESLint."
+            echo "All changed JS files are outside whitelist scope or blacklisted — skipping ESLint."
             exit 0
           fi
 
