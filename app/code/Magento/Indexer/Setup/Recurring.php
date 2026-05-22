@@ -140,6 +140,12 @@ class Recurring implements InstallSchemaInterface
                 $state->save();
             }
 
+            $indexer = $this->indexerFactory->create()->load($indexerId);
+            if ($indexer->isScheduled()) {
+                // Migrate existing changelog tables (version_id int→bigint, charset→utf8mb4)
+                // without unsubscribing/subscribing, which would unconditionally rebuild triggers.
+                $indexer->getView()->getChangelog()->create();
+            }
         }
 
         // Use TriggerCleaner to only recreate triggers whose statements actually changed,
