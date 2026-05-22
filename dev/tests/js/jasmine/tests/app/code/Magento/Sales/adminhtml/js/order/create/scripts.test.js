@@ -153,7 +153,7 @@ define([
             try {
                 injector.clean();
                 injector.remove();
-            } catch (e) {
+            } catch (e) { //eslint-disable-line no-unused-vars
             }
             $(formEl).off().remove();
             formEl = undefined;
