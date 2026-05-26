@@ -20,6 +20,8 @@ use Magento\Sales\Model\AdminOrder\Create;
  *
  * The original order consumes a usage slot; it is canceled after the edited order is placed,
  * so that consumption must not block re-applying the same rule during edit.
+ *
+ * @SuppressWarnings(PHPMD.CookieAndSessionMisuse)
  */
 class OrderEditUsageOffset
 {

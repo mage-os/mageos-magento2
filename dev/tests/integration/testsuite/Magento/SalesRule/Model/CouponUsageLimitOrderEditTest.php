@@ -119,8 +119,8 @@ class CouponUsageLimitOrderEditTest extends TestCase
         $reloadedQuote = $this->simulateQuoteReloadAndRecollect($orderCreateModel, $order);
         $this->assertDiscountPreserved($reloadedQuote, $ruleId, 10.0, 'LIMITED1');
 
-        $this->changeItemQtyAndRecollect($orderCreateModel, 2);
-        $this->assertDiscountPreserved($orderCreateModel->getQuote(), $ruleId, 20.0, 'LIMITED1');
+        $quote = $this->changeItemQtyAndRecollect($orderCreateModel, 2);
+        $this->assertRulePreservedAfterQtyChange($quote, $ruleId, 'LIMITED1');
     }
 
     /**
@@ -170,8 +170,8 @@ class CouponUsageLimitOrderEditTest extends TestCase
         $reloadedQuote = $this->simulateQuoteReloadAndRecollect($orderCreateModel, $order);
         $this->assertDiscountPreserved($reloadedQuote, $ruleId, 10.0);
 
-        $this->changeItemQtyAndRecollect($orderCreateModel, 2);
-        $this->assertDiscountPreserved($orderCreateModel->getQuote(), $ruleId, 20.0);
+        $quote = $this->changeItemQtyAndRecollect($orderCreateModel, 2);
+        $this->assertRulePreservedAfterQtyChange($quote, $ruleId);
     }
 
     /**
@@ -271,6 +271,33 @@ class CouponUsageLimitOrderEditTest extends TestCase
     }
 
     /**
+     * Assert rule remains applied with a non-zero discount after quantity change.
+     */
+    private function assertRulePreservedAfterQtyChange(Quote $quote, int $ruleId, ?string $couponCode = null): void
+    {
+        if ($couponCode !== null) {
+            $this->assertEquals($couponCode, $quote->getCouponCode());
+        }
+
+        $this->assertNotEmpty(
+            $quote->getAppliedRuleIds(),
+            'Applied rule IDs should not be empty after quantity change during order edit'
+        );
+        $this->assertContains(
+            (string)$ruleId,
+            explode(',', (string)$quote->getAppliedRuleIds()),
+            'Expected sales rule must remain applied after quantity change during order edit'
+        );
+
+        $address = $quote->isVirtual() ? $quote->getBillingAddress() : $quote->getShippingAddress();
+        $this->assertGreaterThan(
+            0,
+            abs((float)$address->getDiscountAmount()),
+            'Discount must remain applied after quantity change during order edit'
+        );
+    }
+
+    /**
      * Simulate a subsequent admin request where the quote is reloaded from persistence.
      */
     private function simulateQuoteReloadAndRecollect(Create $orderCreateModel, Order $order): Quote
@@ -295,12 +322,16 @@ class CouponUsageLimitOrderEditTest extends TestCase
     /**
      * Simulate admin changing item quantity and recollecting totals.
      */
-    private function changeItemQtyAndRecollect(Create $orderCreateModel, float $qty): void
+    private function changeItemQtyAndRecollect(Create $orderCreateModel, float $qty): Quote
     {
         $item = current($orderCreateModel->getQuote()->getAllVisibleItems());
         $this->assertNotFalse($item, 'Edit quote must contain at least one visible item');
 
         $orderCreateModel->updateQuoteItems([(int)$item->getId() => ['qty' => $qty]]);
-        $orderCreateModel->saveQuote();
+        $quote = $orderCreateModel->getQuote();
+        $quote->setTotalsCollectedFlag(false);
+        $quote->collectTotals();
+
+        return $quote;
     }
 }

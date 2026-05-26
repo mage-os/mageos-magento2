@@ -9,7 +9,6 @@ namespace Magento\SalesRule\Model;
 
 use Magento\Framework\DataObjectFactory;
 use Magento\Quote\Api\Data\CartInterface;
-use Magento\Quote\Model\Quote\Address;
 use Magento\SalesRule\Api\Data\CouponInterface;
 use Magento\SalesRule\Model\ResourceModel\Coupon\UsageFactory;
 
@@ -74,18 +73,58 @@ class ValidateCouponCode
             return false;
         }
 
-        $orderEditOffset = $quote && $coupon->getRuleId()
-            ? $this->orderEditUsageOffset->getOffsetForQuote($quote, (int)$coupon->getRuleId())
-            : 0;
-
-        if ($coupon->getUsageLimit()
-            && $coupon->getTimesUsed() - $orderEditOffset >= $coupon->getUsageLimit()
-        ) {
+        $orderEditOffset = $this->getOrderEditOffset($quote, $coupon);
+        if ($this->isTotalUsageLimitReached($coupon, $orderEditOffset)) {
             return false;
         }
 
+        return !$this->isPerCustomerUsageLimitReached($coupon, $customerId, $orderEditOffset);
+    }
+
+    /**
+     * Resolve order-edit usage offset for a coupon rule.
+     *
+     * @param CartInterface|null $quote
+     * @param CouponInterface $coupon
+     * @return int
+     */
+    private function getOrderEditOffset(?CartInterface $quote, CouponInterface $coupon): int
+    {
+        if (!$quote || !$coupon->getRuleId()) {
+            return 0;
+        }
+
+        return $this->orderEditUsageOffset->getOffsetForQuote($quote, (int)$coupon->getRuleId());
+    }
+
+    /**
+     * Check whether coupon total usage limit is reached.
+     *
+     * @param CouponInterface $coupon
+     * @param int $orderEditOffset
+     * @return bool
+     */
+    private function isTotalUsageLimitReached(CouponInterface $coupon, int $orderEditOffset): bool
+    {
+        return (bool)($coupon->getUsageLimit()
+            && $coupon->getTimesUsed() - $orderEditOffset >= $coupon->getUsageLimit());
+    }
+
+    /**
+     * Check whether coupon per-customer usage limit is reached.
+     *
+     * @param CouponInterface $coupon
+     * @param int|null $customerId
+     * @param int $orderEditOffset
+     * @return bool
+     */
+    private function isPerCustomerUsageLimitReached(
+        CouponInterface $coupon,
+        ?int $customerId,
+        int $orderEditOffset
+    ): bool {
         if (!$customerId || !$coupon->getUsagePerCustomer()) {
-            return true;
+            return false;
         }
 
         $couponUsage = $this->objectFactory->create();
@@ -94,11 +133,8 @@ class ValidateCouponCode
             $customerId,
             $coupon->getId()
         );
-        if ($couponUsage->getCouponId()
-            && $couponUsage->getTimesUsed() - $orderEditOffset >= $coupon->getUsagePerCustomer()
-        ) {
-            return false;
-        }
-        return true;
+
+        return (bool)($couponUsage->getCouponId()
+            && $couponUsage->getTimesUsed() - $orderEditOffset >= $coupon->getUsagePerCustomer());
     }
 }
