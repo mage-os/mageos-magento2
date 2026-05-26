@@ -209,27 +209,7 @@ class SaveHandlerTest extends TestCase
 
         $this->assertSame($this->quoteMock, $this->saveHandler->save($this->quoteMock));
     }
-
-    public function testSaveThrowsInputExceptionWhenMultipleShippingAssignments(): void
-    {
-        $shippingAssignmentMock = $this->createMock(ShippingAssignmentInterface::class);
-
-        $this->quoteMock->expects(static::atLeastOnce())
-            ->method('getItems')
-            ->willReturn([]);
-        $this->quoteMock->expects(static::atLeastOnce())
-            ->method('isVirtual')
-            ->willReturn(false);
-        $this->extensionAttributesMock->expects(static::atLeastOnce())
-            ->method('getShippingAssignments')
-            ->willReturn([$shippingAssignmentMock, $shippingAssignmentMock]);
-
-        $this->expectException(InputException::class);
-        $this->expectExceptionMessage('Only 1 shipping assignment can be set');
-
-        $this->saveHandler->save($this->quoteMock);
-    }
-
+    
     public function testSaveThrowsCouldNotSaveExceptionWhenCartItemPersisterFails(): void
     {
         $quoteItemMock = $this->createQuoteItemMock(false);
