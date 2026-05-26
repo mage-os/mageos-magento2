@@ -26,6 +26,25 @@ class ValidateCoupon
     }
 
     /**
+     * Get usage offset for order edit context.
+     *
+     * When editing an order, the original order's coupon/rule usage should not count
+     * against the limit because the original order will be canceled after the new one is placed.
+     *
+     * @param Address $address
+     * @param Rule $rule
+     * @return int
+     */
+    private function getOrderEditUsageOffset(Address $address, Rule $rule): int
+    {
+        $originalRuleIds = $address->getQuote()->getData('original_order_applied_rule_ids');
+        if ($originalRuleIds && in_array((string)$rule->getId(), explode(',', $originalRuleIds))) {
+            return 1;
+        }
+        return 0;
+    }
+
+    /**
      * Validate coupon rule
      *
      * @param Rule $rule
@@ -50,8 +69,12 @@ class ValidateCoupon
             return false;
         }
 
+        $orderEditOffset = $this->getOrderEditUsageOffset($address, $rule);
+
         // check entire usage limit
-        if ($coupon->getUsageLimit() && $coupon->getTimesUsed() >= $coupon->getUsageLimit()) {
+        if ($coupon->getUsageLimit()
+            && $coupon->getTimesUsed() - $orderEditOffset >= $coupon->getUsageLimit()
+        ) {
             $rule->setIsValidForAddress($address, false);
             return false;
         }
@@ -67,8 +90,8 @@ class ValidateCoupon
             $customerId,
             $coupon->getId()
         );
-        if ($couponUsage->getCouponId() &&
-            $couponUsage->getTimesUsed() >= $coupon->getUsagePerCustomer()
+        if ($couponUsage->getCouponId()
+            && $couponUsage->getTimesUsed() - $orderEditOffset >= $coupon->getUsagePerCustomer()
         ) {
             $rule->setIsValidForAddress($address, false);
             return false;

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright 2026 Adobe
+ * All Rights Reserved.
+ */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminEditOrderPreservesCartPriceRuleWithUsageLimitTest">
+        <annotations>
+            <features value="SalesRule"/>
+            <stories value="Cart price rule discount is preserved when editing an order in admin"/>
+            <title value="Admin order edit preserves cart price rule discount when rule has usage limit"/>
+            <description value="Verify that when a cart price rule with 'Uses per Customer = 1' is applied to an order
+                and the admin edits that order, the discount remains applied to the edited order."/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="AC-16671"/>
+            <useCaseId value="40624"/>
+            <group value="salesRule"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <!-- Create product and customer -->
+            <createData entity="SimpleProduct2" stepKey="createProduct"/>
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+
+            <!-- Create cart price rule with coupon and uses_per_customer=1 -->
+            <actionGroup ref="AdminOpenCartPriceRulesPageActionGroup" stepKey="goToCartPriceRules"/>
+            <click selector="{{AdminCartPriceRulesSection.addNewRuleButton}}" stepKey="clickAddNewRule"/>
+            <fillField selector="{{AdminCartPriceRulesFormSection.ruleName}}" userInput="TestUsageLimitRule" stepKey="fillRuleName"/>
+            <selectOption selector="{{AdminCartPriceRulesFormSection.websites}}" userInput="Main Website" stepKey="selectWebsite"/>
+            <selectOption selector="{{AdminCartPriceRulesFormSection.customerGroups}}" parameterArray="['General', 'NOT LOGGED IN']" stepKey="selectCustomerGroups"/>
+            <selectOption selector="{{AdminCartPriceRulesFormSection.coupon}}" userInput="Specific Coupon" stepKey="selectCouponType"/>
+            <fillField selector="{{AdminCartPriceRulesFormSection.couponCode}}" userInput="TESTLIMIT1" stepKey="fillCouponCode"/>
+            <fillField selector="{{AdminCartPriceRulesFormSection.userPerCustomer}}" userInput="1" stepKey="fillUsesPerCustomer"/>
+            <!-- Set discount action -->
+            <click selector="{{AdminCartPriceRulesFormSection.actionsHeader}}" stepKey="expandActions"/>
+            <selectOption selector="{{AdminCartPriceRulesFormSection.apply}}" userInput="Percent of product price discount" stepKey="selectApplyType"/>
+            <fillField selector="{{AdminCartPriceRulesFormSection.discountAmount}}" userInput="50" stepKey="fillDiscountAmount"/>
+            <click selector="{{AdminCartPriceRulesFormSection.save}}" stepKey="saveRule"/>
+            <waitForPageLoad stepKey="waitForRuleSave"/>
+
+            <!-- Create order in admin with the coupon applied -->
+            <amOnPage stepKey="navigateToNewOrderPage" url="{{AdminOrderCreatePage.url}}"/>
+            <waitForPageLoad stepKey="waitForNewOrderPageOpened"/>
+            <click stepKey="chooseCustomer" selector="{{AdminOrdersGridSection.customerInOrdersSection('$$createCustomer.firstname$$')}}"/>
+            <waitForPageLoad stepKey="waitForStoresPageOpened"/>
+            <conditionalClick selector="{{AdminOrderFormStoreSelectorSection.defaultStoreViewButton}}"
+                              dependentSelector="{{AdminOrderFormStoreSelectorSection.storeSelectorContainer}}"
+                              visible="true"
+                              stepKey="selectDefaultStoreView"/>
+            <waitForPageLoad stepKey="waitForAddProductPageOpened"/>
+            <click selector="{{OrdersGridSection.addProducts}}" stepKey="clickOnAddProducts"/>
+            <waitForPageLoad stepKey="waitForProductsListForOrder"/>
+            <click selector="{{AdminOrdersGridSection.productForOrder('$$createProduct.sku$$')}}" stepKey="chooseTheProduct"/>
+            <waitForPageLoad stepKey="waitForClickProduct"/>
+            <click selector="{{AdminOrderFormItemsSection.addSelected}}" stepKey="addSelectedProductToOrder"/>
+            <waitForPageLoad stepKey="waitForProductAddedInOrder"/>
+            <actionGroup ref="AdminApplyCouponToOrderActionGroup" stepKey="applyCoupon">
+                <argument name="couponCode" value="TESTLIMIT1"/>
+            </actionGroup>
+            <click selector="{{AdminInvoicePaymentShippingSection.getShippingMethodAndRates}}" stepKey="openShippingMethod"/>
+            <waitForPageLoad stepKey="waitForShippingMethods"/>
+            <click selector="{{AdminInvoicePaymentShippingSection.shippingMethod}}" stepKey="chooseShippingMethod"/>
+            <waitForPageLoad stepKey="waitForShippingMethodsThickened"/>
+            <click selector="{{OrdersGridSection.submitOrder}}" stepKey="submitOrder"/>
+            <waitForPageLoad stepKey="waitForSubmitOrder"/>
+            <see stepKey="seeSuccessMessageForOrder" userInput="You created the order."/>
+        </before>
+        <after>
+            <actionGroup ref="DeleteCartPriceRuleByName" stepKey="deleteRule">
+                <argument name="ruleName" value="TestUsageLimitRule"/>
+            </actionGroup>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="logoutCustomer"/>
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
+        </after>
+
+        <!-- Grab the original order ID -->
+        <grabTextFrom selector="{{AdminOrderDetailsInformationSection.orderId}}" stepKey="grabOriginalOrderId"/>
+
+        <!-- Open the order and edit it -->
+        <actionGroup ref="OpenOrderByIdActionGroup" stepKey="openOrder">
+            <argument name="orderId" value="{$grabOriginalOrderId}"/>
+        </actionGroup>
+        <waitForElementClickable selector="{{AdminOrderDetailsMainActionsSection.edit}}" stepKey="waitForEditButton"/>
+        <click selector="{{AdminOrderDetailsMainActionsSection.edit}}" stepKey="clickEditOrder"/>
+        <waitForElementClickable selector="{{AdminOrderDetailsMainActionsSection.ok}}" stepKey="waitForConfirmModal"/>
+        <click selector="{{AdminOrderDetailsMainActionsSection.ok}}" stepKey="confirmEditOrder"/>
+        <waitForPageLoad stepKey="waitForEditPage"/>
+
+        <!-- Verify the coupon code is still present on the edit page -->
+        <seeInField selector="input[name='order[coupon][code]']" userInput="TESTLIMIT1" stepKey="verifyCouponCodePreserved"/>
+
+        <!-- Submit the edited order -->
+        <waitForElementClickable selector="{{OrdersGridSection.submitOrder}}" stepKey="waitForSubmitButton"/>
+        <click selector="{{OrdersGridSection.submitOrder}}" stepKey="submitEditedOrder"/>
+        <waitForPageLoad stepKey="waitForOrderCreation"/>
+
+        <!-- Verify the new order was created successfully -->
+        <see selector="{{AdminOrderDetailsMessagesSection.successMessage}}" userInput="You created the order." stepKey="seeOrderCreatedSuccess"/>
+    </test>
+</tests>

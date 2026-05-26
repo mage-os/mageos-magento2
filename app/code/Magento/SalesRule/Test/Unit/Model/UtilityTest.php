@@ -273,6 +273,39 @@ class UtilityTest extends TestCase
     }
 
     /**
+     * Verify rule is allowed during admin order edit when usage limit was reached by the original order.
+     *
+     * @return void
+     */
+    public function testCanProcessRuleAllowsUsageDuringOrderEdit(): void
+    {
+        $customerId = 1;
+        $usageLimit = 1;
+        $timesUsed = 1;
+        $ruleId = 4;
+        $this->rule->setId($ruleId);
+        $this->rule->setUsesPerCustomer($usageLimit);
+        $this->quote->setCustomerId($customerId);
+        $this->quote->setData('original_order_applied_rule_ids', (string)$ruleId);
+        $this->address->expects($this->atLeastOnce())
+            ->method('getQuote')
+            ->willReturn($this->quote);
+        $this->customer->setId($customerId);
+        $this->customer->setTimesUsed($timesUsed);
+        $this->customerFactory->expects($this->once())
+            ->method('create')
+            ->willReturn($this->customer);
+
+        $this->validateCoupon->method('execute')
+            ->willReturn(true);
+
+        $this->rule->expects($this->once())->method('afterLoad');
+        $this->rule->expects($this->once())->method('validate')->willReturn(true);
+
+        $this->assertTrue($this->utility->canProcessRule($this->rule, $this->address));
+    }
+
+    /**
      * Quote does not meet rule's conditions
      *
      * @return void
