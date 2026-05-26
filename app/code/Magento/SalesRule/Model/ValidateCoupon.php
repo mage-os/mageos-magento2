@@ -17,31 +17,14 @@ class ValidateCoupon
      * @param CouponFactory $couponFactory
      * @param DataObjectFactory $objectFactory
      * @param UsageFactory $usageFactory
+     * @param OrderEditUsageOffset $orderEditUsageOffset
      */
     public function __construct(
         private readonly CouponFactory $couponFactory,
         private readonly DataObjectFactory $objectFactory,
-        private readonly UsageFactory $usageFactory
+        private readonly UsageFactory $usageFactory,
+        private readonly OrderEditUsageOffset $orderEditUsageOffset
     ) {
-    }
-
-    /**
-     * Get usage offset for order edit context.
-     *
-     * When editing an order, the original order's coupon/rule usage should not count
-     * against the limit because the original order will be canceled after the new one is placed.
-     *
-     * @param Address $address
-     * @param Rule $rule
-     * @return int
-     */
-    private function getOrderEditUsageOffset(Address $address, Rule $rule): int
-    {
-        $originalRuleIds = $address->getQuote()->getData('original_order_applied_rule_ids');
-        if ($originalRuleIds && in_array((string)$rule->getId(), explode(',', $originalRuleIds))) {
-            return 1;
-        }
-        return 0;
     }
 
     /**
@@ -69,7 +52,7 @@ class ValidateCoupon
             return false;
         }
 
-        $orderEditOffset = $this->getOrderEditUsageOffset($address, $rule);
+        $orderEditOffset = $this->orderEditUsageOffset->getOffset($address, (int)$rule->getId());
 
         // check entire usage limit
         if ($coupon->getUsageLimit()

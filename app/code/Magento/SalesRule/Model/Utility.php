@@ -59,12 +59,18 @@ class Utility
     private $validateCoupon;
 
     /**
+     * @var OrderEditUsageOffset
+     */
+    private $orderEditUsageOffset;
+
+    /**
      * @param UsageFactory $usageFactory
      * @param CouponFactory $couponFactory
      * @param Rule\CustomerFactory $customerFactory
      * @param DataObjectFactory $objectFactory
      * @param PriceCurrencyInterface $priceCurrency
      * @param ValidateCoupon|null $validateCoupon
+     * @param OrderEditUsageOffset|null $orderEditUsageOffset
      */
     public function __construct(
         UsageFactory $usageFactory,
@@ -72,7 +78,8 @@ class Utility
         CustomerFactory $customerFactory,
         DataObjectFactory $objectFactory,
         PriceCurrencyInterface $priceCurrency,
-        ?ValidateCoupon $validateCoupon = null
+        ?ValidateCoupon $validateCoupon = null,
+        ?OrderEditUsageOffset $orderEditUsageOffset = null
     ) {
         $this->couponFactory = $couponFactory;
         $this->customerFactory = $customerFactory;
@@ -80,6 +87,8 @@ class Utility
         $this->objectFactory = $objectFactory;
         $this->priceCurrency = $priceCurrency;
         $this->validateCoupon = $validateCoupon ?: ObjectManager::getInstance()->get(ValidateCoupon::class);
+        $this->orderEditUsageOffset = $orderEditUsageOffset
+            ?: ObjectManager::getInstance()->get(OrderEditUsageOffset::class);
     }
 
     /**
@@ -112,7 +121,7 @@ class Utility
             $ruleCustomer->loadByCustomerRule($customerId, $ruleId);
             if ($ruleCustomer->getId()) {
                 $timesUsed = $ruleCustomer->getTimesUsed();
-                $timesUsed -= $this->getOriginalOrderRuleUsageCount($address, (int)$ruleId);
+                $timesUsed -= $this->orderEditUsageOffset->getOffset($address, (int)$ruleId);
                 if ($timesUsed >= $rule->getUsesPerCustomer()) {
                     $rule->setIsValidForAddress($address, false);
                     return false;
@@ -144,25 +153,6 @@ class Utility
          */
         $rule->setIsValidForAddress($address, true);
         return true;
-    }
-
-    /**
-     * Get the number of times a rule was used in the original order being edited.
-     *
-     * During admin order edits, the original order's usage should not count against the limit
-     * because it will be canceled after the new order is placed.
-     *
-     * @param Address $address
-     * @param int $ruleId
-     * @return int
-     */
-    private function getOriginalOrderRuleUsageCount(Address $address, int $ruleId): int
-    {
-        $originalRuleIds = $address->getQuote()->getData('original_order_applied_rule_ids');
-        if ($originalRuleIds && in_array((string)$ruleId, explode(',', $originalRuleIds))) {
-            return 1;
-        }
-        return 0;
     }
 
     /**
