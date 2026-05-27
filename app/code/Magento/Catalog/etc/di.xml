@@ -357,14 +357,6 @@
             <argument name="indexer" xsi:type="object" shared="false">Magento\Framework\Indexer\IndexerInterface</argument>
         </arguments>
     </type>
-    <type name="Magento\Framework\Model\ActionValidator\RemoveAction">
-        <arguments>
-            <argument name="protectedModels" xsi:type="array">
-                <item name="catalogCategory" xsi:type="string">Magento\Catalog\Model\Category</item>
-                <item name="catalogProduct" xsi:type="string">Magento\Catalog\Model\Product</item>
-            </argument>
-        </arguments>
-    </type>
     <type name="Magento\Framework\Pricing\Adjustment\Collection">
     </type>
     <type name="Magento\Catalog\Model\Product\ReservedAttributeList">

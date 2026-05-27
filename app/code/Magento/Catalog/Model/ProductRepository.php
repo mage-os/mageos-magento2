@@ -32,7 +32,6 @@ use Magento\Framework\Exception\StateException;
 use Magento\Framework\Exception\TemporaryState\CouldNotSaveException as TemporaryCouldNotSaveException;
 use Magento\Framework\Exception\ValidatorException;
 use Magento\Framework\ObjectManager\ResetAfterRequestInterface;
-use Magento\Framework\Registry;
 use Magento\Store\Model\Store;
 use Magento\Catalog\Api\Data\EavAttributeInterface;
 
@@ -189,11 +188,6 @@ class ProductRepository implements \Magento\Catalog\Api\ProductRepositoryInterfa
     private $scopeOverriddenValue;
 
     /**
-     * @var Registry
-     */
-    private $registry;
-
-    /**
      * ProductRepository constructor.
      * @param ProductFactory $productFactory
      * @param \Magento\Catalog\Api\Data\ProductSearchResultsInterfaceFactory $searchResultsFactory
@@ -220,7 +214,6 @@ class ProductRepository implements \Magento\Catalog\Api\ProductRepositoryInterfa
      * @param ReadExtensions $readExtensions
      * @param CategoryLinkManagementInterface $linkManagement
      * @param ScopeOverriddenValue|null $scopeOverriddenValue
-     * @param Registry|null $registry
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
@@ -249,8 +242,7 @@ class ProductRepository implements \Magento\Catalog\Api\ProductRepositoryInterfa
         $cacheLimit = 1000,
         ?ReadExtensions $readExtensions = null,
         ?CategoryLinkManagementInterface $linkManagement = null,
-        ?ScopeOverriddenValue $scopeOverriddenValue = null,
-        ?Registry $registry = null
+        ?ScopeOverriddenValue $scopeOverriddenValue = null
     ) {
         $this->productFactory = $productFactory;
         $this->collectionFactory = $collectionFactory;
@@ -278,8 +270,6 @@ class ProductRepository implements \Magento\Catalog\Api\ProductRepositoryInterfa
             ->get(CategoryLinkManagementInterface::class);
         $this->scopeOverriddenValue = $scopeOverriddenValue ?: \Magento\Framework\App\ObjectManager::getInstance()
             ->get(ScopeOverriddenValue::class);
-        $this->registry = $registry ?: \Magento\Framework\App\ObjectManager::getInstance()
-            ->get(Registry::class);
     }
 
     /**
@@ -683,10 +673,6 @@ class ProductRepository implements \Magento\Catalog\Api\ProductRepositoryInterfa
     {
         $sku = $product->getSku();
         $productId = $product->getId();
-        $wasSecure = (bool) $this->registry->registry('isSecureArea');
-        if (!$wasSecure) {
-            $this->registry->register('isSecureArea', true);
-        }
         try {
             $this->removeProductFromLocalCacheBySku($product->getSku());
             $this->removeProductFromLocalCacheById($product->getId());
@@ -698,10 +684,6 @@ class ProductRepository implements \Magento\Catalog\Api\ProductRepositoryInterfa
                 __('The "%1" product couldn\'t be removed.', $sku),
                 $e
             );
-        } finally {
-            if (!$wasSecure) {
-                $this->registry->unregister('isSecureArea');
-            }
         }
         $this->removeProductFromLocalCacheBySku($sku);
         $this->removeProductFromLocalCacheById($productId);
