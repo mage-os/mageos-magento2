@@ -33,6 +33,8 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Quote totals calculate tests class
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class CalculateTest extends TestCase
 {
