@@ -10,6 +10,12 @@ namespace Magento\Weee\Model\Total\Quote;
 use Magento\Catalog\Test\Fixture\Product as ProductFixture;
 use Magento\Checkout\Api\Data\TotalsInformationInterface;
 use Magento\Checkout\Model\TotalsInformationManagement;
+use Magento\Checkout\Test\Fixture\PlaceOrder as PlaceOrderFixture;
+use Magento\Checkout\Test\Fixture\SetBillingAddress as SetBillingAddressFixture;
+use Magento\Checkout\Test\Fixture\SetDeliveryMethod as SetDeliveryMethodFixture;
+use Magento\Checkout\Test\Fixture\SetGuestEmail as SetGuestEmailFixture;
+use Magento\Checkout\Test\Fixture\SetPaymentMethod as SetPaymentMethodFixture;
+use Magento\Checkout\Test\Fixture\SetShippingAddress as SetShippingAddressFixture;
 use Magento\ConfigurableProduct\Test\Fixture\AddProductToCart as AddConfigurableProductToCartFixture;
 use Magento\ConfigurableProduct\Test\Fixture\Attribute as ConfigurableAttributeFixture;
 use Magento\ConfigurableProduct\Test\Fixture\Product as ConfigurableProductFixture;
@@ -24,6 +30,8 @@ use Magento\Quote\Model\QuoteFactory;
 use Magento\Quote\Model\ResourceModel\Quote as QuoteResource;
 use Magento\Quote\Test\Fixture\AddProductToCart as AddProductToCartFixture;
 use Magento\Quote\Test\Fixture\GuestCart as GuestCartFixture;
+use Magento\Sales\Test\Fixture\Creditmemo as CreditmemoFixture;
+use Magento\Sales\Test\Fixture\Invoice as InvoiceFixture;
 use Magento\TestFramework\Fixture\Config;
 use Magento\TestFramework\Fixture\DataFixture;
 use Magento\TestFramework\Fixture\DataFixtureStorageManager;
@@ -179,7 +187,7 @@ class CalculateTest extends TestCase
     }
 
     /**
-     * Verify that recalculateParent propagates base_weee_tax_applied_amount from child to parent quote item.
+     * Verify that recalculateParent propagates all WEEE unit and row amounts from child to parent quote item.
      */
     #[
         Config('tax/weee/enable', '1', 'store', 'default'),
@@ -219,7 +227,7 @@ class CalculateTest extends TestCase
         $cart = $this->fixtures->get('cart');
         $cart = $this->cartRepository->get($cart->getId());
         $cart->getShippingAddress()->setCountryId('US');
-        $cart->collectTotals();
+        $cart->setTotalsCollectedFlag(false)->collectTotals();
 
         $parentItem = null;
         $childItem = null;
@@ -242,6 +250,251 @@ class CalculateTest extends TestCase
             $childItem->getBaseWeeeTaxAppliedAmount(),
             $parentItem->getBaseWeeeTaxAppliedAmount(),
             'Configurable parent item base_weee_tax_applied_amount must be propagated from the child item'
+        );
+        $this->assertEquals(
+            $childItem->getWeeeTaxAppliedRowAmount(),
+            $parentItem->getWeeeTaxAppliedRowAmount(),
+            'Configurable parent item weee_tax_applied_row_amount must be propagated from the child item'
+        );
+        $this->assertEquals(
+            $childItem->getBaseWeeeTaxAppliedRowAmnt(),
+            $parentItem->getBaseWeeeTaxAppliedRowAmnt(),
+            'Configurable parent item base_weee_tax_applied_row_amnt must be propagated from the child item'
+        );
+    }
+
+    /**
+     * Same as testCollectSetsBaseWeeeTaxAppliedAmountOnConfigurableParentItem with taxable FPT (apply_vat=1).
+     */
+    #[
+        Config('tax/weee/enable', '1', 'store', 'default'),
+        Config('tax/weee/apply_vat', '1', 'store', 'default'),
+        DataFixture(FptAttributeFixture::class, ['attribute_code' => 'fpt_attr'], 'fpt'),
+        DataFixture(ConfigurableAttributeFixture::class, ['attribute_code' => 'test_configurable'], 'conf_attr'),
+        DataFixture(
+            ProductFixture::class,
+            [
+                'sku' => 'simple-with-fpt',
+                'price' => 100.0,
+                'fpt_attr' => [['website_id' => 0, 'country' => 'US', 'state' => 0, 'price' => 10.0]],
+            ],
+            'simple'
+        ),
+        DataFixture(
+            ConfigurableProductFixture::class,
+            [
+                'sku' => 'configurable-with-fpt',
+                '_options' => ['$conf_attr$'],
+                '_links' => ['$simple$'],
+            ],
+            'configurable'
+        ),
+        DataFixture(GuestCartFixture::class, as: 'cart'),
+        DataFixture(
+            AddConfigurableProductToCartFixture::class,
+            [
+                'cart_id' => '$cart.id$',
+                'product_id' => '$configurable.id$',
+                'child_product_id' => '$simple.id$',
+            ]
+        ),
+    ]
+    public function testCollectSetsWeeeRowAmountsOnConfigurableParentItemWithTaxableFpt(): void
+    {
+        $cart = $this->fixtures->get('cart');
+        $cart = $this->cartRepository->get($cart->getId());
+        $cart->getShippingAddress()->setCountryId('US');
+        $cart->setTotalsCollectedFlag(false)->collectTotals();
+
+        $parentItem = null;
+        $childItem = null;
+        foreach ($cart->getAllItems() as $item) {
+            if ($item->getParentItem()) {
+                $childItem = $item;
+            } else {
+                $parentItem = $item;
+            }
+        }
+
+        $this->assertNotNull($parentItem, 'Configurable parent quote item must exist');
+        $this->assertNotNull($childItem, 'Simple child quote item must exist');
+        $this->assertGreaterThan(0, $childItem->getWeeeTaxAppliedRowAmount());
+        $this->assertEquals(
+            $childItem->getWeeeTaxAppliedRowAmount(),
+            $parentItem->getWeeeTaxAppliedRowAmount(),
+            'Configurable parent item weee_tax_applied_row_amount must be propagated from the child item'
+        );
+        $this->assertEquals(
+            $childItem->getBaseWeeeTaxAppliedRowAmnt(),
+            $parentItem->getBaseWeeeTaxAppliedRowAmnt(),
+            'Configurable parent item base_weee_tax_applied_row_amnt must be propagated from the child item'
+        );
+        $this->assertEquals(
+            $childItem->getBaseWeeeTaxAppliedAmount(),
+            $parentItem->getBaseWeeeTaxAppliedAmount(),
+            'Configurable parent item base_weee_tax_applied_amount must be propagated from the child item'
+        );
+    }
+
+    /**
+     * Verify invoice and credit memo grand totals include FPT for a configurable product (apply_vat=0).
+     */
+    #[
+        Config('tax/weee/enable', '1', 'store', 'default'),
+        Config('tax/weee/apply_vat', '0', 'store', 'default'),
+        DataFixture(FptAttributeFixture::class, ['attribute_code' => 'fpt_attr'], 'fpt'),
+        DataFixture(ConfigurableAttributeFixture::class, ['attribute_code' => 'test_configurable'], 'conf_attr'),
+        DataFixture(
+            ProductFixture::class,
+            [
+                'sku' => 'simple-with-fpt',
+                'price' => 100.0,
+                'fpt_attr' => [['website_id' => 0, 'country' => 'US', 'state' => 0, 'price' => 10.0]],
+            ],
+            'simple'
+        ),
+        DataFixture(
+            ConfigurableProductFixture::class,
+            [
+                'sku' => 'configurable-with-fpt',
+                '_options' => ['$conf_attr$'],
+                '_links' => ['$simple$'],
+            ],
+            'configurable'
+        ),
+        DataFixture(GuestCartFixture::class, as: 'cart'),
+        DataFixture(
+            AddConfigurableProductToCartFixture::class,
+            [
+                'cart_id' => '$cart.id$',
+                'product_id' => '$configurable.id$',
+                'child_product_id' => '$simple.id$',
+            ]
+        ),
+        DataFixture(SetShippingAddressFixture::class, ['cart_id' => '$cart.id$']),
+        DataFixture(SetBillingAddressFixture::class, ['cart_id' => '$cart.id$']),
+        DataFixture(SetGuestEmailFixture::class, ['cart_id' => '$cart.id$']),
+        DataFixture(SetDeliveryMethodFixture::class, ['cart_id' => '$cart.id$']),
+        DataFixture(SetPaymentMethodFixture::class, ['cart_id' => '$cart.id$']),
+        DataFixture(PlaceOrderFixture::class, ['cart_id' => '$cart.id$'], 'order'),
+        DataFixture(InvoiceFixture::class, ['order_id' => '$order.id$'], 'invoice'),
+        DataFixture(CreditmemoFixture::class, ['order_id' => '$order.id$'], 'creditmemo'),
+    ]
+    public function testInvoiceAndCreditMemoIncludeFptForConfigurableProduct(): void
+    {
+        $order = $this->fixtures->get('order');
+        $invoice = $this->fixtures->get('invoice');
+        $creditmemo = $this->fixtures->get('creditmemo');
+
+        $this->assertEquals(
+            $order->getGrandTotal(),
+            $invoice->getGrandTotal(),
+            'Invoice grand total must equal order grand total — FPT must be included in the invoice'
+        );
+        $this->assertEquals(
+            $order->getGrandTotal(),
+            $creditmemo->getGrandTotal(),
+            'Credit memo grand total must equal order grand total — FPT must be included in the refund'
+        );
+
+        $parentOrderItem = null;
+        foreach ($order->getItems() as $item) {
+            if (!$item->getParentItemId()) {
+                $parentOrderItem = $item;
+                break;
+            }
+        }
+        $this->assertNotNull($parentOrderItem, 'Configurable parent order item must exist');
+        $this->assertGreaterThan(
+            0,
+            $parentOrderItem->getWeeeTaxAppliedRowAmount(),
+            'Parent order item weee_tax_applied_row_amount must be set so the invoice collector can read it'
+        );
+        $this->assertGreaterThan(
+            0,
+            $parentOrderItem->getBaseWeeeTaxAppliedRowAmnt(),
+            'Parent order item base_weee_tax_applied_row_amnt must be set so the invoice collector can read it'
+        );
+    }
+
+    /**
+     * Verify invoice and credit memo grand totals include FPT for a configurable product (apply_vat=1).
+     */
+    #[
+        Config('tax/weee/enable', '1', 'store', 'default'),
+        Config('tax/weee/apply_vat', '1', 'store', 'default'),
+        DataFixture(FptAttributeFixture::class, ['attribute_code' => 'fpt_attr'], 'fpt'),
+        DataFixture(ConfigurableAttributeFixture::class, ['attribute_code' => 'test_configurable'], 'conf_attr'),
+        DataFixture(
+            ProductFixture::class,
+            [
+                'sku' => 'simple-with-fpt',
+                'price' => 100.0,
+                'fpt_attr' => [['website_id' => 0, 'country' => 'US', 'state' => 0, 'price' => 10.0]],
+            ],
+            'simple'
+        ),
+        DataFixture(
+            ConfigurableProductFixture::class,
+            [
+                'sku' => 'configurable-with-fpt',
+                '_options' => ['$conf_attr$'],
+                '_links' => ['$simple$'],
+            ],
+            'configurable'
+        ),
+        DataFixture(GuestCartFixture::class, as: 'cart'),
+        DataFixture(
+            AddConfigurableProductToCartFixture::class,
+            [
+                'cart_id' => '$cart.id$',
+                'product_id' => '$configurable.id$',
+                'child_product_id' => '$simple.id$',
+            ]
+        ),
+        DataFixture(SetShippingAddressFixture::class, ['cart_id' => '$cart.id$']),
+        DataFixture(SetBillingAddressFixture::class, ['cart_id' => '$cart.id$']),
+        DataFixture(SetGuestEmailFixture::class, ['cart_id' => '$cart.id$']),
+        DataFixture(SetDeliveryMethodFixture::class, ['cart_id' => '$cart.id$']),
+        DataFixture(SetPaymentMethodFixture::class, ['cart_id' => '$cart.id$']),
+        DataFixture(PlaceOrderFixture::class, ['cart_id' => '$cart.id$'], 'order'),
+        DataFixture(InvoiceFixture::class, ['order_id' => '$order.id$'], 'invoice'),
+        DataFixture(CreditmemoFixture::class, ['order_id' => '$order.id$'], 'creditmemo'),
+    ]
+    public function testInvoiceAndCreditMemoIncludeFptForConfigurableProductWithTaxableFpt(): void
+    {
+        $order = $this->fixtures->get('order');
+        $invoice = $this->fixtures->get('invoice');
+        $creditmemo = $this->fixtures->get('creditmemo');
+
+        $this->assertEquals(
+            $order->getGrandTotal(),
+            $invoice->getGrandTotal(),
+            'Invoice grand total must equal order grand total — FPT must be included in the invoice'
+        );
+        $this->assertEquals(
+            $order->getGrandTotal(),
+            $creditmemo->getGrandTotal(),
+            'Credit memo grand total must equal order grand total — FPT must be included in the refund'
+        );
+
+        $parentOrderItem = null;
+        foreach ($order->getItems() as $item) {
+            if (!$item->getParentItemId()) {
+                $parentOrderItem = $item;
+                break;
+            }
+        }
+        $this->assertNotNull($parentOrderItem, 'Configurable parent order item must exist');
+        $this->assertGreaterThan(
+            0,
+            $parentOrderItem->getWeeeTaxAppliedRowAmount(),
+            'Parent order item weee_tax_applied_row_amount must be set so the invoice collector can read it'
+        );
+        $this->assertGreaterThan(
+            0,
+            $parentOrderItem->getBaseWeeeTaxAppliedRowAmnt(),
+            'Parent order item base_weee_tax_applied_row_amnt must be set so the invoice collector can read it'
         );
     }
 
