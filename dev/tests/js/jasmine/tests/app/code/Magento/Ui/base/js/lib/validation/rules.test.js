@@ -10,6 +10,28 @@ define([
     'use strict';
 
     describe('Magento_Ui/js/lib/validation/rules', function () {
+        describe('"max_text_length" method', function () {
+            it('passes when value is undefined', function () {
+                expect(rules['max_text_length'].handler(undefined, 10)).toBe(true);
+            });
+
+            it('passes when value is empty string', function () {
+                expect(rules['max_text_length'].handler('', 10)).toBe(true);
+            });
+
+            it('passes when value length equals the limit', function () {
+                expect(rules['max_text_length'].handler('hello', 5)).toBe(true);
+            });
+
+            it('passes when value length is within the limit', function () {
+                expect(rules['max_text_length'].handler('hi', 10)).toBe(true);
+            });
+
+            it('fails when value length exceeds the limit', function () {
+                expect(rules['max_text_length'].handler('hello world', 5)).toBe(false);
+            });
+        });
+
         describe('"range-words" method', function () {
             it('Check on empty value', function () {
                 var value = '',
