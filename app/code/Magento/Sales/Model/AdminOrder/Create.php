@@ -631,13 +631,13 @@ class Create extends \Magento\Framework\DataObject implements \Magento\Checkout\
         $this->setShippingMethod($order->getShippingMethod());
         $quote->getShippingAddress()->setShippingDescription($order->getShippingDescription());
 
+        if ($order->getAppliedRuleIds() && !$order->getReordered()) {
+            $quote->setData(self::ORIGINAL_ORDER_APPLIED_RULE_IDS, $order->getAppliedRuleIds());
+        }
+
         $orderCouponCode = $order->getCouponCode();
         if ($orderCouponCode) {
             $quote->setCouponCode($orderCouponCode);
-        }
-
-        if ($order->getAppliedRuleIds() && !$order->getReordered()) {
-            $quote->setData(self::ORIGINAL_ORDER_APPLIED_RULE_IDS, $order->getAppliedRuleIds());
         }
 
         if ($quote->getCouponCode()) {

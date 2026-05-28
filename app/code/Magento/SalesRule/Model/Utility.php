@@ -102,7 +102,9 @@ class Utility
      */
     public function canProcessRule(Rule $rule, Address $address): bool
     {
-        if ($rule->hasIsValidForAddress($address) && !$address->isObjectNew()) {
+        $ruleId = (int)$rule->getId();
+        $orderEditOffset = $this->orderEditUsageOffset->getOffset($address, $ruleId);
+        if ($rule->hasIsValidForAddress($address) && !$address->isObjectNew() && $orderEditOffset === 0) {
             return $rule->getIsValidForAddress($address);
         }
 
@@ -113,7 +115,6 @@ class Utility
         /**
          * check per rule usage limit
          */
-        $ruleId = $rule->getId();
         if ($ruleId && $rule->getUsesPerCustomer()) {
             $customerId = $address->getQuote()->getCustomerId();
             /** @var \Magento\SalesRule\Model\Rule\Customer $ruleCustomer */
@@ -121,7 +122,7 @@ class Utility
             $ruleCustomer->loadByCustomerRule($customerId, $ruleId);
             if ($ruleCustomer->getId()) {
                 $timesUsed = $ruleCustomer->getTimesUsed();
-                $timesUsed -= $this->orderEditUsageOffset->getOffset($address, (int)$ruleId);
+                $timesUsed -= $orderEditOffset;
                 if ($timesUsed >= $rule->getUsesPerCustomer()) {
                     $rule->setIsValidForAddress($address, false);
                     return false;

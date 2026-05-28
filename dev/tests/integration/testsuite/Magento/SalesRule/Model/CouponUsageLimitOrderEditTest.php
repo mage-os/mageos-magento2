@@ -304,6 +304,7 @@ class CouponUsageLimitOrderEditTest extends TestCase
     {
         $quoteId = (int)$orderCreateModel->getQuote()->getId();
         $reloadedQuote = $this->quoteRepository->get($quoteId);
+        $orderCreateModel->setQuote($reloadedQuote);
 
         $this->assertEmpty(
             $reloadedQuote->getData(Create::ORIGINAL_ORDER_APPLIED_RULE_IDS),
@@ -328,10 +329,8 @@ class CouponUsageLimitOrderEditTest extends TestCase
         $this->assertNotFalse($item, 'Edit quote must contain at least one visible item');
 
         $orderCreateModel->updateQuoteItems([(int)$item->getId() => ['qty' => $qty]]);
-        $quote = $orderCreateModel->getQuote();
-        $quote->setTotalsCollectedFlag(false);
-        $quote->collectTotals();
+        $orderCreateModel->saveQuote();
 
-        return $quote;
+        return $orderCreateModel->getQuote();
     }
 }

@@ -90,11 +90,11 @@ class ValidateCouponCode
      */
     private function getOrderEditOffset(?CartInterface $quote, CouponInterface $coupon): int
     {
-        if (!$quote || !$coupon->getRuleId()) {
+        if (!$coupon->getRuleId()) {
             return 0;
         }
 
-        return $this->orderEditUsageOffset->getOffsetForQuote($quote, (int)$coupon->getRuleId());
+        return $this->orderEditUsageOffset->getOffsetForRuleId((int)$coupon->getRuleId(), $quote);
     }
 
     /**

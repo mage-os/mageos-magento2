@@ -56,6 +56,20 @@ class OrderEditUsageOffset
      */
     public function getOffsetForQuote(CartInterface $quote, int $ruleId): int
     {
+        return $this->getOffsetForRuleId($ruleId, $quote);
+    }
+
+    /**
+     * Return how many times a rule was used by the order being edited.
+     *
+     * Uses admin session when quote edit-context data is unavailable (e.g. Multicoupon validation without quote).
+     *
+     * @param int $ruleId
+     * @param CartInterface|null $quote
+     * @return int
+     */
+    public function getOffsetForRuleId(int $ruleId, ?CartInterface $quote = null): int
+    {
         if (!$this->isAdminOrderEdit()) {
             return 0;
         }
@@ -71,14 +85,16 @@ class OrderEditUsageOffset
     /**
      * Resolve applied rule IDs from the order being edited.
      *
-     * @param CartInterface $quote
+     * @param CartInterface|null $quote
      * @return string|null
      */
-    private function getOriginalAppliedRuleIds(CartInterface $quote): ?string
+    private function getOriginalAppliedRuleIds(?CartInterface $quote): ?string
     {
-        $ruleIds = $quote->getData(Create::ORIGINAL_ORDER_APPLIED_RULE_IDS);
-        if ($ruleIds) {
-            return (string)$ruleIds;
+        if ($quote !== null) {
+            $ruleIds = $quote->getData(Create::ORIGINAL_ORDER_APPLIED_RULE_IDS);
+            if ($ruleIds) {
+                return (string)$ruleIds;
+            }
         }
 
         if (!$this->adminSessionQuote->getData('order_id') || $this->adminSessionQuote->getData('reordered')) {

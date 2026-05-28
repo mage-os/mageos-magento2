@@ -190,6 +190,12 @@ class UtilityTest extends TestCase
      */
     public function testCanProcessRuleValidAddress(): void
     {
+        $ruleId = 4;
+        $this->rule->setId($ruleId);
+        $this->orderEditUsageOffset->expects($this->once())
+            ->method('getOffset')
+            ->with($this->address, $ruleId)
+            ->willReturn(0);
         $this->rule->expects($this->once())
             ->method('hasIsValidForAddress')
             ->with($this->address)
@@ -321,6 +327,12 @@ class UtilityTest extends TestCase
      */
     public function testCanProcessRuleReturnsCachedInvalidAddressResult(): void
     {
+        $ruleId = 4;
+        $this->rule->setId($ruleId);
+        $this->orderEditUsageOffset->expects($this->once())
+            ->method('getOffset')
+            ->with($this->address, $ruleId)
+            ->willReturn(0);
         $this->rule->expects($this->once())
             ->method('hasIsValidForAddress')
             ->with($this->address)
@@ -334,6 +346,45 @@ class UtilityTest extends TestCase
             ->willReturn(false);
 
         $this->assertFalse($this->utility->canProcessRule($this->rule, $this->address));
+    }
+
+    /**
+     * Cached invalid result must not block rule revalidation during admin order edit.
+     *
+     * @return void
+     */
+    public function testCanProcessRuleRevalidatesWhenOrderEditOffsetApplies(): void
+    {
+        $ruleId = 4;
+        $this->rule->setId($ruleId);
+        $this->rule->setUsesPerCustomer(1);
+        $this->rule->setCouponType(Rule::COUPON_TYPE_NO_COUPON);
+        $this->quote->setCustomerId(1);
+        $this->orderEditUsageOffset->expects($this->once())
+            ->method('getOffset')
+            ->with($this->address, $ruleId)
+            ->willReturn(1);
+        $this->rule->expects($this->once())
+            ->method('hasIsValidForAddress')
+            ->with($this->address)
+            ->willReturn(true);
+        $this->rule->expects($this->never())
+            ->method('getIsValidForAddress');
+        $this->address->expects($this->once())
+            ->method('isObjectNew')
+            ->willReturn(false);
+        $this->address->expects($this->atLeastOnce())
+            ->method('getQuote')
+            ->willReturn($this->quote);
+        $this->customer->setId(1);
+        $this->customer->setTimesUsed(1);
+        $this->customerFactory->expects($this->once())
+            ->method('create')
+            ->willReturn($this->customer);
+        $this->validateCoupon->method('execute')->willReturn(true);
+        $this->rule->expects($this->once())->method('validate')->willReturn(true);
+
+        $this->assertTrue($this->utility->canProcessRule($this->rule, $this->address));
     }
 
     /**
@@ -378,7 +429,10 @@ class UtilityTest extends TestCase
         $this->customerFactory->expects($this->once())
             ->method('create')
             ->willReturn($this->customer);
-        $this->orderEditUsageOffset->expects($this->never())->method('getOffset');
+        $this->orderEditUsageOffset->expects($this->once())
+            ->method('getOffset')
+            ->with($this->address, $ruleId)
+            ->willReturn(0);
         $this->validateCoupon->method('execute')->willReturn(true);
         $this->rule->setCouponType(Rule::COUPON_TYPE_NO_COUPON);
         $this->rule->expects($this->once())->method('validate')->willReturn(true);

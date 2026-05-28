@@ -243,4 +243,31 @@ class OrderEditUsageOffsetTest extends TestCase
 
         $this->assertSame(0, $this->orderEditUsageOffset->getOffsetForQuote($this->quote, 10));
     }
+
+    /**
+     * @return void
+     */
+    public function testGetOffsetForRuleIdFallsBackToSessionOrderAppliedRules(): void
+    {
+        $ruleId = 7;
+        $order = $this->createPartialMock(Order::class, ['getId', 'getAppliedRuleIds']);
+
+        $this->appState->expects($this->once())
+            ->method('getAreaCode')
+            ->willReturn(Area::AREA_ADMINHTML);
+        $this->adminSessionQuote->expects($this->exactly(2))
+            ->method('getData')
+            ->willReturnCallback(static function (string $key) {
+                return match ($key) {
+                    'order_id' => 100,
+                    'reordered' => null,
+                    default => null,
+                };
+            });
+        $this->adminSessionQuote->expects($this->once())->method('getOrder')->willReturn($order);
+        $order->expects($this->once())->method('getId')->willReturn(100);
+        $order->expects($this->once())->method('getAppliedRuleIds')->willReturn('7,8');
+
+        $this->assertSame(1, $this->orderEditUsageOffset->getOffsetForRuleId($ruleId));
+    }
 }
