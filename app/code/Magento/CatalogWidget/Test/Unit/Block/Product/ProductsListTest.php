@@ -257,10 +257,15 @@ class ProductsListTest extends TestCase
             });
 
         $info = $this->productsList->getCacheKeyInfo();
-        $this->assertIsString($info[10]);
-        $this->assertStringContainsString('fbclid', $info[10]);
-        $this->assertStringContainsString('utm_source', $info[10]);
-        $this->assertStringContainsString('dclid', $info[10]);
+
+        // Locate the serialized-params element without relying on a hardcoded index.
+        // getCacheKeyInfo() ends with [..., serializedParams, template, title], so the
+        // params entry is always third from the end regardless of future additions.
+        $serializedParams = $info[count($info) - 3];
+        $this->assertIsString($serializedParams);
+        $this->assertStringContainsString('fbclid', $serializedParams);
+        $this->assertStringContainsString('utm_source', $serializedParams);
+        $this->assertStringContainsString('dclid', $serializedParams);
     }
 
     public function testGetProductPriceHtml()

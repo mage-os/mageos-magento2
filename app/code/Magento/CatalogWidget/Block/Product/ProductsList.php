@@ -264,7 +264,7 @@ class ProductsList extends AbstractProduct implements BlockInterface, IdentityIn
     private function scrubInvalidUtf8($value)
     {
         if (is_string($value)) {
-            return mb_convert_encoding($value, 'UTF-8', 'UTF-8');
+            return mb_scrub($value, 'UTF-8');
         }
         if (is_array($value)) {
             foreach ($value as $key => $item) {
