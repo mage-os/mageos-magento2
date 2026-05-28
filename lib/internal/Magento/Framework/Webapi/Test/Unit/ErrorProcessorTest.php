@@ -11,6 +11,7 @@ namespace Magento\Framework\Webapi\Test\Unit;
 
 use Magento\Framework\App\State;
 use Magento\Framework\Exception\AuthorizationException;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Json\Encoder;
@@ -313,7 +314,22 @@ class ErrorProcessorTest extends TestCase
                 WebapiException::HTTP_INTERNAL_ERROR,
                 'Internal Error. Details are available in Magento log file. Report ID:',
                 [],
-            ]
+            ],
+            'LocalizedException with HTTP 429 code' => [
+                new LocalizedException(new Phrase('Too many requests'), null, 429),
+                WebapiException::HTTP_TOO_MANY_REQUESTS,
+                'Too many requests',
+                [],
+            ],
+            'LocalizedException wrapping exception with HTTP 429 code' => [
+                new LocalizedException(
+                    new Phrase('Too many requests'),
+                    new \Exception('Rate limit exceeded', 429)
+                ),
+                WebapiException::HTTP_TOO_MANY_REQUESTS,
+                'Too many requests',
+                [],
+            ],
         ];
     }
 

@@ -206,6 +206,10 @@ class ErrorProcessor
             || ($exception instanceof AuthenticationException)
         ) {
             return WebapiException::HTTP_UNAUTHORIZED;
+        } elseif (((int)$exception->getPrevious()?->getCode() === WebapiException::HTTP_TOO_MANY_REQUESTS)
+            || ((int)$exception->getCode() === WebapiException::HTTP_TOO_MANY_REQUESTS)
+        ) {
+            return WebapiException::HTTP_TOO_MANY_REQUESTS;
         } else {
             return WebapiException::HTTP_BAD_REQUEST;
         }
