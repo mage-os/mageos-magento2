@@ -17,6 +17,7 @@ use Magento\Customer\Api\Data\AddressInterface as CustomerAddressInterface;
 use Magento\Customer\Api\Data\CustomerInterface;
 use Magento\Customer\Api\AddressRepositoryInterface;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\PaymentException;
 use Magento\Framework\Phrase;
 use Magento\Quote\Api\BillingAddressManagementInterface;
 use Magento\Quote\Api\CartManagementInterface;
@@ -236,6 +237,25 @@ class PaymentInformationManagementTest extends TestCase
         $this->paymentMethodManagementMock->expects($this->any())->method('set')->with($cartId, $paymentMock);
         $phrase = new Phrase(__('DB exception'));
         $exception = new LocalizedException($phrase);
+        $this->cartManagementMock->expects($this->any())->method('placeOrder')->willThrowException($exception);
+
+        $this->model->savePaymentInformationAndPlaceOrder($cartId, $paymentMock, $billingAddressMock);
+    }
+
+    public function testSavePaymentInformationAndPlaceOrderWithPaymentException()
+    {
+        $this->expectException(PaymentException::class);
+        $this->expectExceptionMessage('Payment declined');
+        $cartId = 100;
+        $paymentMock = $this->createMock(PaymentInterface::class);
+        $billingAddressMock = $this->createMock(AddressInterface::class);
+
+        $this->getMockForAssignBillingAddress($cartId, $billingAddressMock);
+
+        $this->paymentMethodManagementMock->expects($this->any())->method('set')->with($cartId, $paymentMock);
+        $phrase = new Phrase(__('Payment declined'));
+        $exception = new PaymentException($phrase);
+        $this->loggerMock->expects($this->any())->method('critical');
         $this->cartManagementMock->expects($this->any())->method('placeOrder')->willThrowException($exception);
 
         $this->model->savePaymentInformationAndPlaceOrder($cartId, $paymentMock, $billingAddressMock);
