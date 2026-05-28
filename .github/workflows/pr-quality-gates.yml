@@ -72,13 +72,13 @@ jobs:
           fi
 
           # Get upstream mainline HEAD SHA; fall back to origin on error
-          if ! mainline_sha=$(gh api "repos/${upstream_owner}/${upstream_repo}/branches/${base_branch}" \
-              --jq '.commit.sha' 2>/dev/null); then
+          if ! mainline_sha=$(gh api "repos/${upstream_owner}/${upstream_repo}/git/ref/heads/${base_branch}" \
+              --jq '.object.sha' 2>/dev/null); then
             echo "::warning::Cannot reach ${upstream_label}/${base_branch}. Falling back to origin."
             upstream_owner="$owner"
             upstream_repo="${repo##*/}"
             upstream_label="$repo"
-            mainline_sha=$(gh api "repos/${repo}/branches/${base_branch}" --jq '.commit.sha')
+            mainline_sha=$(gh api "repos/${repo}/git/ref/heads/${base_branch}" --jq '.object.sha')
           fi
           echo "Mainline HEAD (${upstream_label} ${base_branch}): ${mainline_sha}"
 
