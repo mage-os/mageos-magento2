@@ -93,7 +93,8 @@
         <waitForPageLoad stepKey="waitForEditPage"/>
 
         <!-- Verify the coupon code is still present on the edit page -->
-        <seeInField selector="input[name='order[coupon][code]']" userInput="TESTLIMIT1" stepKey="verifyCouponCodePreserved"/>
+        <waitForElementVisible selector=".added-coupon-code span" stepKey="waitForAppliedCouponCode"/>
+        <see selector=".added-coupon-code span" userInput="TESTLIMIT1" stepKey="verifyCouponCodePreserved"/>
 
         <!-- Submit the edited order -->
         <waitForElementClickable selector="{{OrdersGridSection.submitOrder}}" stepKey="waitForSubmitButton"/>
