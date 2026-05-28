@@ -22,25 +22,26 @@
         </annotations>
         <before>
             <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
-            <!-- Create product and customer -->
             <createData entity="SimpleProduct2" stepKey="createProduct"/>
             <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
 
             <!-- Create cart price rule with coupon and uses_per_customer=1 -->
-            <actionGroup ref="AdminOpenCartPriceRulesPageActionGroup" stepKey="goToCartPriceRules"/>
-            <click selector="{{AdminCartPriceRulesSection.addNewRuleButton}}" stepKey="clickAddNewRule"/>
-            <fillField selector="{{AdminCartPriceRulesFormSection.ruleName}}" userInput="TestUsageLimitRule" stepKey="fillRuleName"/>
-            <selectOption selector="{{AdminCartPriceRulesFormSection.websites}}" userInput="Main Website" stepKey="selectWebsite"/>
-            <selectOption selector="{{AdminCartPriceRulesFormSection.customerGroups}}" parameterArray="['General', 'NOT LOGGED IN']" stepKey="selectCustomerGroups"/>
-            <selectOption selector="{{AdminCartPriceRulesFormSection.coupon}}" userInput="Specific Coupon" stepKey="selectCouponType"/>
-            <fillField selector="{{AdminCartPriceRulesFormSection.couponCode}}" userInput="TESTLIMIT1" stepKey="fillCouponCode"/>
-            <fillField selector="{{AdminCartPriceRulesFormSection.userPerCustomer}}" userInput="1" stepKey="fillUsesPerCustomer"/>
-            <!-- Set discount action -->
+            <actionGroup ref="CreateCartPriceRuleActionGroup" stepKey="createCartRule">
+                <argument name="ruleName" value="TestUsageLimitRule"/>
+                <argument name="websiteName" value="Main Website"/>
+            </actionGroup>
+            <actionGroup ref="CatalogSelectCustomerGroupActionGroup" stepKey="selectGeneralCustomerGroup">
+                <argument name="customerGroupName" value="{{GeneralCustomerGroup.code}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminCartPriceRuleFillCouponInfoActionGroup" stepKey="fillCartPriceRuleCouponInfo">
+                <argument name="couponCode" value="TESTLIMIT1"/>
+                <argument name="userPerCoupon" value="1"/>
+                <argument name="userPerCustomer" value="1"/>
+            </actionGroup>
             <click selector="{{AdminCartPriceRulesFormSection.actionsHeader}}" stepKey="expandActions"/>
             <selectOption selector="{{AdminCartPriceRulesFormSection.apply}}" userInput="Percent of product price discount" stepKey="selectApplyType"/>
             <fillField selector="{{AdminCartPriceRulesFormSection.discountAmount}}" userInput="50" stepKey="fillDiscountAmount"/>
-            <click selector="{{AdminCartPriceRulesFormSection.save}}" stepKey="saveRule"/>
-            <waitForPageLoad stepKey="waitForRuleSave"/>
+            <actionGroup ref="AssertCartPriceRuleSuccessSaveMessageActionGroup" stepKey="saveRule"/>
 
             <!-- Create order in admin with the coupon applied -->
             <amOnPage stepKey="navigateToNewOrderPage" url="{{AdminOrderCreatePage.url}}"/>
@@ -70,11 +71,24 @@
             <see stepKey="seeSuccessMessageForOrder" userInput="You created the order."/>
         </before>
         <after>
-            <actionGroup ref="DeleteCartPriceRuleByName" stepKey="deleteRule">
-                <argument name="ruleName" value="TestUsageLimitRule"/>
-            </actionGroup>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="reloginAsAdmin"/>
+            <amOnPage url="{{AdminCartPriceRulesPage.url}}" stepKey="amOnCartPriceList"/>
+            <waitForPageLoad stepKey="waitForPriceList"/>
+            <conditionalClick selector="{{AdminDataGridHeaderSection.clearFilters}}"
+                              dependentSelector="{{AdminDataGridHeaderSection.clearFilters}}"
+                              visible="true"
+                              stepKey="clearFilters"/>
+            <waitForPageLoad stepKey="waitForGridAfterClear"/>
+            <fillField selector="{{AdminCartPriceRulesSection.filterByNameInput}}" userInput="TestUsageLimitRule" stepKey="filterByName"/>
+            <click selector="{{AdminCartPriceRulesSection.searchButton}}" stepKey="doFilter"/>
+            <waitForPageLoad stepKey="waitForFilterResults"/>
+            <click selector="{{AdminCartPriceRulesSection.rowByIndex('1')}}" stepKey="goToEditRulePage"/>
+            <waitForPageLoad stepKey="waitForEditRulePage"/>
+            <waitForElementClickable selector="{{AdminCartPriceRulesFormSection.delete}}" stepKey="waitForDeleteButtonClickable"/>
+            <click selector="{{AdminCartPriceRulesFormSection.delete}}" stepKey="clickDeleteButton"/>
+            <waitForElementClickable selector="{{AdminCartPriceRulesFormSection.modalAcceptButton}}" stepKey="waitForConfirmButtonClickable"/>
+            <click selector="{{AdminCartPriceRulesFormSection.modalAcceptButton}}" stepKey="confirmDelete"/>
             <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
-            <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="logoutCustomer"/>
             <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
             <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
         </after>
@@ -92,8 +106,9 @@
         <click selector="{{AdminOrderDetailsMainActionsSection.ok}}" stepKey="confirmEditOrder"/>
         <waitForPageLoad stepKey="waitForEditPage"/>
 
-        <!-- Verify the coupon code is still present on the edit page -->
-        <seeInField selector="input[name='order[coupon][code]']" userInput="TESTLIMIT1" stepKey="verifyCouponCodePreserved"/>
+        <!-- When the coupon is preserved, admin UI shows the applied code instead of an input field -->
+        <waitForElementVisible selector=".added-coupon-code span" stepKey="waitForAppliedCouponCode"/>
+        <see selector=".added-coupon-code span" userInput="TESTLIMIT1" stepKey="verifyCouponCodePreserved"/>
 
         <!-- Submit the edited order -->
         <waitForElementClickable selector="{{OrdersGridSection.submitOrder}}" stepKey="waitForSubmitButton"/>
