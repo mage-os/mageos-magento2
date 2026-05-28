@@ -203,16 +203,16 @@ jobs:
           copyright_files="${copyright_files%$'\n'}"
 
           # Write file lists for coding-standard checks (avoids git diff in later steps)
-          [ -n "$php_list" ]             && printf '%s' "${php_list%$'\n'}"              > /tmp/changed_php.txt
-          [ -n "$js_list" ]              && printf '%s' "${js_list%$'\n'}"               > /tmp/changed_js.txt
-          [ -n "$xml_list" ]             && printf '%s' "${xml_list%$'\n'}"              > /tmp/changed_xml.txt
-          [ -n "$html_list" ]            && printf '%s' "${html_list%$'\n'}"             > /tmp/changed_html.txt
-          [ -n "$graphql_list" ]         && printf '%s' "${graphql_list%$'\n'}"          > /tmp/changed_graphqls.txt
-          [ -n "$less_list" ]            && printf '%s' "${less_list%$'\n'}"             > /tmp/changed_less.txt
-          [ -n "$new_php_list" ]         && printf '%s' "${new_php_list%$'\n'}"          > /tmp/new_php.txt
-          [ -n "$copyright_files" ]      && printf '%s' "$copyright_files"               > /tmp/copyright_changed.txt
-          [ -n "$copyright_added_list" ] && printf '%s' "${copyright_added_list%$'\n'}" > /tmp/copyright_added.txt
-          [ -n "$ts_list" ]              && printf '%s' "${ts_list%$'\n'}"               > /tmp/changed_ts.txt
+          [ -n "$php_list" ]             && printf '%s\n' "${php_list%$'\n'}"              > /tmp/changed_php.txt
+          [ -n "$js_list" ]              && printf '%s\n' "${js_list%$'\n'}"               > /tmp/changed_js.txt
+          [ -n "$xml_list" ]             && printf '%s\n' "${xml_list%$'\n'}"              > /tmp/changed_xml.txt
+          [ -n "$html_list" ]            && printf '%s\n' "${html_list%$'\n'}"             > /tmp/changed_html.txt
+          [ -n "$graphql_list" ]         && printf '%s\n' "${graphql_list%$'\n'}"          > /tmp/changed_graphqls.txt
+          [ -n "$less_list" ]            && printf '%s\n' "${less_list%$'\n'}"             > /tmp/changed_less.txt
+          [ -n "$new_php_list" ]         && printf '%s\n' "${new_php_list%$'\n'}"          > /tmp/new_php.txt
+          [ -n "$copyright_files" ]      && printf '%s\n' "$copyright_files"               > /tmp/copyright_changed.txt
+          [ -n "$copyright_added_list" ] && printf '%s\n' "${copyright_added_list%$'\n'}" > /tmp/copyright_added.txt
+          [ -n "$ts_list" ]              && printf '%s\n' "${ts_list%$'\n'}"               > /tmp/changed_ts.txt
 
           echo "has_php=$has_php"                         >> "$GITHUB_OUTPUT"
           echo "has_js=$has_js"                           >> "$GITHUB_OUTPUT"
@@ -614,7 +614,7 @@ jobs:
                 "$ruleset" \
                 --suffixes=php,phtml 2>/dev/null || phpmd_exit=$?
             fi
-            [ "$phpmd_exit" -ne 0 ] && break
+            [ "$phpmd_exit" -ne 0 ] && [ "$phpmd_exit" -ne 2 ] && break
           done
           if [ "$phpmd_exit" -eq 124 ]; then
             echo "::error::PHPMD batch timed out (120 s). The PR may have too many complex files for a single batch. Consider splitting the PR."
