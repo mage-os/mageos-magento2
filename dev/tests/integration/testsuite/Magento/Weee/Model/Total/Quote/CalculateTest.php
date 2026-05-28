@@ -197,7 +197,6 @@ class CalculateTest extends TestCase
         DataFixture(
             ProductFixture::class,
             [
-                'sku' => 'simple-with-fpt',
                 'price' => 100.0,
                 'fpt_attr' => [['website_id' => 0, 'country' => 'US', 'state' => 0, 'price' => 10.0]],
             ],
@@ -206,7 +205,6 @@ class CalculateTest extends TestCase
         DataFixture(
             ConfigurableProductFixture::class,
             [
-                'sku' => 'configurable-with-fpt',
                 '_options' => ['$conf_attr$'],
                 '_links' => ['$simple$'],
             ],
@@ -274,7 +272,6 @@ class CalculateTest extends TestCase
         DataFixture(
             ProductFixture::class,
             [
-                'sku' => 'simple-with-fpt',
                 'price' => 100.0,
                 'fpt_attr' => [['website_id' => 0, 'country' => 'US', 'state' => 0, 'price' => 10.0]],
             ],
@@ -283,7 +280,6 @@ class CalculateTest extends TestCase
         DataFixture(
             ConfigurableProductFixture::class,
             [
-                'sku' => 'configurable-with-fpt',
                 '_options' => ['$conf_attr$'],
                 '_links' => ['$simple$'],
             ],
@@ -347,7 +343,6 @@ class CalculateTest extends TestCase
         DataFixture(
             ProductFixture::class,
             [
-                'sku' => 'simple-with-fpt',
                 'price' => 100.0,
                 'fpt_attr' => [['website_id' => 0, 'country' => 'US', 'state' => 0, 'price' => 10.0]],
             ],
@@ -356,7 +351,6 @@ class CalculateTest extends TestCase
         DataFixture(
             ConfigurableProductFixture::class,
             [
-                'sku' => 'configurable-with-fpt',
                 '_options' => ['$conf_attr$'],
                 '_links' => ['$simple$'],
             ],
@@ -428,7 +422,6 @@ class CalculateTest extends TestCase
         DataFixture(
             ProductFixture::class,
             [
-                'sku' => 'simple-with-fpt',
                 'price' => 100.0,
                 'fpt_attr' => [['website_id' => 0, 'country' => 'US', 'state' => 0, 'price' => 10.0]],
             ],
@@ -437,7 +430,6 @@ class CalculateTest extends TestCase
         DataFixture(
             ConfigurableProductFixture::class,
             [
-                'sku' => 'configurable-with-fpt',
                 '_options' => ['$conf_attr$'],
                 '_links' => ['$simple$'],
             ],
