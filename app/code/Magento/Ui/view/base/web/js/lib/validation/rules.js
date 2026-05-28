@@ -124,7 +124,7 @@ define([
         ],
         'max_text_length': [
             function (value, params) {
-                return !_.isUndefined(value) && value.length <= +params;
+                return _.isUndefined(value) || value.length <= +params;
             },
             $.mage.__('Please enter less or equal than {0} symbols.')
         ],
