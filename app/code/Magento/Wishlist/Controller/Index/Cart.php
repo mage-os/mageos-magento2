@@ -101,6 +101,16 @@ class Cart extends AbstractIndex implements Action\HttpPostActionInterface
     private $cookieMetadataFactory;
 
     /**
+     * @var ProductRepositoryInterface
+     */
+    private $productRepository;
+
+    /**
+     * @var StoreManagerInterface
+     */
+    private $storeManager;
+
+    /**
      * @param Action\Context $context
      * @param WishlistProviderInterface $wishlistProvider
      * @param LocaleQuantityProcessor $quantityProcessor
@@ -114,6 +124,8 @@ class Cart extends AbstractIndex implements Action\HttpPostActionInterface
      * @param Validator $formKeyValidator
      * @param CookieManagerInterface|null $cookieManager
      * @param CookieMetadataFactory|null $cookieMetadataFactory
+     * @param ProductRepositoryInterface|null $productRepository
+     * @param StoreManagerInterface|null $storeManager
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
@@ -130,7 +142,9 @@ class Cart extends AbstractIndex implements Action\HttpPostActionInterface
         CartHelper $cartHelper,
         Validator $formKeyValidator,
         ?CookieManagerInterface $cookieManager = null,
-        ?CookieMetadataFactory $cookieMetadataFactory = null
+        ?CookieMetadataFactory $cookieMetadataFactory = null,
+        ?ProductRepositoryInterface $productRepository = null,
+        ?StoreManagerInterface $storeManager = null
     ) {
         $this->wishlistProvider = $wishlistProvider;
         $this->quantityProcessor = $quantityProcessor;
@@ -145,6 +159,10 @@ class Cart extends AbstractIndex implements Action\HttpPostActionInterface
         $this->cookieManager = $cookieManager ?: ObjectManager::getInstance()->get(CookieManagerInterface::class);
         $this->cookieMetadataFactory = $cookieMetadataFactory ?:
             ObjectManager::getInstance()->get(CookieMetadataFactory::class);
+        $this->productRepository = $productRepository ?:
+            ObjectManager::getInstance()->get(ProductRepositoryInterface::class);
+        $this->storeManager = $storeManager ?:
+            ObjectManager::getInstance()->get(StoreManagerInterface::class);
         parent::__construct($context);
     }
 
@@ -229,29 +247,12 @@ class Cart extends AbstractIndex implements Action\HttpPostActionInterface
             $wishlist->save();
 
             if (!$this->cart->getQuote()->getHasError()) {
-                $productNames = [$item->getProduct()->getName()];
-                if (!empty($related)) {
-                    $productRepository = ObjectManager::getInstance()->get(ProductRepositoryInterface::class);
-                    $storeId = ObjectManager::getInstance()->get(StoreManagerInterface::class)->getStore()->getId();
-                    foreach (explode(',', $related) as $relatedProductId) {
-                        $relatedProductId = (int)$relatedProductId;
-                        if (!$relatedProductId) {
-                            continue;
-                        }
-                        try {
-                            $relatedProduct = $productRepository->getById($relatedProductId, false, $storeId);
-                            if ($relatedProduct->isVisibleInCatalog()) {
-                                $productNames[] = $relatedProduct->getName();
-                            }
-                        } catch (NoSuchEntityException $e) {
-                            continue;
-                        }
-                    }
-                }
                 $this->messageManager->addComplexSuccessMessage(
                     'addCartSuccessMessage',
                     [
-                        'product_name' => $this->formatProductNamesForMessage($productNames),
+                        'product_name' => $this->formatProductNamesForMessage(
+                            $this->getProductNamesForAddToCartMessage($item, $related)
+                        ),
                         'cart_url' => $this->cartHelper->getCartUrl()
                     ]
                 );
@@ -306,6 +307,54 @@ class Cart extends AbstractIndex implements Action\HttpPostActionInterface
 
         $resultRedirect->setUrl($redirectUrl);
         return $resultRedirect;
+    }
+
+    /**
+     * Collect main and related product names for add-to-cart success message.
+     *
+     * @param \Magento\Wishlist\Model\Item $item
+     * @param string|null $related
+     * @return string[]
+     */
+    private function getProductNamesForAddToCartMessage(\Magento\Wishlist\Model\Item $item, ?string $related): array
+    {
+        $productNames = [$item->getProduct()->getName()];
+        if (empty($related)) {
+            return $productNames;
+        }
+
+        return array_merge($productNames, $this->getRelatedProductNames($related));
+    }
+
+    /**
+     * Collect related product names for add-to-cart success message.
+     *
+     * @param string $related
+     * @return string[]
+     */
+    private function getRelatedProductNames(string $related): array
+    {
+        $productNames = [];
+        $storeId = $this->storeManager->getStore()->getId();
+
+        foreach (explode(',', $related) as $relatedProductId) {
+            $relatedProductId = (int)$relatedProductId;
+            if (!$relatedProductId) {
+                continue;
+            }
+
+            try {
+                $relatedProduct = $this->productRepository->getById($relatedProductId, false, $storeId);
+            } catch (NoSuchEntityException $e) {
+                continue;
+            }
+
+            if ($relatedProduct->isVisibleInCatalog()) {
+                $productNames[] = $relatedProduct->getName();
+            }
+        }
+
+        return $productNames;
     }
 
     /**
