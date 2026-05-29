@@ -71,7 +71,6 @@
             <see stepKey="seeSuccessMessageForOrder" userInput="You created the order."/>
         </before>
         <after>
-            <actionGroup ref="AdminLoginActionGroup" stepKey="reloginAsAdmin"/>
             <amOnPage url="{{AdminCartPriceRulesPage.url}}" stepKey="amOnCartPriceList"/>
             <waitForPageLoad stepKey="waitForPriceList"/>
             <conditionalClick selector="{{AdminDataGridHeaderSection.clearFilters}}"
