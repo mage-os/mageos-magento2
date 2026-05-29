@@ -102,6 +102,8 @@ class Add extends \Magento\Checkout\Controller\Cart implements HttpPostActionInt
      *
      * @return ResponseInterface|ResultInterface
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function execute()
     {
