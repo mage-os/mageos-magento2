@@ -72,13 +72,13 @@ jobs:
           fi
 
           # Get upstream mainline HEAD SHA; fall back to origin on error
-          if ! mainline_sha=$(gh api "repos/${upstream_owner}/${upstream_repo}/branches/${base_branch}" \
-              --jq '.commit.sha' 2>/dev/null); then
+          if ! mainline_sha=$(gh api "repos/${upstream_owner}/${upstream_repo}/git/ref/heads/${base_branch}" \
+              --jq '.object.sha' 2>/dev/null); then
             echo "::warning::Cannot reach ${upstream_label}/${base_branch}. Falling back to origin."
             upstream_owner="$owner"
             upstream_repo="${repo##*/}"
             upstream_label="$repo"
-            mainline_sha=$(gh api "repos/${repo}/branches/${base_branch}" --jq '.commit.sha')
+            mainline_sha=$(gh api "repos/${repo}/git/ref/heads/${base_branch}" --jq '.object.sha')
           fi
           echo "Mainline HEAD (${upstream_label} ${base_branch}): ${mainline_sha}"
 
@@ -203,16 +203,16 @@ jobs:
           copyright_files="${copyright_files%$'\n'}"
 
           # Write file lists for coding-standard checks (avoids git diff in later steps)
-          [ -n "$php_list" ]             && printf '%s' "${php_list%$'\n'}"              > /tmp/changed_php.txt
-          [ -n "$js_list" ]              && printf '%s' "${js_list%$'\n'}"               > /tmp/changed_js.txt
-          [ -n "$xml_list" ]             && printf '%s' "${xml_list%$'\n'}"              > /tmp/changed_xml.txt
-          [ -n "$html_list" ]            && printf '%s' "${html_list%$'\n'}"             > /tmp/changed_html.txt
-          [ -n "$graphql_list" ]         && printf '%s' "${graphql_list%$'\n'}"          > /tmp/changed_graphqls.txt
-          [ -n "$less_list" ]            && printf '%s' "${less_list%$'\n'}"             > /tmp/changed_less.txt
-          [ -n "$new_php_list" ]         && printf '%s' "${new_php_list%$'\n'}"          > /tmp/new_php.txt
-          [ -n "$copyright_files" ]      && printf '%s' "$copyright_files"               > /tmp/copyright_changed.txt
-          [ -n "$copyright_added_list" ] && printf '%s' "${copyright_added_list%$'\n'}" > /tmp/copyright_added.txt
-          [ -n "$ts_list" ]              && printf '%s' "${ts_list%$'\n'}"               > /tmp/changed_ts.txt
+          [ -n "$php_list" ]             && printf '%s\n' "${php_list%$'\n'}"              > /tmp/changed_php.txt
+          [ -n "$js_list" ]              && printf '%s\n' "${js_list%$'\n'}"               > /tmp/changed_js.txt
+          [ -n "$xml_list" ]             && printf '%s\n' "${xml_list%$'\n'}"              > /tmp/changed_xml.txt
+          [ -n "$html_list" ]            && printf '%s\n' "${html_list%$'\n'}"             > /tmp/changed_html.txt
+          [ -n "$graphql_list" ]         && printf '%s\n' "${graphql_list%$'\n'}"          > /tmp/changed_graphqls.txt
+          [ -n "$less_list" ]            && printf '%s\n' "${less_list%$'\n'}"             > /tmp/changed_less.txt
+          [ -n "$new_php_list" ]         && printf '%s\n' "${new_php_list%$'\n'}"          > /tmp/new_php.txt
+          [ -n "$copyright_files" ]      && printf '%s\n' "$copyright_files"               > /tmp/copyright_changed.txt
+          [ -n "$copyright_added_list" ] && printf '%s\n' "${copyright_added_list%$'\n'}" > /tmp/copyright_added.txt
+          [ -n "$ts_list" ]              && printf '%s\n' "${ts_list%$'\n'}"               > /tmp/changed_ts.txt
 
           echo "has_php=$has_php"                         >> "$GITHUB_OUTPUT"
           echo "has_js=$has_js"                           >> "$GITHUB_OUTPUT"
@@ -363,7 +363,7 @@ jobs:
           echo "phpmd_constraint_from_magento2=${phpmd_m2:-<missing>}"
 
       - name: Fetch Magento static PHPMD framework
-        if: env.HAS_PHP_OR_STATIC == 'true'
+        if: env.HAS_PHP_OR_STATIC == 'true' || env.HAS_JS == 'true'
         run: |
           set -euo pipefail
           ref="${{ steps.php-version.outputs.magento_composer_ref }}"
@@ -380,6 +380,9 @@ jobs:
           git sparse-checkout set \
             dev/tests/static/framework \
             dev/tests/static/testsuite/Magento/Test/Php/_files/phpmd \
+            dev/tests/static/testsuite/Magento/Test/Js/_files/blacklist \
+            dev/tests/static/testsuite/Magento/Test/Js/_files/whitelist \
+            dev/tests/static/testsuite/Magento/Test/Less/_files/blacklist \
             lib/internal/Magento/Framework
 
           echo "Fetched Magento static PHPMD framework from ref: $ref"
@@ -505,7 +508,32 @@ jobs:
         if: always() && steps.gate.outputs.phpcs_less == 'true' && env.HAS_STATIC == 'true'
         run: |
           set -euo pipefail
-          .github/scripts/run-phpcs.sh "LESS" /tmp/changed_less.txt
+
+          # Filter against Jenkins LESS blacklist (legacy files with known violations)
+          bl="/tmp/magento2-static/dev/tests/static/testsuite/Magento/Test/Less/_files/blacklist"
+          {
+            cat "$bl/old.txt" 2>/dev/null || true
+            cat "$bl/ee.txt"  2>/dev/null || true
+          } > /tmp/less_blacklist.txt
+
+          filtered_less=$(mktemp)
+          python3 - /tmp/changed_less.txt /tmp/less_blacklist.txt "$filtered_less" <<'PYEOF'
+          import fnmatch, sys
+          with open(sys.argv[2]) as f:
+              patterns = [l.strip() for l in f if l.strip() and not l.strip().startswith('//')]
+          with open(sys.argv[1]) as f:
+              files = [l.strip() for l in f if l.strip()]
+          filtered = [fp for fp in files if not any(fnmatch.fnmatch(fp, p) for p in patterns)]
+          with open(sys.argv[3], 'w') as out:
+              out.write('\n'.join(filtered) + ('\n' if filtered else ''))
+          PYEOF
+
+          if [ ! -s "$filtered_less" ]; then
+            echo "All changed LESS files are blacklisted — skipping PHPCS LESS."
+            exit 0
+          fi
+
+          .github/scripts/run-phpcs.sh "LESS" "$filtered_less"
 
       # ── PHPMD ────────────────────────────────────────────────────
 
@@ -586,7 +614,7 @@ jobs:
                 "$ruleset" \
                 --suffixes=php,phtml 2>/dev/null || phpmd_exit=$?
             fi
-            [ "$phpmd_exit" -ne 0 ] && break
+            [ "$phpmd_exit" -ne 0 ] && [ "$phpmd_exit" -ne 2 ] && break
           done
           if [ "$phpmd_exit" -eq 124 ]; then
             echo "::error::PHPMD batch timed out (120 s). The PR may have too many complex files for a single batch. Consider splitting the PR."
@@ -692,7 +720,76 @@ jobs:
         if: always() && steps.gate.outputs.eslint == 'true' && env.HAS_JS == 'true'
         run: |
           set -euo pipefail
-          mapfile -t js_args < /tmp/changed_js.txt
+
+          # Apply Jenkins whitelist then blacklist — both live in CE repo sparse clone.
+          # Whitelist defines which files are expected to comply (app/code, app/design,
+          # lib/web/mage, etc.). Files outside it (grunt tasks, setup scripts) are not
+          # subject to ESLint in Jenkins and must be excluded here too.
+          jsd="/tmp/magento2-static/dev/tests/static/testsuite/Magento/Test/Js/_files"
+          {
+            cat "$jsd/whitelist/magento.txt" 2>/dev/null || true
+            cat "$jsd/whitelist/ee.txt"      2>/dev/null || true
+            cat "$jsd/whitelist/b2b.txt"     2>/dev/null || true
+          } > /tmp/eslint_whitelist.txt
+          {
+            cat "$jsd/blacklist/magento.txt" 2>/dev/null || true
+            cat "$jsd/blacklist/ee.txt"      2>/dev/null || true
+            cat "$jsd/blacklist/b2b.txt"     2>/dev/null || true
+          } > /tmp/eslint_blacklist.txt
+
+          mapfile -t js_args < <(python3 - /tmp/changed_js.txt /tmp/eslint_whitelist.txt /tmp/eslint_blacklist.txt <<'PYEOF'
+          import re, sys
+
+          def glob_to_regex(pattern):
+              result = ''
+              i = 0
+              while i < len(pattern):
+                  if pattern[i:i+3] == '**/':
+                      result += '(?:.+/)?'
+                      i += 3
+                  elif pattern[i:i+2] == '**':
+                      result += '.*'
+                      i += 2
+                  elif pattern[i] == '*':
+                      result += '[^/]*'
+                      i += 1
+                  elif pattern[i] == '?':
+                      result += '[^/]'
+                      i += 1
+                  else:
+                      result += re.escape(pattern[i])
+                      i += 1
+              return re.compile('^' + result + '$')
+
+          def load(path):
+              try:
+                  with open(path) as f:
+                      return [glob_to_regex(l.strip()) for l in f
+                              if l.strip() and not l.strip().startswith('#')
+                              and not l.strip().startswith('//')]
+              except FileNotFoundError:
+                  return []
+
+          with open(sys.argv[1]) as f:
+              files = [l.strip() for l in f if l.strip()]
+          whitelist = load(sys.argv[2])
+          blacklist = load(sys.argv[3])
+
+          result = []
+          for fp in files:
+              if whitelist and not any(r.match(fp) for r in whitelist):
+                  continue
+              if any(r.match(fp) for r in blacklist):
+                  continue
+              result.append(fp)
+          print('\n'.join(result))
+          PYEOF
+          )
+
+          if [ ${#js_args[@]} -eq 0 ]; then
+            echo "All changed JS files are outside whitelist scope or blacklisted — skipping ESLint."
+            exit 0
+          fi
 
           mcs/node_modules/.bin/eslint \
             -c mcs/eslint/eslint.config.mjs \
