@@ -112,9 +112,13 @@
         <!-- Submit the edited order -->
         <waitForElementClickable selector="{{OrdersGridSection.submitOrder}}" stepKey="waitForSubmitButton"/>
         <click selector="{{OrdersGridSection.submitOrder}}" stepKey="submitEditedOrder"/>
-        <waitForPageLoad stepKey="waitForOrderCreation"/>
 
-        <!-- Verify the new order was created successfully -->
-        <see selector="{{AdminOrderDetailsMessagesSection.successMessage}}" userInput="You created the order." stepKey="seeOrderCreatedSuccess"/>
+        <!-- Verify the edited order was submitted (same pattern as AdminOrderEditParentChildOrderLinksTest) -->
+        <seeInCurrentUrl url="{{AdminOrderDetailsPage.url}}" stepKey="seeOrderViewPage"/>
+        <grabTextFrom selector="{{AdminOrderDetailsInformationSection.orderId}}" stepKey="grabNewOrderId"/>
+        <assertNotEquals stepKey="assertEditedOrderWasCreated">
+            <actualResult type="string">$grabNewOrderId</actualResult>
+            <expectedResult type="string">$grabOriginalOrderId</expectedResult>
+        </assertNotEquals>
     </test>
 </tests>
