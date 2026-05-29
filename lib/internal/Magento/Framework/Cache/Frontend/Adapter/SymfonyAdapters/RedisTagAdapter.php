@@ -32,6 +32,14 @@ class RedisTagAdapter implements TagAdapterInterface
     private const SUNION_CHUNK_SIZE = 500;
 
     /**
+     * Maximum set size for which a single SINTER call is safe.
+     * SINTER is O(N*M) where N = smallest set size. If the smallest set exceeds
+     * this threshold, SINTER blocks Valkey long enough to saturate PHP-FPM workers.
+     * Above the threshold, SMEMBERS + PHP array_intersect is used instead.
+     */
+    private const SINTER_SAFE_SIZE = 500;
+
+    /**
      * Maximum number of IDs to be removed at a time - matches Zend's $_removeChunkSize
      * @see vendor/colinmollenhour/cache-backend-redis/Cm/Cache/Backend/Redis.php line 99
      */
@@ -298,7 +306,13 @@ LUA;
     /**
      * @inheritDoc
      *
-     * Uses Redis SINTER for efficient set intersection (true AND logic)
+     * Size-adaptive intersection: uses SINTER when the smallest matching set is
+     * small enough to be safe, falls back to SMEMBERS + PHP array_intersect when
+     * any set is large. A bare SINTER on large sets blocks Valkey (single-threaded)
+     * for the full O(N*M) duration, starving all other PHP workers.
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function getIdsMatchingTags(array $tags): array
     {
@@ -306,13 +320,46 @@ LUA;
             return [];
         }
 
-        // Build tag keys for Redis SINTER
+        if (count($tags) === 1) {
+            $ids = $this->redis->sMembers($this->getTagKey($tags[0]));
+            return is_array($ids) ? $ids : [];
+        }
+
         $tagKeys = array_map([$this, 'getTagKey'], $tags);
 
-        // Redis SINTER returns IDs present in ALL sets
-        $ids = $this->redis->sinter($tagKeys);
+        // Fetch all set sizes in one pipeline round-trip
+        $pipeline = $this->createPipeline();
+        foreach ($tagKeys as $key) {
+            $pipeline->scard($key);
+        }
+        $sizes = array_map('intval', (array)$this->executePipeline($pipeline));
 
-        return is_array($ids) ? $ids : [];
+        // Short-circuit: any empty set means the intersection is empty
+        if (in_array(0, $sizes, true)) {
+            return [];
+        }
+
+        // Sort ascending so $sizes[0] is the smallest — SINTER is most efficient
+        // when the smallest set is listed first
+        array_multisort($sizes, SORT_ASC, $tagKeys);
+
+        if ($sizes[0] <= self::SINTER_SAFE_SIZE) {
+            $ids = $this->redis->sinter($tagKeys);
+            return is_array($ids) ? $ids : [];
+        }
+
+        // All sets are large — distribute work as multiple O(N) SMEMBERS + PHP intersect
+        // instead of one O(N*M) SINTER that would block Valkey
+        $pipeline = $this->createPipeline();
+        foreach ($tagKeys as $key) {
+            $pipeline->sMembers($key);
+        }
+        $sets = array_map(
+            fn($s) => is_array($s) ? $s : [],
+            (array)$this->executePipeline($pipeline)
+        );
+
+        return array_values(array_intersect(...$sets));
     }
 
     /**
