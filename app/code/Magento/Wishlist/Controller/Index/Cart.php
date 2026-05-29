@@ -6,8 +6,11 @@
 
 namespace Magento\Wishlist\Controller\Index;
 
+use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Helper\Product;
 use Magento\Catalog\Model\Product\Exception as ProductException;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Store\Model\StoreManagerInterface;
 use Magento\Checkout\Model\Cart as CheckoutCart;
 use Magento\Checkout\Helper\Cart as CartHelper;
 use Magento\Framework\App\Action;
@@ -226,10 +229,29 @@ class Cart extends AbstractIndex implements Action\HttpPostActionInterface
             $wishlist->save();
 
             if (!$this->cart->getQuote()->getHasError()) {
+                $productNames = [$item->getProduct()->getName()];
+                if (!empty($related)) {
+                    $productRepository = ObjectManager::getInstance()->get(ProductRepositoryInterface::class);
+                    $storeId = ObjectManager::getInstance()->get(StoreManagerInterface::class)->getStore()->getId();
+                    foreach (explode(',', $related) as $relatedProductId) {
+                        $relatedProductId = (int)$relatedProductId;
+                        if (!$relatedProductId) {
+                            continue;
+                        }
+                        try {
+                            $relatedProduct = $productRepository->getById($relatedProductId, false, $storeId);
+                            if ($relatedProduct->isVisibleInCatalog()) {
+                                $productNames[] = $relatedProduct->getName();
+                            }
+                        } catch (NoSuchEntityException $e) {
+                            continue;
+                        }
+                    }
+                }
                 $this->messageManager->addComplexSuccessMessage(
                     'addCartSuccessMessage',
                     [
-                        'product_name' => $item->getProduct()->getName(),
+                        'product_name' => $this->formatProductNamesForMessage($productNames),
                         'cart_url' => $this->cartHelper->getCartUrl()
                     ]
                 );
@@ -284,5 +306,26 @@ class Cart extends AbstractIndex implements Action\HttpPostActionInterface
 
         $resultRedirect->setUrl($redirectUrl);
         return $resultRedirect;
+    }
+
+    /**
+     * Format product names for add-to-cart success message.
+     *
+     * @param string[] $productNames
+     * @return string
+     */
+    private function formatProductNamesForMessage(array $productNames): string
+    {
+        if (count($productNames) === 1) {
+            return $productNames[0];
+        }
+
+        if (count($productNames) === 2) {
+            return (string)__('%1 and %2', $productNames[0], $productNames[1]);
+        }
+
+        $lastProductName = array_pop($productNames);
+
+        return (string)__('%1 and %2', implode(', ', $productNames), $lastProductName);
     }
 }

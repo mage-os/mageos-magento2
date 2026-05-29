@@ -464,26 +464,6 @@ class Cart extends DataObject implements CartInterface
                 }
             }
 
-            if (count($successProducts) > 0) {
-                foreach ($successProducts as $product) {
-                    if ($this->shouldRedirectToCart()) {
-                        $message = __(
-                            'You added %1 to your shopping cart.',
-                            $product
-                        );
-                        $this->messageManager->addSuccessMessage($message);
-                    } else {
-                        $this->messageManager->addComplexSuccessMessage(
-                            'addCartSuccessMessage',
-                            [
-                                'product_name' => $product,
-                                'cart_url' => $this->getCartUrl(),
-                            ]
-                        );
-                    }
-                }
-            }
-
             if (!$allAvailable) {
                 $this->messageManager->addErrorMessage(__("We don't have some of the products you want."));
             }
