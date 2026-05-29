@@ -21,9 +21,10 @@ class PaymentProcessingRateLimitExceededException extends LocalizedException
     /**
      * @param Phrase $phrase
      * @param \Exception|null $cause
+     * @param int $code
      */
-    public function __construct(Phrase $phrase, ?\Exception $cause = null)
+    public function __construct(Phrase $phrase, ?\Exception $cause = null, int $code = 429)
     {
-        parent::__construct($phrase, $cause, 429);
+        parent::__construct($phrase, $cause, $code);
     }
 }
