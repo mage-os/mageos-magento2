@@ -191,9 +191,12 @@
         <!-- 1 Product U -->
         <seeInField userInput="1" selector="{{StorefrontMinicartSection.itemQuantity($$productU.name$$)}}" stepKey="seeProductU"/>
 
-        <!-- See success message lists main and all selected related products -->
+        <!-- See success message contains main and all selected related products -->
         <waitForElementVisible selector="{{StorefrontProductPageSection.successMsg}}" time="30" stepKey="waitForProductAddedAgain"/>
-        <see selector="{{StorefrontCategoryMainSection.SuccessMsg}}" userInput="You added $$productA.name$$, $$productU.name$$ and $$productB.name$$ to your shopping cart." stepKey="seeSucessMessage"/>
+        <see selector="{{StorefrontCategoryMainSection.SuccessMsg}}" userInput="You added $$productA.name$$," stepKey="seeSucessMessage"/>
+        <see selector="{{StorefrontCategoryMainSection.SuccessMsg}}" userInput="$$productB.name$$" stepKey="assertAddToCartSuccessMessageContainsProductB"/>
+        <see selector="{{StorefrontCategoryMainSection.SuccessMsg}}" userInput="$$productU.name$$" stepKey="assertAddToCartSuccessMessageContainsProductU"/>
+        <see selector="{{StorefrontCategoryMainSection.SuccessMsg}}" userInput="to your shopping cart." stepKey="assertAddToCartSuccessMessageSuffix"/>
 
         <!--Untick B CheckBox-->
         <click selector="{{StorefrontProductRelatedProductsSection.relatedProductCheckBoxButton('$$productB.name$$')}}" stepKey="untickProductB"/>
@@ -294,9 +297,12 @@
         <!-- 1 Products V -->
         <seeInField userInput="1" selector="{{StorefrontMinicartSection.itemQuantity($$productU.name$$)}}" stepKey="assertProductUItems"/>
 
-        <!-- See success message lists main and all selected related products -->
+        <!-- See success message contains main and all selected related products -->
         <waitForElementVisible selector="{{StorefrontProductPageSection.successMsg}}" time="30" stepKey="waitforLoad"/>
-        <see selector="{{StorefrontCategoryMainSection.SuccessMsg}}" userInput="You added $$productV.name$$, $$productU.name$$ and $$productB.name$$ to your shopping cart." stepKey="seeAddedToCartMessageForProductV"/>
+        <see selector="{{StorefrontCategoryMainSection.SuccessMsg}}" userInput="You added $$productV.name$$," stepKey="seeAddedToCartMessageForProductV"/>
+        <see selector="{{StorefrontCategoryMainSection.SuccessMsg}}" userInput="$$productB.name$$" stepKey="assertAddToCartSuccessMessageContainsProductBOnV"/>
+        <see selector="{{StorefrontCategoryMainSection.SuccessMsg}}" userInput="$$productU.name$$" stepKey="assertAddToCartSuccessMessageContainsProductUOnV"/>
+        <see selector="{{StorefrontCategoryMainSection.SuccessMsg}}" userInput="to your shopping cart." stepKey="assertAddToCartSuccessMessageSuffixOnV"/>
 
         <!--Untick B-->
         <click selector="{{StorefrontProductRelatedProductsSection.relatedProductCheckBoxButton('$$productB.name$$')}}" stepKey="untickcheckboxB"/>
