@@ -18,7 +18,7 @@
             <group value="Bundle"/>
         </annotations>
         <before>
-            <!-- Step 1: Create two simple products and one bundle product with option ship together -->
+            <!-- Step 1: Create two simple products, one bundle product with option ship together and login as admin -->
             <createData entity="SimpleProduct2" stepKey="simpleProduct1">
                 <field key="price">50.00</field>
             </createData>
@@ -48,10 +48,10 @@
                 <requiredEntity createDataKey="simpleProduct2"/>
                 <field key="is_default">1</field>
             </createData>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
         </before>
         <after>
-            <!-- Clear filters, delete simple, bundle product and logout from admin -->
-            <actionGroup ref="AdminOrdersGridClearFiltersActionGroup" stepKey="clearOrdersGridFilters"/>
+            <!-- Delete simple, bundle product and logout from admin -->
             <deleteData createDataKey="simpleProduct1" stepKey="deleteSimpleProduct1"/>
             <deleteData createDataKey="simpleProduct2" stepKey="deleteSimpleProduct2"/>
             <deleteData createDataKey="bundleProduct" stepKey="deleteBundleProduct"/>
@@ -75,19 +75,19 @@
             <argument name="orderNumberMessage" value="CONST.successGuestCheckoutOrderNumberMessage"/>
             <argument name="emailYouMessage" value="CONST.successCheckoutEmailYouMessage"/>
         </actionGroup>
-        <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber}}" stepKey="grabOrderNumber"/>
+        <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber}}" stepKey="grabOrderId"/>
         <!-- Step 3: In admin panel, go to order view, invoice bundle product -->
-        <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
-        <actionGroup ref="FilterOrderGridByIdActionGroup" stepKey="filterOrderGridById">
-            <argument name="orderId" value="$grabOrderNumber"/>
+        <actionGroup ref="AdminOpenOrderByEntityIdActionGroup" stepKey="openOrderInAdmin">
+            <argument name="entityId" value="{$grabOrderId}"/>
         </actionGroup>
-        <actionGroup ref="AdminOrderGridClickFirstRowActionGroup" stepKey="clickOrderRow"/>
         <actionGroup ref="StartCreateInvoiceFromOrderPageActionGroup" stepKey="startInvoice"/>
         <actionGroup ref="SubmitInvoiceActionGroup" stepKey="submitInvoice"/>
         <!-- Step 4: Ship bundle product -->
         <actionGroup ref="GoToShipmentIntoOrderActionGroup" stepKey="goToShipment"/>
         <actionGroup ref="SubmitShipmentIntoOrderActionGroup" stepKey="submitShipment"/>
         <!-- Step 5 Assertion: Order changes status to complete -->
-        <waitForText selector="{{AdminOrderDetailsInformationSection.orderStatus}}" userInput="Complete" stepKey="assertOrderStatusComplete"/>
+        <actionGroup ref="AdminOrderViewCheckStatusActionGroup" stepKey="assertOrderStatusComplete">
+            <argument name="status" value="Complete"/>
+        </actionGroup>
     </test>
 </tests>
