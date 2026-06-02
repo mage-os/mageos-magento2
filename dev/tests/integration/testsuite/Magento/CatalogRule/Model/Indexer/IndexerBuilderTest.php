@@ -241,6 +241,105 @@ class IndexerBuilderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Regression test: catalog rule indexer must consider tier prices so the
+     * rule never produces a price higher than an existing tier price.
+     *
+     * Setup:
+     *   - Product regular price: $100
+     *   - All-groups global tier price: $30 (qty=1)
+     *   - Catalog rule: 50% off → $50 without tier consideration
+     *
+     * Without the fix the indexed rule price is $50, which is higher than the
+     * $30 tier price — customers who qualify for the tier see a higher price.
+     *
+     * With the fix the indexer uses LEAST(tier, regular) = $30 as the base,
+     * so 50% → $15, and the rule price ≤ tier price for all customer groups.
+     *
+     * @magentoDataFixture Magento/CatalogRule/_files/product_with_tier_price_and_50_percent_rule.php
+     */
+    public function testReindexFullRulePriceNeverExceedsTierPrice(): void
+    {
+        $this->indexerBuilder->reindexFull();
+
+        $product    = $this->productRepository->get('simple-tier-price-rule');
+        $productId  = (int)$product->getId();
+        $websiteId  = (int)$this->storeManager->getDefaultStoreView()->getWebsiteId();
+        $tierPrice  = 30.0;
+        $regularPrice = 100.0;
+        $ruleDiscount = 50; // 50%
+
+        $rulePriceOnRegular = $regularPrice * (1 - $ruleDiscount / 100); // $50
+
+        // Rule price must be ≤ tier price for every customer group in the rule
+        foreach ([0, 1, 2, 3] as $customerGroupId) {
+            $rulePrice = $this->resourceRule->getRulePrice(new \DateTime(), $websiteId, $customerGroupId, $productId);
+
+            // Without fix: $50 > $30 tier — assertion would fail
+            $this->assertNotFalse(
+                $rulePrice,
+                "No rule price indexed for customer group $customerGroupId"
+            );
+            $this->assertLessThanOrEqual(
+                $tierPrice,
+                (float)$rulePrice,
+                "Customer group $customerGroupId: rule price \$$rulePrice must not exceed tier price \$$tierPrice. "
+                . "Without the fix the indexer ignores tier prices and returns \$$rulePriceOnRegular."
+            );
+        }
+    }
+
+    /**
+     * Verify that when the catalog rule discount produces a price LOWER than
+     * the tier price, the lower rule price is used (rule wins).
+     *
+     * Setup:
+     *   - Product regular price: $100
+     *   - All-groups global tier price: $80 (qty=1)
+     *   - Catalog rule: 50% off → $50
+     *
+     * Expected: rule price = $40 (50% of LEAST($80,$100)=$80), which is < $80 tier ✓
+     *
+     * @magentoDataFixture Magento/CatalogRule/_files/product_with_tier_price_and_50_percent_rule.php
+     */
+    public function testReindexFullRulePriceWinsWhenLowerThanTierPrice(): void
+    {
+        // Adjust the tier price to $80 so the 50% rule ($50) would win
+        $product = $this->productRepository->get('simple-tier-price-rule', true, null, true);
+
+        /** @var \Magento\Catalog\Api\Data\ProductTierPriceInterfaceFactory $tierFactory */
+        $tierFactory = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
+            ->get(\Magento\Catalog\Api\Data\ProductTierPriceInterfaceFactory::class);
+        /** @var \Magento\Catalog\Api\Data\ProductTierPriceExtensionFactory $extFactory */
+        $extFactory = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
+            ->get(\Magento\Catalog\Api\Data\ProductTierPriceExtensionFactory::class);
+
+        $tier = $tierFactory->create();
+        $tier->setCustomerGroupId(\Magento\Customer\Model\Group::CUST_GROUP_ALL);
+        $tier->setQty(1);
+        $tier->setValue(80.00);
+        $tier->setWebsiteId(0);
+        $tier->setExtensionAttributes($extFactory->create());
+
+        $product->setTierPrices([$tier]);
+        $this->productRepository->save($product);
+
+        $this->indexerBuilder->reindexFull();
+
+        $productId = (int)$product->getId();
+        $websiteId = (int)$this->storeManager->getDefaultStoreView()->getWebsiteId();
+
+        foreach ([0, 1, 2, 3] as $customerGroupId) {
+            $rulePrice = $this->resourceRule->getRulePrice(new \DateTime(), $websiteId, $customerGroupId, $productId);
+            $this->assertNotFalse($rulePrice, "No rule price indexed for group $customerGroupId");
+            $this->assertLessThanOrEqual(
+                80.0,
+                (float)$rulePrice,
+                "Group $customerGroupId: rule price must not exceed tier price \$80"
+            );
+        }
+    }
+
+    /**
      * Returns triggers count.
      *
      * @param string $tableName
