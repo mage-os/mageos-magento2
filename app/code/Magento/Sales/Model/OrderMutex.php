@@ -29,6 +29,7 @@ class OrderMutex implements OrderMutexInterface
      * @param ResourceConnection $resourceConnection
      * @param DeadlockRecoveryExecutorInterface $deadlockRecoveryExecutor
      */
+
     public function __construct(
         ResourceConnection $resourceConnection,
         DeadlockRecoveryExecutorInterface $deadlockRecoveryExecutor

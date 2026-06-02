@@ -43,21 +43,17 @@ class DeadlockRecoveryExecutor implements DeadlockRecoveryExecutorInterface
      */
     public function execute(AdapterInterface $connection, callable $callable, array $args)
     {
-        // @phpstan-ignore-next-line - false positive for missing return, loop exits with return or exception
+        $deadlockException = null;
         for ($attempt = 1; $attempt <= $this->attempts; $attempt++) {
             try {
                 $connection->beginTransaction();
-
                 $result = $callable(...$args);
-
                 $connection->commit();
 
                 return $result;
             } catch (DeadlockException|LockWaitException $e) {
                 $connection->rollBack();
-                if ($attempt >= $this->attempts) {
-                    throw $e;
-                }
+                $deadlockException = $e;
                 if ($this->maxJitter > 0) {
                     usleep(random_int(0, $this->maxJitter));
                 }
@@ -66,5 +62,6 @@ class DeadlockRecoveryExecutor implements DeadlockRecoveryExecutorInterface
                 throw $e;
             }
         }
+        throw $deadlockException ?? new \LogicException('The number of retry attempts should must be greater than 0');
     }
 }
