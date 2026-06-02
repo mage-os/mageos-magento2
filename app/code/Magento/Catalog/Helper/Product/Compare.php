@@ -294,7 +294,9 @@ class Compare extends \Magento\Framework\Url\Helper\Data
             /* Price data is added to consider item stock status using price index */
             $this->_itemCollection->addPriceData();
 
-            $this->_itemCollection->addAttributeToSelect('name')->addUrlRewrite()->load();
+            $this->_itemCollection->addAttributeToSelect('name')->addUrlRewrite()
+                ->addOrder('catalog_compare_item_id', 'ASC')
+                ->load();
 
             /* update compare items count */
             $count = count($this->_itemCollection);
