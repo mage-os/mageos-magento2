@@ -77,7 +77,10 @@
             <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindexInvalidatedIndices">
                 <argument name="indices" value=""/>
             </actionGroup>
-        </after>
+            <!--Clear filter product listing grid-->
+            <actionGroup ref="AdminOpenCatalogProductPageActionGroup" stepKey="goToProductCatalogPageBeforeClearFilters"/>
+            <actionGroup ref="ClearFiltersAdminProductGridActionGroup" stepKey="clearProductGridFilters"/>
+</after>
 
         <!-- Edit the product and set those attributes values -->
         <actionGroup ref="SearchForProductOnBackendActionGroup" stepKey="findCreatedProductInGrid">
