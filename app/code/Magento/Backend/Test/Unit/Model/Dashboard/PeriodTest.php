@@ -54,6 +54,24 @@ class PeriodTest extends TestCase
     }
 
     /**
+     * Test getPeriodChartUnits() method
+     */
+    public function testGetPeriodChartUnits(): void
+    {
+        $this->assertEquals(
+            [
+                Period::PERIOD_TODAY => 'hour',
+                Period::PERIOD_24_HOURS => 'hour',
+                Period::PERIOD_7_DAYS => 'day',
+                Period::PERIOD_1_MONTH => 'day',
+                Period::PERIOD_1_YEAR => 'month',
+                Period::PERIOD_2_YEARS => 'month',
+            ],
+            $this->model->getPeriodChartUnits()
+        );
+    }
+
+    /**
      * @return array
      */
     public static function getDefaultPeriodDataProvider(): array
