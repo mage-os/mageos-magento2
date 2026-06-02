@@ -208,6 +208,20 @@ class ErrorProcessorTest extends TestCase
      * Test maskException method with turned on developer mode.
      * @return void
      */
+    public function testIsDeveloperModeReturnsTrueInDeveloperMode(): void
+    {
+        $this->_appStateMock->method('getMode')->willReturn(\Magento\Framework\App\State::MODE_DEVELOPER);
+        $reflection = new \ReflectionMethod($this->_errorProcessor, 'isDeveloperMode');
+        $this->assertTrue($reflection->invoke($this->_errorProcessor));
+    }
+
+    public function testIsDeveloperModeReturnsFalseInProductionMode(): void
+    {
+        $this->_appStateMock->method('getMode')->willReturn(\Magento\Framework\App\State::MODE_PRODUCTION);
+        $reflection = new \ReflectionMethod($this->_errorProcessor, 'isDeveloperMode');
+        $this->assertFalse($reflection->invoke($this->_errorProcessor));
+    }
+
     public function testMaskExceptionInDeveloperMode()
     {
         /** Mock app isDeveloperMode to return true. */
