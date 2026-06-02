@@ -340,6 +340,186 @@ class IndexerBuilderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Specific customer group tier: only group 1 has a tier price.
+     * Group 1 rule price must be ≤ tier price; other groups get the regular rule price.
+     *
+     * Regular: $100 · Group-1 global tier: $20 · 50% rule for all groups
+     * Group 1 expected: rule price ≤ $20 (LEAST($20,$100)=$20 → 50%=$10)
+     * Groups 0,2,3 expected: rule price = $50 (no tier, LEAST=$100 → 50%=$50)
+     *
+     * @magentoDataFixture Magento/CatalogRule/_files/product_with_tier_price_and_50_percent_rule.php
+     */
+    public function testReindexFullSpecificGroupTierOnlyAppliesToThatGroup(): void
+    {
+        $om = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
+        /** @var \Magento\Catalog\Api\Data\ProductTierPriceInterfaceFactory $tierFactory */
+        $tierFactory = $om->get(\Magento\Catalog\Api\Data\ProductTierPriceInterfaceFactory::class);
+        $extFactory  = $om->get(\Magento\Catalog\Api\Data\ProductTierPriceExtensionFactory::class);
+
+        // Replace the all-groups tier with a group-1-only tier at $20
+        $product = $this->productRepository->get('simple-tier-price-rule', true, null, true);
+
+        $tier = $tierFactory->create();
+        $tier->setCustomerGroupId(1); // group 1 only, not all groups
+        $tier->setQty(1);
+        $tier->setValue(20.00);
+        $tier->setWebsiteId(0);
+        $tier->setExtensionAttributes($extFactory->create());
+
+        $product->setTierPrices([$tier]);
+        $this->productRepository->save($product);
+
+        $this->indexerBuilder->reindexFull();
+
+        $productId = (int)$product->getId();
+        $websiteId = (int)$this->storeManager->getDefaultStoreView()->getWebsiteId();
+
+        // Group 1: tier caps the rule
+        $rulePrice1 = (float)$this->resourceRule->getRulePrice(new \DateTime(), $websiteId, 1, $productId);
+        $this->assertLessThanOrEqual(20.0, $rulePrice1, 'Group 1 rule price must not exceed its $20 tier price');
+
+        // Other groups: no tier → rule applies to regular price → $50
+        foreach ([0, 2, 3] as $g) {
+            $rulePrice = $this->resourceRule->getRulePrice(new \DateTime(), $websiteId, $g, $productId);
+            if ($rulePrice !== false) {
+                $this->assertEqualsWithDelta(
+                    50.0,
+                    (float)$rulePrice,
+                    0.01,
+                    "Group $g has no tier price — rule price should be \$50 (50% of \$100)"
+                );
+            }
+        }
+    }
+
+    /**
+     * Website-specific tier price: tier is scoped to website_id=1 (not global).
+     * Tests the `price_tier` JOIN (website-specific path).
+     *
+     * Regular: $100 · Website-1 tier: $25 (all groups, qty=1) · 50% rule
+     * Expected: LEAST($25 website-tier, null global-tier, $100 regular) = $25 → 50%=$12.50
+     *
+     * @magentoDataFixture Magento/CatalogRule/_files/product_with_website_tier_price_and_50_percent_rule.php
+     */
+    public function testReindexFullWebsiteScopedTierPriceIsRespected(): void
+    {
+        $this->indexerBuilder->reindexFull();
+
+        $product   = $this->productRepository->get('simple-website-tier-price-rule');
+        $productId = (int)$product->getId();
+        $websiteId = (int)$this->storeManager->getDefaultStoreView()->getWebsiteId();
+        $tierPrice = 25.0;
+
+        foreach ([0, 1, 2, 3] as $g) {
+            $rulePrice = $this->resourceRule->getRulePrice(new \DateTime(), $websiteId, $g, $productId);
+            $this->assertNotFalse($rulePrice, "No rule price for group $g");
+            $this->assertLessThanOrEqual(
+                $tierPrice,
+                (float)$rulePrice,
+                "Group $g: website-scoped tier \$$tierPrice must cap the indexed rule price"
+            );
+        }
+    }
+
+    /**
+     * When both a global tier ($40) and a website-specific tier ($20) exist,
+     * LEAST must pick the lower one (website-specific $20 wins).
+     *
+     * Regular: $100 · Global tier: $40 · Website-1 tier: $20 · 50% rule
+     * Expected: LEAST($40, $20, $100) = $20 → 50% = $10 ≤ $20 for all groups.
+     *
+     * Tier prices are inserted via the DB connection to avoid Magento's model-level
+     * uniqueness check, which rejects two all-groups tiers for different websites
+     * even though the DB schema correctly allows it (different website_id).
+     *
+     * @magentoDataFixture Magento/CatalogRule/_files/product_with_tier_price_and_50_percent_rule.php
+     */
+    public function testReindexFullLowestTierWinsWhenBothGlobalAndWebsiteExist(): void
+    {
+        $product   = $this->productRepository->get('simple-tier-price-rule');
+        $productId = (int)$product->getId();
+
+        // Insert both tiers directly — Magento's model validation rejects two
+        // all-groups tiers for different websites even though the schema allows it.
+        $conn      = $this->connection->getConnection();
+        $tierTable = $this->connection->getTableName('catalog_product_entity_tier_price');
+        $conn->delete($tierTable, ['entity_id = ?' => $productId]);
+        $conn->insert($tierTable, [
+            'entity_id' => $productId, 'all_groups' => 1, 'customer_group_id' => 0,
+            'qty' => 1, 'value' => 40.0, 'website_id' => 0,
+        ]);
+        $conn->insert($tierTable, [
+            'entity_id' => $productId, 'all_groups' => 1, 'customer_group_id' => 0,
+            'qty' => 1, 'value' => 20.0, 'website_id' => 1,
+        ]);
+
+        $this->indexerBuilder->reindexFull();
+
+        $websiteId = (int)$this->storeManager->getDefaultStoreView()->getWebsiteId();
+
+        foreach ([0, 1, 2, 3] as $g) {
+            $rulePrice = $this->resourceRule->getRulePrice(new \DateTime(), $websiteId, $g, $productId);
+            $this->assertNotFalse($rulePrice, "No rule price for group $g");
+            $this->assertLessThanOrEqual(
+                20.0,
+                (float)$rulePrice,
+                "Group $g: website tier \$20 must be the effective base — LEAST picks \$20 over \$40 global"
+            );
+        }
+    }
+
+    /**
+     * Volume discount: tier prices with qty > 1 are intentionally NOT considered
+     * by the indexer (only qty=1 is used as the base price for single-unit display).
+     *
+     * When a product has only qty≥5 tier prices, the catalog rule applies to the
+     * regular price unchanged. This documents the known limitation.
+     *
+     * Regular: $100 · Tier only for qty=5: $20 · 50% rule
+     * Expected: rule price = $50 (50% of $100 — qty=1 tier not found, regular used)
+     *
+     * @magentoDataFixture Magento/CatalogRule/_files/product_with_tier_price_and_50_percent_rule.php
+     */
+    public function testReindexFullTierPriceForQtyAboveOneIsNotConsideredByIndexer(): void
+    {
+        $om = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
+        $tierFactory = $om->get(\Magento\Catalog\Api\Data\ProductTierPriceInterfaceFactory::class);
+        $extFactory  = $om->get(\Magento\Catalog\Api\Data\ProductTierPriceExtensionFactory::class);
+
+        $product = $this->productRepository->get('simple-tier-price-rule', true, null, true);
+
+        // Only a qty=5 tier price — no qty=1 tier
+        $tier = $tierFactory->create();
+        $tier->setCustomerGroupId(\Magento\Customer\Model\Group::CUST_GROUP_ALL);
+        $tier->setQty(5); // qty > 1
+        $tier->setValue(20.0);
+        $tier->setWebsiteId(0);
+        $tier->setExtensionAttributes($extFactory->create());
+
+        $product->setTierPrices([$tier]);
+        $this->productRepository->save($product);
+
+        $this->indexerBuilder->reindexFull();
+
+        $productId = (int)$product->getId();
+        $websiteId = (int)$this->storeManager->getDefaultStoreView()->getWebsiteId();
+
+        foreach ([0, 1, 2, 3] as $g) {
+            $rulePrice = $this->resourceRule->getRulePrice(new \DateTime(), $websiteId, $g, $productId);
+            if ($rulePrice !== false) {
+                // No qty=1 tier — indexer uses regular price $100 → 50% = $50
+                $this->assertEqualsWithDelta(
+                    50.0,
+                    (float)$rulePrice,
+                    0.01,
+                    "Group $g: qty>1 tier is not considered by the indexer; "
+                    . "rule applies to regular price \$100 → expected \$50"
+                );
+            }
+        }
+    }
+
+    /**
      * Returns triggers count.
      *
      * @param string $tableName
