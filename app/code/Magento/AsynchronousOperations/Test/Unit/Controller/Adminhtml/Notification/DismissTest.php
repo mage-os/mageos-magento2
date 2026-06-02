@@ -83,7 +83,7 @@ class DismissTest extends TestCase
 
         $this->jsonResultMock->expects($this->once())
             ->method('setData')
-            ->with([''])
+            ->with(['error' => 0])
             ->willReturn($this->jsonResultMock);
 
         $this->assertEquals($this->jsonResultMock, $this->model->execute());
@@ -105,7 +105,7 @@ class DismissTest extends TestCase
 
         $this->jsonResultMock->expects($this->once())
             ->method('setData')
-            ->with([''])
+            ->with(['error' => 1])
             ->willReturn($this->jsonResultMock);
 
         $this->notificationManagementMock->expects($this->once())
