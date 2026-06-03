@@ -331,12 +331,6 @@ class Weee extends AbstractTotal
             $item->setWeeeTaxApplied($childItem->getWeeeTaxApplied());
             $item->setWeeeTaxAppliedAmount($childItem->getWeeeTaxAppliedAmount());
             $item->setBaseWeeeTaxAppliedAmount($childItem->getBaseWeeeTaxAppliedAmount());
-            $item->setWeeeTaxAppliedRowAmount($childItem->getWeeeTaxAppliedRowAmount());
-            $item->setBaseWeeeTaxAppliedRowAmnt($childItem->getBaseWeeeTaxAppliedRowAmnt());
-            $item->setWeeeTaxAppliedAmountInclTax($childItem->getWeeeTaxAppliedAmountInclTax());
-            $item->setBaseWeeeTaxAppliedAmountInclTax($childItem->getBaseWeeeTaxAppliedAmountInclTax());
-            $item->setWeeeTaxAppliedRowAmountInclTax($childItem->getWeeeTaxAppliedRowAmountInclTax());
-            $item->setBaseWeeeTaxAppliedRowAmntInclTax($childItem->getBaseWeeeTaxAppliedRowAmntInclTax());
         }
     }
 
@@ -363,11 +357,6 @@ class Weee extends AbstractTotal
 
         $item->setWeeeTaxAppliedAmount(0);
         $item->setWeeeTaxAppliedRowAmount(0);
-
-        $item->setWeeeTaxAppliedAmountInclTax(0);
-        $item->setBaseWeeeTaxAppliedAmountInclTax(0);
-        $item->setWeeeTaxAppliedRowAmountInclTax(0);
-        $item->setBaseWeeeTaxAppliedRowAmntInclTax(0);
     }
 
     /**

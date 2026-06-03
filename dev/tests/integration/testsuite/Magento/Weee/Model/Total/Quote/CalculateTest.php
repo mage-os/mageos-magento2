@@ -249,16 +249,6 @@ class CalculateTest extends TestCase
             $parentItem->getBaseWeeeTaxAppliedAmount(),
             'Configurable parent item base_weee_tax_applied_amount must be propagated from the child item'
         );
-        $this->assertEquals(
-            $childItem->getWeeeTaxAppliedRowAmount(),
-            $parentItem->getWeeeTaxAppliedRowAmount(),
-            'Configurable parent item weee_tax_applied_row_amount must be propagated from the child item'
-        );
-        $this->assertEquals(
-            $childItem->getBaseWeeeTaxAppliedRowAmnt(),
-            $parentItem->getBaseWeeeTaxAppliedRowAmnt(),
-            'Configurable parent item base_weee_tax_applied_row_amnt must be propagated from the child item'
-        );
     }
 
     /**
@@ -315,16 +305,6 @@ class CalculateTest extends TestCase
         $this->assertNotNull($parentItem, 'Configurable parent quote item must exist');
         $this->assertNotNull($childItem, 'Simple child quote item must exist');
         $this->assertGreaterThan(0, $childItem->getWeeeTaxAppliedRowAmount());
-        $this->assertEquals(
-            $childItem->getWeeeTaxAppliedRowAmount(),
-            $parentItem->getWeeeTaxAppliedRowAmount(),
-            'Configurable parent item weee_tax_applied_row_amount must be propagated from the child item'
-        );
-        $this->assertEquals(
-            $childItem->getBaseWeeeTaxAppliedRowAmnt(),
-            $parentItem->getBaseWeeeTaxAppliedRowAmnt(),
-            'Configurable parent item base_weee_tax_applied_row_amnt must be propagated from the child item'
-        );
         $this->assertEquals(
             $childItem->getBaseWeeeTaxAppliedAmount(),
             $parentItem->getBaseWeeeTaxAppliedAmount(),
@@ -399,15 +379,9 @@ class CalculateTest extends TestCase
             }
         }
         $this->assertNotNull($parentOrderItem, 'Configurable parent order item must exist');
-        $this->assertGreaterThan(
-            0,
-            $parentOrderItem->getWeeeTaxAppliedRowAmount(),
-            'Parent order item weee_tax_applied_row_amount must be set so the invoice collector can read it'
-        );
-        $this->assertGreaterThan(
-            0,
-            $parentOrderItem->getBaseWeeeTaxAppliedRowAmnt(),
-            'Parent order item base_weee_tax_applied_row_amnt must be set so the invoice collector can read it'
+        $this->assertNotEmpty(
+            $this->objectManager->get(\Magento\Weee\Helper\Data::class)->getApplied($parentOrderItem),
+            'Parent order item weee_tax_applied JSON must be populated so Invoice/Creditmemo collectors can read it'
         );
     }
 
@@ -478,15 +452,9 @@ class CalculateTest extends TestCase
             }
         }
         $this->assertNotNull($parentOrderItem, 'Configurable parent order item must exist');
-        $this->assertGreaterThan(
-            0,
-            $parentOrderItem->getWeeeTaxAppliedRowAmount(),
-            'Parent order item weee_tax_applied_row_amount must be set so the invoice collector can read it'
-        );
-        $this->assertGreaterThan(
-            0,
-            $parentOrderItem->getBaseWeeeTaxAppliedRowAmnt(),
-            'Parent order item base_weee_tax_applied_row_amnt must be set so the invoice collector can read it'
+        $this->assertNotEmpty(
+            $this->objectManager->get(\Magento\Weee\Helper\Data::class)->getApplied($parentOrderItem),
+            'Parent order item weee_tax_applied JSON must be populated so Invoice/Creditmemo collectors can read it'
         );
     }
 
