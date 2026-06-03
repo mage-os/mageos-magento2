@@ -304,11 +304,33 @@ class CalculateTest extends TestCase
 
         $this->assertNotNull($parentItem, 'Configurable parent quote item must exist');
         $this->assertNotNull($childItem, 'Simple child quote item must exist');
+
+        // Child carries the FPT row amounts set by process()
         $this->assertGreaterThan(0, $childItem->getWeeeTaxAppliedRowAmount());
+        $this->assertGreaterThan(0, $childItem->getBaseWeeeTaxAppliedRowAmnt());
+
+        // Parent unit amounts are propagated (ACP2E-3193 + ACP2E-4922)
+        $this->assertEquals(
+            $childItem->getWeeeTaxAppliedAmount(),
+            $parentItem->getWeeeTaxAppliedAmount(),
+            'Configurable parent item weee_tax_applied_amount must be propagated from the child item'
+        );
         $this->assertEquals(
             $childItem->getBaseWeeeTaxAppliedAmount(),
             $parentItem->getBaseWeeeTaxAppliedAmount(),
             'Configurable parent item base_weee_tax_applied_amount must be propagated from the child item'
+        );
+
+        // Parent weee_tax_applied JSON must contain row_amount — Invoice/Creditmemo collectors
+        // read from this JSON instead of the direct row amount property
+        $weeeHelper = $this->objectManager->get(\Magento\Weee\Helper\Data::class);
+        $parentApplied = $weeeHelper->getApplied($parentItem);
+        $this->assertNotEmpty($parentApplied, 'weee_tax_applied JSON must be set on the parent quote item');
+        $parentJsonRowAmount = array_sum(array_column($parentApplied, 'row_amount'));
+        $this->assertEquals(
+            $childItem->getWeeeTaxAppliedRowAmount(),
+            $parentJsonRowAmount,
+            'Parent weee_tax_applied JSON row_amount must match child row amount for correct invoicing'
         );
     }
 
