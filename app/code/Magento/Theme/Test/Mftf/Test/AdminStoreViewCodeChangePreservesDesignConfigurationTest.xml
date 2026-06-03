@@ -24,12 +24,16 @@
                 <argument name="StoreGroup" value="_defaultStoreGroup"/>
                 <argument name="customStore" value="storeViewData"/>
             </actionGroup>
+            <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
+                <argument name="indices" value=""/>
+            </actionGroup>
             <actionGroup ref="AdminChangeStorefrontThemeActionGroup" stepKey="assignMagentoBlankThemeToStoreView">
                 <argument name="theme" value="{{MagentoBlankTheme.name}}"/>
                 <argument name="scopeName" value="{{storeViewData.name}}"/>
             </actionGroup>
         </before>
         <after>
+            <!-- Delete store view and logout from admin -->
             <actionGroup ref="AdminDeleteStoreViewActionGroup" stepKey="deleteStoreViewAfterDesignConfigTest">
                 <argument name="customStore" value="storeViewData"/>
             </actionGroup>
