@@ -83,8 +83,8 @@ if ((int)$settings->get('TESTS_PARALLEL_RUN') !== 1) {
  * Discover module-level test fixture dirs: .../Test/_files/Magento/<Name> (direct child only).
  *
  * Uses shallow glob patterns under app/code (Magento packages and Vendor/Module) and under
- * vendor/magento (Composer path packages) so test fixtures are found whether modules live in
- * app/code or remain in vendor.
+ * vendor/magento (Composer path packages) so test fixtures are found when modules are not
+ * copied into app/code.
  *
  * @param string $appCodeDir Absolute path to app/code
  * @return string[] List of absolute paths to each test module root directory
@@ -96,16 +96,11 @@ function findModuleLevelTestModuleFixtureDirectories(string $appCodeDir): array
     }
 
     $found = [];
-    // Project root is two levels above app/code (app/code -> app -> project root).
-    $projectRoot = dirname($appCodeDir, 2);
-
     $patterns = [
         $appCodeDir . '/Magento/*/Test/_files/Magento/*',
         $appCodeDir . '/*/*/Test/_files/Magento/*',
     ];
-
-    // Composer-installed Magento modules under vendor/magento (e.g. module-page-builder).
-    $vendorMagentoDir = $projectRoot . '/vendor/magento';
+    $vendorMagentoDir = dirname($appCodeDir, 2) . '/vendor/magento';
     if (is_dir($vendorMagentoDir)) {
         $patterns[] = $vendorMagentoDir . '/module-*/Test/_files/Magento/*';
     }
