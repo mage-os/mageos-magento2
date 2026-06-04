@@ -21,7 +21,7 @@
         <waitForLoadingMaskToDisappear stepKey="waitForProductGridAfterSkuFilter"/>
         <waitForAjaxLoad stepKey="waitForGridAjaxAfterSkuFilter"/>
         <waitForElementVisible selector="{{AdminCreateNewReviewSection.addNewReviewBySKU(sku)}}" stepKey="waitForFilteredSkuCellVisible"/>
-        <waitForElementClickable selector="{{AdminCreateNewReviewSection.addNewReviewRowBySKU(sku)}}" stepKey="waitForSkuRowClickable"/>
+        <waitForElementClickable selector="{{AdminCreateNewReviewSection.addNewReviewRowBySKU(sku)}}" stepKey="waitForSkuCellClickable"/>
         <click selector="{{AdminCreateNewReviewSection.addNewReviewRowBySKU(sku)}}" stepKey="addNewReviewBySKU"/>
         <waitForPageLoad stepKey="waitForPageLoad"/>
         <waitForElementVisible selector="{{AdminCreateNewReviewSection.select_stores}}" stepKey="waitForVisibleReviewDetails"/>
