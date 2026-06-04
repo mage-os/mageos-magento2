@@ -180,7 +180,7 @@ class ShipOrderTest extends TestCase
                 'notifierInterface' => $this->notifierInterfaceMock,
                 'logger' => $this->loggerMock,
                 'orderRegistrar' => $this->orderRegistrarMock,
-                'orderMutex' => new OrderMutex($this->resourceConnectionMock, new DeadlockRecoveryExecutor(5, 10000)),
+                'orderMutex' => new OrderMutex($this->resourceConnectionMock, new DeadlockRecoveryExecutor(5, 0)),
             ]
         );
     }

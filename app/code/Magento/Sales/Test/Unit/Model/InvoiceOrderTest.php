@@ -162,7 +162,7 @@ class InvoiceOrderTest extends TestCase
             $this->invoiceOrderValidatorMock,
             $this->notifierInterfaceMock,
             $this->loggerMock,
-            new OrderMutex($this->resourceConnectionMock, new DeadlockRecoveryExecutor(5, 10000))
+            new OrderMutex($this->resourceConnectionMock, new DeadlockRecoveryExecutor(5, 0))
         );
     }
 

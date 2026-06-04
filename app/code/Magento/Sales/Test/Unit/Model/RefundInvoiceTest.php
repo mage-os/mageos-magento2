@@ -192,7 +192,7 @@ class RefundInvoiceTest extends TestCase
             $this->notifierMock,
             $this->configMock,
             $this->loggerMock,
-            new OrderMutex($this->resourceConnectionMock, new DeadlockRecoveryExecutor(5, 10000))
+            new OrderMutex($this->resourceConnectionMock, new DeadlockRecoveryExecutor(5, 0))
         );
     }
 

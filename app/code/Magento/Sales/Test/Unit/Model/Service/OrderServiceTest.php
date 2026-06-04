@@ -181,7 +181,7 @@ class OrderServiceTest extends TestCase
             $this->orderCommentSender,
             $paymentFailures,
             $logger,
-            new OrderMutex($this->resourceConnectionMock, new DeadlockRecoveryExecutor(5, 10000)),
+            new OrderMutex($this->resourceConnectionMock, new DeadlockRecoveryExecutor(5, 0)),
             $this->orderConfigMock
         );
     }
