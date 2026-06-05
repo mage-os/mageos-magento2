@@ -113,7 +113,7 @@ class ErrorProcessor
      */
     public function maskException(\Exception $exception)
     {
-        $isDevMode = $this->_appState->getMode() === State::MODE_DEVELOPER;
+        $isDevMode = $this->isDeveloperMode();
         $stackTrace = $isDevMode ? $exception->getTraceAsString() : null;
 
         if ($exception instanceof WebapiException) {
@@ -285,7 +285,7 @@ class ErrorProcessor
      */
     public function renderException(\Exception $exception, $httpCode = self::DEFAULT_ERROR_HTTP_CODE)
     {
-        if ($this->_appState->getMode() == State::MODE_DEVELOPER ||
+        if ($this->isDeveloperMode() ||
             $exception instanceof \Magento\Framework\Webapi\Exception
         ) {
             $this->renderErrorMessage($exception->getMessage(), $exception->getTraceAsString(), $httpCode);
@@ -359,7 +359,7 @@ class ErrorProcessor
     {
         $errorData = [];
         $message = ['code' => $httpCode, 'message' => $errorMessage];
-        $isDeveloperMode = $this->_appState->getMode() == State::MODE_DEVELOPER;
+        $isDeveloperMode = $this->isDeveloperMode();
         if ($isDeveloperMode) {
             $message['trace'] = $trace;
         }
@@ -387,6 +387,20 @@ class ErrorProcessor
     }
 
     /**
+     * Determine whether the application is running in developer mode.
+     *
+     * Extracted so subclasses and plugins can override the check — for example
+     * to enable verbose API output for specific API keys regardless of the
+     * configured application mode.
+     *
+     * @return bool
+     */
+    protected function isDeveloperMode(): bool
+    {
+        return $this->_appState->getMode() === State::MODE_DEVELOPER;
+    }
+
+    /**
      * Declare web API-specific shutdown function.
      *
      * @return $this
@@ -409,7 +423,7 @@ class ErrorProcessor
         if ($error && $error['type'] & $fatalErrorFlag) {
             $errorMessage = "Fatal Error: '{$error['message']}' in '{$error['file']}' on line {$error['line']}";
             $reportId = $this->_saveFatalErrorReport($errorMessage);
-            if ($this->_appState->getMode() == State::MODE_DEVELOPER) {
+            if ($this->isDeveloperMode()) {
                 $this->renderErrorMessage($errorMessage);
             } else {
                 $this->renderErrorMessage(
