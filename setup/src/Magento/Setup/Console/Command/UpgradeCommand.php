@@ -229,7 +229,7 @@ class UpgradeCommand extends AbstractSetupCommand
     private function validateAmqpVersion(): ?string
     {
         $defaultConnection = $this->deploymentConfig->get('queue/default_connection');
-        if ($defaultConnection !== 'amqp') {
+        if ($defaultConnection && $defaultConnection !== 'amqp') {
             return null;
         }
 
