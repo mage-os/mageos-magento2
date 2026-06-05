@@ -37,7 +37,8 @@ class Config implements \Magento\Framework\Interception\ConfigInterface
 
     /**
      * Cache
-     * @deprecated 102.0.1
+     * @deprecated 102.0.1 Cache handling was moved to a dedicated class
+     * @see \Magento\Framework\Interception\Config\CacheManager
      * @var \Magento\Framework\Cache\FrontendInterface
      */
     protected $_cache;
