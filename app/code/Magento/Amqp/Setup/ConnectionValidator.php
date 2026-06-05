@@ -68,7 +68,7 @@ class ConnectionValidator
             $connection = $this->connectionFactory->create($options);
 
             $connection->close();
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return false;
         }
 
@@ -129,11 +129,12 @@ class ConnectionValidator
             } finally {
                 try {
                     $connection->close();
-                } catch (\Exception $e) {
+                // phpcs:ignore Magento2.CodeAnalysis.EmptyBlock.DetectedCatch
+                } catch (\Exception) {
                     // Ignore errors closing connection
                 }
             }
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return null;
         }
     }

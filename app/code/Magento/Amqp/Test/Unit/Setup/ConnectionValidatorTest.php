@@ -16,6 +16,14 @@ use PHPUnit\Framework\TestCase;
 
 class ConnectionValidatorTest extends TestCase
 {
+    private const TEST_HOST = 'localhost';
+    private const TEST_PORT = '5672';
+    private const TEST_USER = 'guest';
+    private const TEST_PASSWORD = 'guest';
+    private const TEST_VHOST = '/';
+    private const TEST_SSL_PORT = '5671';
+    private const TEST_INVALID_HOST = 'invalid-host';
+
     /**
      * @var ConnectionFactory|MockObject
      */
@@ -58,11 +66,11 @@ class ConnectionValidatorTest extends TestCase
             ->willReturn($connectionMock);
 
         $result = $this->connectionValidator->getServerVersion(
-            'localhost',
-            '5672',
-            'guest',
-            'guest',
-            '/'
+            self::TEST_HOST,
+            self::TEST_PORT,
+            self::TEST_USER,
+            self::TEST_PASSWORD,
+            self::TEST_VHOST
         );
 
         $this->assertEquals('4.3.1', $result);
@@ -85,11 +93,11 @@ class ConnectionValidatorTest extends TestCase
             ->willReturn($connectionMock);
 
         $result = $this->connectionValidator->getServerVersion(
-            'localhost',
-            '5672',
-            'guest',
-            'guest',
-            '/'
+            self::TEST_HOST,
+            self::TEST_PORT,
+            self::TEST_USER,
+            self::TEST_PASSWORD,
+            self::TEST_VHOST
         );
 
         $this->assertEquals('4.4.0', $result);
@@ -112,11 +120,11 @@ class ConnectionValidatorTest extends TestCase
             ->willReturn($connectionMock);
 
         $result = $this->connectionValidator->getServerVersion(
-            'localhost',
-            '5672',
-            'guest',
-            'guest',
-            '/'
+            self::TEST_HOST,
+            self::TEST_PORT,
+            self::TEST_USER,
+            self::TEST_PASSWORD,
+            self::TEST_VHOST
         );
 
         $this->assertNull($result);
@@ -132,11 +140,11 @@ class ConnectionValidatorTest extends TestCase
             ->willThrowException(new \Exception('Connection refused'));
 
         $result = $this->connectionValidator->getServerVersion(
-            'invalid-host',
-            '5672',
-            'guest',
-            'guest',
-            '/'
+            self::TEST_INVALID_HOST,
+            self::TEST_PORT,
+            self::TEST_USER,
+            self::TEST_PASSWORD,
+            self::TEST_VHOST
         );
 
         $this->assertNull($result);
@@ -159,11 +167,11 @@ class ConnectionValidatorTest extends TestCase
             ->willReturn($connectionMock);
 
         $result = $this->connectionValidator->getServerVersion(
-            'localhost',
-            '5672',
-            'guest',
-            'guest',
-            '/'
+            self::TEST_HOST,
+            self::TEST_PORT,
+            self::TEST_USER,
+            self::TEST_PASSWORD,
+            self::TEST_VHOST
         );
 
         $this->assertNull($result);
@@ -187,11 +195,11 @@ class ConnectionValidatorTest extends TestCase
             ->willReturn($connectionMock);
 
         $result = $this->connectionValidator->getServerVersion(
-            'localhost',
-            '5672',
-            'guest',
-            'guest',
-            '/'
+            self::TEST_HOST,
+            self::TEST_PORT,
+            self::TEST_USER,
+            self::TEST_PASSWORD,
+            self::TEST_VHOST
         );
 
         $this->assertEquals('4.3.0', $result);
@@ -213,17 +221,20 @@ class ConnectionValidatorTest extends TestCase
 
         $this->connectionFactoryMock->expects($this->once())
             ->method('create')
-            ->with($this->callback(function (FactoryOptions $options) {
-                return true;
+            ->with($this->callback(function (FactoryOptions $options) use ($sslOptions) {
+                return $options->getHost() === self::TEST_HOST
+                    && $options->getPort() === self::TEST_SSL_PORT
+                    && $options->isSslEnabled() === true
+                    && $options->getSslOptions() === $sslOptions;
             }))
             ->willReturn($connectionMock);
 
         $result = $this->connectionValidator->getServerVersion(
-            'localhost',
-            '5671',
-            'guest',
-            'guest',
-            '/',
+            self::TEST_HOST,
+            self::TEST_SSL_PORT,
+            self::TEST_USER,
+            self::TEST_PASSWORD,
+            self::TEST_VHOST,
             true,
             $sslOptions
         );
@@ -244,11 +255,11 @@ class ConnectionValidatorTest extends TestCase
             ->willReturn($connectionMock);
 
         $result = $this->connectionValidator->isConnectionValid(
-            'localhost',
-            '5672',
-            'guest',
-            'guest',
-            '/'
+            self::TEST_HOST,
+            self::TEST_PORT,
+            self::TEST_USER,
+            self::TEST_PASSWORD,
+            self::TEST_VHOST
         );
 
         $this->assertTrue($result);
@@ -264,11 +275,11 @@ class ConnectionValidatorTest extends TestCase
             ->willThrowException(new \Exception('Connection refused'));
 
         $result = $this->connectionValidator->isConnectionValid(
-            'invalid-host',
-            '5672',
-            'guest',
-            'guest',
-            '/'
+            self::TEST_INVALID_HOST,
+            self::TEST_PORT,
+            self::TEST_USER,
+            self::TEST_PASSWORD,
+            self::TEST_VHOST
         );
 
         $this->assertFalse($result);

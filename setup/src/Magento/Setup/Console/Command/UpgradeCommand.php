@@ -228,36 +228,24 @@ class UpgradeCommand extends AbstractSetupCommand
      */
     private function validateAmqpVersion(): ?string
     {
+        $defaultConnection = $this->deploymentConfig->get('queue/default_connection');
+        if ($defaultConnection && $defaultConnection !== 'amqp') {
+            return null;
+        }
+
         $amqpConfig = $this->deploymentConfig->get('queue/amqp');
-        if (!$amqpConfig || empty($amqpConfig['host'])) {
+        if (empty($amqpConfig['host'])) {
             return null;
         }
 
         try {
             /** @var ConnectionValidator $connectionValidator */
             $connectionValidator = ObjectManager::getInstance()->get(ConnectionValidator::class);
-        } catch (\Exception $e) {
-            // If ConnectionValidator cannot be instantiated, skip validation
+        } catch (\Exception) {
             return null;
         }
 
-        $isSsl = !empty($amqpConfig['ssl']) && $amqpConfig['ssl'] !== 'false';
-        $sslOptions = null;
-        if (!empty($amqpConfig['ssl_options'])) {
-            $sslOptions = is_string($amqpConfig['ssl_options'])
-                ? json_decode($amqpConfig['ssl_options'], true)
-                : $amqpConfig['ssl_options'];
-        }
-
-        $version = $connectionValidator->getServerVersion(
-            $amqpConfig['host'],
-            $amqpConfig['port'] ?? '5672',
-            $amqpConfig['user'] ?? '',
-            $amqpConfig['password'] ?? '',
-            $amqpConfig['virtualhost'] ?? '/',
-            $isSsl,
-            is_array($sslOptions) ? $sslOptions : null
-        );
+        $version = $this->detectServerVersion($connectionValidator, $amqpConfig);
 
         if ($version !== null
             && version_compare($version, ConnectionValidator::MINIMUM_RABBITMQ_VERSION, '<')
@@ -271,5 +259,41 @@ class UpgradeCommand extends AbstractSetupCommand
         }
 
         return null;
+    }
+
+    /**
+     * Retrieve RabbitMQ server version.
+     *
+     * @param ConnectionValidator $connectionValidator
+     * @param array $amqpConfig
+     * @return string|null
+     */
+    private function detectServerVersion(ConnectionValidator $connectionValidator, array $amqpConfig): ?string
+    {
+        $isSsl = ($amqpConfig['ssl'] ?? '') !== '' && $amqpConfig['ssl'] !== 'false';
+        return $connectionValidator->getServerVersion(
+            $amqpConfig['host'],
+            $amqpConfig['port'] ?? '5672',
+            $amqpConfig['user'] ?? '',
+            $amqpConfig['password'] ?? '',
+            $amqpConfig['virtualhost'] ?? '/',
+            (bool)$isSsl,
+            $this->getSslOptions($amqpConfig)
+        );
+    }
+
+    /**
+     * Parse SSL options from configuration.
+     *
+     * @param array $amqpConfig
+     * @return array|null
+     */
+    private function getSslOptions(array $amqpConfig): ?array
+    {
+        $sslOptions = $amqpConfig['ssl_options'] ?? null;
+        if (is_string($sslOptions)) {
+            return json_decode($sslOptions, true);
+        }
+        return is_array($sslOptions) ? $sslOptions : null;
     }
 }

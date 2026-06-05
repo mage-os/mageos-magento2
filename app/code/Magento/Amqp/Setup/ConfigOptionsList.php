@@ -211,30 +211,48 @@ class ConfigOptionsList implements ConfigOptionsListInterface
 
             // Validate RabbitMQ version if connection succeeded
             if ($result) {
-                $serverVersion = $this->connectionValidator->getServerVersion(
-                    $options[self::INPUT_KEY_QUEUE_AMQP_HOST],
-                    $options[self::INPUT_KEY_QUEUE_AMQP_PORT],
-                    $options[self::INPUT_KEY_QUEUE_AMQP_USER],
-                    $options[self::INPUT_KEY_QUEUE_AMQP_PASSWORD],
-                    $options[self::INPUT_KEY_QUEUE_AMQP_VIRTUAL_HOST],
-                    $isSslEnabled,
-                    $sslOptions
-                );
-
-                if ($serverVersion !== null
-                    && version_compare($serverVersion, ConnectionValidator::MINIMUM_RABBITMQ_VERSION, '<')
-                ) {
-                    $errors[] = sprintf(
-                        'RabbitMQ version "%s" detected. Magento requires RabbitMQ version %s or later. '
-                        . 'Please upgrade RabbitMQ and rerun setup.',
-                        $serverVersion,
-                        ConnectionValidator::MINIMUM_RABBITMQ_VERSION
-                    );
+                $versionError = $this->validateVersion($options, $isSslEnabled, $sslOptions);
+                if ($versionError !== null) {
+                    $errors[] = $versionError;
                 }
             }
         }
 
         return $errors;
+    }
+
+    /**
+     * Validate RabbitMQ version.
+     *
+     * @param array $options
+     * @param bool $isSslEnabled
+     * @param array|null $sslOptions
+     * @return string|null Error message or null
+     */
+    private function validateVersion(array $options, bool $isSslEnabled, ?array $sslOptions): ?string
+    {
+        $serverVersion = $this->connectionValidator->getServerVersion(
+            $options[self::INPUT_KEY_QUEUE_AMQP_HOST],
+            $options[self::INPUT_KEY_QUEUE_AMQP_PORT],
+            $options[self::INPUT_KEY_QUEUE_AMQP_USER],
+            $options[self::INPUT_KEY_QUEUE_AMQP_PASSWORD],
+            $options[self::INPUT_KEY_QUEUE_AMQP_VIRTUAL_HOST],
+            $isSslEnabled,
+            $sslOptions
+        );
+
+        if ($serverVersion !== null
+            && version_compare($serverVersion, ConnectionValidator::MINIMUM_RABBITMQ_VERSION, '<')
+        ) {
+            return sprintf(
+                'RabbitMQ version "%s" detected. Magento requires RabbitMQ version %s or later. '
+                . 'Please upgrade RabbitMQ and rerun setup.',
+                $serverVersion,
+                ConnectionValidator::MINIMUM_RABBITMQ_VERSION
+            );
+        }
+
+        return null;
     }
 
     /**
