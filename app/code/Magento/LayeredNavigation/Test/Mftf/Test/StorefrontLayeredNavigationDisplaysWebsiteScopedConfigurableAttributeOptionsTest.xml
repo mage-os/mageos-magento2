@@ -21,14 +21,13 @@
             <!-- Step 1: Create a secondary website, store, and store view -->
             <createData entity="secondCustomWebsite" stepKey="createSecondaryWebsite"/>
             <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
-            <actionGroup ref="AdminGetWebsiteIdActionGroup" stepKey="getSecondaryWebsiteId">
-                <argument name="website" value="secondCustomWebsite"/>
+            <actionGroup ref="AdminStoreGroupCreateActionGroup" stepKey="createSecondaryStoreGroup">
+                <argument name="Website" value="secondCustomWebsite"/>
+                <argument name="storeGroup" value="customStoreGroup"/>
             </actionGroup>
-            <createData entity="customStoreGroup" stepKey="createSecondaryStoreGroup">
-                <field key="website_id">$grabFromCurrentUrlGetSecondaryWebsiteId</field>
-            </createData>
-            <actionGroup ref="CreateCustomStoreViewActionGroup" stepKey="createSecondaryStoreView">
-                <argument name="storeGroupName" value="$$createSecondaryStoreGroup.group[name]$$"/>
+            <actionGroup ref="AdminCreateStoreViewActionGroup" stepKey="createSecondaryStoreView">
+                <argument name="StoreGroup" value="customStoreGroup"/>
+                <argument name="customStore" value="customStoreEN"/>
             </actionGroup>
             <!-- Step 2: Create category and configurable product using a size attribute -->
             <createData entity="SimpleSubCategory" stepKey="createCategory"/>
