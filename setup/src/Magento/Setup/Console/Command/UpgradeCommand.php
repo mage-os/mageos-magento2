@@ -7,6 +7,7 @@
 
 namespace Magento\Setup\Console\Command;
 
+use Magento\Amqp\Setup\ConnectionValidator;
 use Magento\Deploy\Console\Command\App\ConfigImportCommand;
 use Magento\Framework\App\DeploymentConfig;
 use Magento\Framework\App\ObjectManager;
@@ -162,6 +163,11 @@ class UpgradeCommand extends AbstractSetupCommand
             $searchConfig = $this->searchConfigFactory->create();
             $this->cache->clean();
             $searchConfig->validateSearchEngine();
+            $amqpVersionError = $this->validateAmqpVersion();
+            if ($amqpVersionError !== null) {
+                $output->writeln('<error>' . $amqpVersionError . '</error>');
+                return Cli::RETURN_FAILURE;
+            }
             $installer->installSchema($request);
             $installer->removeUnusedTriggers();
             $installer->installDataFixtures($request, true);
@@ -205,5 +211,65 @@ class UpgradeCommand extends AbstractSetupCommand
         }
 
         return Cli::RETURN_SUCCESS;
+    }
+
+    /**
+     * Validate RabbitMQ version from deployment configuration.
+     *
+     * Reads AMQP settings from env.php and checks the running RabbitMQ server
+     * version against the minimum requirement. Skips validation if AMQP is
+     * not configured or if the server version cannot be determined.
+     *
+     * ConnectionValidator is resolved lazily via ObjectManager at execution time
+     * (after updateModulesSequence) to ensure the proper DI context is available,
+     * since the setup bootstrap may reset generated files and caches.
+     *
+     * @return string|null Error message if validation fails, null if validation passes
+     */
+    private function validateAmqpVersion(): ?string
+    {
+        $amqpConfig = $this->deploymentConfig->get('queue/amqp');
+        if (!$amqpConfig || empty($amqpConfig['host'])) {
+            return null;
+        }
+
+        try {
+            /** @var ConnectionValidator $connectionValidator */
+            $connectionValidator = ObjectManager::getInstance()->get(ConnectionValidator::class);
+        } catch (\Exception $e) {
+            // If ConnectionValidator cannot be instantiated, skip validation
+            return null;
+        }
+
+        $isSsl = !empty($amqpConfig['ssl']) && $amqpConfig['ssl'] !== 'false';
+        $sslOptions = null;
+        if (!empty($amqpConfig['ssl_options'])) {
+            $sslOptions = is_string($amqpConfig['ssl_options'])
+                ? json_decode($amqpConfig['ssl_options'], true)
+                : $amqpConfig['ssl_options'];
+        }
+
+        $version = $connectionValidator->getServerVersion(
+            $amqpConfig['host'],
+            $amqpConfig['port'] ?? '5672',
+            $amqpConfig['user'] ?? '',
+            $amqpConfig['password'] ?? '',
+            $amqpConfig['virtualhost'] ?? '/',
+            $isSsl,
+            is_array($sslOptions) ? $sslOptions : null
+        );
+
+        if ($version !== null
+            && version_compare($version, ConnectionValidator::MINIMUM_RABBITMQ_VERSION, '<')
+        ) {
+            return sprintf(
+                'RabbitMQ version "%s" detected. Magento requires RabbitMQ version %s or later. '
+                . 'Please upgrade RabbitMQ and rerun setup.',
+                $version,
+                ConnectionValidator::MINIMUM_RABBITMQ_VERSION
+            );
+        }
+
+        return null;
     }
 }
