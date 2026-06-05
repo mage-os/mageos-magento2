@@ -47,7 +47,7 @@
         <!-- Step 2,3,4: Navigate to created store view, change the code field and save store view -->
         <actionGroup ref="AdminUpdateStoreViewCodeActionGroup" stepKey="updateStoreViewCodeFromStoresGrid">
             <argument name="storeViewName" value="{{storeViewData.name}}"/>
-            <argument name="storeViewCode" value="storeview_main"/>
+            <argument name="storeViewCode" value="{{storeViewCode.code}}"/>
         </actionGroup>
         <!-- Step 5 Assertion: The design configuration remains intact after changing the store view code -->
         <actionGroup ref="AdminAssertStoreViewDesignThemeActionGroup" stepKey="assertMagentoBlankThemeAfterStoreViewCodeChange">
