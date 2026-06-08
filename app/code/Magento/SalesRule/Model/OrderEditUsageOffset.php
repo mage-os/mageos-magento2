@@ -70,15 +70,10 @@ class OrderEditUsageOffset
      */
     public function getOffsetForRuleId(int $ruleId, ?CartInterface $quote = null): int
     {
-        if (!$this->isAdminOrderEdit()) {
-            return 0;
-        }
-
         $originalRuleIds = $this->getOriginalAppliedRuleIds($quote);
-        if (!$originalRuleIds) {
+        if (!$this->isAdminOrderEdit() || !$originalRuleIds) {
             return 0;
         }
-
         return in_array((string)$ruleId, explode(',', $originalRuleIds), true) ? 1 : 0;
     }
 
@@ -97,12 +92,9 @@ class OrderEditUsageOffset
             }
         }
 
-        if (!$this->adminSessionQuote->getData('order_id') || $this->adminSessionQuote->getData('reordered')) {
-            return null;
-        }
-
         $order = $this->adminSessionQuote->getOrder();
-        if (!$order->getId()) {
+        if ((!$this->adminSessionQuote->getData('order_id') || $this->adminSessionQuote->getData('reordered'))
+            || (!$order->getId())) {
             return null;
         }
 
