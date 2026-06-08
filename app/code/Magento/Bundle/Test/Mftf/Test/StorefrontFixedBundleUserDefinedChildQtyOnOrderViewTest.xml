@@ -52,6 +52,7 @@
             <actionGroup ref="AdminProductPageOpenByIdActionGroup" stepKey="openBundleProductEditPage">
                 <argument name="productId" value="$createFixedBundleProduct.id$"/>
             </actionGroup>
+            <conditionalClick selector="{{AdminProductFormBundleSection.dynamicSkuToggle}}" dependentSelector="{{AdminProductFormBundleSection.dynamicSkuToggleOff}}" visible="false" stepKey="disableDynamicSkuIfEnabled"/>
             <checkOption selector="{{AdminProductFormBundleSection.userDefinedQuantity('0', '0')}}" stepKey="enableUserDefinedQtyForFirstOption"/>
             <checkOption selector="{{AdminProductFormBundleSection.userDefinedQuantity('1', '0')}}" stepKey="enableUserDefinedQtyForSecondOption"/>
             <actionGroup ref="SaveProductFormActionGroup" stepKey="saveBundleProduct"/>
