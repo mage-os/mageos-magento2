@@ -163,17 +163,16 @@ class AddTest extends TestCase
         $storeId = 1;
         $params = ['qty' => 1];
         $product = $this->createMock(Product::class);
-        $product->method('getName')->willReturn('Main Product');
-        $relatedProduct1 = $this->createMock(Product::class);
-        $relatedProduct1->method('getName')->willReturn('Related Product 1');
-        $relatedProduct2 = $this->createMock(Product::class);
-        $relatedProduct2->method('getName')->willReturn('Related Product 2');
         $quote = $this->createMock(Quote::class);
         $storeManager = $this->createMock(StoreManagerInterface::class);
         $store = $this->createMock(Store::class);
         $localeResolver = $this->createMock(ResolverInterface::class);
-        $storeManager->method('getStore')->willReturn($store);
-        $store->method('getId')->willReturn($storeId);
+        $storeManager->expects($this->once())
+            ->method('getStore')
+            ->willReturn($store);
+        $store->expects($this->once())
+            ->method('getId')
+            ->willReturn($storeId);
         $this->request->method('getParam')
             ->willReturnMap([
                 ['product', null, $productId],
@@ -186,12 +185,10 @@ class AddTest extends TestCase
         $this->request->expects($this->once())
             ->method('isAjax')
             ->willReturn(true);
-        $this->productRepository->method('getById')
-            ->willReturnMap([
-                [$productId, false, $storeId, $product],
-                [2, false, $storeId, $relatedProduct1],
-                [3, false, $storeId, $relatedProduct2],
-            ]);
+        $this->productRepository->expects($this->once())
+            ->method('getById')
+            ->with($productId, false, $storeId)
+            ->willReturn($product);
         $this->objectManagerMock->method('get')
             ->with()
             ->willReturnMap([

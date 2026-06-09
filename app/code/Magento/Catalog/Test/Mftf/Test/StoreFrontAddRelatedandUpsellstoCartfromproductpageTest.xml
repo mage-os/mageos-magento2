@@ -154,7 +154,9 @@
         <click selector="{{StorefrontProductRelatedProductsSection.relatedProductCheckBoxButton('$$productB.name$$')}}" stepKey="checkProductB"/>
 
         <!--Click Add to Cart-->
-        <actionGroup ref="StorefrontClickAddToCartOnProductPageActionGroup" stepKey="addToCartFromStorefrontProductPage"/>
+        <actionGroup ref="AddToCartFromStorefrontProductPageActionGroup" stepKey="addToCartFromStorefrontProductPage">
+            <argument name="productName" value="$$productA.name$$"/>
+        </actionGroup>
 
         <!-- Verify Two Products are added Product A and B-->
         <!--Check Product A is there -->
@@ -166,9 +168,9 @@
             <argument name="productName" value="$$productB.name$$"/>
         </actionGroup>
 
-        <!-- See success message lists main and related products -->
+        <!-- See  Success message appears:  'You added Product A to your shopping cart.' -->
         <waitForElementVisible selector="{{StorefrontProductPageSection.successMsg}}" time="30" stepKey="waitForProductAdded"/>
-        <see selector="{{StorefrontCategoryMainSection.SuccessMsg}}" userInput="You added $$productA.name$$ and $$productB.name$$ to your shopping cart." stepKey="seeAddedToCartMessage"/>
+        <see selector="{{StorefrontCategoryMainSection.SuccessMsg}}" userInput="You added $$productA.name$$ to your shopping cart." stepKey="seeAddedToCartMessage"/>
 
         <!--Click on SelectAll-->
         <click selector="{{StorefrontProductRelatedProductsSection.selectAll}}" stepKey="clickSelectAll"/>
@@ -179,7 +181,9 @@
 
 
         <!--Click Add to Cart-->
-        <actionGroup ref="StorefrontClickAddToCartOnProductPageActionGroup" stepKey="clickAddToCart"/>
+        <actionGroup ref="AddToCartFromStorefrontProductPageActionGroup" stepKey="clickAddToCart">
+            <argument name="productName" value="$$productA.name$$"/>
+        </actionGroup>
 
         <!-- See There are 5 items in the cart now -->
         <see userInput="5" selector="{{StorefrontMinicartSection.quantity}}" stepKey="assertQuantity"/>
@@ -191,12 +195,9 @@
         <!-- 1 Product U -->
         <seeInField userInput="1" selector="{{StorefrontMinicartSection.itemQuantity($$productU.name$$)}}" stepKey="seeProductU"/>
 
-        <!-- See success message contains main and all selected related products -->
+        <!-- See  Success message appears:  'You added Product A to your shopping cart.' -->
         <waitForElementVisible selector="{{StorefrontProductPageSection.successMsg}}" time="30" stepKey="waitForProductAddedAgain"/>
-        <see selector="{{StorefrontCategoryMainSection.SuccessMsg}}" userInput="You added $$productA.name$$," stepKey="seeSucessMessage"/>
-        <see selector="{{StorefrontCategoryMainSection.SuccessMsg}}" userInput="$$productB.name$$" stepKey="assertAddToCartSuccessMessageContainsProductB"/>
-        <see selector="{{StorefrontCategoryMainSection.SuccessMsg}}" userInput="$$productU.name$$" stepKey="assertAddToCartSuccessMessageContainsProductU"/>
-        <see selector="{{StorefrontCategoryMainSection.SuccessMsg}}" userInput="to your shopping cart." stepKey="assertAddToCartSuccessMessageSuffix"/>
+        <see selector="{{StorefrontCategoryMainSection.SuccessMsg}}" userInput="You added $$productA.name$$ to your shopping cart." stepKey="seeSucessMessage"/>
 
         <!--Untick B CheckBox-->
         <click selector="{{StorefrontProductRelatedProductsSection.relatedProductCheckBoxButton('$$productB.name$$')}}" stepKey="untickProductB"/>
@@ -206,7 +207,9 @@
         <seeCheckboxIsChecked selector="{{StorefrontProductRelatedProductsSection.relatedProductCheckBoxButton('$$productU.name$$')}}" stepKey="checkUIsTicked"/>
 
         <!-- Click Add to Cart Again-->
-        <actionGroup ref="StorefrontClickAddToCartOnProductPageActionGroup" stepKey="addToCartFromStorefrontProductPagethree"/>
+        <actionGroup ref="AddToCartFromStorefrontProductPageActionGroup" stepKey="addToCartFromStorefrontProductPagethree">
+            <argument name="productName" value="$$productA.name$$"/>
+        </actionGroup>
 
         <!-- See There are 7 items in the cart now -->
         <see userInput="7" selector="{{StorefrontMinicartSection.quantity}}" stepKey="seeItemsQuantity"/>
@@ -216,9 +219,9 @@
         <seeInField userInput="2" selector="{{StorefrontMinicartSection.itemQuantity($$productB.name$$)}}" stepKey="seeBItemQuantity"/>
         <!--  2 Products U -->
         <seeInField userInput="2" selector="{{StorefrontMinicartSection.itemQuantity($$productU.name$$)}}" stepKey="seeUItemQuantity"/>
-        <!-- See success message lists main and selected related product -->
+        <!-- See  Success message appears:  'You added Product A to your shopping cart.' -->
         <waitForElementVisible selector="{{StorefrontProductPageSection.successMsg}}" time="30" stepKey="waitForElement"/>
-        <see selector="{{StorefrontCategoryMainSection.SuccessMsg}}" userInput="You added $$productA.name$$ and $$productU.name$$ to your shopping cart." stepKey="seeSucessMsg"/>
+        <see selector="{{StorefrontCategoryMainSection.SuccessMsg}}" userInput="You added $$productA.name$$ to your shopping cart." stepKey="seeSucessMsg"/>
 
         <!-- Step no .22 is left -->
         <comment userInput="No Element Reference for CheckBox could be found to automate" stepKey="noElementFound" />
@@ -257,7 +260,9 @@
         <click selector="{{StorefrontProductRelatedProductsSection.relatedProductCheckBoxButton('$$productB.name$$')}}" stepKey="tickProductB"/>
 
         <!--Click Add to Cart-->
-        <actionGroup ref="StorefrontClickAddToCartOnProductPageActionGroup" stepKey="addVProductToCart"/>
+        <actionGroup ref="AddToCartFromStorefrontProductPageActionGroup" stepKey="addVProductToCart">
+            <argument name="productName" value="$$productV.name$$"/>
+        </actionGroup>
 
         <!-- Verify Two Products are added Product V and B-->
         <!--Check Product V is there -->
@@ -269,9 +274,9 @@
             <argument name="productName" value="$$productB.name$$"/>
         </actionGroup>
 
-        <!-- See success message lists main and related products -->
+        <!-- See  Success message appears:  'You added Product V to your shopping cart.' -->
         <waitForElementVisible selector="{{StorefrontProductPageSection.successMsg}}" time="30" stepKey="waitForPageToLoad"/>
-        <see selector="{{StorefrontCategoryMainSection.SuccessMsg}}" userInput="You added $$productV.name$$ and $$productB.name$$ to your shopping cart." stepKey="seeSuccessMessageForProductV"/>
+        <see selector="{{StorefrontCategoryMainSection.SuccessMsg}}" userInput="You added $$productV.name$$ to your shopping cart." stepKey="seeSuccessMessageForProductV"/>
 
         <!--Close Mini Cart-->
         <click selector="{{StorefrontMinicartSection.minicartclose}}" stepKey="closeMiniCart"/>
@@ -286,7 +291,9 @@
 
 
         <!--Click Add to Cart for Product V-->
-        <actionGroup ref="StorefrontClickAddToCartOnProductPageActionGroup" stepKey="addProductVToCart"/>
+        <actionGroup ref="AddToCartFromStorefrontProductPageActionGroup" stepKey="addProductVToCart">
+            <argument name="productName" value="$$productV.name$$"/>
+        </actionGroup>
 
         <!-- Verify 5 Products there -->
         <see userInput="5" selector="{{StorefrontMinicartSection.quantity}}" stepKey="verifyItemsQuantity"/>
@@ -297,12 +304,9 @@
         <!-- 1 Products V -->
         <seeInField userInput="1" selector="{{StorefrontMinicartSection.itemQuantity($$productU.name$$)}}" stepKey="assertProductUItems"/>
 
-        <!-- See success message contains main and all selected related products -->
+        <!-- See  Success message appears:  'You added Product V to your shopping cart.' -->
         <waitForElementVisible selector="{{StorefrontProductPageSection.successMsg}}" time="30" stepKey="waitforLoad"/>
-        <see selector="{{StorefrontCategoryMainSection.SuccessMsg}}" userInput="You added $$productV.name$$," stepKey="seeAddedToCartMessageForProductV"/>
-        <see selector="{{StorefrontCategoryMainSection.SuccessMsg}}" userInput="$$productB.name$$" stepKey="assertAddToCartSuccessMessageContainsProductBOnV"/>
-        <see selector="{{StorefrontCategoryMainSection.SuccessMsg}}" userInput="$$productU.name$$" stepKey="assertAddToCartSuccessMessageContainsProductUOnV"/>
-        <see selector="{{StorefrontCategoryMainSection.SuccessMsg}}" userInput="to your shopping cart." stepKey="assertAddToCartSuccessMessageSuffixOnV"/>
+        <see selector="{{StorefrontCategoryMainSection.SuccessMsg}}" userInput="You added $$productV.name$$ to your shopping cart." stepKey="seeAddedToCartMessageForProductV"/>
 
         <!--Untick B-->
         <click selector="{{StorefrontProductRelatedProductsSection.relatedProductCheckBoxButton('$$productB.name$$')}}" stepKey="untickcheckboxB"/>
@@ -313,7 +317,9 @@
         <checkOption selector="{{StorefrontProductRelatedProductsSection.relatedProductCheckBoxButton('$$productU.name$$')}}" stepKey="seeUIsUnchecked"/>
 
         <!-- Click Add to Cart for Product V-->
-        <actionGroup ref="StorefrontClickAddToCartOnProductPageActionGroup" stepKey="addToCartProductV"/>
+        <actionGroup ref="AddToCartFromStorefrontProductPageActionGroup" stepKey="addToCartProductV">
+            <argument name="productName" value="$$productV.name$$"/>
+        </actionGroup>
 
         <!-- Verify 7 Products there -->
         <see userInput="7" selector="{{StorefrontMinicartSection.quantity}}" stepKey="seeproductquantity"/>
@@ -323,9 +329,9 @@
         <seeInField userInput="2" selector="{{StorefrontMinicartSection.itemQuantity($$productB.name$$)}}" stepKey="seeProductBItemQuantity"/>
         <!-- 2 Products U -->
         <seeInField userInput="2" selector="{{StorefrontMinicartSection.itemQuantity($$productU.name$$)}}" stepKey="seeProductUItemQuantity"/>
-        <!-- See success message lists main and selected related product -->
+        <!-- See  Success message appears:  'You added Product V to your shopping cart.' -->
         <waitForElementVisible selector="{{StorefrontProductPageSection.successMsg}}" time="30" stepKey="seeMessage"/>
-        <see selector="{{StorefrontCategoryMainSection.SuccessMsg}}" userInput="You added $$productV.name$$ and $$productU.name$$ to your shopping cart." stepKey="seeSuccessMessageInProductV"/>
+        <see selector="{{StorefrontCategoryMainSection.SuccessMsg}}" userInput="You added $$productV.name$$ to your shopping cart." stepKey="seeSuccessMessageInProductV"/>
 
     </test>
 </tests>

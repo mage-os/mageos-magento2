@@ -434,7 +434,6 @@ class Cart extends DataObject implements CartInterface
     {
         $allAvailable = true;
         $allAdded = true;
-        $successProducts = [];
 
         if (!empty($productIds)) {
             foreach ($productIds as $productId) {
@@ -447,7 +446,6 @@ class Cart extends DataObject implements CartInterface
                     $request = $this->getQtyRequest($product);
                     try {
                         $this->getQuote()->addProduct($product, $request);
-                        $successProducts[] = $product->getName();
                     } catch (\Exception $e) {
                         $allAdded = false;
                     }

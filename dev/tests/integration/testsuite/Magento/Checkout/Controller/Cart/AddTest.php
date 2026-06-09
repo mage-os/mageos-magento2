@@ -193,21 +193,9 @@ class AddTest extends AbstractController
         ];
         $this->dispatchAddToCartRequest($params);
         $this->assertCount(3, $checkoutSession->getQuote()->getItemsCollection());
-
-        $productNames = [$product->getName()];
-        foreach ($product->getRelatedProductIds() as $relatedProductId) {
-            $productNames[] = $this->productRepository->getById($relatedProductId)->getName();
-        }
-        if (count($productNames) === 2) {
-            $productList = (string)__('%1 and %2', $productNames[0], $productNames[1]);
-        } else {
-            $lastProductName = array_pop($productNames);
-            $productList = (string)__('%1 and %2', implode(', ', $productNames), $lastProductName);
-        }
-
         $message = (string)__(
             'You added %1 to your <a href="%2">shopping cart</a>.',
-            $productList,
+            $product->getName(),
             'http://localhost/checkout/cart/'
         );
         $this->assertSessionMessages(
