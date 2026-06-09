@@ -10,6 +10,8 @@ namespace Magento\Framework\Jwt;
 
 /**
  * Initiates JWKs for various encryption types.
+ *
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
 class JwkFactory
 {
@@ -24,6 +26,8 @@ class JwkFactory
      *
      * @param array $data
      * @return Jwk
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function createFromData(array $data): Jwk
     {
@@ -750,6 +754,11 @@ class JwkFactory
         return $this->createOct($password, Jwk::PUBLIC_KEY_USE_ENCRYPTION, Jwk::ALGORITHM_PBES2_HS512_A256KW, $kid);
     }
 
+    /**
+     * Create JWK with "none" algorithm.
+     *
+     * @return Jwk
+     */
     public function createNone(): Jwk
     {
         return new Jwk(
@@ -761,6 +770,15 @@ class JwkFactory
         );
     }
 
+    /**
+     * Create octet sequence JWK.
+     *
+     * @param string $key
+     * @param string $use
+     * @param string $algo
+     * @param string|null $kid
+     * @return Jwk
+     */
     private function createOct(string $key, string $use, string $algo, ?string $kid): Jwk
     {
         if (strlen($key) < 2048) {
@@ -781,6 +799,16 @@ class JwkFactory
         );
     }
 
+    /**
+     * Create private RSA JWK.
+     *
+     * @param string $key
+     * @param string|null $pass
+     * @param string $use
+     * @param string $algorithm
+     * @param string|null $kid
+     * @return Jwk
+     */
     private function createPrivateRsa(string $key, ?string $pass, string $use, string $algorithm, ?string $kid): Jwk
     {
         $resource = openssl_get_privatekey($key, (string)$pass);
@@ -816,6 +844,15 @@ class JwkFactory
         );
     }
 
+    /**
+     * Create public RSA JWK.
+     *
+     * @param string $key
+     * @param string $use
+     * @param string $algorithm
+     * @param string|null $kid
+     * @return Jwk
+     */
     private function createPublicRsa(string $key, string $use, string $algorithm, ?string $kid): Jwk
     {
         $resource = openssl_get_publickey($key);
@@ -845,6 +882,17 @@ class JwkFactory
         );
     }
 
+    /**
+     * Create private EC JWK.
+     *
+     * @param string $key
+     * @param string|null $pass
+     * @param int|null $validateCurveBits
+     * @param string $algorithm
+     * @param string $use
+     * @param string|null $kid
+     * @return Jwk
+     */
     private function createPrivateEc(
         string $key,
         ?string $pass,
@@ -883,6 +931,16 @@ class JwkFactory
         );
     }
 
+    /**
+     * Create public EC JWK.
+     *
+     * @param string $key
+     * @param int|null $validateCurveBits
+     * @param string $algorithm
+     * @param string $use
+     * @param string|null $kid
+     * @return Jwk
+     */
     private function createPublicEc(
         string $key,
         ?int $validateCurveBits,
@@ -935,6 +993,7 @@ class JwkFactory
      *
      * @param string $encoded
      * @return string
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      */
     private static function base64Decode(string $encoded): string
     {
@@ -945,5 +1004,4 @@ class JwkFactory
 
         return $value;
     }
-
 }
