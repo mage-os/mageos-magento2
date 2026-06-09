@@ -102,6 +102,8 @@ class Add extends \Magento\Checkout\Controller\Cart implements HttpPostActionInt
      *
      * @return ResponseInterface|ResultInterface
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function execute()
     {
@@ -143,17 +145,26 @@ class Add extends \Magento\Checkout\Controller\Cart implements HttpPostActionInt
             );
 
             if (!$this->_checkoutSession->getNoCartRedirect(true)) {
+                $productNames = [$product->getName()];
+                if ($related) {
+                    foreach (explode(',', $related) as $relatedProductId) {
+                        $relatedProduct = $this->_initProductById((int)$relatedProductId);
+                        if ($relatedProduct) {
+                            $productNames[] = $relatedProduct->getName();
+                        }
+                    }
+                }
+                $productList = $this->formatProductNamesForMessage($productNames);
+
                 if ($this->shouldRedirectToCart()) {
-                    $message = __(
-                        'You added %1 to your shopping cart.',
-                        $product->getName()
+                    $this->messageManager->addSuccessMessage(
+                        __('You added %1 to your shopping cart.', $productList)
                     );
-                    $this->messageManager->addSuccessMessage($message);
                 } else {
                     $this->messageManager->addComplexSuccessMessage(
                         'addCartSuccessMessage',
                         [
-                            'product_name' => $product->getName(),
+                            'product_name' => $productList,
                             'cart_url' => $this->getCartUrl(),
                         ]
                     );
@@ -229,6 +240,49 @@ class Add extends \Magento\Checkout\Controller\Cart implements HttpPostActionInt
         );
 
         return $this->getResponse();
+    }
+
+    /**
+     * Initialize product instance by id
+     *
+     * @param int $productId
+     * @return \Magento\Catalog\Model\Product|false
+     */
+    private function _initProductById(int $productId)
+    {
+        if (!$productId) {
+            return false;
+        }
+
+        $storeId = $this->_objectManager->get(
+            \Magento\Store\Model\StoreManagerInterface::class
+        )->getStore()->getId();
+        try {
+            return $this->productRepository->getById($productId, false, $storeId);
+        } catch (NoSuchEntityException $e) {
+            return false;
+        }
+    }
+
+    /**
+     * Format product names for add-to-cart success message.
+     *
+     * @param string[] $productNames
+     * @return string
+     */
+    private function formatProductNamesForMessage(array $productNames): string
+    {
+        if (count($productNames) === 1) {
+            return $productNames[0];
+        }
+
+        if (count($productNames) === 2) {
+            return (string)__('%1 and %2', $productNames[0], $productNames[1]);
+        }
+
+        $lastProductName = array_pop($productNames);
+
+        return (string)__('%1 and %2', implode(', ', $productNames), $lastProductName);
     }
 
     /**
