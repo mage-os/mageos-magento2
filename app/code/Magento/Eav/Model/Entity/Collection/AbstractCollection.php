@@ -390,9 +390,18 @@ abstract class AbstractCollection extends AbstractDb implements SourceProviderIn
         }
 
         if (is_array($attribute)) {
+            if ($this->isFieldsConditionsFilterFormat($attribute, $condition)) {
+                $attribute = $this->convertFieldsConditionsToAttributeFilters($attribute, $condition);
+                $condition = null;
+            }
+
             $sqlArr = [];
-            foreach ($attribute as $condition) {
-                $sqlArr[] = $this->_getAttributeConditionSql($condition['attribute'], $condition, $joinType);
+            foreach ($attribute as $attributeCondition) {
+                $sqlArr[] = $this->_getAttributeConditionSql(
+                    $attributeCondition['attribute'],
+                    $attributeCondition,
+                    $joinType
+                );
             }
             $conditionSql = '(' . implode(') OR (', $sqlArr) . ')';
         } elseif (is_string($attribute)) {
@@ -412,6 +421,60 @@ abstract class AbstractCollection extends AbstractDb implements SourceProviderIn
         }
 
         return $this;
+    }
+
+    /**
+     * Check if filter uses fields/conditions format from Framework FilterProcessor.
+     *
+     * @param string[] $fields
+     * @param mixed $conditions
+     * @return bool
+     */
+    private function isFieldsConditionsFilterFormat(array $fields, $conditions): bool
+    {
+        if (!is_array($conditions) || $fields === []) {
+            return false;
+        }
+
+        foreach ($fields as $field) {
+            if (!is_string($field)) {
+                return false;
+            }
+        }
+
+        if (count($fields) === 1) {
+            return count($conditions) === 1 && is_array($conditions[0]);
+        }
+
+        if (count($fields) !== count($conditions)) {
+            return false;
+        }
+
+        foreach ($conditions as $condition) {
+            if (!is_array($condition)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Convert fields/conditions format from Framework FilterProcessor to attribute filter format.
+     *
+     * @param string[] $fields
+     * @param array[] $conditions
+     * @return array
+     */
+    private function convertFieldsConditionsToAttributeFilters(array $fields, array $conditions): array
+    {
+        $attributeFilters = [];
+
+        foreach ($fields as $index => $field) {
+            $attributeFilters[] = array_merge(['attribute' => $field], $conditions[$index]);
+        }
+
+        return $attributeFilters;
     }
 
     /**
