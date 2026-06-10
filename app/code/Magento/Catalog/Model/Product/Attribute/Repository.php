@@ -146,7 +146,7 @@ class Repository implements \Magento\Catalog\Api\ProductAttributeRepositoryInter
                 if ($existingAttribute->getAttributeId()) {
                     $attribute->setAttributeId($existingAttribute->getAttributeId());
                 }
-            } catch (NoSuchEntityException $e) {
+            } catch (NoSuchEntityException $e) {// phpcs:ignore Magento2.CodeAnalysis.EmptyBlock.DetectedCatch
                 // It's a new attribute, proceed as usual
             }
         }
