@@ -140,6 +140,18 @@ class Repository implements \Magento\Catalog\Api\ProductAttributeRepositoryInter
                 ->getEntityType(\Magento\Catalog\Api\Data\ProductAttributeInterface::ENTITY_TYPE_CODE)
                 ->getId()
         );
+        if (!$attribute->getAttributeId() && $attribute->getAttributeCode()) {
+            try {
+                $existingAttribute = $this->get($attribute->getAttributeCode());
+                if ($existingAttribute->getAttributeId()) {
+                    $attribute->setAttributeId($existingAttribute->getAttributeId());
+                }
+            } catch (NoSuchEntityException $e) {
+                // It's a new attribute, proceed as usual
+            }
+        }
+
+        $validOptionIds = [];
         if ($attribute->getAttributeId()) {
             $existingModel = $this->get($attribute->getAttributeCode());
 
@@ -155,6 +167,13 @@ class Repository implements \Magento\Catalog\Api\ProductAttributeRepositoryInter
             $attribute->setBackendModel($existingModel->getBackendModel());
 
             $this->updateDefaultFrontendLabel($attribute, $existingModel);
+
+            $source = $existingModel->getSource();
+            if ($source) {
+                foreach ($source->getAllOptions() as $opt) {
+                    $validOptionIds[] = $opt['value'];
+                }
+            }
         } else {
             $attribute->setAttributeId(null);
 
@@ -191,7 +210,11 @@ class Repository implements \Magento\Catalog\Api\ProductAttributeRepositoryInter
             $optionIndex = 0;
             foreach ($attribute->getOptions() as $option) {
                 $optionIndex++;
-                $optionId = $option->getValue() ?: 'option_' . $optionIndex;
+                $optionId = $option->getValue();
+                if ($optionId && is_numeric($optionId) && !in_array($optionId, $validOptionIds)) {
+                    $optionId = null;
+                }
+                $optionId = $optionId ?: 'option_' . $optionIndex;
                 $options['value'][$optionId][0] = $option->getLabel();
                 $options['order'][$optionId] = $option->getSortOrder() ?: $sortOrder++;
                 if (is_array($option->getStoreLabels())) {

@@ -222,9 +222,9 @@ class RepositoryTest extends TestCase
         $this->expectExceptionMessage('No such entity with attribute_code = test attribute code');
         $attributeMock = $this->createMock(Attribute::class);
         $existingModelMock = $this->createMock(Attribute::class);
-        $attributeMock->expects($this->once())->method('getAttributeId')->willReturn('12');
+        $attributeMock->expects($this->any())->method('getAttributeId')->willReturn('12');
         $attributeCode = 'test attribute code';
-        $attributeMock->expects($this->once())->method('getAttributeCode')->willReturn($attributeCode);
+        $attributeMock->expects($this->any())->method('getAttributeCode')->willReturn($attributeCode);
         $this->eavAttributeRepositoryMock->expects($this->once())
             ->method('get')
             ->with(
@@ -246,7 +246,7 @@ class RepositoryTest extends TestCase
             Attribute::class,
             ['getFrontendLabels', 'getDefaultFrontendLabel', 'getAttributeId', 'setAttributeId']
         );
-        $attributeMock->expects($this->once())->method('getAttributeId')->willReturn(null);
+        $attributeMock->expects($this->any())->method('getAttributeId')->willReturn(null);
         $attributeMock->expects($this->once())->method('setAttributeId')->with(null)->willReturnSelf();
         $attributeMock->expects($this->once())->method('getFrontendLabels')->willReturn(null);
         $attributeMock->expects($this->once())->method('getDefaultFrontendLabel')->willReturn(null);
@@ -298,7 +298,7 @@ class RepositoryTest extends TestCase
             Attribute::class,
             ['getFrontendLabels', 'getDefaultFrontendLabel', 'getAttributeId', 'setAttributeId']
         );
-        $attributeMock->expects($this->once())->method('getAttributeId')->willReturn(null);
+        $attributeMock->expects($this->any())->method('getAttributeId')->willReturn(null);
         $attributeMock->expects($this->once())->method('setAttributeId')->with(null)->willReturnSelf();
         $labelMock = $this->createMock(FrontendLabel::class);
         $attributeMock->method('getFrontendLabels')->willReturn([$labelMock]);
