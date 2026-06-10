@@ -432,14 +432,24 @@ abstract class AbstractCollection extends AbstractDb implements SourceProviderIn
      */
     private function isFieldsConditionsFilterFormat(array $fields, $conditions): bool
     {
-        if (!is_array($conditions) || $fields === []) {
+        if (!is_array($conditions) || $fields === [] || is_array(reset($fields))) {
             return false;
         }
 
-        foreach ($fields as $field) {
-            if (!is_string($field)) {
-                return false;
-            }
+        return $this->hasMatchingFieldConditions($fields, $conditions);
+    }
+
+    /**
+     * Validate fields and conditions arrays have matching structure.
+     *
+     * @param string[] $fields
+     * @param array[] $conditions
+     * @return bool
+     */
+    private function hasMatchingFieldConditions(array $fields, array $conditions): bool
+    {
+        if (count($fields) !== count(array_filter($fields, 'is_string'))) {
+            return false;
         }
 
         if (count($fields) === 1) {
@@ -450,13 +460,7 @@ abstract class AbstractCollection extends AbstractDb implements SourceProviderIn
             return false;
         }
 
-        foreach ($conditions as $condition) {
-            if (!is_array($condition)) {
-                return false;
-            }
-        }
-
-        return true;
+        return count($conditions) === count(array_filter($conditions, 'is_array'));
     }
 
     /**
@@ -471,7 +475,7 @@ abstract class AbstractCollection extends AbstractDb implements SourceProviderIn
         $attributeFilters = [];
 
         foreach ($fields as $index => $field) {
-            $attributeFilters[] = array_merge(['attribute' => $field], $conditions[$index]);
+            $attributeFilters[] = ['attribute' => $field, ...$conditions[$index]];
         }
 
         return $attributeFilters;
