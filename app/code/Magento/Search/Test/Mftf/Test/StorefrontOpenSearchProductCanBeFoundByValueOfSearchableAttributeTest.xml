@@ -79,6 +79,12 @@
         <waitForElementVisible selector="{{StorefrontPropertiesSection.PageTitle}}" stepKey="waitTabLoad"/>
         <selectOption selector="{{AdvancedAttributePropertiesSection.UseInSearch}}" userInput="No" stepKey="setSearchable"/>
         <actionGroup ref="AdminProductAttributeSaveActionGroup" stepKey="saveAttribute"/>
+        <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindexAfterDisableSearchable">
+            <argument name="indices" value=""/>
+        </actionGroup>
+        <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushCacheAfterDisableSearchable">
+            <argument name="tags" value=""/>
+        </actionGroup>
         <actionGroup ref="StorefrontOpenHomePageActionGroup" stepKey="goToStorefrontPage1"/>
         <actionGroup ref="StorefrontCheckQuickSearchStringActionGroup" stepKey="quickSearchForFirstSearchTerm1">
             <argument name="phrase" value="searchable"/>
