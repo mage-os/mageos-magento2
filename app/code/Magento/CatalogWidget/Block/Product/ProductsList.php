@@ -258,10 +258,10 @@ class ProductsList extends AbstractProduct implements BlockInterface, IdentityIn
      * breaks block rendering. Substituting invalid bytes is safe here because the
      * result is used only as part of a cache key.
      *
-     * @param mixed $value
-     * @return mixed
+     * @param string|array $value
+     * @return string|array
      */
-    private function scrubInvalidUtf8($value)
+    private function scrubInvalidUtf8(string|array $value): string|array
     {
         if (is_string($value)) {
             return mb_scrub($value, 'UTF-8');
