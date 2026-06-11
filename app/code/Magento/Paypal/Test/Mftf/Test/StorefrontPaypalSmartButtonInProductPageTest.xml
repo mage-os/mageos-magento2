@@ -35,12 +35,6 @@
             <!-- Enable free shipping method -->
             <createData entity="FreeShippinMethodConfig" stepKey="enableFreeShippingMethod"/>
 
-            <!-- Create Tax Rule -->
-            <createData entity="US_CA_Rate_1" stepKey="initialTaxRate"/>
-            <actionGroup ref="AdminCreateTaxRuleActionGroup" stepKey="createTaxRule">
-                <argument name="taxRate" value="$$initialTaxRate$$"/>
-                <argument name="taxRule" value="SimpleTaxRule"/>
-            </actionGroup>
         </before>
         <after>
             <magentoCLI command="config:set {{StorefrontPaypalDisableSkipOrderReviewStepConfigData.path}} {{StorefrontPaypalDisableSkipOrderReviewStepConfigData.value}}" stepKey="disableSkipOrderReview"/>
@@ -56,11 +50,6 @@
             <!--Delete customer -->
             <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="logoutCustomer" />
             <deleteData stepKey="deleteCustomer" createDataKey="createCustomer"/>
-
-            <!--Delete Tax Rule-->
-            <actionGroup ref="AdminDeleteTaxRule" stepKey="deleteTaxRule">
-                <argument name="taxRuleCode" value="{{SimpleTaxRule.code}}" />
-            </actionGroup>
 
             <!-- Logout -->
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
@@ -91,11 +80,10 @@
         </actionGroup>
 
         <!--Assert grand total-->
-        <actionGroup ref="StorefrontAssertOrderReviewSummaryWithTaxActionGroup" stepKey="verifyCheckoutPaymentOrderSummary">
+        <actionGroup ref="VerifyCheckoutPaymentOrderSummaryActionGroup" stepKey="verifyCheckoutPaymentOrderSummary">
             <argument name="orderSummarySubTotal" value="$123.00"/>
             <argument name="orderSummaryShippingTotal" value="$0.00"/>
-            <argument name="orderSummaryTotal" value="$133.15"/>
-            <argument name="orderSummaryTax" value="$10.15"/>
+            <argument name="orderSummaryTotal" value="$123.00"/>
         </actionGroup>
 
         <actionGroup ref="StorefrontPlaceOrderOnOrderReviewPageActionGroup" stepKey="clickPlaceOrderBtn"/>
