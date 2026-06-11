@@ -23,6 +23,7 @@ use Magento\Config\Model\Config\Structure\Element\Group;
 use Magento\Config\Model\Config\Structure\Element\Section;
 use Magento\Config\Model\Config\Structure\ElementVisibilityInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\App\Config\Value as ConfigValue;
 use Magento\Framework\App\DeploymentConfig;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\ObjectManager as AppObjectManager;
@@ -553,6 +554,102 @@ class FormTest extends TestCase
         $helper->setBackwardCompatibleProperty($this->object, 'elementVisibility', $elementVisibilityMock);
 
         $this->object->initFields($fieldsetMock, $groupMock, $sectionMock, $fieldPrefix, $labelPrefix);
+    }
+
+    /**
+     * Regression test: afterLoad() must be called on backend models even when the value
+     * is already present in the deployment config (app/etc/config.php via --lock-config).
+     *
+     * Before the fix, getFieldData() only called afterLoad() inside the `if ($data === null)`
+     * block. When a configPath value was locked, getAppConfigDataValue() returned non-null,
+     * skipping the entire block — including afterLoad() — so backend model processing was lost.
+     */
+    public function testAfterLoadIsCalledWhenValueComesFromDeploymentConfig(): void
+    {
+        $fieldPath   = 'section1/group1/field1';
+        $lockedValue = 'locked_raw_value';
+
+        // Deployment config returns a non-null value for the field path (simulates --lock-config)
+        $deploymentConfigMock = $this->createMock(DeploymentConfig::class);
+        $deploymentConfigMock->method('get')
+            ->with('system')
+            ->willReturn([
+                'stores' => [
+                    'store_code' => [
+                        'section1' => [
+                            'group1' => [
+                                'field1' => $lockedValue
+                            ]
+                        ]
+                    ]
+                ]
+            ]);
+
+        $objectManagerMock = $this->createMock(ObjectManagerInterface::class);
+        $objectManagerMock->method('get')
+            ->willReturnMap([[DeploymentConfig::class, $deploymentConfigMock]]);
+        AppObjectManager::setInstance($objectManagerMock);
+
+        // Backend model that transforms the value in afterLoad()
+        // setPath/setValue/setWebsite/setStore are DataObject magic methods handled by __call;
+        // only mock afterLoad() and getValue() which are explicitly defined on the class.
+        $backendModelMock = $this->getMockBuilder(ConfigValue::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['afterLoad'])
+            ->getMock();
+        $backendModelMock->expects($this->once())->method('afterLoad')->willReturnSelf();
+
+        $fieldMock = $this->createMock(StructureField::class);
+        $fieldMock->method('getPath')->willReturn($fieldPath);
+        $fieldMock->method('getConfigPath')->willReturn($fieldPath);
+        $fieldMock->method('getGroupPath')->willReturn('section1/group1');
+        $fieldMock->method('getSectionId')->willReturn('section1');
+        $fieldMock->method('hasBackendModel')->willReturn(true);
+        $fieldMock->method('getBackendModel')->willReturn($backendModelMock);
+        $fieldMock->method('getDependencies')->willReturn([]);
+        $fieldMock->method('getType')->willReturn('text');
+        $fieldMock->method('getLabel')->willReturn('label');
+        $fieldMock->method('getComment')->willReturn('comment');
+        $fieldMock->method('getTooltip')->willReturn('tooltip');
+        $fieldMock->method('getHint')->willReturn('hint');
+        $fieldMock->method('getFrontendClass')->willReturn('');
+        $fieldMock->method('showInDefault')->willReturn(false);
+        $fieldMock->method('showInWebsite')->willReturn(false);
+        $fieldMock->method('getData')->willReturn([]);
+        $fieldMock->method('getRequiredFields')->willReturn([]);
+        $fieldMock->method('getRequiredGroups')->willReturn([]);
+
+        $fieldRendererMock = $this->createMock(Field::class);
+        $this->_fieldFactoryMock->method('create')->willReturn($fieldRendererMock);
+
+        $this->_backendConfigMock->method('extendConfig')->willReturn([]);
+
+        $storeMock = $this->createMock(StoreInterface::class);
+        $storeMock->method('getCode')->willReturn('store_code');
+        $this->storeManagerMock->method('getStore')->willReturn($storeMock);
+
+        $fieldsetMock  = $this->createMock(FieldsetElement::class);
+        $groupMock     = $this->createMock(Group::class);
+        $sectionMock   = $this->createMock(Section::class);
+
+        $groupMock->method('getChildren')->willReturn([$fieldMock]);
+        $sectionMock->method('getId')->willReturn('section1');
+
+        $formFieldMock = $this->createPartialMock(AbstractElement::class, ['setRenderer']);
+        $fieldsetMock->method('addField')->willReturn($formFieldMock);
+
+        $settingCheckerMock = $this->createMock(SettingChecker::class);
+        $settingCheckerMock->method('getPlaceholderValue')->willReturn(null);
+        $settingCheckerMock->method('isReadOnly')->willReturn(false);
+
+        $elementVisibilityMock = $this->createMock(ElementVisibilityInterface::class);
+        $elementVisibilityMock->method('isDisabled')->willReturn(false);
+
+        $helper = new ObjectManager($this);
+        $helper->setBackwardCompatibleProperty($this->object, 'settingChecker', $settingCheckerMock);
+        $helper->setBackwardCompatibleProperty($this->object, 'elementVisibility', $elementVisibilityMock);
+
+        $this->object->initFields($fieldsetMock, $groupMock, $sectionMock, '', '');
     }
 
     /**
