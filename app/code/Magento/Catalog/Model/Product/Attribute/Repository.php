@@ -116,6 +116,7 @@ class Repository implements \Magento\Catalog\Api\ProductAttributeRepositoryInter
      * @inheritdoc
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function save(\Magento\Catalog\Api\Data\ProductAttributeInterface $attribute)
     {

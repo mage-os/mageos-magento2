@@ -613,7 +613,10 @@ class RepositoryTest extends TestCase
         $backendModel = 'backend_model';
 
         $attributeMock = $this->createMock(Attribute::class);
-        $attributeMock->expects($this->any())->method('getAttributeId')->willReturnOnConsecutiveCalls(null, $attributeId);
+        $attributeMock
+            ->expects($this->any())
+            ->method('getAttributeId')
+            ->willReturnOnConsecutiveCalls(null, $attributeId);
         $attributeMock->expects($this->exactly(2))->method('setAttributeId')->with($attributeId)->willReturnSelf();
         $attributeMock->expects($this->any())->method('getAttributeCode')->willReturn($attributeCode);
         $attributeMock->expects($this->once())->method('setAttributeCode')->with($attributeCode)->willReturnSelf();
