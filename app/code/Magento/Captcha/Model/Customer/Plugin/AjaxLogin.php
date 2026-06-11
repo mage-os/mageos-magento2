@@ -89,7 +89,7 @@ class AjaxLogin
         }
         $username = $loginParams['username'] ?? null;
         $captchaString = $loginParams[$captchaInputName] ?? null;
-        $loginFormId = $loginParams[$captchaFormIdField] ?? null;
+        $loginFormId = $loginParams[$captchaFormIdField] ?? '';
 
         if (!in_array($loginFormId, $this->formIds) && $this->helper->getCaptcha($loginFormId)->isRequired($username)) {
             return $this->returnJsonError(__('Provided form does not exist'));

@@ -84,11 +84,12 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     /**
      * Get Captcha
      *
-     * @param string $formId
+     * @param string|null $formId
      * @return \Magento\Captcha\Model\CaptchaInterface
      */
     public function getCaptcha($formId)
     {
+        $formId = $formId ?? '';
         if (!array_key_exists($formId, $this->_captcha)) {
             $captchaType = ucfirst($this->getConfig('type'));
             if (!$captchaType) {
