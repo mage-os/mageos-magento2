@@ -228,6 +228,42 @@ class LinkManagementTest extends TestCase
         $this->assertTrue($this->object->addChild($productSku, $childSku));
     }
 
+    public function testAddChildLoadsParentWithForceReload(): void
+    {
+        $productSku = 'configurable-sku';
+        $childSku   = 'simple-sku';
+
+        $configurable = $this->createMock(Product::class);
+        $configurable->method('getId')->willReturn(666);
+        $simple = $this->createMock(Product::class);
+        $simple->method('getId')->willReturn(1);
+
+        // Assert that the parent is loaded with forceReload=true (4th argument)
+        // to bypass the in-memory cache. This prevents stale data from being used
+        // in long-lived processes such as queue consumers.
+        $this->productRepository
+            ->expects($this->atLeastOnce())
+            ->method('get')
+            ->willReturnCallback(
+                function ($sku, $editMode = false, $storeId = null, $forceReload = false)
+                use ($productSku, $childSku, $configurable, $simple) {
+                    if ($sku === $productSku) {
+                        $this->assertTrue($forceReload, 'Parent product must be loaded with forceReload=true');
+                        return $configurable;
+                    }
+                    return $simple;
+                }
+            );
+
+        $this->configurableType->method('getChildrenIds')
+            ->willReturn([0 => [1, 2, 3]]);
+
+        // Child ID 1 is already in the list → StateException expected
+        $this->expectException(\Magento\Framework\Exception\StateException::class);
+        $this->expectExceptionMessage('The product is already attached.');
+        $this->object->addChild($productSku, $childSku);
+    }
+
     /**
      * @return void
      */
