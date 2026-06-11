@@ -127,4 +127,12 @@
     <type name="Magento\Catalog\Model\Config">
         <plugin name="special_price_listing_plugin" type="Magento\Catalog\Plugin\Model\ConfigPlugin" sortOrder="10" />
     </type>
+    <type name="Magento\Framework\Model\ActionValidator\RemoveAction">
+        <arguments>
+            <argument name="protectedModels" xsi:type="array">
+                <item name="catalogCategory" xsi:type="string">Magento\Catalog\Model\Category</item>
+                <item name="catalogProduct" xsi:type="string">Magento\Catalog\Model\Product</item>
+            </argument>
+        </arguments>
+    </type>
 </config>
