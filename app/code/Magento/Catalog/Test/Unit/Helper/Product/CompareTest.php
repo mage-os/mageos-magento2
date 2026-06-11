@@ -9,7 +9,11 @@ namespace Magento\Catalog\Test\Unit\Helper\Product;
 
 use Magento\Catalog\Helper\Product\Compare;
 use Magento\Catalog\Model\Product;
+use Magento\Catalog\Model\ResourceModel\Product\Compare\Item\Collection;
+use Magento\Catalog\Model\ResourceModel\Product\Compare\Item\CollectionFactory;
 use Magento\Catalog\Model\Session;
+use Magento\Customer\Model\Session as CustomerSession;
+use Magento\Customer\Model\Visitor;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\App\Request\Http;
@@ -208,5 +212,55 @@ class CompareTest extends TestCase
         $this->urlBuilder->expects($this->once())->method('getUrl')
             ->with('checkout/cart/add', $expectedResult);
         $this->compareHelper->getAddToCartUrl($productMock);
+    }
+
+    public function testGetItemCollectionOrdersByCompareItemIdAscending(): void
+    {
+        $collectionMock = $this->getMockBuilder(Collection::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['useProductItem', 'setStoreId', 'setVisitorId', 'setVisibility',
+                'addPriceData', 'addAttributeToSelect', 'addUrlRewrite', 'addOrder', 'load'])
+            ->getMock();
+
+        $collectionMock->method('useProductItem')->willReturnSelf();
+        $collectionMock->method('setStoreId')->willReturnSelf();
+        $collectionMock->method('setVisitorId')->willReturnSelf();
+        $collectionMock->method('setVisibility')->willReturnSelf();
+        $collectionMock->method('addPriceData')->willReturnSelf();
+        $collectionMock->method('addAttributeToSelect')->willReturnSelf();
+        $collectionMock->method('addUrlRewrite')->willReturnSelf();
+        $collectionMock->method('load')->willReturnSelf();
+
+        $collectionMock->expects($this->once())
+            ->method('addOrder')
+            ->with('catalog_compare_item_id', 'ASC')
+            ->willReturnSelf();
+
+        $collectionFactory = $this->createMock(CollectionFactory::class);
+        $collectionFactory->method('create')->willReturn($collectionMock);
+
+        $customerSession = $this->createMock(CustomerSession::class);
+        $customerSession->method('isLoggedIn')->willReturn(false);
+
+        $visitor = $this->createMock(Visitor::class);
+        $visitor->method('getId')->willReturn(1);
+
+        $storeMock = $this->createMock(\Magento\Store\Model\Store::class);
+        $storeMock->method('getId')->willReturn(1);
+        $storeManagerMock = $this->createMock(\Magento\Store\Model\StoreManagerInterface::class);
+        $storeManagerMock->method('getStore')->willReturn($storeMock);
+
+        $objectManager = new ObjectManager($this);
+        $helper = $objectManager->getObject(
+            Compare::class,
+            [
+                'itemCollectionFactory' => $collectionFactory,
+                'customerSession'       => $customerSession,
+                'customerVisitor'       => $visitor,
+                'storeManager'          => $storeManagerMock,
+            ]
+        );
+
+        $helper->getItemCollection();
     }
 }

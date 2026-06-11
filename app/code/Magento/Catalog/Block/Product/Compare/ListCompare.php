@@ -155,7 +155,7 @@ class ListCompare extends \Magento\Catalog\Block\Product\AbstractProduct
                 $this->_catalogConfig->getProductAttributes()
             )->loadComparableAttributes()->addMinimalPrice()->addTaxPercents()->setVisibility(
                 $this->_catalogProductVisibility->getVisibleInSiteIds()
-            );
+            )->addOrder('catalog_compare_item_id', 'ASC');
         }
 
         return $this->_items;

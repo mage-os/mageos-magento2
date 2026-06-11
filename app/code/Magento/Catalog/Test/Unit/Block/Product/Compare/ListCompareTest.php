@@ -11,8 +11,11 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Catalog\Block\Product\Compare\ListCompare;
 use Magento\Catalog\Block\Product\Context;
 use Magento\Catalog\Model\Product;
+use Magento\Catalog\Model\ResourceModel\Product\Compare\Item\Collection;
+use Magento\Catalog\Model\ResourceModel\Product\Compare\Item\CollectionFactory;
 use Magento\Eav\Model\Entity\Attribute\AttributeInterface;
 use Magento\Eav\Model\Entity\Attribute\Frontend\AbstractFrontend;
+use Magento\Framework\App\Http\Context as HttpContext;
 use Magento\Framework\Pricing\Render;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
@@ -124,6 +127,71 @@ class ListCompareTest extends TestCase
             ->willReturn($blockMock);
 
         $this->assertEquals($expectedResult, $this->block->getProductPrice($product, '-compare-list-top'));
+    }
+
+    public function testGetItemsOrdersByCompareItemIdAscending(): void
+    {
+        $collectionMock = $this->getMockBuilder(Collection::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['useProductItem', 'setStoreId', 'setCustomerId', 'setVisitorId',
+                'addAttributeToSelect', 'loadComparableAttributes', 'addMinimalPrice',
+                'addTaxPercents', 'setVisibility', 'addOrder'])
+            ->getMock();
+
+        $collectionMock->method('useProductItem')->willReturnSelf();
+        $collectionMock->method('setStoreId')->willReturnSelf();
+        $collectionMock->method('setVisitorId')->willReturnSelf();
+        $collectionMock->method('addAttributeToSelect')->willReturnSelf();
+        $collectionMock->method('loadComparableAttributes')->willReturnSelf();
+        $collectionMock->method('addMinimalPrice')->willReturnSelf();
+        $collectionMock->method('addTaxPercents')->willReturnSelf();
+        $collectionMock->method('setVisibility')->willReturnSelf();
+
+        $collectionMock->expects($this->once())
+            ->method('addOrder')
+            ->with('catalog_compare_item_id', 'ASC')
+            ->willReturnSelf();
+
+        $collectionFactory = $this->createMock(CollectionFactory::class);
+        $collectionFactory->method('create')->willReturn($collectionMock);
+
+        $httpContext = $this->createMock(HttpContext::class);
+        $httpContext->method('getValue')->willReturn(false);
+
+        $objectManager = new ObjectManager($this);
+        $block = $objectManager->getObject(
+            ListCompare::class,
+            [
+                'context'               => $this->createPartialMock(Context::class, ['getLayout']),
+                'itemCollectionFactory' => $collectionFactory,
+                'httpContext'           => $httpContext,
+            ]
+        );
+
+        // Inject the required dependencies that come from Context
+        $compareProductMock = $this->getMockBuilder(\Magento\Catalog\Helper\Product\Compare::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['setAllowUsedFlat'])
+            ->getMock();
+        $compareProductMock->method('setAllowUsedFlat')->willReturnSelf();
+
+        $storeMock = $this->createMock(\Magento\Store\Model\Store::class);
+        $storeMock->method('getId')->willReturn(1);
+        $storeManagerMock = $this->createMock(\Magento\Store\Model\StoreManagerInterface::class);
+        $storeManagerMock->method('getStore')->willReturn($storeMock);
+
+        $catalogVisibilityMock = $this->createMock(\Magento\Catalog\Model\Product\Visibility::class);
+        $catalogVisibilityMock->method('getVisibleInSiteIds')->willReturn([1, 2]);
+
+        $catalogConfigMock = $this->createMock(\Magento\Catalog\Model\Config::class);
+        $catalogConfigMock->method('getProductAttributes')->willReturn([]);
+
+        $objectManager->setBackwardCompatibleProperty($block, '_compareProduct', $compareProductMock);
+        $objectManager->setBackwardCompatibleProperty($block, '_storeManager', $storeManagerMock);
+        $objectManager->setBackwardCompatibleProperty($block, '_catalogProductVisibility', $catalogVisibilityMock);
+        $objectManager->setBackwardCompatibleProperty($block, '_catalogConfig', $catalogConfigMock);
+
+        $block->getItems();
     }
 
     /**
