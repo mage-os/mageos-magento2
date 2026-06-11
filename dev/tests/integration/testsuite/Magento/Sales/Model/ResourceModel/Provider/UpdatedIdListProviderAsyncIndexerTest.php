@@ -43,20 +43,30 @@ class UpdatedIdListProviderAsyncIndexerTest extends TestCase
 
     private const SECOND_ORDER_INCREMENT_ID = '100000002';
 
+    /** @var ObjectManagerInterface */
     private ObjectManagerInterface $objectManager;
 
+    /** @var AdapterInterface */
     private AdapterInterface $connection;
 
+    /** @var OrderRepositoryInterface */
     private OrderRepositoryInterface $orderRepository;
 
+    /**
+     * @var Grid
+     */
     private Grid $grid;
 
+    /** @var UpdatedIdListProvider */
     private UpdatedIdListProvider $updatedIdListProvider;
 
+    /** @var FlagManager */
     private FlagManager $flagManager;
 
+    /** @var GridAsyncInsert */
     private GridAsyncInsert $gridAsyncInsert;
 
+    /** @var string */
     private string $cursorFlagCode;
 
     /**
