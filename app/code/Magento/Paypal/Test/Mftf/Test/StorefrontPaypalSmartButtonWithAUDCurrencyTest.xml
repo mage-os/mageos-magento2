@@ -22,10 +22,9 @@
         <before>
             <!--Set price scope global-->
             <magentoCLI command="config:set {{CatalogPriceScopeGlobalConfigData.path}} {{CatalogPriceScopeGlobalConfigData.value}}" stepKey="setCatalogPriceScopeWebsite"/>
-            <!--Remove Currency options for Website-->
-            <remove keyForRemoval="setCurrencyBaseEURWebsites"/>
-            <remove keyForRemoval="setAllowedCurrencyWebsitesForEURandUSD"/>
-            <remove keyForRemoval="setCurrencyDefaultEURWebsites"/>
+            <!--Set Currency options for Website (AUD display, USD base to generate AUD / USD rate)-->
+            <magentoCLI command="config:set --scope={{SetAllowedCurrenciesConfigForAUD.scope}} --scope-code={{SetAllowedCurrenciesConfigForAUD.scope_code}} {{SetAllowedCurrenciesConfigForAUD.path}} {{SetAllowedCurrenciesConfigForUSD.value}},{{SetAllowedCurrenciesConfigForAUD.value}}" stepKey="setAllowedCurrencyWebsitesForEURandUSD"/>
+            <magentoCLI command="config:set --scope={{SetDefaultCurrencyAUDConfig.scope}} --scope-code={{SetDefaultCurrencyAUDConfig.scope_code}} {{SetDefaultCurrencyAUDConfig.path}} {{SetDefaultCurrencyAUDConfig.value}}" stepKey="setCurrencyDefaultEURWebsites"/>
             <!--Enable Advanced Setting-->
             <magentoCLI command="config:set {{StorefrontPaypalEnableSkipOrderReviewStepConfigData.path}} {{StorefrontPaypalEnableSkipOrderReviewStepConfigData.value}}" stepKey="enableSkipOrderReview"/>
             <!--Set merchant country-->
