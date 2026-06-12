@@ -17,7 +17,6 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Console\Output\ConsoleOutput;
 
 class ConfigOptionsListTest extends TestCase
 {
@@ -42,11 +41,6 @@ class ConfigOptionsListTest extends TestCase
     private $deploymentConfigMock;
 
     /**
-     * @var ConsoleOutput|MockObject
-     */
-    private $consoleOutputMock;
-
-    /**
      * @var array
      */
     private $options;
@@ -66,13 +60,11 @@ class ConfigOptionsListTest extends TestCase
         $this->objectManager = new ObjectManager($this);
         $this->connectionValidatorMock = $this->createMock(ConnectionValidator::class);
         $this->deploymentConfigMock = $this->createMock(DeploymentConfig::class);
-        $this->consoleOutputMock = $this->createMock(ConsoleOutput::class);
 
         $this->model = $this->objectManager->getObject(
             ConfigOptionsList::class,
             [
                 'connectionValidator' => $this->connectionValidatorMock,
-                'consoleOutput' => $this->consoleOutputMock,
             ]
         );
     }
@@ -183,13 +175,14 @@ class ConfigOptionsListTest extends TestCase
             ->method('getServerVersion')
             ->willReturn('4.2.0');
 
-        $this->consoleOutputMock->expects($this->once())
-            ->method('writeln')
-            ->with($this->stringContains('Warning: RabbitMQ version "4.2.0" detected'));
-
         $errors = $this->model->validate($this->options, $this->deploymentConfigMock);
 
-        $this->assertEmpty($errors);
+        $this->assertNotEmpty($errors);
+        $this->assertStringContainsString('RabbitMQ version "4.2.0" detected', $errors[0]);
+        $this->assertStringContainsString(
+            ConnectionValidator::MINIMUM_RABBITMQ_VERSION,
+            $errors[0]
+        );
     }
 
     public function testValidateVersionExactMinimum()

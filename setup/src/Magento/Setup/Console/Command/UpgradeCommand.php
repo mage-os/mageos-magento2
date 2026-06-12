@@ -165,7 +165,8 @@ class UpgradeCommand extends AbstractSetupCommand
             $searchConfig->validateSearchEngine();
             $amqpVersionError = $this->validateAmqpVersion();
             if ($amqpVersionError !== null) {
-                $output->writeln('<comment>Warning: ' . $amqpVersionError . '</comment>');
+                $output->writeln('<error>' . $amqpVersionError . '</error>');
+                return Cli::RETURN_FAILURE;
             }
             $installer->installSchema($request);
             $installer->removeUnusedTriggers();

@@ -11,7 +11,6 @@ use Magento\Framework\Config\File\ConfigFilePool;
 use Magento\Framework\Setup\ConfigOptionsListInterface;
 use Magento\Framework\Setup\Option\TextConfigOption;
 use Magento\MessageQueue\Setup\ConfigOptionsList as MessageQueueConfigOptionsList;
-use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * Deployment configuration options needed for Setup application
@@ -56,20 +55,11 @@ class ConfigOptionsList implements ConfigOptionsListInterface
     private $connectionValidator;
 
     /**
-     * @var ConsoleOutput
-     */
-    private $consoleOutput;
-
-    /**
      * @param ConnectionValidator $connectionValidator
-     * @param ConsoleOutput $consoleOutput
      */
-    public function __construct(
-        ConnectionValidator $connectionValidator,
-        ConsoleOutput $consoleOutput
-    ) {
+    public function __construct(ConnectionValidator $connectionValidator)
+    {
         $this->connectionValidator = $connectionValidator;
-        $this->consoleOutput = $consoleOutput;
     }
 
     /**
@@ -225,9 +215,7 @@ class ConfigOptionsList implements ConfigOptionsListInterface
         if ($result) {
             $versionError = $this->validateVersion($options, $isSslEnabled, $sslOptions);
             if ($versionError !== null) {
-                if (PHP_SAPI === 'cli') {
-                    $this->consoleOutput->writeln('<comment>Warning: ' . $versionError . '</comment>');
-                }
+                $errors[] = $versionError;
             }
         }
 
