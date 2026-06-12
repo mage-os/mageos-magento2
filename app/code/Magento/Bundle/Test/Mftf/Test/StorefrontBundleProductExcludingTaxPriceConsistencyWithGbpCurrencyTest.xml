@@ -38,13 +38,7 @@
                 <argument name="rate" value="0.74"/>
             </actionGroup>
             <!-- Create UK VAT 20% tax rate and rule -->
-            <createData entity="taxRateCustomRateUK" stepKey="createUkVatTaxRate">
-                <field key="code">UK VAT 20%</field>
-                <field key="rate">20.0000</field>
-                <field key="zip_is_range">0</field>
-                <field key="tax_postcode">*</field>
-                <field key="tax_region_id">0</field>
-            </createData>
+            <createData entity="taxRateUkVat20" stepKey="createUkVatTaxRate"/>
             <actionGroup ref="AdminCreateTaxRuleActionGroup" stepKey="createUkVatTaxRule">
                 <argument name="taxRate" value="$$createUkVatTaxRate$$"/>
                 <argument name="taxRule" value="SimpleTaxRule"/>

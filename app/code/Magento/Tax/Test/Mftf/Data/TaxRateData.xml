@@ -106,6 +106,15 @@
         <data key="zip_to">7800935</data>
         <data key="rate">12.9900</data>
     </entity>
+    <entity name="taxRateUkVat20" type="taxRate">
+        <data key="code" unique="suffix">UK VAT 20%</data>
+        <data key="tax_country_id">GB</data>
+        <data key="tax_country">United Kingdom</data>
+        <data key="tax_region_id">0</data>
+        <data key="tax_postcode">*</data>
+        <data key="zip_is_range">0</data>
+        <data key="rate">20.0000</data>
+    </entity>
     <entity name="taxRateCustomRateFrance" type="taxRate">
         <data key="code" unique="suffix">TaxRate</data>
         <data key="tax_country_id">FR</data>
