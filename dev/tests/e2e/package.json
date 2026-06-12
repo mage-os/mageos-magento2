@@ -1,0 +1,18 @@
+{
+  "name": "@elgentos/magento2-playwright",
+  "version": "3.0.1",
+  "author": "elgentos",
+  "license": "ISC",
+  "description": "A Playwright End-To-End (E2E) testing suite for Magento 2 with Hyva that helps you find (potential) issues on your webshop.",
+  "scripts": {
+    "postinstall": "node build.js; node install.js; npx playwright install",
+    "translate": "node translate-json.js nl_NL"
+  },
+  "dependencies": {
+    "@faker-js/faker": "^9.8.0",
+    "@playwright/test": "^1.57.0",
+    "@types/node": "^22.7.4",
+    "csv-parse": "^5.5.3",
+    "dotenv": "^16.4.5"
+  }
+}
