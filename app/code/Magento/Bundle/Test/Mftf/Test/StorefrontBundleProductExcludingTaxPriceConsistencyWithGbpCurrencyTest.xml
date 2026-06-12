@@ -49,10 +49,8 @@
             <magentoCLI command="config:set {{CustomShippingPricesConfigData.path}} {{CustomShippingPricesConfigData.value}}" stepKey="setShippingPricesIncludingTax"/>
             <magentoCLI command="config:set {{ApplyCustomerTaxBeforeDiscount.path}} {{ApplyCustomerTaxBeforeDiscount.value}}" stepKey="setApplyCustomerTaxBeforeDiscount"/>
             <magentoCLI command="config:set {{ApplyDiscountOnPricesIncludingTax.path}} {{ApplyDiscountOnPricesIncludingTax.value}}" stepKey="setApplyDiscountOnPricesIncludingTax"/>
-            <magentoCLI command="config:set {{DisableCrossBorderTrade.path}} {{DisableCrossBorderTrade.value}}" stepKey="setCrossBorderTradeDisabled"/>
             <magentoCLI command="config:set {{UkTaxDefaultCountry.path}} {{UkTaxDefaultCountry.value}}" stepKey="setDefaultTaxCountryUk"/>
             <magentoCLI command="config:set {{ShippingTaxClassTaxableGoods.path}} {{ShippingTaxClassTaxableGoods.value}}" stepKey="setShippingTaxClassTaxableGoods"/>
-            <magentoCLI command="config:set {{GiftOptionsTaxClassNone.path}} {{GiftOptionsTaxClassNone.value}}" stepKey="setGiftOptionsTaxClassNone"/>
             <magentoCLI command="config:set {{CustomDisplayProductPricesInCatalog.path}} {{CustomDisplayProductPricesInCatalog.value}}" stepKey="setCatalogDisplayBothPrices"/>
             <magentoCLI command="config:set {{DisplayShippingPricesInCatalogIncludingTax.path}} {{DisplayShippingPricesInCatalogIncludingTax.value}}" stepKey="setCatalogShippingDisplayIncludingTax"/>
             <magentoCLI command="config:set {{CustomCartDisplayPrice.path}} {{CustomCartDisplayPrice.value}}" stepKey="setCartDisplayBothPrices"/>
@@ -111,10 +109,8 @@
             <magentoCLI command="config:set {{ShippingPricesConfigData.path}} {{ShippingPricesConfigData.value}}" stepKey="resetShippingPricesIncludingTax"/>
             <magentoCLI command="config:set {{DefaultApplyCustomerTaxAfterDiscount.path}} {{DefaultApplyCustomerTaxAfterDiscount.value}}" stepKey="resetApplyCustomerTaxAfterDiscount"/>
             <magentoCLI command="config:set {{DefaultApplyDiscountOnPricesExcludingTax.path}} {{DefaultApplyDiscountOnPricesExcludingTax.value}}" stepKey="resetApplyDiscountOnPricesExcludingTax"/>
-            <magentoCLI command="config:set {{DisableCrossBorderTrade.path}} {{DisableCrossBorderTrade.value}}" stepKey="resetCrossBorderTrade"/>
             <magentoCLI command="config:set {{DefaultTaxDestinationCountry.path}} {{DefaultTaxDestinationCountry.value}}" stepKey="resetDefaultTaxCountry"/>
             <magentoCLI command="config:set {{DefaultShippingTaxClass.path}} {{DefaultShippingTaxClass.value}}" stepKey="resetShippingTaxClass"/>
-            <magentoCLI command="config:set {{GiftOptionsTaxClassNone.path}} {{GiftOptionsTaxClassNone.value}}" stepKey="resetGiftOptionsTaxClass"/>
             <magentoCLI command="config:set {{DisplayProductPricesInCatalog.path}} {{DisplayProductPricesInCatalog.value}}" stepKey="resetCatalogDisplay"/>
             <magentoCLI command="config:set {{DefaultDisplayShippingPricesInCatalog.path}} {{DefaultDisplayShippingPricesInCatalog.value}}" stepKey="resetCatalogShippingDisplay"/>
             <magentoCLI command="config:set {{DefaultCartDisplayPrice.path}} {{DefaultCartDisplayPrice.value}}" stepKey="resetCartDisplay"/>

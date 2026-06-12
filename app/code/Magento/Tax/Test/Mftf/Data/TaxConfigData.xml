@@ -181,10 +181,6 @@
         <data key="path">tax/calculation/discount_tax</data>
         <data key="value">0</data>
     </entity>
-    <entity name="DisableCrossBorderTrade">
-        <data key="path">tax/calculation/cross_border_trade_enabled</data>
-        <data key="value">0</data>
-    </entity>
     <entity name="UkTaxDefaultCountry">
         <data key="path">tax/defaults/country</data>
         <data key="value">GB</data>
@@ -195,10 +191,6 @@
     </entity>
     <entity name="DefaultShippingTaxClass">
         <data key="path">tax/classes/shipping_tax_class</data>
-        <data key="value">0</data>
-    </entity>
-    <entity name="GiftOptionsTaxClassNone">
-        <data key="path">tax/classes/wrapping_tax_class</data>
         <data key="value">0</data>
     </entity>
     <entity name="CustomDisplaySalesPrice">
