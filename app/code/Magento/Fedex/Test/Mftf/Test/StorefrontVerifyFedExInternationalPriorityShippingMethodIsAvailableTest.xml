@@ -21,7 +21,7 @@
             <!-- Create simple product with weight -->
             <createData entity="SimpleProduct" stepKey="createProduct"/>
             <!-- Enable FedEx -->
-            <actionGroup ref="AdminEnableFedExLocalConfigurationActionGroup" stepKey="enableFedExLocalConfiguration"/>
+            <actionGroup ref="AdminEnableFedExConfigurationActionGroup" stepKey="enableFedExLocalConfiguration"/>
             <!-- Enable only International Priority shipping method -->
             <magentoCLI command="config:set {{AdminFedexInternationalPriorityOnlyAllowedMethodsConfigData.path}} {{AdminFedexInternationalPriorityOnlyAllowedMethodsConfigData.value}}" stepKey="setInternationalPriorityOnlyAllowedMethod"/>
         </before>
