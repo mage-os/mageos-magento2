@@ -40,7 +40,6 @@
         <element name="placeOrderWithoutTimeout" type="button" selector=".payment-method._active button.action.primary.checkout"/>
         <element name="paymentSectionTitle" type="text" selector="//*[@id='checkout-payment-method-load']//div[@data-role='title']" />
         <element name="orderSummarySubtotal" type="text" selector="//tr[@class='totals sub']//span[@class='price']" />
-        <element name="orderSummarySubtotalExcludingTax" type="text" selector="//tr[@class='totals sub excl']//span[@class='price']" />
         <element name="orderSummarySubtotalIncludingTax" type="text" selector="//tr[@class='totals sub incl']//span[@class='price']" />
         <element name="orderSummaryShippingTotal" type="text" selector="//tr[@class='totals shipping excl']//span[@class='price']" />
         <element name="orderSummaryShippingTotalIncludingTax" type="text" selector="//tr[@class='totals shipping incl']//span[@class='price']" />
