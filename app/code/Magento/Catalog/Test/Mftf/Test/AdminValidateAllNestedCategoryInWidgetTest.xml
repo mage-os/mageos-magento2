@@ -21,26 +21,33 @@
         <before>
             <!-- Create six level nested category -->
             <createData entity="_defaultCategory" stepKey="createDefaultCategory"/>
-            <createData entity="Two_nested_categories" stepKey="createTwoLevelNestedCategories">
+            <createData entity="SubCategoryWithParent" stepKey="createTwoLevelNestedCategories">
                 <requiredEntity createDataKey="createDefaultCategory"/>
+                <field key="name">SubCategoryLvl-2</field>
             </createData>
-            <createData entity="Three_nested_categories" stepKey="createThreeLevelNestedCategories">
+            <createData entity="SubCategoryWithParent" stepKey="createThreeLevelNestedCategories">
                 <requiredEntity createDataKey="createTwoLevelNestedCategories"/>
+                <field key="name">SubCategoryLvl-3</field>
             </createData>
-            <createData entity="Four_nested_categories" stepKey="createFourLevelNestedCategories">
+            <createData entity="SubCategoryWithParent" stepKey="createFourLevelNestedCategories">
                 <requiredEntity createDataKey="createThreeLevelNestedCategories"/>
+                <field key="name">SubCategoryLvl-4</field>
             </createData>
-            <createData entity="Five_nested_categories" stepKey="createFiveLevelNestedCategories">
+            <createData entity="SubCategoryWithParent" stepKey="createFiveLevelNestedCategories">
                 <requiredEntity createDataKey="createFourLevelNestedCategories"/>
+                <field key="name">SubCategoryLvl-5</field>
             </createData>
-            <createData entity="Six_nested_categories" stepKey="createSixLevelNestedCategories">
+            <createData entity="SubCategoryWithParent" stepKey="createSixLevelNestedCategories">
                 <requiredEntity createDataKey="createFiveLevelNestedCategories"/>
+                <field key="name">SubCategoryLvl-6</field>
             </createData>
             <createData entity="SubCategoryWithParent" stepKey="createLevelFiveSubCategory">
                 <requiredEntity createDataKey="createFiveLevelNestedCategories"/>
+                <field key="name">SubCategoryLvl-5-1</field>
             </createData>
             <createData entity="SubCategoryWithParent" stepKey="createLevelFiveOneSubCategory">
                 <requiredEntity createDataKey="createLevelFiveSubCategory"/>
+                <field key="name">SubCategoryLvl-5-1-1</field>
             </createData>
             <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
         </before>
@@ -58,8 +65,7 @@
         <!--Main test-->
         <comment userInput="Start creating a new widget. note that we don't need to save it for the cause of the test." stepKey="commentCreatingWidget"/>
         <actionGroup ref="AdminCreateSpecificEntityWidgetActionGroup" stepKey="startCreatingWidget">
-            <argument name="WidgetType" value="Catalog Category Link"/>
-            <argument name="WidgetTheme" value="Magento Luma"/>
+            <argument name="widget" value="CatalogCategoryLinkSpecifiedCategory"/>
         </actionGroup>
         <click selector="#widget_instace_tabs_main_section" stepKey="clickStorefrontProperties"/>
         <comment userInput="Expand all previously created categories one by one." stepKey="commentExpandCategories"/>
