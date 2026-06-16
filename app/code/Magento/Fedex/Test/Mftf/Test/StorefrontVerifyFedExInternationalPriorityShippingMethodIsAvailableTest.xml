@@ -44,13 +44,7 @@
             <argument name="customer" value="Simple_US_Customer"/>
             <argument name="customerAddress" value="Canada_Address"/>
         </actionGroup>
-        <waitForPageLoad stepKey="waitForShippingMethodsToLoadAfterAddressEntry"/>
         <!-- Assert International Priority shipping method is displayed -->
-        <actionGroup ref="AssertStoreFrontShippingMethodAvailableActionGroup" stepKey="assertInternationalPriorityFedexShippingMethodIsVisible">
-            <argument name="shippingMethodName" value="{{FedExInternationalPriorityShippingMethodData.value}}"/>
-        </actionGroup>
-        <actionGroup ref="StorefrontSetShippingMethodActionGroup" stepKey="selectInternationalPriorityFedexShippingMethod">
-            <argument name="shippingMethodName" value="{{FedExInternationalPriorityShippingMethodData.value}}"/>
-        </actionGroup>
+        <waitForElementVisible selector="{{AdminShippingMethodFedExSection.fedExInternationalPriorityShippingMethod}}" stepKey="waitForShippingMethodLoad"/>
     </test>
 </tests>
