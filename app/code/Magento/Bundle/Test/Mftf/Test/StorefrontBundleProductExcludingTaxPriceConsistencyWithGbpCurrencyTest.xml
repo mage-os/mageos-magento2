@@ -82,8 +82,8 @@
             </actionGroup>
         </before>
         <after>
-            <deleteData createDataKey="createBundleProduct" stepKey="deleteBundleProduct"/>
-            <deleteData createDataKey="createSimpleProduct" stepKey="deleteSimpleProduct"/>
+            <!-- Delete products -->
+            <helper class="Magento\Catalog\Test\Mftf\Helper\ProductApiHelper" method="deleteAllProductsApi" stepKey="deleteAllProductsViaApi"/>
             <actionGroup ref="AdminDeleteTaxRule" stepKey="deleteUkVatTaxRule">
                 <argument name="taxRuleCode" value="{{SimpleTaxRule.code}}"/>
             </actionGroup>
