@@ -18,19 +18,9 @@
             <group value="Bundle"/>
         </annotations>
         <before>
+            <magentoCLI command="config:set {{SetAllowedCurrenciesConfigForUSD.path}} {{SetAllowedCurrenciesConfigForGBP.value}},{{SetAllowedCurrenciesConfigForUSD.value}}" stepKey="setAllowedCurrencies"/>
+            <magentoCLI command="config:set --scope={{SetDefaultCurrencyGBPConfig.scope}} --scope-code={{SetDefaultCurrencyGBPConfig.scope_code}} {{SetDefaultCurrencyGBPConfig.path}} {{SetDefaultCurrencyGBPConfig.value}}" stepKey="setDefaultDisplayCurrencyForMainWebsite"/>
             <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
-            <!-- Configure allowed currencies and Main Website default display currency -->
-            <actionGroup ref="AdminNavigateToCurrencySetupPageActionGroup" stepKey="goToCurrencySetupPage"/>
-            <conditionalClick selector="{{AdminConfigSection.currencyOptionsTab}}" dependentSelector="{{AdminConfigSection.defaultCurrencySelect}}" visible="false" stepKey="openCurrencyOptionsTab"/>
-            <selectOption selector="{{AdminConfigSection.allowedCurrencies}}" parameterArray="['British Pound', 'US Dollar']" stepKey="selectAllowedCurrencies"/>
-            <actionGroup ref="SaveStoreConfigurationActionGroup" stepKey="saveAllowedCurrenciesConfig"/>
-            <actionGroup ref="AdminSwitchWebsiteActionGroup" stepKey="switchToMainWebsite">
-                <argument name="website" value="_defaultWebsite"/>
-            </actionGroup>
-            <conditionalClick selector="{{AdminConfigSection.currencyOptionsTab}}" dependentSelector="{{AdminConfigSection.defaultCurrencySelect}}" visible="false" stepKey="openCurrencyOptionsTabForWebsite"/>
-            <uncheckOption selector="{{AdminConfigSection.defaultCurrencyCheckbox}}" stepKey="uncheckUseSystemValueForDefaultDisplayCurrency"/>
-            <selectOption selector="{{AdminConfigSection.defaultCurrency}}" userInput="British Pound" stepKey="selectBritishPoundAsDefaultDisplayCurrency"/>
-            <actionGroup ref="SaveStoreConfigurationActionGroup" stepKey="saveDefaultDisplayCurrencyConfig"/>
             <actionGroup ref="AdminOpenCurrencyRatesPageActionGroup" stepKey="openCurrencyRatesPage"/>
             <actionGroup ref="AdminSetCurrencyRatesActionGroup" stepKey="setUsdToGbpRate">
                 <argument name="firstCurrency" value="USD"/>
@@ -99,15 +89,7 @@
             </actionGroup>
             <deleteData createDataKey="createUkVatTaxRate" stepKey="deleteUkVatTaxRate"/>
             <!-- Revert currency configuration -->
-            <actionGroup ref="AdminNavigateToCurrencySetupPageActionGroup" stepKey="goToCurrencySetupPageForCleanup"/>
-            <actionGroup ref="AdminSwitchWebsiteActionGroup" stepKey="switchToMainWebsiteForCleanup">
-                <argument name="website" value="_defaultWebsite"/>
-            </actionGroup>
-            <conditionalClick selector="{{AdminConfigSection.currencyOptionsTab}}" dependentSelector="{{AdminConfigSection.defaultCurrencySelect}}" visible="false" stepKey="openCurrencyOptionsTabForCleanup"/>
-            <actionGroup ref="AdminCheckUseSystemValueActionGroup" stepKey="resetDefaultDisplayCurrencyToSystemValue">
-                <argument name="rowId" value="row_currency_options_default"/>
-            </actionGroup>
-            <actionGroup ref="SaveStoreConfigurationActionGroup" stepKey="saveWebsiteCurrencyCleanup"/>
+            <magentoCLI command="config:set --scope={{SetDefaultCurrencyUSDConfig.scope}} --scope-code={{SetDefaultCurrencyUSDConfig.scope_code}} {{SetDefaultCurrencyUSDConfig.path}} {{SetDefaultCurrencyUSDConfig.value}}" stepKey="resetDefaultDisplayCurrencyForMainWebsite"/>
             <magentoCLI command="config:set {{SetAllowedCurrenciesConfigForUSD.path}} {{SetAllowedCurrenciesConfigForUSD.value}}" stepKey="resetAllowedCurrencies"/>
             <!-- Revert tax configuration -->
             <magentoCLI command="config:set {{DefaultTaxCalculationTotalBaseAlgorithm.path}} {{DefaultTaxCalculationTotalBaseAlgorithm.value}}" stepKey="resetTaxCalculationAlgorithm"/>
