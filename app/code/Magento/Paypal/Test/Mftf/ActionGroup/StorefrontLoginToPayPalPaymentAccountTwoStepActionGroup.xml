@@ -24,6 +24,11 @@
         <fillField selector="{{PayPalPaymentSection.email}}" userInput="{{credentials.magento/PAYPAL_LOGIN}}" stepKey="fillEmail"/>
         <click selector="{{PayPalPaymentSection.nextButton}}" stepKey="clickNext"/>
         <waitForPageLoad stepKey="waitForNextPageLoad"/>
+        <!-- Wait until the post-email page settles: either the password field appears directly
+             or the "Use Password Instead" / "Try another way" button becomes visible.
+             Without this gate the conditionalClick fires while neither element is in the DOM yet,
+             causing a WebDriver error when it tries to click a non-existent element. -->
+        <waitForElement selector="{{PayPalPaymentSection.passwordOrUsePasswordButton}}" time="30" stepKey="waitForPasswordOrUsePasswordButton"/>
         <conditionalClick selector="{{PayPalPaymentSection.usePasswordInsteadButton}}" dependentSelector="{{PayPalPaymentSection.password}}" visible="false" stepKey="clickUsePasswordInsteadIfPasswordFieldNotVisible"/>
         <waitForElementVisible selector="{{PayPalPaymentSection.password}}" stepKey="waitForPasswordField"/>
         <click selector="{{PayPalPaymentSection.password}}" stepKey="focusOnPasswordField"/>
