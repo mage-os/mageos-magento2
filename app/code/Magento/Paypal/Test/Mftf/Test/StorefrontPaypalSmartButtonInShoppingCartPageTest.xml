@@ -84,9 +84,7 @@
         <actionGroup ref="StorefrontLoginToPayPalPaymentFromCartAccountActionGroup" stepKey="LoginToPayPal"/>
 
         <!--Transfer Cart Line and Shipping Method assertion-->
-        <actionGroup ref="PayPalAssertTransferLineAndShippingMethodActionGroup" stepKey="assertPayPalSettings">
-            <argument name="productName" value="$$createProduct.name$$"/>
-        </actionGroup>
+        <actionGroup ref="PayPalAssertTransferLineAndShippingMethodActionGroup" stepKey="assertPayPalSettings"/>
 
         <!--Click PayPal button and go back to Magento site-->
         <actionGroup ref="StorefrontPaypalSwitchBackToMagentoFromCheckoutPageActionGroup" stepKey="goBackToMagentoSite"/>
