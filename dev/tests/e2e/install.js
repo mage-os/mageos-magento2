@@ -82,6 +82,11 @@ class Install {
       this.useDefaults = initialAnswer.trim().toLowerCase() !== 'y';
     }
 
+    if (this.isCi && fs.existsSync('.env')) {
+        console.log('Using existing .env');
+        return;
+    }
+
     // Read and update .env file
     const envPath = path.join('.env');
     let envContent = '';
