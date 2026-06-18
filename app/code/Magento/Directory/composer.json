@@ -1,28 +1,32 @@
 {
-    "name": "magento/module-directory",
-    "description": "N/A",
-    "config": {
-        "sort-packages": true
-    },
-    "require": {
-        "php": "~8.3.0||~8.4.0||~8.5.0",
-        "lib-libxml": "*",
-        "magento/framework": "*",
-        "magento/module-backend": "*",
-        "magento/module-config": "*",
-        "magento/module-store": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-directory",
+  "description": "N/A",
+  "config": {
+    "sort-packages": true
+  },
+  "require": {
+    "php": "~8.3.0||~8.4.0||~8.5.0",
+    "lib-libxml": "*",
+    "mage-os/framework": "3.1.0",
+    "mage-os/module-backend": "3.1.0",
+    "mage-os/module-config": "3.1.0",
+    "mage-os/module-store": "3.1.0"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\Directory\\": ""
-        }
+    "psr-4": {
+      "Magento\\Directory\\": ""
     }
+  },
+  "version": "3.1.0",
+  "replace": {
+    "magento/module-directory": "100.4.9"
+  }
 }

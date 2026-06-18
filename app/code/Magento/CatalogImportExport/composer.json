@@ -1,37 +1,41 @@
 {
-    "name": "magento/module-catalog-import-export",
-    "description": "N/A",
-    "config": {
-        "sort-packages": true
-    },
-    "require": {
-        "php": "~8.3.0||~8.4.0||~8.5.0",
-        "ext-ctype": "*",
-        "magento/framework": "*",
-        "magento/module-catalog": "*",
-        "magento/module-catalog-inventory": "*",
-        "magento/module-catalog-url-rewrite": "*",
-        "magento/module-customer": "*",
-        "magento/module-downloadable": "*",
-        "magento/module-eav": "*",
-        "magento/module-import-export": "*",
-        "magento/module-media-storage": "*",
-        "magento/module-store": "*",
-        "magento/module-tax": "*",
-        "magento/module-authorization": "*",
-        "magento/module-aws-s3": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-catalog-import-export",
+  "description": "N/A",
+  "config": {
+    "sort-packages": true
+  },
+  "require": {
+    "php": "~8.3.0||~8.4.0||~8.5.0",
+    "ext-ctype": "*",
+    "mage-os/framework": "3.1.0",
+    "mage-os/module-catalog": "3.1.0",
+    "mage-os/module-catalog-inventory": "3.1.0",
+    "mage-os/module-catalog-url-rewrite": "3.1.0",
+    "mage-os/module-customer": "3.1.0",
+    "mage-os/module-downloadable": "3.1.0",
+    "mage-os/module-eav": "3.1.0",
+    "mage-os/module-import-export": "3.1.0",
+    "mage-os/module-media-storage": "3.1.0",
+    "mage-os/module-store": "3.1.0",
+    "mage-os/module-tax": "3.1.0",
+    "mage-os/module-authorization": "3.1.0",
+    "mage-os/module-aws-s3": "3.1.0"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\CatalogImportExport\\": ""
-        }
+    "psr-4": {
+      "Magento\\CatalogImportExport\\": ""
     }
+  },
+  "version": "3.1.0",
+  "replace": {
+    "magento/module-catalog-import-export": "101.1.9"
+  }
 }
