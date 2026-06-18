@@ -20,6 +20,7 @@
             <group value="pr_exclude"/>
         </annotations>
         <before>
+            <magentoCLI command="config:set carriers/flatrate/sallowspecific 0" stepKey="setFlatRateForAllCountries"/>
             <!-- Login -->
             <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
 
@@ -47,6 +48,7 @@
             <!-- Logout -->
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
         </after>
+        <magentoCLI command="cache:flush" stepKey="cleanCache"/>
 
         <!--Login to storefront as previously created customer-->
         <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginAsCustomer">
@@ -70,6 +72,11 @@
 
         <!--Click PayPal button and go back to Magento site-->
         <actionGroup ref="StorefrontPaypalSwitchBackToMagentoFromCheckoutPageActionGroup" stepKey="goBackToMagentoSite"/>
+
+        <!--Select shipping method on review page-->
+        <actionGroup ref="StorefrontSelectShippingMethodOnOrderReviewPageActionGroup" stepKey="selectShipping">
+            <argument name="shippingMethod" value="Fixed - US$5.00"/>
+        </actionGroup>
 
         <!--Assert grand total-->
         <actionGroup ref="StorefrontAssertOrderReviewSummaryWithTaxActionGroup" stepKey="verifyCheckoutPaymentOrderSummary">

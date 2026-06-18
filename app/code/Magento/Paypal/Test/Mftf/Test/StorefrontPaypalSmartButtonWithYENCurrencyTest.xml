@@ -49,7 +49,7 @@
         </actionGroup>
 
         <!--Login to Paypal in-context-->
-        <actionGroup ref="StorefrontLoginToPayPalPaymentAccountOneStepActionGroup" after="guestPlaceOrder" stepKey="LoginToPayPal">
+        <actionGroup ref="StorefrontLoginToPayPalPaymentAccountTwoStepActionGroup" after="guestPlaceOrder" stepKey="LoginToPayPal">
             <argument name="payerName" value="{{Payer.firstName}}"/>
         </actionGroup>
 

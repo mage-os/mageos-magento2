@@ -27,6 +27,7 @@
         <fillField selector="{{PayPalPaymentSection.password}}" userInput="{{credentials.magento/PAYPAL_PWD}}" stepKey="fillPassword"/>
         <waitForElementClickable selector="{{PayPalPaymentSection.loginBtn}}" stepKey="waitForLoginBtn"/>
         <click selector="{{PayPalPaymentSection.loginBtn}}" stepKey="login"/>
+        <waitForPageLoad time="30" stepKey="wait"/>
         <waitForElementVisible selector="{{PayPalPaymentSection.paypalSubmitBtn}}" stepKey="waitForPayPalReviewPage"/>
     </actionGroup>
 </actionGroups>

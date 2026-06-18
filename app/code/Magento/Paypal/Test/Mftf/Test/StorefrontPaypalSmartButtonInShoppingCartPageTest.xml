@@ -19,6 +19,7 @@
             <group value="pr_exclude"/>
         </annotations>
         <before>
+            <magentoCLI command="config:set carriers/flatrate/sallowspecific 0" stepKey="setFlatRateForAllCountries"/>
             <!-- Login -->
             <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
 
