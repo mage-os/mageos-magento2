@@ -65,7 +65,7 @@
         <actionGroup ref="SwitchToPayPalGroupBtnActionGroup" stepKey="clickPayPalBtn"/>
 
         <!--Login to Paypal in-context-->
-        <actionGroup ref="StorefrontLoginToPayPalPaymentFromCartAccountActionGroup" stepKey="LoginToPayPal"/>
+        <actionGroup ref="StorefrontLoginToPayPalPaymentAccountTwoStepActionGroup" stepKey="LoginToPayPal"/>
 
         <!--Transfer Cart Line and Shipping Method assertion-->
         <actionGroup ref="PayPalAssertTransferLineAndShippingMethodActionGroup" stepKey="assertPayPalSettings"/>
@@ -75,7 +75,7 @@
 
         <!--Select shipping method on review page-->
         <actionGroup ref="StorefrontSelectShippingMethodOnOrderReviewPageActionGroup" stepKey="selectShipping">
-            <argument name="shippingMethod" value="Fixed - US$5.00"/>
+            <argument name="shippingMethod" value="Fixed - $5.00"/>
         </actionGroup>
 
         <!--Assert grand total-->

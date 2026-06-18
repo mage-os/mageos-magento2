@@ -82,7 +82,7 @@
         </actionGroup>
 
         <!--Login to Paypal in-context-->
-        <actionGroup ref="StorefrontLoginToPayPalPaymentFromCartAccountActionGroup" stepKey="LoginToPayPal"/>
+        <actionGroup ref="StorefrontLoginToPayPalPaymentAccountTwoStepActionGroup" stepKey="LoginToPayPal"/>
 
         <!--Transfer Cart Line and Shipping Method assertion-->
         <actionGroup ref="PayPalAssertTransferLineAndShippingMethodActionGroup" stepKey="assertPayPalSettings"/>

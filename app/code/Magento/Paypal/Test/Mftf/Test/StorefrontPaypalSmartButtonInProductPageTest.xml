@@ -87,7 +87,7 @@
         <actionGroup ref="StorefrontPaypalSwitchBackToMagentoFromCheckoutPageActionGroup" stepKey="goBackToMagentoSite"/>
 
         <actionGroup ref="StorefrontSelectShippingMethodOnOrderReviewPageActionGroup" stepKey="selectShippingMethod">
-            <argument name="shippingMethod" value="Free - US$0.00"/>
+            <argument name="shippingMethod" value="Free - $0.00"/>
         </actionGroup>
 
         <!--Assert grand total-->
