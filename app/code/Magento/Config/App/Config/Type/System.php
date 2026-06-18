@@ -20,7 +20,6 @@ use Magento\Framework\Cache\FrontendInterface;
 use Magento\Framework\Cache\LockGuardedCacheLoader;
 use Magento\Framework\Encryption\Encryptor;
 use Magento\Framework\Lock\LockManagerInterface;
-use Magento\Framework\ObjectManager\ResetAfterRequestInterface;
 use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Store\Model\Config\Processor\Fallback;
 use Magento\Store\Model\ScopeInterface as StoreScope;
@@ -34,7 +33,7 @@ use Psr\Log\LoggerInterface;
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
  */
-class System implements ConfigTypeInterface, ResetAfterRequestInterface
+class System implements ConfigTypeInterface
 {
     /**
      * Config cache tag.
@@ -91,16 +90,6 @@ class System implements ConfigTypeInterface, ResetAfterRequestInterface
      * @var array
      */
     private $availableDataScopes;
-
-    /**
-     * Re-entrancy guard: true while readData() is executing.
-     *
-     * Prevents infinite recursion when code triggered inside readData() (e.g. the Fallback post-processor
-     * or Encryptor key resolution) calls System::get() before the current read completes.
-     *
-     * @var bool
-     */
-    private bool $isReadingData = false;
 
     /**
      * @var Encryptor
@@ -445,21 +434,10 @@ class System implements ConfigTypeInterface, ResetAfterRequestInterface
      */
     private function readData(): array
     {
-        if ($this->isReadingData) {
-            return $this->data;
-        }
-
-        $this->isReadingData = true;
-        try {
-            // Drop any in-memory scope index so fresh data is never paired with a stale cache-derived map.
-            $this->availableDataScopes = null;
-            $this->data = $this->reader->read();
-            $this->data = $this->postProcessor->process(
-                $this->data
-            );
-        } finally {
-            $this->isReadingData = false;
-        }
+        $this->data = $this->reader->read();
+        $this->data = $this->postProcessor->process(
+            $this->data
+        );
 
         return $this->data;
     }
@@ -573,18 +551,6 @@ class System implements ConfigTypeInterface, ResetAfterRequestInterface
             $this->cachePreparedData($preparedData);
         };
         $this->lockQuery->lockedLoadData(self::$lockName, $loadAction, $dataCollector, $dataSaver);
-    }
-
-    /**
-     * Resets the re-entrancy guard and scope index between requests (ApplicationServer / long-running process support).
-     * In-memory config data is intentionally retained across requests; use clean() for a full data reset.
-     *
-     * @return void
-     */
-    public function _resetState(): void
-    {
-        $this->isReadingData = false;
-        $this->availableDataScopes = null;
     }
 
     /**
