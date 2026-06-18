@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 
 use Magento\Setup\Di\MagentoDiFactory;
@@ -29,6 +29,7 @@ return [
             \Symfony\Component\Console\Helper\TableFactory::class => MagentoDiFactory::class,
             \Magento\Deploy\Console\InputValidator::class => MagentoDiFactory::class,
             \Magento\Framework\App\State::class => MagentoDiFactory::class,
+            \MageOS\Installer\Console\Command\InstallCommand::class => MagentoDiFactory::class,
         ],
     ]
 ];

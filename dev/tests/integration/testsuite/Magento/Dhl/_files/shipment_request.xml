@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2019 Adobe
+ * All Rights Reserved.
  */
 -->
 <req:ShipmentRequest xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -15,7 +15,7 @@
             <Password>some password</Password>
         </ServiceHeader>
         <MetaData>
-            <SoftwareName>Mage-OS</SoftwareName>
+            <SoftwareName>Magento</SoftwareName>
             <SoftwareVersion>1.0.0+no-v</SoftwareVersion>
         </MetaData>
     </Request>

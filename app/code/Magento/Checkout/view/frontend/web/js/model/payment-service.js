@@ -1,14 +1,15 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 
 define([
     'underscore',
     'Magento_Checkout/js/model/quote',
     'Magento_Checkout/js/model/payment/method-list',
-    'Magento_Checkout/js/action/select-payment-method'
-], function (_, quote, methodList, selectPaymentMethod) {
+    'Magento_Checkout/js/action/select-payment-method',
+    'Magento_Checkout/js/checkout-data'
+], function (_, quote, methodList, selectPaymentMethod, checkoutData) {
     'use strict';
 
     /**
@@ -47,11 +48,13 @@ define([
             if (freeMethod && getGrandTotal() <= 0) {
                 methods.splice(0, methods.length, freeMethod);
                 selectPaymentMethod(freeMethod);
+                checkoutData.setSelectedPaymentMethod(freeMethod.method);
             }
 
             filteredMethods = _.without(methods, freeMethod);
             if (filteredMethods.length === 1) {
                 selectPaymentMethod(filteredMethods[0]);
+                checkoutData.setSelectedPaymentMethod(filteredMethods[0].method);
             } else if (quote.paymentMethod()) {
                 methodIsAvailable = methods.some(function (item) {
                     return item.method === quote.paymentMethod().method;

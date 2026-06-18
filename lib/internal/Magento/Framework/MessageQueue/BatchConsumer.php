@@ -185,6 +185,11 @@ class BatchConsumer implements ConsumerInterface
     private function getAllMessages(QueueInterface $queue)
     {
         $messages = [];
+        $consumerName = $this->configuration->getConsumerName();
+        $connectionName = $this->consumerConfig->getConsumer($consumerName)->getConnection();
+        if ($connectionName === 'stomp') {
+            $queue->subscribeQueue();
+        }
         while ($message = $queue->dequeue()) {
             $messages[] = $message;
         }
@@ -201,6 +206,11 @@ class BatchConsumer implements ConsumerInterface
     private function getMessages(QueueInterface $queue, $count)
     {
         $messages = [];
+        $consumerName = $this->configuration->getConsumerName();
+        $connectionName = $this->consumerConfig->getConsumer($consumerName)->getConnection();
+        if ($connectionName === 'stomp') {
+            $queue->subscribeQueue();
+        }
         for ($i = $count; $i > 0; $i--) {
             $message = $queue->dequeue();
             if ($message === null) {

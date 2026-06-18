@@ -42,7 +42,7 @@ class AsyncTestData
      * @param string $strValue
      * @return void
      */
-    public function setValue($strValue): void
+    public function setValue(string $strValue): void
     {
         $this->msgValue = $strValue;
     }

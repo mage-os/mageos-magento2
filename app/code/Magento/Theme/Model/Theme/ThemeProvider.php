@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Theme\Model\Theme;
 
@@ -15,6 +15,7 @@ use Magento\Framework\View\Design\Theme\ThemeProviderInterface;
 /**
  * Provide data for theme grid and for theme edit page
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class ThemeProvider implements ThemeProviderInterface, ResetAfterRequestInterface
 {
     /**
@@ -126,6 +127,10 @@ class ThemeProvider implements ThemeProviderInterface, ResetAfterRequestInterfac
      */
     public function getThemeById($themeId)
     {
+        if ($themeId === null) {
+            return $this->themeFactory->create();
+        }
+
         if (isset($this->themes[$themeId])) {
             return $this->themes[$themeId];
         }

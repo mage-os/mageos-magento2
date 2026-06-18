@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Config\Block\System\Config;
 
@@ -256,7 +256,8 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
             $this->initFields($fieldset, $group, $section);
         }
 
-        $this->_fieldsets[$group->getId()] = $fieldset;
+        $groupId = $group->getId() ?? '';
+        $this->_fieldsets[$groupId] = $fieldset;
     }
 
     /**
@@ -414,27 +415,27 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
         );
 
         if ($placeholderValue) {
-            $data = $placeholderValue;
+            return $placeholderValue;
         }
 
         if ($data === null) {
-            $path = $field->getConfigPath() !== null ? $field->getConfigPath() : $path;
             $data = $this->getConfigValue($path);
-            if ($field->hasBackendModel()) {
-                $backendModel = $field->getBackendModel();
-                // Backend models which implement ProcessorInterface are processed by ScopeConfigInterface
-                if (!$backendModel instanceof ProcessorInterface) {
-                    if (array_key_exists($path, $this->_configData)) {
-                        $data = $this->_configData[$path];
-                    }
+        }
 
-                    $backendModel->setPath($path)
-                        ->setValue($data)
-                        ->setWebsite($this->getWebsiteCode())
-                        ->setStore($this->getStoreCode())
-                        ->afterLoad();
-                    $data = $backendModel->getValue();
+        if ($field->hasBackendModel()) {
+            $backendModel = $field->getBackendModel();
+            // Backend models which implement ProcessorInterface are processed by ScopeConfigInterface
+            if (!$backendModel instanceof ProcessorInterface) {
+                if (array_key_exists($path, $this->_configData)) {
+                    $data = $this->_configData[$path];
                 }
+
+                $backendModel->setPath($path)
+                    ->setValue($data)
+                    ->setWebsite($this->getWebsiteCode())
+                    ->setStore($this->getStoreCode())
+                    ->afterLoad();
+                $data = $backendModel->getValue();
             }
         }
 
@@ -783,7 +784,8 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
     /**
      * Retrieve Deployment Configuration object.
      *
-     * @deprecated 100.1.2
+     * @deprecated 100.1.2 Use constructor-injected DeploymentConfig instead of ObjectManager lookup.
+     * @see DeploymentConfig
      * @return DeploymentConfig
      */
     private function getAppConfig()
@@ -838,9 +840,8 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
      * Gets instance of ElementVisibilityInterface.
      *
      * @return ElementVisibilityInterface
-     * @deprecated 101.0.0 Added to not break backward compatibility of the constructor signature
-     *             by injecting the new dependency directly.
-     *             The method can be removed in a future major release, when constructor signature can be changed.
+     * @deprecated 101.0.0 Added to avoid breaking constructor signature; prefer DI of ElementVisibilityInterface.
+     * @see ElementVisibilityInterface
      * @since 101.0.0
      */
     public function getElementVisibility()

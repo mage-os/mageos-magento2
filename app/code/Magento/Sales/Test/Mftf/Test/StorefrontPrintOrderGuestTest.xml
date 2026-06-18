@@ -270,13 +270,6 @@
 
         <!--  Click on the "Print Order" button -->
         <click selector="{{StorefrontGuestOrderViewSection.printOrder}}" stepKey="printOrder"/>
-        <comment userInput="BIC workaround" stepKey="switchToWindowWithUrlAndClosePrintDialogIfEncountered"/>
-        <comment userInput="BIC workaround" stepKey="waitForPrintWindowToOpen" />
-        <comment userInput="BIC workaround" stepKey="switchToWindow"/>
-        <comment userInput="BIC workaround" stepKey="waitForPrintTabToOpen"/>
-        <comment userInput="BIC workaround" stepKey="switchToTab"/>
-        <comment userInput="BIC workaround" stepKey="waitForPrintPreviewToLoad"/>
-        <comment userInput="BIC workaround" stepKey="seePrintPage"/>
         <waitForPageLoad stepKey="waitForPrintOrderPageLoad"/>
 
         <!-- AssertSalesPrintOrderProducts -->
@@ -301,6 +294,5 @@
 
         <!-- AssertShippingMethodOnPrintOrder -->
         <see userInput="Flat Rate - Fixed" selector="{{StorefrontOrderDetailsSection.shippingMethod}}" stepKey="assertShippingMethodOnPrintOrder"/>
-        <comment userInput="BIC workaround" stepKey="switchToPreviousTab"/>
     </test>
 </tests>

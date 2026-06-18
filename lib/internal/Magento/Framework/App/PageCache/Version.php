@@ -17,6 +17,7 @@ use Magento\Framework\App\Request\Http;
  *
  * @SuppressWarnings(PHPMD.CookieAndSessionMisuse)
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class Version
 {
     /**

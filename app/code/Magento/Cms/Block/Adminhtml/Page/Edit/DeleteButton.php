@@ -23,7 +23,7 @@ class DeleteButton extends GenericButton implements ButtonProviderInterface
                 'label' => __('Delete Page'),
                 'class' => 'delete',
                 'on_click' => 'deleteConfirm(\'' . $confirmMessage . '\', \''
-                . $this->getDeleteUrl() . '\', {"data": {}})',
+                    . $this->getDeleteUrl() . '\', {"data": {}})',
                 'sort_order' => 20,
             ];
         }

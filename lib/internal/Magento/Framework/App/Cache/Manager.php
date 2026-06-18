@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\Framework\App\Cache;
@@ -14,6 +14,7 @@ use Magento\Framework\App;
  * @api
  * @since 100.0.2
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class Manager
 {
     /**
@@ -102,11 +103,13 @@ class Manager
     {
         $flushedBackend = [];
         foreach ($types as $type) {
-            $backend = $this->pool->get($type)->getBackend();
+            $frontend = $this->pool->get($type);
+            $backend = $frontend->getBackend();
             if (in_array($backend, $flushedBackend, true)) { // it was already flushed from another frontend
                 continue;
             }
-            $backend->clean();
+            // Call clean on frontend (not backend) for proper abstraction
+            $frontend->clean();
             $flushedBackend[] = $backend;
         }
     }
@@ -126,6 +129,8 @@ class Manager
     }
 
     /**
+     * Get list of available cache types
+     *
      * @return array
      */
     public function getAvailableTypes()

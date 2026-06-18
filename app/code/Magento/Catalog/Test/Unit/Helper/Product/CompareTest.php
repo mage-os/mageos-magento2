@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -9,11 +9,16 @@ namespace Magento\Catalog\Test\Unit\Helper\Product;
 
 use Magento\Catalog\Helper\Product\Compare;
 use Magento\Catalog\Model\Product;
+use Magento\Catalog\Model\ResourceModel\Product\Compare\Item\Collection;
+use Magento\Catalog\Model\ResourceModel\Product\Compare\Item\CollectionFactory;
 use Magento\Catalog\Model\Session;
+use Magento\Customer\Model\Session as CustomerSession;
+use Magento\Customer\Model\Visitor;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\App\Request\Http;
 use Magento\Framework\Data\Helper\PostHelper;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\Url;
 use Magento\Framework\Url\EncoderInterface;
@@ -22,8 +27,9 @@ use PHPUnit\Framework\TestCase;
 
 class CompareTest extends TestCase
 {
+    use MockCreationTrait;
     /**
-     * @var \Magento\Catalog\Helper\Product\Compare
+     * @var Compare
      */
     protected $compareHelper;
 
@@ -61,18 +67,23 @@ class CompareTest extends TestCase
     {
         $objectManager = new ObjectManager($this);
 
-        $this->urlBuilder = $this->createPartialMock(Url::class, ['getUrl']);
+        $this->urlBuilder = $this->createPartialMock(Url::class, ['getUrl', 'getCurrentUrl']);
         $this->request = $this->createPartialMock(
             Http::class,
             ['getServer', 'isSecure']
         );
+        $this->request->method('getServer')->willReturnMap([
+            [null, ['HTTP_HOST' => 'magento.com', 'SERVER_PORT' => 80]],
+            ['HTTP_HOST', 'magento.com'],
+            ['SERVER_PORT', 80],
+        ]);
+        $this->request->method('isSecure')->willReturn(false);
         /** @var Context $context */
         $this->context = $this->createPartialMock(
             Context::class,
             ['getUrlBuilder', 'getRequest', 'getUrlEncoder']
         );
-        $this->urlEncoder = $this->getMockBuilder(EncoderInterface::class)
-            ->getMock();
+        $this->urlEncoder = $this->createMock(EncoderInterface::class);
         $this->urlEncoder->expects($this->any())
             ->method('encode')
             ->willReturnCallback(
@@ -93,10 +104,10 @@ class CompareTest extends TestCase
             PostHelper::class,
             ['getPostData']
         );
-        $this->catalogSessionMock = $this->getMockBuilder(Session::class)
-            ->addMethods(['getBeforeCompareUrl'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->catalogSessionMock = $this->createPartialMockWithReflection(
+            Session::class,
+            ['getBeforeCompareUrl']
+        );
 
         $this->compareHelper = $objectManager->getObject(
             Compare::class,
@@ -190,13 +201,66 @@ class CompareTest extends TestCase
         ];
 
         $productMock = $this->createMock(Product::class);
-        $this->catalogSessionMock->expects($this->once())->method('getBeforeCompareUrl')->willReturn($beforeCompareUrl);
+    
         $productMock->expects($this->once())->method('getId')->willReturn($productId);
+        $this->catalogSessionMock->expects($this->once())->method('getBeforeCompareUrl')
+            ->willReturn($beforeCompareUrl);
         $this->urlEncoder->expects($this->once())->method('encode')->with($beforeCompareUrl)
             ->willReturn($encodedCompareUrl);
         $this->request->expects($this->once())->method('isSecure')->willReturn($isRequestSecure);
 
-        $this->urlBuilder->expects($this->once())->method('getUrl')->with('checkout/cart/add', $expectedResult);
+        $this->urlBuilder->expects($this->once())->method('getUrl')
+            ->with('checkout/cart/add', $expectedResult);
         $this->compareHelper->getAddToCartUrl($productMock);
+    }
+
+    public function testGetItemCollectionOrdersByCompareItemIdAscending(): void
+    {
+        $collectionMock = $this->getMockBuilder(Collection::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['useProductItem', 'setStoreId', 'setVisitorId', 'setVisibility',
+                'addPriceData', 'addAttributeToSelect', 'addUrlRewrite', 'addOrder', 'load'])
+            ->getMock();
+
+        $collectionMock->method('useProductItem')->willReturnSelf();
+        $collectionMock->method('setStoreId')->willReturnSelf();
+        $collectionMock->method('setVisitorId')->willReturnSelf();
+        $collectionMock->method('setVisibility')->willReturnSelf();
+        $collectionMock->method('addPriceData')->willReturnSelf();
+        $collectionMock->method('addAttributeToSelect')->willReturnSelf();
+        $collectionMock->method('addUrlRewrite')->willReturnSelf();
+        $collectionMock->method('load')->willReturnSelf();
+
+        $collectionMock->expects($this->once())
+            ->method('addOrder')
+            ->with('catalog_compare_item_id', 'ASC')
+            ->willReturnSelf();
+
+        $collectionFactory = $this->createMock(CollectionFactory::class);
+        $collectionFactory->method('create')->willReturn($collectionMock);
+
+        $customerSession = $this->createMock(CustomerSession::class);
+        $customerSession->method('isLoggedIn')->willReturn(false);
+
+        $visitor = $this->createMock(Visitor::class);
+        $visitor->method('getId')->willReturn(1);
+
+        $storeMock = $this->createMock(\Magento\Store\Model\Store::class);
+        $storeMock->method('getId')->willReturn(1);
+        $storeManagerMock = $this->createMock(\Magento\Store\Model\StoreManagerInterface::class);
+        $storeManagerMock->method('getStore')->willReturn($storeMock);
+
+        $objectManager = new ObjectManager($this);
+        $helper = $objectManager->getObject(
+            Compare::class,
+            [
+                'itemCollectionFactory' => $collectionFactory,
+                'customerSession'       => $customerSession,
+                'customerVisitor'       => $visitor,
+                'storeManager'          => $storeManagerMock,
+            ]
+        );
+
+        $helper->getItemCollection();
     }
 }

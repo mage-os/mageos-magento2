@@ -1,6 +1,6 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2020 Adobe
+ * All Rights Reserved.
  */
 
 /* eslint max-nested-callbacks: 0 */
@@ -122,6 +122,7 @@ define([
                 clearLocalStorage();
                 injector.clean();
                 injector.remove();
+                // eslint-disable-next-line no-unused-vars
             } catch (e) {
             }
         });
@@ -523,6 +524,85 @@ define([
         describe('"Magento_Customer/js/customer-data" method', function () {
             it('Should be defined', function () {
                 expect(obj.hasOwnProperty('Magento_Customer/js/customer-data')).toBeDefined();
+            });
+        });
+
+        describe('Customer share scope handling', function () {
+            var originalCookieStorage,
+                originalLocalStorage;
+
+            beforeEach(function () {
+                originalCookieStorage = $.cookieStorage;
+                originalLocalStorage = $.localStorage;
+
+                $.cookieStorage = jasmine.createSpyObj('cookieStorage', ['isSet', 'get', 'set', 'setConf']);
+                $.localStorage = jasmine.createSpyObj('localStorage', ['isSet', 'get', 'set']);
+            });
+
+            afterEach(function () {
+                $.cookieStorage = originalCookieStorage;
+                $.localStorage = originalLocalStorage;
+            });
+
+            it('Should use cookieStorage for login state when customerShare is global (0)', function () {
+                init({
+                    customerShare: '0',
+                    isLoggedIn: '1'
+                });
+
+                expect($.cookieStorage.isSet).toHaveBeenCalledWith('mage-customer-login');
+                expect($.cookieStorage.get).toHaveBeenCalledWith('mage-customer-login');
+            });
+
+            it('Should use localStorage for login state when customerShare is not global (1)', function () {
+                init({
+                    customerShare: '1',
+                    isLoggedIn: '1'
+                });
+
+                expect($.localStorage.isSet).toHaveBeenCalledWith('mage-customer-login');
+                expect($.localStorage.get).toHaveBeenCalledWith('mage-customer-login');
+            });
+        });
+
+        describe('"initStorage" cookie path', function () {
+            var originalCookieStorage,
+                originalLocalStorage,
+                cookieStorageSpy;
+
+            beforeEach(function () {
+                originalCookieStorage = $.cookieStorage;
+                originalLocalStorage  = $.localStorage;
+
+                cookieStorageSpy = jasmine.createSpyObj(
+                    'cookieStorage', ['setConf', 'set', 'get', 'isSet']
+                );
+                cookieStorageSpy.get.and.returnValue({});
+                cookieStorageSpy.isSet.and.returnValue(false);
+
+                $.cookieStorage = cookieStorageSpy;
+                $.localStorage  = jasmine.createSpyObj(
+                    'localStorage', ['isSet', 'get', 'set']
+                );
+            });
+
+            afterEach(function () {
+                $.cookieStorage = originalCookieStorage;
+                $.localStorage  = originalLocalStorage;
+            });
+
+            it('uses "/" as default cookie path when cookiePath is not configured', function () {
+                init({ cookieLifeTime: 3600 });
+                expect(cookieStorageSpy.setConf).toHaveBeenCalledWith(
+                    jasmine.objectContaining({ path: '/' })
+                );
+            });
+
+            it('uses the configured cookiePath when provided', function () {
+                init({ cookieLifeTime: 3600, cookiePath: '/shop/' });
+                expect(cookieStorageSpy.setConf).toHaveBeenCalledWith(
+                    jasmine.objectContaining({ path: '/shop/' })
+                );
             });
         });
     });

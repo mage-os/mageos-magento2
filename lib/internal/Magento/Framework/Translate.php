@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -19,6 +19,7 @@ use Magento\Framework\ObjectManager\ResetAfterRequestInterface;
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.TooManyFields)
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class Translate implements \Magento\Framework\TranslateInterface, ResetAfterRequestInterface
 {
     public const CONFIG_AREA_KEY = 'area';

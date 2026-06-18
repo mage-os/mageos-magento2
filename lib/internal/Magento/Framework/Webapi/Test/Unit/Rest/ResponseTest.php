@@ -2,8 +2,8 @@
 /**
  * Test Rest response controller.
  *
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -172,7 +172,7 @@ class ResponseTest extends TestCase
         )->method(
             'render'
         )->willReturnCallback(
-            [$this, 'callbackForSendResponseTest'], $this->returnArgument(0)
+            [$this, 'callbackForSendResponseTest']
         );
         $exceptionMessage = 'Message';
         $exceptionHttpCode = \Magento\Framework\Webapi\Exception::HTTP_BAD_REQUEST;
@@ -230,5 +230,19 @@ class ResponseTest extends TestCase
         $this->responseRest->setException(new \Exception());
         $hasException = $this->responseRest->hasExceptionOfType('Test\Exception');
         $this->assertFalse($hasException);
+    }
+
+    public function testIsDeveloperModeReturnsTrueInDeveloperMode(): void
+    {
+        $this->appStateMock->method('getMode')->willReturn(State::MODE_DEVELOPER);
+        $reflection = new \ReflectionMethod($this->responseRest, 'isDeveloperMode');
+        $this->assertTrue($reflection->invoke($this->responseRest));
+    }
+
+    public function testIsDeveloperModeReturnsFalseInProductionMode(): void
+    {
+        $this->appStateMock->method('getMode')->willReturn(State::MODE_PRODUCTION);
+        $reflection = new \ReflectionMethod($this->responseRest, 'isDeveloperMode');
+        $this->assertFalse($reflection->invoke($this->responseRest));
     }
 }

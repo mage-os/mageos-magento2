@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Framework\App\Response\HeaderProvider;
 
@@ -10,6 +10,7 @@ use \Magento\Framework\App\Response\Http;
 /**
  * Adds an X-FRAME-OPTIONS header to HTTP responses to safeguard against click-jacking.
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class XFrameOptions extends \Magento\Framework\App\Response\HeaderProvider\AbstractHeaderProvider
 {
     /** Deployment config key for frontend x-frame-options header value */

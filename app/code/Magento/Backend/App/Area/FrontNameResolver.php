@@ -23,6 +23,7 @@ use Magento\Store\Model\Store;
  * @api
  * @since 100.0.2
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class FrontNameResolver implements FrontNameResolverInterface
 {
     public const XML_PATH_USE_CUSTOM_ADMIN_PATH = 'admin/url/use_custom_path';
@@ -107,11 +108,10 @@ class FrontNameResolver implements FrontNameResolverInterface
         if ($checkHost && !$this->isHostBackend()) {
             return false;
         }
-        $isCustomPathUsed = (bool)(string)$this->config->getValue(self::XML_PATH_USE_CUSTOM_ADMIN_PATH);
-        if ($isCustomPathUsed) {
-            return (string)$this->config->getValue(self::XML_PATH_CUSTOM_ADMIN_PATH);
-        }
-        return $this->defaultFrontName;
+
+        return $this->config->isSetFlag(self::XML_PATH_USE_CUSTOM_ADMIN_PATH)
+            ? (string)$this->config->getValue(self::XML_PATH_CUSTOM_ADMIN_PATH)
+            : $this->defaultFrontName;
     }
 
     /**
@@ -127,9 +127,8 @@ class FrontNameResolver implements FrontNameResolverInterface
         if (!$this->request->getServer('HTTP_HOST')) {
             return false;
         }
-
-        if ($this->scopeConfig->getValue(self::XML_PATH_USE_CUSTOM_ADMIN_URL, ScopeInterface::SCOPE_STORE)) {
-            $backendUrl = $this->scopeConfig->getValue(self::XML_PATH_CUSTOM_ADMIN_URL, ScopeInterface::SCOPE_STORE);
+        if ($this->scopeConfig->isSetFlag(self::XML_PATH_USE_CUSTOM_ADMIN_URL)) {
+            $backendUrl = $this->scopeConfig->getValue(self::XML_PATH_CUSTOM_ADMIN_URL);
         } else {
             $xmlPath = $this->request->isSecure() ? Store::XML_PATH_SECURE_BASE_URL : Store::XML_PATH_UNSECURE_BASE_URL;
             $backendUrl = $this->config->getValue($xmlPath);

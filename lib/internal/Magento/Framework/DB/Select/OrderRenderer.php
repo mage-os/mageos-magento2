@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Framework\DB\Select;
 
@@ -11,6 +11,7 @@ use Magento\Framework\DB\Platform\Quote;
 /**
  * Class OrderRenderer
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class OrderRenderer implements RendererInterface
 {
     /**

@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2017 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Store\App\Config\Source;
 
@@ -12,6 +12,7 @@ use Magento\Framework\App\DeploymentConfig\Reader;
 /**
  * Config source. Retrieve all configuration data from files for specified config type
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class InitialConfigSource implements ConfigSourceInterface
 {
     /**

@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2021 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\Customer\Model\Session\Validators;
@@ -16,7 +16,10 @@ use Magento\Framework\Session\Generic;
 
 /**
  * Session Validator
+ *
+ * @SuppressWarnings(PHPMD.CookieAndSessionMisuse)
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class CutoffValidator implements ValidatorInterface
 {
     /**

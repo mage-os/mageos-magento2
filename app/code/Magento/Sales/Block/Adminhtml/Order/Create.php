@@ -14,8 +14,6 @@ namespace Magento\Sales\Block\Adminhtml\Order;
 class Create extends \Magento\Backend\Block\Widget\Form\Container
 {
     /**
-     * Backend session quote instance used for order creation
-     *
      * @var \Magento\Backend\Model\Session\Quote
      */
     protected $_sessionQuote;

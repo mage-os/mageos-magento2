@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2017 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Framework\View\Layout;
 
@@ -12,6 +12,7 @@ use Magento\Framework\App\ScopeResolverInterface;
 /**
  * Check that config flag is set to true,
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class ConfigCondition implements VisibilityConditionInterface
 {
     /**

@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\AsynchronousOperations\Controller\Adminhtml\Notification;
 
@@ -56,9 +56,12 @@ class Dismiss extends Action implements HttpPostActionInterface
         $isAcknowledged = $this->notificationManagement->acknowledgeBulks($bulkUuids);
 
         /** @var \Magento\Framework\Controller\Result\Json $result */
-        $result = $this->resultFactory->create(ResultFactory::TYPE_JSON)->setData(['']);
+        $result = $this->resultFactory->create(ResultFactory::TYPE_JSON);
         if (!$isAcknowledged) {
+            $result->setData(['error' => 1]);
             $result->setHttpResponseCode(400);
+        } else {
+            $result->setData(['error' => 0]);
         }
 
         return $result;

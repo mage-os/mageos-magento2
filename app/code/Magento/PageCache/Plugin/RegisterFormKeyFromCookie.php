@@ -1,8 +1,7 @@
 <?php
 /**
- *
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2018 Adobe
+ * All Rights Reserved.
  */
 
 declare(strict_types=1);
@@ -18,6 +17,7 @@ use Magento\Framework\Stdlib\Cookie\CookieMetadataFactory;
 /**
  * Allow for registration of a form key through cookies.
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class RegisterFormKeyFromCookie
 {
     /**

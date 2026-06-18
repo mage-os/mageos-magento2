@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\Framework\App;
@@ -9,6 +9,7 @@ namespace Magento\Framework\App;
 /**
  * Provider of scope resolvers by type
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class ScopeResolverPool
 {
     /**

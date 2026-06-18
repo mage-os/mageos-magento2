@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2016 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Store\App\Config\Type;
 
@@ -13,6 +13,7 @@ use Magento\Store\Model\ScopeInterface;
 /**
  * Merge and hold scopes data from different sources
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class Scopes implements ConfigTypeInterface
 {
     public const CONFIG_TYPE = 'scopes';

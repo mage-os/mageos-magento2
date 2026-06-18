@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Framework\Url;
 
@@ -63,9 +63,12 @@ class QueryParamsResolver extends \Magento\Framework\DataObject implements
         if (!$this->hasData('query_params')) {
             $params = [];
             if ($this->_getData('query')) {
-                foreach (explode('&', $this->_getData('query')) as $param) {
-                    $paramArr = explode('=', $param);
-                    $params[$paramArr[0]] = urldecode($paramArr[1]);
+                foreach (explode('&', (string)$this->_getData('query')) as $param) {
+                    if ($param === '') {
+                        continue;
+                    }
+                    $paramArr = explode('=', $param, 2);
+                    $params[$paramArr[0]] = urldecode($paramArr[1] ?? '');
                 }
             }
             $this->setData('query_params', $params);

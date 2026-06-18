@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\Framework\DB;
@@ -15,6 +15,7 @@ use Magento\Framework\DB\Adapter\AdapterInterface;
  * @api
  * @since 100.1.0
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class SelectFactory
 {
     /**

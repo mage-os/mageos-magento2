@@ -1,18 +1,19 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Framework\ObjectManager\Config;
 
 use Magento\Framework\ObjectManager\ConfigInterface;
 use Magento\Framework\ObjectManager\ConfigCacheInterface;
+use Magento\Framework\ObjectManager\LazyTypeAwareInterface;
 use Magento\Framework\ObjectManager\RelationsInterface;
 
 /**
  * Provides object manager configuration when in compiled mode
  */
-class Compiled implements ConfigInterface
+class Compiled implements ConfigInterface, LazyTypeAwareInterface
 {
     /**
      * @var array
@@ -30,6 +31,11 @@ class Compiled implements ConfigInterface
     private $preferences;
 
     /**
+     * @var array<string,bool>
+     */
+    private array $nonLazyTypes = [];
+
+    /**
      * @param array $data
      */
     public function __construct($data)
@@ -40,6 +46,25 @@ class Compiled implements ConfigInterface
             ? $data['instanceTypes'] : [];
         $this->preferences = isset($data['preferences']) && is_array($data['preferences'])
             ? $data['preferences'] : [];
+        $this->nonLazyTypes = isset($data['nonLazyTypes']) && is_array($data['nonLazyTypes'])
+            ? $data['nonLazyTypes'] : [];
+    }
+
+    /**
+     * Whether the given concrete type was flagged at compile-time as incompatible with PHP 8.4 lazy ghosts.
+     *
+     * Fails safe: Returns true (= non-lazy) if no compile-time data is present.
+     *
+     * @param string $type
+     * @return bool
+     */
+    public function isNonLazyType(string $type): bool
+    {
+        if ($this->nonLazyTypes === []) {
+            return true;
+        }
+
+        return isset($this->nonLazyTypes[$type]);
     }
 
     /**
@@ -147,6 +172,9 @@ class Compiled implements ConfigInterface
         $this->preferences = isset($configuration['preferences']) && is_array($configuration['preferences'])
             ? array_replace($this->preferences, $configuration['preferences'])
             : $this->preferences;
+        $this->nonLazyTypes = isset($configuration['nonLazyTypes']) && is_array($configuration['nonLazyTypes'])
+            ? array_replace($this->nonLazyTypes, $configuration['nonLazyTypes'])
+            : $this->nonLazyTypes;
     }
 
     /**

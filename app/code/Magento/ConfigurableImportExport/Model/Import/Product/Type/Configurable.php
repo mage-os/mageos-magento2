@@ -1,14 +1,16 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2011 Adobe
+ * All Rights Reserved.
  */
+declare(strict_types=1);
 
 namespace Magento\ConfigurableImportExport\Model\Import\Product\Type;
 
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\CatalogImportExport\Model\Import\Product as ImportProduct;
 use Magento\CatalogImportExport\Model\Import\Product\SkuStorage;
+use Magento\Eav\Model\ResourceModel\Entity\Attribute\Option\CollectionFactory as AttributeOptionCollectionFactory;
 use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Framework\Exception\LocalizedException;
 
@@ -59,7 +61,7 @@ class Configurable extends \Magento\CatalogImportExport\Model\Import\Product\Typ
         self::ERROR_INVALID_OPTION_VALUE => 'Column configurable_variations: Invalid option value for attribute "%s"',
         self::ERROR_INVALID_WEBSITE => 'Invalid website code for super attribute',
         self::ERROR_DUPLICATED_VARIATIONS => 'SKU %s contains duplicated variations',
-        self::ERROR_UNIDENTIFIABLE_VARIATION => 'Configurable variation "%s" is unidentifiable',
+        self::ERROR_UNIDENTIFIABLE_VARIATION => 'Configurable variation "%1" is unidentifiable',
     ];
 
     /**
@@ -218,6 +220,7 @@ class Configurable extends \Magento\CatalogImportExport\Model\Import\Product\Typ
      * @param \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $_productColFac
      * @param MetadataPool $metadataPool
      * @param SkuStorage $skuStorage
+     * @param AttributeOptionCollectionFactory|null $attributeOptionCollectionFactory
      */
     public function __construct(
         \Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\CollectionFactory $attrSetColFac,
@@ -228,9 +231,17 @@ class Configurable extends \Magento\CatalogImportExport\Model\Import\Product\Typ
         \Magento\ImportExport\Model\ResourceModel\Helper $resourceHelper,
         \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $_productColFac,
         ?MetadataPool $metadataPool = null,
-        ?SkuStorage $skuStorage = null
+        ?SkuStorage $skuStorage = null,
+        ?AttributeOptionCollectionFactory $attributeOptionCollectionFactory = null
     ) {
-        parent::__construct($attrSetColFac, $prodAttrColFac, $resource, $params, $metadataPool);
+        parent::__construct(
+            $attrSetColFac,
+            $prodAttrColFac,
+            $resource,
+            $params,
+            $metadataPool,
+            $attributeOptionCollectionFactory
+        );
         $this->_productTypesConfig = $productTypesConfig;
         $this->_resourceHelper = $resourceHelper;
         $this->_productColFac = $_productColFac;
@@ -580,10 +591,8 @@ class Configurable extends \Magento\CatalogImportExport\Model\Import\Product\Typ
             if (empty($fieldAndValuePairs['sku'])) {
                 throw new LocalizedException(
                     __(
-                        sprintf(
-                            $this->_messageTemplates[self::ERROR_UNIDENTIFIABLE_VARIATION],
-                            $variation
-                        )
+                        $this->_messageTemplates[self::ERROR_UNIDENTIFIABLE_VARIATION],
+                        $variation
                     )
                 );
             }

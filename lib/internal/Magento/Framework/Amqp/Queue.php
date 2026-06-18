@@ -8,12 +8,13 @@ namespace Magento\Framework\Amqp;
 use Closure;
 use Exception;
 use Magento\Framework\MessageQueue\ConnectionLostException;
+use Magento\Framework\MessageQueue\EnvelopeFactory;
 use Magento\Framework\MessageQueue\EnvelopeInterface;
 use Magento\Framework\MessageQueue\QueueInterface;
 use Magento\Framework\Phrase;
+use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Exception\AMQPTimeoutException;
 use PhpAmqpLib\Message\AMQPMessage;
-use Magento\Framework\MessageQueue\EnvelopeFactory;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -98,6 +99,7 @@ class Queue implements QueueInterface
                 [
                     'topic_name' => $message->delivery_info['routing_key'],
                     'delivery_tag' => $message->delivery_info['delivery_tag'],
+                    'delivery_channel' => $message->getChannel(),
                 ]
             );
             $envelope = $this->envelopeFactory->create(['body' => $message->body, 'properties' => $properties]);
@@ -117,6 +119,7 @@ class Queue implements QueueInterface
         $channel = $this->amqpConfig->getChannel();
         // @codingStandardsIgnoreStart
         try {
+            $this->validateChannel($properties, $channel, 'ack');
             $channel->basic_ack($properties['delivery_tag']);
         } catch (Exception $exception) {
             throw new ConnectionLostException(
@@ -129,22 +132,75 @@ class Queue implements QueueInterface
     }
 
     /**
+     * Subscribe using basic_consume and stop after processing $maxMessages.
+     *
+     * Uses prefetch (basic_qos) for efficient push-based delivery instead of
+     * per-message basic_get round-trips. Respects the wait timeout so the
+     * consumer exits cleanly when the queue empties before $maxMessages.
+     *
+     * @param callable $callback
+     * @param int $maxMessages
+     * @param int $waitTimeout Seconds to wait for the next message before exiting (0 = block forever)
+     * @return void
+     * @since 103.0.0
+     */
+    public function subscribeWithLimit(callable $callback, int $maxMessages, int $waitTimeout = 1): void
+    {
+        if ($maxMessages <= 0) {
+            return;
+        }
+
+        $messagesProcessed = 0;
+        $consumerTag = '';
+
+        // @codingStandardsIgnoreStart
+        $callbackConverter = function (AMQPMessage $message) use (
+            $callback,
+            &$messagesProcessed,
+            $maxMessages,
+            &$consumerTag
+        ) {
+            $envelope = $this->createEnvelopeFromAmqpMessage($message);
+
+            try {
+                if ($callback instanceof Closure) {
+                    $callback($envelope);
+                } else {
+                    call_user_func($callback, $envelope);
+                }
+            } finally {
+                $messagesProcessed++;
+                if ($messagesProcessed >= $maxMessages) {
+                    $message->getChannel()->basic_cancel($consumerTag);
+                }
+            }
+        };
+
+        $channel = $this->amqpConfig->getChannel();
+        $channel->basic_qos(0, $this->prefetchCount, false);
+        $consumerTag = $channel->basic_consume($this->queueName, '', false, false, false, false, $callbackConverter);
+
+        $timeout = $waitTimeout > 0 ? $waitTimeout : null;
+        while (count($channel->callbacks)) {
+            try {
+                $channel->wait(null, false, $timeout);
+            } catch (AMQPTimeoutException $e) {
+                // No message arrived within the wait window — queue is empty or idle; exit cleanly.
+                break;
+            }
+        }
+        // @codingStandardsIgnoreEnd
+    }
+
+    /**
      * @inheritdoc
      * @since 103.0.0
      */
     public function subscribe($callback)
     {
+        $channel = $this->amqpConfig->getChannel();
         $callbackConverter = function (AMQPMessage $message) use ($callback) {
-            // @codingStandardsIgnoreStart
-            $properties = array_merge(
-                $message->get_properties(),
-                [
-                    'topic_name' => $message->delivery_info['routing_key'],
-                    'delivery_tag' => $message->delivery_info['delivery_tag'],
-                ]
-            );
-            // @codingStandardsIgnoreEnd
-            $envelope = $this->envelopeFactory->create(['body' => $message->body, 'properties' => $properties]);
+            $envelope = $this->createEnvelopeFromAmqpMessage($message);
 
             if ($callback instanceof Closure) {
                 $callback($envelope);
@@ -153,7 +209,6 @@ class Queue implements QueueInterface
             }
         };
 
-        $channel = $this->amqpConfig->getChannel();
         // @codingStandardsIgnoreStart
         $channel->basic_qos(0, $this->prefetchCount, false);
         $channel->basic_consume($this->queueName, '', false, false, false, false, $callbackConverter);
@@ -161,6 +216,30 @@ class Queue implements QueueInterface
         while (count($channel->callbacks)) {
             $channel->wait();
         }
+    }
+
+    /**
+     * Build an EnvelopeInterface from a raw AMQPMessage.
+     *
+     * Centralises the property mapping used by both subscribe() and
+     * subscribeWithLimit() to avoid duplication.
+     *
+     * @param AMQPMessage $message
+     * @return EnvelopeInterface
+     */
+    private function createEnvelopeFromAmqpMessage(AMQPMessage $message): EnvelopeInterface
+    {
+        // @codingStandardsIgnoreStart
+        $properties = array_merge(
+            $message->get_properties(),
+            [
+                'topic_name'      => $message->delivery_info['routing_key'],
+                'delivery_tag'    => $message->delivery_info['delivery_tag'],
+                'delivery_channel' => $message->getChannel(),
+            ]
+        );
+        // @codingStandardsIgnoreEnd
+        return $this->envelopeFactory->create(['body' => $message->body, 'properties' => $properties]);
     }
 
     /**
@@ -173,7 +252,16 @@ class Queue implements QueueInterface
 
         $channel = $this->amqpConfig->getChannel();
         // @codingStandardsIgnoreStart
-        $channel->basic_reject($properties['delivery_tag'], $requeue);
+        try {
+            $this->validateChannel($properties, $channel, 'reject');
+            $channel->basic_reject($properties['delivery_tag'], $requeue);
+        } catch (Exception $exception) {
+            throw new ConnectionLostException(
+                $exception->getMessage(),
+                $exception->getCode(),
+                $exception
+            );
+        }
         // @codingStandardsIgnoreEnd
         if ($rejectionMessage !== null) {
             $this->logger->critical(
@@ -229,5 +317,28 @@ class Queue implements QueueInterface
     public function getConnectionName(): string
     {
         return $this->amqpConfig->getConnectionName();
+    }
+
+    /**
+     * Validate that the delivery tag's channel matches the current channel.
+     *
+     * @param array $properties
+     * @param AMQPChannel $channel
+     * @param string $operation
+     * @return void
+     * @throws ConnectionLostException
+     */
+    private function validateChannel(array $properties, AMQPChannel $channel, string $operation): void
+    {
+        if (isset($properties['delivery_channel']) && $properties['delivery_channel'] instanceof AMQPChannel
+            && $properties['delivery_channel'] !== $channel
+        ) {
+            throw new ConnectionLostException(
+                sprintf(
+                    'Delivery tag channel does not match current channel; skipping %s.',
+                    $operation
+                )
+            );
+        }
     }
 }

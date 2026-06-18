@@ -1,6 +1,6 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 
 /**
@@ -15,7 +15,6 @@ define([
     'text!ui/template/modal/modal-custom.html',
     'Magento_Ui/js/lib/key-codes',
     'jquery-ui-modules/widget',
-    'jquery-ui-modules/core',
     'mage/translate',
     'jquery/z-index'
 ], function ($, _, template, popupTpl, slideTpl, customTpl, keyCodes) {
@@ -449,6 +448,10 @@ define([
          * Destroy overlay.
          */
         _destroyOverlay: function () {
+            if (this.overlay === null) {
+                return;
+            }
+
             if (this._getVisibleCount()) {
                 this.overlay.off().on('click', this.prevOverlayHandler);
             } else {

@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\ConfigurableProduct\Model;
 
@@ -26,9 +26,14 @@ class OptionRepositoryTest extends \PHPUnit\Framework\TestCase
         $joinedEntity->load($options[0]->getId());
         $joinedExtensionAttributeValue = $joinedEntity->getAttributeCode();
         $result = $options[0]->getExtensionAttributes()->__toArray();
+        $this->assertArrayHasKey(
+            'test_dummy_attribute',
+            $result,
+            'Extension attribute "test_dummy_attribute" was not loaded via join processor'
+        );
         $this->assertEquals(
             $joinedExtensionAttributeValue,
-            $result['test_dummy_attribute'],
+            $result['test_dummy_attribute'] ?? null,
             "Extension attributes were not loaded correctly"
         );
     }
@@ -42,7 +47,6 @@ class OptionRepositoryTest extends \PHPUnit\Framework\TestCase
         $reflection = new \ReflectionObject($this);
         foreach ($reflection->getProperties() as $property) {
             if (!$property->isStatic() && 0 !== strpos($property->getDeclaringClass()->getName(), 'PHPUnit')) {
-                $property->setAccessible(true);
                 $property->setValue($this, null);
             }
         }

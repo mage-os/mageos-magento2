@@ -1,6 +1,6 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2017 Adobe
+ * All Rights Reserved.
  */
 
 /* eslint-disable max-nested-callbacks */
@@ -10,6 +10,28 @@ define([
     'use strict';
 
     describe('Magento_Ui/js/lib/validation/rules', function () {
+        describe('"max_text_length" method', function () {
+            it('passes when value is undefined', function () {
+                expect(rules['max_text_length'].handler(undefined, 10)).toBe(true);
+            });
+
+            it('passes when value is empty string', function () {
+                expect(rules['max_text_length'].handler('', 10)).toBe(true);
+            });
+
+            it('passes when value length equals the limit', function () {
+                expect(rules['max_text_length'].handler('hello', 5)).toBe(true);
+            });
+
+            it('passes when value length is within the limit', function () {
+                expect(rules['max_text_length'].handler('hi', 10)).toBe(true);
+            });
+
+            it('fails when value length exceeds the limit', function () {
+                expect(rules['max_text_length'].handler('hello world', 5)).toBe(false);
+            });
+        });
+
         describe('"range-words" method', function () {
             it('Check on empty value', function () {
                 var value = '',
@@ -117,6 +139,51 @@ define([
                 var value = 'string';
 
                 expect(rules['validate-nonempty-number-greater-than-zero'].handler(value)).toBe(false);
+            });
+        });
+        describe('"validate-number-range" method', function () {
+            it('should return true for empty value', function () {
+                expect(rules['validate-number-range'].handler('', '1-10')).toBe(true);
+            });
+
+            it('should return true for value within range', function () {
+                expect(rules['validate-number-range'].handler('5', '1-10')).toBe(true);
+            });
+
+            it('should return false for value below range', function () {
+                expect(rules['validate-number-range'].handler('0', '1-10')).toBe(false);
+            });
+
+            it('should return false for value above range', function () {
+                expect(rules['validate-number-range'].handler('11', '1-10')).toBe(false);
+            });
+
+            it('should return false for non-numeric value', function () {
+                expect(rules['validate-number-range'].handler('abc', '1-10')).toBe(false);
+            });
+
+            it('should return true for value equal to min', function () {
+                expect(rules['validate-number-range'].handler('1', '1-10')).toBe(true);
+            });
+
+            it('should return true for value equal to max', function () {
+                expect(rules['validate-number-range'].handler('10', '1-10')).toBe(true);
+            });
+
+            it('should return true for value within negative range', function () {
+                expect(rules['validate-number-range'].handler('-5', '-10--1')).toBe(false);
+            });
+
+            it('should return false for value outside negative range', function () {
+                expect(rules['validate-number-range'].handler('0', '-10--1')).toBe(false);
+            });
+
+            it('should return false for invalid range param', function () {
+                expect(rules['validate-number-range'].handler('5', 'invalid')).toBe(true);
+            });
+
+            it('should return false for alphanumeric value', function () {
+                expect(rules['validate-number-range'].handler('abc123', '1-10')).toBe(false);
             });
         });
     });

@@ -1,8 +1,7 @@
 <?php
 /**
- *
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Backup\Controller\Adminhtml\Index;
 
@@ -13,6 +12,8 @@ use Magento\Framework\Filesystem;
 /**
  * Backup rollback controller.
  *
+ * @deprecated
+ * @see This class depended on the PHP ext-ftp extension, which has been removed.
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Rollback extends \Magento\Backup\Controller\Adminhtml\Index implements HttpPostActionInterface

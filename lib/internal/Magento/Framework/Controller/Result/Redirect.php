@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\Framework\Controller\Result;
@@ -82,6 +82,16 @@ class Redirect extends AbstractResult
     {
         $this->url = $url;
         return $this;
+    }
+
+    /**
+     * URL Getter
+     *
+     * @return string
+     */
+    public function getUrl(): string
+    {
+        return (string)$this->url;
     }
 
     /**

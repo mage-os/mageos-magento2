@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2016 Adobe
+ * All Rights Reserved.
  */
 
 /**
@@ -14,6 +14,17 @@
 /** Copy test modules to app/code/Magento to make them visible for Magento instance */
 $pathToCommittedTestModules = $testFrameworkDir . '/../_files/Magento';
 $pathToInstalledMagentoInstanceModules = $testFrameworkDir . '/../../../../app/code/Magento';
+
+// Remove stale test modules left by a previous run (e.g. restored from a warm CI cache)
+$filesystem = new \Symfony\Component\Filesystem\Filesystem();
+$staleIterator = new DirectoryIterator($pathToCommittedTestModules);
+foreach ($staleIterator as $staleModule) {
+    if ($staleModule->isDir() && !$staleModule->isDot()) {
+        $filesystem->remove($pathToInstalledMagentoInstanceModules . '/' . $staleModule->getFilename());
+    }
+}
+unset($staleIterator, $staleModule, $filesystem);
+
 $iterator = new RecursiveIteratorIterator(
     new RecursiveDirectoryIterator($pathToCommittedTestModules, RecursiveDirectoryIterator::FOLLOW_SYMLINKS)
 );

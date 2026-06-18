@@ -1,6 +1,6 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 
 /**
@@ -47,7 +47,7 @@ define([
                 get tabsFront() {
                     return this.attrTabsFront.length ? this.attrTabsFront.closest('li') : $('#front_fieldset-wrapper');
                 },
-                selectFields: ['boolean', 'select', 'multiselect', 'price', 'swatch_text', 'swatch_visual'],
+                selectFields: optionConfig.selectFields || ['boolean', 'select', 'multiselect', 'price', 'swatch_text', 'swatch_visual'],
 
                 /**
                  * @this {swatchProductAttributes}

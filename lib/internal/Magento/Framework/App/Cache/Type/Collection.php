@@ -1,13 +1,14 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Framework\App\Cache\Type;
 
 /**
  * System / Cache Management / Cache type "Collections Data"
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class Collection extends \Magento\Framework\Cache\Frontend\Decorator\TagScope
 {
     /**

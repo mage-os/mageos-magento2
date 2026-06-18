@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Config\Model\ResourceModel\Config;
 
@@ -12,6 +12,7 @@ namespace Magento\Config\Model\ResourceModel\Config;
  * @api
  * @since 100.0.2
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class Data extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
     /**

@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2013 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\Checkout\Block;
 
@@ -39,6 +39,7 @@ class Cart extends \Magento\Checkout\Block\Cart\AbstractCart
      * @param \Magento\Checkout\Helper\Cart $cartHelper
      * @param \Magento\Framework\App\Http\Context $httpContext
      * @param array $data
+     * @param \Magento\Framework\App\CacheInterface|null $cache
      * @codeCoverageIgnore
      */
     public function __construct(
@@ -48,11 +49,12 @@ class Cart extends \Magento\Checkout\Block\Cart\AbstractCart
         \Magento\Catalog\Model\ResourceModel\Url $catalogUrlBuilder,
         \Magento\Checkout\Helper\Cart $cartHelper,
         \Magento\Framework\App\Http\Context $httpContext,
-        array $data = []
+        array $data = [],
+        ?\Magento\Framework\App\CacheInterface $cache = null
     ) {
         $this->_cartHelper = $cartHelper;
         $this->_catalogUrlBuilder = $catalogUrlBuilder;
-        parent::__construct($context, $customerSession, $checkoutSession, $data);
+        parent::__construct($context, $customerSession, $checkoutSession, $data, $cache);
         $this->_isScopePrivate = true;
         $this->httpContext = $httpContext;
     }

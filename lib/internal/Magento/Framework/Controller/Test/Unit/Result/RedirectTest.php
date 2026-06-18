@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -13,6 +13,7 @@ use Magento\Framework\Controller\Result\Redirect;
 use Magento\Framework\UrlInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class RedirectTest extends TestCase
 {
@@ -33,10 +34,10 @@ class RedirectTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->redirectInterface = $this->getMockForAbstractClass(RedirectInterface::class);
-        $this->urlBuilder = $this->getMockForAbstractClass(UrlInterface::class);
-        $this->urlInterface = $this->getMockForAbstractClass(UrlInterface::class);
-        $this->response = $this->getMockForAbstractClass(HttpResponseInterface::class);
+        $this->redirectInterface = $this->createMock(RedirectInterface::class);
+        $this->urlBuilder = $this->createMock(UrlInterface::class);
+        $this->urlInterface = $this->createMock(UrlInterface::class);
+        $this->response = $this->createMock(HttpResponseInterface::class);
         $this->redirect = new Redirect($this->redirectInterface, $this->urlInterface);
     }
 
@@ -62,6 +63,31 @@ class RedirectTest extends TestCase
     {
         $url = 'http://test.com';
         $this->assertInstanceOf(Redirect::class, $this->redirect->setUrl($url));
+    }
+
+    public function testGetUrlReturnsUrlSetViaSetUrl(): void
+    {
+        $url = 'https://example.com/catalog/product/view/id/1';
+        $this->redirect->setUrl($url);
+        $this->assertSame($url, $this->redirect->getUrl());
+    }
+
+    public function testGetUrlReturnsUrlSetViaSetPath(): void
+    {
+        $path   = 'catalog/product/view';
+        $params = ['id' => 1];
+        $expectedUrl = 'https://example.com/catalog/product/view/id/1';
+
+        $this->redirectInterface->method('updatePathParams')->with($params)->willReturn($params);
+        $this->urlInterface->method('getUrl')->with($path, $params)->willReturn($expectedUrl);
+
+        $this->redirect->setPath($path, $params);
+        $this->assertSame($expectedUrl, $this->redirect->getUrl());
+    }
+
+    public function testGetUrlReturnsEmptyStringWhenNotSet(): void
+    {
+        $this->assertSame('', $this->redirect->getUrl());
     }
 
     public function testSetPath()
@@ -91,9 +117,8 @@ class RedirectTest extends TestCase
 
     /**
      * @param int $expectedStatusCode
-     * @param int|null $actualStatusCode
-     * @dataProvider httpRedirectResponseStatusCodes
-     */
+     * @param int|null $actualStatusCode     */
+    #[DataProvider('httpRedirectResponseStatusCodes')]
     public function testRender($expectedStatusCode, $actualStatusCode)
     {
         $url = 'http://test.com';

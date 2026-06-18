@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 namespace Magento\PageCache\Model\App\FrontController;
 
@@ -16,6 +16,7 @@ use Magento\Framework\Controller\ResultInterface;
 /**
  * Varnish for processing builtin cache
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class VarnishPlugin
 {
     /**

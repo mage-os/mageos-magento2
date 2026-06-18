@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -12,6 +12,7 @@ use Magento\Framework\App\ProductMetadata;
 use Magento\Framework\Composer\ComposerInformation;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class ProductMetadataTest extends TestCase
@@ -43,15 +44,12 @@ class ProductMetadataTest extends TestCase
         $objectManager = new ObjectManager($this);
         $this->productMetadata = $objectManager->getObject(ProductMetadata::class, ['cache' => $this->cacheMock]);
         $reflectionProperty = new \ReflectionProperty($this->productMetadata, 'composerInformation');
-        $reflectionProperty->setAccessible(true);
         $reflectionProperty->setValue($this->productMetadata, $this->composerInformationMock);
     }
 
-    /**
-     * @param array $packageList
-     * @param string $expectedVersion
-     * @dataProvider testGetVersionGitInstallationDataProvider
+    /**     * @param string $expectedVersion
      */
+    #[DataProvider('getVersionGitInstallationDataProvider')]
     public function testGetVersion($packageList, $expectedVersion)
     {
         $this->composerInformationMock->expects($this->any())->method('getSystemPackages')->willReturn($packageList);
@@ -74,23 +72,30 @@ class ProductMetadataTest extends TestCase
     /**
      * @return array
      */
-    public static function testGetVersionGitInstallationDataProvider()
+    public static function getVersionGitInstallationDataProvider()
     {
         return [
-            [
+            'community edition package' => [
                 [
-                    0 => [
-                        'name'    => 'magento/product-community-edition',
-                        'version' => '123.456.789'
-                    ],
-                    1 => [
-                        'name'    => 'magento/product-other-edition',
-                        'version' => '987.654.321'
+                    'mage-os/product-community-edition' => [
+                        'name'    => 'mage-os/product-community-edition',
+                        'version' => '1.0.0',
+                        'magento_version' => '123.456.789'
                     ],
                 ],
                 '123.456.789'
             ],
-            [
+            'minimal product package' => [
+                [
+                    'mage-os/product-minimal' => [
+                        'name'    => 'mage-os/product-minimal',
+                        'version' => '2.0.0',
+                        'magento_version' => '234.567.890'
+                    ],
+                ],
+                '234.567.890'
+            ],
+            'empty packages' => [
                 [],
                 'UNKNOWN'
             ]

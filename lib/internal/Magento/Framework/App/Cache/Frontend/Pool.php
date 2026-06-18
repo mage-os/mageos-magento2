@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 
 namespace Magento\Framework\App\Cache\Frontend;
@@ -12,6 +12,7 @@ use Magento\Framework\App\DeploymentConfig;
 /**
  * In-memory readonly pool of all cache front-end instances known to the system
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class Pool implements \Iterator
 {
     /**
@@ -66,6 +67,8 @@ class Pool implements \Iterator
         if ($this->_instances === null) {
             $this->_instances = [];
             foreach ($this->_getCacheSettings() as $frontendId => $frontendOptions) {
+                // Pass frontend ID to factory for cache type detection (e.g., FPC vs application cache)
+                $frontendOptions['frontend_id'] = $frontendId;
                 $this->_instances[$frontendId] = $this->_factory->create($frontendOptions);
             }
         }

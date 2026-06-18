@@ -39,11 +39,11 @@ class Edit extends \Magento\Backend\Block\Widget\Form\Container
     protected $_reviewFactory;
 
     /**
-     *  Escaper for secure output rendering
+     * Escaper for secure output rendering
      *
      * @var Escaper
      */
-    protected $escaper;
+    private $escaper;
 
     /**
      * @param Context $context

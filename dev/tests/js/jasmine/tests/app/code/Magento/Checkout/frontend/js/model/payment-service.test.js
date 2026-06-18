@@ -1,6 +1,6 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2022 Adobe
+ * All Rights Reserved.
  */
 
 define([
@@ -28,6 +28,30 @@ define([
                     'method': 'credit_card_vault_1'
                 })
             }
+        },
+        mocksPaymentMethodSingle = {
+            'Magento_Checkout/js/model/quote': {
+                totals: ko.observable({'grand_total': 10}),
+                paymentMethod: ko.observable(null)
+            },
+            'Magento_Checkout/js/checkout-data': {
+                setSelectedPaymentMethod: jasmine.createSpy('setSelectedPaymentMethod'),
+                getSelectedPaymentMethod: jasmine.createSpy('getSelectedPaymentMethod')
+            },
+            'Magento_Checkout/js/model/payment/method-list': ko.observableArray([]),
+            'Magento_Checkout/js/action/select-payment-method': jasmine.createSpy('selectPaymentMethod')
+        },
+        mocksPaymentMethodFree = {
+            'Magento_Checkout/js/model/quote': {
+                totals: ko.observable({'grand_total': 0}),
+                paymentMethod: ko.observable(null)
+            },
+            'Magento_Checkout/js/checkout-data': {
+                setSelectedPaymentMethod: jasmine.createSpy('setSelectedPaymentMethod'),
+                getSelectedPaymentMethod: jasmine.createSpy('getSelectedPaymentMethod')
+            },
+            'Magento_Checkout/js/model/payment/method-list': ko.observableArray([]),
+            'Magento_Checkout/js/action/select-payment-method': jasmine.createSpy('selectPaymentMethod')
         };
 
     beforeEach(function (done) {
@@ -49,7 +73,8 @@ define([
         try {
             injector.remove();
             injector.clean();
-        } catch (e) {}
+        } catch (e) { // eslint-disable-line no-unused-vars
+        }
     });
 
     describe('Magento_Checkout/js/model/payment-service', function () {
@@ -67,7 +92,54 @@ define([
         });
     });
 
-    describe('Magento_Checkout/js/model/payment-service', function () {
+    describe('Magento_Checkout/js/model/payment-service single method persistence', function () {
+        beforeEach(function (done) {
+            injector = new Squire();
+            mocksPaymentMethodSingle['Magento_Checkout/js/checkout-data'].setSelectedPaymentMethod =
+                jasmine.createSpy('setSelectedPaymentMethod');
+            injector.mock(mocksPaymentMethodSingle);
+            // eslint-disable-next-line max-nested-callbacks
+            injector.require(['Magento_Checkout/js/model/payment-service'], function (instance) {
+                paymentService = instance;
+                done();
+            });
+        });
+
+        it('persists the selected payment method to checkout data when only one method is available', function () {
+            var singleMethod = [{title: 'Check / Money Order', method: 'checkmo'}];
+
+            paymentService.setPaymentMethods(singleMethod);
+            expect(mocksPaymentMethodSingle['Magento_Checkout/js/checkout-data'].setSelectedPaymentMethod)
+                .toHaveBeenCalledWith('checkmo');
+        });
+    });
+
+    describe('Magento_Checkout/js/model/payment-service free method persistence', function () {
+        beforeEach(function (done) {
+            injector = new Squire();
+            mocksPaymentMethodFree['Magento_Checkout/js/checkout-data'].setSelectedPaymentMethod =
+                jasmine.createSpy('setSelectedPaymentMethod');
+            injector.mock(mocksPaymentMethodFree);
+            // eslint-disable-next-line max-nested-callbacks
+            injector.require(['Magento_Checkout/js/model/payment-service'], function (instance) {
+                paymentService = instance;
+                done();
+            });
+        });
+
+        it('persists the free payment method to checkout data when grand total is zero', function () {
+            var methods = [
+                {title: 'Check / Money Order', method: 'checkmo'},
+                {title: 'Free', method: 'free'}
+            ];
+
+            paymentService.setPaymentMethods(methods);
+            expect(mocksPaymentMethodFree['Magento_Checkout/js/checkout-data'].setSelectedPaymentMethod)
+                .toHaveBeenCalledWith('free');
+        });
+    });
+
+    describe('Magento_Checkout/js/model/payment-service vault methods', function () {
         beforeEach(function (done) {
             injector.mock(mocksPaymentMethodVault);
             // eslint-disable-next-line max-nested-callbacks
