@@ -97,7 +97,9 @@ class RequestLoggerFactoryTest extends TestCase
     public function testCreateShouldThrowRuntimeExceptionWhenInvalidTypeIsProvided(): void
     {
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Invalid request logger type: invalid_type');
+        $this->expectExceptionMessage(
+            (string) __('Invalid request logger type: %1', 'invalid_type')
+        );
 
         $this->objectManagerMock->expects($this->never())
             ->method('create');
