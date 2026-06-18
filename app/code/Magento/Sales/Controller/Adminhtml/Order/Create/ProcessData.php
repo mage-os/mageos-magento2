@@ -5,7 +5,9 @@
  */
 namespace Magento\Sales\Controller\Adminhtml\Order\Create;
 
-class ProcessData extends \Magento\Sales\Controller\Adminhtml\Order\Create
+use Magento\Framework\App\Action\HttpPostActionInterface;
+
+class ProcessData extends \Magento\Sales\Controller\Adminhtml\Order\Create implements HttpPostActionInterface
 {
     /**
      * Process data and display index page
