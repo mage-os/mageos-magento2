@@ -51,9 +51,7 @@
         </actionGroup>
 
         <!--Login to Paypal in-context-->
-        <actionGroup ref="StorefrontLoginToPayPalPaymentAccountOneStepActionGroup" after="guestPlaceOrder" stepKey="LoginToPayPal">
-            <argument name="payerName" value="{{Payer.firstName}}"/>
-        </actionGroup>
+        <actionGroup ref="StorefrontLoginToPayPalPaymentAccountTwoStepActionGroup" after="guestPlaceOrder" stepKey="LoginToPayPal"/>
 
         <!--Submit payment on PayPal site-->
         <actionGroup ref="StorefrontPaypalSwitchBackToMagentoFromCheckoutPageActionGroup" after="LoginToPayPal" stepKey="submitPayment"/>
