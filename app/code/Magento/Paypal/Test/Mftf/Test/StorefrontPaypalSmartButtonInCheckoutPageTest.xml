@@ -19,11 +19,6 @@
             <group value="paypalExpress"/>
         </annotations>
         <before>
-            <!-- Extend admin REST token lifetime so deleteData in <after> does not receive a
-                 401 when the PayPal checkout makes the test run longer than the default TTL.
-                 Reader.php computes expires = created_at + CURRENT config at validation time,
-                 so raising the value here covers the entire test run. -->
-            <magentoCLI command="config:set oauth/access_token_lifetime/admin 8" stepKey="extendAdminTokenLifetime"/>
             <!-- Login -->
             <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
             <!-- Create Product -->
@@ -52,8 +47,6 @@
             <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="logoutCustomer" />
             <deleteData stepKey="deleteCustomer" createDataKey="createCustomer"/>
 
-            <!-- Restore admin token lifetime to default -->
-            <magentoCLI command="config:set oauth/access_token_lifetime/admin 4" stepKey="restoreAdminTokenLifetime"/>
             <!-- Logout -->
             <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
         </after>

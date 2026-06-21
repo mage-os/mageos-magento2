@@ -9,12 +9,8 @@
               xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
     <actionGroup name="StorefrontLoginToPayPalPaymentAccountOneStepActionGroup" extends="StorefrontLoginToPayPalPaymentAccountTwoStepActionGroup">
         <annotations>
-            <description>EXTENDS: StorefrontLoginToPayPalPaymentAccountTwoStepActionGroup. Handles both one-step (password visible immediately after email) and two-step (Next button present) PayPal login flows by clicking Next only when it is visible.</description>
+            <description>EXTENDS: StorefrontLoginToPayPalPaymentAccountOneStepActionGroup. Remove extra Continue step on PayPal site</description>
         </annotations>
-        <!-- Replace the hard clickNext with a conditional one so this action group works for
-             both the legacy one-step flow (password in DOM immediately, no Next button) and
-             the two-step sandbox flow (Next button visible after filling the email). -->
         <remove keyForRemoval="clickNext"/>
-        <conditionalClick selector="{{PayPalPaymentSection.nextButton}}" dependentSelector="{{PayPalPaymentSection.nextButton}}" visible="true" after="fillEmail" stepKey="clickNextIfVisible"/>
     </actionGroup>
 </actionGroups>
