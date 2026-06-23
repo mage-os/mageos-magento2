@@ -58,6 +58,7 @@ export default defineConfig({
   testDir: '.',
   /* Run tests in files in parallel */
   fullyParallel: true,
+  maxFailures: process.env.CI ? 2 : 0,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
@@ -67,7 +68,9 @@ export default defineConfig({
   /* Increase default timeout */
   timeout: 150_000,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'html',
+  reporter: process.env.CI
+    ? [['github'], ['list', { printSteps: true }], ['html', { open: 'never' }]]
+    : [['list', { printSteps: true }], ['html', { open: 'never' }]],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     baseURL: process.env.PLAYWRIGHT_BASE_URL || 'https://hyva-demo.elgentos.io/',
