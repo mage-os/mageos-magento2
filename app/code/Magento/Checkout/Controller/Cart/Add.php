@@ -11,7 +11,6 @@ use Magento\Checkout\Model\Cart as CustomerCart;
 use Magento\Checkout\Model\Cart\AjaxMessageResponse;
 use Magento\Checkout\Model\Cart\RequestQuantityProcessor;
 use Magento\Framework\App\Action\HttpPostActionInterface as HttpPostActionInterface;
-use Magento\Framework\App\ObjectManager;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\ResultInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
@@ -54,6 +53,7 @@ class Add extends \Magento\Checkout\Controller\Cart implements HttpPostActionInt
      * @param ProductRepositoryInterface $productRepository
      * @param RequestQuantityProcessor|null $quantityProcessor
      * @param AddProductToCart|null $addProductToCart
+     * @param AjaxMessageResponse|null $ajaxMessageResponse
      * @codeCoverageIgnore
      */
     public function __construct(
@@ -65,7 +65,8 @@ class Add extends \Magento\Checkout\Controller\Cart implements HttpPostActionInt
         CustomerCart $cart,
         ProductRepositoryInterface $productRepository,
         ?RequestQuantityProcessor $quantityProcessor = null,
-        ?AddProductToCart $addProductToCart = null
+        ?AddProductToCart $addProductToCart = null,
+        ?AjaxMessageResponse $ajaxMessageResponse = null
     ) {
         parent::__construct(
             $context,
@@ -77,9 +78,10 @@ class Add extends \Magento\Checkout\Controller\Cart implements HttpPostActionInt
         );
         $this->productRepository = $productRepository;
         $this->quantityProcessor = $quantityProcessor
-            ?? ObjectManager::getInstance()->get(RequestQuantityProcessor::class);
+            ?? $this->_objectManager->get(RequestQuantityProcessor::class);
         $this->addProductToCart = $addProductToCart
-            ?? ObjectManager::getInstance()->get(AddProductToCart::class);
+            ?? $this->_objectManager->get(AddProductToCart::class);
+        $this->ajaxMessageResponse = $ajaxMessageResponse;
     }
 
     /**
@@ -90,7 +92,7 @@ class Add extends \Magento\Checkout\Controller\Cart implements HttpPostActionInt
     private function getAjaxMessageResponse(): AjaxMessageResponse
     {
         if ($this->ajaxMessageResponse === null) {
-            $this->ajaxMessageResponse = ObjectManager::getInstance()->get(AjaxMessageResponse::class);
+            $this->ajaxMessageResponse = $this->_objectManager->get(AjaxMessageResponse::class);
         }
 
         return $this->ajaxMessageResponse;
