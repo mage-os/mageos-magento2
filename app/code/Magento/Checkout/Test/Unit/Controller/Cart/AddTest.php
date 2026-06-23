@@ -139,7 +139,6 @@ class AddTest extends TestCase
                 '_objectManager' => $this->objectManagerMock,
                 'quantityProcessor' => $this->quantityProcessor,
                 'addProductToCart' => $this->addProductToCart,
-                'ajaxMessageResponse' => $this->ajaxMessageResponse,
                 'cart' => $this->cart,
                 '_response' => $this->response
             ]
@@ -202,6 +201,7 @@ class AddTest extends TestCase
             ->willReturnMap([
                 [StoreManagerInterface::class, $storeManager],
                 [ResolverInterface::class, $localeResolver],
+                [AjaxMessageResponse::class, $this->ajaxMessageResponse],
                 [JsonSerializer::class, $this->createMock(JsonSerializer::class)],
             ]);
         $this->addProductToCart->expects($this->once())

@@ -53,7 +53,6 @@ class Add extends \Magento\Checkout\Controller\Cart implements HttpPostActionInt
      * @param ProductRepositoryInterface $productRepository
      * @param RequestQuantityProcessor|null $quantityProcessor
      * @param AddProductToCart|null $addProductToCart
-     * @param AjaxMessageResponse|null $ajaxMessageResponse
      * @codeCoverageIgnore
      */
     public function __construct(
@@ -65,8 +64,7 @@ class Add extends \Magento\Checkout\Controller\Cart implements HttpPostActionInt
         CustomerCart $cart,
         ProductRepositoryInterface $productRepository,
         ?RequestQuantityProcessor $quantityProcessor = null,
-        ?AddProductToCart $addProductToCart = null,
-        ?AjaxMessageResponse $ajaxMessageResponse = null
+        ?AddProductToCart $addProductToCart = null
     ) {
         parent::__construct(
             $context,
@@ -81,7 +79,6 @@ class Add extends \Magento\Checkout\Controller\Cart implements HttpPostActionInt
             ?? $this->_objectManager->get(RequestQuantityProcessor::class);
         $this->addProductToCart = $addProductToCart
             ?? $this->_objectManager->get(AddProductToCart::class);
-        $this->ajaxMessageResponse = $ajaxMessageResponse;
     }
 
     /**
