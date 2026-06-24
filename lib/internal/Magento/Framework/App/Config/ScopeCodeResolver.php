@@ -40,11 +40,8 @@ class ScopeCodeResolver
      */
     public function resolve($scopeType, $scopeCode)
     {
-        // use empty string in case $scopeCode is null, needed to avoid deprecated warnings on PHP >=8.5
-        $scopeCodeKey = $scopeCode ?? '';
-
-        if (isset($this->resolvedScopeCodes[$scopeType][$scopeCodeKey])) {
-            return $this->resolvedScopeCodes[$scopeType][$scopeCodeKey];
+        if ($scopeCode !== null && isset($this->resolvedScopeCodes[$scopeType][$scopeCode])) {
+            return $this->resolvedScopeCodes[$scopeType][$scopeCode];
         }
 
         if ($scopeType !== ScopeConfigInterface::SCOPE_TYPE_DEFAULT) {
@@ -58,7 +55,11 @@ class ScopeCodeResolver
             $resolverScopeCode = $resolverScopeCode->getCode();
         }
 
-        $this->resolvedScopeCodes[$scopeType][$scopeCodeKey] = $resolverScopeCode;
+        if ($scopeCode === null) {
+            return $resolverScopeCode;
+        }
+
+        $this->resolvedScopeCodes[$scopeType][$scopeCode] = $resolverScopeCode;
 
         return $resolverScopeCode;
     }
