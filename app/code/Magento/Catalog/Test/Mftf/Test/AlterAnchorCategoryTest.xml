@@ -150,6 +150,7 @@
             <argument name="parentCategoryName" value="Default Category"/>
             <argument name="childCategoryName" value="$createTestCategory.name$"/>
         </actionGroup>
+        <actionGroup ref="AdminResetFilterInCategoryGridActionGroup" stepKey="resetCategoryGridFiltersAfterLastAdminAction"/>
         <actionGroup ref="StorefrontGoToCategoryPageActionGroup" stepKey="openCategoryPage3rdTime">
             <argument name="categoryName" value="$$createTestCategory.name$$"/>
         </actionGroup>

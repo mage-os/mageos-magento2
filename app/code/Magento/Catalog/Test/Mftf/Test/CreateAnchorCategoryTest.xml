@@ -211,6 +211,7 @@
         <actionGroup ref="AdminExpandCategoryTreeActionGroup" stepKey="expandAllFiveCategoryTree"/>
         <wait time="15" stepKey="waitForExpandAllFiveCategoryTree" />
         <seeElement  selector="{{AdminCategoryBasicFieldSection.categoryTreeForFive($createCategoryA.name$,'5',$createCategoryB.name$,'1',$createCategoryC.name$,'1',$createCategoryD.name$,'2',$createCategoryE.name$,'1')}}" stepKey="verifyFiveLayerCategoryTreeWithProductQty"/>
+        <actionGroup ref="AdminResetFilterInCategoryGridActionGroup" stepKey="resetCategoryGridFiltersAfterLastAdminAction"/>
 
         <!--storefront validation for product qty and visibility in category A and category D-->
         <actionGroup ref="StorefrontGoToCategoryPageActionGroup" stepKey="openCategoryAPageFifthTime">
