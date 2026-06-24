@@ -23,6 +23,7 @@
             <createData entity="SimpleProduct2" stepKey="createProduct"/>
         </before>
         <after>
+            <!-- Logout from storefront, delete product and customer -->
             <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="customerLogout"/>
             <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
             <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
