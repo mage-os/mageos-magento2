@@ -172,7 +172,6 @@
     <entity name="SalesDisplayPriceIncludingTax">
         <data key="path">tax/sales_display/price</data>
         <data key="value">2</data>
-    </entity>
     <entity name="TaxCalculationUnitBaseAlgorithm">
         <data key="path">tax/calculation/algorithm</data>
         <data key="value">UNIT_BASE_CALCULATION</data>
