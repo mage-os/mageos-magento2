@@ -217,6 +217,7 @@ define([
                 _.each(dataProvider.getFromStorage(storage.keys()), function (sectionData, sectionName) {
                     buffer.notify(sectionName, sectionData);
                 });
+                this.preReloadSectionDataIds = this._getStoredDataIds(expiredSectionNames);
                 this.reload(expiredSectionNames, false);
             } else {
                 _.each(dataProvider.getFromStorage(storage.keys()), function (sectionData, sectionName) {
@@ -224,6 +225,7 @@ define([
                 });
 
                 if (!_.isEmpty(storageInvalidation.keys())) {
+                    this.preReloadSectionDataIds = this._getStoredDataIds(storageInvalidation.keys());
                     this.reload(storageInvalidation.keys(), false);
                 }
             }
@@ -232,6 +234,26 @@ define([
                 this.reload(sectionConfig.getSectionNames(), true);
                 $.cookieStorage.set('section_data_clean', '');
             }
+        },
+
+        /**
+         * Captures data_id for each section from storage before a server reload.
+         * Used downstream (e.g. messages component) to distinguish carry-over
+         * localStorage data from freshly-delivered XHR data.
+         *
+         * @param {Array} sectionNames
+         * @return {Object}
+         */
+        _getStoredDataIds: function (sectionNames) {
+            var ids = {},
+                data;
+
+            _.each(sectionNames, function (sectionName) {
+                data = storage.get(sectionName);
+                ids[sectionName] = data ? data['data_id'] : null;
+            });
+
+            return ids;
         },
 
         /**
