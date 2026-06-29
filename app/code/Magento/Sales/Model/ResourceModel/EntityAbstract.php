@@ -95,38 +95,6 @@ abstract class EntityAbstract extends AbstractDb implements ResetAfterRequestInt
     }
 
     /**
-     * Atomically claim an entity for async email sending.
-     *
-     * Sets email_sent to the in-progress only when the row is still pending or has a stale claim.
-     *
-     * @param int $entityId
-     * @param int $staleClaimMinutes
-     * @return bool
-     */
-    public function tryClaimForAsyncEmailSend(int $entityId, int $staleClaimMinutes = 10): bool
-    {
-        $connection = $this->getConnection();
-        $staleThreshold = date('Y-m-d H:i:s', strtotime(sprintf('-%d minutes', $staleClaimMinutes)));
-        $pendingCondition = implode(
-            ' OR ',
-            [
-                'email_sent IS NULL',
-                'email_sent = 0',
-                $connection->quoteInto('email_sent <= ?', -1),
-                '(' . $connection->quoteInto('email_sent = ?', 2)
-                    . ' AND ' . $connection->quoteInto('updated_at < ?', $staleThreshold) . ')',
-            ]
-        );
-        $where = $connection->quoteInto($this->getIdFieldName() . ' = ?', $entityId)
-            . ' AND send_email = 1 AND (' . $pendingCondition . ')';
-        $data = ['email_sent' => 2];
-        if ($connection->tableColumnExists($this->getMainTable(), 'updated_at')) {
-            $data['updated_at'] = gmdate('Y-m-d H:i:s');
-        }
-        return $connection->update($this->getMainTable(), $data, $where) === 1;
-    }
-
-    /**
      * Prepares data for saving and removes update time (if exists).
      *
      * This prevents saving same update time on each entity update.

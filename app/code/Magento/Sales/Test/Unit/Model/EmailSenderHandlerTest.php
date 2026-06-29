@@ -11,8 +11,8 @@ use Magento\Config\Model\Config\Backend\Encrypted;
 use Magento\Framework\App\Config;
 use Magento\Framework\App\Config\Value;
 use Magento\Framework\App\Config\ValueFactory;
+use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Select;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Sales\Model\AbstractModel;
 use Magento\Sales\Model\EmailSenderHandler;
 use Magento\Sales\Model\Order\Email\Container\IdentityInterface;
@@ -101,8 +101,6 @@ class EmailSenderHandlerTest extends TestCase
      */
     protected function setUp(): void
     {
-        $objectManager = new ObjectManager($this);
-
         $this->emailSender = $this->createPartialMockWithReflection(Sender::class, ['send']);
 
         $this->entityResource = $this->createMock(EntityAbstract::class);
@@ -238,11 +236,16 @@ class EmailSenderHandlerTest extends TestCase
 
                  $collectionItem->method('getEmailSent')->willReturn(null);
                  $collectionItem->method('getId')->willReturn(1);
-                 $this->entityResource
-                    ->expects($this->once())
-                    ->method('tryClaimForAsyncEmailSend')
-                    ->with(1, 10)
-                    ->willReturn(true);
+
+                 $connectionMock = $this->createMock(AdapterInterface::class);
+                 $connectionMock->method('quoteInto')->willReturnCallback(
+                     static fn (string $sql, mixed $value): string => $sql
+                 );
+                 $connectionMock->method('tableColumnExists')->willReturn(true);
+                 $connectionMock->method('update')->willReturn(1);
+                 $this->entityResource->method('getConnection')->willReturn($connectionMock);
+                 $this->entityResource->method('getMainTable')->willReturn('sales_order');
+                 $this->entityResource->method('getIdFieldName')->willReturn('entity_id');
                  $this->entityResource
                     ->expects($this->once())
                     ->method('load')

@@ -170,10 +170,7 @@ class EmailSenderHandler
 
                 /** @var \Magento\Sales\Model\AbstractModel $item */
                 foreach ($entityCollection->getItems() as $item) {
-                    if (!$this->entityResource->tryClaimForAsyncEmailSend(
-                        (int)$item->getId(),
-                        $staleClaimMinutes
-                    )) {
+                    if (!$this->tryClaimForAsyncEmailSend((int)$item->getId(), $staleClaimMinutes)) {
                         continue;
                     }
                     $this->entityResource->load($item, $item->getId());
@@ -260,6 +257,39 @@ class EmailSenderHandler
         }
 
         return (int)$emailSent;
+    }
+
+    /**
+     * Atomically claim an entity for async email sending.
+     *
+     * Sets email_sent to the in-progress status only when the row is still pending or has a stale claim.
+     *
+     * @param int $entityId
+     * @param int $staleClaimMinutes
+     * @return bool
+     */
+    private function tryClaimForAsyncEmailSend(int $entityId, int $staleClaimMinutes): bool
+    {
+        $connection = $this->entityResource->getConnection();
+        $mainTable = $this->entityResource->getMainTable();
+        $staleThreshold = date('Y-m-d H:i:s', strtotime(sprintf('-%d minutes', $staleClaimMinutes)));
+        $pendingCondition = implode(
+            ' OR ',
+            [
+                'email_sent IS NULL',
+                'email_sent = 0',
+                $connection->quoteInto('email_sent <= ?', -1),
+                '(' . $connection->quoteInto('email_sent = ?', self::EMAIL_SENT_PROCESSING)
+                    . ' AND ' . $connection->quoteInto('updated_at < ?', $staleThreshold) . ')',
+            ]
+        );
+        $where = $connection->quoteInto($this->entityResource->getIdFieldName() . ' = ?', $entityId)
+            . ' AND send_email = 1 AND (' . $pendingCondition . ')';
+        $data = ['email_sent' => self::EMAIL_SENT_PROCESSING];
+        if ($connection->tableColumnExists($mainTable, 'updated_at')) {
+            $data['updated_at'] = gmdate('Y-m-d H:i:s');
+        }
+        return $connection->update($mainTable, $data, $where) === 1;
     }
 
     /**
