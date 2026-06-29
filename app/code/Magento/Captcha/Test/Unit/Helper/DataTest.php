@@ -103,6 +103,33 @@ class DataTest extends TestCase
     }
 
     /**
+     * @covers \Magento\Captcha\Helper\Data::getCaptcha
+     */
+    public function testGetCaptchaWithNullFormId()
+    {
+        $this->configMock->expects($this->once())
+            ->method('getValue')
+            ->with('customer/captcha/type')
+            ->willReturn('zend');
+
+        $this->factoryMock->expects($this->once())
+            ->method('create')
+            ->with('Zend')
+            ->willReturn(
+                new DefaultModel(
+                    $this->createMock(SessionManager::class),
+                    $this->createMock(Data::class),
+                    $this->createPartialMock(LogFactory::class, ['create']),
+                    '',                       // null formId coalesced to ''
+                    $this->createMock(Random::class),
+                    $this->createMock(UserContextInterface::class)
+                )
+            );
+
+        $this->assertInstanceOf(DefaultModel::class, $this->helper->getCaptcha(null));
+    }
+
+    /**
      * @covers \Magento\Captcha\Helper\Data::getConfig
      */
     public function testGetConfigNode()
