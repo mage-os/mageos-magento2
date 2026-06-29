@@ -21,6 +21,8 @@ use Magento\Framework\Lock\LockManagerInterface;
  *
  * Performs handling of cron jobs related to sending emails to customers
  * after creation/modification of Order, Invoice, Shipment or Creditmemo.
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class EmailSenderHandler
 {
