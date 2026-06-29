@@ -60,20 +60,6 @@ define([
             return escaper.escapeHtml(message, this.allowedTags);
         },
         purgeMessages: function () {
-            var current = this.messages(),
-                preReloadDataId;
-
-            if (_.isEmpty(current.messages)) {
-                return;
-            }
-
-            preReloadDataId = customerData.preReloadSectionDataIds &&
-                customerData.preReloadSectionDataIds['messages'];
-
-            if (preReloadDataId !== undefined && current['data_id'] !== preReloadDataId) {
-                return;
-            }
-
             customerData.set('messages', {});
         }
     });
