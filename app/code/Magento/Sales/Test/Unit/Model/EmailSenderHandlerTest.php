@@ -239,7 +239,7 @@ class EmailSenderHandlerTest extends TestCase
 
                  $connectionMock = $this->createMock(AdapterInterface::class);
                  $connectionMock->method('quoteInto')->willReturnCallback(
-                     static fn (string $sql, mixed $value): string => $sql
+                     static fn (string $sql): string => $sql
                  );
                  $connectionMock->method('tableColumnExists')->willReturn(true);
                  $connectionMock->method('update')->willReturn(1);
