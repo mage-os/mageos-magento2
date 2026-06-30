@@ -87,7 +87,8 @@ class DataTest extends TestCase
         )->method(
             'create'
         )->with(
-            'Zend'
+            'Zend',
+            'user_create'
         )->willReturn(
             new DefaultModel(
                 $this->createMock(SessionManager::class),
@@ -114,7 +115,7 @@ class DataTest extends TestCase
 
         $this->factoryMock->expects($this->once())
             ->method('create')
-            ->with('Zend')
+            ->with('Zend', $this->identicalTo(''))
             ->willReturn(
                 new DefaultModel(
                     $this->createMock(SessionManager::class),
