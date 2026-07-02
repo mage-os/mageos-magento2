@@ -18,7 +18,6 @@ use Magento\TestFramework\Fixture\Config;
 use Magento\TestFramework\Fixture\DataFixtureBeforeTransaction;
 use Magento\TestFramework\Fixture\DbIsolation;
 use Magento\TestFramework\Helper\Bootstrap;
-use Magento\TestFramework\ObjectManager;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -29,17 +28,10 @@ use PHPUnit\Framework\TestCase;
  */
 class CurrencyTest extends TestCase
 {
-    private const SECOND_STORE_CODE = 'fixture_second_store';
-
-    private ObjectManager $objectManager;
-
     /**
-     * @inheritdoc
+     * Store view code for the secondary website fixture.
      */
-    protected function setUp(): void
-    {
-        $this->objectManager = Bootstrap::getObjectManager();
-    }
+    private const SECOND_STORE_CODE = 'fixture_second_store';
 
     /**
      * Main regression test for ACP2E-3658.
@@ -85,19 +77,17 @@ class CurrencyTest extends TestCase
     ]
     public function testRenderUsesWebsiteCurrencyWhenStoreIdProvided(): void
     {
-        $store = $this->objectManager->get(StoreRepositoryInterface::class)->get(self::SECOND_STORE_CODE);
-
-        $renderer = $this->objectManager->create(Currency::class);
-        $column = $this->objectManager->create(
-            Column::class,
-            ['data' => ['index' => 'price', 'type' => 'currency']]
+        $result = $this->renderPrice(
+            ['index' => 'price', 'type' => 'currency'],
+            ['price' => 100.00, 'store_id' => $this->getStoreIdByCode(self::SECOND_STORE_CODE)]
         );
-        $row = new DataObject(['price' => 100.00, 'store_id' => $store->getId()]);
-
-        $result = $renderer->setColumn($column)->render($row);
 
         $this->assertStringContainsString('€', $result, 'Price should display in EUR for a store with EUR currency');
-        $this->assertStringNotContainsString('$', $result, 'Price must not display in USD (the default system currency)');
+        $this->assertStringNotContainsString(
+            '$',
+            $result,
+            'Price must not display in USD (the default system currency)'
+        );
     }
 
     /**
@@ -137,16 +127,10 @@ class CurrencyTest extends TestCase
     ]
     public function testColumnCurrencyCodeTakesPrecedenceOverStoreId(): void
     {
-        $store = $this->objectManager->get(StoreRepositoryInterface::class)->get(self::SECOND_STORE_CODE);
-
-        $renderer = $this->objectManager->create(Currency::class);
-        $column = $this->objectManager->create(
-            Column::class,
-            ['data' => ['index' => 'price', 'type' => 'currency', 'currency_code' => 'GBP']]
+        $result = $this->renderPrice(
+            ['index' => 'price', 'type' => 'currency', 'currency_code' => 'GBP'],
+            ['price' => 100.00, 'store_id' => $this->getStoreIdByCode(self::SECOND_STORE_CODE)]
         );
-        $row = new DataObject(['price' => 100.00, 'store_id' => $store->getId()]);
-
-        $result = $renderer->setColumn($column)->render($row);
 
         $this->assertStringContainsString('£', $result, 'Column-level currency_code must override the store currency');
     }
@@ -161,14 +145,10 @@ class CurrencyTest extends TestCase
     #[AppArea('adminhtml')]
     public function testRowCurrencyFieldIsUsedWhenColumnCurrencyIsSet(): void
     {
-        $renderer = $this->objectManager->create(Currency::class);
-        $column = $this->objectManager->create(
-            Column::class,
-            ['data' => ['index' => 'price', 'type' => 'currency', 'currency' => 'order_currency_code']]
+        $result = $this->renderPrice(
+            ['index' => 'price', 'type' => 'currency', 'currency' => 'order_currency_code'],
+            ['price' => 100.00, 'order_currency_code' => 'EUR']
         );
-        $row = new DataObject(['price' => 100.00, 'order_currency_code' => 'EUR']);
-
-        $result = $renderer->setColumn($column)->render($row);
 
         $this->assertStringContainsString(
             '€',
@@ -187,14 +167,10 @@ class CurrencyTest extends TestCase
     #[AppArea('adminhtml')]
     public function testRenderFallsBackToDefaultCurrencyForInvalidStoreId(): void
     {
-        $renderer = $this->objectManager->create(Currency::class);
-        $column = $this->objectManager->create(
-            Column::class,
-            ['data' => ['index' => 'price', 'type' => 'currency']]
+        $result = $this->renderPrice(
+            ['index' => 'price', 'type' => 'currency'],
+            ['price' => 100.00, 'store_id' => 99999]
         );
-        $row = new DataObject(['price' => 100.00, 'store_id' => 99999]);
-
-        $result = $renderer->setColumn($column)->render($row);
 
         $this->assertStringContainsString(
             '$',
@@ -213,16 +189,10 @@ class CurrencyTest extends TestCase
     #[AppArea('adminhtml')]
     public function testRenderUsesDefaultCurrencyForDefaultWebsiteStore(): void
     {
-        $defaultStore = $this->objectManager->get(StoreRepositoryInterface::class)->get('default');
-
-        $renderer = $this->objectManager->create(Currency::class);
-        $column = $this->objectManager->create(
-            Column::class,
-            ['data' => ['index' => 'price', 'type' => 'currency']]
+        $result = $this->renderPrice(
+            ['index' => 'price', 'type' => 'currency'],
+            ['price' => 100.00, 'store_id' => $this->getStoreIdByCode('default')]
         );
-        $row = new DataObject(['price' => 100.00, 'store_id' => $defaultStore->getId()]);
-
-        $result = $renderer->setColumn($column)->render($row);
 
         $this->assertStringContainsString('$', $result, 'Default website store should still render prices in USD');
     }
@@ -235,19 +205,46 @@ class CurrencyTest extends TestCase
     #[AppArea('adminhtml')]
     public function testRenderFallsBackToDefaultCurrencyWithoutStoreId(): void
     {
-        $renderer = $this->objectManager->create(Currency::class);
-        $column = $this->objectManager->create(
-            Column::class,
-            ['data' => ['index' => 'price', 'type' => 'currency']]
+        $result = $this->renderPrice(
+            ['index' => 'price', 'type' => 'currency'],
+            ['price' => 100.00]
         );
-        $row = new DataObject(['price' => 100.00]);
-
-        $result = $renderer->setColumn($column)->render($row);
 
         $this->assertStringContainsString(
             '$',
             $result,
             'Price should display in USD (system default) when no store_id is set'
         );
+    }
+
+    /**
+     * Render a grid currency column value for the given column and row data.
+     *
+     * @param array<string, mixed> $columnData
+     * @param array<string, mixed> $rowData
+     * @return string
+     */
+    private function renderPrice(array $columnData, array $rowData): string
+    {
+        $objectManager = Bootstrap::getObjectManager();
+        $renderer = $objectManager->create(Currency::class);
+        $column = $objectManager->create(Column::class, ['data' => $columnData]);
+        $row = new DataObject($rowData);
+
+        return $renderer->setColumn($column)->render($row);
+    }
+
+    /**
+     * Resolve a store view ID by store code.
+     *
+     * @param string $storeCode
+     * @return int
+     */
+    private function getStoreIdByCode(string $storeCode): int
+    {
+        return (int) Bootstrap::getObjectManager()
+            ->get(StoreRepositoryInterface::class)
+            ->get($storeCode)
+            ->getId();
     }
 }
