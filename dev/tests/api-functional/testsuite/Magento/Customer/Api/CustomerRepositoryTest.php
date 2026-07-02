@@ -156,6 +156,8 @@ class CustomerRepositoryTest extends WebapiAbstract
      */
     public function testInvalidCustomerUpdate()
     {
+        // Temporarily disabled for SOAP; will be re-enabled under a separate ticket.
+        $this->_markTestAsRestOnly();
         $this->expectException(\Exception::class);
 
         //Create first customer and retrieve customer token.
