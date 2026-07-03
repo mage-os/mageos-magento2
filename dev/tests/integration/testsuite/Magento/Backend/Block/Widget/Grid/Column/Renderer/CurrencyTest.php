@@ -8,14 +8,28 @@ declare(strict_types=1);
 namespace Magento\Backend\Block\Widget\Grid\Column\Renderer;
 
 use Magento\Backend\Block\Widget\Grid\Column;
+use Magento\Catalog\Test\Fixture\Product as ProductFixture;
+use Magento\Checkout\Test\Fixture\PlaceOrder as PlaceOrderFixture;
+use Magento\Checkout\Test\Fixture\SetBillingAddress as SetBillingAddressFixture;
+use Magento\Checkout\Test\Fixture\SetDeliveryMethod as SetDeliveryMethodFixture;
+use Magento\Checkout\Test\Fixture\SetGuestEmail as SetGuestEmailFixture;
+use Magento\Checkout\Test\Fixture\SetPaymentMethod as SetPaymentMethodFixture;
+use Magento\Checkout\Test\Fixture\SetShippingAddress as SetShippingAddressFixture;
 use Magento\Framework\DataObject;
+use Magento\Quote\Test\Fixture\AddProductToCart as AddProductToCartFixture;
+use Magento\Quote\Test\Fixture\GuestCart as GuestCartFixture;
+use Magento\Sales\Test\Fixture\Invoice as InvoiceFixture;
+use Magento\Sales\Test\Fixture\Shipment as ShipmentFixture;
 use Magento\Store\Api\StoreRepositoryInterface;
 use Magento\Store\Test\Fixture\Group as StoreGroupFixture;
 use Magento\Store\Test\Fixture\Store as StoreFixture;
 use Magento\Store\Test\Fixture\Website as WebsiteFixture;
 use Magento\TestFramework\Fixture\AppArea;
+use Magento\TestFramework\Fixture\AppIsolation;
 use Magento\TestFramework\Fixture\Config;
+use Magento\TestFramework\Fixture\DataFixture;
 use Magento\TestFramework\Fixture\DataFixtureBeforeTransaction;
+use Magento\TestFramework\Fixture\DataFixtureStorageManager;
 use Magento\TestFramework\Fixture\DbIsolation;
 use Magento\TestFramework\Helper\Bootstrap;
 use PHPUnit\Framework\TestCase;
@@ -25,6 +39,8 @@ use PHPUnit\Framework\TestCase;
  *
  * In a multi-website setup, the currency renderer must use the currency configured for the
  * row's store/website instead of always falling back to the system default currency.
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class CurrencyTest extends TestCase
 {
@@ -32,6 +48,98 @@ class CurrencyTest extends TestCase
      * Store view code for the secondary website fixture.
      */
     private const SECOND_STORE_CODE = 'fixture_second_store';
+
+    /**
+     * End-to-end scenario covering ACP2E-3658.
+     *
+     * Runs first in this class: checkout PDF fixtures require a fresh StoreManager state. Later tests
+     * that create and revert secondary websites via DataFixtureBeforeTransaction leave stale store
+     * scope that breaks add-to-cart when this scenario runs after them.
+     *
+     * Creates a guest order on the secondary store with invoice and shipment via declarative
+     * fixtures, then verifies the return product grid currency renderer uses the store EUR currency.
+     *
+     * @return void
+     */
+    #[AppArea('adminhtml')]
+    #[Config('currency/options/default', 'EUR', 'store', self::SECOND_STORE_CODE)]
+    #[Config('currency/options/allow', 'EUR', 'store', self::SECOND_STORE_CODE)]
+    #[
+        AppIsolation(true),
+        DbIsolation(true),
+        DataFixtureBeforeTransaction(
+            WebsiteFixture::class,
+            ['code' => 'test', 'name' => 'Test Website'],
+            as: 'second_website'
+        ),
+        DataFixtureBeforeTransaction(
+            StoreGroupFixture::class,
+            [
+                'code' => 'second_group',
+                'name' => 'Second Store Group',
+                'website_id' => '$second_website.id$',
+            ],
+            as: 'second_store_group'
+        ),
+        DataFixtureBeforeTransaction(
+            StoreFixture::class,
+            [
+                'code' => self::SECOND_STORE_CODE,
+                'name' => 'Fixture Second Store',
+                'sort_order' => 10,
+                'store_group_id' => '$second_store_group.id$',
+            ],
+            as: 'second_store'
+        ),
+        DataFixture(
+            ProductFixture::class,
+            ['website_ids' => ['$second_website.id$']],
+            as: 'product'
+        ),
+        DataFixture(
+            GuestCartFixture::class,
+            ['reserved_order_id' => '200000001'],
+            as: 'cart',
+            scope: 'second_store'
+        ),
+        DataFixture(
+            AddProductToCartFixture::class,
+            [
+                'cart_id' => '$cart.id$',
+                'product_id' => '$product.id$',
+                'qty' => 2,
+            ],
+            scope: 'second_store'
+        ),
+        DataFixture(SetShippingAddressFixture::class, ['cart_id' => '$cart.id$'], scope: 'second_store'),
+        DataFixture(SetBillingAddressFixture::class, ['cart_id' => '$cart.id$'], scope: 'second_store'),
+        DataFixture(SetGuestEmailFixture::class, ['cart_id' => '$cart.id$'], scope: 'second_store'),
+        DataFixture(SetDeliveryMethodFixture::class, ['cart_id' => '$cart.id$'], scope: 'second_store'),
+        DataFixture(SetPaymentMethodFixture::class, ['cart_id' => '$cart.id$'], scope: 'second_store'),
+        DataFixture(PlaceOrderFixture::class, ['cart_id' => '$cart.id$'], 'order', 'second_store'),
+        DataFixture(InvoiceFixture::class, ['order_id' => '$order.id$'], 'invoice'),
+        DataFixture(ShipmentFixture::class, ['order_id' => '$order.id$'], 'shipment'),
+    ]
+    public function testReturnProductGridShowsEurForOrderOnSecondWebsite(): void
+    {
+        $order = DataFixtureStorageManager::getStorage()->get('order');
+
+        $result = $this->renderPrice(
+            ['index' => 'price', 'type' => 'currency'],
+            ['price' => 100.00, 'store_id' => $order->getStoreId()]
+        );
+
+        $this->assertStringContainsString(
+            '€',
+            $result,
+            'Return product grid must show EUR for an order placed on the EU website store'
+        );
+        $this->assertStringNotContainsString(
+            '$',
+            $result,
+            'Return product grid must not show the system-default USD for an EU website order'
+        );
+    }
 
     /**
      * Main regression test for ACP2E-3658.
@@ -49,6 +157,7 @@ class CurrencyTest extends TestCase
     #[Config('currency/options/default', 'EUR', 'store', self::SECOND_STORE_CODE)]
     #[Config('currency/options/allow', 'EUR', 'store', self::SECOND_STORE_CODE)]
     #[
+        AppIsolation(true),
         DbIsolation(true),
         DataFixtureBeforeTransaction(
             WebsiteFixture::class,
@@ -99,6 +208,7 @@ class CurrencyTest extends TestCase
      */
     #[AppArea('adminhtml')]
     #[
+        AppIsolation(true),
         DbIsolation(true),
         DataFixtureBeforeTransaction(
             WebsiteFixture::class,
