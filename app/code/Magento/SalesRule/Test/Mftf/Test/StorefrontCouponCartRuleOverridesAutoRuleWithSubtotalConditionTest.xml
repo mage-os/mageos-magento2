@@ -40,20 +40,27 @@
             <click selector="{{AdminCartPriceRulesSection.addNewRuleButton}}" stepKey="clickAddNewRule2"/>
             <waitForElementVisible selector="{{AdminCartPriceRulesFormSection.ruleName}}" stepKey="waitForRule2FormVisible"/>
             <fillField selector="{{AdminCartPriceRulesFormSection.ruleName}}" userInput="CartPriceRule2AutoSubtotalExclTax" stepKey="fillRule2Name"/>
+            <waitForElementVisible selector="{{AdminCartPriceRulesFormSection.websites}}" stepKey="waitForRule2WebsitesSelect"/>
             <selectOption selector="{{AdminCartPriceRulesFormSection.websites}}" userInput="Main Website" stepKey="selectRule2Websites"/>
+            <waitForElementVisible selector="{{AdminCartPriceRulesFormSection.customerGroups}}" stepKey="waitForRule2CustomerGroupsSelect"/>
             <selectOption selector="{{AdminCartPriceRulesFormSection.customerGroups}}" parameterArray="['NOT LOGGED IN', 'General', 'Wholesale', 'Retailer']" stepKey="selectRule2CustomerGroups"/>
+            <waitForElementVisible selector="{{AdminCartPriceRulesFormSection.coupon}}" stepKey="waitForRule2CouponSelect"/>
             <selectOption selector="{{AdminCartPriceRulesFormSection.coupon}}" userInput="No Coupon" stepKey="selectRule2NoCoupon"/>
+            <waitForElementVisible selector="{{AdminCartPriceRulesFormSection.priority}}" stepKey="waitForRule2PriorityField"/>
             <fillField selector="{{AdminCartPriceRulesFormSection.priority}}" userInput="1" stepKey="fillRule2Priority"/>
             <!-- Fill Rule 2 conditions -->
             <scrollTo selector="{{AdminCartPriceRulesFormSection.conditionsHeader}}" stepKey="scrollToRule2ConditionsHeader"/>
             <conditionalClick selector="{{AdminCartPriceRulesFormSection.conditionsHeader}}" dependentSelector="{{AdminCartPriceRulesFormSection.conditionsHeaderOpen}}" visible="false" stepKey="expandRule2ConditionsTab"/>
             <waitForElementClickable selector="{{AdminCartPriceRulesFormSection.addNewCondition('1')}}" stepKey="waitForRule2AddConditionLink"/>
             <click selector="{{AdminCartPriceRulesFormSection.addNewCondition('1')}}" stepKey="addRule2SubtotalCondition"/>
+            <waitForElementVisible selector="{{AdminCartPriceRulesFormSection.conditionSelect}}" stepKey="waitForSubtotalConditionSelect"/>
             <selectOption selector="{{AdminCartPriceRulesFormSection.conditionSelect}}" userInput="Subtotal (Excl. Tax)" stepKey="selectSubtotalExclTaxCondition"/>
             <waitForPageLoad stepKey="waitForSubtotalConditionLoad"/>
+            <waitForElementClickable selector="{{AdminCartPriceRulesFormSection.condition('is')}}" stepKey="waitForSubtotalOperatorLink"/>
             <click selector="{{AdminCartPriceRulesFormSection.condition('is')}}" stepKey="clickSubtotalOperatorLink"/>
             <waitForElementVisible selector="{{AdminCartPriceRulesFormSection.conditionsOperator}}" stepKey="waitForSubtotalOperatorSelect"/>
             <selectOption selector="{{AdminCartPriceRulesFormSection.conditionsOperator}}" userInput="equals or greater than" stepKey="selectSubtotalEqualsOrGreaterThan"/>
+            <waitForElementClickable selector="{{AdminCartPriceRulesFormSection.targetEllipsis}}" stepKey="waitForSubtotalValueEllipsis"/>
             <click selector="{{AdminCartPriceRulesFormSection.targetEllipsis}}" stepKey="clickSubtotalValueEllipsis"/>
             <waitForElementVisible selector="{{AdminCartPriceRulesFormSection.ruleFieldByIndex('1--1')}}" stepKey="waitForSubtotalValueInput"/>
             <fillField selector="{{AdminCartPriceRulesFormSection.ruleFieldByIndex('1--1')}}" userInput="75" stepKey="fillSubtotalThreshold"/>
@@ -67,6 +74,7 @@
             <click selector="{{AdminCartPriceRulesFormSection.applyToShippingAmount}}" stepKey="enableRule2ApplyToShippingAmount"/>
             <waitForElementVisible selector="{{AdminCartPriceRulesFormSection.apply}}" stepKey="waitForRule2ActionsFieldsetOpen"/>
             <selectOption selector="{{AdminCartPriceRulesFormSection.apply}}" userInput="Fixed amount discount" stepKey="selectRule2FixedDiscountType"/>
+            <waitForElementVisible selector="{{AdminCartPriceRulesFormSection.discountAmount}}" stepKey="waitForRule2DiscountAmountField"/>
             <fillField selector="{{AdminCartPriceRulesFormSection.discountAmount}}" userInput="5" stepKey="fillRule2FixedDiscountAmount"/>
             <pressKey selector="{{AdminCartPriceRulesFormSection.discountAmount}}" parameterArray="[\Facebook\WebDriver\WebDriverKeys::TAB]" stepKey="blurRule2DiscountAmount"/>
             <!-- Fill Rule 2 actions condition -->
@@ -75,13 +83,16 @@
             <click selector="{{AdminCartPriceRulesFormSection.actionsCondition('TRUE')}}" stepKey="clickTrueLinkToOpenActionsValueSelect"/>
             <waitForElementVisible selector="{{AdminCartPriceRulesFormSection.actionsValueSelect}}" stepKey="waitForActionsValueSelect"/>
             <selectOption selector="{{AdminCartPriceRulesFormSection.actionsValueSelect}}" userInput="FALSE" stepKey="setActionsConditionValueFalse"/>
+            <waitForElementClickable selector="{{AdminCartPriceRulesFormSection.actionsAddCondition}}" stepKey="waitForActionsAddConditionLink"/>
             <click selector="{{AdminCartPriceRulesFormSection.actionsAddCondition}}" stepKey="clickAddActionsCondition"/>
             <waitForPageLoad stepKey="waitForActionsConditionAttributeDropdown"/>
+            <waitForElementVisible selector="{{AdminCartPriceRulesFormSection.actionsChildAttributeSelect}}" stepKey="waitForPriceInCartAttributeSelect"/>
             <selectOption selector="{{AdminCartPriceRulesFormSection.actionsChildAttributeSelect}}" userInput="Price in cart" stepKey="selectPriceInCartAttribute"/>
-            <waitForElementVisible selector="{{AdminCartPriceRulesFormSection.actionsCondition('is')}}" stepKey="waitForPriceInCartConditionRow"/>
+            <waitForElementClickable selector="{{AdminCartPriceRulesFormSection.actionsCondition('is')}}" stepKey="waitForPriceInCartConditionRow"/>
             <click selector="{{AdminCartPriceRulesFormSection.actionsCondition('is')}}" stepKey="clickPriceInCartOperatorLink"/>
             <waitForElementVisible selector="{{AdminCartPriceRulesFormSection.actionsChildOperator}}" stepKey="waitForPriceInCartOperatorSelect"/>
             <selectOption selector="{{AdminCartPriceRulesFormSection.actionsChildOperator}}" userInput="greater than" stepKey="selectGreaterThanOperator"/>
+            <waitForElementClickable selector="{{AdminCartPriceRulesFormSection.actionsCondition('...')}}" stepKey="waitForPriceInCartValueEllipsis"/>
             <click selector="{{AdminCartPriceRulesFormSection.actionsCondition('...')}}" stepKey="clickPriceInCartValueEllipsis"/>
             <waitForElementVisible selector="{{AdminCartPriceRulesFormSection.actionsChildValue}}" stepKey="waitForPriceInCartValueInput"/>
             <fillField selector="{{AdminCartPriceRulesFormSection.actionsChildValue}}" userInput="0" stepKey="fillPriceInCartConditionValue"/>
