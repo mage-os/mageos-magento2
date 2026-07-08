@@ -155,8 +155,7 @@
 
         <!--Click Add to Cart-->
         <actionGroup ref="AddToCartFromStorefrontProductPageActionGroup" stepKey="addToCartFromStorefrontProductPage">
-            <argument name="productName" value="$$productA.name$$"/>
-            <argument name="relatedProductsMessageSuffix" value=" and $$productB.name$$"/>
+            <argument name="productName" value="$$productA.name$$ and $$productB.name$$"/>
         </actionGroup>
 
         <!-- Verify Two Products are added Product A and B-->
@@ -183,8 +182,7 @@
 
         <!--Click Add to Cart-->
         <actionGroup ref="AddToCartFromStorefrontProductPageActionGroup" stepKey="clickAddToCart">
-            <argument name="productName" value="$$productA.name$$"/>
-            <argument name="relatedProductsMessageSuffix" value=", $$productB.name$$ and $$productU.name$$"/>
+            <argument name="productName" value="$$productA.name$$, $$productB.name$$ and $$productU.name$$"/>
         </actionGroup>
 
         <!-- See There are 5 items in the cart now -->
@@ -210,8 +208,7 @@
 
         <!-- Click Add to Cart Again-->
         <actionGroup ref="AddToCartFromStorefrontProductPageActionGroup" stepKey="addToCartFromStorefrontProductPagethree">
-            <argument name="productName" value="$$productA.name$$"/>
-            <argument name="relatedProductsMessageSuffix" value=" and $$productU.name$$"/>
+            <argument name="productName" value="$$productA.name$$ and $$productU.name$$"/>
         </actionGroup>
 
         <!-- See There are 7 items in the cart now -->
@@ -264,8 +261,7 @@
 
         <!--Click Add to Cart-->
         <actionGroup ref="AddToCartFromStorefrontProductPageActionGroup" stepKey="addVProductToCart">
-            <argument name="productName" value="$$productV.name$$"/>
-            <argument name="relatedProductsMessageSuffix" value=" and $$productB.name$$"/>
+            <argument name="productName" value="$$productV.name$$ and $$productB.name$$"/>
         </actionGroup>
 
         <!-- Verify Two Products are added Product V and B-->
@@ -296,8 +292,7 @@
 
         <!--Click Add to Cart for Product V-->
         <actionGroup ref="AddToCartFromStorefrontProductPageActionGroup" stepKey="addProductVToCart">
-            <argument name="productName" value="$$productV.name$$"/>
-            <argument name="relatedProductsMessageSuffix" value=", $$productB.name$$ and $$productU.name$$"/>
+            <argument name="productName" value="$$productV.name$$, $$productB.name$$ and $$productU.name$$"/>
         </actionGroup>
 
         <!-- Verify 5 Products there -->
@@ -323,8 +318,7 @@
 
         <!-- Click Add to Cart for Product V-->
         <actionGroup ref="AddToCartFromStorefrontProductPageActionGroup" stepKey="addToCartProductV">
-            <argument name="productName" value="$$productV.name$$"/>
-            <argument name="relatedProductsMessageSuffix" value=" and $$productU.name$$"/>
+            <argument name="productName" value="$$productV.name$$ and $$productU.name$$"/>
         </actionGroup>
 
         <!-- Verify 7 Products there -->

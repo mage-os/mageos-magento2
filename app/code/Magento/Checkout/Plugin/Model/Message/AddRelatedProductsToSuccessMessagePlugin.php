@@ -17,6 +17,7 @@ use Magento\Store\Model\StoreManagerInterface;
 
 /**
  * Include related product names in add-to-cart success messages from the product page.
+ * @SuppressWarnings(PHPMD.CookieAndSessionMisuse)
  */
 class AddRelatedProductsToSuccessMessagePlugin
 {
