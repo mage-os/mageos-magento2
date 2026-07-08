@@ -65,6 +65,8 @@ class AddRelatedProductsToSuccessMessagePlugin
     }
 
     /**
+     * Include related product names in add-to-cart success message.
+     *
      * @param ManagerInterface $subject
      * @param string $identifier
      * @param array $data
@@ -93,6 +95,8 @@ class AddRelatedProductsToSuccessMessagePlugin
     }
 
     /**
+     * Include related product names in add-to-cart success message.
+     *
      * @param ManagerInterface $subject
      * @param Phrase|string $message
      * @param string|null $group
@@ -127,6 +131,8 @@ class AddRelatedProductsToSuccessMessagePlugin
     }
 
     /**
+     * Check if success message should include related products.
+     *
      * @return bool
      */
     private function shouldModifyMessage(): bool
@@ -144,6 +150,8 @@ class AddRelatedProductsToSuccessMessagePlugin
     }
 
     /**
+     * Get related product IDs from request
+     *
      * @return int[]
      */
     private function getRelatedProductIds(): array
@@ -165,6 +173,8 @@ class AddRelatedProductsToSuccessMessagePlugin
     }
 
     /**
+     * Build formatted product name list with related products.
+     *
      * @param string $mainProductName
      * @return string|null
      */

@@ -15,6 +15,7 @@
         </annotations>
         <arguments>
             <argument name="productName"/>
+            <argument name="relatedProductsMessageSuffix" type="string" defaultValue=""/>
         </arguments>
         <waitForElementNotVisible selector="{{StorefrontProductActionSection.addToCartDisabled}}" stepKey="waitForAddToCartButtonToRemoveDisabledState"/>
         <!-- Scroll to button to prevent overlapping elements from intercepting click -->
@@ -34,6 +35,6 @@
         <waitForElementNotVisible selector="{{StorefrontProductActionSection.addToCartButtonTitleIsAdded}}" stepKey="waitForElementNotVisibleAddToCartButtonTitleIsAdded"/>
         <waitForPageLoad stepKey="waitForPageLoad"/>
         <waitForElementVisible selector="{{StorefrontMessagesSection.success}}" stepKey="waitForSuccessMessage"/>
-        <see selector="{{StorefrontMessagesSection.success}}" userInput="You added {{productName}} to your shopping cart." stepKey="seeAddToCartSuccessMessage"/>
+        <see selector="{{StorefrontMessagesSection.success}}" userInput="You added {{productName}}{{relatedProductsMessageSuffix}} to your shopping cart." stepKey="seeAddToCartSuccessMessage"/>
     </actionGroup>
 </actionGroups>

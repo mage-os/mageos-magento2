@@ -195,6 +195,7 @@
 
         <actionGroup ref="AddToCartFromStorefrontProductPageActionGroup" stepKey="addToCartFromStorefrontProductPage">
             <argument name="productName" value="$$baseConfigProductHandle.name$$"/>
+            <argument name="relatedProductsMessageSuffix" value=" and $$simple2Handle.name$$"/>
         </actionGroup>
 
         <see selector="{{StorefrontMinicartSection.quantity}}" userInput="2" stepKey="seeItemCounterInMiniCart"/>
