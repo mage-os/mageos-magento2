@@ -89,7 +89,7 @@ class EmailTest extends TestCase
     protected function setUp(): void
     {
         $this->appStateMock = $this->createMock(State::class);
-        $eventManagerMock = $this->getMockForAbstractClass(EventManagerInterface::class);
+        $eventManagerMock = $this->createMock(EventManagerInterface::class);
 
         $contextMock = $this->createMock(Context::class);
         $contextMock->method('getAppState')->willReturn($this->appStateMock);
@@ -97,8 +97,8 @@ class EmailTest extends TestCase
 
         $this->productAlertDataMock = $this->createMock(Data::class);
         $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
-        $this->storeManagerMock = $this->getMockForAbstractClass(StoreManagerInterface::class);
-        $this->customerRepositoryMock = $this->getMockForAbstractClass(CustomerRepositoryInterface::class);
+        $this->storeManagerMock = $this->createMock(StoreManagerInterface::class);
+        $this->customerRepositoryMock = $this->createMock(CustomerRepositoryInterface::class);
         $this->customerHelperMock = $this->createMock(View::class);
         $this->appEmulationMock = $this->createMock(Emulation::class);
         $this->transportBuilderMock = $this->createMock(TransportBuilder::class);
@@ -164,7 +164,7 @@ class EmailTest extends TestCase
     public function testSetCustomerId(): void
     {
         $customerId = 42;
-        $customerMock = $this->getMockForAbstractClass(CustomerInterface::class);
+        $customerMock = $this->createMock(CustomerInterface::class);
         $this->customerRepositoryMock->expects($this->once())
             ->method('getById')
             ->with($customerId)
@@ -180,7 +180,7 @@ class EmailTest extends TestCase
      */
     public function testSetCustomerData(): void
     {
-        $customerMock = $this->getMockForAbstractClass(CustomerInterface::class);
+        $customerMock = $this->createMock(CustomerInterface::class);
         $this->assertSame($this->model, $this->model->setCustomerData($customerMock));
     }
 
@@ -206,7 +206,7 @@ class EmailTest extends TestCase
      */
     public function testSendReturnsFalseWithoutWebsite(): void
     {
-        $this->model->setCustomerData($this->getMockForAbstractClass(CustomerInterface::class));
+        $this->model->setCustomerData($this->createMock(CustomerInterface::class));
         $this->assertFalse($this->model->send());
     }
 
@@ -229,7 +229,7 @@ class EmailTest extends TestCase
     public function testSendReturnsFalseWithoutDefaultStore(): void
     {
         $this->model->setWebsite($this->createWebsiteMock(false));
-        $this->model->setCustomerData($this->getMockForAbstractClass(CustomerInterface::class));
+        $this->model->setCustomerData($this->createMock(CustomerInterface::class));
         $this->assertFalse($this->model->send());
     }
 
@@ -241,7 +241,7 @@ class EmailTest extends TestCase
     public function testSendReturnsFalseForUnsupportedType(): void
     {
         $this->model->setWebsite($this->createWebsiteMock(true));
-        $this->model->setCustomerData($this->getMockForAbstractClass(CustomerInterface::class));
+        $this->model->setCustomerData($this->createMock(CustomerInterface::class));
         $this->model->setType('unsupported');
 
         $this->assertFalse($this->model->send());
@@ -255,7 +255,7 @@ class EmailTest extends TestCase
     public function testSendReturnsFalseWithoutProducts(): void
     {
         $this->model->setWebsite($this->createWebsiteMock(true));
-        $this->model->setCustomerData($this->getMockForAbstractClass(CustomerInterface::class));
+        $this->model->setCustomerData($this->createMock(CustomerInterface::class));
 
         $this->assertFalse($this->model->send());
     }
@@ -274,7 +274,7 @@ class EmailTest extends TestCase
         $customerName = 'John Doe';
         $groupId = 7;
 
-        $customerMock = $this->getMockForAbstractClass(CustomerInterface::class);
+        $customerMock = $this->createMock(CustomerInterface::class);
         $customerMock->method('getStoreId')->willReturn($storeId);
         $customerMock->method('getGroupId')->willReturn($groupId);
         $customerMock->method('getEmail')->willReturn('john@example.com');
@@ -283,7 +283,7 @@ class EmailTest extends TestCase
         $productMock->method('getId')->willReturn(11);
         $productMock->expects($this->once())->method('setCustomerGroupId')->with($groupId);
 
-        $storeMock = $this->getMockForAbstractClass(StoreInterface::class);
+        $storeMock = $this->createMock(StoreInterface::class);
         $this->storeManagerMock->expects($this->once())
             ->method('getStore')
             ->with($storeId)
@@ -347,7 +347,7 @@ class EmailTest extends TestCase
         $customerName = 'Jane Roe';
         $groupId = 2;
 
-        $customerMock = $this->getMockForAbstractClass(CustomerInterface::class);
+        $customerMock = $this->createMock(CustomerInterface::class);
         $customerMock->method('getStoreId')->willReturn($storeId);
         $customerMock->method('getGroupId')->willReturn($groupId);
         $customerMock->method('getEmail')->willReturn('jane@example.com');
@@ -356,7 +356,7 @@ class EmailTest extends TestCase
         $productMock->method('getId')->willReturn(22);
         $productMock->expects($this->once())->method('setCustomerGroupId')->with($groupId);
 
-        $storeMock = $this->getMockForAbstractClass(StoreInterface::class);
+        $storeMock = $this->createMock(StoreInterface::class);
         $this->storeManagerMock->method('getStore')->with($storeId)->willReturn($storeMock);
 
         $blockMock = $this->createMock(Stock::class);
@@ -412,7 +412,7 @@ class EmailTest extends TestCase
     {
         $groupMock = $this->createMock(Group::class);
         if ($withDefaultStore) {
-            $groupMock->method('getDefaultStore')->willReturn($this->getMockForAbstractClass(StoreInterface::class));
+            $groupMock->method('getDefaultStore')->willReturn($this->createMock(StoreInterface::class));
         } else {
             $groupMock->method('getDefaultStore')->willReturn(null);
         }
@@ -459,7 +459,7 @@ class EmailTest extends TestCase
             ->method('addTo')
             ->willReturnSelf();
 
-        $transportMock = $this->getMockForAbstractClass(TransportInterface::class);
+        $transportMock = $this->createMock(TransportInterface::class);
         $transportMock->expects($this->once())->method('sendMessage');
         $this->transportBuilderMock->expects($this->once())->method('getTransport')->willReturn($transportMock);
     }
