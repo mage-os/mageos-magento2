@@ -26,4 +26,9 @@
     </type>
     <preference for="Magento\Wishlist\Model\ResourceModel\Item\Product\CollectionBuilderInterface"
                 type="Magento\Wishlist\Model\Adminhtml\ResourceModel\Item\Product\CollectionBuilder"/>
+    <type name="Magento\Sales\Block\Adminhtml\Order\Create\Items\Grid">
+        <arguments>
+            <argument name="wishlistFactory" xsi:type="object">Magento\Wishlist\Model\WishlistFactory</argument>
+        </arguments>
+    </type>
 </config>

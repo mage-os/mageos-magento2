@@ -1090,4 +1090,10 @@
             <argument name="batchSize" xsi:type="number">5000</argument>
         </arguments>
     </type>
+    <type name="Magento\Sales\Block\Adminhtml\Order\Create\Items\Grid">
+        <arguments>
+            <!-- Overridden with the real factory by Magento_Wishlist's adminhtml di.xml -->
+            <argument name="wishlistFactory" xsi:type="null"/>
+        </arguments>
+    </type>
 </config>

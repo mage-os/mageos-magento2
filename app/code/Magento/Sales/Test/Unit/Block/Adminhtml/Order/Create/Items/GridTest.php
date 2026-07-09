@@ -97,10 +97,7 @@ class GridTest extends TestCase
         $this->priceCurrency = $this->getMockBuilder(
             PriceCurrencyInterface::class
         )->getMock();
-        $sessionMock = $this->getMockBuilder(Quote::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getQuote'])
-            ->getMock();
+        $sessionMock = $this->createPartialMockWithReflection(Quote::class, ['getQuote', 'getCustomerId']);
 
         $quoteMock = $this->getMockBuilder(QuoteModel::class)
             ->disableOriginalConstructor()
@@ -113,7 +110,6 @@ class GridTest extends TestCase
             ->willReturnArgument(0);
         $quoteMock->expects($this->any())->method('getStore')->willReturn($storeMock);
         $sessionMock->expects($this->any())->method('getQuote')->willReturn($quoteMock);
-        $wishlistFactoryMock = $this->createPartialMockWithReflection(WishlistFactory::class, ['methods']);
 
         $giftMessageSave = $this->createMock(GiftMessageSave::class);
 
@@ -153,7 +149,7 @@ class GridTest extends TestCase
         $this->block = $this->objectManager->getObject(
             Grid::class,
             [
-                'wishlistFactory' => $wishlistFactoryMock,
+                'wishlistFactory' => null,
                 'giftMessageSave' => $giftMessageSave,
                 'taxConfig' => $taxConfig,
                 'taxData' => $taxData,
@@ -458,5 +454,50 @@ class GridTest extends TestCase
             'expected' => 32
         ];
         return $result;
+    }
+
+    /**
+     * Without an injected wishlist factory the grid offers no wishlists.
+     */
+    public function testNoWishlistsWithoutWishlistFactory()
+    {
+        $this->assertSame([], $this->block->getCustomerWishlists());
+        $this->assertFalse($this->block->isMoveToWishlistAllowed($this->createMock(Item::class)));
+    }
+
+    /**
+     * With the wishlist factory injected (done by Magento_Wishlist through
+     * di.xml), wishlists resolve exactly as before.
+     */
+    public function testGetCustomerWishlistsUsesInjectedWishlistFactory()
+    {
+        $collection = $this->createPartialMockWithReflection(
+            \Magento\Wishlist\Model\ResourceModel\Wishlist\Collection::class,
+            ['filterByCustomerId']
+        );
+        $collection->expects($this->once())->method('filterByCustomerId')->willReturnSelf();
+        $wishlist = $this->createPartialMockWithReflection(
+            \Magento\Wishlist\Model\Wishlist::class,
+            ['getCollection']
+        );
+        $wishlist->method('getCollection')->willReturn($collection);
+        $wishlistFactory = $this->createPartialMockWithReflection(WishlistFactory::class, ['create']);
+        $wishlistFactory->method('create')->willReturn($wishlist);
+
+        $block = $this->objectManager->getObject(
+            Grid::class,
+            [
+                'wishlistFactory' => $wishlistFactory,
+                'sessionQuote' => $this->createPartialMockWithReflection(Quote::class, ['getCustomerId']),
+            ]
+        );
+
+        $this->assertSame($collection, $block->getCustomerWishlists());
+
+        $product = $this->createMock(Product::class);
+        $product->method('isVisibleInSiteVisibility')->willReturn(true);
+        $item = $this->createMock(Item::class);
+        $item->method('getProduct')->willReturn($product);
+        $this->assertTrue($block->isMoveToWishlistAllowed($item));
     }
 }
