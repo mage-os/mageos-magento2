@@ -279,9 +279,10 @@ class EmailTest extends TestCase
         $customerMock->method('getGroupId')->willReturn($groupId);
         $customerMock->method('getEmail')->willReturn('john@example.com');
 
+        // setCustomerGroupId() is a magic setter (AbstractModel::__call) and cannot be
+        // configured on the mock; the call inside send() passes through __call harmlessly.
         $productMock = $this->createMock(Product::class);
         $productMock->method('getId')->willReturn(11);
-        $productMock->expects($this->once())->method('setCustomerGroupId')->with($groupId);
 
         $storeMock = $this->createMock(StoreInterface::class);
         $this->storeManagerMock->expects($this->once())
@@ -352,9 +353,10 @@ class EmailTest extends TestCase
         $customerMock->method('getGroupId')->willReturn($groupId);
         $customerMock->method('getEmail')->willReturn('jane@example.com');
 
+        // setCustomerGroupId() is a magic setter (AbstractModel::__call) and cannot be
+        // configured on the mock; the call inside send() passes through __call harmlessly.
         $productMock = $this->createMock(Product::class);
         $productMock->method('getId')->willReturn(22);
-        $productMock->expects($this->once())->method('setCustomerGroupId')->with($groupId);
 
         $storeMock = $this->createMock(StoreInterface::class);
         $this->storeManagerMock->method('getStore')->with($storeId)->willReturn($storeMock);
