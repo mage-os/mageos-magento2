@@ -71,6 +71,9 @@
     <type name="Magento\Catalog\Ui\DataProvider\Product\Listing\DataProvider">
         <plugin name="wishlistSettingsDataProvider" type="Magento\Wishlist\Plugin\Ui\DataProvider\WishlistSettings"/>
     </type>
+    <type name="Magento\Customer\Model\EmailNotificationInterface">
+        <plugin name="saveWishlistDataAndAddReferenceKeyToBackUrl" type="Magento\Wishlist\Plugin\SaveWishlistDataAndAddReferenceKeyToBackUrl"/>
+    </type>
     <type name="Magento\Catalog\Ui\DataProvider\Product\ProductRenderCollectorComposite">
         <arguments>
             <argument name="productProviders" xsi:type="array">
