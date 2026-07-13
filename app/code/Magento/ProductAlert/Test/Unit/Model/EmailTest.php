@@ -119,6 +119,8 @@ class EmailTest extends TestCase
     /**
      * Type defaults to "price" and can be changed.
      *
+     * @covers \Magento\ProductAlert\Model\Email::getType()
+     * @covers \Magento\ProductAlert\Model\Email::setType()
      * @return void
      */
     public function testGetSetType(): void
@@ -131,6 +133,7 @@ class EmailTest extends TestCase
     /**
      * setWebsite() is fluent.
      *
+     * @covers \Magento\ProductAlert\Model\Email::setWebsite()
      * @return void
      */
     public function testSetWebsite(): void
@@ -142,6 +145,7 @@ class EmailTest extends TestCase
     /**
      * setWebsiteId() resolves the website through the store manager and is fluent.
      *
+     * @covers \Magento\ProductAlert\Model\Email::setWebsiteId()
      * @return void
      */
     public function testSetWebsiteId(): void
@@ -159,6 +163,7 @@ class EmailTest extends TestCase
     /**
      * setCustomerId() loads the customer through the repository and is fluent.
      *
+     * @covers \Magento\ProductAlert\Model\Email::setCustomerId()
      * @return void
      */
     public function testSetCustomerId(): void
@@ -176,6 +181,7 @@ class EmailTest extends TestCase
     /**
      * setCustomerData() is fluent.
      *
+     * @covers \Magento\ProductAlert\Model\Email::setCustomerData()
      * @return void
      */
     public function testSetCustomerData(): void
@@ -187,6 +193,9 @@ class EmailTest extends TestCase
     /**
      * clean(), addPriceProduct() and addStockProduct() are all fluent.
      *
+     * @covers \Magento\ProductAlert\Model\Email::addPriceProduct()
+     * @covers \Magento\ProductAlert\Model\Email::addStockProduct()
+     * @covers \Magento\ProductAlert\Model\Email::clean()
      * @return void
      */
     public function testFluentProductAndCleanMethods(): void
@@ -202,6 +211,7 @@ class EmailTest extends TestCase
     /**
      * send() returns false when no website has been set.
      *
+     * @covers \Magento\ProductAlert\Model\Email::send()
      * @return void
      */
     public function testSendReturnsFalseWithoutWebsite(): void
@@ -213,6 +223,7 @@ class EmailTest extends TestCase
     /**
      * send() returns false when no customer has been set.
      *
+     * @covers \Magento\ProductAlert\Model\Email::send()
      * @return void
      */
     public function testSendReturnsFalseWithoutCustomer(): void
@@ -224,6 +235,7 @@ class EmailTest extends TestCase
     /**
      * send() returns false when the website has no default store.
      *
+     * @covers \Magento\ProductAlert\Model\Email::send()
      * @return void
      */
     public function testSendReturnsFalseWithoutDefaultStore(): void
@@ -236,6 +248,7 @@ class EmailTest extends TestCase
     /**
      * send() returns false when the type is not supported.
      *
+     * @covers \Magento\ProductAlert\Model\Email::send()
      * @return void
      */
     public function testSendReturnsFalseForUnsupportedType(): void
@@ -250,6 +263,7 @@ class EmailTest extends TestCase
     /**
      * send() returns false when there are no products to notify about.
      *
+     * @covers \Magento\ProductAlert\Model\Email::send()
      * @return void
      */
     public function testSendReturnsFalseWithoutProducts(): void
@@ -263,6 +277,7 @@ class EmailTest extends TestCase
     /**
      * send() builds and dispatches a price alert email for the collected products.
      *
+     * @covers \Magento\ProductAlert\Model\Email::send()
      * @return void
      */
     public function testSendPriceAlertSucceeds(): void
@@ -337,6 +352,7 @@ class EmailTest extends TestCase
     /**
      * send() builds and dispatches a stock alert email using the stock block.
      *
+     * @covers \Magento\ProductAlert\Model\Email::send()
      * @return void
      */
     public function testSendStockAlertSucceeds(): void
