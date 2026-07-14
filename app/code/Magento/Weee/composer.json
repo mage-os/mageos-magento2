@@ -1,42 +1,46 @@
 {
-    "name": "magento/module-weee",
-    "description": "N/A",
-    "config": {
-        "sort-packages": true
-    },
-    "require": {
-        "php": "~8.3.0||~8.4.0||~8.5.0",
-        "magento/framework": "*",
-        "magento/module-backend": "*",
-        "magento/module-catalog": "*",
-        "magento/module-checkout": "*",
-        "magento/module-configurable-product": "*",
-        "magento/module-customer": "*",
-        "magento/module-directory": "*",
-        "magento/module-eav": "*",
-        "magento/module-page-cache": "*",
-        "magento/module-quote": "*",
-        "magento/module-sales": "*",
-        "magento/module-store": "*",
-        "magento/module-tax": "*",
-        "magento/module-ui": "*",
-        "magento/module-bundle": "*"
-    },
-    "suggest": {
-        "magento/module-bundle": "*",
-        "magento/module-swatches": "*"
-    },
-    "type": "magento2-module",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
+  "name": "mage-os/module-weee",
+  "description": "N/A",
+  "config": {
+    "sort-packages": true
+  },
+  "require": {
+    "php": "~8.3.0||~8.4.0||~8.5.0",
+    "mage-os/framework": "3.2.0",
+    "mage-os/module-backend": "3.2.0",
+    "mage-os/module-catalog": "3.2.0",
+    "mage-os/module-checkout": "3.2.0",
+    "mage-os/module-configurable-product": "3.2.0",
+    "mage-os/module-customer": "3.2.0",
+    "mage-os/module-directory": "3.2.0",
+    "mage-os/module-eav": "3.2.0",
+    "mage-os/module-page-cache": "3.2.0",
+    "mage-os/module-quote": "3.2.0",
+    "mage-os/module-sales": "3.2.0",
+    "mage-os/module-store": "3.2.0",
+    "mage-os/module-tax": "3.2.0",
+    "mage-os/module-ui": "3.2.0",
+    "mage-os/module-bundle": "3.2.0"
+  },
+  "suggest": {
+    "mage-os/module-bundle": "3.2.0",
+    "mage-os/module-swatches": "3.2.0"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\Weee\\": ""
-        }
+    "psr-4": {
+      "Magento\\Weee\\": ""
     }
+  },
+  "version": "3.2.0",
+  "replace": {
+    "magento/module-weee": "100.4.9"
+  }
 }
