@@ -12,7 +12,6 @@ use Magento\Catalog\Model\Product;
 use Magento\Checkout\Controller\Cart\Add;
 use Magento\Checkout\Model\AddProductToCart;
 use Magento\Checkout\Model\Cart;
-use Magento\Checkout\Model\Cart\AjaxMessageResponse;
 use Magento\Checkout\Model\Cart\RequestQuantityProcessor;
 use Magento\Framework\App\Request\Http;
 use Magento\Framework\App\RequestInterface;
@@ -86,11 +85,6 @@ class AddTest extends TestCase
     private $cart;
 
     /**
-     * @var AjaxMessageResponse&MockObject
-     */
-    private $ajaxMessageResponse;
-
-    /**
      * @var \Magento\Framework\App\Response\Http&MockObject
      */
     private $response;
@@ -124,7 +118,6 @@ class AddTest extends TestCase
         $this->quantityProcessor = $this->createMock(RequestQuantityProcessor::class);
         $this->addProductToCart = $this->createMock(AddProductToCart::class);
         $this->cart = $this->createMock(Cart::class);
-        $this->ajaxMessageResponse = $this->createMock(AjaxMessageResponse::class);
         $this->response = $this->createMock(\Magento\Framework\App\Response\Http::class);
 
         $this->objectManagerHelper = new ObjectManagerHelper($this);
@@ -139,7 +132,6 @@ class AddTest extends TestCase
                 '_objectManager' => $this->objectManagerMock,
                 'quantityProcessor' => $this->quantityProcessor,
                 'addProductToCart' => $this->addProductToCart,
-                'ajaxMessageResponse' => $this->ajaxMessageResponse,
                 'cart' => $this->cart,
                 '_response' => $this->response
             ]
@@ -215,9 +207,6 @@ class AddTest extends TestCase
         $this->cart->expects($this->once())
             ->method('getQuote')
             ->willReturn($quote);
-        $this->ajaxMessageResponse->expects($this->once())
-            ->method('resolve')
-            ->willReturn(null);
         $this->formKeyValidator->expects($this->once())
             ->method('validate')
             ->with($this->request)
