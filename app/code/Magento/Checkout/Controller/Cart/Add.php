@@ -83,7 +83,7 @@ class Add extends \Magento\Checkout\Controller\Cart implements HttpPostActionInt
     }
 
     /**
-     * Provides AJAX message response service.
+     * Get AjaxMessageResponse instance
      *
      * @return AjaxMessageResponse
      */
@@ -246,13 +246,12 @@ class Add extends \Magento\Checkout\Controller\Cart implements HttpPostActionInt
             ];
         }
 
-        $inlineResponse = $this->getAjaxMessageResponse()->resolve(
-            $resolvedBackUrl,
-            $this->_redirect->getRefererUrl()
-        );
-        if ($inlineResponse) {
-            $result['messages'] = $inlineResponse['html'];
-            $result['displayMessages'] = $inlineResponse['displayMessages'];
+        if ($this->getAjaxMessageResponse()->shouldDisplayInline($resolvedBackUrl, $this->_redirect->getRefererUrl())) {
+            $inlineMessages = $this->getAjaxMessageResponse()->getInlineMessages(true);
+            if ($inlineMessages) {
+                $result['messages'] = $inlineMessages['html'];
+                $result['displayMessages'] = true;
+            }
         }
 
         $this->getResponse()->representJson(
