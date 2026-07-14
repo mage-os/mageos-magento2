@@ -21,6 +21,7 @@ use Magento\Framework\View;
  * @api
  * @since 100.0.2
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class Layout extends AbstractResult
 {
     /**

@@ -44,6 +44,7 @@ use Magento\Framework\View\EntitySpecificHandlesList;
  * @api
  * @since 100.0.2
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class Page extends Layout
 {
     /**
