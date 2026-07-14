@@ -6,7 +6,7 @@
 declare(strict_types=1);
 namespace Magento\Config\App\Config;
 
-use Magento\Framework\App\Config\ConfigTypeInterface;
+use Magento\Config\App\Config\Type\System;
 use Magento\Framework\App\State\ReloadProcessorInterface;
 
 /**
@@ -15,9 +15,9 @@ use Magento\Framework\App\State\ReloadProcessorInterface;
 class ReloadConfig implements ReloadProcessorInterface
 {
     /**
-     * @param ConfigTypeInterface $system
+     * @param System $system
      */
-    public function __construct(private readonly ConfigTypeInterface $system)
+    public function __construct(private readonly System $system)
     {
     }
 

@@ -9,7 +9,7 @@ namespace Magento\Store\Model\Config;
 /**
  * Placeholder configuration values processor. Replace placeholders in configuration with config values
  */
-class Placeholder implements PlaceholderInterface
+class Placeholder
 {
     /**
      * @var \Magento\Framework\App\RequestInterface

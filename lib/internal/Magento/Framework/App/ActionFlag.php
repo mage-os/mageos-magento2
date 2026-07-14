@@ -50,9 +50,8 @@ class ActionFlag implements ResetAfterRequestInterface
         if ('' === $action) {
             $action = $this->_request->getActionName() ?? '';
         }
-        $actionKey = is_string($action) ? $action : '';
-        $flagKey = is_string($flag) ? $flag : '';
-        $this->_flags[$this->_getControllerKey()][$actionKey][$flagKey] = $value;
+        $flagKey = $flag ?? '';
+        $this->_flags[$this->_getControllerKey()][$action][$flagKey] = $value;
     }
 
     /**
@@ -69,13 +68,11 @@ class ActionFlag implements ResetAfterRequestInterface
         if ('' === $action) {
             $action = $this->_request->getActionName() ?? '';
         }
-        $actionKey = is_string($action) ? $action : '';
-        if ('' === $flag) {
+        $flagKey = $flag ?? '';
+        if ('' === $flagKey) {
             return $this->_flags[$this->_getControllerKey()] ?? [];
-        }
-        $flagKey = is_string($flag) ? $flag : '';
-        if (isset($this->_flags[$this->_getControllerKey()][$actionKey][$flagKey])) {
-            return $this->_flags[$this->_getControllerKey()][$actionKey][$flagKey];
+        } elseif (isset($this->_flags[$this->_getControllerKey()][$action][$flagKey])) {
+            return $this->_flags[$this->_getControllerKey()][$action][$flagKey];
         } else {
             return false;
         }

@@ -8,7 +8,6 @@ namespace Magento\TestFramework\Authentication;
 use Magento\Framework\Exception\IntegrationException;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Oauth\Exception;
-use Magento\Framework\App\Cache\TypeListInterface;
 use Magento\TestFramework\Helper\Bootstrap;
 use Laminas\Stdlib\Exception\LogicException;
 use Magento\Integration\Model\Integration;
@@ -164,10 +163,16 @@ class OauthHelper
         $integration = $integrationService->create($params);
         $integration->setStatus(\Magento\Integration\Model\Integration::STATUS_ACTIVE)->save();
 
-        /** Clean integration cache types to activate just created ACL role. */
-        $cacheTypeList = $objectManager->get(TypeListInterface::class);
-        $cacheTypeList->cleanType('config_integration');
-        $cacheTypeList->cleanType('config_integration_api');
+        /** Magento cache must be cleared to activate just created ACL role. */
+        $varPath = realpath(BP . '/var');
+        if (!$varPath) {
+            throw new LogicException("Magento cache cannot be cleared after new ACL role creation.");
+        } else {
+            $cachePath = $varPath . '/cache';
+            if (is_dir($cachePath)) {
+                self::_rmRecursive($cachePath, true);
+            }
+        }
         return $integration;
     }
 }
