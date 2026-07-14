@@ -5,6 +5,7 @@
  */
 namespace Magento\Framework\App;
 
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class View implements ViewInterface
 {
     /**
