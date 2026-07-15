@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\NonLazyTypes\Foo;
+namespace Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyTypes\Foo;
 
 class Proxy
 {

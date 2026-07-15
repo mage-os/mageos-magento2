@@ -13,9 +13,11 @@ namespace Magento\Framework\ObjectManager;
 interface LazyTypeAwareInterface
 {
     /**
-     * Whether the given concrete type was flagged at compile-time as incompatible with PHP 8.4 lazy ghosts.
+     * Whether the given concrete type must not be constructed as a PHP 8.4 lazy ghost.
      *
-     * Fails safe: Returns true (= non-lazy) if no compile-time data is present.
+     * Only types proven lazy-eligible at compile time may return false; unknown types
+     * are non-lazy. Fails safe: returns true (= non-lazy) for everything when no
+     * compile-time data is present.
      *
      * @param string $type
      * @return bool

@@ -31,9 +31,11 @@ class Compiled implements ConfigInterface, LazyTypeAwareInterface
     private $preferences;
 
     /**
+     * Compile-time allow-list of types provably eligible for PHP 8.4 lazy ghosts.
+     *
      * @var array<string,bool>
      */
-    private array $nonLazyTypes = [];
+    private array $lazyTypes = [];
 
     /**
      * @param array $data
@@ -46,25 +48,24 @@ class Compiled implements ConfigInterface, LazyTypeAwareInterface
             ? $data['instanceTypes'] : [];
         $this->preferences = isset($data['preferences']) && is_array($data['preferences'])
             ? $data['preferences'] : [];
-        $this->nonLazyTypes = isset($data['nonLazyTypes']) && is_array($data['nonLazyTypes'])
-            ? $data['nonLazyTypes'] : [];
+        $this->lazyTypes = isset($data['lazyTypes']) && is_array($data['lazyTypes'])
+            ? $data['lazyTypes'] : [];
     }
 
     /**
-     * Whether the given concrete type was flagged at compile-time as incompatible with PHP 8.4 lazy ghosts.
+     * Whether the given concrete type is absent from the compile-time lazy-eligibility allow-list.
      *
-     * Fails safe: Returns true (= non-lazy) if no compile-time data is present.
+     * Opt-in semantics: only types the compile-time scan proved compatible with PHP 8.4 lazy
+     * ghosts are lazy; anything unknown (including transitive auto-wired dependencies never
+     * seen at compile time) is non-lazy. Fails safe: with no compile-time data present the
+     * allow-list is empty and every type is non-lazy.
      *
      * @param string $type
      * @return bool
      */
     public function isNonLazyType(string $type): bool
     {
-        if ($this->nonLazyTypes === []) {
-            return true;
-        }
-
-        return isset($this->nonLazyTypes[$type]);
+        return !isset($this->lazyTypes[$type]);
     }
 
     /**
@@ -172,9 +173,9 @@ class Compiled implements ConfigInterface, LazyTypeAwareInterface
         $this->preferences = isset($configuration['preferences']) && is_array($configuration['preferences'])
             ? array_replace($this->preferences, $configuration['preferences'])
             : $this->preferences;
-        $this->nonLazyTypes = isset($configuration['nonLazyTypes']) && is_array($configuration['nonLazyTypes'])
-            ? array_replace($this->nonLazyTypes, $configuration['nonLazyTypes'])
-            : $this->nonLazyTypes;
+        $this->lazyTypes = isset($configuration['lazyTypes']) && is_array($configuration['lazyTypes'])
+            ? array_replace($this->lazyTypes, $configuration['lazyTypes'])
+            : $this->lazyTypes;
     }
 
     /**
