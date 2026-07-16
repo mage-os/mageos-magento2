@@ -25,7 +25,7 @@ class AddRelatedProductsToSuccessMessagePlugin
 
     private const ADD_TO_CART_SUCCESS_MESSAGE = 'addCartSuccessMessage';
 
-    private const MAX_CART_ITEMS_FOR_MESSAGE = 50;
+    private const MAX_CART_ITEMS_FOR_MESSAGE = 20;
 
     /**
      * @var HttpRequest
