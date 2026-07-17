@@ -70,6 +70,11 @@ class BulkManagement implements BulkManagementInterface
     private $logger;
 
     /**
+     * @var Exception|null
+     */
+    private $lastException = null;
+
+    /**
      * BulkManagement constructor.
      * @param EntityManager $entityManager
      * @param BulkSummaryInterfaceFactory $bulkSummaryFactory
@@ -134,10 +139,21 @@ class BulkManagement implements BulkManagementInterface
         } catch (Exception $exception) {
             $connection->rollBack();
             $this->logger->critical($exception->getMessage());
+            $this->lastException = $exception;
             return false;
         }
 
         return true;
+    }
+
+    /**
+     * Return the last exception caught by scheduleBulk(), or null if none.
+     *
+     * @return Exception|null
+     */
+    public function getLastException(): ?Exception
+    {
+        return $this->lastException;
     }
 
     /**
