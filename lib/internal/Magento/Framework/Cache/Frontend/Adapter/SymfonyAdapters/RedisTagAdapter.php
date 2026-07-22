@@ -23,6 +23,17 @@ class RedisTagAdapter implements TagAdapterInterface
 {
     private const TAG_INDEX_PREFIX = 'cache:tags:';
     private const ALL_IDS_SET = 'cache:all_ids';
+    private const REVERSE_INDEX_PREFIX = 'cache:id_tags:';
+
+    /**
+     * Extra seconds the reverse index (cache:id_tags:*) is allowed to outlive its data key.
+     *
+     * Without a TTL these sets leak forever once the data key expires passively, because
+     * passive expiry fires no event the adapter can hook (onRemove() only runs on explicit
+     * removes). The buffer keeps the reverse index discoverable by garbageCollect() for a
+     * while after the data key is gone, so residual tag-set memberships can still be reaped.
+     */
+    private const ID_TAGS_TTL_BUFFER = 3600;
 
     /**
      * SUNION chunk size
@@ -255,6 +266,17 @@ LUA;
     }
 
     /**
+     * Get the reverse-index SET key (id -> tags) for a cache id
+     *
+     * @param string $id
+     * @return string
+     */
+    private function reverseIndexKey(string $id): string
+    {
+        return self::REVERSE_INDEX_PREFIX . $this->namespace . $id;
+    }
+
+    /**
      * Check if using Predis client (vs phpredis extension)
      *
      * @return bool
@@ -408,12 +430,8 @@ LUA;
                     $success = false;
                 }
 
-                // Remove IDs from all_ids set for this chunk
-                $pipeline = $this->createPipeline();
-                foreach ($chunk as $id) {
-                    $pipeline->srem(self::ALL_IDS_SET, $id);
-                }
-                $this->executePipeline($pipeline);
+                // Remove the chunk's tag bookkeeping (tag-set members, all_ids, reverse index)
+                $this->cleanupIndicesForIds($chunk);
 
                 // Commit each chunk separately (important for large operations)
                 if (method_exists($this->cachePool, 'commit')) {
@@ -426,20 +444,10 @@ LUA;
 
         $success = $this->cachePool->deleteItems($ids);
 
-        if (count($ids) > 10) {
-            $pipeline = $this->createPipeline();
-
-            // Remove each ID from all_ids set in pipeline
-            foreach ($ids as $id) {
-                $pipeline->srem(self::ALL_IDS_SET, $id);
-            }
-
-            $this->executePipeline($pipeline);
-        } else {
-            // For small batches, use single command (slightly faster)
-            array_unshift($ids, self::ALL_IDS_SET);
-            call_user_func_array([$this->redis, 'sRem'], $ids);
-        }
+        // Remove all tag bookkeeping for the deleted ids. Deleting the data keys
+        // alone leaves their reverse index and tag-set memberships behind, which
+        // is the primary source of unbounded Redis growth on tag invalidation.
+        $this->cleanupIndicesForIds($ids);
 
         // Ensure changes are committed immediately (important for MFTF and tests)
         if (method_exists($this->cachePool, 'commit')) {
@@ -447,6 +455,55 @@ LUA;
         }
 
         return $success;
+    }
+
+    /**
+     * Remove all tag bookkeeping for the given ids
+     *
+     * For each id: remove its membership from every tag set it belonged to (discovered
+     * via the reverse index), remove it from all_ids, and delete the reverse index key.
+     * Individual Redis SET members cannot expire, so leaving them behind leaks memory
+     * without bound; this is the batch equivalent of onRemove().
+     *
+     * Uses two pipelines (SMEMBERS, then SREM/DEL) so it works with both phpredis and
+     * Predis. It is not atomic: a concurrent onSave() for the same id may re-create the
+     * reverse index between the two passes, but that id self-heals on its next save.
+     *
+     * @param array $ids
+     * @return void
+     */
+    private function cleanupIndicesForIds(array $ids): void
+    {
+        if (empty($ids)) {
+            return;
+        }
+
+        $ids = array_values($ids);
+
+        // First pass: read the tags associated with each id from its reverse index.
+        $pipeline = $this->createPipeline();
+        foreach ($ids as $id) {
+            $pipeline->smembers($this->reverseIndexKey($id));
+        }
+        $tagLists = $this->executePipeline($pipeline);
+        if (!is_array($tagLists)) {
+            $tagLists = [];
+        }
+
+        // Second pass: drop each id from all_ids and every tag set it belonged to,
+        // then delete the reverse index itself.
+        $pipeline = $this->createPipeline();
+        foreach ($ids as $i => $id) {
+            $pipeline->srem(self::ALL_IDS_SET, $id);
+            $tags = $tagLists[$i] ?? null;
+            if (is_array($tags)) {
+                foreach ($tags as $tag) {
+                    $pipeline->srem($this->getTagKey($tag), $id);
+                }
+            }
+            $pipeline->del($this->reverseIndexKey($id));
+        }
+        $this->executePipeline($pipeline);
     }
 
     /**
@@ -568,7 +625,7 @@ LUA;
      * Maintains tag-to-ID indices in Redis SETs
      * OPTIMIZED: Uses Redis pipeline for batch operations
      */
-    public function onSave(string $id, array $tags): void
+    public function onSave(string $id, array $tags, ?int $lifetime = null): void
     {
         if (empty($tags)) {
             return;
@@ -586,10 +643,17 @@ LUA;
         }
 
         // Reverse index: Store tags for this ID (for cleanup on delete)
-        $idTagsKey = 'cache:id_tags:' . $this->namespace . $id;
+        $idTagsKey = $this->reverseIndexKey($id);
         $pipeline->del($idTagsKey);  // Clear old tags first
         foreach ($tags as $tag) {
             $pipeline->sadd($idTagsKey, $tag);
+        }
+
+        // Bound the reverse index's lifetime to its data key's. Emitted after the
+        // sadd()s so the key exists when EXPIRE runs. Entries saved without a
+        // lifetime keep a persistent reverse index, matching their persistent data key.
+        if ($lifetime !== null && $lifetime > 0) {
+            $pipeline->expire($idTagsKey, $lifetime + self::ID_TAGS_TTL_BUFFER);
         }
 
         // Execute all operations in one go
@@ -605,7 +669,7 @@ LUA;
     public function onRemove(string $id): void
     {
         // Find which tags this ID was associated with store a reverse index: cache:id:tags => SET{tag1, tag2}
-        $idTagsKey = 'cache:id_tags:' . $this->namespace . $id;
+        $idTagsKey = $this->reverseIndexKey($id);
         $tags = $this->redis->smembers($idTagsKey);
 
         if (!is_array($tags) || empty($tags)) {
@@ -659,7 +723,7 @@ LUA;
         $this->redis->del(self::ALL_IDS_SET);
 
         // Clear reverse index keys
-        $reversePattern = 'cache:id_tags:' . $this->namespace . '*';
+        $reversePattern = self::REVERSE_INDEX_PREFIX . $this->namespace . '*';
         $reverseKeys = $this->redis->keys($reversePattern);
         if (is_array($reverseKeys) && !empty($reverseKeys)) {
             // PHP 8+ compatibility: use call_user_func_array to avoid spread operator issues
@@ -672,15 +736,16 @@ LUA;
      *
      * @param string $id
      * @param array $tags
+     * @param int|null $lifetime Data-key lifetime; bounds the reverse index TTL when > 0
      * @return void
      */
-    public function storeReverseIndex(string $id, array $tags): void
+    public function storeReverseIndex(string $id, array $tags, ?int $lifetime = null): void
     {
         if (empty($tags)) {
             return;
         }
 
-        $idTagsKey = 'cache:id_tags:' . $this->namespace . $id;
+        $idTagsKey = $this->reverseIndexKey($id);
 
         // OPTIMIZATION: Use Redis pipeline for all operations
         // Reduces network round trips from N+1 to 1
@@ -694,30 +759,102 @@ LUA;
             $pipeline->sadd($idTagsKey, $tag);
         }
 
+        // Bound the reverse index's lifetime to its data key's (see onSave)
+        if ($lifetime !== null && $lifetime > 0) {
+            $pipeline->expire($idTagsKey, $lifetime + self::ID_TAGS_TTL_BUFFER);
+        }
+
         // Execute all operations in one go
         $this->executePipeline($pipeline);
     }
 
     /**
-     * Run garbage collection to clean expired items
+     * Run garbage collection to reap tag bookkeeping orphaned by passive expiry
      *
-     * @param int $batchSize Number of keys to process per iteration
-     * @return int Number of items cleaned
+     * Data keys expire passively (by TTL) with no event the adapter can hook, so their
+     * membership in tag sets / all_ids and their reverse index are never cleaned by the
+     * normal remove/invalidation paths. This scans all_ids and, for every id whose data
+     * key no longer exists, removes its bookkeeping via cleanupIndicesForIds().
+     *
+     * Bounded: it processes at most $batchSize ids per call, so it can be run repeatedly
+     * (e.g. via CLEANING_MODE_OLD or cron) without unbounded work in a single pass.
+     *
+     * @param int $batchSize Maximum number of ids to inspect per call
+     * @return int Number of orphaned ids cleaned
      */
     public function garbageCollect(int $batchSize = 1000): int
     {
-        // Garbage collection specifically checks use_lua_on_gc flag
-        if (!$this->useLuaOnGc || !$this->luaHelper) {
+        if ($batchSize <= 0) {
             return 0;
         }
 
-        $result = $this->luaHelper->garbageCollect(
-            $this->namespace . '*',
-            self::TAG_INDEX_PREFIX . $this->namespace,
-            $batchSize
-        );
+        $cleaned = 0;
+        $processed = 0;
+        $orphans = [];
 
-        return $result[0]; // Return deleted count (first element)
+        foreach ($this->scanSet(self::ALL_IDS_SET, min($batchSize, 1000)) as $id) {
+            $processed++;
+
+            if (!$this->cachePool->hasItem((string)$id)) {
+                $orphans[] = $id;
+                if (count($orphans) >= 100) {
+                    $this->cleanupIndicesForIds($orphans);
+                    $cleaned += count($orphans);
+                    $orphans = [];
+                }
+            }
+
+            if ($processed >= $batchSize) {
+                break;
+            }
+        }
+
+        if (!empty($orphans)) {
+            $this->cleanupIndicesForIds($orphans);
+            $cleaned += count($orphans);
+        }
+
+        return $cleaned;
+    }
+
+    /**
+     * Iterate the members of a Redis SET via SSCAN (cursor-based, non-blocking)
+     *
+     * Abstracts the phpredis vs Predis SSCAN differences behind a generator.
+     *
+     * @param string $setKey
+     * @param int $count SSCAN COUNT hint per round trip
+     * @return \Generator
+     */
+    private function scanSet(string $setKey, int $count): \Generator
+    {
+        if ($this->isPredisClient()) {
+            $cursor = 0;
+            do {
+                [$cursor, $members] = $this->redis->sscan($setKey, $cursor, ['COUNT' => $count]);
+                if (is_array($members)) {
+                    foreach ($members as $member) {
+                        yield $member;
+                    }
+                }
+                $cursor = (int)$cursor;
+            } while ($cursor !== 0);
+
+            return;
+        }
+
+        // phpredis: cursor is passed by reference and reaches 0 when iteration completes
+        $iterator = null;
+        while (($members = $this->redis->sScan($setKey, $iterator, null, $count)) !== false) {
+            if (is_array($members)) {
+                foreach ($members as $member) {
+                    yield $member;
+                }
+            }
+            if ((int)$iterator === 0) {
+                break;
+            }
+        }
     }
 
     /**
