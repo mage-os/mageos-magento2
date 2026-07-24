@@ -285,11 +285,12 @@ class CompiledTest extends TestCase
     }
 
     /**
-     * Empty deny-list must report every type as non-lazy: protects the upgrade scenario where
-     * a cache compiled on PHP < 8.4 (no `nonLazyTypes` key) is read by a PHP 8.4 runtime, so
-     * incompatible types aren't accidentally lazified before recompile.
+     * Empty allow-list must report every type as non-lazy: protects the upgrade scenario where
+     * a cache compiled on PHP < 8.4 (no `lazyTypes` key) is read by a PHP 8.4 runtime, so
+     * incompatible types aren't accidentally lazified before recompile. Also covers stale
+     * caches from the earlier deny-list (`nonLazyTypes`) format, which are simply ignored.
      */
-    public function testIsNonLazyTypeReturnsTrueWhenDenyListIsEmpty(): void
+    public function testIsNonLazyTypeReturnsTrueWhenAllowListIsEmpty(): void
     {
         /** @var Compiled $compiled */
         $compiled = $this->objectManager->getObject(Compiled::class, ['data' => []]);
@@ -298,7 +299,7 @@ class CompiledTest extends TestCase
         $this->assertTrue($compiled->isNonLazyType('Another\\Type'));
     }
 
-    public function testIsNonLazyTypeReturnsTrueForListedType(): void
+    public function testIsNonLazyTypeIgnoresLegacyDenyListFormat(): void
     {
         /** @var Compiled $compiled */
         $compiled = $this->objectManager->getObject(
@@ -307,31 +308,43 @@ class CompiledTest extends TestCase
         );
 
         $this->assertTrue($compiled->isNonLazyType('Listed\\Type'));
+        $this->assertTrue($compiled->isNonLazyType('Unlisted\\Type'));
     }
 
-    public function testIsNonLazyTypeReturnsFalseForUnlistedTypeWhenDenyListIsPopulated(): void
+    public function testIsNonLazyTypeReturnsFalseForAllowListedType(): void
     {
         /** @var Compiled $compiled */
         $compiled = $this->objectManager->getObject(
             Compiled::class,
-            ['data' => ['nonLazyTypes' => ['Listed\\Type' => true]]]
+            ['data' => ['lazyTypes' => ['Listed\\Type' => true]]]
         );
 
-        $this->assertFalse($compiled->isNonLazyType('Unlisted\\Type'));
+        $this->assertFalse($compiled->isNonLazyType('Listed\\Type'));
     }
 
-    public function testExtendMergesNonLazyTypes(): void
+    public function testIsNonLazyTypeReturnsTrueForTypeAbsentFromAllowList(): void
     {
         /** @var Compiled $compiled */
         $compiled = $this->objectManager->getObject(
             Compiled::class,
-            ['data' => ['nonLazyTypes' => ['First\\Type' => true]]]
+            ['data' => ['lazyTypes' => ['Listed\\Type' => true]]]
         );
 
-        $compiled->extend(['nonLazyTypes' => ['Second\\Type' => true]]);
+        $this->assertTrue($compiled->isNonLazyType('Unlisted\\Type'));
+    }
 
-        $this->assertTrue($compiled->isNonLazyType('First\\Type'));
-        $this->assertTrue($compiled->isNonLazyType('Second\\Type'));
-        $this->assertFalse($compiled->isNonLazyType('Other\\Type'));
+    public function testExtendMergesLazyTypes(): void
+    {
+        /** @var Compiled $compiled */
+        $compiled = $this->objectManager->getObject(
+            Compiled::class,
+            ['data' => ['lazyTypes' => ['First\\Type' => true]]]
+        );
+
+        $compiled->extend(['lazyTypes' => ['Second\\Type' => true]]);
+
+        $this->assertFalse($compiled->isNonLazyType('First\\Type'));
+        $this->assertFalse($compiled->isNonLazyType('Second\\Type'));
+        $this->assertTrue($compiled->isNonLazyType('Other\\Type'));
     }
 }
