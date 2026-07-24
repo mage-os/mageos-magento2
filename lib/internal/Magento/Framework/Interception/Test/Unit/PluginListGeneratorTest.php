@@ -53,9 +53,17 @@ class PluginListGeneratorTest extends TestCase
         foreach (glob($this->tmpDir . '/generated/metadata/*.php') ?: [] as $file) {
             unlink($file);
         }
-        @rmdir($this->tmpDir . '/generated/metadata');
-        @rmdir($this->tmpDir . '/generated');
-        @rmdir($this->tmpDir);
+        foreach (
+            [
+                $this->tmpDir . '/generated/metadata',
+                $this->tmpDir . '/generated',
+                $this->tmpDir,
+            ] as $dir
+        ) {
+            if (is_dir($dir)) {
+                rmdir($dir);
+            }
+        }
     }
 
     /**
@@ -112,6 +120,9 @@ class PluginListGeneratorTest extends TestCase
         };
 
         $scopeConfig = new class implements ScopeInterface {
+            /**
+             * @var string
+             */
             private $currentScope = 'global';
             public function getCurrentScope()
             {
