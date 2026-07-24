@@ -180,7 +180,7 @@ class Queue implements QueueInterface
         $channel->basic_qos(0, $this->prefetchCount, false);
         $consumerTag = $channel->basic_consume($this->queueName, '', false, false, false, false, $callbackConverter);
 
-        $timeout = $waitTimeout > 0 ? $waitTimeout : null;
+        $timeout = $waitTimeout > 0 ? $waitTimeout : 0;
         while (count($channel->callbacks)) {
             try {
                 $channel->wait(null, false, $timeout);
