@@ -323,7 +323,8 @@ class Symfony implements FrontendInterface
         if ($this->alwaysDeferSaves) {
             $this->batchedItems[$cleanId] = [
                 'item' => $item,
-                'tags' => $cleanTags
+                'tags' => $cleanTags,
+                'lifetime' => $actualLifetime
             ];
             $this->hasPendingWrites = true;
             return $cache->saveDeferred($item);
@@ -334,7 +335,8 @@ class Symfony implements FrontendInterface
         if ($this->batchMode) {
             $this->batchedItems[$cleanId] = [
                 'item' => $item,
-                'tags' => $cleanTags
+                'tags' => $cleanTags,
+                'lifetime' => $actualLifetime
             ];
             $this->hasPendingWrites = true;
             return $cache->saveDeferred($item);
@@ -344,7 +346,7 @@ class Symfony implements FrontendInterface
         $success = $cache->save($item);
 
         // Commit and notify helpers
-        $this->commitAndNotify($cache, $success, $cleanId, $cleanTags);
+        $this->commitAndNotify($cache, $success, $cleanId, $cleanTags, $actualLifetime);
 
         return $success;
     }
@@ -394,7 +396,7 @@ class Symfony implements FrontendInterface
 
         // Notify tag adapters about all saved items
         foreach ($this->batchedItems as $cleanId => $itemData) {
-            $this->commitAndNotify($cache, $success, $cleanId, $itemData['tags']);
+            $this->commitAndNotify($cache, $success, $cleanId, $itemData['tags'], $itemData['lifetime'] ?? null);
         }
 
         // Clear state
@@ -528,10 +530,16 @@ class Symfony implements FrontendInterface
      * @param bool $success
      * @param string $cleanId
      * @param array $cleanTags
+     * @param int|null $lifetime Effective data-key lifetime, so adapters can bound their indices
      * @return void
      */
-    private function commitAndNotify($cache, bool $success, string $cleanId, array $cleanTags): void
-    {
+    private function commitAndNotify(
+        $cache,
+        bool $success,
+        string $cleanId,
+        array $cleanTags,
+        ?int $lifetime = null
+    ): void {
         // Ensure immediate persistence (commit any deferred saves)
         if ($success && method_exists($cache, 'commit')) {
             $cache->commit();
@@ -540,7 +548,7 @@ class Symfony implements FrontendInterface
         // Notify helper about the save (for Redis/Filesystem to maintain indices)
         // Note: onSave() already handles reverse index, no need for separate call
         if ($success && !empty($cleanTags)) {
-            $this->adapter->onSave($cleanId, $cleanTags);
+            $this->adapter->onSave($cleanId, $cleanTags, $lifetime);
         }
     }
 
@@ -641,8 +649,13 @@ class Symfony implements FrontendInterface
      */
     private function cleanOld(CacheItemPoolInterface $cache): bool
     {
-        // Symfony handles expiration automatically
-        // This is a no-op as expired items are not returned
+        // Symfony expires data keys automatically, but the tag bookkeeping
+        // (tag sets, all_ids and reverse index) of passively-expired entries is
+        // not reaped by that. CLEANING_MODE_OLD is the correct hook to collect it.
+        if (method_exists($this->adapter, 'garbageCollect')) {
+            $this->adapter->garbageCollect();
+        }
+
         return true;
     }
 
