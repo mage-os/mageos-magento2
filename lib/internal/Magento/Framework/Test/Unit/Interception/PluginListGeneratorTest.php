@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\Framework\Interception\Test\Unit;
+namespace Magento\Framework\Test\Unit\Interception;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Config\ReaderInterface;
@@ -23,8 +23,8 @@ use Magento\Framework\ObjectManager\RelationsInterface;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 
-require_once __DIR__ . '/Custom/Module/Model/Item.php';
-require_once __DIR__ . '/Custom/Module/Model/ItemPlugin/Simple.php';
+require_once __DIR__ . '/../../../Interception/Test/Unit/Custom/Module/Model/Item.php';
+require_once __DIR__ . '/../../../Interception/Test/Unit/Custom/Module/Model/ItemPlugin/Simple.php';
 
 /**
  * Regression test for mage-os/mageos-magento2#299.
