@@ -53,13 +53,12 @@ class PluginListGeneratorTest extends TestCase
         foreach (glob($this->tmpDir . '/generated/metadata/*.php') ?: [] as $file) {
             unlink($file);
         }
-        foreach (
-            [
-                $this->tmpDir . '/generated/metadata',
-                $this->tmpDir . '/generated',
-                $this->tmpDir,
-            ] as $dir
-        ) {
+        $dirs = [
+            $this->tmpDir . '/generated/metadata',
+            $this->tmpDir . '/generated',
+            $this->tmpDir,
+        ];
+        foreach ($dirs as $dir) {
             if (is_dir($dir)) {
                 rmdir($dir);
             }
