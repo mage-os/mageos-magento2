@@ -441,7 +441,7 @@ class Product extends \Magento\Framework\Url\Helper\Data
         $categoryId = $params->getCategoryId();
         if (!$categoryId && $categoryId !== false) {
             $lastId = $this->_catalogSession->getLastVisitedCategoryId();
-            if ($lastId && $product->canBeShowInCategory($lastId)) {
+            if ($lastId !== null && $product->canBeShowInCategory($lastId)) {
                 $categoryId = $lastId;
             }
         } elseif (!$product->canBeShowInCategory($categoryId)) {

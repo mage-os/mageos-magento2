@@ -140,7 +140,7 @@ class Design extends \Magento\Framework\Model\AbstractModel
             $currentCategory = $object->getCategory();
             if (!$currentCategory) {
                 $lastId = $this->catalogSession->getLastVisitedCategoryId();
-                if ($lastId && $object->canBeShowInCategory($lastId)) {
+                if ($lastId !== null && $object->canBeShowInCategory($lastId)) {
                     $categoryId = $lastId;
                     try {
                         $currentCategory = $this->categoryRepository->get($categoryId);
