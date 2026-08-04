@@ -262,7 +262,7 @@ class Mysql extends \Magento\TestFramework\Db\AbstractDb
         if (file_exists($this->_defaultsExtraFile)) {
             return;
         }
-        
+
         $this->assertVarPathWritable();
 
         $config = [
