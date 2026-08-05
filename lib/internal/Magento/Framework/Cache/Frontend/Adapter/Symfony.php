@@ -711,7 +711,9 @@ class Symfony implements FrontendInterface
             return true;
         }
 
-        return $this->adapter->deleteByIds($ids);
+        // Pass the source tags so stale tag-set members are swept even when
+        // an id's reverse index has already expired
+        return $this->adapter->deleteByIds($ids, $cleanTags);
     }
 
     /**
@@ -841,8 +843,9 @@ class Symfony implements FrontendInterface
                 return true;
             }
 
-            // Batch delete all IDs at once
-            return $this->adapter->deleteByIds($ids);
+            // Batch delete all IDs at once; the source tags let the adapter sweep
+            // stale members whose reverse index already expired
+            return $this->adapter->deleteByIds($ids, $cleanTags);
         }
 
         // Fallback: Try Symfony's native invalidateTags (OR logic)

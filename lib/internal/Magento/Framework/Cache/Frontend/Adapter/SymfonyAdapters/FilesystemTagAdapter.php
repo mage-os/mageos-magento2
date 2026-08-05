@@ -239,8 +239,10 @@ class FilesystemTagAdapter implements TagAdapterInterface
 
     /**
      * @inheritDoc
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function deleteByIds(array $ids): bool
+    public function deleteByIds(array $ids, array $sourceTags = []): bool
     {
         if (empty($ids)) {
             return true;

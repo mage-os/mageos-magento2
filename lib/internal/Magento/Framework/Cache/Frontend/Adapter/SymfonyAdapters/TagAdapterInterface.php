@@ -56,9 +56,11 @@ interface TagAdapterInterface
      * Delete cache items by their IDs
      *
      * @param array $ids Array of cache IDs to delete
+     * @param array $sourceTags Tags the ids were discovered from, so adapters can sweep
+     *        stale members (ids whose reverse index already expired) from those tag sets
      * @return bool True on success
      */
-    public function deleteByIds(array $ids): bool;
+    public function deleteByIds(array $ids, array $sourceTags = []): bool;
 
     /**
      * Update tag-to-ID index when a cache item is saved

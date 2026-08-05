@@ -412,11 +412,16 @@ LUA;
      *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
-    public function deleteByIds(array $ids): bool
+    public function deleteByIds(array $ids, array $sourceTags = []): bool
     {
         if (empty($ids)) {
             return true;
         }
+
+        // Drop the ids from the tag sets they were discovered from. cleanupIndicesForIds()
+        // can only SREM memberships still recorded in each id's reverse index, so stale
+        // members (reverse index expired) would otherwise stay in these sets forever.
+        $this->removeIdsFromTagSets($sourceTags, $ids);
 
         // Matches Zend's implementation to prevent Redis blocking and memory issues
         // @see vendor/colinmollenhour/cache-backend-redis/Cm/Cache/Backend/Redis.php line 809-825
@@ -544,12 +549,7 @@ LUA;
         }
 
         // Batch delete - exactly like Zend's _removeByIds (line 751-768)
-        $success = $this->deleteByIds($ids);
-
-        // Drop the fetched ids from the source tag sets directly. cleanupIndicesForIds()
-        // can only SREM memberships still recorded in each id's reverse index, so ids
-        // whose reverse index already expired would otherwise stay in these sets forever.
-        $this->removeIdsFromTagSets($tags, $ids);
+        $success = $this->deleteByIds($ids, $tags);
 
         // Ensure changes are committed to underlying pool
         if (method_exists($this->cachePool, 'commit')) {
@@ -614,10 +614,7 @@ LUA;
         }
 
         // Step 4: Batch delete filtered IDs
-        $success = $this->deleteByIds($filteredIds);
-
-        // Drop the deleted ids from the source tag sets directly (see cleanMatchingAnyTags)
-        $this->removeIdsFromTagSets(array_merge($tags, [$scopeTag]), $filteredIds);
+        $success = $this->deleteByIds($filteredIds, array_merge($tags, [$scopeTag]));
 
         // Step 5: Ensure changes are committed to underlying pool
         if (method_exists($this->cachePool, 'commit')) {
@@ -824,31 +821,23 @@ LUA;
     /**
      * Find which of the given ids have no data key and reap the orphans' bookkeeping
      *
-     * Existence is checked with a pipelined EXISTS on the data keys (namespace . id,
-     * the same mapping the Lua cleaners use): one round trip per batch instead of
-     * one cachePool->hasItem() round trip per id.
+     * Existence is checked with a single batched cachePool->getItems() call (one MGET
+     * round trip in Symfony's RedisAdapter) instead of one hasItem() round trip per id.
+     * The pool is authoritative on key naming, so this stays correct regardless of how
+     * Symfony maps ids to Redis keys.
      *
      * @param array $ids
      * @return int Number of orphaned ids cleaned
      */
     private function reapOrphanedIds(array $ids): int
     {
-        $pipeline = $this->createPipeline();
-        foreach ($ids as $id) {
-            $pipeline->exists($this->namespace . $id);
-        }
-        $results = $this->executePipeline($pipeline);
-        if (!is_array($results)) {
-            // Existence unknown; treat all ids as live rather than reap blindly
-            return 0;
-        }
-
-        $orphans = [];
-        foreach ($ids as $i => $id) {
-            if ((int)($results[$i] ?? 1) === 0) {
-                $orphans[] = $id;
+        $orphans = array_flip($ids);
+        foreach ($this->cachePool->getItems($ids) as $key => $item) {
+            if ($item->isHit()) {
+                unset($orphans[$key]);
             }
         }
+        $orphans = array_keys($orphans);
 
         if (empty($orphans)) {
             return 0;

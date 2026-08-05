@@ -11,6 +11,7 @@ use Magento\Framework\Cache\Frontend\Adapter\SymfonyAdapters\RedisTagAdapter;
 use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Predis\Client as PredisClient;
+use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
 
 /**
@@ -136,8 +137,10 @@ class RedisTagAdapterTest extends TestCase
         $this->redis->sscanResponses = [[0, ['LIVE', 'DEAD']]];
         $this->redis->sets['cache:id_tags:4e0_DEAD'] = ['MAGE'];
 
-        // Existence is checked via pipelined EXISTS on namespace-prefixed data keys
-        $this->redis->dataKeys['4e0_LIVE'] = true;
+        // Existence is checked via one batched cachePool->getItems() call
+        $this->cachePoolMock->method('getItems')->willReturnCallback(
+            fn (array $ids) => $this->poolItems($ids, ['LIVE'])
+        );
 
         $cleaned = $this->adapter->garbageCollect();
 
@@ -154,7 +157,9 @@ class RedisTagAdapterTest extends TestCase
     public function testGarbageCollectWithNoOrphansCleansNothing(): void
     {
         $this->redis->sscanResponses = [[0, ['LIVE']]];
-        $this->redis->dataKeys['4e0_LIVE'] = true;
+        $this->cachePoolMock->method('getItems')->willReturnCallback(
+            fn (array $ids) => $this->poolItems($ids, ['LIVE'])
+        );
 
         $this->assertSame(0, $this->adapter->garbageCollect());
         $this->assertNoCommand('del');
@@ -196,9 +201,6 @@ class RedisTagAdapterTest extends TestCase
             /** @var array<int, array{0:int,1:array}> queued [cursor, members] SSCAN responses */
             public array $sscanResponses = [];
 
-            /** @var array<string, bool> data keys that EXISTS reports as present */
-            public array $dataKeys = [];
-
             // phpcs:ignore Magento2.Functions.DiscouragedFunction
             public function __construct()
             {
@@ -225,11 +227,7 @@ class RedisTagAdapterTest extends TestCase
                     {
                         $results = [];
                         foreach ($this->queued as [$method, $args]) {
-                            $results[] = match ($method) {
-                                'smembers' => $this->parent->sets[$args[0]] ?? [],
-                                'exists' => isset($this->parent->dataKeys[$args[0]]) ? 1 : 0,
-                                default => true,
-                            };
+                            $results[] = $method === 'smembers' ? ($this->parent->sets[$args[0]] ?? []) : true;
                         }
 
                         return $results;
@@ -254,11 +252,29 @@ class RedisTagAdapterTest extends TestCase
                 return match ($method) {
                     'smembers' => $this->sets[$arguments[0]] ?? [],
                     'sscan' => array_shift($this->sscanResponses) ?: [0, []],
-                    'exists' => isset($this->dataKeys[$arguments[0]]) ? 1 : 0,
                     default => true,
                 };
             }
         };
+    }
+
+    /**
+     * Build a getItems() result: pool items keyed by id, hit only for $liveIds
+     *
+     * @param string[] $ids
+     * @param string[] $liveIds
+     * @return array<string, CacheItemInterface>
+     */
+    private function poolItems(array $ids, array $liveIds): array
+    {
+        $items = [];
+        foreach ($ids as $id) {
+            $item = $this->createStub(CacheItemInterface::class);
+            $item->method('isHit')->willReturn(in_array($id, $liveIds, true));
+            $items[$id] = $item;
+        }
+
+        return $items;
     }
 
     private function setPrivate(string $property, $value): void
