@@ -239,10 +239,8 @@ class FilesystemTagAdapter implements TagAdapterInterface
 
     /**
      * @inheritDoc
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function deleteByIds(array $ids, array $sourceTags = []): bool
+    public function deleteByIds(array $ids): bool
     {
         if (empty($ids)) {
             return true;
@@ -262,10 +260,8 @@ class FilesystemTagAdapter implements TagAdapterInterface
      * @inheritDoc
      *
      * Maintains tag-to-ID indices in filesystem
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function onSave(string $id, array $tags, ?int $lifetime = null): void
+    public function onSave(string $id, array $tags): void
     {
         if (empty($tags)) {
             return;

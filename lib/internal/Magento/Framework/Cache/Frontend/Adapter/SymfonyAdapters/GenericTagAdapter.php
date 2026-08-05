@@ -118,10 +118,8 @@ class GenericTagAdapter implements TagAdapterInterface
 
     /**
      * @inheritDoc
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function deleteByIds(array $ids, array $sourceTags = []): bool
+    public function deleteByIds(array $ids): bool
     {
         if (empty($ids)) {
             return true;
@@ -146,7 +144,7 @@ class GenericTagAdapter implements TagAdapterInterface
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     // phpcs:disable Magento2.CodeAnalysis.EmptyBlock
-    public function onSave(string $id, array $tags, ?int $lifetime = null): void
+    public function onSave(string $id, array $tags): void
     {
         // Intentional no-op: Tags are handled by Symfony's TagAwareAdapter
         // (for Database, APCu, and Memcached backends that lack native tag support)
