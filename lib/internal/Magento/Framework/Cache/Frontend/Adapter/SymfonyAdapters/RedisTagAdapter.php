@@ -19,10 +19,19 @@ use Symfony\Component\Cache\Adapter\TagAwareAdapter;
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class RedisTagAdapter implements TagAdapterInterface
+class RedisTagAdapter implements
+    TagAdapterInterface,
+    LifetimeAwareTagAdapterInterface,
+    SourceTagsAwareTagAdapterInterface,
+    GarbageCollectingTagAdapterInterface
 {
     private const TAG_INDEX_PREFIX = 'cache:tags:';
-    private const ALL_IDS_SET = 'cache:all_ids';
+    private const ALL_IDS_PREFIX = 'cache:all_ids:';
+
+    /**
+     * Pre-namespacing all_ids key; only referenced to clear leftovers from older versions
+     */
+    private const LEGACY_ALL_IDS_SET = 'cache:all_ids';
     private const REVERSE_INDEX_PREFIX = 'cache:id_tags:';
 
     /**
@@ -67,11 +76,15 @@ class RedisTagAdapter implements TagAdapterInterface
 -- KEYS: array of tags to match (e.g., ["product", "category", "config"])
 -- ARGV[1]: tag prefix (e.g., "cache:tags:")
 -- ARGV[2]: namespace prefix (e.g., "69d_")
--- ARGV[3]: chunk size for SUNION operations
+-- ARGV[3]: data key prefix (e.g., "69d_:" - Symfony appends ':' to the namespace)
+-- ARGV[4]: reverse index prefix (e.g., "cache:id_tags:")
+-- ARGV[5]: all_ids set key (e.g., "cache:all_ids")
 
 local tag_prefix = ARGV[1]
 local namespace = ARGV[2]
-local chunk_size = tonumber(ARGV[3]) or 100
+local data_prefix = ARGV[3]
+local reverse_prefix = ARGV[4]
+local all_ids_key = ARGV[5]
 
 -- Build prefixed tag keys
 local prefixed_tags = {}
@@ -86,13 +99,27 @@ if #ids_to_delete == 0 then
     return 0
 end
 
--- Delete cache items and remove from indices
+-- Delete cache items and all their tag bookkeeping
 local deleted = 0
 for _, id in ipairs(ids_to_delete) do
-    -- Delete the actual cache item
-    local cache_key = namespace .. id
-    redis.call('DEL', cache_key)
+    redis.call('DEL', data_prefix .. id)
+    local reverse_key = reverse_prefix .. namespace .. id
+    local id_tags = redis.call('SMEMBERS', reverse_key)
+    for _, tag in ipairs(id_tags) do
+        redis.call('SREM', tag_prefix .. namespace .. tag, id)
+    end
+    redis.call('DEL', reverse_key)
+    redis.call('SREM', all_ids_key, id)
     deleted = deleted + 1
+end
+
+-- The script is atomic, so the source tag sets can be dropped wholesale: every
+-- member was just deleted and no concurrent save can interleave. This also reaps
+-- stale members whose reverse index already expired. Chunked to respect Lua's
+-- unpack() C-stack limit (ARGV[6], see LUA_MAX_CSTACK).
+local del_chunk = tonumber(ARGV[6]) or 1000
+for i = 1, #prefixed_tags, del_chunk do
+    redis.call('DEL', unpack(prefixed_tags, i, math.min(i + del_chunk - 1, #prefixed_tags)))
 end
 
 return deleted
@@ -110,10 +137,16 @@ LUA;
 -- ARGV[1]: tag prefix (e.g., "cache:tags:")
 -- ARGV[2]: namespace prefix (e.g., "69d_")
 -- ARGV[3]: scope tag (e.g., "FPC")
+-- ARGV[4]: data key prefix (e.g., "69d_:" - Symfony appends ':' to the namespace)
+-- ARGV[5]: reverse index prefix (e.g., "cache:id_tags:")
+-- ARGV[6]: all_ids set key (e.g., "cache:all_ids")
 
 local tag_prefix = ARGV[1]
 local namespace = ARGV[2]
 local scope_tag = ARGV[3]
+local data_prefix = ARGV[4]
+local reverse_prefix = ARGV[5]
+local all_ids_key = ARGV[6]
 
 -- Build prefixed tag keys
 local prefixed_tags = {}
@@ -153,11 +186,24 @@ if #filtered_ids == 0 then
     return 0
 end
 
--- Step 4: Delete filtered IDs
+-- Step 4: Delete filtered IDs and all their tag bookkeeping. The source tag sets
+-- cannot be dropped wholesale here (non-scope members must survive), so each id is
+-- also SREMed from the source sets explicitly to reap stale members whose reverse
+-- index already expired.
 local deleted = 0
 for _, id in ipairs(filtered_ids) do
-    local cache_key = namespace .. id
-    redis.call('DEL', cache_key)
+    redis.call('DEL', data_prefix .. id)
+    local reverse_key = reverse_prefix .. namespace .. id
+    local id_tags = redis.call('SMEMBERS', reverse_key)
+    for _, tag in ipairs(id_tags) do
+        redis.call('SREM', tag_prefix .. namespace .. tag, id)
+    end
+    redis.call('DEL', reverse_key)
+    redis.call('SREM', all_ids_key, id)
+    for _, tag_key in ipairs(prefixed_tags) do
+        redis.call('SREM', tag_key, id)
+    end
+    redis.call('SREM', scope_key, id)
     deleted = deleted + 1
 end
 
@@ -278,6 +324,20 @@ LUA;
     }
 
     /**
+     * Get the all-ids SET key for this namespace
+     *
+     * Namespaced so that two installs sharing a Redis DB with different id_prefix
+     * cannot see (or garbage-collect) each other's ids. The pre-namespacing shared
+     * key is cleared by clearAllIndices() and otherwise ages out.
+     *
+     * @return string
+     */
+    private function allIdsKey(): string
+    {
+        return self::ALL_IDS_PREFIX . $this->namespace;
+    }
+
+    /**
      * Check if using Predis client (vs phpredis extension)
      *
      * @return bool
@@ -391,14 +451,14 @@ LUA;
     {
         if (empty($tags)) {
             // Return all IDs if no tags specified
-            $allIds = $this->redis->smembers(self::ALL_IDS_SET);
+            $allIds = $this->redis->smembers($this->allIdsKey());
             return is_array($allIds) ? $allIds : [];
         }
 
         $tagKeys = array_map([$this, 'getTagKey'], $tags);
 
         // Prepend the all_ids set as first argument
-        array_unshift($tagKeys, self::ALL_IDS_SET);
+        array_unshift($tagKeys, $this->allIdsKey());
 
         // Call SDIFF: returns IDs in ALL_IDS_SET but NOT in any tag sets
         $result = call_user_func_array([$this->redis, 'sdiff'], $tagKeys);
@@ -512,7 +572,7 @@ LUA;
             // then delete the reverse index itself.
             $pipeline = $this->createPipeline();
             foreach ($chunk as $i => $id) {
-                $pipeline->srem(self::ALL_IDS_SET, $id);
+                $pipeline->srem($this->allIdsKey(), $id);
                 $tags = $tagLists[$i] ?? null;
                 if (is_array($tags)) {
                     foreach ($tags as $tag) {
@@ -653,7 +713,7 @@ LUA;
         $pipeline = $this->createPipeline();
 
         // Add ID to all_ids set
-        $pipeline->sadd(self::ALL_IDS_SET, $id);
+        $pipeline->sadd($this->allIdsKey(), $id);
 
         // Forward index: Add ID to each tag's SET
         foreach ($tags as $tag) {
@@ -693,7 +753,7 @@ LUA;
 
         if (!is_array($tags) || empty($tags)) {
             // No tags, just remove from all_ids
-            $this->redis->srem(self::ALL_IDS_SET, $id);
+            $this->redis->srem($this->allIdsKey(), $id);
             return;
         }
 
@@ -701,7 +761,7 @@ LUA;
         $pipeline = $this->createPipeline();
 
         // Remove from all_ids set
-        $pipeline->srem(self::ALL_IDS_SET, $id);
+        $pipeline->srem($this->allIdsKey(), $id);
 
         // Remove ID from each tag's SET in pipeline
         foreach ($tags as $tag) {
@@ -739,7 +799,8 @@ LUA;
         }
 
         // Clear all_ids set
-        $this->redis->del(self::ALL_IDS_SET);
+        $this->redis->del($this->allIdsKey());
+        $this->redis->del(self::LEGACY_ALL_IDS_SET);
 
         // Clear reverse index keys
         $reversePattern = self::REVERSE_INDEX_PREFIX . $this->namespace . '*';
@@ -788,25 +849,217 @@ LUA;
     }
 
     /**
-     * Run garbage collection to clean expired items
+     * Run garbage collection to reap tag bookkeeping orphaned by passive expiry
      *
-     * @param int $batchSize Number of keys to process per iteration
-     * @return int Number of items cleaned
+     * Data keys expire passively (by TTL) with no event the adapter can hook, so their
+     * tag-set memberships, all_ids entry and reverse index are never cleaned by the
+     * normal remove/invalidation paths.
+     *
+     * Stage 1 sweeps the tag sets themselves: SCAN each cache:tags:{ns}* set, batch-check
+     * its members against the pool, SREM the misses. This reaps from the structure that
+     * actually leaks and does not depend on the reverse index (which usually expired long
+     * before GC runs under the default cron cadence).
+     * Stage 2 sweeps all_ids the same way, keeping NOT_MATCHING_TAG accurate.
+     *
+     * Bounded by wall time rather than a fixed id count: a fixed cap suits no one
+     * (high-volume sites orphan more ids between cron runs than a small cap can drain,
+     * while small sites don't need a cap at all). An explicit $batchSize additionally
+     * caps the number of ids inspected, for callers that need deterministic work.
+     *
+     * @param int|null $batchSize Maximum ids to inspect per call, or null for time-bounded only
+     * @param float $maxRuntime Wall-time budget in seconds
+     * @return int Number of orphaned set members cleaned
      */
-    public function garbageCollect(int $batchSize = 1000): int
+    public function garbageCollect(?int $batchSize = null, float $maxRuntime = 2.0): int
     {
-        // Garbage collection specifically checks use_lua_on_gc flag
-        if (!$this->useLuaOnGc || !$this->luaHelper) {
+        if ($batchSize !== null && $batchSize <= 0) {
             return 0;
         }
 
-        $result = $this->luaHelper->garbageCollect(
-            $this->namespace . '*',
-            self::TAG_INDEX_PREFIX . $this->namespace,
-            $batchSize
-        );
+        $deadline = hrtime(true) + (int)($maxRuntime * 1e9);
+        $budget = $batchSize;
+        $cleaned = 0;
 
-        return $result[0]; // Return deleted count (first element)
+        foreach ($this->scanKeys(self::TAG_INDEX_PREFIX . $this->namespace . '*', 100) as $tagKey) {
+            $cleaned += $this->sweepSetForOrphans((string)$tagKey, $deadline, $budget);
+            if (hrtime(true) >= $deadline || ($budget !== null && $budget <= 0)) {
+                return $cleaned;
+            }
+        }
+
+        $cleaned += $this->sweepSetForOrphans($this->allIdsKey(), $deadline, $budget);
+
+        return $cleaned;
+    }
+
+    /**
+     * Sweep one Redis SET, removing members whose data key no longer exists
+     *
+     * @param string $setKey
+     * @param int $deadline hrtime(true) deadline in nanoseconds
+     * @param int|null $budget Remaining id-inspection budget, decremented in place
+     * @return int Number of members removed
+     */
+    private function sweepSetForOrphans(string $setKey, int $deadline, ?int &$budget): int
+    {
+        $removed = 0;
+        $batch = [];
+
+        foreach ($this->scanSet($setKey, 1000) as $id) {
+            if ($budget !== null && $budget-- <= 0) {
+                break;
+            }
+
+            $batch[] = (string)$id;
+
+            if (count($batch) >= 100) {
+                $removed += $this->reapOrphansFromSet($setKey, $batch);
+                $batch = [];
+
+                if (hrtime(true) >= $deadline) {
+                    return $removed;
+                }
+            }
+        }
+
+        if (!empty($batch)) {
+            $removed += $this->reapOrphansFromSet($setKey, $batch);
+        }
+
+        return $removed;
+    }
+
+    /**
+     * Remove the given set's members whose data key is gone, and reap their bookkeeping
+     *
+     * Existence is checked through the pool (batched getItems(), one MGET round trip),
+     * so key naming stays the pool's concern. The check is repeated immediately before
+     * the destructive pass: an id missing on the first check may have been re-saved
+     * concurrently (popular entries are re-saved just as they expire), and reaping it
+     * then would strip a live entry's bookkeeping. The re-check narrows that window;
+     * it cannot close it entirely.
+     *
+     * @param string $setKey
+     * @param array $ids
+     * @return int Number of members removed
+     */
+    private function reapOrphansFromSet(string $setKey, array $ids): int
+    {
+        $missing = $this->poolMisses($ids);
+        if (!empty($missing)) {
+            $missing = $this->poolMisses($missing);
+        }
+        if (empty($missing)) {
+            return 0;
+        }
+
+        $pipeline = $this->createPipeline();
+        foreach (array_chunk($missing, 1000) as $chunk) {
+            $pipeline->srem($setKey, ...$chunk);
+        }
+        $this->executePipeline($pipeline);
+
+        // Reap the rest of each orphan's bookkeeping (all_ids, reverse index, and any
+        // other tag sets its reverse index still records).
+        $this->cleanupIndicesForIds($missing);
+
+        return count($missing);
+    }
+
+    /**
+     * Return the subset of ids whose data key is absent from the pool
+     *
+     * @param array $ids
+     * @return array
+     */
+    private function poolMisses(array $ids): array
+    {
+        $missing = array_flip($ids);
+        foreach ($this->cachePool->getItems($ids) as $key => $item) {
+            if ($item->isHit()) {
+                unset($missing[$key]);
+            }
+        }
+
+        return array_keys($missing);
+    }
+
+    /**
+     * Iterate the members of a Redis SET via SSCAN (cursor-based, non-blocking)
+     *
+     * Abstracts the phpredis vs Predis SSCAN differences behind a generator.
+     *
+     * @param string $setKey
+     * @param int $count SSCAN COUNT hint per round trip
+     * @return \Generator
+     */
+    private function scanSet(string $setKey, int $count): \Generator
+    {
+        if ($this->isPredisClient()) {
+            $cursor = 0;
+            do {
+                [$cursor, $members] = $this->redis->sscan($setKey, $cursor, ['COUNT' => $count]);
+                if (is_array($members)) {
+                    foreach ($members as $member) {
+                        yield $member;
+                    }
+                }
+                $cursor = (int)$cursor;
+            } while ($cursor !== 0);
+
+            return;
+        }
+
+        // phpredis: cursor is passed by reference and reaches 0 when iteration completes
+        $iterator = null;
+        while (($members = $this->redis->sScan($setKey, $iterator, null, $count)) !== false) {
+            if (is_array($members)) {
+                foreach ($members as $member) {
+                    yield $member;
+                }
+            }
+            if ((int)$iterator === 0) {
+                break;
+            }
+        }
+    }
+
+    /**
+     * Iterate keys matching a pattern via SCAN (cursor-based, non-blocking)
+     *
+     * @param string $pattern
+     * @param int $count SCAN COUNT hint per round trip
+     * @return \Generator
+     */
+    private function scanKeys(string $pattern, int $count): \Generator
+    {
+        if ($this->isPredisClient()) {
+            $cursor = 0;
+            do {
+                [$cursor, $keys] = $this->redis->scan($cursor, ['MATCH' => $pattern, 'COUNT' => $count]);
+                if (is_array($keys)) {
+                    foreach ($keys as $key) {
+                        yield $key;
+                    }
+                }
+                $cursor = (int)$cursor;
+            } while ($cursor !== 0);
+
+            return;
+        }
+
+        // phpredis: cursor by reference; returns false when iteration completes
+        $iterator = null;
+        while (($keys = $this->redis->scan($iterator, $pattern, $count)) !== false) {
+            if (is_array($keys)) {
+                foreach ($keys as $key) {
+                    yield $key;
+                }
+            }
+            if ((int)$iterator === 0) {
+                break;
+            }
+        }
     }
 
     /**
@@ -851,39 +1104,68 @@ LUA;
             return 0;
         }
 
-        try {
-            // Load and execute Lua script
-            $sha = $this->loadLuaScript(self::LUA_CLEAN_MATCHING_ANY_TAGS);
+        // KEYS: array of tags; ARGV: [tag_prefix, namespace, data_prefix, reverse_prefix, all_ids]
+        return $this->evalLua(self::LUA_CLEAN_MATCHING_ANY_TAGS, $tags, [
+            self::TAG_INDEX_PREFIX,
+            $this->namespace,
+            $this->dataKeyPrefix(),
+            self::REVERSE_INDEX_PREFIX,
+            $this->allIdsKey(),
+            self::LUA_MAX_CSTACK,
+        ]);
+    }
 
-            // KEYS: array of tags
-            // ARGV: [tag_prefix, namespace, chunk_size]
-            $result = $this->redis->evalSha(
-                $sha,
-                $tags,  // KEYS
-                count($tags),  // Number of KEYS
-                self::TAG_INDEX_PREFIX,  // ARGV[1]
-                $this->namespace,  // ARGV[2]
-                100  // ARGV[3] - chunk size
-            );
+    /**
+     * Execute a Lua script with client-appropriate argument passing
+     *
+     * The phpredis client expects (script, [keys..., argv...], numKeys); Predis expects
+     * (script, numKeys, key1..keyN, arg1..argM) as a flat argument list.
+     *
+     * Note: eval/evalSha are the Redis EVAL/EVALSHA commands (server-side Lua,
+     * class-constant scripts only), not PHP eval().
+     *
+     * @param string $script
+     * @param array $keys
+     * @param array $argv
+     * @return int Script result (-1 on error, so callers fall back to the PHP path)
+     */
+    private function evalLua(string $script, array $keys, array $argv): int
+    {
+        $flat = array_merge(array_values($keys), array_values($argv));
+
+        try {
+            $sha = $this->loadLuaScript($script);
+            $result = $this->isPredisClient()
+                ? $this->redis->evalsha($sha, count($keys), ...$flat)
+                : $this->redis->evalSha($sha, $flat, count($keys));
 
             return (int)$result;
-        } catch (\RedisException $e) {
-            // Fallback: try executing script directly
+        } catch (\Exception $e) {
+            // Fallback: try executing the script directly (e.g. sha evicted by SCRIPT FLUSH)
             try {
-                $result = $this->redis->eval(
-                    self::LUA_CLEAN_MATCHING_ANY_TAGS,
-                    $tags,
-                    count($tags),
-                    self::TAG_INDEX_PREFIX,
-                    $this->namespace,
-                    100
-                );
+                $result = $this->isPredisClient()
+                    ? $this->redis->eval($script, count($keys), ...$flat)
+                    : $this->redis->eval($script, $flat, count($keys));
+
                 return (int)$result;
-            } catch (\RedisException $e) {
-                // Return -1 to signal error (will fall back to PHP)
+            } catch (\Exception $e) {
+                // Signal error; callers fall back to the PHP implementation
                 return -1;
             }
         }
+    }
+
+    /**
+     * Get the prefix Symfony's RedisAdapter puts on data keys
+     *
+     * Symfony appends ':' to a non-empty namespace when building keys
+     * (data key = namespace + ':' + id), and uses no prefix for an empty namespace.
+     *
+     * @return string
+     */
+    private function dataKeyPrefix(): string
+    {
+        return $this->namespace === '' ? '' : $this->namespace . ':';
     }
 
     /**
@@ -899,39 +1181,16 @@ LUA;
             return 0;
         }
 
-        try {
-            // Load and execute Lua script
-            $sha = $this->loadLuaScript(self::LUA_CLEAN_MATCHING_ANY_TAGS_WITH_SCOPE);
-
-            // KEYS: array of tags
-            // ARGV: [tag_prefix, namespace, scope_tag]
-            $result = $this->redis->evalSha(
-                $sha,
-                $tags,  // KEYS
-                count($tags),  // Number of KEYS
-                self::TAG_INDEX_PREFIX,  // ARGV[1]
-                $this->namespace,  // ARGV[2]
-                $scopeTag  // ARGV[3]
-            );
-
-            return (int)$result;
-        } catch (\RedisException $e) {
-            // Fallback: try executing script directly
-            try {
-                $result = $this->redis->eval(
-                    self::LUA_CLEAN_MATCHING_ANY_TAGS_WITH_SCOPE,
-                    $tags,
-                    count($tags),
-                    self::TAG_INDEX_PREFIX,
-                    $this->namespace,
-                    $scopeTag
-                );
-                return (int)$result;
-            } catch (\RedisException $e) {
-                // Return -1 to signal error (will fall back to PHP)
-                return -1;
-            }
-        }
+        // KEYS: array of tags
+        // ARGV: [tag_prefix, namespace, scope_tag, data_prefix, reverse_prefix, all_ids]
+        return $this->evalLua(self::LUA_CLEAN_MATCHING_ANY_TAGS_WITH_SCOPE, $tags, [
+            self::TAG_INDEX_PREFIX,
+            $this->namespace,
+            $scopeTag,
+            $this->dataKeyPrefix(),
+            self::REVERSE_INDEX_PREFIX,
+            $this->allIdsKey(),
+        ]);
     }
 
     /**
