@@ -507,6 +507,11 @@ LUA;
      * Predis. It is not atomic: a concurrent onSave() for the same id may re-create the
      * reverse index between the two passes, but that id self-heals on its next save.
      *
+     * Processes ids in sub-chunks so a large invalidation (deleteByIds() passes up to
+     * REMOVE_CHUNK_SIZE ids at once) cannot buffer an unbounded pipeline: with many
+     * tags per entry the second pipeline is ids x (tags + 2) commands, so bounding ids
+     * caps both the client-side command buffer and the single-burst load on Redis.
+     *
      * @param array $ids
      * @return void
      */
@@ -516,32 +521,32 @@ LUA;
             return;
         }
 
-        $ids = array_values($ids);
-
-        // First pass: read the tags associated with each id from its reverse index.
-        $pipeline = $this->createPipeline();
-        foreach ($ids as $id) {
-            $pipeline->smembers($this->reverseIndexKey($id));
-        }
-        $tagLists = $this->executePipeline($pipeline);
-        if (!is_array($tagLists)) {
-            $tagLists = [];
-        }
-
-        // Second pass: drop each id from all_ids and every tag set it belonged to,
-        // then delete the reverse index itself.
-        $pipeline = $this->createPipeline();
-        foreach ($ids as $i => $id) {
-            $pipeline->srem(self::ALL_IDS_SET, $id);
-            $tags = $tagLists[$i] ?? null;
-            if (is_array($tags)) {
-                foreach ($tags as $tag) {
-                    $pipeline->srem($this->getTagKey($tag), $id);
-                }
+        foreach (array_chunk(array_values($ids), 1000) as $chunk) {
+            // First pass: read the tags associated with each id from its reverse index.
+            $pipeline = $this->createPipeline();
+            foreach ($chunk as $id) {
+                $pipeline->smembers($this->reverseIndexKey($id));
             }
-            $pipeline->del($this->reverseIndexKey($id));
+            $tagLists = $this->executePipeline($pipeline);
+            if (!is_array($tagLists)) {
+                $tagLists = [];
+            }
+
+            // Second pass: drop each id from all_ids and every tag set it belonged to,
+            // then delete the reverse index itself.
+            $pipeline = $this->createPipeline();
+            foreach ($chunk as $i => $id) {
+                $pipeline->srem(self::ALL_IDS_SET, $id);
+                $tags = $tagLists[$i] ?? null;
+                if (is_array($tags)) {
+                    foreach ($tags as $tag) {
+                        $pipeline->srem($this->getTagKey($tag), $id);
+                    }
+                }
+                $pipeline->del($this->reverseIndexKey($id));
+            }
+            $this->executePipeline($pipeline);
         }
-        $this->executePipeline($pipeline);
     }
 
     /**
@@ -886,9 +891,26 @@ LUA;
             return 0;
         }
 
-        $this->cleanupIndicesForIds($orphans);
+        // Double-check right before the destructive pass: an id that was missing above
+        // may have been re-saved concurrently (popular entries are re-saved just as they
+        // expire), and reaping it then would strip a live entry's bookkeeping, leaving
+        // it invisible to tag invalidation until its next save. This narrows that window
+        // to the confirm->cleanup gap; it cannot close it entirely.
+        $confirmed = array_flip($orphans);
+        foreach ($this->cachePool->getItems($orphans) as $key => $item) {
+            if ($item->isHit()) {
+                unset($confirmed[$key]);
+            }
+        }
+        $confirmed = array_keys($confirmed);
 
-        return count($orphans);
+        if (empty($confirmed)) {
+            return 0;
+        }
+
+        $this->cleanupIndicesForIds($confirmed);
+
+        return count($confirmed);
     }
 
     /**
@@ -1022,7 +1044,7 @@ LUA;
     /**
      * Execute a Lua script with client-appropriate argument passing
      *
-     * phpredis expects (script, [keys..., argv...], numKeys); Predis expects
+     * The phpredis client expects (script, [keys..., argv...], numKeys); Predis expects
      * (script, numKeys, key1..keyN, arg1..argM) as a flat argument list.
      *
      * Note: eval/evalSha are the Redis EVAL/EVALSHA commands (server-side Lua,
