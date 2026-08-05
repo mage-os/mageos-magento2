@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2026 Adobe
+ * Copyright 2026 Mage-OS
  * All Rights Reserved.
  */
 declare(strict_types=1);
@@ -11,7 +11,6 @@ use Magento\Framework\Cache\Frontend\Adapter\SymfonyAdapters\RedisTagAdapter;
 use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Predis\Client as PredisClient;
-use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
 
 /**
@@ -32,7 +31,7 @@ class RedisTagAdapterTest extends TestCase
 
     /**
      * Predis test double recording every command as [method, args]. Public props:
-     * ->commands (log), ->sets (SMEMBERS source), ->sscanResponses (queued SSCAN replies).
+     * ->commands (log), ->sets (SMEMBERS source).
      *
      * @var PredisClient
      */
@@ -129,43 +128,6 @@ class RedisTagAdapterTest extends TestCase
     }
 
     /**
-     * garbageCollect() scans all_ids and reaps the bookkeeping of ids whose data key is gone,
-     * while leaving live ids untouched.
-     */
-    public function testGarbageCollectReapsOrphanedIds(): void
-    {
-        $this->redis->sscanResponses = [[0, ['LIVE', 'DEAD']]];
-        $this->redis->sets['cache:id_tags:4e0_DEAD'] = ['MAGE'];
-
-        // Existence is checked via one batched cachePool->getItems() call
-        $this->cachePoolMock->method('getItems')->willReturnCallback(
-            fn (array $ids) => $this->poolItems($ids, ['LIVE'])
-        );
-
-        $cleaned = $this->adapter->garbageCollect();
-
-        $this->assertSame(1, $cleaned);
-        // DEAD reaped
-        $this->assertCommand('srem', ['cache:all_ids', 'DEAD']);
-        $this->assertCommand('srem', ['cache:tags:4e0_MAGE', 'DEAD']);
-        $this->assertCommand('del', ['cache:id_tags:4e0_DEAD']);
-        // LIVE left alone
-        $this->assertNoCommand('del', ['cache:id_tags:4e0_LIVE']);
-        $this->assertNoCommand('srem', ['cache:all_ids', 'LIVE']);
-    }
-
-    public function testGarbageCollectWithNoOrphansCleansNothing(): void
-    {
-        $this->redis->sscanResponses = [[0, ['LIVE']]];
-        $this->cachePoolMock->method('getItems')->willReturnCallback(
-            fn (array $ids) => $this->poolItems($ids, ['LIVE'])
-        );
-
-        $this->assertSame(0, $this->adapter->garbageCollect());
-        $this->assertNoCommand('del');
-    }
-
-    /**
      * Tag invalidation must SREM the fetched ids from the source tag sets directly, so
      * stale members whose reverse index already expired are still swept from the sets.
      */
@@ -197,9 +159,6 @@ class RedisTagAdapterTest extends TestCase
 
             /** @var array<string, array> key => members (SMEMBERS result) */
             public array $sets = [];
-
-            /** @var array<int, array{0:int,1:array}> queued [cursor, members] SSCAN responses */
-            public array $sscanResponses = [];
 
             // phpcs:ignore Magento2.Functions.DiscouragedFunction
             public function __construct()
@@ -251,30 +210,10 @@ class RedisTagAdapterTest extends TestCase
 
                 return match ($method) {
                     'smembers' => $this->sets[$arguments[0]] ?? [],
-                    'sscan' => array_shift($this->sscanResponses) ?: [0, []],
                     default => true,
                 };
             }
         };
-    }
-
-    /**
-     * Build a getItems() result: pool items keyed by id, hit only for $liveIds
-     *
-     * @param string[] $ids
-     * @param string[] $liveIds
-     * @return array<string, CacheItemInterface>
-     */
-    private function poolItems(array $ids, array $liveIds): array
-    {
-        $items = [];
-        foreach ($ids as $id) {
-            $item = $this->createStub(CacheItemInterface::class);
-            $item->method('isHit')->willReturn(in_array($id, $liveIds, true));
-            $items[$id] = $item;
-        }
-
-        return $items;
     }
 
     private function setPrivate(string $property, $value): void

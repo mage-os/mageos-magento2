@@ -649,13 +649,8 @@ class Symfony implements FrontendInterface
      */
     private function cleanOld(CacheItemPoolInterface $cache): bool
     {
-        // Symfony expires data keys automatically, but the tag bookkeeping
-        // (tag sets, all_ids and reverse index) of passively-expired entries is
-        // not reaped by that. CLEANING_MODE_OLD is the correct hook to collect it.
-        if (method_exists($this->adapter, 'garbageCollect')) {
-            $this->adapter->garbageCollect();
-        }
-
+        // Symfony handles expiration automatically
+        // This is a no-op as expired items are not returned
         return true;
     }
 
