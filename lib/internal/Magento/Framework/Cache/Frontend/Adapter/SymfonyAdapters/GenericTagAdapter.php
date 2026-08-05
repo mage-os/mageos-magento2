@@ -144,7 +144,7 @@ class GenericTagAdapter implements TagAdapterInterface
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     // phpcs:disable Magento2.CodeAnalysis.EmptyBlock
-    public function onSave(string $id, array $tags): void
+    public function onSave(string $id, array $tags, ?int $lifetime = null): void
     {
         // Intentional no-op: Tags are handled by Symfony's TagAwareAdapter
         // (for Database, APCu, and Memcached backends that lack native tag support)

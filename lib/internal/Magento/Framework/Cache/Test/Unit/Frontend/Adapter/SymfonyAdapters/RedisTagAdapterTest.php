@@ -136,10 +136,8 @@ class RedisTagAdapterTest extends TestCase
         $this->redis->sscanResponses = [[0, ['LIVE', 'DEAD']]];
         $this->redis->sets['cache:id_tags:4e0_DEAD'] = ['MAGE'];
 
-        $this->cachePoolMock->method('hasItem')->willReturnMap([
-            ['LIVE', true],
-            ['DEAD', false],
-        ]);
+        // Existence is checked via pipelined EXISTS on namespace-prefixed data keys
+        $this->redis->dataKeys['4e0_LIVE'] = true;
 
         $cleaned = $this->adapter->garbageCollect();
 
@@ -156,10 +154,29 @@ class RedisTagAdapterTest extends TestCase
     public function testGarbageCollectWithNoOrphansCleansNothing(): void
     {
         $this->redis->sscanResponses = [[0, ['LIVE']]];
-        $this->cachePoolMock->method('hasItem')->willReturn(true);
+        $this->redis->dataKeys['4e0_LIVE'] = true;
 
         $this->assertSame(0, $this->adapter->garbageCollect());
         $this->assertNoCommand('del');
+    }
+
+    /**
+     * Tag invalidation must SREM the fetched ids from the source tag sets directly, so
+     * stale members whose reverse index already expired are still swept from the sets.
+     */
+    public function testCleanMatchingAnyTagsSweepsStaleIdsFromTagSets(): void
+    {
+        // STALE has no reverse index (it expired), so cleanupIndicesForIds() alone
+        // could not remove it from the MAGE tag set.
+        $this->redis->sets['cache:tags:4e0_MAGE'] = ['LIVE', 'STALE'];
+        $this->redis->sets['cache:id_tags:4e0_LIVE'] = ['MAGE'];
+
+        $this->cachePoolMock->method('deleteItems')->willReturn(true);
+
+        $this->assertTrue($this->adapter->cleanMatchingAnyTags(['MAGE']));
+
+        $this->assertCommand('srem', ['cache:tags:4e0_MAGE', 'LIVE', 'STALE']);
+        $this->assertCommand('del', ['cache:id_tags:4e0_STALE']);
     }
 
     /**
@@ -178,6 +195,9 @@ class RedisTagAdapterTest extends TestCase
 
             /** @var array<int, array{0:int,1:array}> queued [cursor, members] SSCAN responses */
             public array $sscanResponses = [];
+
+            /** @var array<string, bool> data keys that EXISTS reports as present */
+            public array $dataKeys = [];
 
             // phpcs:ignore Magento2.Functions.DiscouragedFunction
             public function __construct()
@@ -205,7 +225,11 @@ class RedisTagAdapterTest extends TestCase
                     {
                         $results = [];
                         foreach ($this->queued as [$method, $args]) {
-                            $results[] = $method === 'smembers' ? ($this->parent->sets[$args[0]] ?? []) : true;
+                            $results[] = match ($method) {
+                                'smembers' => $this->parent->sets[$args[0]] ?? [],
+                                'exists' => isset($this->parent->dataKeys[$args[0]]) ? 1 : 0,
+                                default => true,
+                            };
                         }
 
                         return $results;
@@ -230,6 +254,7 @@ class RedisTagAdapterTest extends TestCase
                 return match ($method) {
                     'smembers' => $this->sets[$arguments[0]] ?? [],
                     'sscan' => array_shift($this->sscanResponses) ?: [0, []],
+                    'exists' => isset($this->dataKeys[$arguments[0]]) ? 1 : 0,
                     default => true,
                 };
             }

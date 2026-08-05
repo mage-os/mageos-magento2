@@ -65,9 +65,10 @@ interface TagAdapterInterface
      *
      * @param string $id Cache ID
      * @param array $tags Tags associated with this ID
+     * @param int|null $lifetime Effective data-key lifetime in seconds, so adapters can bound their indices
      * @return void
      */
-    public function onSave(string $id, array $tags): void;
+    public function onSave(string $id, array $tags, ?int $lifetime = null): void;
 
     /**
      * Update tag-to-ID index when a cache item is removed

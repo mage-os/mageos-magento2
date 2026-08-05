@@ -260,8 +260,10 @@ class FilesystemTagAdapter implements TagAdapterInterface
      * @inheritDoc
      *
      * Maintains tag-to-ID indices in filesystem
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function onSave(string $id, array $tags): void
+    public function onSave(string $id, array $tags, ?int $lifetime = null): void
     {
         if (empty($tags)) {
             return;

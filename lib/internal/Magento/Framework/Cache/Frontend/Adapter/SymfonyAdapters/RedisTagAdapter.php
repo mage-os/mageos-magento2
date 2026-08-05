@@ -546,6 +546,11 @@ LUA;
         // Batch delete - exactly like Zend's _removeByIds (line 751-768)
         $success = $this->deleteByIds($ids);
 
+        // Drop the fetched ids from the source tag sets directly. cleanupIndicesForIds()
+        // can only SREM memberships still recorded in each id's reverse index, so ids
+        // whose reverse index already expired would otherwise stay in these sets forever.
+        $this->removeIdsFromTagSets($tags, $ids);
+
         // Ensure changes are committed to underlying pool
         if (method_exists($this->cachePool, 'commit')) {
             $this->cachePool->commit();
@@ -610,6 +615,9 @@ LUA;
 
         // Step 4: Batch delete filtered IDs
         $success = $this->deleteByIds($filteredIds);
+
+        // Drop the deleted ids from the source tag sets directly (see cleanMatchingAnyTags)
+        $this->removeIdsFromTagSets(array_merge($tags, [$scopeTag]), $filteredIds);
 
         // Step 5: Ensure changes are committed to underlying pool
         if (method_exists($this->cachePool, 'commit')) {
@@ -790,18 +798,15 @@ LUA;
 
         $cleaned = 0;
         $processed = 0;
-        $orphans = [];
+        $batch = [];
 
         foreach ($this->scanSet(self::ALL_IDS_SET, min($batchSize, 1000)) as $id) {
             $processed++;
+            $batch[] = (string)$id;
 
-            if (!$this->cachePool->hasItem((string)$id)) {
-                $orphans[] = $id;
-                if (count($orphans) >= 100) {
-                    $this->cleanupIndicesForIds($orphans);
-                    $cleaned += count($orphans);
-                    $orphans = [];
-                }
+            if (count($batch) >= 100) {
+                $cleaned += $this->reapOrphanedIds($batch);
+                $batch = [];
             }
 
             if ($processed >= $batchSize) {
@@ -809,12 +814,77 @@ LUA;
             }
         }
 
-        if (!empty($orphans)) {
-            $this->cleanupIndicesForIds($orphans);
-            $cleaned += count($orphans);
+        if (!empty($batch)) {
+            $cleaned += $this->reapOrphanedIds($batch);
         }
 
         return $cleaned;
+    }
+
+    /**
+     * Find which of the given ids have no data key and reap the orphans' bookkeeping
+     *
+     * Existence is checked with a pipelined EXISTS on the data keys (namespace . id,
+     * the same mapping the Lua cleaners use): one round trip per batch instead of
+     * one cachePool->hasItem() round trip per id.
+     *
+     * @param array $ids
+     * @return int Number of orphaned ids cleaned
+     */
+    private function reapOrphanedIds(array $ids): int
+    {
+        $pipeline = $this->createPipeline();
+        foreach ($ids as $id) {
+            $pipeline->exists($this->namespace . $id);
+        }
+        $results = $this->executePipeline($pipeline);
+        if (!is_array($results)) {
+            // Existence unknown; treat all ids as live rather than reap blindly
+            return 0;
+        }
+
+        $orphans = [];
+        foreach ($ids as $i => $id) {
+            if ((int)($results[$i] ?? 1) === 0) {
+                $orphans[] = $id;
+            }
+        }
+
+        if (empty($orphans)) {
+            return 0;
+        }
+
+        $this->cleanupIndicesForIds($orphans);
+
+        return count($orphans);
+    }
+
+    /**
+     * Remove the given ids from the given tags' sets
+     *
+     * Invalidation discovers ids from these tag sets, but cleanupIndicesForIds() can only
+     * SREM memberships still recorded in each id's reverse index. Ids whose reverse index
+     * already expired would otherwise stay in the source sets forever; SREMing the fetched
+     * ids from them directly makes every tag invalidation self-healing. Specific members
+     * are removed (not DEL of the whole set) so concurrently saved ids keep their membership.
+     *
+     * @param array $tags
+     * @param array $ids
+     * @return void
+     */
+    private function removeIdsFromTagSets(array $tags, array $ids): void
+    {
+        if (empty($tags) || empty($ids)) {
+            return;
+        }
+
+        $pipeline = $this->createPipeline();
+        foreach ($tags as $tag) {
+            foreach (array_chunk(array_values($ids), 1000) as $chunk) {
+                $pipeline->srem($this->getTagKey($tag), ...$chunk);
+            }
+        }
+        $this->executePipeline($pipeline);
     }
 
     /**
