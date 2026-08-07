@@ -115,6 +115,11 @@ class Upload extends \Magento\Backend\App\Action implements HttpPostActionInterf
             }
         } catch (LocalizedException $e) {
             $result = ['error' => $e->getMessage(), 'errorcode' => $e->getCode()];
+        } catch (\InvalidArgumentException $e) {
+            // The image adapter refuses an unusable upload with this exception and its messages are
+            // already written for the merchant. Falling through to the generic message below is what
+            // a perfectly valid AVIF gets on a build whose GD was compiled without libavif.
+            $result = ['error' => __($e->getMessage())->render(), 'errorcode' => 0];
         } catch (\Throwable $e) {
             $result = ['error' => 'Something went wrong while saving the file(s).', 'errorcode' => 0];
         }
