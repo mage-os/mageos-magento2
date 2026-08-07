@@ -189,6 +189,7 @@ class InterfaceTest extends \PHPUnit\Framework\TestCase
             [
                 [null],
                 [self::_getFixture('image_adapters_test.png')],
+                [self::_getFixture('image_adapters_test.webp')],
                 [self::_getFixture('image_adapters_test.tiff')],
                 [self::_getFixture('image_adapters_test.bmp')],
             ]
@@ -792,5 +793,122 @@ class InterfaceTest extends \PHPUnit\Framework\TestCase
                 'useFixture' => true
             ]
         ];
+    }
+
+    /**
+     * WebP has to be listed as a supported format so that every extension-driven check accepts it.
+     *
+     * @param string $adapterType
+     */
+    #[DataProvider('adaptersDataProvider')]
+    public function testWebpIsAdvertisedAsSupported($adapterType)
+    {
+        $adapter = $this->_getAdapter($adapterType);
+
+        $this->assertContains('webp', $adapter->getSupportedFormats());
+    }
+
+    /**
+     * @param string $adapterType
+     */
+    #[DataProvider('adaptersDataProvider')]
+    public function testOpenWebpReportsTheRightTypeAndMime($adapterType)
+    {
+        $adapter = $this->_getAdapter($adapterType);
+        $image = $this->_getFixture('image_adapters_test.webp');
+        $this->skipUnlessWebpIsWritable($adapter, $image);
+
+        $adapter->open($image);
+
+        $this->assertEquals(IMAGETYPE_WEBP, $adapter->getImageType());
+        $this->assertEquals('image/webp', $adapter->getMimeType());
+    }
+
+    /**
+     * @param string $adapterType
+     */
+    #[DataProvider('adaptersDataProvider')]
+    public function testResizeAndSaveWebpKeepsTheFormat($adapterType)
+    {
+        $adapter = $this->_getAdapter($adapterType);
+        $image = $this->_getFixture('image_adapters_test.webp');
+        $this->skipUnlessWebpIsWritable($adapter, $image);
+
+        $adapter->open($image);
+        $adapter->resize(100, 100);
+        $destination = $this->_getFixture(uniqid('resized_') . '.webp');
+        $adapter->save($destination);
+
+        $this->assertFileExists($destination);
+        $written = getimagesize($destination);
+        $this->assertEquals('image/webp', $written['mime']);
+        $this->assertEquals(IMAGETYPE_WEBP, $written[2]);
+        unlink($destination);
+    }
+
+    /**
+     * Transparency used to be assumed to exist in GIF and PNG only, which flattened a WebP alpha
+     * channel onto the background colour.
+     *
+     * @param string $adapterType
+     */
+    #[DataProvider('adaptersDataProvider')]
+    public function testResizeWebpPreservesTheAlphaChannel($adapterType)
+    {
+        $adapter = $this->_getAdapter($adapterType);
+        $image = $this->_getFixture('watermark_alpha.webp');
+        $this->skipUnlessWebpIsWritable($adapter, $image);
+
+        $adapter->keepTransparency(true);
+        $adapter->open($image);
+        $adapter->resize(30, 30);
+        $destination = $this->_getFixture(uniqid('alpha_') . '.webp');
+        $adapter->save($destination);
+
+        $resource = imagecreatefromwebp($destination);
+        $cornerAlpha = (imagecolorat($resource, 0, 0) >> 24) & 0x7F;
+        imagedestroy($resource);
+        unlink($destination);
+
+        $this->assertGreaterThan(
+            100,
+            $cornerAlpha,
+            'The transparent corner of the source has to stay (near) fully transparent.'
+        );
+    }
+
+    /**
+     * AVIF has to be advertised the moment it is registered, whichever adapter is in use.
+     *
+     * @param string $adapterType
+     */
+    #[DataProvider('adaptersDataProvider')]
+    public function testAvifIsAdvertisedAsSupported($adapterType)
+    {
+        $adapter = $this->_getAdapter($adapterType);
+
+        $this->assertContains('avif', $adapter->getSupportedFormats());
+    }
+
+    /**
+     * GD without libwebp, or ImageMagick without the WebP delegate, cannot exercise these paths.
+     *
+     * @param \Magento\Framework\Image\Adapter\AdapterInterface $adapter
+     * @param string $image
+     * @return void
+     */
+    private function skipUnlessWebpIsWritable($adapter, $image): void
+    {
+        if (!function_exists('imagecreatefromwebp') || !function_exists('imagewebp')) {
+            $this->markTestSkipped('This PHP build has no GD WebP support.');
+        }
+        if ($adapter instanceof \Magento\Framework\Image\Adapter\ImageMagick
+            && empty(\Imagick::queryFormats('WEBP'))
+        ) {
+            $this->markTestSkipped('This ImageMagick build has no WebP delegate.');
+        }
+        if (!file_exists($image)) {
+            $this->markTestSkipped('Fixture is missing: ' . $image);
+        }
     }
 }

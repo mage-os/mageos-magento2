@@ -30,6 +30,8 @@ class Gd2 extends AbstractAdapter
         IMAGETYPE_GIF => ['output' => 'imagegif', 'create' => 'imagecreatefromgif'],
         IMAGETYPE_JPEG => ['output' => 'imagejpeg', 'create' => 'imagecreatefromjpeg'],
         IMAGETYPE_PNG => ['output' => 'imagepng', 'create' => 'imagecreatefrompng'],
+        IMAGETYPE_WEBP => ['output' => 'imagewebp', 'create' => 'imagecreatefromwebp'],
+        IMAGETYPE_AVIF => ['output' => 'imageavif', 'create' => 'imagecreatefromavif'],
         IMAGETYPE_XBM => ['output' => 'imagexbm', 'create' => 'imagecreatefromxbm'],
         IMAGETYPE_WBMP => ['output' => 'imagewbmp', 'create' => 'imagecreatefromxbm'],
     ];
@@ -205,6 +207,8 @@ class Gd2 extends AbstractAdapter
                 break;
 
             case IMAGETYPE_JPEG:
+            case IMAGETYPE_WEBP:
+            case IMAGETYPE_AVIF:
                 $quality = $this->quality();
                 break;
 
@@ -256,7 +260,13 @@ class Gd2 extends AbstractAdapter
         if (empty(self::$_callbacks[$fileType][$callbackType])) {
             throw new \BadFunctionCallException('Callback not found.');
         }
-        return self::$_callbacks[$fileType][$callbackType];
+        $callback = self::$_callbacks[$fileType][$callbackType];
+        // GD only declares the WebP and AVIF helpers when it was built against libwebp/libavif,
+        // so an unsupported build has to surface as an unsupported format rather than a fatal error.
+        if (!function_exists($callback)) {
+            throw new \InvalidArgumentException($unsupportedText);
+        }
+        return $callback;
     }
 
     /**
@@ -313,20 +323,20 @@ class Gd2 extends AbstractAdapter
     private function applyAlphaTransparency(&$imageResourceTo): void
     {
         if (!imagealphablending($imageResourceTo, false)) {
-            throw new \InvalidArgumentException('Failed to set alpha blending for PNG image.');
+            throw new \InvalidArgumentException('Failed to set alpha blending for image.');
         }
         $transparentAlphaColor = imagecolorallocatealpha($imageResourceTo, 0, 0, 0, 127);
 
         if (false === $transparentAlphaColor) {
-            throw new \InvalidArgumentException('Failed to allocate alpha transparency for PNG image.');
+            throw new \InvalidArgumentException('Failed to allocate alpha transparency for image.');
         }
 
         if (!imagefill($imageResourceTo, 0, 0, $transparentAlphaColor)) {
-            throw new \InvalidArgumentException('Failed to fill PNG image with alpha transparency.');
+            throw new \InvalidArgumentException('Failed to fill image with alpha transparency.');
         }
 
         if (!imagesavealpha($imageResourceTo, true)) {
-            throw new \InvalidArgumentException('Failed to save alpha transparency into PNG image.');
+            throw new \InvalidArgumentException('Failed to save alpha transparency into image.');
         }
     }
 
@@ -388,8 +398,12 @@ class Gd2 extends AbstractAdapter
     {
         $isAlpha = false;
         $isTrueColor = false;
-        // assume that transparency is supported by gif/png only
-        if (IMAGETYPE_GIF === $fileType || IMAGETYPE_PNG === $fileType) {
+        // assume that transparency is supported by gif/png/webp/avif only
+        if (IMAGETYPE_GIF === $fileType
+            || IMAGETYPE_PNG === $fileType
+            || IMAGETYPE_WEBP === $fileType
+            || IMAGETYPE_AVIF === $fileType
+        ) {
             // check for specific transparent color
             $transparentIndex = imagecolortransparent($imageResource);
             if ($transparentIndex >= 0 && $transparentIndex < imagecolorstotal($imageResource)) {
@@ -399,6 +413,15 @@ class Gd2 extends AbstractAdapter
                 $isAlpha = $this->checkAlpha($this->_fileName);
                 $isTrueColor = true;
                 // -1
+                return $transparentIndex;
+            } elseif (IMAGETYPE_WEBP === $fileType || IMAGETYPE_AVIF === $fileType) {
+                // WebP and AVIF are always decoded into a truecolor resource. Detecting whether the
+                // source actually carries alpha would mean parsing container-specific flags, and
+                // getting that wrong flattens transparency onto black. Treating them as potentially
+                // alpha routes them through the same path as a truecolor PNG, correct either way.
+                $isAlpha = true;
+                $isTrueColor = true;
+
                 return $transparentIndex;
             }
         }
@@ -699,7 +722,10 @@ class Gd2 extends AbstractAdapter
 
         $canvas = imagecreatetruecolor($newWidth, $newHeight);
 
-        if ($this->_fileType == IMAGETYPE_PNG) {
+        if ($this->_fileType == IMAGETYPE_PNG
+            || $this->_fileType == IMAGETYPE_WEBP
+            || $this->_fileType == IMAGETYPE_AVIF
+        ) {
             $this->_saveAlpha($canvas);
         }
 
