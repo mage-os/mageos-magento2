@@ -101,6 +101,11 @@
         <waitForPageLoad stepKey="waitForUploadJpg"/>
         <dontSeeElement selector="{{AdminProductMessagesSection.errorMessage}}" stepKey="dontSeeErrorJpg"/>
 
+        <!-- *.webp is allowed -->
+        <attachFile selector="{{AdminProductImagesSection.imageFileUpload}}" userInput="webp.webp" stepKey="attachWebp"/>
+        <waitForPageLoad stepKey="waitForUploadWebp"/>
+        <dontSeeElement selector="{{AdminProductMessagesSection.errorMessage}}" stepKey="dontSeeErrorWebp"/>
+
         <!-- *.png is allowed -->
         <attachFile selector="{{AdminProductImagesSection.imageFileUpload}}" userInput="png.png" stepKey="attachPng"/>
         <waitForPageLoad stepKey="waitForUploadPng"/>
