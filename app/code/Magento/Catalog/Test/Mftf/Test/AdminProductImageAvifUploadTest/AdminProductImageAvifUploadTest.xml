@@ -6,7 +6,7 @@
  */
 -->
 <tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
     <test name="AdminProductImageAvifUploadTest">
         <annotations>
             <features value="Catalog"/>
@@ -24,13 +24,16 @@
             <createData entity="_defaultProduct" stepKey="product">
                 <requiredEntity createDataKey="category"/>
             </createData>
-            <magentoCLI command="config:set {{AdminImageAdapterImageMagick.path}} {{AdminImageAdapterImageMagick.value}}" stepKey="useImageMagick"/>
+            <magentoCLI
+                command="config:set {{AdminImageAdapterImageMagick.path}} {{AdminImageAdapterImageMagick.value}}"
+                stepKey="useImageMagick"/>
             <magentoCLI command="cache:flush" stepKey="flushCacheBefore"/>
             <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
         </before>
 
         <after>
-            <magentoCLI command="config:set {{AdminImageAdapterDefault.path}} {{AdminImageAdapterDefault.value}}" stepKey="restoreAdapter"/>
+            <magentoCLI command="config:set {{AdminImageAdapterDefault.path}} {{AdminImageAdapterDefault.value}}"
+                        stepKey="restoreAdapter"/>
             <magentoCLI command="cache:flush" stepKey="flushCacheAfter"/>
             <deleteData createDataKey="category" stepKey="deleteCategory"/>
             <deleteData createDataKey="product" stepKey="deleteProduct"/>
@@ -42,12 +45,14 @@
         <actionGroup ref="FilterProductGridBySkuActionGroup" stepKey="filterProductGridBySku">
             <argument name="product" value="$$product$$"/>
         </actionGroup>
-        <actionGroup ref="OpenProductForEditByClickingRowXColumnYInProductGridActionGroup" stepKey="openProductForEdit"/>
+        <actionGroup ref="OpenProductForEditByClickingRowXColumnYInProductGridActionGroup"
+                     stepKey="openProductForEdit"/>
 
         <click selector="{{AdminProductImagesSection.productImagesToggle}}" stepKey="expandImages"/>
 
         <!-- *.avif is allowed: neither the Uppy restrictions nor the upload controller may reject it -->
-        <attachFile selector="{{AdminProductImagesSection.imageFileUpload}}" userInput="avif.avif" stepKey="attachAvif"/>
+        <attachFile selector="{{AdminProductImagesSection.imageFileUpload}}" userInput="avif.avif"
+                    stepKey="attachAvif"/>
         <waitForPageLoad stepKey="waitForUploadAvif"/>
         <dontSeeElement selector="{{AdminProductMessagesSection.errorMessage}}" stepKey="dontSeeErrorAvif"/>
         <waitForElementVisible selector="{{AdminProductImagesSection.imageFile('avif')}}" stepKey="seeAvifThumbnail"/>
@@ -55,7 +60,9 @@
         <actionGroup ref="SaveProductFormActionGroup" stepKey="saveProduct"/>
 
         <!-- The section collapses on reload, so it has to be reopened before the gallery renders again -->
-        <click selector="{{AdminProductImagesSection.productImagesToggle}}" stepKey="expandImagesAfterSave"/>
+        <conditionalClick selector="{{AdminProductImagesSection.productImagesToggle}}"
+                          dependentSelector="{{AdminProductImagesSection.imageFile('avif')}}" visible="false"
+                          stepKey="expandImagesAfterSave"/>
         <waitForElementVisible selector="{{AdminProductImagesSection.imageFile('avif')}}" stepKey="seeAvifAfterSave"/>
     </test>
 </tests>
