@@ -17,7 +17,7 @@ class Uploader
      *
      * @var array
      */
-    protected $_allowedExtensions = ['jpg', 'jpeg', 'gif', 'png', 'xbm', 'wbmp'];
+    protected $_allowedExtensions = ['jpg', 'jpeg', 'gif', 'png', 'webp', 'avif', 'xbm', 'wbmp'];
 
     /**
      * @var \Magento\Framework\Filesystem

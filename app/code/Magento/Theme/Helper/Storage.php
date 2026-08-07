@@ -337,7 +337,7 @@ class Storage extends \Magento\Framework\App\Helper\AbstractHelper
     {
         return $this->getStorageType() == \Magento\Theme\Model\Wysiwyg\Storage::TYPE_FONT
             ? ['ttf', 'otf', 'eot', 'svg', 'woff']
-            : ['jpg', 'jpeg', 'gif', 'png', 'xbm', 'wbmp'];
+            : ['jpg', 'jpeg', 'gif', 'png', 'webp', 'avif', 'xbm', 'wbmp'];
     }
 
     /**

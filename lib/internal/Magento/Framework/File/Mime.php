@@ -44,6 +44,8 @@ class Mime
         'jpeg' => 'image/jpeg',
         'jpg' => 'image/jpeg',
         'gif' => 'image/gif',
+        'webp' => 'image/webp',
+        'avif' => 'image/avif',
         'bmp' => 'image/bmp',
         'ico' => 'image/vnd.microsoft.icon',
         'tiff' => 'image/tiff',
