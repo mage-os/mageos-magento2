@@ -28,6 +28,6 @@ class Logo extends DesignLogo
      */
     public function getAllowedExtensions()
     {
-        return ['jpg', 'jpeg', 'gif', 'png', 'webp', 'avif'];
+        return ['jpg', 'jpeg', 'gif', 'png'];
     }
 }
