@@ -48,7 +48,11 @@
         <actionGroup ref="OpenProductForEditByClickingRowXColumnYInProductGridActionGroup"
                      stepKey="openProductForEdit"/>
 
+        <waitForElementVisible selector="{{AdminProductImagesSection.productImagesToggle}}"
+                               stepKey="waitForImagesToggle"/>
         <click selector="{{AdminProductImagesSection.productImagesToggle}}" stepKey="expandImages"/>
+        <waitForElementVisible selector="{{AdminProductImagesSection.imageUploadButton}}"
+                               stepKey="waitForImagesSection"/>
 
         <!-- *.avif is allowed -->
         <attachFile selector="{{AdminProductImagesSection.imageFileUpload}}" userInput="avif.avif"
