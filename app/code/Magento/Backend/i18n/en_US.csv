@@ -25,7 +25,7 @@ Views,Views
 Revenue,Revenue
 Tax,Tax
 Shipping,Shipping
-"Images (.gif, .jpg, .png)","Images (.gif, .jpg, .png)"
+"Images (.gif, .jpg, .png, .webp, .avif)","Images (.gif, .jpg, .png, .webp, .avif)"
 "Media (.avi, .flv, .swf)","Media (.avi, .flv, .swf)"
 "All Files","All Files"
 "Reset to Default","Reset to Default"

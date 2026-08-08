@@ -154,7 +154,7 @@ Edit,Edit
 "Update Attributes","Update Attributes"
 "start typing to search category","start typing to search category"
 "New Category","New Category"
-"Images (.gif, .jpg, .png)","Images (.gif, .jpg, .png)"
+"Images (.gif, .jpg, .png, .webp, .avif)","Images (.gif, .jpg, .png, .webp, .avif)"
 "Add New Images","Add New Images"
 "Inc. Tax","Inc. Tax"
 "Does this have a weight?","Does this have a weight?"
@@ -843,7 +843,7 @@ AttributeSetText,AttributeSetText
 StatusText,StatusText
 "Product Image Watermarks","Product Image Watermarks"
 Base,Base
-"Allowed file types: jpeg, gif, png.","Allowed file types: jpeg, gif, png."
+"Allowed file types: jpeg, gif, png, webp, avif.","Allowed file types: jpeg, gif, png, webp, avif."
 "Image Opacity","Image Opacity"
 "Example format: 200x300.","Example format: 200x300."
 "Image Position","Image Position"
