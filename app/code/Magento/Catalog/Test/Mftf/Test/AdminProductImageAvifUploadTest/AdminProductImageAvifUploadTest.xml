@@ -50,7 +50,7 @@
 
         <click selector="{{AdminProductImagesSection.productImagesToggle}}" stepKey="expandImages"/>
 
-        <!-- *.avif is allowed: neither the Uppy restrictions nor the upload controller may reject it -->
+        <!-- *.avif is allowed -->
         <attachFile selector="{{AdminProductImagesSection.imageFileUpload}}" userInput="avif.avif"
                     stepKey="attachAvif"/>
         <waitForPageLoad stepKey="waitForUploadAvif"/>

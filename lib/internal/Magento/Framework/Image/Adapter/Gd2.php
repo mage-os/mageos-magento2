@@ -261,8 +261,6 @@ class Gd2 extends AbstractAdapter
             throw new \BadFunctionCallException('Callback not found.');
         }
         $callback = self::$_callbacks[$fileType][$callbackType];
-        // GD only declares the WebP and AVIF helpers when it was built against libwebp/libavif,
-        // so an unsupported build has to surface as an unsupported format rather than a fatal error.
         if (!function_exists($callback)) {
             throw new \InvalidArgumentException($unsupportedText);
         }
