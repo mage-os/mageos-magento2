@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\Framework\ObjectManager\Test\Unit\Config;
 
 use Magento\Framework\ObjectManager\Config\Compiled;
+use Magento\Framework\ObjectManager\ConfigLoaderInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -346,5 +347,91 @@ class CompiledTest extends TestCase
         $this->assertFalse($compiled->isNonLazyType('First\\Type'));
         $this->assertFalse($compiled->isNonLazyType('Second\\Type'));
         $this->assertTrue($compiled->isNonLazyType('Other\\Type'));
+    }
+
+    public function testExtendAppliesADeltaOnTopOfTheAreaItExtends(): void
+    {
+        $configLoader = $this->createMock(ConfigLoaderInterface::class);
+        $configLoader->expects($this->never())->method('load');
+
+        $compiled = new Compiled(
+            [
+                'preferences' => ['preference1' => 'globalValue'],
+                ConfigLoaderInterface::AREA_KEY => 'global',
+            ],
+            $configLoader
+        );
+
+        $compiled->extend([
+            ConfigLoaderInterface::EXTENDS_KEY => 'global',
+            'preferences' => ['preference1' => 'frontendValue'],
+        ]);
+
+        $this->assertSame('frontendValue', $compiled->getPreference('preference1'));
+    }
+
+    public function testExtendRebuildsFromTheBaseWhenAnotherAreaIsAlreadyApplied(): void
+    {
+        $globalConfig = ['preferences' => ['preference1' => 'globalValue']];
+        $configLoader = $this->createMock(ConfigLoaderInterface::class);
+        $configLoader->expects($this->once())
+            ->method('load')
+            ->with('global')
+            ->willReturn($globalConfig);
+
+        $compiled = new Compiled(
+            $globalConfig + [ConfigLoaderInterface::AREA_KEY => 'global'],
+            $configLoader
+        );
+
+        $compiled->extend([
+            ConfigLoaderInterface::EXTENDS_KEY => 'global',
+            'preferences' => ['preference1' => 'adminhtmlValue'],
+        ]);
+        $compiled->extend([
+            ConfigLoaderInterface::EXTENDS_KEY => 'global',
+            'preferences' => ['preference2' => 'frontendOnly'],
+        ]);
+
+        $this->assertSame('globalValue', $compiled->getPreference('preference1'));
+        $this->assertSame('frontendOnly', $compiled->getPreference('preference2'));
+    }
+
+    public function testExtendRebuildsFromTheBaseAfterAnArbitraryConfiguration(): void
+    {
+        $globalConfig = ['preferences' => ['preference1' => 'globalValue']];
+        $configLoader = $this->createMock(ConfigLoaderInterface::class);
+        $configLoader->expects($this->once())
+            ->method('load')
+            ->with('global')
+            ->willReturn($globalConfig);
+
+        $compiled = new Compiled(
+            $globalConfig + [ConfigLoaderInterface::AREA_KEY => 'global'],
+            $configLoader
+        );
+
+        $compiled->extend(['preferences' => ['preference1' => 'mockedValue']]);
+        $compiled->extend([
+            ConfigLoaderInterface::EXTENDS_KEY => 'global',
+            'preferences' => [],
+        ]);
+
+        $this->assertSame('globalValue', $compiled->getPreference('preference1'));
+    }
+
+    public function testExtendAppliesADeltaWhenNoLoaderIsAvailable(): void
+    {
+        $compiled = new Compiled([
+            'preferences' => ['preference1' => 'globalValue'],
+            ConfigLoaderInterface::AREA_KEY => 'global',
+        ]);
+
+        $compiled->extend([
+            ConfigLoaderInterface::EXTENDS_KEY => 'global',
+            'preferences' => ['preference1' => 'frontendValue'],
+        ]);
+
+        $this->assertSame('frontendValue', $compiled->getPreference('preference1'));
     }
 }

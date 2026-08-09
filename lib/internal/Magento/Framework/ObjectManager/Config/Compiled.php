@@ -7,6 +7,7 @@ namespace Magento\Framework\ObjectManager\Config;
 
 use Magento\Framework\ObjectManager\ConfigInterface;
 use Magento\Framework\ObjectManager\ConfigCacheInterface;
+use Magento\Framework\ObjectManager\ConfigLoaderInterface;
 use Magento\Framework\ObjectManager\LazyTypeAwareInterface;
 use Magento\Framework\ObjectManager\RelationsInterface;
 
@@ -38,10 +39,25 @@ class Compiled implements ConfigInterface, LazyTypeAwareInterface
     private array $lazyTypes = [];
 
     /**
-     * @param array $data
+     * Area whose configuration is currently applied, null when the state matches no single area
+     *
+     * @var string|null
      */
-    public function __construct($data)
+    private $appliedArea;
+
+    /**
+     * @var ConfigLoaderInterface|null
+     */
+    private $configLoader;
+
+    /**
+     * @param array $data
+     * @param ConfigLoaderInterface|null $configLoader
+     */
+    public function __construct($data, ?ConfigLoaderInterface $configLoader = null)
     {
+        $this->configLoader = $configLoader;
+        $this->appliedArea = $data[ConfigLoaderInterface::AREA_KEY] ?? null;
         $this->arguments = isset($data['arguments']) && is_array($data['arguments'])
             ? $data['arguments'] : [];
         $this->virtualTypes = isset($data['instanceTypes']) && is_array($data['instanceTypes'])
@@ -164,6 +180,8 @@ class Compiled implements ConfigInterface, LazyTypeAwareInterface
      */
     public function extend(array $configuration)
     {
+        $configuration = $this->resolveAgainstAppliedArea($configuration);
+
         $this->arguments = isset($configuration['arguments']) && is_array($configuration['arguments'])
             ? array_replace($this->arguments, $configuration['arguments'])
             : $this->arguments;
@@ -176,6 +194,42 @@ class Compiled implements ConfigInterface, LazyTypeAwareInterface
         $this->lazyTypes = isset($configuration['lazyTypes']) && is_array($configuration['lazyTypes'])
             ? array_replace($this->lazyTypes, $configuration['lazyTypes'])
             : $this->lazyTypes;
+    }
+
+    /**
+     * Returns a configuration that is equivalent to the complete one on top of the current state
+     *
+     * @param array $configuration
+     * @return array
+     */
+    private function resolveAgainstAppliedArea(array $configuration)
+    {
+        $base = $configuration[ConfigLoaderInterface::EXTENDS_KEY] ?? null;
+        $resolved = $base !== null && $base !== $this->appliedArea && $this->configLoader !== null
+            ? self::merge($this->configLoader->load($base), $configuration)
+            : $configuration;
+
+        $this->appliedArea = $configuration[ConfigLoaderInterface::AREA_KEY] ?? null;
+
+        return $resolved;
+    }
+
+    /**
+     * Applies a configuration on top of another one, per top-level key of each section
+     *
+     * @param array $base
+     * @param array $configuration
+     * @return array
+     */
+    private static function merge(array $base, array $configuration)
+    {
+        foreach (['arguments', 'instanceTypes', 'preferences', 'lazyTypes'] as $section) {
+            if (isset($configuration[$section]) && is_array($configuration[$section])) {
+                $base[$section] = array_replace($base[$section] ?? [], $configuration[$section]);
+            }
+        }
+
+        return $base;
     }
 
     /**

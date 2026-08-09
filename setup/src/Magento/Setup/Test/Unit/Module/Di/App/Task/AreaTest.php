@@ -10,6 +10,7 @@ namespace Magento\Setup\Test\Unit\Module\Di\App\Task;
 use Magento\Framework\App;
 use Magento\Framework\App\AreaList;
 use Magento\Framework\App\ObjectManager\ConfigWriterInterface;
+use Magento\Framework\ObjectManager\ConfigLoaderInterface;
 use Magento\Setup\Module\Di\App\Task\Operation\Area;
 use Magento\Setup\Module\Di\Compiler\Config;
 use Magento\Setup\Module\Di\Compiler\Config\ModificationChain;
@@ -125,5 +126,74 @@ class AreaTest extends TestCase
             );
 
         $areaOperation->doOperation();
+    }
+
+    public function testDoOperationWritesOnlyTheDifferencesOfNonGlobalAreas()
+    {
+        $path = 'path/to/codebase/';
+
+        $globalConfig = [
+            'arguments' => [
+                'Overridden' => ['b' => 2],
+                'Shared' => ['a' => 1],
+            ],
+            'preferences' => ['SomeInterface' => 'GlobalImplementation'],
+            'instanceTypes' => ['globalVirtual' => 'GlobalType'],
+        ];
+        $frontendConfig = [
+            'arguments' => [
+                'FrontendOnly' => ['c' => 3],
+                'Overridden' => ['b' => 'frontend'],
+                'Shared' => ['a' => 1],
+            ],
+            'preferences' => ['SomeInterface' => 'FrontendImplementation'],
+            'instanceTypes' => ['globalVirtual' => 'GlobalType'],
+        ];
+
+        $areaOperation = new Area(
+            $this->areaListMock,
+            $this->areaInstancesNamesList,
+            $this->configReaderMock,
+            $this->configWriterMock,
+            $this->configChain,
+            [$path]
+        );
+
+        $this->areaListMock->expects($this->once())
+            ->method('getCodes')
+            ->willReturn([App\Area::AREA_FRONTEND]);
+        $this->areaInstancesNamesList->expects($this->once())
+            ->method('getList')
+            ->with($path)
+            ->willReturn([]);
+        $this->configReaderMock->method('generateCachePerScope')
+            ->willReturnCallback(
+                static fn ($definitions, $areaCode) => $areaCode === App\Area::AREA_GLOBAL
+                    ? $globalConfig
+                    : $frontendConfig
+            );
+        $this->configChain->method('modify')->willReturnArgument(0);
+
+        $written = [];
+        $this->configWriterMock->method('write')
+            ->willReturnCallback(function ($areaCode, $config) use (&$written) {
+                $written[$areaCode] = $config;
+            });
+
+        $areaOperation->doOperation();
+
+        $this->assertSame($globalConfig, $written[App\Area::AREA_GLOBAL]);
+        $this->assertSame(
+            [
+                ConfigLoaderInterface::EXTENDS_KEY => App\Area::AREA_GLOBAL,
+                'arguments' => [
+                    'FrontendOnly' => ['c' => 3],
+                    'Overridden' => ['b' => 'frontend'],
+                ],
+                'preferences' => ['SomeInterface' => 'FrontendImplementation'],
+                'instanceTypes' => [],
+            ],
+            $written[App\Area::AREA_FRONTEND]
+        );
     }
 }
