@@ -17,9 +17,10 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.event.pull_request.head.sha }}
+          allow-unsafe-pr-checkout: true
           persist-credentials: false
 
       - name: Download eComscan
