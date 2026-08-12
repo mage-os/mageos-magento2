@@ -168,9 +168,34 @@ class RuleProductsSelectBuilder
             sprintf($joinCondition, $tableAlias, $storeId),
             []
         );
+
+        $tierPriceTable = $this->resource->getTableName('catalog_product_entity_tier_price');
+
+        $select->joinLeft(
+            ['price_tier' => $tierPriceTable],
+            '(price_tier.' . $linkField . ' = e.' . $linkField . ')'
+            . ' AND (price_tier.website_id = ' . $websiteId . ')'
+            . ' AND (price_tier.customer_group_id = rp.customer_group_id OR price_tier.all_groups = 1)'
+            . ' AND (price_tier.qty = 1)',
+            []
+        );
+
+        $select->joinLeft(
+            ['price_tier0' => $tierPriceTable],
+            '(price_tier0.' . $linkField . ' = e.' . $linkField . ')'
+            . ' AND (price_tier0.website_id = 0)'
+            . ' AND (price_tier0.customer_group_id = rp.customer_group_id OR price_tier0.all_groups = 1)'
+            . ' AND (price_tier0.qty = 1)',
+            []
+        );
+
         $select->columns(
             [
-                'default_price' => $connection->getIfNullSql($tableAlias . '.value', 'pp_default.value'),
+                'default_price' => 'LEAST('
+                    . $connection->getIfNullSql('price_tier0.value', 'pp_default.value') . ','
+                    . $connection->getIfNullSql('price_tier.value', 'pp_default.value') . ','
+                    . $connection->getIfNullSql($tableAlias . '.value', 'pp_default.value')
+                    . ')',
             ]
         );
 
