@@ -79,11 +79,6 @@ class ExternalVideoResourceBackend
                 ]
             ),
             []
-        // PgCompat: was hardcoded MySQL backtick identifiers ('`value_video`.`provider`'
-        // etc) passed as plain strings - getIfNullSql() just interpolates its arguments
-        // verbatim, so these reached Postgres as literal, invalid backtick syntax
-        // instead of going through quoteIdentifier(). Same bug, same fix, as the
-        // core Gallery.php site this plugin's select is built from.
         )->columns([
             'video_provider' => $originalResourceModel->getConnection()
                 ->getIfNullSql('value_video.provider', 'default_value_video.provider'),

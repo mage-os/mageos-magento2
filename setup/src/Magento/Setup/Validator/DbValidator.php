@@ -89,6 +89,7 @@ class DbValidator
      * @param string $dbUser
      * @param string $dbPass
      * @param array $driverOptions
+     * @param string|null $engine Database engine (mysql, postgresql)
      * @return bool
      * @throws \Magento\Setup\Exception
      */

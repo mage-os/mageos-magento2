@@ -128,7 +128,9 @@ class BulkStatus implements BulkStatusInterface
         $select = $collection->getSelect();
         $statusExpr = $this->calculatedStatusSql->get($operationTableName);
         $select->columns(['status' => $statusExpr])
-            ->order($select->getAdapter()->getFieldSql((string) $statusExpr, $statusesArray));
+            ->order(
+                $this->resourceConnection->getConnection()->getFieldSql((string) $statusExpr, $statusesArray)
+            );
         $collection->addFieldToFilter('user_id', $userId)
             ->addOrder('start_time');
 
