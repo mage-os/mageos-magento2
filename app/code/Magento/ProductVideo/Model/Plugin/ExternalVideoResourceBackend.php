@@ -79,17 +79,22 @@ class ExternalVideoResourceBackend
                 ]
             ),
             []
+        // PgCompat: was hardcoded MySQL backtick identifiers ('`value_video`.`provider`'
+        // etc) passed as plain strings - getIfNullSql() just interpolates its arguments
+        // verbatim, so these reached Postgres as literal, invalid backtick syntax
+        // instead of going through quoteIdentifier(). Same bug, same fix, as the
+        // core Gallery.php site this plugin's select is built from.
         )->columns([
             'video_provider' => $originalResourceModel->getConnection()
-                ->getIfNullSql('`value_video`.`provider`', '`default_value_video`.`provider`'),
+                ->getIfNullSql('value_video.provider', 'default_value_video.provider'),
             'video_url' => $originalResourceModel->getConnection()
-                ->getIfNullSql('`value_video`.`url`', '`default_value_video`.`url`'),
+                ->getIfNullSql('value_video.url', 'default_value_video.url'),
             'video_title' => $originalResourceModel->getConnection()
-                ->getIfNullSql('`value_video`.`title`', '`default_value_video`.`title`'),
+                ->getIfNullSql('value_video.title', 'default_value_video.title'),
             'video_description' => $originalResourceModel->getConnection()
-                ->getIfNullSql('`value_video`.`description`', '`default_value_video`.`description`'),
+                ->getIfNullSql('value_video.description', 'default_value_video.description'),
             'video_metadata' => $originalResourceModel->getConnection()
-                ->getIfNullSql('`value_video`.`metadata`', '`default_value_video`.`metadata`'),
+                ->getIfNullSql('value_video.metadata', 'default_value_video.metadata'),
             'video_provider_default' => 'default_value_video.provider',
             'video_url_default' => 'default_value_video.url',
             'video_title_default' => 'default_value_video.title',

@@ -120,18 +120,12 @@ class TemporaryTableService
             $indexStatements[] = sprintf('%s(%s)', $indexType, $renderedColumns);
         }
 
-        $statement = sprintf(
-            'CREATE TEMPORARY TABLE %s %s ENGINE=%s IGNORE (%s)',
-            $adapter->quoteIdentifier($name),
-            $indexStatements ? '(' . implode(',', $indexStatements) . ')' : '',
-            $adapter->quoteIdentifier($dbEngine),
-            "{$select}"
-        );
-
-        $adapter->query(
-            $statement,
-            $select->getBind()
-        );
+        // PgCompat: `CREATE TEMPORARY TABLE x (...) ENGINE=y IGNORE (SELECT ...)` is a
+        // MySQL-only "materialize a dedup'd select into a temp table" idiom -
+        // createTemporaryTableFromSelect() isn't part of AdapterInterface, but every
+        // connection in this deployment is one of the two PgCompat providers, both of
+        // which implement it as a native `CREATE TEMPORARY TABLE x AS SELECT ...`.
+        $adapter->createTemporaryTableFromSelect($name, $indexStatements, $select);
 
         $this->createdTableAdapters[$name] = $adapter;
 

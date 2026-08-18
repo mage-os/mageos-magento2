@@ -282,14 +282,18 @@ class Builder
             }
 
             if (!empty($conditions) && !empty($attributeField)) {
-                $conditions = $this->_connection->quote(
-                    array_map('trim', explode(',', $conditions))
+                // PgCompat: FIELD() is MySQL-only - getFieldSql() isn't part of
+                // AdapterInterface, but every connection in this deployment is one of
+                // the two PgCompat providers, both of which implement it as a
+                // CASE-expression equivalent. quote() on an array returns one
+                // comma-joined, already-quoted string - split back into a value list.
+                $conditionValues = explode(
+                    ', ',
+                    $this->_connection->quote(array_map('trim', explode(',', $conditions)))
                 );
                 $collection->getSelect()->reset(Select::ORDER);
                 $collection->getSelect()->order(
-                    $this->_expressionFactory->create(
-                        ['expression' => "FIELD($attributeField, $conditions)"]
-                    )
+                    $this->_connection->getFieldSql($attributeField, $conditionValues)
                 );
             }
         }
