@@ -485,11 +485,6 @@ class Price implements DimensionalIndexerInterface
             [
                 'min_price' => new \Zend_Db_Expr('MIN(' . $minPrice . ')'),
                 'alt_price' => new \Zend_Db_Expr('MIN(price)'),
-                // PgCompat: group_type is functionally dependent on option_id within this
-                // GROUP BY, but MySQL's non-ONLY_FULL_GROUP_BY leniency allowed referencing
-                // it bare in the CASE condition anyway - Postgres requires it aggregated.
-                // MIN(group_type) is value-identical to group_type here (same table/row
-                // set as before), so this is a no-op on MySQL and a fix on Postgres.
                 'max_price' => $connection->getCheckSql('MIN(group_type) = 0', 'MAX(price)', 'SUM(price)'),
                 'tier_price' => new \Zend_Db_Expr('MIN(' . $tierPrice . ')'),
                 'alt_tier_price' => new \Zend_Db_Expr('MIN(tier_price)'),

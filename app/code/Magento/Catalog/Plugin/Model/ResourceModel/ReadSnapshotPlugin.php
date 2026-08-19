@@ -41,6 +41,8 @@ class ReadSnapshotPlugin
     }
 
     /**
+     * Merge global-scope catalog attribute values into the current-store snapshot.
+     *
      * @param ReadSnapshot $subject
      * @param array $entityData
      * @param string $entityType
@@ -73,17 +75,12 @@ class ReadSnapshotPlugin
         if ($globalAttributes) {
             $selects = [];
             foreach ($globalAttributes as $table => $attributeIds) {
-                // PgCompat: this select is UNION ALL'd (below) with one of these per EAV
-                // backend type table (varchar/int/decimal/text/datetime) - MySQL coerces
-                // the differently-typed "value" columns across branches implicitly,
-                // Postgres requires them to already share one type. Same fix as the
-                // other EAV union-cast sites (union-cast-eav-abstract-collection.patch,
-                // Eav\Model\ResourceModel\ReadHandler::execute()).
-                $select = $connection->select()
-                    ->from(
-                        ['t' => $table],
-                        ['value' => $connection->castToText('t.value'), 'attribute_id' => 't.attribute_id']
-                    )
+                $select = $connection->select();
+                // Align types across UNION ALL branches.
+                $select->from(
+                    ['t' => $table],
+                    ['value' => $connection->castToText('t.value'), 'attribute_id' => 't.attribute_id']
+                )
                     ->where($metadata->getLinkField() . ' = ?', $entityData[$metadata->getLinkField()])
                     ->where('attribute_id' . ' in (?)', $attributeIds)
                     ->where('store_id = ?', \Magento\Store\Model\Store::DEFAULT_STORE_ID);

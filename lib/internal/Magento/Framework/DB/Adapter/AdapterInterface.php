@@ -820,7 +820,7 @@ interface AdapterInterface
     public function getIfNullSql($expression, $value = 0);
 
     /**
-     * GROUP_CONCAT / string_agg equivalent
+     * Concatenate grouped column values with a separator.
      *
      * @param string|\Zend_Db_Expr $expression
      * @param string $separator
@@ -831,7 +831,7 @@ interface AdapterInterface
     public function getGroupConcatSql($expression, $separator = ',', $orderBy = null, $distinct = false);
 
     /**
-     * FIELD() / CASE equivalent for ORDER BY a fixed list
+     * Rank an expression by a fixed value list for ORDER BY.
      *
      * @param string|\Zend_Db_Expr $expression
      * @param array $values

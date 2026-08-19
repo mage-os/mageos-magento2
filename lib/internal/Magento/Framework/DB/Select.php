@@ -57,19 +57,7 @@ class Select extends \Zend_Db_Select
      * Class constructor
      * Add straight join support
      *
-     * PgCompat: type-hint relaxed from the concrete Adapter\Pdo\Mysql to
-     * Zend_Db_Adapter_Abstract - this class only calls forUpdate()/
-     * getQuoteIdentifierSymbol()/orderRand()/supportStraightJoin() on $adapter, all
-     * part of AdapterInterface's own contract (not Zend_Db_Adapter_Abstract's), so the
-     * narrower Mysql-only type-hint was never load-bearing for anything this class
-     * actually does - PHP doesn't statically check that a dynamic method call exists
-     * against the parameter's declared type, only that the object passed at runtime
-     * has it. Zend_Db_Adapter_Abstract (not the AdapterInterface interface) specifically
-     * because parent::__construct() below requires it, and PHP's intersection types
-     * can't combine an interface with a concrete class. SelectFactory::create() already
-     * type-hints AdapterInterface (not Mysql) when building this object, so without
-     * this change ANY AdapterInterface implementation that doesn't extend Magento's own
-     * Mysql adapter fails here with a TypeError the moment it calls select().
+     * Accepts any Zend DB adapter, not only Pdo\Mysql.
      *
      * @param \Zend_Db_Adapter_Abstract $adapter
      * @param Select\SelectRenderer $selectRenderer
