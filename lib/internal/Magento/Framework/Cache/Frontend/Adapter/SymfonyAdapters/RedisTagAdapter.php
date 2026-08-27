@@ -1048,23 +1048,6 @@ LUA;
             return;
         }
 
-        // phpredis RedisCluster: scan() takes a node argument and must be run per master node,
-        // since the keyspace is spread across masters and a single cursor cannot cover it.
-        if ($this->redis instanceof \RedisCluster) {
-            foreach ($this->redis->_masters() as $node) {
-                $iterator = null;
-                while (($keys = $this->redis->scan($iterator, $node, $pattern, $count)) !== false) {
-                    if (is_array($keys)) {
-                        foreach ($keys as $key) {
-                            yield $key;
-                        }
-                    }
-                }
-            }
-
-            return;
-        }
-
         // phpredis: cursor by reference; returns false when iteration completes
         $iterator = null;
         while (($keys = $this->redis->scan($iterator, $pattern, $count)) !== false) {
