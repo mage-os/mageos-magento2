@@ -397,7 +397,7 @@ class RendererTest extends TestCase
      * @param int|string $qtyOrdered
      */
     #[DataProvider('zeroQtyOrderedDataProvider')]
-    public function testGetBaseUnitDisplayPriceExclTaxWithZeroQtyOrdered($qtyOrdered)
+    public function testGetBaseUnitDisplayPriceExclTaxWithZeroQtyOrdered(int|string $qtyOrdered)
     {
         $baseRowTotal = 100;
 
@@ -760,7 +760,7 @@ class RendererTest extends TestCase
      * @param int|string $qtyOrdered
      */
     #[DataProvider('zeroQtyOrderedDataProvider')]
-    public function testGetBaseFinalUnitDisplayPriceExclTaxWithZeroQtyOrdered($qtyOrdered)
+    public function testGetBaseFinalUnitDisplayPriceExclTaxWithZeroQtyOrdered(int|string $qtyOrdered)
     {
         $baseRowTotal = 100;
 
