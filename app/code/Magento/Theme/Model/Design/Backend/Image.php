@@ -14,6 +14,6 @@ class Image extends File
      */
     public function getAllowedExtensions()
     {
-        return ['jpg', 'jpeg', 'gif', 'png'];
+        return ['jpg', 'jpeg', 'gif', 'png', 'webp', 'avif'];
     }
 }

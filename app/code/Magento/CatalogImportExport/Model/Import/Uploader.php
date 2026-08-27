@@ -58,6 +58,8 @@ class Uploader extends \Magento\MediaStorage\Model\File\Uploader
         'jpeg' => 'image/jpeg',
         'gif' => 'image/gif',
         'png' => 'image/png',
+        'webp' => 'image/webp',
+        'avif' => 'image/avif',
     ];
 
     public const DEFAULT_FILE_TYPE = 'application/octet-stream';

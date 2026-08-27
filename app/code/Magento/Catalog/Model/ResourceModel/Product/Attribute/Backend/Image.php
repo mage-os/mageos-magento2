@@ -60,7 +60,7 @@ class Image extends AbstractBackend
         try {
             /** @var $uploader \Magento\MediaStorage\Model\File\Uploader */
             $uploader = $this->_fileUploaderFactory->create(['fileId' => $this->getAttribute()->getName()]);
-            $uploader->setAllowedExtensions(['jpg', 'jpeg', 'gif', 'png']);
+            $uploader->setAllowedExtensions(['jpg', 'jpeg', 'gif', 'png', 'webp', 'avif']);
             $uploader->setAllowRenameFiles(true);
             $uploader->setFilesDispersion(true);
         } catch (\Exception $e) {

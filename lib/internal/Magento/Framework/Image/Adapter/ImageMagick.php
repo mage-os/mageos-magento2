@@ -172,7 +172,11 @@ class ImageMagick extends AbstractAdapter
     protected function _applyOptions()
     {
         $this->_imageHandler->setImageCompressionQuality((int)$this->quality());
-        $this->_imageHandler->setImageCompression(\Imagick::COMPRESSION_JPEG);
+        // WebP and AVIF carry their own encoders; forcing JPEG compression on them yields a
+        // container whose declared compression contradicts its payload.
+        if (!in_array($this->_fileType, [IMAGETYPE_WEBP, IMAGETYPE_AVIF], true)) {
+            $this->_imageHandler->setImageCompression(\Imagick::COMPRESSION_JPEG);
+        }
         $this->_imageHandler->setImageUnits(\Imagick::RESOLUTION_PIXELSPERINCH);
         $this->_imageHandler->setImageResolution(
             $this->_options['resolution']['x'],
