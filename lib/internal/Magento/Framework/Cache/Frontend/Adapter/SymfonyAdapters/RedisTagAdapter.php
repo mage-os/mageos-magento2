@@ -29,6 +29,34 @@ class RedisTagAdapter implements
     private const ALL_IDS_PREFIX = 'cache:all_ids:';
 
     /**
+     * Separator between the namespace and the variable tag/id when building index keys.
+     *
+     * Without it the tag/reverse keys are `cache:tags:{ns}{tag}`, so a GC glob of
+     * `cache:tags:{ns}*` also matches a second install whose id_prefix merely extends
+     * this one (e.g. `site1_` vs `site1_stage_`); that install's ids all miss against
+     * this pool and get SREM'd from its tag sets, silently breaking its invalidation.
+     * The separator makes the namespace boundary unambiguous in the glob.
+     */
+    private const KEY_SEPARATOR = ':';
+
+    /**
+     * Redis key holding the persisted Stage 1 SCAN cursor, namespaced per install.
+     *
+     * garbageCollect() runs under a wall-time budget; persisting the tag-set SCAN cursor
+     * lets each run resume where the last left off instead of re-scanning the keyspace
+     * head every time, so large keyspaces are drained across runs. Reset to 0 (a full
+     * pass) whenever iteration completes.
+     */
+    private const GC_CURSOR_PREFIX = 'cache:gc:cursor:';
+
+    /**
+     * Fraction of the GC wall-time budget reserved for Stage 1 (tag-set sweep); the
+     * remainder always runs Stage 2 (all_ids sweep) so NOT_MATCHING_TAG accuracy is
+     * restored on every run even when Stage 1 does not finish within its slice.
+     */
+    private const GC_STAGE1_TIME_FRACTION = 0.8;
+
+    /**
      * Pre-namespacing all_ids key; only referenced to clear leftovers from older versions
      */
     private const LEGACY_ALL_IDS_SET = 'cache:all_ids';
@@ -211,9 +239,15 @@ return deleted
 LUA;
 
     /**
-     * @var \Redis|\RedisCluster|PredisClient|OptimizedPredisClient
+     * Single-node Redis client only. \RedisCluster is intentionally unsupported: this
+     * adapter relies on multi-key operations (SINTER/SDIFF, keyspace SCAN + multi-key DEL,
+     * cross-key pipelines and Lua scripts over many tag keys) that raise CROSSSLOT on a
+     * cluster because the keys hash to different slots. Cluster wiring is not built by the
+     * shipped SymfonyAdapterProvider; extractRedisClient() rejects a cluster client.
+     *
+     * @var \Redis|PredisClient|OptimizedPredisClient
      */
-    private \Redis|\RedisCluster|PredisClient|OptimizedPredisClient $redis;
+    private \Redis|PredisClient|OptimizedPredisClient $redis;
 
     /**
      * @var string
@@ -273,12 +307,12 @@ LUA;
      * Extract Redis client from Symfony cache adapter
      *
      * @param CacheItemPoolInterface $cachePool
-     * @return \Redis|\RedisCluster|PredisClient|OptimizedPredisClient
+     * @return \Redis|PredisClient|OptimizedPredisClient
      * @throws \RuntimeException If Redis client cannot be extracted
      */
     private function extractRedisClient(
         CacheItemPoolInterface $cachePool
-    ): \Redis|\RedisCluster|PredisClient|OptimizedPredisClient {
+    ): \Redis|PredisClient|OptimizedPredisClient {
         $adapter = $cachePool;
         if ($adapter instanceof TagAwareAdapter) {
             $reflection = new \ReflectionClass($adapter);
@@ -286,13 +320,14 @@ LUA;
             $adapter = $poolProperty->getValue($adapter);
         }
 
-        // Get Redis client from RedisAdapter
+        // Get Redis client from RedisAdapter. \RedisCluster is intentionally excluded:
+        // the tag-bookkeeping operations here are multi-key and raise CROSSSLOT on a cluster.
         if ($adapter instanceof RedisAdapter) {
             $reflection = new \ReflectionClass($adapter);
             $redisProperty = $reflection->getProperty('redis');
             $redis = $redisProperty->getValue($adapter);
 
-            if ($redis instanceof \Redis || $redis instanceof \RedisCluster ||
+            if ($redis instanceof \Redis ||
                 $redis instanceof PredisClient || $redis instanceof OptimizedPredisClient) {
                 return $redis;
             }
@@ -309,7 +344,7 @@ LUA;
      */
     private function getTagKey(string $tag): string
     {
-        return self::TAG_INDEX_PREFIX . $this->namespace . $tag;
+        return self::TAG_INDEX_PREFIX . $this->namespace . self::KEY_SEPARATOR . $tag;
     }
 
     /**
@@ -320,7 +355,7 @@ LUA;
      */
     private function reverseIndexKey(string $id): string
     {
-        return self::REVERSE_INDEX_PREFIX . $this->namespace . $id;
+        return self::REVERSE_INDEX_PREFIX . $this->namespace . self::KEY_SEPARATOR . $id;
     }
 
     /**
@@ -790,7 +825,7 @@ LUA;
 
         // Fallback: PHP-based clearing (original implementation)
         // Get all tag keys
-        $pattern = self::TAG_INDEX_PREFIX . $this->namespace . '*';
+        $pattern = self::TAG_INDEX_PREFIX . $this->namespace . self::KEY_SEPARATOR . '*';
         $tagKeys = $this->redis->keys($pattern);
 
         if (is_array($tagKeys) && !empty($tagKeys)) {
@@ -802,8 +837,11 @@ LUA;
         $this->redis->del($this->allIdsKey());
         $this->redis->del(self::LEGACY_ALL_IDS_SET);
 
+        // Reset the persisted GC scan cursor so the next GC starts a fresh pass
+        $this->redis->del(self::GC_CURSOR_PREFIX . $this->namespace);
+
         // Clear reverse index keys
-        $reversePattern = self::REVERSE_INDEX_PREFIX . $this->namespace . '*';
+        $reversePattern = self::REVERSE_INDEX_PREFIX . $this->namespace . self::KEY_SEPARATOR . '*';
         $reverseKeys = $this->redis->keys($reversePattern);
         if (is_array($reverseKeys) && !empty($reverseKeys)) {
             // PHP 8+ compatibility: use call_user_func_array to avoid spread operator issues
@@ -855,11 +893,15 @@ LUA;
      * tag-set memberships, all_ids entry and reverse index are never cleaned by the
      * normal remove/invalidation paths.
      *
-     * Stage 1 sweeps the tag sets themselves: SCAN each cache:tags:{ns}* set, batch-check
+     * Stage 1 sweeps the tag sets themselves: SCAN each cache:tags:{ns}:* set, batch-check
      * its members against the pool, SREM the misses. This reaps from the structure that
      * actually leaks and does not depend on the reverse index (which usually expired long
-     * before GC runs under the default cron cadence).
-     * Stage 2 sweeps all_ids the same way, keeping NOT_MATCHING_TAG accurate.
+     * before GC runs under the default cron cadence). The tag-set SCAN cursor is persisted
+     * between runs (see loadGcCursor()), so a keyspace too large to sweep in one budget is
+     * drained across successive runs instead of re-scanning the head every time.
+     * Stage 2 sweeps all_ids the same way, keeping NOT_MATCHING_TAG accurate. A slice of the
+     * wall-time budget (1 - GC_STAGE1_TIME_FRACTION) is reserved for it so Stage 2 still runs
+     * even when Stage 1 exhausts its share, rather than starving on large keyspaces.
      *
      * Bounded by wall time rather than a fixed id count: a fixed cap suits no one
      * (high-volume sites orphan more ids between cron runs than a small cap can drain,
@@ -876,20 +918,60 @@ LUA;
             return 0;
         }
 
-        $deadline = hrtime(true) + (int)($maxRuntime * 1e9);
+        $start = hrtime(true);
+        $deadline = $start + (int)($maxRuntime * 1e9);
+        $stage1Deadline = $start + (int)($maxRuntime * self::GC_STAGE1_TIME_FRACTION * 1e9);
         $budget = $batchSize;
         $cleaned = 0;
 
-        foreach ($this->scanKeys(self::TAG_INDEX_PREFIX . $this->namespace . '*', 100) as $tagKey) {
-            $cleaned += $this->sweepSetForOrphans((string)$tagKey, $deadline, $budget);
-            if (hrtime(true) >= $deadline || ($budget !== null && $budget <= 0)) {
-                return $cleaned;
+        $pattern = self::TAG_INDEX_PREFIX . $this->namespace . self::KEY_SEPARATOR . '*';
+        $cursor = $this->loadGcCursor();
+
+        do {
+            $pageCursor = $cursor;
+            [$cursor, $tagKeys] = $this->scanKeysPage($pattern, $cursor, 100);
+            foreach ($tagKeys as $tagKey) {
+                $cleaned += $this->sweepSetForOrphans((string)$tagKey, $stage1Deadline, $budget);
+                if (hrtime(true) >= $stage1Deadline || ($budget !== null && $budget <= 0)) {
+                    // Out of budget mid-pass: resume from the start of this page next run.
+                    // Re-sweeping already-clean members is idempotent, so no set is skipped.
+                    $this->saveGcCursor($pageCursor);
+                    $cleaned += $this->sweepSetForOrphans($this->allIdsKey(), $deadline, $budget);
+
+                    return $cleaned;
+                }
             }
-        }
+        } while ($cursor !== 0);
+
+        // Completed a full pass over the tag sets; next run starts fresh.
+        $this->saveGcCursor(0);
 
         $cleaned += $this->sweepSetForOrphans($this->allIdsKey(), $deadline, $budget);
 
         return $cleaned;
+    }
+
+    /**
+     * Load the persisted Stage 1 SCAN cursor for this namespace (0 when none/complete)
+     *
+     * @return int
+     */
+    private function loadGcCursor(): int
+    {
+        $cursor = $this->redis->get(self::GC_CURSOR_PREFIX . $this->namespace);
+
+        return ($cursor === false || $cursor === null) ? 0 : (int)$cursor;
+    }
+
+    /**
+     * Persist the Stage 1 SCAN cursor for this namespace so the next run resumes from it
+     *
+     * @param int $cursor
+     * @return void
+     */
+    private function saveGcCursor(int $cursor): void
+    {
+        $this->redis->set(self::GC_CURSOR_PREFIX . $this->namespace, (string)$cursor);
     }
 
     /**
@@ -1025,6 +1107,39 @@ LUA;
     }
 
     /**
+     * Run one SCAN round trip and return [nextCursor, keys]
+     *
+     * Abstracts the phpredis vs Predis SCAN differences behind a single page fetch so
+     * callers can persist the cursor between calls (see garbageCollect()). A returned
+     * cursor of 0 means the iteration is complete. Client-appropriate handling:
+     * Predis returns [cursor, keys]; phpredis mutates the cursor by reference and returns
+     * false only when iteration is finished.
+     *
+     * @param string $pattern
+     * @param int $cursor Cursor to resume from (0 to start a fresh iteration)
+     * @param int $count SCAN COUNT hint
+     * @return array{0:int,1:array} [nextCursor, keys]
+     */
+    private function scanKeysPage(string $pattern, int $cursor, int $count): array
+    {
+        if ($this->isPredisClient()) {
+            [$next, $keys] = $this->redis->scan($cursor, ['MATCH' => $pattern, 'COUNT' => $count]);
+
+            return [(int)$next, is_array($keys) ? $keys : []];
+        }
+
+        // phpredis: cursor is passed by reference; null starts a fresh iteration, and the
+        // command returns false once iteration is complete.
+        $iterator = $cursor === 0 ? null : $cursor;
+        $keys = $this->redis->scan($iterator, $pattern, $count);
+        if ($keys === false) {
+            return [0, []];
+        }
+
+        return [(int)$iterator, is_array($keys) ? $keys : []];
+    }
+
+    /**
      * Iterate keys matching a pattern via SCAN (cursor-based, non-blocking)
      *
      * @param string $pattern
@@ -1033,33 +1148,13 @@ LUA;
      */
     private function scanKeys(string $pattern, int $count): \Generator
     {
-        if ($this->isPredisClient()) {
-            $cursor = 0;
-            do {
-                [$cursor, $keys] = $this->redis->scan($cursor, ['MATCH' => $pattern, 'COUNT' => $count]);
-                if (is_array($keys)) {
-                    foreach ($keys as $key) {
-                        yield $key;
-                    }
-                }
-                $cursor = (int)$cursor;
-            } while ($cursor !== 0);
-
-            return;
-        }
-
-        // phpredis: cursor by reference; returns false when iteration completes
-        $iterator = null;
-        while (($keys = $this->redis->scan($iterator, $pattern, $count)) !== false) {
-            if (is_array($keys)) {
-                foreach ($keys as $key) {
-                    yield $key;
-                }
+        $cursor = 0;
+        do {
+            [$cursor, $keys] = $this->scanKeysPage($pattern, $cursor, $count);
+            foreach ($keys as $key) {
+                yield $key;
             }
-            if ((int)$iterator === 0) {
-                break;
-            }
-        }
+        } while ($cursor !== 0);
     }
 
     /**
@@ -1105,9 +1200,11 @@ LUA;
         }
 
         // KEYS: array of tags; ARGV: [tag_prefix, namespace, data_prefix, reverse_prefix, all_ids]
+        // namespace carries KEY_SEPARATOR so the script rebuilds the same cache:tags:{ns}:{tag}
+        // / cache:id_tags:{ns}:{id} keys that getTagKey()/reverseIndexKey() write.
         return $this->evalLua(self::LUA_CLEAN_MATCHING_ANY_TAGS, $tags, [
             self::TAG_INDEX_PREFIX,
-            $this->namespace,
+            $this->namespace . self::KEY_SEPARATOR,
             $this->dataKeyPrefix(),
             self::REVERSE_INDEX_PREFIX,
             $this->allIdsKey(),
@@ -1183,9 +1280,11 @@ LUA;
 
         // KEYS: array of tags
         // ARGV: [tag_prefix, namespace, scope_tag, data_prefix, reverse_prefix, all_ids]
+        // namespace carries KEY_SEPARATOR so the script rebuilds the same cache:tags:{ns}:{tag}
+        // / cache:id_tags:{ns}:{id} keys that getTagKey()/reverseIndexKey() write.
         return $this->evalLua(self::LUA_CLEAN_MATCHING_ANY_TAGS_WITH_SCOPE, $tags, [
             self::TAG_INDEX_PREFIX,
-            $this->namespace,
+            $this->namespace . self::KEY_SEPARATOR,
             $scopeTag,
             $this->dataKeyPrefix(),
             self::REVERSE_INDEX_PREFIX,
