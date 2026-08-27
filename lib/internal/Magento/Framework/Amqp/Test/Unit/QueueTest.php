@@ -183,4 +183,37 @@ class QueueTest extends TestCase
         $this->model->subscribeWithLimit(function () {
         }, 10, 1);
     }
+
+    /**
+     * Test verifies a waitTimeout of 0 ("block indefinitely", used when
+     * consumers_wait_for_messages=1) is forwarded to $channel->wait() as the
+     * integer 0 and never as null. php-amqplib maps a null wait timeout onto
+     * stream_select() with a zero timeval — a non-blocking poll — which turns an
+     * idle consumer into a 100% CPU busy-loop. Passing 0 blocks until a frame
+     * arrives, matching the sibling subscribe() method.
+     */
+    public function testSubscribeWithLimitPassesZeroTimeoutSoWaitBlocks(): void
+    {
+        $amqpChannel = $this->createMock(AMQPChannel::class);
+        $amqpChannel->method('basic_qos');
+        $amqpChannel->method('basic_consume')
+            ->willReturnCallback(function () use ($amqpChannel) {
+                $amqpChannel->callbacks = ['test-consumer-tag' => function () {
+                }];
+                return 'test-consumer-tag';
+            });
+        // identicalTo enforces === so a null timeout fails the expectation
+        // (with()'s default equalTo would let null pass, since null == 0 in PHP).
+        $amqpChannel->expects($this->once())
+            ->method('wait')
+            ->with(null, false, $this->identicalTo(0))
+            ->willReturnCallback(function () use ($amqpChannel) {
+                // Simulate basic_cancel emptying callbacks so the while loop ends.
+                $amqpChannel->callbacks = [];
+            });
+        $this->config->method('getChannel')->willReturn($amqpChannel);
+
+        $this->model->subscribeWithLimit(function () {
+        }, 10, 0);
+    }
 }
