@@ -568,9 +568,6 @@
             </argument>
         </arguments>
     </type>
-    <type name="Magento\Customer\Model\EmailNotificationInterface">
-        <plugin name="saveWishlistDataAndAddReferenceKeyToBackUrl" type="Magento\Wishlist\Plugin\SaveWishlistDataAndAddReferenceKeyToBackUrl"/>
-    </type>
     <type name="Magento\Eav\Model\Validator\Attribute\Data">
         <arguments>
             <argument name="ignoredAttributesByTypesList" xsi:type="array">
