@@ -43,7 +43,17 @@ trait MockCreationTrait
 
         $builderReflection = new ReflectionClass($mockBuilder);
         $methodsProperty = $builderReflection->getProperty('methods');
-        $methodsProperty->setValue($mockBuilder, $methods);
+
+        $targetReflection = new ReflectionClass($className);
+        $abstractMethods = array_map(
+            static fn (\ReflectionMethod $method): string => $method->getName(),
+            array_filter(
+                $targetReflection->getMethods(),
+                static fn (\ReflectionMethod $method): bool => $targetReflection->isInterface() || $method->isAbstract()
+            )
+        );
+
+        $methodsProperty->setValue($mockBuilder, array_values(array_unique(array_merge($methods, $abstractMethods))));
 
         if (empty($constructorArgs)) {
             $mockBuilder->disableOriginalConstructor();
