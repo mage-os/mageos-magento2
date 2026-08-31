@@ -31,7 +31,8 @@ class RedisTagAdapterTest extends TestCase
 
     /**
      * Predis test double recording every command as [method, args]. Public props:
-     * ->commands (log), ->sets (SMEMBERS source).
+     * ->commands (log), ->sets (SMEMBERS source), ->scanResponses / ->sscanResponses
+     * (queued SCAN / SSCAN replies).
      *
      * @var PredisClient
      */
@@ -64,27 +65,27 @@ class RedisTagAdapterTest extends TestCase
      */
     public function testDeleteByIdsCleansTagSetsAndReverseIndex(): void
     {
-        $this->redis->sets['cache:id_tags:4e0_ID1'] = ['BLOCK_HTML', 'CAT_P'];
-        $this->redis->sets['cache:id_tags:4e0_ID2'] = ['MAGE'];
+        $this->redis->sets['cache:id_tags:4e0_:ID1'] = ['BLOCK_HTML', 'CAT_P'];
+        $this->redis->sets['cache:id_tags:4e0_:ID2'] = ['MAGE'];
 
         $this->cachePoolMock->method('deleteItems')->willReturn(true);
 
         $this->adapter->deleteByIds(['ID1', 'ID2']);
 
         // Reverse index was read to discover memberships
-        $this->assertCommand('smembers', ['cache:id_tags:4e0_ID1']);
-        $this->assertCommand('smembers', ['cache:id_tags:4e0_ID2']);
+        $this->assertCommand('smembers', ['cache:id_tags:4e0_:ID1']);
+        $this->assertCommand('smembers', ['cache:id_tags:4e0_:ID2']);
 
         // ID1 removed from all_ids + both of its tag sets, reverse index deleted
-        $this->assertCommand('srem', ['cache:all_ids', 'ID1']);
-        $this->assertCommand('srem', ['cache:tags:4e0_BLOCK_HTML', 'ID1']);
-        $this->assertCommand('srem', ['cache:tags:4e0_CAT_P', 'ID1']);
-        $this->assertCommand('del', ['cache:id_tags:4e0_ID1']);
+        $this->assertCommand('srem', ['cache:all_ids:4e0_', 'ID1']);
+        $this->assertCommand('srem', ['cache:tags:4e0_:BLOCK_HTML', 'ID1']);
+        $this->assertCommand('srem', ['cache:tags:4e0_:CAT_P', 'ID1']);
+        $this->assertCommand('del', ['cache:id_tags:4e0_:ID1']);
 
         // ID2 removed from all_ids + its tag set, reverse index deleted
-        $this->assertCommand('srem', ['cache:all_ids', 'ID2']);
-        $this->assertCommand('srem', ['cache:tags:4e0_MAGE', 'ID2']);
-        $this->assertCommand('del', ['cache:id_tags:4e0_ID2']);
+        $this->assertCommand('srem', ['cache:all_ids:4e0_', 'ID2']);
+        $this->assertCommand('srem', ['cache:tags:4e0_:MAGE', 'ID2']);
+        $this->assertCommand('del', ['cache:id_tags:4e0_:ID2']);
     }
 
     public function testDeleteByIdsEmptyIsNoop(): void
@@ -101,12 +102,12 @@ class RedisTagAdapterTest extends TestCase
     {
         $this->adapter->onSave('ID1', ['BLOCK_HTML'], 60);
 
-        $this->assertCommand('sadd', ['cache:all_ids', 'ID1']);
-        $this->assertCommand('sadd', ['cache:tags:4e0_BLOCK_HTML', 'ID1']);
-        $this->assertCommand('del', ['cache:id_tags:4e0_ID1']);
-        $this->assertCommand('sadd', ['cache:id_tags:4e0_ID1', 'BLOCK_HTML']);
+        $this->assertCommand('sadd', ['cache:all_ids:4e0_', 'ID1']);
+        $this->assertCommand('sadd', ['cache:tags:4e0_:BLOCK_HTML', 'ID1']);
+        $this->assertCommand('del', ['cache:id_tags:4e0_:ID1']);
+        $this->assertCommand('sadd', ['cache:id_tags:4e0_:ID1', 'BLOCK_HTML']);
         // lifetime 60 + ID_TAGS_TTL_BUFFER (3600)
-        $this->assertCommand('expire', ['cache:id_tags:4e0_ID1', 3660]);
+        $this->assertCommand('expire', ['cache:id_tags:4e0_:ID1', 3660]);
     }
 
     /**
@@ -135,15 +136,15 @@ class RedisTagAdapterTest extends TestCase
     {
         // STALE has no reverse index (it expired), so cleanupIndicesForIds() alone
         // could not remove it from the MAGE tag set.
-        $this->redis->sets['cache:tags:4e0_MAGE'] = ['LIVE', 'STALE'];
-        $this->redis->sets['cache:id_tags:4e0_LIVE'] = ['MAGE'];
+        $this->redis->sets['cache:tags:4e0_:MAGE'] = ['LIVE', 'STALE'];
+        $this->redis->sets['cache:id_tags:4e0_:LIVE'] = ['MAGE'];
 
         $this->cachePoolMock->method('deleteItems')->willReturn(true);
 
         $this->assertTrue($this->adapter->cleanMatchingAnyTags(['MAGE']));
 
-        $this->assertCommand('srem', ['cache:tags:4e0_MAGE', 'LIVE', 'STALE']);
-        $this->assertCommand('del', ['cache:id_tags:4e0_STALE']);
+        $this->assertCommand('srem', ['cache:tags:4e0_:MAGE', 'LIVE', 'STALE']);
+        $this->assertCommand('del', ['cache:id_tags:4e0_:STALE']);
     }
 
     /**
@@ -159,6 +160,15 @@ class RedisTagAdapterTest extends TestCase
 
             /** @var array<string, array> key => members (SMEMBERS result) */
             public array $sets = [];
+
+            /** @var array<int, array{0:int,1:array}> queued [cursor, keys] SCAN replies */
+            public array $scanResponses = [];
+
+            /** @var array<int, array{0:int,1:array}> queued [cursor, members] SSCAN replies */
+            public array $sscanResponses = [];
+
+            /** @var array<string, string> GET/SET key-value store (e.g. the GC cursor) */
+            public array $kv = [];
 
             // phpcs:ignore Magento2.Functions.DiscouragedFunction
             public function __construct()
@@ -208,12 +218,142 @@ class RedisTagAdapterTest extends TestCase
                 $method = strtolower($method);
                 $this->commands[] = [$method, $arguments];
 
+                if ($method === 'set') {
+                    $this->kv[$arguments[0]] = (string)$arguments[1];
+
+                    return true;
+                }
+
                 return match ($method) {
                     'smembers' => $this->sets[$arguments[0]] ?? [],
+                    'scan' => array_shift($this->scanResponses) ?: [0, []],
+                    'sscan' => array_shift($this->sscanResponses) ?: [0, []],
+                    'get' => $this->kv[$arguments[0]] ?? null,
                     default => true,
                 };
             }
         };
+    }
+
+    /**
+     * The reverse index carries a TTL of lifetime + 3600s, but backend_clean_cache runs
+     * once every 24h, so by GC time it is usually gone. The GC must not depend on it:
+     * it sweeps the tag sets directly. (Regression test contributed in PR review.)
+     */
+    public function testGarbageCollectSweepsTagSetsWhenReverseIndexAlreadyExpired(): void
+    {
+        $this->redis->scanResponses = [[0, ['cache:tags:4e0_:CAT_P']]];
+        $this->redis->sscanResponses = [[0, ['DEAD']], [0, []]];
+
+        $this->cachePoolMock->method('getItems')->willReturnCallback(
+            fn (array $ids) => $this->poolItems($ids, [])
+        );
+
+        $cleaned = $this->adapter->garbageCollect();
+
+        $this->assertSame(1, $cleaned);
+        $this->assertCommand('srem', ['cache:tags:4e0_:CAT_P', 'DEAD']);
+        $this->assertCommand('srem', ['cache:all_ids:4e0_', 'DEAD']);
+        $this->assertCommand('del', ['cache:id_tags:4e0_:DEAD']);
+    }
+
+    public function testGarbageCollectLeavesLiveMembersUntouched(): void
+    {
+        $this->redis->scanResponses = [[0, ['cache:tags:4e0_:CAT_P']]];
+        $this->redis->sscanResponses = [[0, ['LIVE']], [0, ['LIVE']]];
+
+        $this->cachePoolMock->method('getItems')->willReturnCallback(
+            fn (array $ids) => $this->poolItems($ids, ['LIVE'])
+        );
+
+        $this->assertSame(0, $this->adapter->garbageCollect());
+        $this->assertNoCommand('srem');
+        $this->assertNoCommand('del');
+    }
+
+    /**
+     * Stage 2: ids orphaned in all_ids (e.g. saved without tags, or already swept from
+     * their tag sets) are reaped from the namespaced all_ids set.
+     */
+    public function testGarbageCollectSweepsAllIdsSet(): void
+    {
+        $this->redis->scanResponses = [[0, []]];
+        $this->redis->sscanResponses = [[0, ['GONE']]];
+
+        $this->cachePoolMock->method('getItems')->willReturnCallback(
+            fn (array $ids) => $this->poolItems($ids, [])
+        );
+
+        $cleaned = $this->adapter->garbageCollect();
+
+        $this->assertSame(1, $cleaned);
+        $this->assertCommand('srem', ['cache:all_ids:4e0_', 'GONE']);
+    }
+
+    /**
+     * When Stage 1 runs out of budget part-way through the tag-set SCAN, the cursor for the
+     * interrupted page is persisted so the next run resumes there instead of re-scanning the
+     * keyspace head. (PR review finding: no GC resume cursor.)
+     */
+    public function testGarbageCollectPersistsScanCursorWhenInterrupted(): void
+    {
+        // First page (cursor 7 follows) holds a clean set; second page holds a set with two
+        // orphans. batchSize=1 forces interruption while processing the second page.
+        $this->redis->scanResponses = [
+            [7, ['cache:tags:4e0_:T1']],
+            [0, ['cache:tags:4e0_:T2']],
+        ];
+        $this->redis->sscanResponses = [
+            [0, []],                    // T1: empty, fully processed
+            [0, ['DEAD1', 'DEAD2']],    // T2: two orphans, budget exhausts after the first
+        ];
+
+        $this->cachePoolMock->method('getItems')->willReturnCallback(
+            fn (array $ids) => $this->poolItems($ids, [])
+        );
+
+        $this->adapter->garbageCollect(1);
+
+        // Resume cursor points at the start of the page we were mid-way through (cursor 7).
+        $this->assertSame('7', $this->redis->kv['cache:gc:cursor:4e0_'] ?? null);
+    }
+
+    /**
+     * A run that completes a full pass over the tag sets resets the persisted cursor to 0,
+     * so the next run starts a fresh iteration rather than resuming a stale position.
+     */
+    public function testGarbageCollectResetsCursorAfterCompletePass(): void
+    {
+        $this->redis->kv['cache:gc:cursor:4e0_'] = '7'; // leftover from an earlier partial run
+        $this->redis->scanResponses = [[0, []]];        // empty keyspace: the pass completes
+        $this->redis->sscanResponses = [[0, []]];       // all_ids empty
+
+        $this->cachePoolMock->method('getItems')->willReturnCallback(
+            fn (array $ids) => $this->poolItems($ids, [])
+        );
+
+        $this->adapter->garbageCollect();
+
+        $this->assertSame('0', $this->redis->kv['cache:gc:cursor:4e0_']);
+    }
+
+    /**
+     * Build a getItems() result: pool items keyed by id, hit only for $liveIds
+     *
+     * @param string[] $ids
+     * @param string[] $liveIds
+     * @return array<string, \Psr\Cache\CacheItemInterface>
+     */
+    private function poolItems(array $ids, array $liveIds): array
+    {
+        $items = [];
+        foreach ($ids as $id) {
+            $item = $this->createStub(\Psr\Cache\CacheItemInterface::class);
+            $item->method('isHit')->willReturn(in_array($id, $liveIds, true));
+            $items[$id] = $item;
+        }
+
+        return $items;
     }
 
     private function setPrivate(string $property, $value): void

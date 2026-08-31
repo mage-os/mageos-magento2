@@ -358,6 +358,9 @@ LUA;
      * @param string $tagPrefix Tag prefix (e.g., "cache:tags:69d_")
      * @param int $batchSize
      * @return array [total_deleted, iterations]
+     * @deprecated RedisTagAdapter::garbageCollect() now sweeps tag sets directly (SCAN-based)
+     *             and no longer consults use_lua_on_gc; this method has no remaining callers.
+     * @see \Magento\Framework\Cache\Frontend\Adapter\SymfonyAdapters\RedisTagAdapter::garbageCollect()
      */
     public function garbageCollect(
         string $pattern,

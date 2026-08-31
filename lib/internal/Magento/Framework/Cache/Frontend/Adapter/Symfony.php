@@ -11,7 +11,10 @@ use Closure;
 use InvalidArgumentException;
 use Magento\Framework\Cache\CacheConstants;
 use Magento\Framework\Cache\Frontend\Adapter\SymfonyAdapterProvider;
+use Magento\Framework\Cache\Frontend\Adapter\SymfonyAdapters\GarbageCollectingTagAdapterInterface;
 use Magento\Framework\Cache\Frontend\Adapter\SymfonyAdapters\GenericTagAdapter;
+use Magento\Framework\Cache\Frontend\Adapter\SymfonyAdapters\LifetimeAwareTagAdapterInterface;
+use Magento\Framework\Cache\Frontend\Adapter\SymfonyAdapters\SourceTagsAwareTagAdapterInterface;
 use Magento\Framework\Cache\Frontend\Adapter\SymfonyAdapters\TagAdapterInterface;
 use Magento\Framework\Cache\FrontendInterface;
 use Psr\Cache\CacheItemInterface;
@@ -548,7 +551,11 @@ class Symfony implements FrontendInterface
         // Notify helper about the save (for Redis/Filesystem to maintain indices)
         // Note: onSave() already handles reverse index, no need for separate call
         if ($success && !empty($cleanTags)) {
-            $this->adapter->onSave($cleanId, $cleanTags, $lifetime);
+            if ($this->adapter instanceof LifetimeAwareTagAdapterInterface) {
+                $this->adapter->onSave($cleanId, $cleanTags, $lifetime);
+            } else {
+                $this->adapter->onSave($cleanId, $cleanTags);
+            }
         }
     }
 
@@ -649,8 +656,21 @@ class Symfony implements FrontendInterface
      */
     private function cleanOld(CacheItemPoolInterface $cache): bool
     {
-        // Symfony handles expiration automatically
-        // This is a no-op as expired items are not returned
+        // Symfony expires data keys automatically, but the tag bookkeeping
+        // (tag sets, all_ids and reverse index) of passively-expired entries is
+        // not reaped by that. CLEANING_MODE_OLD is the correct hook to collect it.
+        if ($this->adapter instanceof GarbageCollectingTagAdapterInterface) {
+            try {
+                $this->adapter->garbageCollect();
+            // phpcs:ignore Magento2.CodeAnalysis.EmptyBlock
+            } catch (\Exception $e) {
+                // GC is best-effort housekeeping: a Redis hiccup here must not abort
+                // the cron cycle (this runs inside Backend\Cron\CleanCache, and an
+                // exception would skip every remaining cache frontend). CLEANING_MODE_OLD
+                // was a silent no-op before GC existed, so swallowing keeps the contract.
+            }
+        }
+
         return true;
     }
 
@@ -708,7 +728,11 @@ class Symfony implements FrontendInterface
 
         // Pass the source tags so stale tag-set members are swept even when
         // an id's reverse index has already expired
-        return $this->adapter->deleteByIds($ids, $cleanTags);
+        if ($this->adapter instanceof SourceTagsAwareTagAdapterInterface) {
+            return $this->adapter->deleteByIds($ids, $cleanTags);
+        }
+
+        return $this->adapter->deleteByIds($ids);
     }
 
     /**
@@ -840,7 +864,11 @@ class Symfony implements FrontendInterface
 
             // Batch delete all IDs at once; the source tags let the adapter sweep
             // stale members whose reverse index already expired
-            return $this->adapter->deleteByIds($ids, $cleanTags);
+            if ($this->adapter instanceof SourceTagsAwareTagAdapterInterface) {
+                return $this->adapter->deleteByIds($ids, $cleanTags);
+            }
+
+            return $this->adapter->deleteByIds($ids);
         }
 
         // Fallback: Try Symfony's native invalidateTags (OR logic)
