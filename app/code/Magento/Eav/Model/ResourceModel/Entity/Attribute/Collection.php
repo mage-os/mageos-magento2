@@ -300,7 +300,11 @@ class Collection extends AbstractCollection
      */
     public function addAttributeGrouping()
     {
-        $this->getSelect()->group('main_table.attribute_id');
+        $select = $this->getSelect();
+        $select->group('main_table.attribute_id');
+        if (array_key_exists('additional_table', $select->getPart(Select::FROM))) {
+            $select->group('additional_table.attribute_id');
+        }
         return $this;
     }
 
@@ -346,12 +350,11 @@ class Collection extends AbstractCollection
         $this->getSelect()->joinLeft(
             ['ao' => $this->getTable('eav_attribute_option')],
             'ao.attribute_id = main_table.attribute_id',
-            'option_id'
-        )->group(
-            'main_table.attribute_id'
+            []
         )->where(
             $orWhere
         );
+        $this->addAttributeGrouping();
         return $this;
     }
 

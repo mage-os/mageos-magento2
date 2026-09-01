@@ -723,9 +723,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Collection\Abstrac
         if (true === $addVisibilityFilter) {
             $select->where('cat_index.visibility in (?)', $this->catalogProductVisibility->getVisibleInSiteIds());
         }
-        if (count($categoryIds) > 1) {
-            $select->group('cat_index.category_id');
-        }
+        $select->group('cat_index.category_id');
 
         return $select;
     }
