@@ -196,6 +196,35 @@ class BulkManagementTest extends TestCase
         $this->assertFalse($this->bulkManagement->scheduleBulk($bulkUuid, [$operation], $description, $userId));
     }
 
+    public function testGetLastExceptionReturnsExceptionCaughtByScheduleBulk(): void
+    {
+        $bulkUuid      = 'bulk-001';
+        $description   = 'Bulk summary description...';
+        $userId        = 1;
+        $connectionName = 'default';
+        $rootCause     = new \LogicException('Root cause: queue broker unavailable');
+        $operation     = $this->createMock(OperationInterface::class);
+        $metadata      = $this->createMock(EntityMetadataInterface::class);
+
+        $this->metadataPool->method('getMetadata')->willReturn($metadata);
+        $metadata->method('getEntityConnectionName')->willReturn($connectionName);
+        $connection = $this->createMock(AdapterInterface::class);
+        $this->resourceConnection->method('getConnectionByName')->willReturn($connection);
+        $connection->method('beginTransaction')->willReturnSelf();
+        $connection->method('rollBack')->willReturnSelf();
+
+        $bulkSummary = $this->createMock(BulkSummaryInterface::class);
+        $this->bulkSummaryFactory->method('create')->willReturn($bulkSummary);
+        $this->entityManager->method('load')->willThrowException($rootCause);
+        $this->logger->method('critical');
+
+        $this->assertNull($this->bulkManagement->getLastException());
+
+        $this->bulkManagement->scheduleBulk($bulkUuid, [$operation], $description, $userId);
+
+        $this->assertSame($rootCause, $this->bulkManagement->getLastException());
+    }
+
     /**
      * Test for scheduleBulk method with exception during publishing.
      *

@@ -131,8 +131,12 @@ class MassSchedule
 
             /** create new bulk without operations */
             if (!$this->bulkManagement->scheduleBulk($groupId, [], $bulkDescription, $userId)) {
+                $previous = method_exists($this->bulkManagement, 'getLastException')
+                    ? $this->bulkManagement->getLastException()
+                    : null;
                 throw new LocalizedException(
-                    __('Something went wrong while processing the request.')
+                    __('Something went wrong while processing the request.'),
+                    $previous
                 );
             }
         }
@@ -167,11 +171,15 @@ class MassSchedule
         }
 
         if (!$this->bulkManagement->scheduleBulk($groupId, $operations, $bulkDescription, $userId)) {
+            $previous = method_exists($this->bulkManagement, 'getLastException')
+                ? $this->bulkManagement->getLastException()
+                : null;
             try {
                 $this->bulkManagement->deleteBulk($groupId);
             } finally {
                 throw new LocalizedException(
-                    __('Something went wrong while processing the request.')
+                    __('Something went wrong while processing the request.'),
+                    $previous
                 );
             }
         }
