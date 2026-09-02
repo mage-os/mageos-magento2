@@ -172,7 +172,7 @@ class CompiledTest extends TestCase
     }
 
     /**
-     * Test that $arguments, $virtualTypes and $preferences initializing in construct must be array.
+     * Test that $arguments, $instanceTypes and $preferences initializing in construct must be array.
      *
      * @param $data
      * @param array $expectedResult
@@ -228,7 +228,7 @@ class CompiledTest extends TestCase
     }
 
     /**
-     * Test that $arguments, $virtualTypes and $preferences initializing in extend must be array.
+     * Test that $arguments, $instanceTypes and $preferences initializing in extend must be array.
      *
      * @param $data
      * @param array $expectedResult
@@ -433,5 +433,34 @@ class CompiledTest extends TestCase
         ]);
 
         $this->assertSame('frontendValue', $compiled->getPreference('preference1'));
+    }
+
+    #[DataProvider('mergedSections')]
+    public function testExtendRebuildsEverySectionFromTheBase(string $section): void
+    {
+        $globalConfig = [$section => ['key' => 'globalValue']];
+        $configLoader = $this->createMock(ConfigLoaderInterface::class);
+        $configLoader->method('load')->with('global')->willReturn($globalConfig);
+
+        $compiled = new Compiled(
+            $globalConfig + [ConfigLoaderInterface::AREA_KEY => 'global'],
+            $configLoader
+        );
+
+        $compiled->extend([$section => ['key' => 'mockedValue']]);
+        $compiled->extend([
+            ConfigLoaderInterface::EXTENDS_KEY => 'global',
+            $section => ['key' => 'areaValue'],
+        ]);
+
+        $this->assertSame(
+            ['key' => 'areaValue'],
+            (new \ReflectionClass(Compiled::class))->getProperty($section)->getValue($compiled)
+        );
+    }
+
+    public static function mergedSections(): array
+    {
+        return array_map(static fn (string $section) => [$section], Compiled::MERGED_SECTIONS);
     }
 }

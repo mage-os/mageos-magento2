@@ -17,6 +17,11 @@ use Magento\Framework\ObjectManager\RelationsInterface;
 class Compiled implements ConfigInterface, LazyTypeAwareInterface
 {
     /**
+     * Sections of a compiled configuration that are merged per top-level key
+     */
+    public const MERGED_SECTIONS = ['arguments', 'instanceTypes', 'preferences', 'lazyTypes'];
+
+    /**
      * @var array
      */
     private $arguments;
@@ -24,7 +29,7 @@ class Compiled implements ConfigInterface, LazyTypeAwareInterface
     /**
      * @var array
      */
-    private $virtualTypes;
+    private $instanceTypes;
 
     /**
      * @var array
@@ -39,7 +44,8 @@ class Compiled implements ConfigInterface, LazyTypeAwareInterface
     private array $lazyTypes = [];
 
     /**
-     * Area whose configuration is currently applied, null when the state matches no single area
+     * Area whose complete configuration the current state is known to hold. Only the global
+     * bootstrap marks it; any later extension clears it, so the next delta rebuilds from its base.
      *
      * @var string|null
      */
@@ -58,14 +64,9 @@ class Compiled implements ConfigInterface, LazyTypeAwareInterface
     {
         $this->configLoader = $configLoader;
         $this->appliedArea = $data[ConfigLoaderInterface::AREA_KEY] ?? null;
-        $this->arguments = isset($data['arguments']) && is_array($data['arguments'])
-            ? $data['arguments'] : [];
-        $this->virtualTypes = isset($data['instanceTypes']) && is_array($data['instanceTypes'])
-            ? $data['instanceTypes'] : [];
-        $this->preferences = isset($data['preferences']) && is_array($data['preferences'])
-            ? $data['preferences'] : [];
-        $this->lazyTypes = isset($data['lazyTypes']) && is_array($data['lazyTypes'])
-            ? $data['lazyTypes'] : [];
+        foreach (self::MERGED_SECTIONS as $section) {
+            $this->{$section} = isset($data[$section]) && is_array($data[$section]) ? $data[$section] : [];
+        }
     }
 
     /**
@@ -150,8 +151,8 @@ class Compiled implements ConfigInterface, LazyTypeAwareInterface
      */
     public function getInstanceType($instanceName)
     {
-        if (isset($this->virtualTypes[$instanceName])) {
-            return $this->virtualTypes[$instanceName];
+        if (isset($this->instanceTypes[$instanceName])) {
+            return $this->instanceTypes[$instanceName];
         }
         return $instanceName;
     }
@@ -182,18 +183,11 @@ class Compiled implements ConfigInterface, LazyTypeAwareInterface
     {
         $configuration = $this->resolveAgainstAppliedArea($configuration);
 
-        $this->arguments = isset($configuration['arguments']) && is_array($configuration['arguments'])
-            ? array_replace($this->arguments, $configuration['arguments'])
-            : $this->arguments;
-        $this->virtualTypes = isset($configuration['instanceTypes']) && is_array($configuration['instanceTypes'])
-            ? array_replace($this->virtualTypes, $configuration['instanceTypes'])
-            : $this->virtualTypes;
-        $this->preferences = isset($configuration['preferences']) && is_array($configuration['preferences'])
-            ? array_replace($this->preferences, $configuration['preferences'])
-            : $this->preferences;
-        $this->lazyTypes = isset($configuration['lazyTypes']) && is_array($configuration['lazyTypes'])
-            ? array_replace($this->lazyTypes, $configuration['lazyTypes'])
-            : $this->lazyTypes;
+        foreach (self::MERGED_SECTIONS as $section) {
+            if (isset($configuration[$section]) && is_array($configuration[$section])) {
+                $this->{$section} = array_replace($this->{$section}, $configuration[$section]);
+            }
+        }
     }
 
     /**
@@ -223,7 +217,7 @@ class Compiled implements ConfigInterface, LazyTypeAwareInterface
      */
     private static function merge(array $base, array $configuration)
     {
-        foreach (['arguments', 'instanceTypes', 'preferences', 'lazyTypes'] as $section) {
+        foreach (self::MERGED_SECTIONS as $section) {
             if (isset($configuration[$section]) && is_array($configuration[$section])) {
                 $base[$section] = array_replace($base[$section] ?? [], $configuration[$section]);
             }
@@ -239,7 +233,7 @@ class Compiled implements ConfigInterface, LazyTypeAwareInterface
      */
     public function getVirtualTypes()
     {
-        return $this->virtualTypes;
+        return $this->instanceTypes;
     }
 
     /**
