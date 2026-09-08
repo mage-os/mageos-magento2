@@ -10,6 +10,7 @@ namespace Magento\Newsletter\Test\Unit\Block\Adminhtml\Queue;
 use Magento\Backend\Block\Template\Context;
 use Magento\Backend\Model\Session;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\AuthorizationInterface;
 use Magento\Framework\App\Request\Http;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\State;
@@ -81,6 +82,10 @@ class PreviewTest extends TestCase
     protected function setUp(): void
     {
         $context = $this->createMock(Context::class);
+        $authorization = $this->createMock(AuthorizationInterface::class);
+        $authorization->method('isAllowed')->willReturn(true);
+        $context->expects($this->once())->method('getAuthorization')
+            ->willReturn($authorization);
         $eventManager = $this->createMock(ManagerInterface::class);
         $context->expects($this->once())->method('getEventManager')
             ->willReturn($eventManager);
