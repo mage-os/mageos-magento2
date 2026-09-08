@@ -97,8 +97,14 @@ class XmlInterceptorScanner implements ScannerInterface
         if (!class_exists($className)) {
             $className = preg_replace('/[^a-zA-Z0-9_]/', '', $className);
             $className = preg_replace('/^([0-9A-Za-z]*)_([0-9A-Za-z]*)/', '\\1_\\2_controllers', $className);
+            // phpcs:ignore Magento2.Functions.DiscouragedFunction, Magento2.Exceptions.TryProcessSystemResources
             $filePath = stream_resolve_include_path(str_replace('_', '/', $className) . '.php');
-            if (file_exists($filePath)) {
+            if ($filePath
+                // phpcs:ignore Magento2.Functions.DiscouragedFunction
+                && file_exists($filePath)
+                && !\Magento\Framework\Filesystem\SecurePathValidator::isUnsafeIncludePath($filePath)
+            ) {
+                // phpcs:ignore Magento2.Security.IncludeFile
                 require_once $filePath;
             }
         }
