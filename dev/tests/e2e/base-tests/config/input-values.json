@@ -1,0 +1,71 @@
+{
+  "account" : {
+		"firstName": "Playwright",
+		"lastName": "TestAccount"
+  },
+  "accountCreation": {
+    "emailHandleValue":"test-user",
+    "emailHostValue": "gmail.com",
+    "firstNameValue": "John",
+    "lastNameValue": "Doe"
+  },
+  "adminLogins": {
+    "allowMultipleLogins": "Yes"
+  },
+  "captcha": {
+    "captchaDisabled": "No"
+  },
+  "contact": {
+    "contactFormEmailValue": "robertbaratheon@gameofthrones.com",
+    "contactFormMessage": "Hello! I am filling out this form as a test only. Feel free to ignore this message."
+  },
+  "coupon": {
+    "couponCodeRuleName": "Test coupon",
+    "couponType": "Specific Coupon"
+  },
+  "addressCountries": [
+    "Netherlands",
+    "United Kingdom",
+    "United States"
+  ],
+  "admin" : {
+		"simpleProductSKU" : "24-WB04"
+	},
+  "editedAddress": {
+    "editCityValue": "Pallet Town",
+    "editfirstNameValue": "Ash",
+    "editLastNameValue": "Ketchum",
+    "editStateValue": "Kansas",
+    "editStreetAddressValue": "House on the left",
+    "editZipCodeValue": "00151"
+  },
+  "firstAddress": {
+    "firstCityValue": "Testing Valley",
+    "firstNonDefaultCountry": "Netherlands",
+    "firstPhoneNumberValue": "0622000000",
+    "firstProvinceValue": "Idaho",
+    "firstStreetAddressValue": "Testingstreet 1",
+    "firstZipCodeValue": "12345"
+  },
+  "payment": {
+    "creditCard": {
+      "number": "4111111111111111",
+      "expiry": "12/25",
+      "cvv": "123",
+      "name": "Test User"
+    }
+  },
+  "secondAddress": {
+    "secondCityValue": "Little Whinging",
+    "secondNonDefaultCountry": "United Kingdom",
+    "secondPhoneNumberValue": "0620081998",
+    "secondProvinceValue": "South Dakota",
+    "secondStreetAddressValue": "Under the Stairs",
+    "secondZipCodeValue": "67890"
+  },
+  "search": {
+    "queryMultipleResults": "bag",
+    "querySpecificProduct": "Push It Messenger Bag",
+    "queryNoResults": "sdfasdfasddd"
+  }
+}
