@@ -172,11 +172,18 @@ class ImageResize
         $viewImages = $this->getViewImages($this->getThemesInUse());
         if ($skipHiddenImages) {
             $websiteIds = $this->productImage->getRelatedWebsiteIds($originalImageName);
-            $viewImages = array_filter(
-                $viewImages,
-                fn (string $index) => array_intersect($websiteIds, $this->paramsWebsitesMap[$index]),
-                ARRAY_FILTER_USE_KEY
-            );
+            // An image file with no catalog_product_entity_media_gallery row resolves to no
+            // website at all. Filtering on an empty set discards every view configuration, so
+            // the on-the-fly regeneration performed by MediaStorage\App\Media generates nothing
+            // and the placeholder is served permanently, with no error reported anywhere.
+            // Narrow the set down only when the lookup actually returned something.
+            if ($websiteIds) {
+                $viewImages = array_filter(
+                    $viewImages,
+                    fn (string $index) => array_intersect($websiteIds, $this->paramsWebsitesMap[$index] ?? []),
+                    ARRAY_FILTER_USE_KEY
+                );
+            }
         }
         foreach ($viewImages as $viewImage) {
             $this->resize($viewImage, $originalImagePath, $originalImageName);
