@@ -737,6 +737,11 @@ class FilterTest extends TestCase
             "Magento{$bs}{$bs}Backend{$bs}{$bs}Block{$bs}{$bs}Widget{$bs}{$bs}Grid{$bs}{$bs}ColumnSet",
             "Magento/Backend/Block/Widget/Grid/ColumnSet",
             "  Magento{$bs}Email{$bs}Block{$bs}Adminhtml{$bs}Template{$bs}Preview  ",
+            "Magento{$bs}User{$bs}Block{$bs}Role{$bs}Grid{$bs}User",
+            "Magento{$bs}Indexer{$bs}Block{$bs}Backend{$bs}Container",
+            "Vendor{$bs}Module{$bs}Block{$bs}Backend{$bs}Anything",
+            "Magento{$bs}Config{$bs}Block{$bs}System{$bs}Config{$bs}Edit",
+            "Magento{$bs}Ups{$bs}Block{$bs}Backend{$bs}System{$bs}CarrierConfig",
         ];
         foreach ($restricted as $class) {
             $this->assertTrue($method->invoke($filter, $class), $class);
@@ -745,9 +750,58 @@ class FilterTest extends TestCase
         $allowed = [
             "Magento{$bs}Cms{$bs}Block{$bs}Block",
             "Magento{$bs}Framework{$bs}View{$bs}Element{$bs}Template",
+            "Vendor{$bs}Module{$bs}Block{$bs}SystemStatus",
+            "Vendor{$bs}Module{$bs}Block{$bs}BackendCompat{$bs}Widget",
         ];
         foreach ($allowed as $class) {
             $this->assertFalse($method->invoke($filter, $class), $class);
         }
+    }
+
+    /**
+     * An "area" parameter on {{block}} must not reach the block.
+     */
+    public function testBlockDirectiveDropsAreaParameter()
+    {
+        $block = $this->getMockBuilder(AbstractBlock::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $block->method('hasData')->willReturn(true);
+        $block->method('toHtml')->willReturn('html');
+        $seen = [];
+        $block->method('setDataUsingMethod')
+            ->willReturnCallback(function ($key) use (&$seen, $block) {
+                $seen[] = $key;
+                return $block;
+            });
+
+        $this->layout->expects($this->once())
+            ->method('createBlock')
+            ->willReturn($block);
+
+        $construction = [
+            '{{block class="Magento\\Cms\\Block\\Block" area="adminhtml"}}',
+            'block',
+            ' class="Magento\\Cms\\Block\\Block" area="adminhtml"'
+        ];
+
+        $this->assertSame('html', $this->getModel()->blockDirective($construction));
+        $this->assertNotContains('area', $seen, 'The area parameter must be dropped');
+    }
+
+    /**
+     * The layout directive refuses adminhtml area emulation.
+     */
+    public function testLayoutDirectiveRefusesAdminhtmlArea()
+    {
+        $this->appState->expects($this->never())->method('emulateAreaCode');
+
+        $construction = [
+            '{{layout handle="adminhtml_email_template_popup" area="adminhtml"}}',
+            'layout',
+            ' handle="adminhtml_email_template_popup" area="adminhtml"'
+        ];
+
+        $this->assertSame('', $this->getModel()->layoutDirective($construction));
     }
 }

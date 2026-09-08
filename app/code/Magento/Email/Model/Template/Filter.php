@@ -409,6 +409,15 @@ class Filter extends Template
         $skipParams = ['class', 'id', 'output'];
         $blockParameters = $this->getParameters($construction[2]);
 
+        // Blocks render in the current area; drop any area override.
+        if (isset($blockParameters['area'])) {
+            $this->_logger->warning(
+                'Ignored an area override on a template block directive.',
+                ['area' => (string)$blockParameters['area']]
+            );
+            unset($blockParameters['area']);
+        }
+
         $block = null;
 
         if (isset($blockParameters['class'])) {
@@ -482,10 +491,15 @@ class Filter extends Template
         if ($normalized === '') {
             return false;
         }
-        if (stripos($normalized, '\\Block\\Adminhtml\\') !== false) {
+        if (stripos($normalized, '\\Block\\Adminhtml\\') !== false
+            || stripos($normalized, '\\Block\\Backend\\') !== false
+            || stripos($normalized, '\\Block\\System\\Config\\') !== false
+        ) {
             return true;
         }
-        if (stripos($normalized, 'Magento\\Backend\\Block\\') === 0) {
+        if (stripos($normalized, 'Magento\\Backend\\Block\\') === 0
+            || stripos($normalized, 'Magento\\User\\Block\\') === 0
+        ) {
             return true;
         }
         return false;
@@ -503,6 +517,16 @@ class Filter extends Template
         if (!isset($this->_directiveParams['area'])) {
             $this->_directiveParams['area'] = Area::AREA_FRONTEND;
         }
+
+        // Adminhtml layout handles are off limits to filtered templates.
+        if (strcasecmp((string)$this->_directiveParams['area'], Area::AREA_ADMINHTML) === 0) {
+            $this->_logger->warning(
+                'Refused to render an adminhtml layout handle from a template directive.',
+                ['handle' => (string)($this->_directiveParams['handle'] ?? '')]
+            );
+            return '';
+        }
+
         if ($this->_directiveParams['area'] != $this->_appState->getAreaCode()) {
             return $this->_appState->emulateAreaCode(
                 $this->_directiveParams['area'],
