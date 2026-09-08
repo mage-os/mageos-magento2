@@ -419,10 +419,12 @@ class Filter extends Template
         $skipParams = ['class', 'id', 'output'];
         $blockParameters = $this->getParameters($construction[2]);
 
-        // Blocks render in the current area; drop any area override.
-        if (isset($blockParameters['area'])) {
+        // Blocks may only opt into the frontend area; drop any other area override.
+        if (isset($blockParameters['area'])
+            && strcasecmp((string)$blockParameters['area'], Area::AREA_FRONTEND) !== 0
+        ) {
             $this->_logger->warning(
-                'Ignored an area override on a template block directive.',
+                'Ignored a non-frontend area override on a template block directive.',
                 ['area' => (string)$blockParameters['area']]
             );
             unset($blockParameters['area']);

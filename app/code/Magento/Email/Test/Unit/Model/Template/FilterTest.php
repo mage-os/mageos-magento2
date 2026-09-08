@@ -737,9 +737,54 @@ class FilterTest extends TestCase
     }
 
     /**
-     * An "area" parameter on {{block}} must not reach the block.
+     * A non-frontend "area" parameter on {{block}} must not reach the block.
      */
-    public function testBlockDirectiveDropsAreaParameter()
+    public function testBlockDirectiveDropsNonFrontendAreaParameter()
+    {
+        $block = $this->createRecordingBlock($seen);
+
+        $this->layout->expects($this->once())
+            ->method('createBlock')
+            ->willReturn($block);
+
+        $construction = [
+            '{{block class="Magento\\Cms\\Block\\Block" area="adminhtml"}}',
+            'block',
+            ' class="Magento\\Cms\\Block\\Block" area="adminhtml"'
+        ];
+
+        $this->assertSame('html', $this->getModel()->blockDirective($construction));
+        $this->assertNotContains('area', $seen, 'A non-frontend area parameter must be dropped');
+    }
+
+    /**
+     * A frontend "area" parameter on {{block}} is legitimate (core shipment emails use it) and must pass through.
+     */
+    public function testBlockDirectiveKeepsFrontendAreaParameter()
+    {
+        $block = $this->createRecordingBlock($seen);
+
+        $this->layout->expects($this->once())
+            ->method('createBlock')
+            ->willReturn($block);
+
+        $construction = [
+            '{{block class="Magento\\Cms\\Block\\Block" area="frontend"}}',
+            'block',
+            ' class="Magento\\Cms\\Block\\Block" area="frontend"'
+        ];
+
+        $this->assertSame('html', $this->getModel()->blockDirective($construction));
+        $this->assertContains('area', $seen, 'The frontend area parameter must be kept');
+    }
+
+    /**
+     * Build a block mock that records setDataUsingMethod keys into $seen.
+     *
+     * @param array|null $seen
+     * @return AbstractBlock
+     */
+    private function createRecordingBlock(?array &$seen)
     {
         $block = $this->getMockBuilder(AbstractBlock::class)
             ->disableOriginalConstructor()
@@ -753,18 +798,7 @@ class FilterTest extends TestCase
                 return $block;
             });
 
-        $this->layout->expects($this->once())
-            ->method('createBlock')
-            ->willReturn($block);
-
-        $construction = [
-            '{{block class="Magento\\Cms\\Block\\Block" area="adminhtml"}}',
-            'block',
-            ' class="Magento\\Cms\\Block\\Block" area="adminhtml"'
-        ];
-
-        $this->assertSame('html', $this->getModel()->blockDirective($construction));
-        $this->assertNotContains('area', $seen, 'The area parameter must be dropped');
+        return $block;
     }
 
     /**
