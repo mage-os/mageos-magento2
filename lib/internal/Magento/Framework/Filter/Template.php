@@ -117,6 +117,14 @@ class Template implements FilterInterface
     private $directiveOutputNeutralizer;
 
     /**
+     * Directives this filter has explicitly deferred to its parent template. Only these are
+     * signed; an unresolvable directive that merely comes back unchanged is not deferred.
+     *
+     * @var string[]
+     */
+    private $deferredDirectives = [];
+
+    /**
      * @param StringUtils $string
      * @param array $variables
      * @param DirectiveProcessorInterface[] $directiveProcessors
@@ -214,6 +222,11 @@ class Template implements FilterInterface
 
         $this->filteringDepthMeter->descend();
 
+        // filter() is re-entrant (directives filter their own bodies); deferrals recorded
+        // by an outer invocation must not leak into this one.
+        $outerDeferredDirectives = $this->deferredDirectives;
+        $this->deferredDirectives = [];
+
         // Processing of template directives.
         $templateDirectivesResults = array_unique(
             $this->processDirectives($value),
@@ -231,12 +244,14 @@ class Template implements FilterInterface
 
         $value = $this->applyDirectivesResults($value, $deferredDirectivesResults);
 
-        if ($this->filteringDepthMeter->showMark() > 1) {
+        if ($this->filteringDepthMeter->showMark() > 1 && $this->deferredDirectives) {
             // Signing own deferred directives (if any).
             $signature = $this->signatureProvider->get();
 
             foreach ($templateDirectivesResults as $result) {
-                if ($result['directive'] === $result['output']) {
+                if ($result['directive'] === $result['output']
+                    && in_array($result['directive'], $this->deferredDirectives, true)
+                ) {
                     $value = str_replace(
                         $result['output'],
                         $signature . $result['output'] . $signature,
@@ -246,11 +261,27 @@ class Template implements FilterInterface
             }
         }
 
+        $this->deferredDirectives = $outerDeferredDirectives;
+
         $value = $this->afterFilter($value);
 
         $this->filteringDepthMeter->ascend();
 
         return $value;
+    }
+
+    /**
+     * Marks a directive as deferred to the parent template.
+     *
+     * A directive processor that returns its construction unchanged so the parent processes
+     * it instead must declare that here; only declared directives are signed.
+     *
+     * @param string $directive
+     * @return void
+     */
+    public function deferToParent(string $directive): void
+    {
+        $this->deferredDirectives[] = $directive;
     }
 
     /**

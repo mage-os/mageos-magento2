@@ -409,6 +409,108 @@ TEMPLATE;
     }
 
     /**
+     * A directive that merely comes back unchanged from a child scope is not deferred: it must
+     * not be signed, and the parent must not execute it.
+     */
+    public function testUndeclaredUnchangedDirectiveIsNotSigned(): void
+    {
+        $depthMeter = new FilteringDepthMeter();
+        $neutralizer = new DirectiveOutputNeutralizer($this->signatureProvider);
+
+        $child = $this->createFilter(
+            [$this->createPassThroughProcessor()],
+            $depthMeter,
+            $neutralizer
+        );
+
+        $parent = $this->createFilter(
+            [
+                $this->createIncludeProcessor($child, 'a {{passthrough}} b'),
+                $this->createPassThroughProcessor('EXECUTED'),
+            ],
+            $depthMeter,
+            $neutralizer
+        );
+
+        $result = $parent->filter('[{{include}}]');
+
+        $this->assertStringNotContainsString('EXECUTED', $result);
+        $this->assertStringNotContainsString($this->signatureProvider->get(), $result);
+        $this->assertSame(0, $depthMeter->showMark());
+    }
+
+    /**
+     * Declared deferrals recorded by a child invocation must not leak into the parent
+     * invocation's own signing pass.
+     */
+    public function testDeclaredDeferralsDoNotLeakAcrossInvocations(): void
+    {
+        $depthMeter = new FilteringDepthMeter();
+        $neutralizer = new DirectiveOutputNeutralizer($this->signatureProvider);
+
+        $inner = $this->createFilter(
+            [$this->createDeferProcessor(null)],
+            $depthMeter,
+            $neutralizer
+        );
+        $middle = $this->createFilter(
+            [
+                $this->createIncludeProcessor($inner, '{{defer}}'),
+                $this->createPassThroughProcessor(),
+            ],
+            $depthMeter,
+            $neutralizer
+        );
+        $outer = $this->createFilter(
+            [
+                $this->createIncludeProcessor($middle, '{{include}} {{passthrough}}'),
+                $this->createDeferProcessor('DEFERRED-OK'),
+                $this->createPassThroughProcessor('EXECUTED'),
+            ],
+            $depthMeter,
+            $neutralizer
+        );
+
+        $result = $outer->filter('[{{include}}]');
+
+        $this->assertStringContainsString('DEFERRED-OK', $result);
+        $this->assertStringNotContainsString('EXECUTED', $result);
+        $this->assertSame(0, $depthMeter->showMark());
+    }
+
+    /**
+     * {{passthrough}} processor: returns the directive unchanged without declaring deferral
+     * when $resolved is null, otherwise resolves to $resolved.
+     *
+     * @param string|null $resolved
+     * @return DirectiveProcessorInterface
+     */
+    private function createPassThroughProcessor(?string $resolved = null): DirectiveProcessorInterface
+    {
+        return new class ($resolved) implements DirectiveProcessorInterface {
+            /**
+             * @var string|null
+             */
+            private $resolved;
+
+            public function __construct(?string $resolved)
+            {
+                $this->resolved = $resolved;
+            }
+
+            public function process(array $construction, Template $filter, array $templateVariables): string
+            {
+                return $this->resolved ?? $construction[0];
+            }
+
+            public function getRegularExpression(): string
+            {
+                return '/{{passthrough}}/';
+            }
+        };
+    }
+
+    /**
      * @param DirectiveProcessorInterface[] $processors
      * @param FilteringDepthMeter $depthMeter
      * @param DirectiveOutputNeutralizer $neutralizer
@@ -451,8 +553,8 @@ TEMPLATE;
     }
 
     /**
-     * {{defer}} processor: passes the directive through unchanged (to be signed and deferred to
-     * the parent) when $resolved is null, otherwise resolves to $resolved.
+     * {{defer}} processor: declares deferral and passes the directive through unchanged (to be
+     * signed and deferred to the parent) when $resolved is null, otherwise resolves to $resolved.
      *
      * @param string|null $resolved
      * @return DirectiveProcessorInterface
@@ -472,6 +574,10 @@ TEMPLATE;
 
             public function process(array $construction, Template $filter, array $templateVariables): string
             {
+                if ($this->resolved === null) {
+                    $filter->deferToParent($construction[0]);
+                }
+
                 return $this->resolved ?? $construction[0];
             }
 
