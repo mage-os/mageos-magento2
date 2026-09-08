@@ -10,6 +10,7 @@ namespace Magento\Email\Model\Template;
 use Exception;
 use Magento\Backend\Model\Url as BackendModelUrl;
 use Magento\Cms\Block\Block;
+use Magento\Email\Model\Template\Filter\BlockDirectivePolicy;
 use Magento\Framework\App\Area;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\ObjectManager;
@@ -198,6 +199,11 @@ class Filter extends Template
     private $inlineTranslationState;
 
     /**
+     * @var BlockDirectivePolicy
+     */
+    private $blockDirectivePolicy;
+
+    /**
      * Filter constructor.
      * @param StringUtils $string
      * @param LoggerInterface $logger
@@ -219,6 +225,7 @@ class Filter extends Template
      * @param array $directiveProcessors
      * @param StoreInformation|null $storeInformation
      * @param StateInterface|null $inlineTranslationState
+     * @param BlockDirectivePolicy|null $blockDirectivePolicy
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
@@ -241,7 +248,8 @@ class Filter extends Template
         $variables = [],
         array $directiveProcessors = [],
         ?StoreInformation $storeInformation = null,
-        ?StateInterface $inlineTranslationState = null
+        ?StateInterface $inlineTranslationState = null,
+        ?BlockDirectivePolicy $blockDirectivePolicy = null
     ) {
         $this->_escaper = $escaper;
         $this->_assetRepo = $assetRepo;
@@ -262,6 +270,8 @@ class Filter extends Template
             ObjectManager::getInstance()->get(StoreInformation::class);
         $this->inlineTranslationState = $inlineTranslationState ?:
             ObjectManager::getInstance()->get(StateInterface::class);
+        $this->blockDirectivePolicy = $blockDirectivePolicy ?:
+            ObjectManager::getInstance()->get(BlockDirectivePolicy::class);
         parent::__construct($string, $variables, $directiveProcessors, $variableResolver);
     }
 
@@ -421,7 +431,7 @@ class Filter extends Template
         $block = null;
 
         if (isset($blockParameters['class'])) {
-            if ($this->isRestrictedBlockClass((string)$blockParameters['class'])) {
+            if ($this->blockDirectivePolicy->isRestricted((string)$blockParameters['class'])) {
                 $this->_logger->warning(
                     'Refused to instantiate a restricted block class from a template directive.',
                     ['class' => (string)$blockParameters['class']]
@@ -441,7 +451,7 @@ class Filter extends Template
         }
 
         // Re-check the class actually instantiated.
-        if ($this->isRestrictedBlockClass(get_class($block))) {
+        if ($this->blockDirectivePolicy->isRestricted(get_class($block))) {
             $this->_logger->warning(
                 'Refused to render a restricted block class resolved from a template directive.',
                 ['class' => get_class($block), 'requested' => (string)($blockParameters['class'] ?? '')]
@@ -472,37 +482,6 @@ class Filter extends Template
             $method = 'toHtml';
         }
         return $block->{$method}();
-    }
-
-    /**
-     * Whether a class is off limits to the {{block}} directive.
-     *
-     * @param string $class
-     * @return bool
-     */
-    private function isRestrictedBlockClass(string $class): bool
-    {
-        // Canonicalize separator spelling before matching.
-        $normalized = str_replace('/', '\\', trim($class));
-        while (strpos($normalized, '\\\\') !== false) {
-            $normalized = str_replace('\\\\', '\\', $normalized);
-        }
-        $normalized = ltrim($normalized, '\\');
-        if ($normalized === '') {
-            return false;
-        }
-        if (stripos($normalized, '\\Block\\Adminhtml\\') !== false
-            || stripos($normalized, '\\Block\\Backend\\') !== false
-            || stripos($normalized, '\\Block\\System\\Config\\') !== false
-        ) {
-            return true;
-        }
-        if (stripos($normalized, 'Magento\\Backend\\Block\\') === 0
-            || stripos($normalized, 'Magento\\User\\Block\\') === 0
-        ) {
-            return true;
-        }
-        return false;
     }
 
     /**

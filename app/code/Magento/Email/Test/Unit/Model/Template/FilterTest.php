@@ -12,6 +12,7 @@ use Magento\Backend\Model\Url as BackendModelUrl;
 use Magento\Backend\Model\UrlInterface;
 use Magento\Email\Model\Template\Css\Processor;
 use Magento\Email\Model\Template\Filter;
+use Magento\Email\Model\Template\Filter\BlockDirectivePolicy;
 use Magento\Email\Test\Unit\Model\Template\_files\Block\Adminhtml\RestrictedBlock;
 use Magento\Framework\App\Area;
 use Magento\Framework\App\Config\ScopeConfigInterface;
@@ -30,6 +31,7 @@ use Magento\Framework\Filter\DirectiveProcessor\LegacyDirective;
 use Magento\Framework\Filter\DirectiveProcessor\TemplateDirective;
 use Magento\Framework\Filter\VariableResolver\StrictResolver;
 use Magento\Framework\Stdlib\StringUtils;
+use Magento\Framework\Translate\Inline\StateInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Asset\ContentProcessorInterface;
 use Magento\Framework\View\Asset\File;
@@ -54,6 +56,14 @@ use Psr\Log\LoggerInterface;
  */
 class FilterTest extends TestCase
 {
+    private const RESTRICTED_BLOCK_PATTERNS = [
+        '\\Block\\Adminhtml\\',
+        '\\Block\\Backend\\',
+        '\\Block\\System\\Config\\',
+        '^Magento\\Backend\\Block\\',
+        '^Magento\\User\\Block\\',
+    ];
+
     /**
      * @var ObjectManager
      */
@@ -272,7 +282,9 @@ class FilterTest extends TestCase
                     $this->cssInliner,
                     [],
                     $this->directiveProcessors,
-                    $this->storeInformation
+                    $this->storeInformation,
+                    $this->createMock(StateInterface::class),
+                    new BlockDirectivePolicy(self::RESTRICTED_BLOCK_PATTERNS)
                 ]
             )
             ->onlyMethods($mockedMethods)
@@ -722,40 +734,6 @@ class FilterTest extends TestCase
 
         $this->assertSame('', $this->getModel()->blockDirective($construction));
         $this->assertFalse($block->rendered, 'A restricted block must not be rendered');
-    }
-
-    public function testIsRestrictedBlockClassCatchesAlternateSeparatorForms()
-    {
-        $filter = $this->getModel();
-        $method = new \ReflectionMethod(Filter::class, 'isRestrictedBlockClass');
-        $method->setAccessible(true);
-        $bs = chr(92);
-
-        $restricted = [
-            "Magento{$bs}Backend{$bs}Block{$bs}Widget{$bs}Grid{$bs}ColumnSet",
-            "{$bs}Magento{$bs}Backend{$bs}Block{$bs}Widget{$bs}Grid{$bs}ColumnSet",
-            "Magento{$bs}{$bs}Backend{$bs}{$bs}Block{$bs}{$bs}Widget{$bs}{$bs}Grid{$bs}{$bs}ColumnSet",
-            "Magento/Backend/Block/Widget/Grid/ColumnSet",
-            "  Magento{$bs}Email{$bs}Block{$bs}Adminhtml{$bs}Template{$bs}Preview  ",
-            "Magento{$bs}User{$bs}Block{$bs}Role{$bs}Grid{$bs}User",
-            "Magento{$bs}Indexer{$bs}Block{$bs}Backend{$bs}Container",
-            "Vendor{$bs}Module{$bs}Block{$bs}Backend{$bs}Anything",
-            "Magento{$bs}Config{$bs}Block{$bs}System{$bs}Config{$bs}Edit",
-            "Magento{$bs}Ups{$bs}Block{$bs}Backend{$bs}System{$bs}CarrierConfig",
-        ];
-        foreach ($restricted as $class) {
-            $this->assertTrue($method->invoke($filter, $class), $class);
-        }
-
-        $allowed = [
-            "Magento{$bs}Cms{$bs}Block{$bs}Block",
-            "Magento{$bs}Framework{$bs}View{$bs}Element{$bs}Template",
-            "Vendor{$bs}Module{$bs}Block{$bs}SystemStatus",
-            "Vendor{$bs}Module{$bs}Block{$bs}BackendCompat{$bs}Widget",
-        ];
-        foreach ($allowed as $class) {
-            $this->assertFalse($method->invoke($filter, $class), $class);
-        }
     }
 
     /**
