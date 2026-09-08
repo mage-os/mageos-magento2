@@ -52,8 +52,21 @@ class BlockDirectivePolicy
             return false;
         }
 
+        // A block that has plugins is instantiated as its generated interceptor, so exemptions
+        // are matched against the wrapped class name too. Restriction patterns keep matching the
+        // name as given, so an interceptor can never shed one.
+        $unwrapped = $this->stripInterceptorSuffix($normalized);
+
         foreach ($this->allowedClasses as $allowed) {
-            if (strcasecmp($normalized, $this->normalize((string)$allowed)) === 0) {
+            $allowedClass = $this->normalize((string)$allowed);
+
+            if ($allowedClass === '') {
+                continue;
+            }
+
+            if (strcasecmp($normalized, $allowedClass) === 0
+                || strcasecmp($unwrapped, $allowedClass) === 0
+            ) {
                 return false;
             }
         }
@@ -91,5 +104,23 @@ class BlockDirectivePolicy
         }
 
         return ltrim($normalized, '\\');
+    }
+
+    /**
+     * Drop a generated interceptor's suffix, leaving the class it wraps.
+     *
+     * @param string $class
+     * @return string
+     */
+    private function stripInterceptorSuffix(string $class): string
+    {
+        $suffix = '\\Interceptor';
+        $length = strlen($suffix);
+
+        if (strlen($class) > $length && substr_compare($class, $suffix, -$length, $length, true) === 0) {
+            return substr($class, 0, -$length);
+        }
+
+        return $class;
     }
 }

@@ -89,6 +89,39 @@ class BlockDirectivePolicyTest extends TestCase
         );
     }
 
+    public function testExemptionAppliesToGeneratedInterceptor()
+    {
+        $policy = new BlockDirectivePolicy(
+            self::DEFAULT_PATTERNS,
+            ['Vendor\\CheckoutFields\\Block\\Adminhtml\\Order\\View\\Fields']
+        );
+
+        $this->assertFalse(
+            $policy->isRestricted('Vendor\\CheckoutFields\\Block\\Adminhtml\\Order\\View\\Fields\\Interceptor'),
+            'A block with plugins is instantiated as its interceptor; the exemption must still apply'
+        );
+        $this->assertFalse(
+            $policy->isRestricted('Vendor\\CheckoutFields\\Block\\Adminhtml\\Order\\View\\Fields\\interceptor'),
+            'The interceptor suffix is matched case-insensitively'
+        );
+    }
+
+    public function testInterceptorCannotShedARestriction()
+    {
+        $policy = new BlockDirectivePolicy(self::DEFAULT_PATTERNS);
+
+        $this->assertTrue(
+            $policy->isRestricted('Magento\\Backend\\Block\\Widget\\Grid\\ColumnSet\\Interceptor')
+        );
+        $this->assertTrue(
+            $policy->isRestricted('Vendor\\Module\\Block\\Adminhtml\\Foo\\Interceptor')
+        );
+        $this->assertTrue(
+            $policy->isRestricted('Vendor\\Module\\Block\\Adminhtml\\Interceptor'),
+            'Unwrapping must never move a class out of a restricted namespace'
+        );
+    }
+
     public function testUnconfiguredPolicyRestrictsNothing()
     {
         $policy = new BlockDirectivePolicy();
