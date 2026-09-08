@@ -816,4 +816,47 @@ class FilterTest extends TestCase
 
         $this->assertSame('', $this->getModel()->layoutDirective($construction));
     }
+
+    /**
+     * The directive tokenizer does not trim values, so padding must not slip past the area check.
+     */
+    public function testLayoutDirectiveRefusesAdminhtmlAreaWithSurroundingWhitespace()
+    {
+        $this->appState->expects($this->never())->method('emulateAreaCode');
+
+        foreach (['adminhtml ', ' adminhtml', " \tADMINHTML \t"] as $area) {
+            $construction = [
+                '{{layout handle="adminhtml_email_template_popup" area="' . $area . '"}}',
+                'layout',
+                ' handle="adminhtml_email_template_popup" area="' . $area . '"'
+            ];
+
+            $this->assertSame(
+                '',
+                $this->getModel()->layoutDirective($construction),
+                var_export($area, true) . ' must be refused'
+            );
+        }
+    }
+
+    /**
+     * A padded frontend area is still the frontend area and must survive.
+     */
+    public function testBlockDirectiveKeepsPaddedFrontendAreaParameter()
+    {
+        $block = $this->createRecordingBlock($seen);
+
+        $this->layout->expects($this->once())
+            ->method('createBlock')
+            ->willReturn($block);
+
+        $construction = [
+            '{{block class="Magento\\Cms\\Block\\Block" area=" frontend "}}',
+            'block',
+            ' class="Magento\\Cms\\Block\\Block" area=" frontend "'
+        ];
+
+        $this->assertSame('html', $this->getModel()->blockDirective($construction));
+        $this->assertContains('area', $seen, 'A padded frontend area parameter must be kept');
+    }
 }

@@ -420,14 +420,16 @@ class Filter extends Template
         $blockParameters = $this->getParameters($construction[2]);
 
         // Blocks may only opt into the frontend area; drop any other area override.
-        if (isset($blockParameters['area'])
-            && strcasecmp((string)$blockParameters['area'], Area::AREA_FRONTEND) !== 0
-        ) {
-            $this->_logger->warning(
-                'Ignored a non-frontend area override on a template block directive.',
-                ['area' => (string)$blockParameters['area']]
-            );
-            unset($blockParameters['area']);
+        if (isset($blockParameters['area'])) {
+            $blockParameters['area'] = trim((string)$blockParameters['area']);
+
+            if (strcasecmp($blockParameters['area'], Area::AREA_FRONTEND) !== 0) {
+                $this->_logger->warning(
+                    'Ignored a non-frontend area override on a template block directive.',
+                    ['area' => $blockParameters['area']]
+                );
+                unset($blockParameters['area']);
+            }
         }
 
         $block = null;
@@ -495,9 +497,9 @@ class Filter extends Template
     public function layoutDirective($construction)
     {
         $this->_directiveParams = $this->getParameters($construction[2]);
-        if (!isset($this->_directiveParams['area'])) {
-            $this->_directiveParams['area'] = Area::AREA_FRONTEND;
-        }
+        // Surrounding whitespace must not let an area slip past the comparison below.
+        $area = trim((string)($this->_directiveParams['area'] ?? ''));
+        $this->_directiveParams['area'] = $area !== '' ? $area : Area::AREA_FRONTEND;
 
         // Adminhtml layout handles are off limits to filtered templates.
         if (strcasecmp((string)$this->_directiveParams['area'], Area::AREA_ADMINHTML) === 0) {
