@@ -149,6 +149,14 @@ class Bundle
             $files = $this->utilityFiles->getFiles([$packageDir], '*.*');
         }
 
+        // Resolve each entry to its path pair, then sort. The list arrives either keyed by file id
+        // (from the map file) or as a numerically indexed filesystem scan whose order follows
+        // however the package happened to be written. Bundle composition depends on that order
+        // twice over: files are packed into numbered bundles in iteration order, and
+        // hasMinVersion() remembers the unminified twin of every ".min." file it passes, so
+        // whether a file is bundled at all can depend on which of the two came first. Sorting
+        // makes the bundles reproducible for a given set of deployed files.
+        $resolved = [];
         foreach ($files as $filePath => $sourcePath) {
             if (is_array($sourcePath)) {
                 $filePath = str_replace(Repository::FILE_ID_SEPARATOR, '/', $filePath);
@@ -162,6 +170,11 @@ class Bundle
                 $filePath = substr($sourcePath, strlen($area . '/' . $theme . '/' . $locale) + 1);
             }
 
+            $resolved[] = [$filePath, $sourcePath];
+        }
+        usort($resolved, static fn(array $a, array $b) => strcmp($a[0], $b[0]));
+
+        foreach ($resolved as [$filePath, $sourcePath]) {
             $contentType = $this->file->getPathInfo($filePath);
             if (!array_key_exists('extension', $contentType) ||
                 !in_array($contentType['extension'], self::$availableTypes)

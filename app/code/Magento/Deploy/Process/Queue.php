@@ -32,6 +32,15 @@ class Queue
     public const DEFAULT_MAX_EXEC_TIME = 900;
 
     /**
+     * How long to wait between checks on running deployment processes, in microseconds.
+     *
+     * Worker status is checked with a non-blocking pcntl_waitpid(), so this interval only exists
+     * to keep the loop from spinning. It also decides how long a finished worker's slot stays
+     * idle: measured on a 12-package install, 500ms cost 6.15s, 100ms 5.24s and 20ms 5.16s.
+     */
+    private const STATUS_POLL_INTERVAL = 20000;
+
+    /**
      * @var array
      */
     private $packages = [];
@@ -181,7 +190,7 @@ class Queue
             if ($this->isCanBeParalleled()) {
                 // in parallel mode sleep before trying to check status and run new jobs
                 // phpcs:ignore Magento2.Functions.DiscouragedFunction
-                usleep(500000); // 0.5 sec (less sleep == less time waste)
+                usleep(self::STATUS_POLL_INTERVAL);
 
                 foreach ($this->inProgress as $name => $package) {
                     if ($this->isDeployed($package)) {
@@ -295,7 +304,7 @@ class Queue
 
             // sleep before checking parallel jobs status
             // phpcs:ignore Magento2.Functions.DiscouragedFunction
-            usleep(500000); // 0.5 sec (less sleep == less time waste)
+            usleep(self::STATUS_POLL_INTERVAL);
         }
         if ($this->isCanBeParalleled()) {
             // close connections only if ran with forks
