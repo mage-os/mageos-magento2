@@ -10,12 +10,18 @@ use Magento\Framework\Code\Generator\Io;
 use Magento\Framework\Filesystem\Driver\File;
 use Magento\Framework\Interception\Code\Generator\Interceptor;
 use Magento\Setup\Module\Di\App\Task\OperationInterface;
+use Magento\Setup\Module\Di\App\Task\Parallel;
 use Magento\Setup\Module\Di\Code\Generator\InterceptionConfigurationBuilder;
 use Magento\Setup\Module\Di\Code\GeneratorFactory;
 use Magento\Setup\Module\Di\Code\Reader\ClassesScanner;
 
 class Interception implements OperationInterface
 {
+    /**
+     * Interceptors below this count are generated in-process; forking would cost more than it saves.
+     */
+    private const MIN_INTERCEPTORS_PER_WORKER = 200;
+
     /**
      * @var App\AreaList
      */
@@ -97,7 +103,17 @@ class Interception implements OperationInterface
             ]
         );
         $configuration = $this->interceptionConfigurationBuilder->getInterceptionConfiguration($classesList);
-        $generator->generateList($configuration);
+
+        // Each interceptor is generated from an already-loaded source class into its own file, so
+        // the entries are independent. Io::writeResultFile() writes through a pid-suffixed
+        // temporary file and renames, so concurrent writers cannot corrupt each other.
+        $workers = Parallel::workerCount(count($configuration), self::MIN_INTERCEPTORS_PER_WORKER);
+        $chunks = $workers > 1
+            ? array_chunk($configuration, (int)ceil(count($configuration) / $workers), true)
+            : [$configuration];
+        Parallel::each($chunks, static function (array $chunk) use ($generator) {
+            $generator->generateList($chunk);
+        });
     }
 
     /**

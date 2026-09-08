@@ -239,4 +239,48 @@ class ReaderTest extends TestCase
         }
         return $getResolvedConstructorArgumentsMap;
     }
+
+    /**
+     * The back-fill must add the scope's preference keys to the collection it is handed, so that a
+     * caller processing scopes out of sequence can reproduce the state each scope would have seen.
+     */
+    public function testApplyThirdPartyInterfacesAddsPreferenceKeys()
+    {
+        $this->diContainerConfig->expects($this->any())
+            ->method('getPreferences')
+            ->willReturn(['SomeInterface' => 'SomeImplementation']);
+        $this->configLoader->expects($this->any())->method('load')->willReturn([]);
+
+        $collection = new Collection();
+        $collection->addDefinition('AlreadyKnown', ['argument']);
+
+        $this->model->applyThirdPartyInterfaces($collection, 'frontend');
+
+        $this->assertTrue($collection->hasInstance('SomeInterface'), 'preference key was not added');
+        $this->assertSame(
+            ['argument'],
+            $collection->getInstanceArguments('AlreadyKnown'),
+            'an existing definition must not be overwritten'
+        );
+    }
+
+    /**
+     * Applying it twice must leave the collection untouched the second time.
+     */
+    public function testApplyThirdPartyInterfacesIsIdempotent()
+    {
+        $this->diContainerConfig->expects($this->any())
+            ->method('getPreferences')
+            ->willReturn(['SomeInterface' => 'SomeImplementation']);
+        $this->configLoader->expects($this->any())->method('load')->willReturn([]);
+
+        $collection = new Collection();
+        $collection->addDefinition('AlreadyKnown', ['argument']);
+
+        $this->model->applyThirdPartyInterfaces($collection, Area::AREA_GLOBAL);
+        $snapshot = $collection->getCollection();
+        $this->model->applyThirdPartyInterfaces($collection, Area::AREA_GLOBAL);
+
+        $this->assertSame($snapshot, $collection->getCollection());
+    }
 }

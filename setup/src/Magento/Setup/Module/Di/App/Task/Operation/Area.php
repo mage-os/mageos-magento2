@@ -6,6 +6,7 @@
 namespace Magento\Setup\Module\Di\App\Task\Operation;
 
 use Magento\Setup\Module\Di\App\Task\OperationInterface;
+use Magento\Setup\Module\Di\App\Task\Parallel;
 use Magento\Framework\App;
 use Magento\Setup\Module\Di\Compiler\Config;
 use Magento\Setup\Module\Di\Definition\Collection as DefinitionsCollection;
@@ -91,17 +92,53 @@ class Area implements OperationInterface
         $this->sortDefinitions($definitionsCollection);
 
         $areaCodes = array_merge([App\Area::AREA_GLOBAL], $this->areaList->getCodes());
-        foreach ($areaCodes as $areaCode) {
-            $config = $this->configReader->generateCachePerScope($definitionsCollection, $areaCode);
-            $config = $this->modificationChain->modify($config);
 
-            // sort configuration to have it in the same order on every build
-            ksort($config['arguments']);
-            ksort($config['preferences']);
-            ksort($config['instanceTypes']);
-
-            $this->configWriter->write($areaCode, $config);
+        // Compilation has just deleted the cache directory, and the configuration cache recreates
+        // it lazily the first time a non-global area is loaded. Workers must not race to create
+        // it, so areas are processed here until one of them has been through that path; only the
+        // remainder is handed to workers.
+        while ($areaCodes) {
+            $areaCode = array_shift($areaCodes);
+            $this->configReader->applyThirdPartyInterfaces($definitionsCollection, $areaCode);
+            $this->processArea($areaCode, $definitionsCollection);
+            if ($areaCode !== App\Area::AREA_GLOBAL) {
+                break;
+            }
         }
+
+        // Areas are not independent: generateCachePerScope() back-fills third-party preferences
+        // into the shared collection, so each area sees the keys added by the areas before it.
+        // The prepare step replays that back-fill in the original order in this process, so a
+        // worker starts from exactly the collection its area would have had sequentially.
+        Parallel::each(
+            $areaCodes,
+            function ($areaCode) use ($definitionsCollection) {
+                $this->processArea($areaCode, $definitionsCollection);
+            },
+            function ($areaCode) use ($definitionsCollection) {
+                $this->configReader->applyThirdPartyInterfaces($definitionsCollection, $areaCode);
+            }
+        );
+    }
+
+    /**
+     * Build, modify and write the compiled DI configuration for a single area.
+     *
+     * @param string $areaCode
+     * @param DefinitionsCollection $definitionsCollection
+     * @return void
+     */
+    private function processArea($areaCode, DefinitionsCollection $definitionsCollection)
+    {
+        $config = $this->configReader->generateCachePerScope($definitionsCollection, $areaCode);
+        $config = $this->modificationChain->modify($config);
+
+        // sort configuration to have it in the same order on every build
+        ksort($config['arguments']);
+        ksort($config['preferences']);
+        ksort($config['instanceTypes']);
+
+        $this->configWriter->write($areaCode, $config);
     }
 
     /**

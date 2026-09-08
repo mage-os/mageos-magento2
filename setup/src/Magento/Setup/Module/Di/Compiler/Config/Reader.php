@@ -180,6 +180,29 @@ class Reader
     }
 
     /**
+     * Apply the third-party preference back-fill for one scope to the given collection.
+     *
+     * The generateCachePerScope() method performs this back-fill as a side effect on the collection
+     * it is given, so consecutive scopes each see the keys added by the scopes before them. Callers
+     * do not process scopes strictly in sequence - for example one computing several scopes
+     * concurrently - must replay the back-fill in the original order first, so every scope starts
+     * from the state it would have had sequentially. Applying it more than once is harmless:
+     * already-defined instances keep their definitions.
+     *
+     * @param DefinitionsCollection $definitionsCollection
+     * @param string $areaCode
+     * @return void
+     */
+    public function applyThirdPartyInterfaces(DefinitionsCollection $definitionsCollection, $areaCode)
+    {
+        $areaConfig = clone $this->diContainerConfig;
+        if ($areaCode !== App\Area::AREA_GLOBAL) {
+            $areaConfig->extend($this->configLoader->load($areaCode));
+        }
+        $this->fillThirdPartyInterfaces($areaConfig, $definitionsCollection);
+    }
+
+    /**
      * Returns preferences for third party code
      *
      * @param ConfigInterface $config

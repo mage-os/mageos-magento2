@@ -71,4 +71,70 @@ class DomTest extends TestCase
         $this->converterMock->expects($this->once())->method('convert')->with('reader dom result');
         $this->model->read();
     }
+
+    /**
+     * Repeated reads of one scope must parse the configuration only once.
+     */
+    public function testReadParsesEachScopeOnce()
+    {
+        $this->fileResolverMock->expects($this->once())->method('get')->willReturn(['first content item']);
+        $this->converterMock->expects($this->once())->method('convert')->willReturn(['converted']);
+
+        $first = $this->model->read('global');
+        $second = $this->model->read('global');
+
+        $this->assertSame(['converted'], $first);
+        $this->assertSame($first, $second);
+    }
+
+    /**
+     * read() and read($defaultScope) address the same scope and must share one parse.
+     */
+    public function testReadNormalizesTheDefaultScope()
+    {
+        $model = new Dom(
+            $this->fileResolverMock,
+            $this->converterMock,
+            $this->schemaLocatorMock,
+            $this->validationStateMock,
+            'filename.xml',
+            [],
+            '\ConfigDomMock',
+            'frontend'
+        );
+        $this->fileResolverMock->expects($this->once())
+            ->method('get')
+            ->with('filename.xml', 'frontend')
+            ->willReturn(['first content item']);
+        $this->converterMock->expects($this->once())->method('convert')->willReturn(['converted']);
+
+        $this->assertSame(['converted'], $model->read());
+        $this->assertSame(['converted'], $model->read('frontend'));
+    }
+
+    /**
+     * Two readers may be configured differently, so one must never serve the other's result.
+     */
+    public function testReadIsNotSharedBetweenInstances()
+    {
+        $otherResolver = $this->createMock(FileResolverInterface::class);
+        $otherConverter = $this->createMock(\Magento\Framework\ObjectManager\Config\Mapper\Dom::class);
+        $other = new Dom(
+            $otherResolver,
+            $otherConverter,
+            $this->schemaLocatorMock,
+            $this->validationStateMock,
+            'filename.xml',
+            [],
+            '\ConfigDomMock'
+        );
+
+        $this->fileResolverMock->expects($this->once())->method('get')->willReturn(['first content item']);
+        $this->converterMock->expects($this->once())->method('convert')->willReturn(['from first reader']);
+        $otherResolver->expects($this->once())->method('get')->willReturn(['first content item']);
+        $otherConverter->expects($this->once())->method('convert')->willReturn(['from second reader']);
+
+        $this->assertSame(['from first reader'], $this->model->read('global'));
+        $this->assertSame(['from second reader'], $other->read('global'));
+    }
 }
