@@ -412,6 +412,13 @@ class Filter extends Template
         $block = null;
 
         if (isset($blockParameters['class'])) {
+            if ($this->isRestrictedBlockClass((string)$blockParameters['class'])) {
+                $this->_logger->warning(
+                    'Refused to instantiate a restricted block class from a template directive.',
+                    ['class' => (string)$blockParameters['class']]
+                );
+                return '';
+            }
             $block = $this->_layout->createBlock($blockParameters['class'], null, ['data' => $blockParameters]);
         } elseif (isset($blockParameters['id'])) {
             $block = $this->_layout->createBlock(Block::class);
@@ -421,6 +428,15 @@ class Filter extends Template
         }
 
         if (!$block) {
+            return '';
+        }
+
+        // Re-check the class actually instantiated.
+        if ($this->isRestrictedBlockClass(get_class($block))) {
+            $this->_logger->warning(
+                'Refused to render a restricted block class resolved from a template directive.',
+                ['class' => get_class($block), 'requested' => (string)($blockParameters['class'] ?? '')]
+            );
             return '';
         }
 
@@ -447,6 +463,32 @@ class Filter extends Template
             $method = 'toHtml';
         }
         return $block->{$method}();
+    }
+
+    /**
+     * Whether a class is off limits to the {{block}} directive.
+     *
+     * @param string $class
+     * @return bool
+     */
+    private function isRestrictedBlockClass(string $class): bool
+    {
+        // Canonicalize separator spelling before matching.
+        $normalized = str_replace('/', '\\', trim($class));
+        while (strpos($normalized, '\\\\') !== false) {
+            $normalized = str_replace('\\\\', '\\', $normalized);
+        }
+        $normalized = ltrim($normalized, '\\');
+        if ($normalized === '') {
+            return false;
+        }
+        if (stripos($normalized, '\\Block\\Adminhtml\\') !== false) {
+            return true;
+        }
+        if (stripos($normalized, 'Magento\\Backend\\Block\\') === 0) {
+            return true;
+        }
+        return false;
     }
 
     /**

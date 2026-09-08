@@ -16,6 +16,7 @@ use Magento\Framework\Filter\DirectiveProcessor\LegacyDirective;
 use Magento\Framework\Filter\DirectiveProcessor\TemplateDirective;
 use Magento\Framework\Filter\DirectiveProcessor\VarDirective;
 use Magento\Framework\Stdlib\StringUtils;
+use Magento\Framework\Filter\Template\DirectiveOutputNeutralizer;
 use Magento\Framework\Filter\Template\SignatureProvider;
 use Magento\Framework\Filter\Template\FilteringDepthMeter;
 
@@ -111,12 +112,18 @@ class Template implements FilterInterface
     private $filteringDepthMeter;
 
     /**
+     * @var DirectiveOutputNeutralizer|null
+     */
+    private $directiveOutputNeutralizer;
+
+    /**
      * @param StringUtils $string
      * @param array $variables
      * @param DirectiveProcessorInterface[] $directiveProcessors
      * @param VariableResolverInterface|null $variableResolver
      * @param SignatureProvider|null $signatureProvider
      * @param FilteringDepthMeter|null $filteringDepthMeter
+     * @param DirectiveOutputNeutralizer|null $directiveOutputNeutralizer
      */
     public function __construct(
         StringUtils $string,
@@ -124,7 +131,8 @@ class Template implements FilterInterface
         $directiveProcessors = [],
         ?VariableResolverInterface $variableResolver = null,
         ?SignatureProvider $signatureProvider = null,
-        ?FilteringDepthMeter $filteringDepthMeter = null
+        ?FilteringDepthMeter $filteringDepthMeter = null,
+        ?DirectiveOutputNeutralizer $directiveOutputNeutralizer = null
     ) {
         $this->string = $string;
         $this->setVariables($variables);
@@ -137,6 +145,9 @@ class Template implements FilterInterface
 
         $this->filteringDepthMeter = $filteringDepthMeter ?? ObjectManager::getInstance()
                 ->get(FilteringDepthMeter::class);
+
+        $this->directiveOutputNeutralizer = $directiveOutputNeutralizer ?? ObjectManager::getInstance()
+                ->get(DirectiveOutputNeutralizer::class);
 
         if (empty($directiveProcessors)) {
             $this->directiveProcessors = [
@@ -273,6 +284,11 @@ class Template implements FilterInterface
             if (preg_match_all($pattern, $value, $constructions, PREG_SET_ORDER)) {
                 foreach ($constructions as $construction) {
                     $replacedValue = $directiveProcessor->process($construction, $this, $this->templateVars);
+
+                    if ($replacedValue !== $construction[0]) {
+                        // Resolved output is data: encode directive openers. Deferred directives pass through.
+                        $replacedValue = $this->directiveOutputNeutralizer->neutralize($replacedValue);
+                    }
 
                     $result = [
                         'directive' => $construction[0],
