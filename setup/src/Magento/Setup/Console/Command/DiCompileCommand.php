@@ -328,7 +328,11 @@ class DiCompileCommand extends Command
     private function cleanupFilesystem($directoryCodeList)
     {
         foreach ($directoryCodeList as $code) {
-            $this->filesystem->getDirectoryWrite($code)->delete();
+            $directory = $this->filesystem->getDirectoryWrite($code);
+            $directory->delete();
+            // Recreate immediately. These directories are recreated lazily by whichever consumer
+            // touches them first, and compilation workers must not race each other to do it.
+            $directory->create();
         }
     }
 

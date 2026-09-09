@@ -56,6 +56,36 @@ class Dom extends \Magento\Framework\Config\Reader\Filesystem
     }
 
     /**
+     * Parsed configuration per scope, memoized for the lifetime of this reader.
+     *
+     * Reading a scope re-parses and DOM-merges every di.xml that contributes to it (~250 files
+     * and ~12k nodes for 'global'), and several consumers ask the same reader for the same scope
+     * during one setup:di:compile. The cache is per instance on purpose: a result depends on this
+     * reader's file resolver, merge rules, schema and validation state, so two differently
+     * configured readers must never see each other's results.
+     *
+     * @var array
+     */
+    private $scopeCache = [];
+
+    /**
+     * Read configuration for the given scope, parsing each scope at most once per reader.
+     *
+     * @param string|null $scope
+     * @return array
+     */
+    public function read($scope = null)
+    {
+        // Normalise exactly as the parent does, so read() and read($defaultScope) share an entry.
+        $scope = $scope ?: $this->_defaultScope;
+        if (!array_key_exists($scope, $this->scopeCache)) {
+            $this->scopeCache[$scope] = parent::read($scope);
+        }
+
+        return $this->scopeCache[$scope];
+    }
+
+    /**
      * Create and return a config merger instance that takes into account types of arguments
      *
      * {@inheritdoc}
