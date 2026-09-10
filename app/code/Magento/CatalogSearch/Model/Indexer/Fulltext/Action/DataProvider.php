@@ -336,7 +336,7 @@ class DataProvider
         if ($backendType == 'datetime') {
             $expr = $this->connection->getDateFormatSql($field, '%Y-%m-%d %H:%i:%s');
         } else {
-            $expr = $field;
+            $expr = $this->connection->castToText($field);
         }
 
         return $expr;

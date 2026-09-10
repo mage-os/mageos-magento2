@@ -1063,7 +1063,11 @@ abstract class AbstractEntity extends AbstractResource implements
             $attribute = current($this->_attributesByTable[$table]);
             $eavType = $attribute->getBackendType();
             $select = $this->_getLoadAttributesSelect($object, $table);
-            $selects[$eavType][] = $select->columns('*');
+            $selects[$eavType][] = $select->columns([
+                'attribute_id' => 'attribute_id',
+                'value_id' => 'value_id',
+                'value' => $this->getConnection()->castToText($this->getConnection()->quoteIdentifier('value')),
+            ]);
         }
         $selectGroups = $this->_resourceHelper->getLoadAttributesSelectGroups($selects);
         foreach ($selectGroups as $selects) {

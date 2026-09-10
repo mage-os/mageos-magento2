@@ -1315,7 +1315,7 @@ abstract class AbstractCollection extends AbstractDb implements SourceProviderIn
      */
     protected function _addLoadAttributesSelectValues($select, $table, $type)
     {
-        $select->columns(['value' => 't_d.value']);
+        $select->columns(['value' => $this->getConnection()->castToText('t_d.value')]);
         return $select;
     }
 

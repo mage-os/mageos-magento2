@@ -41,6 +41,8 @@ class ReadSnapshotPlugin
     }
 
     /**
+     * Merge global-scope catalog attribute values into the current-store snapshot.
+     *
      * @param ReadSnapshot $subject
      * @param array $entityData
      * @param string $entityType
@@ -73,11 +75,12 @@ class ReadSnapshotPlugin
         if ($globalAttributes) {
             $selects = [];
             foreach ($globalAttributes as $table => $attributeIds) {
-                $select = $connection->select()
-                    ->from(
-                        ['t' => $table],
-                        ['value' => 't.value', 'attribute_id' => 't.attribute_id']
-                    )
+                $select = $connection->select();
+                // Align types across UNION ALL branches.
+                $select->from(
+                    ['t' => $table],
+                    ['value' => $connection->castToText('t.value'), 'attribute_id' => 't.attribute_id']
+                )
                     ->where($metadata->getLinkField() . ' = ?', $entityData[$metadata->getLinkField()])
                     ->where('attribute_id' . ' in (?)', $attributeIds)
                     ->where('store_id = ?', \Magento\Store\Model\Store::DEFAULT_STORE_ID);

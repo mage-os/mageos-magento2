@@ -454,7 +454,8 @@ class DefaultPrice extends AbstractIndexer implements PriceInterface
         );
         $currentDate = 'cwd.website_date';
 
-        $maxUnsignedBigint = '~0';
+        // Portable max bigint (not MySQL ~0).
+        $maxUnsignedBigint = '9223372036854775807';
         $specialFromDate = $connection->getDatePartSql($specialFrom);
         $specialToDate = $connection->getDatePartSql($specialTo);
         $specialFromExpr = "{$specialFrom} IS NULL OR {$specialFromDate} <= {$currentDate}";
@@ -838,7 +839,7 @@ class DefaultPrice extends AbstractIndexer implements PriceInterface
      */
     private function getTotalTierPriceExpression(\Zend_Db_Expr $priceExpression)
     {
-        $maxUnsignedBigint = '~0';
+        $maxUnsignedBigint = '9223372036854775807';
 
         return $this->getConnection()->getCheckSql(
             implode(
