@@ -172,11 +172,13 @@ class ImageResize
         $viewImages = $this->getViewImages($this->getThemesInUse());
         if ($skipHiddenImages) {
             $websiteIds = $this->productImage->getRelatedWebsiteIds($originalImageName);
-            $viewImages = array_filter(
-                $viewImages,
-                fn (string $index) => array_intersect($websiteIds, $this->paramsWebsitesMap[$index]),
-                ARRAY_FILTER_USE_KEY
-            );
+            if ($websiteIds) {
+                $viewImages = array_filter(
+                    $viewImages,
+                    fn (string $index) => array_intersect($websiteIds, $this->paramsWebsitesMap[$index] ?? []),
+                    ARRAY_FILTER_USE_KEY
+                );
+            }
         }
         foreach ($viewImages as $viewImage) {
             $this->resize($viewImage, $originalImagePath, $originalImageName);

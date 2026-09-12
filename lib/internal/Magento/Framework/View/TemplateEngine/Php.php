@@ -58,6 +58,9 @@ class Php implements TemplateEngineInterface
      */
     public function render(BlockInterface $block, $fileName, array $dictionary = [])
     {
+        if (\Magento\Framework\Filesystem\SecurePathValidator::isUnsafeIncludePath((string)$fileName)) {
+            throw new \RuntimeException('Refusing to render a template from an unsafe path.');
+        }
         ob_start();
         try {
             $tmpBlock = $this->_currentBlock;

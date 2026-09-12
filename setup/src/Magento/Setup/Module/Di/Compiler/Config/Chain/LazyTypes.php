@@ -11,15 +11,17 @@ use Magento\Framework\ObjectManager\Attribute\NonLazy;
 use Magento\Setup\Module\Di\Compiler\Config\ModificationInterface;
 
 /**
- * Compile-time scanner that flags concrete types as non-lazy when they are PHP-incompatible
- * with newLazyGhost: interfaces, abstracts, traits, final/enum/readonly classes, and classes
- * extending internal PHP classes (e.g. ArrayObject, DateTime). Also honors classes that
- * opt out by declaring the #[NonLazy] attribute.
+ * Compile-time scanner that records the allow-list of concrete types provably eligible for
+ * PHP 8.4 lazy ghosts. A type qualifies only when it is a loadable, concrete, non-final,
+ * non-enum, non-readonly class with no internal PHP ancestor (e.g. ArrayObject, DateTime)
+ * and no #[NonLazy] attribute. Types never seen at compile time — such as transitive
+ * auto-wired dependencies with no di.xml entry of their own — are simply absent from the
+ * allow-list and fall back to eager construction at runtime.
  */
-class NonLazyTypes implements ModificationInterface
+class LazyTypes implements ModificationInterface
 {
     /**
-     * Supplement the DI config to record class types that are NOT eligible for lazy object loading
+     * Supplement the DI config to record class types that ARE eligible for lazy object loading
      *
      * @param array $config
      * @return array
@@ -45,17 +47,17 @@ class NonLazyTypes implements ModificationInterface
             }
         }
 
-        $nonLazy = [];
+        $lazy = [];
         foreach (array_keys($candidates) as $class) {
-            if (!$this->isLazyEligible($class)) {
-                $nonLazy[$class] = true;
+            if ($this->isLazyEligible($class)) {
+                $lazy[$class] = true;
             }
         }
 
-        $existing = (isset($config['nonLazyTypes']) && is_array($config['nonLazyTypes']))
-            ? $config['nonLazyTypes']
+        $existing = (isset($config['lazyTypes']) && is_array($config['lazyTypes']))
+            ? $config['lazyTypes']
             : [];
-        $config['nonLazyTypes'] = array_replace($existing, $nonLazy);
+        $config['lazyTypes'] = array_replace($existing, $lazy);
         return $config;
     }
 

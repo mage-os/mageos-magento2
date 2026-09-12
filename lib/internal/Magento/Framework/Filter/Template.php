@@ -16,6 +16,7 @@ use Magento\Framework\Filter\DirectiveProcessor\LegacyDirective;
 use Magento\Framework\Filter\DirectiveProcessor\TemplateDirective;
 use Magento\Framework\Filter\DirectiveProcessor\VarDirective;
 use Magento\Framework\Stdlib\StringUtils;
+use Magento\Framework\Filter\Template\DirectiveOutputNeutralizer;
 use Magento\Framework\Filter\Template\SignatureProvider;
 use Magento\Framework\Filter\Template\FilteringDepthMeter;
 
@@ -111,12 +112,26 @@ class Template implements FilterInterface
     private $filteringDepthMeter;
 
     /**
+     * @var DirectiveOutputNeutralizer|null
+     */
+    private $directiveOutputNeutralizer;
+
+    /**
+     * Directives this filter has explicitly deferred to its parent template. Only these are
+     * signed; an unresolvable directive that merely comes back unchanged is not deferred.
+     *
+     * @var string[]
+     */
+    private $deferredDirectives = [];
+
+    /**
      * @param StringUtils $string
      * @param array $variables
      * @param DirectiveProcessorInterface[] $directiveProcessors
      * @param VariableResolverInterface|null $variableResolver
      * @param SignatureProvider|null $signatureProvider
      * @param FilteringDepthMeter|null $filteringDepthMeter
+     * @param DirectiveOutputNeutralizer|null $directiveOutputNeutralizer
      */
     public function __construct(
         StringUtils $string,
@@ -124,7 +139,8 @@ class Template implements FilterInterface
         $directiveProcessors = [],
         ?VariableResolverInterface $variableResolver = null,
         ?SignatureProvider $signatureProvider = null,
-        ?FilteringDepthMeter $filteringDepthMeter = null
+        ?FilteringDepthMeter $filteringDepthMeter = null,
+        ?DirectiveOutputNeutralizer $directiveOutputNeutralizer = null
     ) {
         $this->string = $string;
         $this->setVariables($variables);
@@ -137,6 +153,9 @@ class Template implements FilterInterface
 
         $this->filteringDepthMeter = $filteringDepthMeter ?? ObjectManager::getInstance()
                 ->get(FilteringDepthMeter::class);
+
+        $this->directiveOutputNeutralizer = $directiveOutputNeutralizer ?? ObjectManager::getInstance()
+                ->get(DirectiveOutputNeutralizer::class);
 
         if (empty($directiveProcessors)) {
             $this->directiveProcessors = [
@@ -203,6 +222,11 @@ class Template implements FilterInterface
 
         $this->filteringDepthMeter->descend();
 
+        // filter() is re-entrant (directives filter their own bodies); deferrals recorded
+        // by an outer invocation must not leak into this one.
+        $outerDeferredDirectives = $this->deferredDirectives;
+        $this->deferredDirectives = [];
+
         // Processing of template directives.
         $templateDirectivesResults = array_unique(
             $this->processDirectives($value),
@@ -220,12 +244,14 @@ class Template implements FilterInterface
 
         $value = $this->applyDirectivesResults($value, $deferredDirectivesResults);
 
-        if ($this->filteringDepthMeter->showMark() > 1) {
+        if ($this->filteringDepthMeter->showMark() > 1 && $this->deferredDirectives) {
             // Signing own deferred directives (if any).
             $signature = $this->signatureProvider->get();
 
             foreach ($templateDirectivesResults as $result) {
-                if ($result['directive'] === $result['output']) {
+                if ($result['directive'] === $result['output']
+                    && in_array($result['directive'], $this->deferredDirectives, true)
+                ) {
                     $value = str_replace(
                         $result['output'],
                         $signature . $result['output'] . $signature,
@@ -235,11 +261,27 @@ class Template implements FilterInterface
             }
         }
 
+        $this->deferredDirectives = $outerDeferredDirectives;
+
         $value = $this->afterFilter($value);
 
         $this->filteringDepthMeter->ascend();
 
         return $value;
+    }
+
+    /**
+     * Marks a directive as deferred to the parent template.
+     *
+     * A directive processor that returns its construction unchanged so the parent processes
+     * it instead must declare that here; only declared directives are signed.
+     *
+     * @param string $directive
+     * @return void
+     */
+    public function deferToParent(string $directive): void
+    {
+        $this->deferredDirectives[] = $directive;
     }
 
     /**
@@ -273,6 +315,11 @@ class Template implements FilterInterface
             if (preg_match_all($pattern, $value, $constructions, PREG_SET_ORDER)) {
                 foreach ($constructions as $construction) {
                     $replacedValue = $directiveProcessor->process($construction, $this, $this->templateVars);
+
+                    if ($replacedValue !== $construction[0]) {
+                        // Resolved output is data: encode directive openers. Deferred directives pass through.
+                        $replacedValue = $this->directiveOutputNeutralizer->neutralize($replacedValue);
+                    }
 
                     $result = [
                         'directive' => $construction[0],
