@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "strict": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "paths": {
+      "@config": [
+        "base-tests/config",
+        "tests/config", // keep this for gitlab and when index.ts needs to be changed.
+      ],
+      "@utils/*": [
+        "base-tests/utils/*",
+        "tests/utils/*"
+      ],
+      "@poms/*": [
+        "base-tests/poms/*",
+        "tests/poms/*"
+      ],
+      "@types/*": [
+        "base-tests/types/*",
+        "tests/types/*"
+      ],
+      "@fixtures/*": [
+        "base-tests/fixtures/*",
+        "tests/fixtures/*"
+      ]
+    }
+  }
+}

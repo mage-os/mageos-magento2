@@ -1,0 +1,79 @@
+// @ts-check
+
+import {test, expect} from '@playwright/test';
+import {UIReference, outcomeMarker, slugs} from '@config';
+
+import MainMenuPage from '@poms/frontend/mainmenu.page';
+import ProductPage from '@poms/frontend/product.page';
+import MiniCartPage from '@poms/frontend/minicart.page';
+
+test.describe('Minicart Actions', {annotation: {type: 'Minicart', description: 'Minicart simple product tests'},}, () => {
+
+  /**
+   * @feature BeforeEach runs before each test in this group.
+   * @scenario Add a product to the cart and confirm it's there.
+   * @given I am on any page
+   * @when I navigate to a (simple) product page
+   *  @and I add it to my cart
+   *  @then I should see a notification
+   * @when I click the cart in the main menu
+   *  @then the minicart should become visible
+   *  @and I should see the product in the minicart
+   */
+  test.beforeEach(async ({ page }) => {
+    const mainMenu = new MainMenuPage(page);
+    const productPage = new ProductPage(page);
+
+    await page.goto(slugs.productPage.simpleProductSlug);
+    await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productPage.simpleProductSlug);
+    await mainMenu.openMiniCart();
+    await expect(page.getByText(outcomeMarker.miniCart.simpleProductInCartTitle).first()).toBeVisible();
+  });
+
+  /**
+   * @feature Magento 2 Minicart to Cart
+   * @scenario User adds a product to cart, then uses minicart to navigate to their cart
+   * @given I have added a (simple) product to the cart and opened the minicart
+   * @when I click on the 'to cart' link
+   * @then I should be navigated to the cart page
+   */
+
+  test('Add_product_to_minicart_and_go_to_cart',{ tag: ['@minicart-simple-product', '@cold']}, async ({page}) => {
+    const miniCart = new MiniCartPage(page);
+    await miniCart.goToCart();
+  });
+
+  /**
+   * @feature Price Check: Simple Product on Product Detail Page (PDP) and Minicart
+   * @scenario The price on a PDP should be the same as the price in the minicart
+   * @given I have added a (simple) product to the cart and opened the minicart
+   * @then the price listed in the minicart (per product) should be the same as the price on the PDP
+  */
+  test('Pdp_price_matches_minicart_price',{ tag: ['@minicart-simple-product', '@cold']}, async ({page}) => {
+    const miniCart = new MiniCartPage(page);
+    await miniCart.checkPriceWithProductPage();
+  });
+});
+
+test.describe('Minicart Actions', {annotation: {type: 'Minicart', description: 'Minicart configurable product tests'},}, () => {
+  /**
+   * @feature BeforeEach runs before each test in this group.
+   * @scenario Add a configurable product to the cart and confirm it's there.
+   * @given I am on any page
+   * @when I navigate to a (simple) product page
+   *  @and I add it to my cart
+   *  @then I should see a notification
+   * @when I click the cart in the main menu
+   *  @then the minicart should become visible
+   *  @and I should see the product in the minicart
+   */
+  test.beforeEach(async ({ page }) => {
+    const mainMenu = new MainMenuPage(page);
+    const productPage = new ProductPage(page);
+
+    await page.goto(slugs.productPage.configurableProductSlug);
+    await productPage.addConfigurableProductToCart(UIReference.productPage.configurableProductTitle, slugs.productPage.configurableProductSlug, '2');
+    await mainMenu.openMiniCart();
+    await expect(page.getByText(outcomeMarker.miniCart.configurableProductMinicartTitle)).toBeVisible();
+  });
+});
