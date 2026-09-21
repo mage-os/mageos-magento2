@@ -33,6 +33,8 @@ class InputValidator
         'jpeg' => Options::NO_IMAGES,
         'gif' => Options::NO_IMAGES,
         'png' => Options::NO_IMAGES,
+        'webp' => Options::NO_IMAGES,
+        'avif' => Options::NO_IMAGES,
         'ico' => Options::NO_IMAGES,
         'svg' => Options::NO_IMAGES,
         'eot' => Options::NO_FONTS,

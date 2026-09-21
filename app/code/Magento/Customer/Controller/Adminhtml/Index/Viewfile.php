@@ -163,6 +163,12 @@ class Viewfile extends \Magento\Customer\Controller\Adminhtml\Index
                 case 'png':
                     $contentType = 'image/png';
                     break;
+                case 'webp':
+                    $contentType = 'image/webp';
+                    break;
+                case 'avif':
+                    $contentType = 'image/avif';
+                    break;
                 default:
                     $contentType = 'application/octet-stream';
                     break;

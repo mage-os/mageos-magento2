@@ -22,6 +22,7 @@ use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\Url\DecoderInterface;
 use Magento\MediaStorage\Helper\File\Storage;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -226,6 +227,83 @@ class ViewfileTest extends TestCase
             ]
         );
         $this->assertSame($this->resultRawMock, $controller->execute());
+    }
+
+    /**
+     * @param string $file
+     * @param string $expectedContentType
+     * @return void
+     */
+    #[DataProvider('imageContentTypeDataProvider')]
+    public function testExecuteGetParamImageSetsContentType(string $file, string $expectedContentType): void
+    {
+        $decodedFile = 'decoded_file';
+        $fileName = 'customer/' . $file;
+        $path = 'absolute/' . $file;
+
+        $this->requestMock->expects($this->any())->method('getParam')
+            ->willReturnMap([['file', '', ''], ['image', '', $decodedFile]]);
+
+        $this->directoryMock->expects($this->once())->method('getAbsolutePath')->with($fileName)->willReturn($path);
+        $this->directoryMock->expects($this->once())->method('stat')->with($fileName)
+            ->willReturn(['size' => 10, 'mtime' => 10]);
+
+        $this->fileSystemMock->expects($this->once())->method('getDirectoryRead')
+            ->with(DirectoryList::MEDIA)
+            ->willReturn($this->directoryMock);
+
+        $this->storage->expects($this->once())->method('processStorageFile')->with($path)->willReturn(true);
+
+        $this->objectManagerMock->expects($this->any())->method('get')
+            ->willReturnMap(
+                [
+                    [Filesystem::class, $this->fileSystemMock],
+                    [Storage::class, $this->storage]
+                ]
+            );
+
+        $this->urlDecoderMock->expects($this->once())->method('decode')->with($decodedFile)->willReturn($file);
+
+        $headers = [];
+        $this->resultRawMock->expects($this->any())->method('setHttpResponseCode')->willReturnSelf();
+        $this->resultRawMock->expects($this->any())->method('setHeader')
+            ->willReturnCallback(
+                function ($name, $value) use (&$headers) {
+                    $headers[$name] = $value;
+                    return $this->resultRawMock;
+                }
+            );
+
+        $this->resultRawFactoryMock->expects($this->once())->method('create')->willReturn($this->resultRawMock);
+
+        /** @var Viewfile $controller */
+        $controller = $this->objectManager->getObject(
+            Viewfile::class,
+            [
+                'context' => $this->contextMock,
+                'urlDecoder' => $this->urlDecoderMock,
+                'resultRawFactory' => $this->resultRawFactoryMock
+            ]
+        );
+        $controller->execute();
+
+        $this->assertSame($expectedContentType, $headers['Content-type']);
+    }
+
+    /**
+     * @return array
+     */
+    public static function imageContentTypeDataProvider(): array
+    {
+        return [
+            'gif' => ['image.gif', 'image/gif'],
+            'jpg' => ['image.jpg', 'image/jpeg'],
+            'png' => ['image.png', 'image/png'],
+            'webp' => ['image.webp', 'image/webp'],
+            'avif' => ['image.avif', 'image/avif'],
+            'uppercase webp' => ['image.WEBP', 'image/webp'],
+            'unknown' => ['archive.zip', 'application/octet-stream'],
+        ];
     }
 
     public function testExecuteInvalidFile()

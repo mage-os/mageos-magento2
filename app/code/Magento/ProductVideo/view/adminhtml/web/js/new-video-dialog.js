@@ -196,7 +196,9 @@ define([
             '.jpg',
             '.pjpeg',
             '.png',
-            '.gif'
+            '.gif',
+            '.webp',
+            '.avif'
         ],
 
         _imageProductGalleryWrapperSelector: '#image-container',

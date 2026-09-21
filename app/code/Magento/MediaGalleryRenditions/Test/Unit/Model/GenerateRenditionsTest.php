@@ -89,10 +89,20 @@ class GenerateRenditionsTest extends TestCase
         $pattern = $this->model->getImageFileNamePattern();
         
         // Assert the pattern is the expected string
-        $this->assertEquals('#\.(jpg|jpeg|gif|png)$# i', $pattern);
-        
+        $this->assertEquals('#\.(jpg|jpeg|gif|png|webp|avif)$# i', $pattern);
+
         // Test that the pattern correctly validates supported file types
-        $validExtensions = ['test.jpg', 'test.jpeg', 'test.gif', 'test.png', 'TEST.JPG', 'TEST.PNG'];
+        $validExtensions = [
+            'test.jpg',
+            'test.jpeg',
+            'test.gif',
+            'test.png',
+            'test.webp',
+            'test.avif',
+            'TEST.JPG',
+            'TEST.PNG',
+            'TEST.WEBP',
+        ];
         foreach ($validExtensions as $filename) {
             $this->assertEquals(
                 1,
@@ -102,7 +112,7 @@ class GenerateRenditionsTest extends TestCase
         }
         
         // Test that the pattern correctly rejects unsupported file types
-        $invalidExtensions = ['test.txt', 'test.pdf', 'test.webp', 'test.bmp', 'test'];
+        $invalidExtensions = ['test.txt', 'test.pdf', 'test.bmp', 'test'];
         foreach ($invalidExtensions as $filename) {
             $this->assertEquals(
                 0,

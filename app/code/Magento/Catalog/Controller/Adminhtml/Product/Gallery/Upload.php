@@ -34,7 +34,9 @@ class Upload extends \Magento\Backend\App\Action implements HttpPostActionInterf
         'jpg' => 'image/jpg',
         'jpeg' => 'image/jpeg',
         'gif' => 'image/gif',
-        'png' => 'image/png'
+        'png' => 'image/png',
+        'webp' => 'image/webp',
+        'avif' => 'image/avif'
     ];
 
     /**
@@ -113,6 +115,8 @@ class Upload extends \Magento\Backend\App\Action implements HttpPostActionInterf
             }
         } catch (LocalizedException $e) {
             $result = ['error' => $e->getMessage(), 'errorcode' => $e->getCode()];
+        } catch (\InvalidArgumentException $e) {
+            $result = ['error' => __($e->getMessage())->render(), 'errorcode' => 0];
         } catch (\Throwable $e) {
             $result = ['error' => 'Something went wrong while saving the file(s).', 'errorcode' => 0];
         }

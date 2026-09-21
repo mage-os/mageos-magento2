@@ -24,7 +24,7 @@ use Psr\Log\LoggerInterface;
  */
 class GenerateRenditions implements GenerateRenditionsInterface
 {
-    private const IMAGE_FILE_NAME_PATTERN = '#\.(jpg|jpeg|gif|png)$# i';
+    private const IMAGE_FILE_NAME_PATTERN = '#\.(jpg|jpeg|gif|png|webp|avif)$# i';
 
     /**
      * @var AdapterFactory

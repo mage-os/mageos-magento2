@@ -150,7 +150,13 @@ class Image extends File
             return [__('"%1" is not a valid file.', $label)];
         }
 
-        $allowImageTypes = [1 => 'gif', 2 => 'jpg', 3 => 'png'];
+        $allowImageTypes = [
+            IMAGETYPE_GIF => 'gif',
+            IMAGETYPE_JPEG => 'jpg',
+            IMAGETYPE_PNG => 'png',
+            IMAGETYPE_WEBP => 'webp',
+            IMAGETYPE_AVIF => 'avif',
+        ];
 
         if (!isset($allowImageTypes[$imageProp[2]])) {
             return [__('"%1" is not a valid image format.', $label)];

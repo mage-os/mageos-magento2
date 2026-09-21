@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright 2026 Mage-OS
+ * All Rights Reserved.
+ */
+-->
+
+<entities xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:DataGenerator/etc/dataProfileSchema.xsd">
+    <!-- Advanced > Developer > Image Processing Settings > Image Adapter -->
+    <entity name="AdminImageAdapterDefault">
+        <!-- Default configuration -->
+        <data key="path">dev/image/default_adapter</data>
+        <data key="scope_id">0</data>
+        <data key="label">GD2</data>
+        <data key="value">GD2</data>
+    </entity>
+    <entity name="AdminImageAdapterImageMagick">
+        <data key="path">dev/image/default_adapter</data>
+        <data key="scope_id">0</data>
+        <data key="label">ImageMagick</data>
+        <data key="value">IMAGEMAGICK</data>
+    </entity>
+</entities>

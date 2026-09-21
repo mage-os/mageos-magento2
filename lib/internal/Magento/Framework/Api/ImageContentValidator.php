@@ -23,6 +23,8 @@ class ImageContentValidator implements ImageContentValidatorInterface
         'image/jpeg',
         'image/gif',
         'image/png',
+        'image/webp',
+        'image/avif',
     ];
 
     /**

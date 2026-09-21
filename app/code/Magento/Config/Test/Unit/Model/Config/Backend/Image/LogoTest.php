@@ -73,7 +73,7 @@ class LogoTest extends TestCase
             ->willReturn('/tmp/val');
         $this->uploaderMock->expects($this->once())
             ->method('setAllowedExtensions')
-            ->with(['jpg', 'jpeg', 'gif', 'png']);
+            ->with(['jpg', 'jpeg', 'gif', 'png', 'webp', 'avif']);
 
         $this->uploaderMock->method('save')
             ->willReturn(['file' => 'filename']);

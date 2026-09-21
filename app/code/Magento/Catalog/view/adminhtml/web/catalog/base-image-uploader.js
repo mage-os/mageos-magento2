@@ -161,7 +161,7 @@ define([
 
             const uppy = new Uppy.Uppy({
                 restrictions: {
-                    allowedFileTypes: ['.gif', '.jpeg', '.jpg', '.png'],
+                    allowedFileTypes: ['.gif', '.jpeg', '.jpg', '.png', '.webp', '.avif'],
                     maxFileSize: this.element.data('maxFileSize')
                 },
 

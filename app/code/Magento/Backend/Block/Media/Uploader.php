@@ -94,8 +94,8 @@ class Uploader extends \Magento\Backend\Block\Widget
         $this->getConfig()->setFilters(
             [
                 'images' => [
-                    'label' => __('Images (.gif, .jpg, .png)'),
-                    'files' => ['*.gif', '*.jpg', '*.png'],
+                    'label' => __('Images (.gif, .jpg, .png, .webp, .avif)'),
+                    'files' => ['*.gif', '*.jpg', '*.png', '*.webp', '*.avif'],
                 ],
                 'media' => [
                     'label' => __('Media (.avi, .flv, .swf)'),

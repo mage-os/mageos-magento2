@@ -15,6 +15,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHe
 use Magento\Framework\Validator\Locale;
 use Magento\Framework\Validator\Regex;
 use Magento\Framework\Validator\RegexFactory;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
@@ -74,6 +75,30 @@ class InputValidatorTest extends TestCase
                 'versionValidatorFactory' => $regexFactoryMock
             ]
         );
+    }
+
+    #[DataProvider('imageExtensionDataProvider')]
+    public function testImageExtensionIsMappedToNoImagesOption(string $extension)
+    {
+        $this->assertArrayHasKey($extension, InputValidator::$fileExtensionOptionMap);
+        $this->assertSame(Options::NO_IMAGES, InputValidator::$fileExtensionOptionMap[$extension]);
+    }
+
+    /**
+     * @return array
+     */
+    public static function imageExtensionDataProvider(): array
+    {
+        return [
+            'jpg' => ['jpg'],
+            'jpeg' => ['jpeg'],
+            'gif' => ['gif'],
+            'png' => ['png'],
+            'webp' => ['webp'],
+            'avif' => ['avif'],
+            'ico' => ['ico'],
+            'svg' => ['svg'],
+        ];
     }
 
     public function testValidate()

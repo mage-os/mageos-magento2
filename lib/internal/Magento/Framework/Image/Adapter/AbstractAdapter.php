@@ -667,7 +667,7 @@ abstract class AbstractAdapter implements AdapterInterface
      */
     public function getSupportedFormats()
     {
-        return ['gif', 'jpeg', 'jpg', 'png'];
+        return ['gif', 'jpeg', 'jpg', 'png', 'webp', 'avif'];
     }
 
     /**

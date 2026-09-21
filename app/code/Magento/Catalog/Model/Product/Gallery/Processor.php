@@ -159,7 +159,7 @@ class Processor
 
         // phpcs:ignore Magento2.Functions.DiscouragedFunction
         $pathinfo = pathinfo($file);
-        $imgExtensions = ['jpg', 'jpeg', 'gif', 'png'];
+        $imgExtensions = ['jpg', 'jpeg', 'gif', 'png', 'webp', 'avif'];
         if (!isset($pathinfo['extension']) || !in_array(strtolower($pathinfo['extension']), $imgExtensions)) {
             throw new LocalizedException(
                 __('The image type for the file is invalid. Enter the correct image type and try again.')

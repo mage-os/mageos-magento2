@@ -79,7 +79,7 @@ class Show extends \Magento\Backend\App\Action
     {
         try {
             $uploader = $this->uploaderFactory->create(['fileId' => 'datafile']);
-            $uploader->setAllowedExtensions(['jpg', 'jpeg', 'gif', 'png']);
+            $uploader->setAllowedExtensions(['jpg', 'jpeg', 'gif', 'png', 'webp', 'avif']);
             /** @var \Magento\Framework\Image\Adapter\AdapterInterface $imageAdapter */
             $imageAdapter = $this->adapterFactory->create();
             $uploader->addValidateCallback('catalog_product_image', $imageAdapter, 'validateUploadFile');

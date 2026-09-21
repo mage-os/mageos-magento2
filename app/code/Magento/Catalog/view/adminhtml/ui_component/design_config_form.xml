@@ -20,14 +20,14 @@
                 </settings>
                 <field name="watermark_image_image" formElement="imageUploader">
                     <settings>
-                        <notice translate="true">Allowed file types: jpeg, gif, png.</notice>
+                        <notice translate="true">Allowed file types: jpeg, gif, png, webp, avif.</notice>
                         <label translate="true">Image</label>
                         <componentType>imageUploader</componentType>
                     </settings>
                     <formElements>
                         <imageUploader>
                             <settings>
-                                <allowedExtensions>jpg jpeg gif png</allowedExtensions>
+                                <allowedExtensions>jpg jpeg gif png webp avif</allowedExtensions>
                                 <maxFileSize>2097152</maxFileSize>
                                 <uploaderConfig>
                                     <param xsi:type="string" name="url">theme/design_config_fileUploader/save</param>
@@ -86,7 +86,7 @@
                     <formElements>
                         <imageUploader>
                             <settings>
-                                <allowedExtensions>jpg jpeg gif png</allowedExtensions>
+                                <allowedExtensions>jpg jpeg gif png webp avif</allowedExtensions>
                                 <maxFileSize>2097152</maxFileSize>
                                 <uploaderConfig>
                                     <param xsi:type="string" name="url">theme/design_config_fileUploader/save</param>
@@ -145,7 +145,7 @@
                     <formElements>
                         <imageUploader>
                             <settings>
-                                <allowedExtensions>jpg jpeg gif png</allowedExtensions>
+                                <allowedExtensions>jpg jpeg gif png webp avif</allowedExtensions>
                                 <maxFileSize>2097152</maxFileSize>
                                 <uploaderConfig>
                                     <param xsi:type="string" name="url">theme/design_config_fileUploader/save</param>
