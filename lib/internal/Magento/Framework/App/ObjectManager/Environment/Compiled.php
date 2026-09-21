@@ -8,6 +8,7 @@ namespace Magento\Framework\App\ObjectManager\Environment;
 
 use Magento\Framework\App\EnvironmentInterface;
 use Magento\Framework\App\Interception\Cache\CompiledConfig;
+use Magento\Framework\ObjectManager\ConfigLoaderInterface;
 use Magento\Framework\ObjectManager\FactoryInterface;
 use Magento\Framework\App\Area;
 use Magento\Framework\Interception\ObjectManager\ConfigInterface;
@@ -64,7 +65,8 @@ class Compiled extends AbstractEnvironment implements EnvironmentInterface
     {
         if (!$this->config) {
             $this->config = new \Magento\Framework\Interception\ObjectManager\Config\Compiled(
-                $this->getConfigData()
+                $this->getConfigData(),
+                $this->getObjectManagerConfigLoader()
             );
         }
 
@@ -78,7 +80,8 @@ class Compiled extends AbstractEnvironment implements EnvironmentInterface
      */
     protected function getConfigData()
     {
-        return $this->getObjectManagerConfigLoader()->load(Area::AREA_GLOBAL);
+        return $this->getObjectManagerConfigLoader()->load(Area::AREA_GLOBAL)
+            + [ConfigLoaderInterface::AREA_KEY => Area::AREA_GLOBAL];
     }
 
     /**
@@ -103,11 +106,7 @@ class Compiled extends AbstractEnvironment implements EnvironmentInterface
     {
         $objectManager = ObjectManager::getInstance();
 
-        $objectManager->configure(
-            $objectManager
-                ->get(\Magento\Framework\ObjectManager\ConfigLoaderInterface::class)
-                ->load(Area::AREA_GLOBAL)
-        );
+        $objectManager->configure($this->getConfigData());
         $objectManager->get(\Magento\Framework\Config\ScopeInterface::class)
             ->setCurrentScope('global');
         $diConfig->setInterceptionConfig(
