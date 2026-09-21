@@ -116,7 +116,7 @@ class ImageMagick extends AbstractAdapter
         } catch (\ImagickException $e) {
             //phpcs:ignore Magento2.Exceptions.DirectThrow
             throw new LocalizedException(
-                __('Unsupported image format. File: %1', $this->_fileName),
+                __('Unsupported image format. File: %1', $this->_fileSrcName),
                 $e,
                 $e->getCode()
             );
