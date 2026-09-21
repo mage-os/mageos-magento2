@@ -80,7 +80,7 @@ class Gd2 extends AbstractAdapter
         }
         $this->imageDestroy();
         $this->_imageHandler = call_user_func(
-            $this->_getCallback('create', null, sprintf('Unsupported image format. File: %s', $this->_fileName)),
+            $this->_getCallback('create', null, sprintf('Unsupported image format. File: %s', $this->_fileSrcName)),
             $this->_fileName
         );
     }
