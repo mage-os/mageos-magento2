@@ -37,11 +37,7 @@ $viewModel = $block->getViewModel();
                     '_current' => true
                 ])) ?>",
                 "periodSelect": "#dashboard_chart_period",
-                "periodUnits": <?= /** @noEscape */ $viewModel->getPeriodUnits() ?>,
-                <?php if ($precision = $block->getData('chart_precision')): ?>
-                "precision": <?= (int)$precision ?>,
-                <?php endif; ?>
-                "type": "<?= $escaper->escapeJs($block->getData('html_id')) ?>"
+                "periodUnits": <?= /** @noEscape */ $viewModel->getPeriodUnits() ?>
             }
         }
     }

@@ -9,15 +9,8 @@
     <div class="dashboard-main col-m-8 col-m-push-4">
         <div class="dashboard-diagram-container">
             <?= $block->getChildHtml('chartDisabled') ?>
-            <?= $block->getChildHtml('diagrams') ?>
-            <?php
-                $diagramsBlock = $block->getChildBlock('diagrams');
-                $tabsIds = $diagramsBlock ? $diagramsBlock->getTabsIds() : [];
-            ?>
-            <?php if (is_array($tabsIds)): ?>
-                <?= $block->getChildHtml('diagramsPeriod') ?>
-                <div id="diagram_tab_content" class="dashboard-diagram-tab-content"></div>
-            <?php endif; ?>
+            <?= $block->getChildHtml('diagramsPeriod') ?>
+            <?= $block->getChildHtml('chart') ?>
         </div>
         <?= $block->getChildHtml('attention') ?>
         <?= $block->getChildHtml('totals') ?>
