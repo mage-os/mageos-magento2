@@ -10,21 +10,32 @@ namespace Magento\Sales\Model\Dashboard\Attention;
 use Magento\Backend\Model\Dashboard\Attention\CappedCounter;
 use Magento\Backend\Model\Dashboard\Attention\ItemInterface;
 use Magento\Framework\Phrase;
-use Magento\Sales\Model\Order;
 use Magento\Sales\Model\ResourceModel\Order\CollectionFactory;
 
 /**
- * Orders in the "pending" state, i.e. placed but not yet processed
+ * Dashboard attention tile counting orders in one state, scoped to the selected store views
+ *
+ * The state column is indexed, so the capped count stays cheap regardless of order volume.
  */
-class PendingOrders implements ItemInterface
+class OrdersByState implements ItemInterface
 {
     /**
      * @param CollectionFactory $collectionFactory
      * @param CappedCounter $cappedCounter
+     * @param string $state Order state to count
+     * @param string $code Tile code
+     * @param string $label Tile label (translated when rendered)
+     * @param int $sortOrder Position among tiles
+     * @param bool $hideWhenEmpty Hide the tile instead of showing 0
      */
     public function __construct(
         private readonly CollectionFactory $collectionFactory,
-        private readonly CappedCounter $cappedCounter
+        private readonly CappedCounter $cappedCounter,
+        private readonly string $state,
+        private readonly string $code,
+        private readonly string $label,
+        private readonly int $sortOrder = 10,
+        private readonly bool $hideWhenEmpty = false
     ) {
     }
 
@@ -33,7 +44,7 @@ class PendingOrders implements ItemInterface
      */
     public function getCode(): string
     {
-        return 'pending_orders';
+        return $this->code;
     }
 
     /**
@@ -41,7 +52,7 @@ class PendingOrders implements ItemInterface
      */
     public function getLabel(): Phrase
     {
-        return __('Pending Orders');
+        return __($this->label);
     }
 
     /**
@@ -65,7 +76,7 @@ class PendingOrders implements ItemInterface
      */
     public function getSortOrder(): int
     {
-        return 10;
+        return $this->sortOrder;
     }
 
     /**
@@ -74,10 +85,12 @@ class PendingOrders implements ItemInterface
     public function getCount(array $storeIds): ?int
     {
         $collection = $this->collectionFactory->create();
-        $collection->addFieldToFilter('state', Order::STATE_NEW);
+        $collection->addFieldToFilter('state', $this->state);
         if ($storeIds) {
             $collection->addFieldToFilter('store_id', ['in' => $storeIds]);
         }
-        return $this->cappedCounter->count($collection->getSelect());
+        $count = $this->cappedCounter->count($collection->getSelect());
+
+        return $count === 0 && $this->hideWhenEmpty ? null : $count;
     }
 }
