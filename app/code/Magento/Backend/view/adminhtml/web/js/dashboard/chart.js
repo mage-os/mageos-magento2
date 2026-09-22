@@ -73,7 +73,7 @@ define([
             colors: {
                 amounts: '#f1d4b3',
                 amountsBorder: '#eb5202',
-                orders: '#303030',
+                orders: '#3b82f6',
                 average: '#8c8c8c',
                 text: '#666666',
                 grid: '#e3e3e3'
@@ -297,10 +297,12 @@ define([
                         data: [],
                         borderColor: this.options.colors.orders,
                         backgroundColor: this.options.colors.orders,
-                        showLine: false,
+                        showLine: true,
+                        borderWidth: 2,
+                        tension: 0.3,
 
                         /**
-                         * Counts are discrete, so they are drawn as markers only; buckets without orders get none.
+                         * Buckets without orders get no marker.
                          *
                          * @param {Object} context
                          * @returns {Number}
