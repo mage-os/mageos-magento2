@@ -110,4 +110,29 @@ class SearchEngineValidatorTest extends TestCase
         $this->assertLessThan(10, $duration, 'Connection test should timeout within 10 seconds');
         $this->assertFalse($result['success']);
     }
+
+    public function testAuthenticationCredentialsAreAddedAsBasicAuthorizationHeader(): void
+    {
+        $method = new \ReflectionMethod($this->validator, 'createStreamContext');
+        $method->setAccessible(true);
+
+        $context = $method->invoke($this->validator, 'admin', 'secret');
+        $options = stream_context_get_options($context);
+
+        $this->assertSame(
+            'Authorization: Basic ' . base64_encode('admin:secret'),
+            $options['http']['header']
+        );
+    }
+
+    public function testAuthorizationHeaderIsEmptyWithoutCredentials(): void
+    {
+        $method = new \ReflectionMethod($this->validator, 'createStreamContext');
+        $method->setAccessible(true);
+
+        $context = $method->invoke($this->validator, '', '');
+        $options = stream_context_get_options($context);
+
+        $this->assertSame('', $options['http']['header']);
+    }
 }
