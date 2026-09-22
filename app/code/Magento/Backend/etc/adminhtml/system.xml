@@ -494,6 +494,16 @@
                     <label>Enable Charts</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
+                <field id="lifetime_cache_lifetime" translate="label comment" type="text" sortOrder="10" showInDefault="1" canRestore="1">
+                    <label>Lifetime Sales Cache Lifetime (seconds)</label>
+                    <comment>Caches the Lifetime Sales and Average Order figures. Enter 0 to always query live; on stores with a large order volume that query scans every order on each dashboard load.</comment>
+                    <validate>validate-digits validate-zero-or-greater</validate>
+                </field>
+                <field id="totals_cache_lifetime" translate="label comment" type="text" sortOrder="20" showInDefault="1" canRestore="1">
+                    <label>Period Totals Cache Lifetime (seconds)</label>
+                    <comment>Caches the Revenue, Tax, Shipping and Quantity figures per selected period. Enter 0 to always query live.</comment>
+                    <validate>validate-digits validate-zero-or-greater</validate>
+                </field>
             </group>
             <group id="grid" translate="label" type="text" sortOrder="45" showInDefault="1">
                 <label>Admin Grids</label>
