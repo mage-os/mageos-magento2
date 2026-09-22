@@ -96,4 +96,38 @@
                 type="Magento\Sales\Plugin\OrderGrid\CountryNameToCodeFilter"
                 sortOrder="10"/>
     </type>
+    <virtualType name="Magento\Sales\Model\Dashboard\Attention\PendingOrders" type="Magento\Sales\Model\Dashboard\Attention\OrdersByState">
+        <arguments>
+            <argument name="state" xsi:type="const">Magento\Sales\Model\Order::STATE_NEW</argument>
+            <argument name="code" xsi:type="string">pending_orders</argument>
+            <argument name="label" xsi:type="string" translatable="true">Pending Orders</argument>
+            <argument name="sortOrder" xsi:type="number">10</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Magento\Sales\Model\Dashboard\Attention\PaymentReviewOrders" type="Magento\Sales\Model\Dashboard\Attention\OrdersByState">
+        <arguments>
+            <argument name="state" xsi:type="const">Magento\Sales\Model\Order::STATE_PAYMENT_REVIEW</argument>
+            <argument name="code" xsi:type="string">payment_review_orders</argument>
+            <argument name="label" xsi:type="string" translatable="true">Orders in Payment Review</argument>
+            <argument name="sortOrder" xsi:type="number">5</argument>
+            <argument name="hideWhenEmpty" xsi:type="boolean">true</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Magento\Sales\Model\Dashboard\Attention\OnHoldOrders" type="Magento\Sales\Model\Dashboard\Attention\OrdersByState">
+        <arguments>
+            <argument name="state" xsi:type="const">Magento\Sales\Model\Order::STATE_HOLDED</argument>
+            <argument name="code" xsi:type="string">on_hold_orders</argument>
+            <argument name="label" xsi:type="string" translatable="true">Orders on Hold</argument>
+            <argument name="sortOrder" xsi:type="number">15</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\Backend\Model\Dashboard\Attention\Pool">
+        <arguments>
+            <argument name="items" xsi:type="array">
+                <item name="payment_review_orders" xsi:type="object">Magento\Sales\Model\Dashboard\Attention\PaymentReviewOrders</item>
+                <item name="pending_orders" xsi:type="object">Magento\Sales\Model\Dashboard\Attention\PendingOrders</item>
+                <item name="on_hold_orders" xsi:type="object">Magento\Sales\Model\Dashboard\Attention\OnHoldOrders</item>
+            </argument>
+        </arguments>
+    </type>
 </config>

@@ -5,6 +5,9 @@
  */
 namespace Magento\Backend\Block\Dashboard\Tab\Products;
 
+use Magento\Backend\ViewModel\StatisticsFreshness;
+use Magento\Framework\App\ObjectManager;
+
 /**
  * Adminhtml dashboard most ordered products grid
  *
@@ -23,21 +26,30 @@ class Ordered extends \Magento\Backend\Block\Dashboard\Grid
     protected $_moduleManager;
 
     /**
+     * @var \Magento\Backend\ViewModel\StatisticsFreshness
+     */
+    private $statisticsFreshness;
+
+    /**
      * @param \Magento\Backend\Block\Template\Context $context
      * @param \Magento\Backend\Helper\Data $backendHelper
      * @param \Magento\Framework\Module\Manager $moduleManager
      * @param \Magento\Sales\Model\ResourceModel\Report\Bestsellers\CollectionFactory $collectionFactory
      * @param array $data
+     * @param \Magento\Backend\ViewModel\StatisticsFreshness|null $statisticsFreshness
      */
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,
         \Magento\Backend\Helper\Data $backendHelper,
         \Magento\Framework\Module\Manager $moduleManager,
         \Magento\Sales\Model\ResourceModel\Report\Bestsellers\CollectionFactory $collectionFactory,
-        array $data = []
+        array $data = [],
+        ?\Magento\Backend\ViewModel\StatisticsFreshness $statisticsFreshness = null
     ) {
         $this->_collectionFactory = $collectionFactory;
         $this->_moduleManager = $moduleManager;
+        $this->statisticsFreshness = $statisticsFreshness
+            ?? ObjectManager::getInstance()->get(StatisticsFreshness::class);
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -77,6 +89,12 @@ class Ordered extends \Magento\Backend\Block\Dashboard\Grid
         );
 
         $this->setCollection($collection);
+
+        if (!$this->statisticsFreshness->isRefreshed()) {
+            $this->setEmptyText(
+                __('No bestseller statistics yet. Use Reload Data or wait for the report aggregation cron to run.')
+            );
+        }
 
         return parent::_prepareCollection();
     }

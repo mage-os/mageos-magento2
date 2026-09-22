@@ -1,0 +1,28 @@
+<?php
+/**
+ * Copyright © Mage-OS. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+use Magento\Backend\Block\Dashboard\Attention;
+use Magento\Framework\Escaper;
+
+/** @var Attention $block */
+/** @var Escaper $escaper */
+$items = $block->getItems();
+?>
+<?php if ($items): ?>
+<div class="dashboard-attention">
+    <ul class="dashboard-attention-list">
+        <?php foreach ($items as $item): ?>
+            <li class="dashboard-attention-item<?= $item['active'] ? ' _active' : '' ?>"
+                data-code="<?= $escaper->escapeHtmlAttr($item['code']) ?>">
+                <a class="dashboard-attention-link" href="<?= $escaper->escapeUrl($item['url']) ?>">
+                    <strong class="dashboard-attention-count"><?= $escaper->escapeHtml($item['display']) ?></strong>
+                    <span class="dashboard-attention-label"><?= $escaper->escapeHtml($item['label']) ?></span>
+                </a>
+            </li>
+        <?php endforeach; ?>
+    </ul>
+</div>
+<?php endif; ?>
