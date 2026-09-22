@@ -95,7 +95,7 @@ define([
 
             expect(chartWidget.period).toBe(period);
             expect(chartWidget.chart).toBeDefined();
-            expect(chartWidget.chart.data.datasets[0].label).toBe('Orders');
+            expect(chartWidget.chart.data.datasets[0].label).toBe('Revenue');
             expect(chartWidget.chart.data.datasets[0].data).toEqual([]);
             expect(chartWidget.chart.data.datasets[1].data).toEqual([]);
             expect(canvas.parent().is(':visible')).toBeFalse();
@@ -107,10 +107,10 @@ define([
 
             expect(chartWidget.period).toBe(period);
             expect(chartWidget.chart).toBeDefined();
-            expect(chartWidget.chart.data.datasets[0].label).toBe('Orders');
-            expect(chartWidget.chart.data.datasets[0].data).toEqual(series[period].orders.data);
-            expect(chartWidget.chart.data.datasets[1].label).toBe('Revenue');
-            expect(chartWidget.chart.data.datasets[1].data).toEqual(series[period].amounts.data);
+            expect(chartWidget.chart.data.datasets[0].label).toBe('Revenue');
+            expect(chartWidget.chart.data.datasets[0].data).toEqual(series[period].amounts.data);
+            expect(chartWidget.chart.data.datasets[1].label).toBe('Orders');
+            expect(chartWidget.chart.data.datasets[1].data).toEqual(series[period].orders.data);
             expect(chartWidget.chart.options.plugins.averageLine.value).toBe(80);
             expect(canvas.parent().is(':visible')).toBeTrue();
             expect(canvas.parent().next('.dashboard-diagram-nodata').is(':visible')).toBeFalse();
@@ -133,8 +133,8 @@ define([
 
             expect(chartWidget.period).toBe(period);
             expect(chartWidget.unit).toBe('day');
-            expect(chartWidget.chart.data.datasets[0].data).toEqual(series[period].orders.data);
-            expect(chartWidget.chart.data.datasets[1].data).toEqual(series[period].amounts.data);
+            expect(chartWidget.chart.data.datasets[0].data).toEqual(series[period].amounts.data);
+            expect(chartWidget.chart.data.datasets[1].data).toEqual(series[period].orders.data);
             expect(chartWidget.chart.options.plugins.averageLine.value).toBe(100);
             expect(canvas.parent().is(':visible')).toBeTrue();
             expect(canvas.parent().next('.dashboard-diagram-nodata').is(':visible')).toBeFalse();

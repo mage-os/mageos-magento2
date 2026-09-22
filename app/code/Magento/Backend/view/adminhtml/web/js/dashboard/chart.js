@@ -23,7 +23,7 @@ define([
     };
 
     /**
-     * Draws a dashed horizontal line at the average of the revenue series.
+     * Draws a dashed horizontal line at the average of the revenue series (dataset 0).
      */
     var averageLinePlugin = {
         id: 'averageLine',
@@ -34,12 +34,12 @@ define([
          * @param {Object} options
          */
         afterDatasetsDraw: function (chart, args, options) {
-            var meta = chart.getDatasetMeta(1),
+            var meta = chart.getDatasetMeta(0),
                 scale = chart.scales.yAmounts,
                 ctx = chart.ctx,
                 y;
 
-            if (!options.value || !scale || meta.hidden || !chart.isDatasetVisible(1)) {
+            if (!options.value || !scale || meta.hidden || !chart.isDatasetVisible(0)) {
                 return;
             }
             y = scale.getPixelForValue(options.value);
@@ -71,9 +71,9 @@ define([
             currency: 'USD',
             locale: 'en-US',
             colors: {
-                orders: '#f1d4b3',
-                ordersBorder: '#eb5202',
-                amounts: '#303030',
+                amounts: '#f1d4b3',
+                amountsBorder: '#eb5202',
+                orders: '#303030',
                 average: '#8c8c8c',
                 text: '#666666',
                 grid: '#e3e3e3'
@@ -129,9 +129,9 @@ define([
             if (!palette.length) {
                 return;
             }
-            colors.ordersBorder = read('._orders', 'color') || colors.ordersBorder;
-            colors.orders = read('._orders', 'backgroundColor') || colors.orders;
-            colors.amounts = read('._amounts', 'color') || colors.amounts;
+            colors.amountsBorder = read('._amounts', 'color') || colors.amountsBorder;
+            colors.amounts = read('._amounts', 'backgroundColor') || colors.amounts;
+            colors.orders = read('._orders', 'color') || colors.orders;
             colors.average = read('._average', 'color') || colors.average;
             colors.text = read('._text', 'color') || colors.text;
             colors.grid = read('._grid', 'color') || colors.grid;
@@ -211,10 +211,10 @@ define([
 
             this.chart.options.scales.xAxis.time.unit = this.unit;
             this.chart.options.scales.xAxis.time.tooltipFormat = TOOLTIP_FORMATS[this.unit] || TOOLTIP_FORMATS.day;
-            this.chart.data.datasets[0].data = orders.data;
-            this.chart.data.datasets[0].label = orders.label;
-            this.chart.data.datasets[1].data = amounts.data;
-            this.chart.data.datasets[1].label = amounts.label;
+            this.chart.data.datasets[0].data = amounts.data;
+            this.chart.data.datasets[0].label = amounts.label;
+            this.chart.data.datasets[1].data = orders.data;
+            this.chart.data.datasets[1].label = orders.label;
             this.chart.options.plugins.averageLine.value = this.getAverage(amounts.data);
             this.chart.options.plugins.averageLine.label = $t('Avg %1').replace(
                 '%1',
@@ -281,27 +281,37 @@ define([
                 data: {
                     datasets: [{
                         type: 'bar',
-                        yAxisID: 'yOrders',
+                        yAxisID: 'yAmounts',
                         xAxisID: 'xAxis',
                         order: 2,
                         data: [],
-                        backgroundColor: this.options.colors.orders,
-                        borderColor: this.options.colors.ordersBorder,
-                        borderWidth: 1
+                        backgroundColor: this.options.colors.amounts,
+                        borderColor: this.options.colors.amountsBorder,
+                        borderWidth: 1,
+                        borderRadius: 2
                     }, {
                         type: 'line',
-                        yAxisID: 'yAmounts',
+                        yAxisID: 'yOrders',
                         xAxisID: 'xAxis',
                         order: 1,
                         data: [],
-                        borderColor: this.options.colors.amounts,
-                        backgroundColor: this.options.colors.amounts,
-                        borderWidth: 2,
-                        pointRadius: 2.5,
-                        pointHoverRadius: 5,
-                        pointBackgroundColor: this.options.colors.amounts,
-                        cubicInterpolationMode: 'monotone',
-                        spanGaps: true
+                        borderColor: this.options.colors.orders,
+                        backgroundColor: this.options.colors.orders,
+                        showLine: false,
+
+                        /**
+                         * Counts are discrete, so they are drawn as markers only; buckets without orders get none.
+                         *
+                         * @param {Object} context
+                         * @returns {Number}
+                         */
+                        pointRadius: function (context) {
+                            return context.parsed && context.parsed.y > 0 ? 5 : 0;
+                        },
+                        pointHoverRadius: 7,
+                        pointBackgroundColor: this.options.colors.orders,
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 1.5
                     }]
                 },
                 plugins: [averageLinePlugin],
@@ -322,7 +332,7 @@ define([
                                 usePointStyle: false,
 
                                 /**
-                                 * Keep legend entries in dataset order (Orders, then Revenue).
+                                 * Keep legend entries in dataset order (Revenue, then Orders).
                                  *
                                  * @param {Object} a
                                  * @param {Object} b
@@ -355,7 +365,7 @@ define([
                                 label: function (item) {
                                     var value = item.parsed.y;
 
-                                    return item.dataset.label + ': ' + (item.datasetIndex === 1 ?
+                                    return item.dataset.label + ': ' + (item.datasetIndex === 0 ?
                                         self.formatCurrency(value) : self.formatCount(value));
                                 }
                             }
@@ -378,14 +388,16 @@ define([
                             }
                         },
                         yOrders: {
-                            position: 'left',
+                            position: 'right',
                             beginAtZero: true,
+                            grace: '10%',
                             title: {
                                 display: true,
                                 text: $t('Orders'),
                                 color: this.options.colors.text
                             },
                             grid: {
+                                drawOnChartArea: false,
                                 color: this.options.colors.grid
                             },
                             ticks: {
@@ -402,15 +414,15 @@ define([
                             }
                         },
                         yAmounts: {
-                            position: 'right',
+                            position: 'left',
                             beginAtZero: true,
+                            grace: '5%',
                             title: {
                                 display: true,
                                 text: $t('Revenue'),
                                 color: this.options.colors.text
                             },
                             grid: {
-                                drawOnChartArea: false,
                                 color: this.options.colors.grid
                             },
                             ticks: {
