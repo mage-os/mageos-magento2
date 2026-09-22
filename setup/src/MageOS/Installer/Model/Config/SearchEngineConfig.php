@@ -13,6 +13,7 @@ use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\error;
 use function Laravel\Prompts\info;
 use function Laravel\Prompts\note;
+use function Laravel\Prompts\password;
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\spin;
 use function Laravel\Prompts\text;
@@ -38,7 +39,15 @@ class SearchEngineConfig
     /**
      * Collect search engine configuration
      *
-     * @return array{engine: string, host: string, port: int, prefix: string}
+     * @return array{
+     *     engine: string,
+     *     host: string,
+     *     port: int,
+     *     prefix: string,
+     *     enableAuth: bool,
+     *     username: string,
+     *     password: string
+     * }
      */
     public function collect(): array
     {
@@ -81,6 +90,7 @@ class SearchEngineConfig
                         'port' => $detected['port'],
                         'prefix' => $prefix
                     ];
+                    $config = array_merge($config, $this->collectAuthenticationConfig());
 
                     // Test connection
                     if ($this->testConnection($config)) {
@@ -151,7 +161,44 @@ class SearchEngineConfig
             'engine' => $engine,
             'host' => $host,
             'port' => $port,
-            'prefix' => $prefix
+            'prefix' => $prefix,
+            ...$this->collectAuthenticationConfig()
+        ];
+    }
+
+    /**
+     * Collect optional HTTP authentication configuration
+     *
+     * @return array{enableAuth: bool, username: string, password: string}
+     */
+    private function collectAuthenticationConfig(): array
+    {
+        $enableAuth = confirm(
+            label: 'Enable HTTP authentication?',
+            default: false,
+            hint: 'Required when the search engine is protected with a username and password'
+        );
+
+        if (!$enableAuth) {
+            return [
+                'enableAuth' => false,
+                'username' => '',
+                'password' => ''
+            ];
+        }
+
+        return [
+            'enableAuth' => true,
+            'username' => text(
+                label: 'Search engine username',
+                placeholder: 'admin',
+                required: true
+            ),
+            'password' => password(
+                label: 'Search engine password',
+                hint: 'Password for the search engine user',
+                required: true
+            )
         ];
     }
 
@@ -168,7 +215,9 @@ class SearchEngineConfig
             callback: fn () => $this->searchEngineValidator->testConnection(
                 $config['engine'],
                 $config['host'],
-                $config['port']
+                $config['port'],
+                $config['enableAuth'] ? $config['username'] : '',
+                $config['enableAuth'] ? $config['password'] : ''
             )
         );
 

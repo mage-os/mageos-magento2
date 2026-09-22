@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MageOS\Installer\Test\Unit\MageOS\Installer\Model\Stage;
 
 use MageOS\Installer\Model\InstallationContext;
+use MageOS\Installer\Model\VO\SearchEngineConfiguration;
 use MageOS\Installer\Test\Util\TestDataBuilder;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Application;
@@ -49,6 +50,50 @@ class MagentoInstallationStageTest extends TestCase
         $context = TestDataBuilder::validInstallationContext();
 
         $this->assertFalse($stage->shouldSkip($context), 'Installation should never be skipped');
+    }
+
+    public function testBuildSetupInstallArgumentsIncludesOpenSearchAuthentication(): void
+    {
+        $app = $this->createMock(Application::class);
+        $stage = new \MageOS\Installer\Model\Stage\MagentoInstallationStage($app);
+        $context = TestDataBuilder::validInstallationContext();
+        $context->setSearchEngine(new SearchEngineConfiguration(
+            engine: 'opensearch',
+            host: 'search.example.com',
+            port: 9210,
+            prefix: 'store',
+            enableAuth: true,
+            username: 'admin',
+            password: 'secret'
+        ));
+
+        $method = new \ReflectionMethod($stage, 'buildSetupInstallArguments');
+        $method->setAccessible(true);
+        $arguments = $method->invoke($stage, $context);
+
+        $this->assertSame('search.example.com', $arguments['--opensearch-host']);
+        $this->assertSame('9210', $arguments['--opensearch-port']);
+        $this->assertSame('store', $arguments['--opensearch-index-prefix']);
+        $this->assertSame('1', $arguments['--opensearch-enable-auth']);
+        $this->assertSame('admin', $arguments['--opensearch-username']);
+        $this->assertSame('secret', $arguments['--opensearch-password']);
+    }
+
+    public function testBuildSetupInstallArgumentsOmitsAuthenticationWhenDisabled(): void
+    {
+        $app = $this->createMock(Application::class);
+        $stage = new \MageOS\Installer\Model\Stage\MagentoInstallationStage($app);
+        $context = TestDataBuilder::validInstallationContext();
+
+        $method = new \ReflectionMethod($stage, 'buildSetupInstallArguments');
+        $method->setAccessible(true);
+        $arguments = $method->invoke($stage, $context);
+
+        $this->assertSame('localhost', $arguments['--opensearch-host']);
+        $this->assertSame('9200', $arguments['--opensearch-port']);
+        $this->assertArrayNotHasKey('--opensearch-enable-auth', $arguments);
+        $this->assertArrayNotHasKey('--opensearch-username', $arguments);
+        $this->assertArrayNotHasKey('--opensearch-password', $arguments);
     }
 
     public function testWriteSecureBackupPreservesOwnerOnlyPermissions(): void
