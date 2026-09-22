@@ -53,7 +53,7 @@ define([
             ctx.stroke();
             ctx.setLineDash([]);
             ctx.fillStyle = options.color;
-            ctx.font = '11px sans-serif';
+            ctx.font = '11px ' + (Chart.defaults.font.family || 'sans-serif');
             ctx.textAlign = 'right';
             ctx.textBaseline = 'bottom';
             ctx.fillText(options.label, chart.chartArea.right - 4, y - 3);
@@ -74,8 +74,12 @@ define([
                 orders: '#f1d4b3',
                 ordersBorder: '#eb5202',
                 amounts: '#303030',
-                average: '#8c8c8c'
-            }
+                average: '#8c8c8c',
+                text: '#666666',
+                grid: '#e3e3e3'
+            },
+            fontFamily: null,
+            fontSize: 12
         },
         chart: null,
         period: null,
@@ -89,6 +93,7 @@ define([
                 periodStorage.apply(this.options.periodSelect);
             }
 
+            this.applyThemePalette();
             this.createChart();
 
             if (this.options.periodSelect) {
@@ -96,6 +101,49 @@ define([
 
                 this.period = $(this.options.periodSelect).val();
             }
+        },
+
+        /**
+         * Read colours from the theme's .dashboard-diagram-palette swatches (text colour = stroke,
+         * background colour = fill) and the page font, so the chart follows the admin theme.
+         *
+         * @public
+         */
+        applyThemePalette: function () {
+            var palette = $(this.element).closest('.dashboard-diagram').find('.dashboard-diagram-palette'),
+                colors = this.options.colors,
+                self = this;
+
+            /**
+             * @param {String} swatch
+             * @param {String} property
+             * @returns {String|null}
+             */
+            function read(swatch, property) {
+                var el = palette.find(swatch)[0],
+                    value = el ? window.getComputedStyle(el)[property] : '';
+
+                return value && value !== 'rgba(0, 0, 0, 0)' && value !== 'transparent' ? value : null;
+            }
+
+            if (!palette.length) {
+                return;
+            }
+            colors.ordersBorder = read('._orders', 'color') || colors.ordersBorder;
+            colors.orders = read('._orders', 'backgroundColor') || colors.orders;
+            colors.amounts = read('._amounts', 'color') || colors.amounts;
+            colors.average = read('._average', 'color') || colors.average;
+            colors.text = read('._text', 'color') || colors.text;
+            colors.grid = read('._grid', 'color') || colors.grid;
+
+            if (!self.options.fontFamily) {
+                self.options.fontFamily = window.getComputedStyle(document.body).fontFamily || null;
+            }
+            if (self.options.fontFamily) {
+                Chart.defaults.font.family = self.options.fontFamily;
+            }
+            Chart.defaults.font.size = self.options.fontSize;
+            Chart.defaults.color = colors.text;
         },
 
         /**
@@ -249,8 +297,9 @@ define([
                         borderColor: this.options.colors.amounts,
                         backgroundColor: this.options.colors.amounts,
                         borderWidth: 2,
-                        pointRadius: 3,
+                        pointRadius: 2.5,
                         pointHoverRadius: 5,
+                        pointBackgroundColor: this.options.colors.amounts,
                         cubicInterpolationMode: 'monotone',
                         spanGaps: true
                     }]
@@ -267,6 +316,11 @@ define([
                         legend: {
                             position: 'bottom',
                             labels: {
+                                color: this.options.colors.text,
+                                boxWidth: 12,
+                                boxHeight: 12,
+                                usePointStyle: false,
+
                                 /**
                                  * Keep legend entries in dataset order (Orders, then Revenue).
                                  *
@@ -285,6 +339,14 @@ define([
                             color: this.options.colors.average
                         },
                         tooltip: {
+                            /**
+                             * @param {Object} a
+                             * @param {Object} b
+                             * @returns {Number}
+                             */
+                            itemSort: function (a, b) {
+                                return a.datasetIndex - b.datasetIndex;
+                            },
                             callbacks: {
                                 /**
                                  * @param {Object} item
@@ -307,8 +369,12 @@ define([
                                 unit: 'hour',
                                 tooltipFormat: TOOLTIP_FORMATS.hour
                             },
+                            grid: {
+                                color: this.options.colors.grid
+                            },
                             ticks: {
-                                source: 'data'
+                                source: 'data',
+                                color: this.options.colors.text
                             }
                         },
                         yOrders: {
@@ -316,10 +382,15 @@ define([
                             beginAtZero: true,
                             title: {
                                 display: true,
-                                text: $t('Orders')
+                                text: $t('Orders'),
+                                color: this.options.colors.text
+                            },
+                            grid: {
+                                color: this.options.colors.grid
                             },
                             ticks: {
                                 precision: 0,
+                                color: this.options.colors.text,
 
                                 /**
                                  * @param {Number} value
@@ -335,12 +406,15 @@ define([
                             beginAtZero: true,
                             title: {
                                 display: true,
-                                text: $t('Revenue')
+                                text: $t('Revenue'),
+                                color: this.options.colors.text
                             },
                             grid: {
-                                drawOnChartArea: false
+                                drawOnChartArea: false,
+                                color: this.options.colors.grid
                             },
                             ticks: {
+                                color: this.options.colors.text,
                                 /**
                                  * @param {Number} value
                                  * @returns {String}

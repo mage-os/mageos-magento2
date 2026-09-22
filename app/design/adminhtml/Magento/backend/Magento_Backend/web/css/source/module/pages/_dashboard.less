@@ -124,6 +124,30 @@
     padding: .5rem 2rem 2rem;
 }
 
+//  Chart palette: the JS chart reads these swatches (color = stroke, background-color = fill)
+.dashboard-diagram-palette {
+    ._orders {
+        background-color: fade(@color-phoenix, 25%);
+        color: @color-phoenix;
+    }
+
+    ._amounts {
+        color: @color-very-dark-gray-black;
+    }
+
+    ._average {
+        color: @color-gray65;
+    }
+
+    ._text {
+        color: @color-gray65;
+    }
+
+    ._grid {
+        color: @color-gray89;
+    }
+}
+
 //  Range switcher
 .dashboard-diagram-switcher {
     padding: 2rem 2rem 0;
