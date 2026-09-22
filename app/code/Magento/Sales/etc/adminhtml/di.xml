@@ -96,4 +96,11 @@
                 type="Magento\Sales\Plugin\OrderGrid\CountryNameToCodeFilter"
                 sortOrder="10"/>
     </type>
+    <type name="Magento\Backend\Model\Dashboard\Attention\Pool">
+        <arguments>
+            <argument name="items" xsi:type="array">
+                <item name="pending_orders" xsi:type="object">Magento\Sales\Model\Dashboard\Attention\PendingOrders</item>
+            </argument>
+        </arguments>
+    </type>
 </config>

@@ -50,6 +50,11 @@ class Totals extends Bar
     private $dashboardConfig;
 
     /**
+     * @var string
+     */
+    private $currentPeriod = '';
+
+    /**
      * @param Context $context
      * @param CollectionFactory $collectionFactory
      * @param Manager $moduleManager
@@ -85,6 +90,7 @@ class Totals extends Bar
         }
         $firstPeriod = array_key_first($this->period->getDatePeriods());
         $period = (string)$this->getRequest()->getParam('period', $firstPeriod);
+        $this->currentPeriod = $period;
 
         $totals = $this->statisticsCache->get(
             'totals',
@@ -104,6 +110,16 @@ class Totals extends Bar
         $this->addTotal(__('Quantity'), $totals['quantity'], true);
 
         return $this;
+    }
+
+    /**
+     * Period the figures were computed for
+     *
+     * @return string
+     */
+    public function getPeriod(): string
+    {
+        return $this->currentPeriod;
     }
 
     /**

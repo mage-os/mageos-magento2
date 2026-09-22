@@ -9,9 +9,10 @@
     <default>
         <admin>
             <dashboard>
-                <enable_charts>0</enable_charts>
+                <enable_charts>1</enable_charts>
                 <lifetime_cache_lifetime>3600</lifetime_cache_lifetime>
                 <totals_cache_lifetime>300</totals_cache_lifetime>
+                <last_orders_count>5</last_orders_count>
             </dashboard>
             <security>
                 <minimum_password_length>7</minimum_password_length>

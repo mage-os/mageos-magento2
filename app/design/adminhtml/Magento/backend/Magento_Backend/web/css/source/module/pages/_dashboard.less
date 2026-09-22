@@ -149,6 +149,74 @@
     margin: 1rem 2rem 6rem;
 }
 
+//
+//  Needs attention tiles
+//  ---------------------------------------------
+
+.dashboard-attention {
+    margin: 0 2rem 2rem;
+}
+
+.dashboard-attention-list {
+    &:extend(.abs-list-reset-styles all);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.dashboard-attention-item {
+    background-color: @color-white;
+    border: 1px solid @color-gray85;
+    border-radius: 1px;
+    flex: 1 1 14rem;
+    min-width: 14rem;
+
+    &._active {
+        border-color: @color-phoenix;
+
+        .dashboard-attention-count {
+            color: @color-phoenix;
+        }
+    }
+}
+
+.dashboard-attention-link {
+    color: @color-very-dark-gray-black;
+    display: block;
+    padding: 1.5rem 2rem;
+    text-decoration: none;
+
+    &:hover {
+        background-color: @color-gray98;
+        text-decoration: none;
+    }
+}
+
+.dashboard-attention-count {
+    display: block;
+    font-size: @dashboard__font-size-l;
+    font-weight: @font-weight__semibold;
+    line-height: 1.2;
+}
+
+.dashboard-attention-label {
+    display: block;
+    font-size: @dashboard__font-size__base;
+    font-weight: @font-weight__bold;
+    margin-top: .3rem;
+}
+
+.dashboard-statistics-freshness {
+    color: @color-gray65;
+    font-size: @font-size__s;
+    margin: 1rem 0 0;
+
+    .dashboard-statistics-freshness-stale {
+        color: @color-phoenix;
+        display: block;
+    }
+}
+
 .dashboard-totals-list {
     &:extend(.abs-clearfix all);
     &:extend(.abs-list-reset-styles all);

@@ -7,11 +7,12 @@
 define([
     'jquery',
     'chartJs',
+    'Magento_Backend/js/dashboard/period-storage',
     'jquery-ui-modules/widget',
     'chartjs/chartjs-adapter-moment',
     'chartjs/es6-shim.min',
     'moment'
-], function ($, Chart) {
+], function ($, Chart, periodStorage) {
     'use strict';
 
     $.widget('mage.dashboardChart', {
@@ -30,6 +31,10 @@ define([
          * @private
          */
         _create: function () {
+            if (this.options.periodSelect) {
+                periodStorage.apply(this.options.periodSelect);
+            }
+
             this.createChart();
 
             if (this.options.periodSelect) {

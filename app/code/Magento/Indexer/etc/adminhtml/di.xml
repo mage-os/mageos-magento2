@@ -13,4 +13,11 @@
             </argument>
         </arguments>
     </type>
+    <type name="Magento\Backend\Model\Dashboard\Attention\Pool">
+        <arguments>
+            <argument name="items" xsi:type="array">
+                <item name="invalid_indexers" xsi:type="object">Magento\Indexer\Model\Dashboard\Attention\InvalidIndexers</item>
+            </argument>
+        </arguments>
+    </type>
 </config>

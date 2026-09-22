@@ -36,6 +36,26 @@ class ConfigTest extends TestCase
         ];
     }
 
+    #[DataProvider('lastOrdersProvider')]
+    public function testLastOrdersCountIsClamped($raw, int $expected): void
+    {
+        $scopeConfig = $this->createMock(ScopeConfigInterface::class);
+        $scopeConfig->method('getValue')->with(Config::XML_PATH_LAST_ORDERS_COUNT)->willReturn($raw);
+
+        $this->assertSame($expected, (new Config($scopeConfig))->getLastOrdersCount());
+    }
+
+    public static function lastOrdersProvider(): array
+    {
+        return [
+            'default' => ['5', 5],
+            'custom' => ['12', 12],
+            'above max' => ['50', 20],
+            'zero falls back' => ['0', 5],
+            'missing falls back' => [null, 5],
+        ];
+    }
+
     public function testIsChartsEnabled(): void
     {
         $scopeConfig = $this->createMock(ScopeConfigInterface::class);
