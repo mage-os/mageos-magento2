@@ -552,5 +552,4 @@ class GridTest extends TestCase
         $item->method('getProduct')->willReturn($product);
         $this->assertTrue($block->isMoveToWishlistAllowed($item));
     }
-
 }
