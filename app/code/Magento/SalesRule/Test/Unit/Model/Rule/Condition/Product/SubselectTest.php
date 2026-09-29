@@ -575,4 +575,103 @@ class SubselectTest extends TestCase
                 ]
         ];
     }
+
+    /**
+     * Tests that a quantity-range condition is evaluated against the full cart total, not a
+     * partial cumulative total after each item - regression test for a qty split across
+     * multiple simple products incorrectly matching more than one disjoint range.
+     *
+     * @param array $itemQtys
+     * @param string $rangeValue
+     * @param bool $expectedResult
+     * @return void
+     */
+    #[DataProvider('dataProviderForQuantityRangeAcrossMultipleItems')]
+    public function testValidateQuantityRangeAgainstFullCartTotalNotPartialSum(
+        array $itemQtys,
+        string $rangeValue,
+        bool $expectedResult
+    ): void {
+        $this->model->setData('conditions', []);
+        $this->model->setData('attribute', 'qty');
+        $this->model->setData('value', $rangeValue);
+        $this->model->setData('operator', '()');
+
+        $itemMocks = [];
+        foreach ($itemQtys as $qty) {
+            $itemMock = $this->createPartialMockWithReflection(
+                Item::class,
+                ['getProductType', 'getData', 'getProduct', 'getChildren', 'getHasChildren']
+            );
+            $itemMock->expects($this->any())
+                ->method('getProductType')
+                ->willReturn(ProductType::TYPE_SIMPLE);
+            $itemMock->expects($this->any())
+                ->method('getData')
+                ->with('qty')
+                ->willReturn($qty);
+            $itemMock->expects($this->any())
+                ->method('getProduct')
+                ->willReturn($this->productMock);
+            $itemMock->expects($this->any())
+                ->method('getChildren')
+                ->willReturn([]);
+            $itemMock->expects($this->any())
+                ->method('getHasChildren')
+                ->willReturn(false);
+            $itemMocks[] = $itemMock;
+        }
+
+        $quoteMock = $this->createPartialMockWithReflection(
+            Quote::class,
+            ['getIsMultiShipping', 'getAllVisibleItems']
+        );
+        $quoteMock->expects($this->any())
+            ->method('getIsMultiShipping')
+            ->willReturn(false);
+        $quoteMock->expects($this->any())
+            ->method('getAllVisibleItems')
+            ->willReturn($itemMocks);
+
+        $abstractModel = $this->createPartialMockWithReflection(
+            AbstractModel::class,
+            ['getQuote']
+        );
+        $abstractModel->expects($this->any())
+            ->method('getQuote')
+            ->willReturn($quoteMock);
+
+        $this->assertEquals($expectedResult, $this->model->validate($abstractModel));
+    }
+
+    /**
+     * Get data provider array for validate quantity range across multiple items
+     *
+     * @return array
+     */
+    public static function dataProviderForQuantityRangeAcrossMultipleItems(): array
+    {
+        return [
+            '4 units across two products must not match the disjoint 1-3 tier' => [
+                [2, 2],
+                '1,2,3',
+                false,
+            ],
+            '4 units across two products must match the 4-5 tier' => [
+                [2, 2],
+                '4,5',
+                true,
+            ],
+            '4 units of a single product must not match the disjoint 1-3 tier' => [
+                [4],
+                '1,2,3',
+                false,
+            ],
+            '4 units of a single product must match the 4-5 tier' => [
+                [4],
+                '4,5',
+                true,
+            ],
+        ];
+    }
 }
