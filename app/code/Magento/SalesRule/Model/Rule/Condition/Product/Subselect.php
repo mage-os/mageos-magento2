@@ -1,4 +1,4 @@
-&lt;?php
+<?php
 /**
  * Copyright 2011 Adobe
  * All Rights Reserved.
@@ -54,12 +54,12 @@ class Subselect extends Combine
      */
     public function asXml($containerKey = 'conditions', $itemKey = 'condition')
     {
-        $xml = '&lt;attribute>' .
+        $xml = '<attribute>' .
             $this->getAttribute() .
-            '&lt;/attribute>' .
-            '&lt;operator>' .
+            '</attribute>' .
+            '<operator>' .
             $this->getOperator() .
-            '&lt;/operator>' .
+            '</operator>' .
             parent::asXml(
                 $containerKey,
                 $itemKey
@@ -106,9 +106,9 @@ class Subselect extends Combine
                 '==' => __('is'),
                 '!=' => __('is not'),
                 '>=' => __('equals or greater than'),
-                '&lt;=' => __('equals or less than'),
+                '<=' => __('equals or less than'),
                 '>' => __('greater than'),
-                '&lt;' => __('less than'),
+                '<' => __('less than'),
                 '()' => __('is one of'),
                 '!()' => __('is not one of'),
             ]
