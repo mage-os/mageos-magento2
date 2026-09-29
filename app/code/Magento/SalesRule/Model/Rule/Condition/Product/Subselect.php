@@ -1,4 +1,4 @@
-<?php
+&lt;?php
 /**
  * Copyright 2011 Adobe
  * All Rights Reserved.
@@ -54,12 +54,12 @@ class Subselect extends Combine
      */
     public function asXml($containerKey = 'conditions', $itemKey = 'condition')
     {
-        $xml = '<attribute>' .
+        $xml = '&lt;attribute>' .
             $this->getAttribute() .
-            '</attribute>' .
-            '<operator>' .
+            '&lt;/attribute>' .
+            '&lt;operator>' .
             $this->getOperator() .
-            '</operator>' .
+            '&lt;/operator>' .
             parent::asXml(
                 $containerKey,
                 $itemKey
@@ -106,9 +106,9 @@ class Subselect extends Combine
                 '==' => __('is'),
                 '!=' => __('is not'),
                 '>=' => __('equals or greater than'),
-                '<=' => __('equals or less than'),
+                '&lt;=' => __('equals or less than'),
                 '>' => __('greater than'),
-                '<' => __('less than'),
+                '&lt;' => __('less than'),
                 '()' => __('is one of'),
                 '!()' => __('is not one of'),
             ]
@@ -165,7 +165,7 @@ class Subselect extends Combine
                 $subSelectConditionsFlag = $this->validateSubSelectConditions($item);
             }
             $total = $this->getBaseRowTotalForChildrenProduct($item, $attr, $total);
-            if ($subSelectConditionsFlag && $this->validateAttribute($total)) {
+            if ($isMultiShipping && $subSelectConditionsFlag && $this->validateAttribute($total)) {
                 return true;
             }
         }
