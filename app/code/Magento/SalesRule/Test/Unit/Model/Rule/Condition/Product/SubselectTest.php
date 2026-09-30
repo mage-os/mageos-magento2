@@ -577,11 +577,13 @@ class SubselectTest extends TestCase
     }
 
     /**
-     * Tests that a quantity-range condition is evaluated against the full cart total, not a
+     * Tests that a quantity condition is evaluated against the full cart total, not a
      * partial cumulative total after each item - regression test for a qty split across
-     * multiple simple products incorrectly matching more than one disjoint range.
+     * multiple simple products incorrectly matching a disjoint range, or a non-monotonic
+     * operator (e.g. "<") matching early on a partial sum.
      *
      * @param array $itemQtys
+     * @param string $operator
      * @param string $rangeValue
      * @param bool $expectedResult
      * @return void
@@ -589,13 +591,14 @@ class SubselectTest extends TestCase
     #[DataProvider('dataProviderForQuantityRangeAcrossMultipleItems')]
     public function testValidateQuantityRangeAgainstFullCartTotalNotPartialSum(
         array $itemQtys,
+        string $operator,
         string $rangeValue,
         bool $expectedResult
     ): void {
         $this->model->setData('conditions', []);
         $this->model->setData('attribute', 'qty');
         $this->model->setData('value', $rangeValue);
-        $this->model->setData('operator', '()');
+        $this->model->setData('operator', $operator);
 
         $itemMocks = [];
         foreach ($itemQtys as $qty) {
@@ -654,23 +657,33 @@ class SubselectTest extends TestCase
         return [
             '4 units across two products must not match the disjoint 1-3 tier' => [
                 [2, 2],
+                '()',
                 '1,2,3',
                 false,
             ],
             '4 units across two products must match the 4-5 tier' => [
                 [2, 2],
+                '()',
                 '4,5',
                 true,
             ],
             '4 units of a single product must not match the disjoint 1-3 tier' => [
                 [4],
+                '()',
                 '1,2,3',
                 false,
             ],
             '4 units of a single product must match the 4-5 tier' => [
                 [4],
+                '()',
                 '4,5',
                 true,
+            ],
+            '120 units across two products must not match a less-than-100 condition' => [
+                [60, 60],
+                '<',
+                '100',
+                false,
             ],
         ];
     }
