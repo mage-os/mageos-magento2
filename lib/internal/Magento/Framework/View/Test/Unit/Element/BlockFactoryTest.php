@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Framework\View\Test\Unit\Element;
 
+use Magento\Framework\ObjectManager\ConfigInterface;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Element\BlockFactory;
@@ -33,9 +34,16 @@ class BlockFactoryTest extends TestCase
 
         $this->objectManagerMock = $this->createMock(ObjectManagerInterface::class);
 
+        $objectManagerConfig = $this->createMock(ConfigInterface::class);
+        $objectManagerConfig->method('getPreference')->willReturnArgument(0);
+        $objectManagerConfig->method('getInstanceType')->willReturnArgument(0);
+
         $this->blockFactory = $objectManagerHelper->getObject(
             BlockFactory::class,
-            ['objectManager' => $this->objectManagerMock]
+            [
+                'objectManager' => $this->objectManagerMock,
+                'objectManagerConfig' => $objectManagerConfig,
+            ]
         );
     }
 

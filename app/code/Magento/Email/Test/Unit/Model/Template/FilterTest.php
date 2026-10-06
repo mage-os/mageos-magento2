@@ -12,6 +12,8 @@ use Magento\Backend\Model\Url as BackendModelUrl;
 use Magento\Backend\Model\UrlInterface;
 use Magento\Email\Model\Template\Css\Processor;
 use Magento\Email\Model\Template\Filter;
+use Magento\Email\Model\Template\Filter\BlockDirectivePolicy;
+use Magento\Email\Test\Unit\Model\Template\_files\Block\Adminhtml\RestrictedBlock;
 use Magento\Framework\App\Area;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Filesystem\DirectoryList;
@@ -29,6 +31,7 @@ use Magento\Framework\Filter\DirectiveProcessor\LegacyDirective;
 use Magento\Framework\Filter\DirectiveProcessor\TemplateDirective;
 use Magento\Framework\Filter\VariableResolver\StrictResolver;
 use Magento\Framework\Stdlib\StringUtils;
+use Magento\Framework\Translate\Inline\StateInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Asset\ContentProcessorInterface;
 use Magento\Framework\View\Asset\File;
@@ -53,6 +56,14 @@ use Psr\Log\LoggerInterface;
  */
 class FilterTest extends TestCase
 {
+    private const RESTRICTED_BLOCK_PATTERNS = [
+        '\\Block\\Adminhtml\\',
+        '\\Block\\Backend\\',
+        '\\Block\\System\\Config\\',
+        '^Magento\\Backend\\Block\\',
+        '^Magento\\User\\Block\\',
+    ];
+
     /**
      * @var ObjectManager
      */
@@ -271,7 +282,9 @@ class FilterTest extends TestCase
                     $this->cssInliner,
                     [],
                     $this->directiveProcessors,
-                    $this->storeInformation
+                    $this->storeInformation,
+                    $this->createMock(StateInterface::class),
+                    new BlockDirectivePolicy(self::RESTRICTED_BLOCK_PATTERNS)
                 ]
             )
             ->onlyMethods($mockedMethods)
@@ -683,5 +696,167 @@ class FilterTest extends TestCase
                 'expectSetData' => false
             ]
         ];
+    }
+
+    /**
+     * A backend/adminhtml block class must never be instantiated from a template directive.
+     */
+    public function testBlockDirectiveRefusesBackendBlockClass()
+    {
+        $this->layout->expects($this->never())->method('createBlock');
+
+        $construction = [
+            '{{block class="Magento\\Backend\\Block\\Widget\\Grid\\ColumnSet"}}',
+            'block',
+            ' class="Magento\\Backend\\Block\\Widget\\Grid\\ColumnSet"'
+        ];
+
+        $filter = $this->getModel();
+        $this->assertSame('', $filter->blockDirective($construction));
+    }
+
+    /**
+     * The deny list is checked again on the instantiated object.
+     */
+    public function testBlockDirectiveRefusesRestrictedBlockResolvedByLayout()
+    {
+        $block = new RestrictedBlock();
+        $this->layout->expects($this->once())
+            ->method('createBlock')
+            ->with('Vendor\\Alias\\Block')
+            ->willReturn($block);
+
+        $construction = [
+            '{{block class="Vendor\\Alias\\Block"}}',
+            'block',
+            ' class="Vendor\\Alias\\Block"'
+        ];
+
+        $this->assertSame('', $this->getModel()->blockDirective($construction));
+        $this->assertFalse($block->rendered, 'A restricted block must not be rendered');
+    }
+
+    /**
+     * A non-frontend "area" parameter on {{block}} must not reach the block.
+     */
+    public function testBlockDirectiveDropsNonFrontendAreaParameter()
+    {
+        $block = $this->createRecordingBlock($seen);
+
+        $this->layout->expects($this->once())
+            ->method('createBlock')
+            ->willReturn($block);
+
+        $construction = [
+            '{{block class="Magento\\Cms\\Block\\Block" area="adminhtml"}}',
+            'block',
+            ' class="Magento\\Cms\\Block\\Block" area="adminhtml"'
+        ];
+
+        $this->assertSame('html', $this->getModel()->blockDirective($construction));
+        $this->assertNotContains('area', $seen, 'A non-frontend area parameter must be dropped');
+    }
+
+    /**
+     * A frontend "area" parameter on {{block}} is legitimate (core shipment emails use it) and must pass through.
+     */
+    public function testBlockDirectiveKeepsFrontendAreaParameter()
+    {
+        $block = $this->createRecordingBlock($seen);
+
+        $this->layout->expects($this->once())
+            ->method('createBlock')
+            ->willReturn($block);
+
+        $construction = [
+            '{{block class="Magento\\Cms\\Block\\Block" area="frontend"}}',
+            'block',
+            ' class="Magento\\Cms\\Block\\Block" area="frontend"'
+        ];
+
+        $this->assertSame('html', $this->getModel()->blockDirective($construction));
+        $this->assertContains('area', $seen, 'The frontend area parameter must be kept');
+    }
+
+    /**
+     * Build a block mock that records setDataUsingMethod keys into $seen.
+     *
+     * @param array|null $seen
+     * @return AbstractBlock
+     */
+    private function createRecordingBlock(?array &$seen)
+    {
+        $block = $this->getMockBuilder(AbstractBlock::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $block->method('hasData')->willReturn(true);
+        $block->method('toHtml')->willReturn('html');
+        $seen = [];
+        $block->method('setDataUsingMethod')
+            ->willReturnCallback(function ($key) use (&$seen, $block) {
+                $seen[] = $key;
+                return $block;
+            });
+
+        return $block;
+    }
+
+    /**
+     * The layout directive refuses adminhtml area emulation.
+     */
+    public function testLayoutDirectiveRefusesAdminhtmlArea()
+    {
+        $this->appState->expects($this->never())->method('emulateAreaCode');
+
+        $construction = [
+            '{{layout handle="adminhtml_email_template_popup" area="adminhtml"}}',
+            'layout',
+            ' handle="adminhtml_email_template_popup" area="adminhtml"'
+        ];
+
+        $this->assertSame('', $this->getModel()->layoutDirective($construction));
+    }
+
+    /**
+     * The directive tokenizer does not trim values, so padding must not slip past the area check.
+     */
+    public function testLayoutDirectiveRefusesAdminhtmlAreaWithSurroundingWhitespace()
+    {
+        $this->appState->expects($this->never())->method('emulateAreaCode');
+
+        foreach (['adminhtml ', ' adminhtml', " \tADMINHTML \t"] as $area) {
+            $construction = [
+                '{{layout handle="adminhtml_email_template_popup" area="' . $area . '"}}',
+                'layout',
+                ' handle="adminhtml_email_template_popup" area="' . $area . '"'
+            ];
+
+            $this->assertSame(
+                '',
+                $this->getModel()->layoutDirective($construction),
+                var_export($area, true) . ' must be refused'
+            );
+        }
+    }
+
+    /**
+     * A padded frontend area is still the frontend area and must survive.
+     */
+    public function testBlockDirectiveKeepsPaddedFrontendAreaParameter()
+    {
+        $block = $this->createRecordingBlock($seen);
+
+        $this->layout->expects($this->once())
+            ->method('createBlock')
+            ->willReturn($block);
+
+        $construction = [
+            '{{block class="Magento\\Cms\\Block\\Block" area=" frontend "}}',
+            'block',
+            ' class="Magento\\Cms\\Block\\Block" area=" frontend "'
+        ];
+
+        $this->assertSame('html', $this->getModel()->blockDirective($construction));
+        $this->assertContains('area', $seen, 'A padded frontend area parameter must be kept');
     }
 }

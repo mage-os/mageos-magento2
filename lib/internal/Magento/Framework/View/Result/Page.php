@@ -350,6 +350,10 @@ class Page extends Layout
             throw new \InvalidArgumentException('Template "' . $this->template . '" is not found');
         }
 
+        if (\Magento\Framework\Filesystem\SecurePathValidator::isUnsafeIncludePath((string)$fileName)) {
+            throw new \RuntimeException('Refusing to render a template from an unsafe path.');
+        }
+
         ob_start();
         try {
             extract($this->viewVars, EXTR_SKIP);

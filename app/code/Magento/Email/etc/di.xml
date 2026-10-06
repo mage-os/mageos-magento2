@@ -100,4 +100,15 @@
             </argument>
         </arguments>
     </type>
+    <type name="Magento\Email\Model\Template\Filter\BlockDirectivePolicy">
+        <arguments>
+            <argument name="restrictedPatterns" xsi:type="array">
+                <item name="block_adminhtml" xsi:type="string">\Block\Adminhtml\</item>
+                <item name="block_backend" xsi:type="string">\Block\Backend\</item>
+                <item name="block_system_config" xsi:type="string">\Block\System\Config\</item>
+                <item name="magento_backend_block" xsi:type="string">^Magento\Backend\Block\</item>
+                <item name="magento_user_block" xsi:type="string">^Magento\User\Block\</item>
+            </argument>
+        </arguments>
+    </type>
 </config>

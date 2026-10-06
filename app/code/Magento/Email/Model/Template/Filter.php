@@ -10,6 +10,7 @@ namespace Magento\Email\Model\Template;
 use Exception;
 use Magento\Backend\Model\Url as BackendModelUrl;
 use Magento\Cms\Block\Block;
+use Magento\Email\Model\Template\Filter\BlockDirectivePolicy;
 use Magento\Framework\App\Area;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\ObjectManager;
@@ -198,6 +199,11 @@ class Filter extends Template
     private $inlineTranslationState;
 
     /**
+     * @var BlockDirectivePolicy
+     */
+    private $blockDirectivePolicy;
+
+    /**
      * Filter constructor.
      * @param StringUtils $string
      * @param LoggerInterface $logger
@@ -219,6 +225,7 @@ class Filter extends Template
      * @param array $directiveProcessors
      * @param StoreInformation|null $storeInformation
      * @param StateInterface|null $inlineTranslationState
+     * @param BlockDirectivePolicy|null $blockDirectivePolicy
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
@@ -241,7 +248,8 @@ class Filter extends Template
         $variables = [],
         array $directiveProcessors = [],
         ?StoreInformation $storeInformation = null,
-        ?StateInterface $inlineTranslationState = null
+        ?StateInterface $inlineTranslationState = null,
+        ?BlockDirectivePolicy $blockDirectivePolicy = null
     ) {
         $this->_escaper = $escaper;
         $this->_assetRepo = $assetRepo;
@@ -262,6 +270,8 @@ class Filter extends Template
             ObjectManager::getInstance()->get(StoreInformation::class);
         $this->inlineTranslationState = $inlineTranslationState ?:
             ObjectManager::getInstance()->get(StateInterface::class);
+        $this->blockDirectivePolicy = $blockDirectivePolicy ?:
+            ObjectManager::getInstance()->get(BlockDirectivePolicy::class);
         parent::__construct($string, $variables, $directiveProcessors, $variableResolver);
     }
 
@@ -409,9 +419,29 @@ class Filter extends Template
         $skipParams = ['class', 'id', 'output'];
         $blockParameters = $this->getParameters($construction[2]);
 
+        // Blocks may only opt into the frontend area; drop any other area override.
+        if (isset($blockParameters['area'])) {
+            $blockParameters['area'] = trim((string)$blockParameters['area']);
+
+            if (strcasecmp($blockParameters['area'], Area::AREA_FRONTEND) !== 0) {
+                $this->_logger->warning(
+                    'Ignored a non-frontend area override on a template block directive.',
+                    ['area' => $blockParameters['area']]
+                );
+                unset($blockParameters['area']);
+            }
+        }
+
         $block = null;
 
         if (isset($blockParameters['class'])) {
+            if ($this->blockDirectivePolicy->isRestricted((string)$blockParameters['class'])) {
+                $this->_logger->warning(
+                    'Refused to instantiate a restricted block class from a template directive.',
+                    ['class' => (string)$blockParameters['class']]
+                );
+                return '';
+            }
             $block = $this->_layout->createBlock($blockParameters['class'], null, ['data' => $blockParameters]);
         } elseif (isset($blockParameters['id'])) {
             $block = $this->_layout->createBlock(Block::class);
@@ -421,6 +451,15 @@ class Filter extends Template
         }
 
         if (!$block) {
+            return '';
+        }
+
+        // Re-check the class actually instantiated.
+        if ($this->blockDirectivePolicy->isRestricted(get_class($block))) {
+            $this->_logger->warning(
+                'Refused to render a restricted block class resolved from a template directive.',
+                ['class' => get_class($block), 'requested' => (string)($blockParameters['class'] ?? '')]
+            );
             return '';
         }
 
@@ -458,9 +497,19 @@ class Filter extends Template
     public function layoutDirective($construction)
     {
         $this->_directiveParams = $this->getParameters($construction[2]);
-        if (!isset($this->_directiveParams['area'])) {
-            $this->_directiveParams['area'] = Area::AREA_FRONTEND;
+        // Surrounding whitespace must not let an area slip past the comparison below.
+        $area = trim((string)($this->_directiveParams['area'] ?? ''));
+        $this->_directiveParams['area'] = $area !== '' ? $area : Area::AREA_FRONTEND;
+
+        // Adminhtml layout handles are off limits to filtered templates.
+        if (strcasecmp((string)$this->_directiveParams['area'], Area::AREA_ADMINHTML) === 0) {
+            $this->_logger->warning(
+                'Refused to render an adminhtml layout handle from a template directive.',
+                ['handle' => (string)($this->_directiveParams['handle'] ?? '')]
+            );
+            return '';
         }
+
         if ($this->_directiveParams['area'] != $this->_appState->getAreaCode()) {
             return $this->_appState->emulateAreaCode(
                 $this->_directiveParams['area'],
@@ -980,6 +1029,7 @@ class Filter extends Template
         // If this template is a child of another template, skip processing so that the parent template will process
         // this directive. This is important as CSS inlining must operate on the entire HTML document.
         if ($this->isChildTemplate()) {
+            $this->deferToParent($construction[0]);
             return $construction[0];
         }
 

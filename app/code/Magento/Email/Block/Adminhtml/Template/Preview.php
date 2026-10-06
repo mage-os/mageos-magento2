@@ -26,6 +26,11 @@ use Magento\Store\Model\Store;
 class Preview extends Widget
 {
     /**
+     * @var string
+     */
+    private const ADMIN_RESOURCE = 'Magento_Email::template';
+
+    /**
      * @var MaliciousCode
      */
     protected $_maliciousCode;
@@ -65,6 +70,10 @@ class Preview extends Widget
      */
     protected function _toHtml()
     {
+        if (!$this->_authorization->isAllowed(self::ADMIN_RESOURCE)) {
+            return '';
+        }
+
         $request = $this->getRequest();
 
         $storeId = $this->getAnyStoreView()->getId();

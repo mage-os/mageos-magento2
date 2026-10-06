@@ -132,6 +132,9 @@ class ClassesScanner implements ClassesScannerInterface
     private function includeClass(string $className, string $fileItemPath): bool
     {
         if (!class_exists($className)) {
+            if (\Magento\Framework\Filesystem\SecurePathValidator::isUnsafeIncludePath($fileItemPath)) {
+                return false;
+            }
             // phpcs:ignore
             require_once $fileItemPath;
             return true;

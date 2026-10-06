@@ -11,6 +11,7 @@ use Magento\Backend\Block\Template\Context;
 use Magento\Backend\Model\Session;
 use Magento\Email\Model\AbstractTemplate;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\AuthorizationInterface;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\State;
 use Magento\Framework\App\TemplateTypesInterface;
@@ -118,8 +119,11 @@ class PreviewTest extends TestCase
         $context = $this->createPartialMock(
             Context::class,
             ['getRequest', 'getEventManager', 'getScopeConfig', 'getDesignPackage',
-                'getStoreManager', 'getAppState', 'getBackendSession', 'getEscaper']
+                'getStoreManager', 'getAppState', 'getBackendSession', 'getEscaper', 'getAuthorization']
         );
+        $authorization = $this->createMock(AuthorizationInterface::class);
+        $authorization->method('isAllowed')->willReturn(true);
+        $context->expects($this->any())->method('getAuthorization')->willReturn($authorization);
         $context->expects($this->any())->method('getRequest')->willReturn($this->requestMock);
         $context->expects($this->any())->method('getEventManager')->willReturn($eventManager);
         $context->expects($this->any())->method('getScopeConfig')->willReturn($scopeConfig);
