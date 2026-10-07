@@ -68,7 +68,7 @@ class Consumer extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         $select = $connection->select()
             ->from($this->getMainTable())
             ->reset(\Magento\Framework\DB\Select::COLUMNS)
-            ->columns(new \Zend_Db_Expr('CURRENT_TIMESTAMP() - created_at'))
+            ->columns(new \Zend_Db_Expr('CURRENT_TIMESTAMP - created_at'))
             ->where('entity_id = ?', $consumerId);
 
         return $connection->fetchOne($select);

@@ -160,8 +160,17 @@ class Collection implements ResetAfterRequestInterface
         $childCollection->addWebsiteFilter($context->getExtensionAttributes()->getStore()->getWebsiteId());
         $linkField = $this->metadataPool->getMetadata(ProductInterface::class)->getLinkField();
         $childCollection->getSelect()->group('e.' . $linkField);
-        $childCollection->getSelect()->columns([
-            'parent_ids' => new \Zend_Db_Expr('GROUP_CONCAT(link_table.parent_id)')
+        $select = $childCollection->getSelect();
+        // Drop ungrouped parent_id; parent_ids is aggregated instead.
+        $select->setPart(
+            \Magento\Framework\DB\Select::COLUMNS,
+            array_values(array_filter(
+                $select->getPart(\Magento\Framework\DB\Select::COLUMNS),
+                static fn(array $column) => !($column[0] === 'link_table' && $column[1] === 'parent_id')
+            ))
+        );
+        $select->columns([
+            'parent_ids' => $select->getAdapter()->getGroupConcatSql('link_table.parent_id')
         ]);
 
         $attributeCodes = array_unique(array_merge($this->attributeCodes, $attributeCodes));

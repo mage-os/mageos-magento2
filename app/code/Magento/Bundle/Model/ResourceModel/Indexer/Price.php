@@ -485,7 +485,7 @@ class Price implements DimensionalIndexerInterface
             [
                 'min_price' => new \Zend_Db_Expr('MIN(' . $minPrice . ')'),
                 'alt_price' => new \Zend_Db_Expr('MIN(price)'),
-                'max_price' => $connection->getCheckSql('group_type = 0', 'MAX(price)', 'SUM(price)'),
+                'max_price' => $connection->getCheckSql('MIN(group_type) = 0', 'MAX(price)', 'SUM(price)'),
                 'tier_price' => new \Zend_Db_Expr('MIN(' . $tierPrice . ')'),
                 'alt_tier_price' => new \Zend_Db_Expr('MIN(tier_price)'),
             ]
@@ -734,33 +734,24 @@ class Price implements DimensionalIndexerInterface
             ]
         );
         $select = $this->stockStatusQueryProcessor->execute($select);
-        $query = str_replace('AS `idx`', 'AS `idx` USE INDEX (PRIMARY)', (string) $select);
-
-        $insertColumns = [
-            'entity_id',
-            'customer_group_id',
-            'website_id',
-            'option_id',
-            'selection_id',
-            'group_type',
-            'is_required',
-            'price',
-            'tier_price'
-        ];
-        $insertColumns = array_map(function ($item) use ($connection) {
-            return $connection->quoteIdentifier($item);
-        }, $insertColumns);
-        $updateValues = [];
-        foreach ($insertColumns as $column) {
-            $updateValues[] = sprintf("%s = VALUES(%s)", $column, $column);
-        }
-
-        $connection->query(sprintf(
-            "INSERT INTO `" . $this->getBundleSelectionTable() . "` (%s) %s ON DUPLICATE KEY UPDATE %s",
-            implode(",", $insertColumns),
-            $query,
-            implode(",", $updateValues)
-        ));
+        $connection->query(
+            $connection->insertFromSelect(
+                $select,
+                $this->getBundleSelectionTable(),
+                [
+                    'entity_id',
+                    'customer_group_id',
+                    'website_id',
+                    'option_id',
+                    'selection_id',
+                    'group_type',
+                    'is_required',
+                    'price',
+                    'tier_price',
+                ],
+                \Magento\Framework\DB\Adapter\AdapterInterface::INSERT_ON_DUPLICATE
+            )
+        );
     }
 
     /**
