@@ -122,6 +122,10 @@ class Area implements OperationInterface
      */
     private function extractDiff(array $config, array $globalConfig)
     {
+        if (!$this->keepsEveryGlobalEntry($config, $globalConfig)) {
+            return $config;
+        }
+
         $diff = [CompiledLoader::EXTENDS_KEY => App\Area::AREA_GLOBAL];
 
         foreach ($config as $section => $values) {
@@ -141,6 +145,31 @@ class Area implements OperationInterface
         }
 
         return $diff;
+    }
+
+    /**
+     * Whether an area configuration keeps every section of the global one and every key of its merged sections
+     *
+     * @param array $config
+     * @param array $globalConfig
+     * @return bool
+     */
+    private function keepsEveryGlobalEntry(array $config, array $globalConfig)
+    {
+        foreach ($globalConfig as $section => $globalValues) {
+            if (!array_key_exists($section, $config)) {
+                return false;
+            }
+            if (in_array($section, CompiledConfig::MERGED_SECTIONS, true)
+                && is_array($globalValues)
+                && is_array($config[$section])
+                && array_diff_key($globalValues, $config[$section])
+            ) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**

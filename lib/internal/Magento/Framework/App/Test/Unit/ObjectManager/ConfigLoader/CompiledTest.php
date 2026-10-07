@@ -42,7 +42,7 @@ class CompiledTest extends TestCase
             {
                 $this->fileReads++;
 
-                return $this->files[$area] ?? false;
+                return array_key_exists($area, $this->files) ? $this->files[$area] : false;
             }
         };
     }

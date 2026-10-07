@@ -171,7 +171,13 @@ class AreaTest extends TestCase
     public function testCompiledLoaderRebuildsTheCompleteAreaFromTheWrittenDifferences()
     {
         $globalConfig = [
-            'arguments' => ['Overridden' => ['b' => 2], 'Shared' => ['a' => 1], 'Falsy' => ['x' => 1]],
+            'arguments' => [
+                'Overridden' => ['b' => 2],
+                'Shared' => ['a' => 1],
+                'Falsy' => ['x' => 1],
+                'Narrowed' => ['a' => 1, 'b' => 2],
+                'LooselyEqual' => ['x' => 0],
+            ],
             'preferences' => ['SomeInterface' => 'GlobalImplementation', 'Other' => 'Same'],
             'instanceTypes' => ['globalVirtual' => 'GlobalType'],
             'lazyTypes' => ['Lazy' => true],
@@ -180,6 +186,9 @@ class AreaTest extends TestCase
             'arguments' => [
                 'Falsy' => null,
                 'FrontendOnly' => ['c' => 3],
+                'FrontendOnlyNull' => null,
+                'LooselyEqual' => ['x' => '0'],
+                'Narrowed' => ['a' => 1],
                 'Overridden' => ['b' => ''],
                 'Shared' => ['a' => 1],
             ],
@@ -192,7 +201,61 @@ class AreaTest extends TestCase
             App\Area::AREA_GLOBAL => $globalConfig,
             App\Area::AREA_FRONTEND => $frontendConfig,
         ]);
-        $loader = new class ($written) extends CompiledLoader {
+        $loader = $this->loaderReading($written);
+
+        $this->assertSameIgnoringKeyOrder($frontendConfig, $loader->load(App\Area::AREA_FRONTEND));
+        $this->assertEquals($globalConfig, $loader->load(App\Area::AREA_GLOBAL));
+    }
+
+    public function testDoOperationWritesTheWholeConfigurationOfAnAreaThatDropsAGlobalKey()
+    {
+        $frontendConfig = [
+            'arguments' => ['Shared' => ['a' => 1]],
+            'preferences' => [],
+            'instanceTypes' => [],
+        ];
+
+        $written = $this->compile([
+            App\Area::AREA_GLOBAL => [
+                'arguments' => ['GlobalOnly' => ['b' => 2], 'Shared' => ['a' => 1]],
+                'preferences' => [],
+                'instanceTypes' => [],
+            ],
+            App\Area::AREA_FRONTEND => $frontendConfig,
+        ]);
+
+        $this->assertSame($frontendConfig, $written[App\Area::AREA_FRONTEND]);
+        $this->assertSameIgnoringKeyOrder(
+            $frontendConfig,
+            $this->loaderReading($written)->load(App\Area::AREA_FRONTEND)
+        );
+    }
+
+    public function testDoOperationWritesTheWholeConfigurationOfAnAreaThatDropsAGlobalSection()
+    {
+        $frontendConfig = ['arguments' => [], 'preferences' => [], 'instanceTypes' => []];
+
+        $written = $this->compile([
+            App\Area::AREA_GLOBAL => $frontendConfig + ['lazyTypes' => ['Lazy' => true]],
+            App\Area::AREA_FRONTEND => $frontendConfig,
+        ]);
+
+        $this->assertSame($frontendConfig, $written[App\Area::AREA_FRONTEND]);
+        $this->assertSameIgnoringKeyOrder(
+            $frontendConfig,
+            $this->loaderReading($written)->load(App\Area::AREA_FRONTEND)
+        );
+    }
+
+    /**
+     * Returns a compiled config loader that reads the given files instead of generated/metadata
+     *
+     * @param array $files
+     * @return CompiledLoader
+     */
+    private function loaderReading(array $files): CompiledLoader
+    {
+        return new class ($files) extends CompiledLoader {
             /**
              * @param array $files
              */
@@ -205,17 +268,30 @@ class AreaTest extends TestCase
              */
             protected function loadFile($area)
             {
-                return $this->files[$area];
+                return array_key_exists($area, $this->files) ? $this->files[$area] : false;
             }
         };
+    }
 
-        $resolved = $loader->load(App\Area::AREA_FRONTEND);
-
-        $this->assertArrayNotHasKey(CompiledLoader::EXTENDS_KEY, $resolved);
-        foreach (array_keys($frontendConfig) as $section) {
-            $this->assertEquals($frontendConfig[$section], $resolved[$section], $section);
+    /**
+     * Asserts that a resolved configuration holds exactly the expected sections, keys and values
+     *
+     * @param array $expected
+     * @param array $actual
+     * @return void
+     */
+    private function assertSameIgnoringKeyOrder(array $expected, array $actual): void
+    {
+        ksort($expected);
+        ksort($actual);
+        $this->assertSame(array_keys($expected), array_keys($actual));
+        foreach ($expected as $section => $values) {
+            if (is_array($values) && is_array($actual[$section])) {
+                ksort($values);
+                ksort($actual[$section]);
+            }
+            $this->assertSame($values, $actual[$section], $section);
         }
-        $this->assertEquals($globalConfig, $loader->load(App\Area::AREA_GLOBAL));
     }
 
     /**
@@ -243,12 +319,16 @@ class AreaTest extends TestCase
             ->method('getList')
             ->with($path)
             ->willReturn([]);
-        $this->configReaderMock->method('generateCachePerScope')
-            ->willReturnCallback(static fn ($definitions, $areaCode) => $configsByArea[$areaCode]);
-        $this->configChain->method('modify')->willReturnArgument(0);
+        $this->configReaderMock->expects($this->exactly(count($configsByArea)))
+            ->method('generateCachePerScope')
+            ->willReturnCallback(static fn (...$arguments) => $configsByArea[$arguments[1]]);
+        $this->configChain->expects($this->exactly(count($configsByArea)))
+            ->method('modify')
+            ->willReturnArgument(0);
 
         $written = [];
-        $this->configWriterMock->method('write')
+        $this->configWriterMock->expects($this->exactly(count($configsByArea)))
+            ->method('write')
             ->willReturnCallback(function ($areaCode, $config) use (&$written) {
                 $written[$areaCode] = $config;
             });
