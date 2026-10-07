@@ -7,6 +7,8 @@ namespace Magento\Setup\Module\Di\App\Task\Operation;
 
 use Magento\Setup\Module\Di\App\Task\OperationInterface;
 use Magento\Framework\App;
+use Magento\Framework\ObjectManager\Config\Compiled as CompiledConfig;
+use Magento\Framework\App\ObjectManager\ConfigLoader\Compiled as CompiledLoader;
 use Magento\Setup\Module\Di\Compiler\Config;
 use Magento\Setup\Module\Di\Definition\Collection as DefinitionsCollection;
 
@@ -91,6 +93,7 @@ class Area implements OperationInterface
         $this->sortDefinitions($definitionsCollection);
 
         $areaCodes = array_merge([App\Area::AREA_GLOBAL], $this->areaList->getCodes());
+        $globalConfig = [];
         foreach ($areaCodes as $areaCode) {
             $config = $this->configReader->generateCachePerScope($definitionsCollection, $areaCode);
             $config = $this->modificationChain->modify($config);
@@ -100,8 +103,73 @@ class Area implements OperationInterface
             ksort($config['preferences']);
             ksort($config['instanceTypes']);
 
+            if ($areaCode === App\Area::AREA_GLOBAL) {
+                $globalConfig = $config;
+            } else {
+                $config = $this->extractDiff($config, $globalConfig);
+            }
+
             $this->configWriter->write($areaCode, $config);
         }
+    }
+
+    /**
+     * Reduces an area configuration to the entries that differ from the global one
+     *
+     * @param array $config
+     * @param array $globalConfig
+     * @return array
+     */
+    private function extractDiff(array $config, array $globalConfig)
+    {
+        if (!$this->keepsEveryGlobalEntry($config, $globalConfig)) {
+            return $config;
+        }
+
+        $diff = [CompiledLoader::EXTENDS_KEY => App\Area::AREA_GLOBAL];
+
+        foreach ($config as $section => $values) {
+            if (!is_array($values) || !in_array($section, CompiledConfig::MERGED_SECTIONS, true)) {
+                $diff[$section] = $values;
+                continue;
+            }
+
+            $globalValues = is_array($globalConfig[$section] ?? null) ? $globalConfig[$section] : [];
+            $sectionDiff = [];
+            foreach ($values as $key => $value) {
+                if (!array_key_exists($key, $globalValues) || $globalValues[$key] !== $value) {
+                    $sectionDiff[$key] = $value;
+                }
+            }
+            $diff[$section] = $sectionDiff;
+        }
+
+        return $diff;
+    }
+
+    /**
+     * Whether an area configuration keeps every section of the global one and every key of its merged sections
+     *
+     * @param array $config
+     * @param array $globalConfig
+     * @return bool
+     */
+    private function keepsEveryGlobalEntry(array $config, array $globalConfig)
+    {
+        foreach ($globalConfig as $section => $globalValues) {
+            if (!array_key_exists($section, $config)) {
+                return false;
+            }
+            if (in_array($section, CompiledConfig::MERGED_SECTIONS, true)
+                && is_array($globalValues)
+                && is_array($config[$section])
+                && array_diff_key($globalValues, $config[$section])
+            ) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
