@@ -341,6 +341,7 @@ class InstallationContext
         return [
             'database.password',
             'admin.password',
+            'search.password',
             'rabbitMQ.password',
             'email.password'
         ];
@@ -518,6 +519,10 @@ class InstallationContext
 
         if ($this->admin && empty($this->admin->password)) {
             $missing[] = 'admin.password';
+        }
+
+        if ($this->searchEngine && $this->searchEngine->enableAuth && empty($this->searchEngine->password)) {
+            $missing[] = 'search.password';
         }
 
         if ($this->rabbitMQ && $this->rabbitMQ->enabled && empty($this->rabbitMQ->password)) {

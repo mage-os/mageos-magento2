@@ -6,6 +6,8 @@ declare(strict_types=1);
 
 namespace MageOS\Installer\Model\VO;
 
+use MageOS\Installer\Model\VO\Attribute\Sensitive;
+
 /**
  * Search engine configuration value object
  */
@@ -16,12 +18,19 @@ class SearchEngineConfiguration
      * @param string $host
      * @param int $port
      * @param string $prefix
+     * @param bool $enableAuth
+     * @param string $username
+     * @param string $password
      */
     public function __construct(
         public readonly string $engine,
         public readonly string $host,
         public readonly int $port,
-        public readonly string $prefix = ''
+        public readonly string $prefix = '',
+        public readonly bool $enableAuth = false,
+        public readonly string $username = '',
+        #[Sensitive]
+        public readonly string $password = ''
     ) {
     }
 
@@ -58,17 +67,25 @@ class SearchEngineConfiguration
     /**
      * Convert to array
      *
-     * @param bool $includeSensitive Whether to include sensitive fields (none here)
+     * @param bool $includeSensitive Whether to include sensitive fields
      * @return array<string, mixed>
      */
     public function toArray(bool $includeSensitive = false): array
     {
-        return [
+        $data = [
             'engine' => $this->engine,
             'host' => $this->host,
             'port' => $this->port,
-            'prefix' => $this->prefix
+            'prefix' => $this->prefix,
+            'enableAuth' => $this->enableAuth,
+            'username' => $this->username
         ];
+
+        if ($includeSensitive) {
+            $data['password'] = $this->password;
+        }
+
+        return $data;
     }
 
     /**
@@ -83,7 +100,10 @@ class SearchEngineConfiguration
             $data['engine'] ?? 'opensearch',
             $data['host'] ?? 'localhost',
             (int)($data['port'] ?? 9200),
-            $data['prefix'] ?? ''
+            $data['prefix'] ?? '',
+            (bool)($data['enableAuth'] ?? false),
+            $data['username'] ?? '',
+            $data['password'] ?? ''
         );
     }
 }
