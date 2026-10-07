@@ -245,8 +245,17 @@ class LinkManagementTest extends TestCase
             ->expects($this->atLeastOnce())
             ->method('get')
             ->willReturnCallback(
-                function ($sku, $editMode = false, $storeId = null, $forceReload = false)
-                use ($productSku, $childSku, $configurable, $simple) {
+                function (
+                    $sku,
+                    $editMode = false,
+                    $storeId = null,
+                    $forceReload = false
+                ) use (
+                    $productSku,
+                    $childSku,
+                    $configurable,
+                    $simple
+                ) {
                     if ($sku === $productSku) {
                         $this->assertTrue($forceReload, 'Parent product must be loaded with forceReload=true');
                         return $configurable;
