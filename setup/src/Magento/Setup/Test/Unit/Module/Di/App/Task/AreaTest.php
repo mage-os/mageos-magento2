@@ -11,7 +11,6 @@ use Magento\Framework\App;
 use Magento\Framework\App\AreaList;
 use Magento\Framework\App\ObjectManager\ConfigLoader\Compiled as CompiledLoader;
 use Magento\Framework\App\ObjectManager\ConfigWriterInterface;
-use Magento\Framework\ObjectManager\ConfigLoaderInterface;
 use Magento\Setup\Module\Di\App\Task\Operation\Area;
 use Magento\Setup\Module\Di\Compiler\Config;
 use Magento\Setup\Module\Di\Compiler\Config\ModificationChain;
@@ -157,7 +156,7 @@ class AreaTest extends TestCase
         $this->assertSame($globalConfig, $written[App\Area::AREA_GLOBAL]);
         $this->assertSame(
             [
-                ConfigLoaderInterface::EXTENDS_KEY => App\Area::AREA_GLOBAL,
+                CompiledLoader::EXTENDS_KEY => App\Area::AREA_GLOBAL,
                 'arguments' => [
                     'FrontendOnly' => ['c' => 3],
                     'Overridden' => ['b' => 'frontend'],
@@ -212,7 +211,7 @@ class AreaTest extends TestCase
 
         $resolved = $loader->load(App\Area::AREA_FRONTEND);
 
-        $this->assertArrayNotHasKey(ConfigLoaderInterface::EXTENDS_KEY, $resolved);
+        $this->assertArrayNotHasKey(CompiledLoader::EXTENDS_KEY, $resolved);
         foreach (array_keys($frontendConfig) as $section) {
             $this->assertEquals($frontendConfig[$section], $resolved[$section], $section);
         }

@@ -15,16 +15,6 @@ namespace Magento\Framework\ObjectManager;
 interface ConfigLoaderInterface
 {
     /**
-     * When present, names the area the loaded configuration only holds the differences against
-     */
-    public const EXTENDS_KEY = '_extends';
-
-    /**
-     * When present, names the area the loaded configuration belongs to
-     */
-    public const AREA_KEY = '_area';
-
-    /**
      * Load modules DI configuration
      *
      * @param string $area

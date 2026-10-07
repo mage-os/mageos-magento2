@@ -9,7 +9,6 @@ namespace Magento\Framework\App\Test\Unit\ObjectManager\ConfigLoader;
 
 use Magento\Framework\App\ObjectManager\ConfigLoader\Compiled;
 use Magento\Framework\ObjectManager\Config\Compiled as CompiledConfig;
-use Magento\Framework\ObjectManager\ConfigLoaderInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
@@ -78,7 +77,7 @@ class CompiledTest extends TestCase
                 'lazyTypes' => ['Lazy' => true],
             ],
             'frontend' => [
-                ConfigLoaderInterface::EXTENDS_KEY => 'global',
+                Compiled::EXTENDS_KEY => 'global',
                 'arguments' => ['Overridden' => ['b' => 'frontend'], 'FrontendOnly' => ['c' => 3]],
                 'preferences' => ['Interface' => 'FrontendImplementation'],
                 'instanceTypes' => [],
@@ -107,7 +106,7 @@ class CompiledTest extends TestCase
         $delta = [$section => ['Overridden' => 'areaValue', 'AreaOnly' => 'areaValue', 'Falsy' => null]];
         $loader = $this->loaderFor([
             'global' => $global,
-            'frontend' => [ConfigLoaderInterface::EXTENDS_KEY => 'global'] + $delta,
+            'frontend' => [Compiled::EXTENDS_KEY => 'global'] + $delta,
         ]);
 
         $this->assertSame(
@@ -129,7 +128,7 @@ class CompiledTest extends TestCase
         $loader = $this->loaderFor([
             'global' => ['arguments' => [], 'other' => ['a' => 1, 'b' => 2]],
             'frontend' => [
-                ConfigLoaderInterface::EXTENDS_KEY => 'global',
+                Compiled::EXTENDS_KEY => 'global',
                 'arguments' => [],
                 'other' => ['b' => 3],
             ],
@@ -142,7 +141,7 @@ class CompiledTest extends TestCase
     {
         $loader = $this->loaderFor([
             'global' => ['arguments' => ['Shared' => 1]],
-            'frontend' => [ConfigLoaderInterface::EXTENDS_KEY => 'global', 'arguments' => ['Own' => 2]],
+            'frontend' => [Compiled::EXTENDS_KEY => 'global', 'arguments' => ['Own' => 2]],
         ]);
 
         $this->assertSame($loader->load('frontend'), $loader->load('frontend'));
@@ -153,7 +152,7 @@ class CompiledTest extends TestCase
     public function testLoadFailsOnAnInvalidBase($base): void
     {
         $loader = $this->loaderFor([
-            'frontend' => [ConfigLoaderInterface::EXTENDS_KEY => $base, 'arguments' => []],
+            'frontend' => [Compiled::EXTENDS_KEY => $base, 'arguments' => []],
         ]);
 
         $this->expectException(\LogicException::class);
@@ -178,7 +177,7 @@ class CompiledTest extends TestCase
     public function testLoadFailsWhenTheBaseCannotBeLoaded(): void
     {
         $loader = $this->loaderFor([
-            'frontend' => [ConfigLoaderInterface::EXTENDS_KEY => 'global', 'arguments' => []],
+            'frontend' => [Compiled::EXTENDS_KEY => 'global', 'arguments' => []],
         ]);
 
         $this->expectException(\LogicException::class);
@@ -190,8 +189,8 @@ class CompiledTest extends TestCase
     public function testLoadFailsWhenTheBaseIsItselfADelta(): void
     {
         $loader = $this->loaderFor([
-            'global' => [ConfigLoaderInterface::EXTENDS_KEY => 'frontend', 'arguments' => []],
-            'frontend' => [ConfigLoaderInterface::EXTENDS_KEY => 'global', 'arguments' => []],
+            'global' => [Compiled::EXTENDS_KEY => 'frontend', 'arguments' => []],
+            'frontend' => [Compiled::EXTENDS_KEY => 'global', 'arguments' => []],
         ]);
 
         $this->expectException(\LogicException::class);

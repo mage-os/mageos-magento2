@@ -15,6 +15,13 @@ use Magento\Framework\ObjectManager\ConfigLoaderInterface;
 class Compiled implements ConfigLoaderInterface
 {
     /**
+     * Marks a compiled file that only holds the differences against the area it names
+     *
+     * Written by setup:di:compile for every non-global area. load() resolves it, so it never reaches callers.
+     */
+    public const EXTENDS_KEY = '_extends';
+
+    /**
      * Global config
      *
      * @var array
@@ -24,10 +31,10 @@ class Compiled implements ConfigLoaderInterface
     /**
      * Returns the complete configuration of an area
      *
-     * A compiled file marked with ConfigLoaderInterface::EXTENDS_KEY only holds the entries that differ
-     * from the area it names; it is resolved against that area here, so callers always receive the complete
-     * configuration. The resolved array is deliberately not cached: it would stay in process memory for the
-     * whole request, whereas the contents of the compiled files live in OPcache shared memory.
+     * A compiled file marked with EXTENDS_KEY only holds the entries that differ from the area it names;
+     * it is resolved against that area here, so callers always receive the complete configuration.
+     * The resolved array is deliberately not cached: it would stay in process memory for the whole
+     * request, whereas the contents of the compiled files live in OPcache shared memory.
      *
      * @param string $area
      * @return array
@@ -36,11 +43,11 @@ class Compiled implements ConfigLoaderInterface
     public function load($area)
     {
         $diConfiguration = $this->loadFile($area);
-        if (!is_array($diConfiguration) || !array_key_exists(ConfigLoaderInterface::EXTENDS_KEY, $diConfiguration)) {
+        if (!is_array($diConfiguration) || !array_key_exists(self::EXTENDS_KEY, $diConfiguration)) {
             return $diConfiguration;
         }
 
-        $base = $diConfiguration[ConfigLoaderInterface::EXTENDS_KEY];
+        $base = $diConfiguration[self::EXTENDS_KEY];
         if (!is_string($base) || $base === '' || $base === $area) {
             throw new \LogicException(
                 sprintf('The compiled DI configuration of "%s" extends an invalid area.', $area)
@@ -55,7 +62,7 @@ class Compiled implements ConfigLoaderInterface
                 $base
             ));
         }
-        if (array_key_exists(ConfigLoaderInterface::EXTENDS_KEY, $baseConfiguration)) {
+        if (array_key_exists(self::EXTENDS_KEY, $baseConfiguration)) {
             throw new \LogicException(sprintf(
                 'The compiled DI configuration of "%s" extends "%s", which is itself a delta.',
                 $area,
@@ -92,7 +99,7 @@ class Compiled implements ConfigLoaderInterface
      */
     private static function merge(array $base, array $delta)
     {
-        unset($delta[ConfigLoaderInterface::EXTENDS_KEY]);
+        unset($delta[self::EXTENDS_KEY]);
 
         foreach ($delta as $section => $values) {
             $base[$section] = in_array($section, CompiledConfig::MERGED_SECTIONS, true)
