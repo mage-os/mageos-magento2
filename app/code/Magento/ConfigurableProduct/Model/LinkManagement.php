@@ -173,7 +173,7 @@ class LinkManagement implements LinkManagementInterface
      */
     public function addChild($sku, $childSku)
     {
-        $product = $this->productRepository->get($sku, true);
+        $product = $this->productRepository->get($sku, true, null, true);
         $child = $this->productRepository->get($childSku);
 
         $childrenIds = array_values($this->configurableType->getChildrenIds($product->getId())[0]);
