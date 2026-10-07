@@ -247,6 +247,27 @@ class AreaTest extends TestCase
         );
     }
 
+    public function testDoOperationWritesTheWholeMergedSectionWhenItIsNotAnArrayInGlobal()
+    {
+        $frontendConfig = [
+            'arguments' => [],
+            'preferences' => [],
+            'instanceTypes' => [],
+            'lazyTypes' => ['Lazy' => true],
+        ];
+
+        $written = $this->compile([
+            App\Area::AREA_GLOBAL => ['lazyTypes' => 'global'] + $frontendConfig,
+            App\Area::AREA_FRONTEND => $frontendConfig,
+        ]);
+
+        $this->assertSame(['Lazy' => true], $written[App\Area::AREA_FRONTEND]['lazyTypes']);
+        $this->assertSameIgnoringKeyOrder(
+            $frontendConfig,
+            $this->loaderReading($written)->load(App\Area::AREA_FRONTEND)
+        );
+    }
+
     /**
      * Returns a compiled config loader that reads the given files instead of generated/metadata
      *

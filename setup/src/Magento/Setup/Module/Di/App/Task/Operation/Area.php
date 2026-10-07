@@ -134,7 +134,7 @@ class Area implements OperationInterface
                 continue;
             }
 
-            $globalValues = $globalConfig[$section] ?? [];
+            $globalValues = is_array($globalConfig[$section] ?? null) ? $globalConfig[$section] : [];
             $sectionDiff = [];
             foreach ($values as $key => $value) {
                 if (!array_key_exists($key, $globalValues) || $globalValues[$key] !== $value) {
