@@ -6,20 +6,31 @@
 
 namespace Magento\Framework\Pricing\Render;
 
+use Magento\Framework\ObjectManager\ResetAfterRequestInterface;
 use Magento\Framework\View\LayoutFactory;
 use Magento\Framework\View\LayoutInterface;
 
 /**
  * Pricing render's layout model
  */
-class Layout
+class Layout implements ResetAfterRequestInterface
 {
     /**
-     * Layout Interface
+     * Layout Interface, created on first use in each request
      *
-     * @var LayoutInterface
+     * @var LayoutInterface|null
      */
     protected $layout;
+
+    /**
+     * @var LayoutFactory
+     */
+    private LayoutFactory $layoutFactory;
+
+    /**
+     * @var LayoutInterface
+     */
+    private LayoutInterface $generalLayout;
 
     /**
      * Constructor
@@ -31,7 +42,29 @@ class Layout
         LayoutFactory $layoutFactory,
         \Magento\Framework\View\LayoutInterface $generalLayout
     ) {
-        $this->layout = $layoutFactory->create(['cacheable' => $generalLayout->isCacheable()]);
+        // The inner layout is created lazily per request: in a long-lived worker a
+        // constructor-time copy of the page's cacheable flag goes stale and makes
+        // PageCache LayoutPlugin mark private pages (cart, login) public.
+        $this->layoutFactory = $layoutFactory;
+        $this->generalLayout = $generalLayout;
+    }
+
+    /**
+     * Get the inner layout, created with the current page's cacheable flag
+     *
+     * @return LayoutInterface
+     */
+    private function getLayout(): LayoutInterface
+    {
+        return $this->layout ??= $this->layoutFactory->create(['cacheable' => $this->generalLayout->isCacheable()]);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function _resetState(): void
+    {
+        $this->layout = null;
     }
 
     /**
@@ -42,7 +75,7 @@ class Layout
      */
     public function addHandle($handle)
     {
-        $this->layout->getUpdate()->addHandle($handle);
+        $this->getLayout()->getUpdate()->addHandle($handle);
     }
 
     /**
@@ -52,9 +85,9 @@ class Layout
      */
     public function loadLayout()
     {
-        $this->layout->getUpdate()->load();
-        $this->layout->generateXml();
-        $this->layout->generateElements();
+        $this->getLayout()->getUpdate()->load();
+        $this->getLayout()->generateXml();
+        $this->getLayout()->generateElements();
     }
 
     /**
@@ -65,6 +98,6 @@ class Layout
      */
     public function getBlock($name)
     {
-        return $this->layout->getBlock($name);
+        return $this->getLayout()->getBlock($name);
     }
 }
