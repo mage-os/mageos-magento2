@@ -11,6 +11,7 @@ use Magento\CatalogInventory\Api\StockStateInterface;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Framework\Session\SessionManagerInterface;
+use Magento\Framework\Module\Manager as ModuleManager;
 use Magento\Quote\Model\Quote\Item;
 use Magento\Catalog\Helper\Data as CatalogHelper;
 
@@ -35,7 +36,10 @@ class Grid extends \Magento\Sales\Block\Adminhtml\Order\Create\AbstractCreate
     protected $_taxData;
 
     /**
-     * @var \Magento\Wishlist\Model\WishlistFactory
+     * Null when Magento_Wishlist is not enabled, in which case the grid offers
+     * no move-to-wishlist actions.
+     *
+     * @var \Magento\Wishlist\Model\WishlistFactory|null
      */
     protected $_wishlistFactory;
 
@@ -69,7 +73,7 @@ class Grid extends \Magento\Sales\Block\Adminhtml\Order\Create\AbstractCreate
      * @param \Magento\Backend\Model\Session\Quote $sessionQuote
      * @param \Magento\Sales\Model\AdminOrder\Create $orderCreate
      * @param PriceCurrencyInterface $priceCurrency
-     * @param \Magento\Wishlist\Model\WishlistFactory $wishlistFactory
+     * @param \Magento\Wishlist\Model\WishlistFactory|null $wishlistFactory
      * @param \Magento\GiftMessage\Model\Save $giftMessageSave
      * @param \Magento\Tax\Model\Config $taxConfig
      * @param \Magento\Tax\Helper\Data $taxData
@@ -78,6 +82,7 @@ class Grid extends \Magento\Sales\Block\Adminhtml\Order\Create\AbstractCreate
      * @param StockStateInterface $stockState
      * @param array $data
      * @param CatalogHelper|null $catalogHelper
+     * @param ModuleManager|null $moduleManager
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
@@ -85,7 +90,7 @@ class Grid extends \Magento\Sales\Block\Adminhtml\Order\Create\AbstractCreate
         \Magento\Backend\Model\Session\Quote $sessionQuote,
         \Magento\Sales\Model\AdminOrder\Create $orderCreate,
         PriceCurrencyInterface $priceCurrency,
-        \Magento\Wishlist\Model\WishlistFactory $wishlistFactory,
+        $wishlistFactory,
         \Magento\GiftMessage\Model\Save $giftMessageSave,
         \Magento\Tax\Model\Config $taxConfig,
         \Magento\Tax\Helper\Data $taxData,
@@ -93,10 +98,17 @@ class Grid extends \Magento\Sales\Block\Adminhtml\Order\Create\AbstractCreate
         StockRegistryInterface $stockRegistry,
         StockStateInterface $stockState,
         array $data = [],
-        ?CatalogHelper $catalogHelper = null
+        ?CatalogHelper $catalogHelper = null,
+        ?ModuleManager $moduleManager = null
     ) {
         $this->_messageHelper = $messageHelper;
-        $this->_wishlistFactory = $wishlistFactory;
+        // The wishlist factory cannot be a typed constructor dependency: di:compile
+        // fails on the typehint when module-wishlist is absent, and PHP forbids a
+        // default value at this position. Resolve it here while the module is enabled.
+        $moduleManager = $moduleManager ?? ObjectManager::getInstance()->get(ModuleManager::class);
+        $this->_wishlistFactory = $wishlistFactory ?? ($moduleManager->isEnabled('Magento_Wishlist')
+            ? ObjectManager::getInstance()->get(\Magento\Wishlist\Model\WishlistFactory::class)
+            : null);
         $this->_giftMessageSave = $giftMessageSave;
         $this->_taxConfig = $taxConfig;
         $this->_taxData = $taxData;
@@ -567,16 +579,22 @@ class Grid extends \Magento\Sales\Block\Adminhtml\Order\Create\AbstractCreate
      */
     public function isMoveToWishlistAllowed($item)
     {
-        return $item->getProduct()->isVisibleInSiteVisibility();
+        return $this->_wishlistFactory !== null && $item->getProduct()->isVisibleInSiteVisibility();
     }
 
     /**
-     * Retrieve collection of customer wishlists
+     * Retrieve customer wishlists
      *
-     * @return \Magento\Wishlist\Model\ResourceModel\Wishlist\Collection
+     * Returns \Magento\Wishlist\Model\ResourceModel\Wishlist\Collection when
+     * Magento_Wishlist is present, an empty iterable otherwise.
+     *
+     * @return iterable
      */
     public function getCustomerWishlists()
     {
+        if ($this->_wishlistFactory === null) {
+            return [];
+        }
         return $this->_wishlistFactory->create()->getCollection()->filterByCustomerId($this->getCustomerId());
     }
 
