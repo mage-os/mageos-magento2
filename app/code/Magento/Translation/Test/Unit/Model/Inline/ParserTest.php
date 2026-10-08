@@ -153,6 +153,32 @@ class ParserTest extends TestCase
         $this->model->processAjaxPost([]);
     }
 
+    public function testRelativeFilenameLinkIsPreserved(): void
+    {
+        $result = $this->removeExternalLinks('<a href="page.html">Guide</a>');
+
+        $this->assertSame('<a href="page.html">Guide</a>', $result);
+    }
+
+    public function testExternalLinkIsStillRemoved(): void
+    {
+        $result = $this->removeExternalLinks('<a href="https://example.com">Guide</a>');
+
+        $this->assertSame('Guide', $result);
+    }
+
+    public function testHtmlParsingRestoresLibxmlErrorMode(): void
+    {
+        $previousMode = libxml_use_internal_errors(false);
+        try {
+            $this->removeExternalLinks('<a href="page.html">Guide</a>');
+
+            $this->assertFalse(libxml_use_internal_errors());
+        } finally {
+            libxml_use_internal_errors($previousMode);
+        }
+    }
+
     /**
      * @return void
      */
@@ -162,6 +188,13 @@ class ParserTest extends TestCase
         $expectedOutput = file_get_contents(__DIR__ . '/_files/output.html');
         $actualOutput = $this->model->processResponseBodyString($html);
         $this->assertEquals($expectedOutput, $actualOutput);
+    }
+
+    private function removeExternalLinks(string $html): string
+    {
+        (new \ReflectionProperty(Parser::class, 'normalizer'))->setValue($this->model, null);
+
+        return (new \ReflectionMethod(Parser::class, 'removeExternalLinks'))->invoke($this->model, $html);
     }
 
     /**
