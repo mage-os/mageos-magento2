@@ -407,6 +407,7 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
     private function getFieldData(\Magento\Config\Model\Config\Structure\Element\Field $field, $path)
     {
         $data = $this->getAppConfigDataValue($path);
+        $hasDeployedValue = $data !== null;
 
         $placeholderValue = $this->settingChecker->getPlaceholderValue(
             $path,
@@ -426,7 +427,7 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
             $backendModel = $field->getBackendModel();
             // Backend models which implement ProcessorInterface are processed by ScopeConfigInterface
             if (!$backendModel instanceof ProcessorInterface) {
-                if (array_key_exists($path, $this->_configData)) {
+                if (!$hasDeployedValue && array_key_exists($path, $this->_configData)) {
                     $data = $this->_configData[$path];
                 }
 

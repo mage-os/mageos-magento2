@@ -636,7 +636,17 @@ class FormTest extends TestCase
         $sectionMock->method('getId')->willReturn('section1');
 
         $formFieldMock = $this->createPartialMock(AbstractElement::class, ['setRenderer']);
-        $fieldsetMock->method('addField')->willReturn($formFieldMock);
+        $fieldsetMock->expects($this->once())
+            ->method('addField')
+            ->with(
+                $this->anything(),
+                $this->anything(),
+                $this->callback(function (array $data) use ($lockedValue): bool {
+                    $this->assertSame($lockedValue, $data['value']);
+                    return true;
+                })
+            )
+            ->willReturn($formFieldMock);
 
         $settingCheckerMock = $this->createMock(SettingChecker::class);
         $settingCheckerMock->method('getPlaceholderValue')->willReturn(null);
