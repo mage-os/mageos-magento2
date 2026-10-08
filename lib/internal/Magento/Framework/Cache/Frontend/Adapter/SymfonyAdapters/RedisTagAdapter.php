@@ -164,35 +164,11 @@ end
 return deleted
 LUA;
 
-    /**
-     * Remove index entries only while the deleted data key is still absent.
-     * A save that completes before this script runs keeps all of its new indices;
-     * a save after it runs adds them back. The check and cleanup must be atomic,
-     * including when the optional Lua-based invalidation path is disabled.
-     */
-    private const LUA_CLEANUP_DELETED_IDS = <<<'LUA'
-local tag_prefix = ARGV[1]
-local reverse_prefix = ARGV[2]
-local all_ids = ARGV[3]
-local source_count = tonumber(ARGV[4])
+    /** @var int Maximum number of IDs watched in one cleanup transaction. */
+    private const CLEANUP_CHUNK_SIZE = 100;
 
-for i, data_key in ipairs(KEYS) do
-    local id = ARGV[4 + source_count + i]
-    if redis.call('EXISTS', data_key) == 0 then
-        local reverse_key = reverse_prefix .. id
-        for _, tag in ipairs(redis.call('SMEMBERS', reverse_key)) do
-            redis.call('SREM', tag_prefix .. tag, id)
-        end
-        for tag_index = 1, source_count do
-            redis.call('SREM', tag_prefix .. ARGV[4 + tag_index], id)
-        end
-        redis.call('SREM', all_ids, id)
-        redis.call('DEL', reverse_key)
-    end
-end
-
-return 1
-LUA;
+    /** @var int Avoid an unbounded retry loop when cache entries are being re-saved. */
+    private const CLEANUP_RETRIES = 3;
 
     /**
      * @var \Redis|\RedisCluster|PredisClient|OptimizedPredisClient
@@ -462,7 +438,9 @@ LUA;
                 }
 
                 // Clean only entries whose data keys are still absent after deletion.
-                $this->cleanupIndicesForIds($chunk, $sourceTags);
+                if (!$this->cleanupIndicesForIds($chunk, $sourceTags)) {
+                    $success = false;
+                }
 
                 // Commit each chunk separately (important for large operations)
                 if (method_exists($this->cachePool, 'commit')) {
@@ -477,51 +455,91 @@ LUA;
 
         // Even after a partial failure, remove bookkeeping for data keys that were
         // deleted. Leave indices for live keys, including concurrent re-saves, intact.
-        $this->cleanupIndicesForIds($ids, $sourceTags);
+        $cleanupSuccess = $this->cleanupIndicesForIds($ids, $sourceTags);
 
         // Ensure changes are committed immediately (important for MFTF and tests)
         if (method_exists($this->cachePool, 'commit')) {
             $this->cachePool->commit();
         }
 
-        return $success;
+        return $success && $cleanupSuccess;
     }
 
     /**
      * Remove tag bookkeeping for ids whose data keys are still absent.
      *
-     * The Redis script combines the data-key check and all index mutations into one
-     * operation. It also sweeps source tags when the reverse index has expired.
-     * Small batches bound the time Redis spends inside each script invocation.
+     * WATCH protects the Symfony data keys while their reverse indices are read and
+     * updated. If a concurrent save changes a watched key, EXEC aborts and the chunk
+     * is retried. This also works when Redis scripting is disabled.
      *
      * @param array $ids
      * @param array $sourceTags
-     * @return void
+     * @return bool Whether every chunk was cleaned or found to contain live data keys
      */
-    private function cleanupIndicesForIds(array $ids, array $sourceTags = []): void
+    private function cleanupIndicesForIds(array $ids, array $sourceTags = []): bool
     {
-        foreach (array_chunk(array_values($ids), 100) as $chunk) {
+        foreach (array_chunk(array_values($ids), self::CLEANUP_CHUNK_SIZE) as $chunk) {
             // Symfony's AbstractAdapter appends ':' to non-empty namespaces.
             $dataKeys = array_map(
                 fn ($id) => $this->namespace === '' ? $id : $this->namespace . ':' . $id,
                 $chunk
             );
-            $arguments = [
-                ...$dataKeys,
-                self::TAG_INDEX_PREFIX . $this->namespace,
-                self::REVERSE_INDEX_PREFIX . $this->namespace,
-                self::ALL_IDS_SET,
-                count($sourceTags),
-                ...$sourceTags,
-                ...$chunk
-            ];
+            $cleaned = false;
 
-            if ($this->isPredisClient()) {
-                $this->redis->executeRaw(['EVAL', self::LUA_CLEANUP_DELETED_IDS, count($dataKeys), ...$arguments]);
-            } else {
-                $this->redis->eval(self::LUA_CLEANUP_DELETED_IDS, $arguments, count($dataKeys));
+            for ($attempt = 0; $attempt < self::CLEANUP_RETRIES; $attempt++) {
+                $this->redis->watch(...$dataKeys);
+                $inTransaction = false;
+                try {
+                    $pipeline = $this->createPipeline();
+                    foreach ($chunk as $index => $id) {
+                        $pipeline->exists($dataKeys[$index]);
+                        $pipeline->smembers($this->reverseIndexKey($id));
+                    }
+                    $states = $this->executePipeline($pipeline);
+                    if (!is_array($states) || count($states) !== 2 * count($chunk)) {
+                        return false;
+                    }
+
+                    $deleted = [];
+                    foreach ($chunk as $index => $id) {
+                        if (!$states[2 * $index]) {
+                            $deleted[$id] = is_array($states[2 * $index + 1])
+                                ? $states[2 * $index + 1] : [];
+                        }
+                    }
+                    if (!$deleted) {
+                        $cleaned = true;
+                        break;
+                    }
+
+                    $this->redis->multi();
+                    $inTransaction = true;
+                    foreach ($deleted as $id => $tags) {
+                        foreach (array_unique([...$tags, ...$sourceTags]) as $tag) {
+                            $this->redis->srem($this->getTagKey($tag), $id);
+                        }
+                        $this->redis->srem(self::ALL_IDS_SET, $id);
+                        $this->redis->del($this->reverseIndexKey($id));
+                    }
+                    $result = $this->redis->exec();
+                    $inTransaction = false;
+                    if (is_array($result) && !in_array(false, $result, true)) {
+                        $cleaned = true;
+                        break;
+                    }
+                } finally {
+                    if ($inTransaction) {
+                        $this->redis->discard();
+                    }
+                    $this->redis->unwatch();
+                }
+            }
+            if (!$cleaned) {
+                return false;
             }
         }
+
+        return true;
     }
 
     /**

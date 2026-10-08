@@ -13,6 +13,9 @@ use PHPUnit\Framework\TestCase;
 use Predis\Client as PredisClient;
 use Psr\Cache\CacheItemPoolInterface;
 
+require_once __DIR__ . '/RedisTagAdapterTestClient.php';
+require_once __DIR__ . '/RedisTagAdapterTestPipeline.php';
+
 /**
  * Unit test for RedisTagAdapter index maintenance / leak fixes.
  *
@@ -58,19 +61,16 @@ class RedisTagAdapterTest extends TestCase
         $this->setPrivate('luaHelper', null);
     }
 
-    public function testDeleteByIdsPassesDataKeysAndIdsToAtomicCleanup(): void
+    public function testDeleteByIdsWatchesDataKeysBeforeCleaningIndices(): void
     {
         $this->cachePoolMock->method('deleteItems')->willReturn(true);
 
         $this->adapter->deleteByIds(['ID1', 'ID2']);
 
-        $this->assertCount(1, $this->redis->rawCommands);
-        $this->assertSame('EVAL', $this->redis->rawCommands[0][0]);
-        $this->assertSame(
-            [2, '4e0_:ID1', '4e0_:ID2', 'cache:tags:4e0_', 'cache:id_tags:4e0_', 'cache:all_ids', 0,
-                'ID1', 'ID2'],
-            array_slice($this->redis->rawCommands[0], 2)
-        );
+        $this->assertCommand('watch', ['4e0_:ID1', '4e0_:ID2']);
+        $this->assertCommand('srem', ['cache:all_ids', 'ID1']);
+        $this->assertCommand('srem', ['cache:all_ids', 'ID2']);
+        $this->assertSame([], $this->redis->rawCommands);
     }
 
     public function testDeleteByIdsEmptyIsNoop(): void
@@ -87,7 +87,19 @@ class RedisTagAdapterTest extends TestCase
 
         $this->adapter->deleteByIds(['ID1']);
 
-        $this->assertSame('ID1', $this->redis->rawCommands[0][3]);
+        $this->assertCommand('watch', ['ID1']);
+    }
+
+    public function testDeleteByIdsReportsCleanupConflictAfterRetries(): void
+    {
+        $this->cachePoolMock->method('deleteItems')->willReturn(true);
+        $this->redis->abortExec = true;
+
+        $this->assertFalse($this->adapter->deleteByIds(['ID1']));
+        $this->assertCount(3, array_filter(
+            $this->redis->commands,
+            static fn (array $command): bool => $command[0] === 'watch'
+        ));
     }
 
     /**
@@ -139,11 +151,8 @@ class RedisTagAdapterTest extends TestCase
 
         $this->assertTrue($this->adapter->cleanMatchingAnyTags(['MAGE']));
 
-        $this->assertSame(
-            [2, '4e0_:LIVE', '4e0_:STALE', 'cache:tags:4e0_', 'cache:id_tags:4e0_',
-                'cache:all_ids', 1, 'MAGE', 'LIVE', 'STALE'],
-            array_slice($this->redis->rawCommands[0], 2)
-        );
+        $this->assertCommand('srem', ['cache:tags:4e0_MAGE', 'LIVE']);
+        $this->assertCommand('srem', ['cache:tags:4e0_MAGE', 'STALE']);
     }
 
     /**
@@ -153,76 +162,7 @@ class RedisTagAdapterTest extends TestCase
      */
     private function createRedisDouble(): PredisClient
     {
-        return new class extends PredisClient {
-            /** @var array<int, array{0:string,1:array}> */
-            public array $commands = [];
-
-            /** @var array<int, array> */
-            public array $rawCommands = [];
-
-            /** @var array<string, array> key => members (SMEMBERS result) */
-            public array $sets = [];
-
-            // phpcs:ignore Magento2.Functions.DiscouragedFunction
-            public function __construct()
-            {
-                // Bypass Predis\Client construction; this double intercepts every call.
-            }
-
-            public function executeRaw(array $arguments, &$error = null)
-            {
-                $this->rawCommands[] = $arguments;
-                return 1;
-            }
-
-            public function pipeline(...$args)
-            {
-                $parent = $this;
-
-                return new class ($parent) {
-                    /** @var object */
-                    private $parent;
-
-                    /** @var array<int, array{0:string,1:array}> */
-                    private array $queued = [];
-
-                    public function __construct($parent)
-                    {
-                        $this->parent = $parent;
-                    }
-
-                    public function execute(): array
-                    {
-                        $results = [];
-                        foreach ($this->queued as [$method, $args]) {
-                            $results[] = $method === 'smembers' ? ($this->parent->sets[$args[0]] ?? []) : true;
-                        }
-
-                        return $results;
-                    }
-
-                    public function __call($method, $arguments)
-                    {
-                        $method = strtolower($method);
-                        $this->queued[] = [$method, $arguments];
-                        $this->parent->commands[] = [$method, $arguments];
-
-                        return $this;
-                    }
-                };
-            }
-
-            public function __call($method, $arguments)
-            {
-                $method = strtolower($method);
-                $this->commands[] = [$method, $arguments];
-
-                return match ($method) {
-                    'smembers' => $this->sets[$arguments[0]] ?? [],
-                    default => true,
-                };
-            }
-        };
+        return new RedisTagAdapterTestClient();
     }
 
     private function setPrivate(string $property, $value): void

@@ -21,6 +21,9 @@ class RedisTagAdapterCleanupTest extends TestCase
     /** @var Client */
     private Client $redis;
 
+    /** @var array<string, int|string> */
+    private array $connectionParams;
+
     /** @var RedisAdapter */
     private RedisAdapter $dataPool;
 
@@ -42,7 +45,12 @@ class RedisTagAdapterCleanupTest extends TestCase
     protected function setUp(): void
     {
         $port = (int)(getenv('MAGEOS_TEST_REDIS_PORT') ?: 6379);
-        $this->redis = new Client(['host' => '127.0.0.1', 'port' => $port]);
+        $this->connectionParams = ['host' => '127.0.0.1', 'port' => $port];
+        if (getenv('MAGEOS_TEST_REDIS_USER')) {
+            $this->connectionParams['username'] = getenv('MAGEOS_TEST_REDIS_USER');
+            $this->connectionParams['password'] = getenv('MAGEOS_TEST_REDIS_PASSWORD') ?: '';
+        }
+        $this->redis = new Client($this->connectionParams);
         try {
             $this->redis->ping();
         } catch (\Exception $e) {
@@ -94,6 +102,50 @@ class RedisTagAdapterCleanupTest extends TestCase
         $this->assertSame(1, $this->redis->sismember('cache:all_ids', $this->id));
     }
 
+    public function testResaveAfterIndexReadAbortsCleanupTransaction(): void
+    {
+        $resave = function (): void {
+            $otherRedis = new Client($this->connectionParams);
+            $otherPool = new RedisAdapter($otherRedis, $this->namespace);
+            $item = $otherPool->getItem($this->id);
+            $item->set('new');
+            $otherPool->save($item);
+            $otherRedis->sadd($this->tagKey, $this->id);
+            $otherRedis->sadd($this->reverseKey, 'TAG');
+            $otherRedis->sadd('cache:all_ids', $this->id);
+        };
+        $watchClient = new class ($this->connectionParams, $resave) extends Client {
+            /** @var callable|null */
+            private $resave;
+
+            public function __construct(array $params, callable $resave)
+            {
+                parent::__construct($params);
+                $this->resave = $resave;
+            }
+
+            public function multi(...$arguments)
+            {
+                if ($this->resave !== null) {
+                    $resave = $this->resave;
+                    $this->resave = null;
+                    $resave();
+                }
+                return parent::__call('multi', $arguments);
+            }
+        };
+        $adapter = $this->createAdapter(
+            fn (array $ids): bool => $this->dataPool->deleteItems($ids),
+            $watchClient
+        );
+
+        $this->assertTrue($adapter->deleteByIds([$this->id], ['TAG']));
+        $this->assertSame('new', $this->dataPool->getItem($this->id)->get());
+        $this->assertSame(1, $this->redis->sismember($this->tagKey, $this->id));
+        $this->assertSame(1, $this->redis->sismember($this->reverseKey, 'TAG'));
+        $this->assertSame(1, $this->redis->sismember('cache:all_ids', $this->id));
+    }
+
     public function testFailedDeletionKeepsLiveEntryIndexed(): void
     {
         $adapter = $this->createAdapter(function (): bool {
@@ -119,12 +171,13 @@ class RedisTagAdapterCleanupTest extends TestCase
         $this->assertSame(0, $this->redis->sismember('cache:all_ids', $this->id));
     }
 
-    private function createAdapter(callable $deleteItems): RedisTagAdapter
+    private function createAdapter(callable $deleteItems, ?Client $redis = null): RedisTagAdapter
     {
-        $pool = $this->createMock(CacheItemPoolInterface::class);
+        $pool = $this->createStub(CacheItemPoolInterface::class);
         $pool->method('deleteItems')->willReturnCallback($deleteItems);
         $adapter = (new \ReflectionClass(RedisTagAdapter::class))->newInstanceWithoutConstructor();
-        foreach (['redis' => $this->redis, 'namespace' => $this->namespace, 'cachePool' => $pool] as $key => $value) {
+        $properties = ['redis' => $redis ?? $this->redis, 'namespace' => $this->namespace, 'cachePool' => $pool];
+        foreach ($properties as $key => $value) {
             (new \ReflectionProperty(RedisTagAdapter::class, $key))->setValue($adapter, $value);
         }
 
