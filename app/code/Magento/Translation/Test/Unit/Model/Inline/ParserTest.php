@@ -11,6 +11,8 @@ use Laminas\Filter\FilterInterface;
 use Magento\Framework\App\Cache\TypeListInterface;
 use Magento\Framework\App\State;
 use Magento\Framework\Escaper;
+use Magento\Framework\Filter\Input\MaliciousCode;
+use Magento\Framework\Filter\Input\PurifierInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\Translate\InlineInterface;
 use Magento\Store\Api\Data\StoreInterface;
@@ -151,6 +153,41 @@ class ParserTest extends TestCase
             ->method('isAllowed')
             ->willReturn(true);
         $this->model->processAjaxPost([]);
+    }
+
+    public function testProcessAjaxPostKeepsRelativeLinkAndRemovesExternalLink(): void
+    {
+        $this->translateInlineMock->method('isAllowed')->willReturn(true);
+        $this->storeMock->method('getId')->willReturn(1);
+        $this->appStateMock->method('getAreaCode')->willReturn('frontend');
+        (new \ReflectionProperty(Parser::class, 'normalizer'))->setValue($this->model, new \Normalizer());
+
+        $purifierConfig = \HTMLPurifier_Config::createDefault();
+        $purifierConfig->set('Cache.DefinitionImpl', null);
+        $purifier = new \HTMLPurifier($purifierConfig);
+        $purifierAdapter = $this->createMock(PurifierInterface::class);
+        $purifierAdapter->method('purify')->willReturnCallback([$purifier, 'purify']);
+        (new \ReflectionProperty(Parser::class, '_inputFilter'))
+            ->setValue($this->model, new MaliciousCode($purifierAdapter));
+
+        $saved = [];
+        $this->resourceMock->expects($this->exactly(2))
+            ->method('saveTranslate')
+            ->willReturnCallback(function ($original, $custom, $locale, $storeId) use (&$saved): void {
+                $this->assertNull($locale);
+                $this->assertSame(1, $storeId);
+                $saved[$original] = $custom;
+            });
+
+        $this->model->processAjaxPost([
+            ['original' => 'relative', 'custom' => '<a href="page.html">Guide</a>', 'perstore' => 1],
+            ['original' => 'external', 'custom' => '<a href="https://outside.example">Guide</a>', 'perstore' => 1],
+        ]);
+
+        $this->assertSame(
+            ['relative' => '<a href="page.html">Guide</a>', 'external' => 'Guide'],
+            $saved
+        );
     }
 
     public function testRelativeFilenameLinkIsPreserved(): void
