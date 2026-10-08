@@ -58,39 +58,36 @@ class RedisTagAdapterTest extends TestCase
         $this->setPrivate('luaHelper', null);
     }
 
-    /**
-     * deleteByIds() must remove every id from its tag sets, from all_ids, and delete the
-     * reverse index — not just SREM all_ids (which was the leak).
-     */
-    public function testDeleteByIdsCleansTagSetsAndReverseIndex(): void
+    public function testDeleteByIdsPassesDataKeysAndIdsToAtomicCleanup(): void
     {
-        $this->redis->sets['cache:id_tags:4e0_ID1'] = ['BLOCK_HTML', 'CAT_P'];
-        $this->redis->sets['cache:id_tags:4e0_ID2'] = ['MAGE'];
-
         $this->cachePoolMock->method('deleteItems')->willReturn(true);
 
         $this->adapter->deleteByIds(['ID1', 'ID2']);
 
-        // Reverse index was read to discover memberships
-        $this->assertCommand('smembers', ['cache:id_tags:4e0_ID1']);
-        $this->assertCommand('smembers', ['cache:id_tags:4e0_ID2']);
-
-        // ID1 removed from all_ids + both of its tag sets, reverse index deleted
-        $this->assertCommand('srem', ['cache:all_ids', 'ID1']);
-        $this->assertCommand('srem', ['cache:tags:4e0_BLOCK_HTML', 'ID1']);
-        $this->assertCommand('srem', ['cache:tags:4e0_CAT_P', 'ID1']);
-        $this->assertCommand('del', ['cache:id_tags:4e0_ID1']);
-
-        // ID2 removed from all_ids + its tag set, reverse index deleted
-        $this->assertCommand('srem', ['cache:all_ids', 'ID2']);
-        $this->assertCommand('srem', ['cache:tags:4e0_MAGE', 'ID2']);
-        $this->assertCommand('del', ['cache:id_tags:4e0_ID2']);
+        $this->assertCount(1, $this->redis->rawCommands);
+        $this->assertSame('EVAL', $this->redis->rawCommands[0][0]);
+        $this->assertSame(
+            [2, '4e0_:ID1', '4e0_:ID2', 'cache:tags:4e0_', 'cache:id_tags:4e0_', 'cache:all_ids', 0,
+                'ID1', 'ID2'],
+            array_slice($this->redis->rawCommands[0], 2)
+        );
     }
 
     public function testDeleteByIdsEmptyIsNoop(): void
     {
         $this->assertTrue($this->adapter->deleteByIds([]));
         $this->assertSame([], $this->redis->commands);
+        $this->assertSame([], $this->redis->rawCommands);
+    }
+
+    public function testDeleteByIdsUsesUnprefixedDataKeyWithoutNamespace(): void
+    {
+        $this->setPrivate('namespace', '');
+        $this->cachePoolMock->method('deleteItems')->willReturn(true);
+
+        $this->adapter->deleteByIds(['ID1']);
+
+        $this->assertSame('ID1', $this->redis->rawCommands[0][3]);
     }
 
     /**
@@ -142,8 +139,11 @@ class RedisTagAdapterTest extends TestCase
 
         $this->assertTrue($this->adapter->cleanMatchingAnyTags(['MAGE']));
 
-        $this->assertCommand('srem', ['cache:tags:4e0_MAGE', 'LIVE', 'STALE']);
-        $this->assertCommand('del', ['cache:id_tags:4e0_STALE']);
+        $this->assertSame(
+            [2, '4e0_:LIVE', '4e0_:STALE', 'cache:tags:4e0_', 'cache:id_tags:4e0_',
+                'cache:all_ids', 1, 'MAGE', 'LIVE', 'STALE'],
+            array_slice($this->redis->rawCommands[0], 2)
+        );
     }
 
     /**
@@ -157,6 +157,9 @@ class RedisTagAdapterTest extends TestCase
             /** @var array<int, array{0:string,1:array}> */
             public array $commands = [];
 
+            /** @var array<int, array> */
+            public array $rawCommands = [];
+
             /** @var array<string, array> key => members (SMEMBERS result) */
             public array $sets = [];
 
@@ -164,6 +167,12 @@ class RedisTagAdapterTest extends TestCase
             public function __construct()
             {
                 // Bypass Predis\Client construction; this double intercepts every call.
+            }
+
+            public function executeRaw(array $arguments, &$error = null)
+            {
+                $this->rawCommands[] = $arguments;
+                return 1;
             }
 
             public function pipeline(...$args)

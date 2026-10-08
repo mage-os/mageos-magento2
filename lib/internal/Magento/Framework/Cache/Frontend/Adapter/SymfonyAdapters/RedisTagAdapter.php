@@ -165,6 +165,36 @@ return deleted
 LUA;
 
     /**
+     * Remove index entries only while the deleted data key is still absent.
+     * A save that completes before this script runs keeps all of its new indices;
+     * a save after it runs adds them back. The check and cleanup must be atomic,
+     * including when the optional Lua-based invalidation path is disabled.
+     */
+    private const LUA_CLEANUP_DELETED_IDS = <<<'LUA'
+local tag_prefix = ARGV[1]
+local reverse_prefix = ARGV[2]
+local all_ids = ARGV[3]
+local source_count = tonumber(ARGV[4])
+
+for i, data_key in ipairs(KEYS) do
+    local id = ARGV[4 + source_count + i]
+    if redis.call('EXISTS', data_key) == 0 then
+        local reverse_key = reverse_prefix .. id
+        for _, tag in ipairs(redis.call('SMEMBERS', reverse_key)) do
+            redis.call('SREM', tag_prefix .. tag, id)
+        end
+        for tag_index = 1, source_count do
+            redis.call('SREM', tag_prefix .. ARGV[4 + tag_index], id)
+        end
+        redis.call('SREM', all_ids, id)
+        redis.call('DEL', reverse_key)
+    end
+end
+
+return 1
+LUA;
+
+    /**
      * @var \Redis|\RedisCluster|PredisClient|OptimizedPredisClient
      */
     private \Redis|\RedisCluster|PredisClient|OptimizedPredisClient $redis;
@@ -431,8 +461,8 @@ LUA;
                     $success = false;
                 }
 
-                // Remove the chunk's tag bookkeeping (tag-set members, all_ids, reverse index)
-                $this->cleanupIndicesForIds($chunk);
+                // Clean only entries whose data keys are still absent after deletion.
+                $this->cleanupIndicesForIds($chunk, $sourceTags);
 
                 // Commit each chunk separately (important for large operations)
                 if (method_exists($this->cachePool, 'commit')) {
@@ -440,28 +470,14 @@ LUA;
                 }
             }
 
-            if ($success) {
-                $this->removeIdsFromTagSets($sourceTags, $ids);
-            }
-
             return $success;
         }
 
         $success = $this->cachePool->deleteItems($ids);
 
-        // Remove all tag bookkeeping for the deleted ids. Deleting the data keys
-        // alone leaves their reverse index and tag-set memberships behind, which
-        // is the primary source of unbounded Redis growth on tag invalidation.
-        $this->cleanupIndicesForIds($ids);
-
-        // Sweep the ids from the tag sets they were discovered from: cleanupIndicesForIds()
-        // can only SREM memberships still recorded in each id's reverse index, so stale
-        // members (reverse index expired) would otherwise stay in these sets forever.
-        // Runs after (and only on) successful data deletion, so a failed delete never
-        // leaves live entries stripped of their memberships.
-        if ($success) {
-            $this->removeIdsFromTagSets($sourceTags, $ids);
-        }
+        // Even after a partial failure, remove bookkeeping for data keys that were
+        // deleted. Leave indices for live keys, including concurrent re-saves, intact.
+        $this->cleanupIndicesForIds($ids, $sourceTags);
 
         // Ensure changes are committed immediately (important for MFTF and tests)
         if (method_exists($this->cachePool, 'commit')) {
@@ -472,56 +488,39 @@ LUA;
     }
 
     /**
-     * Remove all tag bookkeeping for the given ids
+     * Remove tag bookkeeping for ids whose data keys are still absent.
      *
-     * For each id: remove its membership from every tag set it belonged to (discovered
-     * via the reverse index), remove it from all_ids, and delete the reverse index key.
-     * Individual Redis SET members cannot expire, so leaving them behind leaks memory
-     * without bound; this is the batch equivalent of onRemove().
-     *
-     * Uses two pipelines (SMEMBERS, then SREM/DEL) so it works with both phpredis and
-     * Predis. It is not atomic: a concurrent onSave() for the same id may re-create the
-     * reverse index between the two passes, but that id self-heals on its next save.
-     *
-     * Processes ids in sub-chunks so a large invalidation (deleteByIds() passes up to
-     * REMOVE_CHUNK_SIZE ids at once) cannot buffer an unbounded pipeline: with many
-     * tags per entry the second pipeline is ids x (tags + 2) commands, so bounding ids
-     * caps both the client-side command buffer and the single-burst load on Redis.
+     * The Redis script combines the data-key check and all index mutations into one
+     * operation. It also sweeps source tags when the reverse index has expired.
+     * Small batches bound the time Redis spends inside each script invocation.
      *
      * @param array $ids
+     * @param array $sourceTags
      * @return void
      */
-    private function cleanupIndicesForIds(array $ids): void
+    private function cleanupIndicesForIds(array $ids, array $sourceTags = []): void
     {
-        if (empty($ids)) {
-            return;
-        }
+        foreach (array_chunk(array_values($ids), 100) as $chunk) {
+            // Symfony's AbstractAdapter appends ':' to non-empty namespaces.
+            $dataKeys = array_map(
+                fn ($id) => $this->namespace === '' ? $id : $this->namespace . ':' . $id,
+                $chunk
+            );
+            $arguments = [
+                ...$dataKeys,
+                self::TAG_INDEX_PREFIX . $this->namespace,
+                self::REVERSE_INDEX_PREFIX . $this->namespace,
+                self::ALL_IDS_SET,
+                count($sourceTags),
+                ...$sourceTags,
+                ...$chunk
+            ];
 
-        foreach (array_chunk(array_values($ids), 1000) as $chunk) {
-            // First pass: read the tags associated with each id from its reverse index.
-            $pipeline = $this->createPipeline();
-            foreach ($chunk as $id) {
-                $pipeline->smembers($this->reverseIndexKey($id));
+            if ($this->isPredisClient()) {
+                $this->redis->executeRaw(['EVAL', self::LUA_CLEANUP_DELETED_IDS, count($dataKeys), ...$arguments]);
+            } else {
+                $this->redis->eval(self::LUA_CLEANUP_DELETED_IDS, $arguments, count($dataKeys));
             }
-            $tagLists = $this->executePipeline($pipeline);
-            if (!is_array($tagLists)) {
-                $tagLists = [];
-            }
-
-            // Second pass: drop each id from all_ids and every tag set it belonged to,
-            // then delete the reverse index itself.
-            $pipeline = $this->createPipeline();
-            foreach ($chunk as $i => $id) {
-                $pipeline->srem(self::ALL_IDS_SET, $id);
-                $tags = $tagLists[$i] ?? null;
-                if (is_array($tags)) {
-                    foreach ($tags as $tag) {
-                        $pipeline->srem($this->getTagKey($tag), $id);
-                    }
-                }
-                $pipeline->del($this->reverseIndexKey($id));
-            }
-            $this->executePipeline($pipeline);
         }
     }
 
@@ -807,36 +806,6 @@ LUA;
         );
 
         return $result[0]; // Return deleted count (first element)
-    }
-
-    /**
-     * Remove the given ids from the given tags' sets
-     *
-     * Invalidation discovers ids from these tag sets, but cleanupIndicesForIds() can only
-     * SREM memberships still recorded in each id's reverse index. Ids whose reverse index
-     * already expired would otherwise stay in the source sets forever; SREMing the fetched
-     * ids from them directly makes every tag invalidation self-healing. Specific members
-     * are removed (not DEL of the whole set) so concurrently saved ids keep their membership.
-     *
-     * @param array $tags
-     * @param array $ids
-     * @return void
-     */
-    private function removeIdsFromTagSets(array $tags, array $ids): void
-    {
-        if (empty($tags) || empty($ids)) {
-            return;
-        }
-
-        $chunks = array_chunk(array_values($ids), 1000);
-
-        $pipeline = $this->createPipeline();
-        foreach ($tags as $tag) {
-            foreach ($chunks as $chunk) {
-                $pipeline->srem($this->getTagKey($tag), ...$chunk);
-            }
-        }
-        $this->executePipeline($pipeline);
     }
 
     /**
