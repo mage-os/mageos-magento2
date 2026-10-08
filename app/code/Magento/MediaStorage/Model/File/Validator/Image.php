@@ -70,6 +70,13 @@ class Image extends AbstractValidator
     public function isValid($filePath): bool
     {
         $fileMimeType = $this->fileMime->getMimeType($filePath);
+        if ($fileMimeType === 'application/octet-stream') {
+            // phpcs:ignore Generic.PHP.NoSilencedErrors, Magento2.Functions.DiscouragedFunction
+            $imageInfo = @getimagesize($filePath);
+            if (is_array($imageInfo)) {
+                $fileMimeType = $imageInfo['mime'] ?? $fileMimeType;
+            }
+        }
         $isValid = true;
 
         if (stripos(json_encode($this->imageMimeTypes), json_encode($fileMimeType)) !== false) {

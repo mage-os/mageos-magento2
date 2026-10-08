@@ -134,6 +134,30 @@ class Uploader extends \Magento\Framework\File\Uploader
     }
 
     /**
+     * Allow AVIF when libmagic reports a generic MIME type but PHP recognizes the image.
+     *
+     * @param string[] $validTypes
+     * @return bool
+     */
+    public function checkMimeType($validTypes = [])
+    {
+        if (parent::checkMimeType($validTypes)) {
+            return true;
+        }
+
+        if (strtolower($this->getFileExtension()) !== 'avif'
+            || !in_array('image/avif', $validTypes, true)
+            || !parent::checkMimeType(['application/octet-stream'])
+        ) {
+            return false;
+        }
+
+        // phpcs:ignore Generic.PHP.NoSilencedErrors, Magento2.Functions.DiscouragedFunction
+        $imageInfo = @getimagesize($this->_file['tmp_name']);
+        return is_array($imageInfo) && ($imageInfo['mime'] ?? null) === 'image/avif';
+    }
+
+    /**
      * Get file size
      *
      * @return int

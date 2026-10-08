@@ -86,4 +86,17 @@ class ImageTest extends TestCase
                 'image/vnd.microsoft.icon', true]
         ];
     }
+
+    public function testGenericMimeAvifIsOpenedForValidation(): void
+    {
+        $filePath = dirname(__DIR__, 9) . '/dev/tests/acceptance/tests/_data/avif.avif';
+        $this->fileMimeMock->method('getMimeType')->with($filePath)->willReturn('application/octet-stream');
+        $this->imageFactoryMock->expects($this->once())
+            ->method('create')
+            ->with($filePath)
+            ->willReturn($this->imageMock);
+        $this->imageMock->expects($this->once())->method('open');
+
+        $this->assertTrue($this->image->isValid($filePath));
+    }
 }
