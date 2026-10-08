@@ -13,6 +13,9 @@ use PHPUnit\Framework\TestCase;
 use Predis\Client as PredisClient;
 use Psr\Cache\CacheItemPoolInterface;
 
+require_once __DIR__ . '/RedisTagAdapterTestClient.php';
+require_once __DIR__ . '/RedisTagAdapterTestPipeline.php';
+
 /**
  * Unit test for RedisTagAdapter index maintenance / leak fixes.
  *
@@ -58,39 +61,45 @@ class RedisTagAdapterTest extends TestCase
         $this->setPrivate('luaHelper', null);
     }
 
-    /**
-     * deleteByIds() must remove every id from its tag sets, from all_ids, and delete the
-     * reverse index — not just SREM all_ids (which was the leak).
-     */
-    public function testDeleteByIdsCleansTagSetsAndReverseIndex(): void
+    public function testDeleteByIdsWatchesDataKeysBeforeCleaningIndices(): void
     {
-        $this->redis->sets['cache:id_tags:4e0_ID1'] = ['BLOCK_HTML', 'CAT_P'];
-        $this->redis->sets['cache:id_tags:4e0_ID2'] = ['MAGE'];
-
         $this->cachePoolMock->method('deleteItems')->willReturn(true);
 
         $this->adapter->deleteByIds(['ID1', 'ID2']);
 
-        // Reverse index was read to discover memberships
-        $this->assertCommand('smembers', ['cache:id_tags:4e0_ID1']);
-        $this->assertCommand('smembers', ['cache:id_tags:4e0_ID2']);
-
-        // ID1 removed from all_ids + both of its tag sets, reverse index deleted
+        $this->assertCommand('watch', ['4e0_:ID1', '4e0_:ID2']);
         $this->assertCommand('srem', ['cache:all_ids', 'ID1']);
-        $this->assertCommand('srem', ['cache:tags:4e0_BLOCK_HTML', 'ID1']);
-        $this->assertCommand('srem', ['cache:tags:4e0_CAT_P', 'ID1']);
-        $this->assertCommand('del', ['cache:id_tags:4e0_ID1']);
-
-        // ID2 removed from all_ids + its tag set, reverse index deleted
         $this->assertCommand('srem', ['cache:all_ids', 'ID2']);
-        $this->assertCommand('srem', ['cache:tags:4e0_MAGE', 'ID2']);
-        $this->assertCommand('del', ['cache:id_tags:4e0_ID2']);
+        $this->assertSame([], $this->redis->rawCommands);
     }
 
     public function testDeleteByIdsEmptyIsNoop(): void
     {
         $this->assertTrue($this->adapter->deleteByIds([]));
         $this->assertSame([], $this->redis->commands);
+        $this->assertSame([], $this->redis->rawCommands);
+    }
+
+    public function testDeleteByIdsUsesUnprefixedDataKeyWithoutNamespace(): void
+    {
+        $this->setPrivate('namespace', '');
+        $this->cachePoolMock->method('deleteItems')->willReturn(true);
+
+        $this->adapter->deleteByIds(['ID1']);
+
+        $this->assertCommand('watch', ['ID1']);
+    }
+
+    public function testDeleteByIdsReportsCleanupConflictAfterRetries(): void
+    {
+        $this->cachePoolMock->method('deleteItems')->willReturn(true);
+        $this->redis->abortExec = true;
+
+        $this->assertFalse($this->adapter->deleteByIds(['ID1']));
+        $this->assertCount(3, array_filter(
+            $this->redis->commands,
+            static fn (array $command): bool => $command[0] === 'watch'
+        ));
     }
 
     /**
@@ -142,8 +151,8 @@ class RedisTagAdapterTest extends TestCase
 
         $this->assertTrue($this->adapter->cleanMatchingAnyTags(['MAGE']));
 
-        $this->assertCommand('srem', ['cache:tags:4e0_MAGE', 'LIVE', 'STALE']);
-        $this->assertCommand('del', ['cache:id_tags:4e0_STALE']);
+        $this->assertCommand('srem', ['cache:tags:4e0_MAGE', 'LIVE']);
+        $this->assertCommand('srem', ['cache:tags:4e0_MAGE', 'STALE']);
     }
 
     /**
@@ -153,67 +162,7 @@ class RedisTagAdapterTest extends TestCase
      */
     private function createRedisDouble(): PredisClient
     {
-        return new class extends PredisClient {
-            /** @var array<int, array{0:string,1:array}> */
-            public array $commands = [];
-
-            /** @var array<string, array> key => members (SMEMBERS result) */
-            public array $sets = [];
-
-            // phpcs:ignore Magento2.Functions.DiscouragedFunction
-            public function __construct()
-            {
-                // Bypass Predis\Client construction; this double intercepts every call.
-            }
-
-            public function pipeline(...$args)
-            {
-                $parent = $this;
-
-                return new class ($parent) {
-                    /** @var object */
-                    private $parent;
-
-                    /** @var array<int, array{0:string,1:array}> */
-                    private array $queued = [];
-
-                    public function __construct($parent)
-                    {
-                        $this->parent = $parent;
-                    }
-
-                    public function execute(): array
-                    {
-                        $results = [];
-                        foreach ($this->queued as [$method, $args]) {
-                            $results[] = $method === 'smembers' ? ($this->parent->sets[$args[0]] ?? []) : true;
-                        }
-
-                        return $results;
-                    }
-
-                    public function __call($method, $arguments)
-                    {
-                        $method = strtolower($method);
-                        $this->queued[] = [$method, $arguments];
-                        $this->parent->commands[] = [$method, $arguments];
-
-                        return $this;
-                    }
-                };
-            }
-
-            public function __call($method, $arguments)
-            {
-                $method = strtolower($method);
-                $this->commands[] = [$method, $arguments];
-
-                return match ($method) {
-                    'smembers' => $this->sets[$arguments[0]] ?? [],
-                    default => true,
-                };
-            }
-        };
+        return new RedisTagAdapterTestClient();
     }
 
     private function setPrivate(string $property, $value): void
