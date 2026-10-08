@@ -20,7 +20,8 @@ use Magento\Framework\View\Element\Template;
                 'block' => 'totals',
                 'period' => ''
             ])) ?>",
-            "periodSelect": "#dashboard_chart_period"
+            "periodSelect": "#dashboard_chart_period",
+            "period": "<?= $escaper->escapeJs($block->getParentBlock()->getPeriod()) ?>"
         }
     }
 }

@@ -7,8 +7,11 @@ namespace Magento\Backend\Block\Dashboard\Orders;
 
 use Magento\Backend\Block\Template\Context;
 use Magento\Backend\Helper\Data;
+use Magento\Backend\Model\Dashboard\Config;
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Module\Manager;
 use Magento\Reports\Model\ResourceModel\Order\CollectionFactory;
+use Magento\Sales\Model\Order\Config as OrderConfig;
 
 /**
  * Adminhtml dashboard recent orders grid
@@ -30,21 +33,37 @@ class Grid extends \Magento\Backend\Block\Dashboard\Grid
     protected $_moduleManager;
 
     /**
+     * @var Config
+     */
+    private $dashboardConfig;
+
+    /**
+     * @var OrderConfig
+     */
+    private $orderConfig;
+
+    /**
      * @param Context $context
      * @param Data $backendHelper
      * @param Manager $moduleManager
      * @param CollectionFactory $collectionFactory
      * @param array $data
+     * @param Config|null $dashboardConfig
+     * @param OrderConfig|null $orderConfig
      */
     public function __construct(
         Context $context,
         Data $backendHelper,
         Manager $moduleManager,
         CollectionFactory $collectionFactory,
-        array $data = []
+        array $data = [],
+        ?Config $dashboardConfig = null,
+        ?OrderConfig $orderConfig = null
     ) {
         $this->_moduleManager = $moduleManager;
         $this->_collectionFactory = $collectionFactory;
+        $this->dashboardConfig = $dashboardConfig ?? ObjectManager::getInstance()->get(Config::class);
+        $this->orderConfig = $orderConfig ?? ObjectManager::getInstance()->get(OrderConfig::class);
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -57,6 +76,7 @@ class Grid extends \Magento\Backend\Block\Dashboard\Grid
     {
         parent::_construct();
         $this->setId('lastOrdersGrid');
+        $this->setDefaultLimit($this->dashboardConfig->getLastOrdersCount());
     }
 
     /**
@@ -153,6 +173,17 @@ class Grid extends \Magento\Backend\Block\Dashboard\Grid
                 'type' => 'currency',
                 'currency_code' => $this->_escaper->escapeHtml($baseCurrencyCode),
                 'index' => 'revenue'
+            ]
+        );
+
+        $this->addColumn(
+            'status',
+            [
+                'header' => __('Status'),
+                'sortable' => false,
+                'type' => 'options',
+                'options' => $this->orderConfig->getStatuses(),
+                'index' => 'status'
             ]
         );
 
