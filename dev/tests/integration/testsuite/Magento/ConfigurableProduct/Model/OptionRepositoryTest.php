@@ -23,7 +23,7 @@ class OptionRepositoryTest extends \PHPUnit\Framework\TestCase
         $this->assertNotNull($options[0]->getExtensionAttributes(), "Extension attributes not loaded");
         /** @var \Magento\Eav\Model\Entity\Attribute $joinedEntity */
         $joinedEntity = $objectManager->create(\Magento\Eav\Model\Entity\Attribute::class);
-        $joinedEntity->load($options[0]->getId());
+        $joinedEntity->load($options[0]->getAttributeId());
         $joinedExtensionAttributeValue = $joinedEntity->getAttributeCode();
         $result = $options[0]->getExtensionAttributes()->__toArray();
         $this->assertArrayHasKey(
