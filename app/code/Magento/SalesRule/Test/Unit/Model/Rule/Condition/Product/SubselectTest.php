@@ -57,7 +57,7 @@ class SubselectTest extends TestCase
         );
         $this->abstractModel = $this->createPartialMockWithReflection(
             AbstractModel::class,
-            ['getQuote', 'getAllItems', 'getProduct']
+            ['getQuote', 'getAllItems', 'getAllVisibleItems', 'getProduct']
         );
         $this->productMock = $this->createPartialMockWithReflection(
             Product::class,
@@ -89,6 +89,9 @@ class SubselectTest extends TestCase
             ->willReturn($this->quoteMock);
         $this->abstractModel->expects($this->any())
             ->method('getAllItems')
+            ->willReturn([$this->quoteItemMock]);
+        $this->abstractModel->expects($this->any())
+            ->method('getAllVisibleItems')
             ->willReturn([$this->quoteItemMock]);
         $this->abstractModel->expects($this->any())
             ->method('getProduct')
@@ -293,13 +296,16 @@ class SubselectTest extends TestCase
 
         $abstractModel = $this->createPartialMockWithReflection(
             AbstractModel::class,
-            ['getQuote', 'getAllItems', 'getProduct']
+            ['getQuote', 'getAllItems', 'getAllVisibleItems', 'getProduct']
         );
         $abstractModel->expects($this->any())
             ->method('getQuote')
             ->willReturn($this->quoteMock);
         $abstractModel->expects($this->any())
             ->method('getAllItems')
+            ->willReturn($childrenQuoteItemsMock);
+        $abstractModel->expects($this->any())
+            ->method('getAllVisibleItems')
             ->willReturn($childrenQuoteItemsMock);
         $this->assertEquals($expectedResult, $this->model->validate($abstractModel));
     }
@@ -313,8 +319,7 @@ class SubselectTest extends TestCase
     public static function dataProviderForBundleAndSimpleProducts(): array
     {
         return [
-            'validate true for multiple products  with conditions
-            for attribute base_row_total with multi shipping' =>
+            'combined totals must not match one item amount with multi shipping' =>
                 [
                     [
                         'id' => 'attribute_set_id',
@@ -343,7 +348,7 @@ class SubselectTest extends TestCase
                         ],
                     ],
                     true,
-                    true
+                    false
                 ],
         ];
     }
@@ -686,5 +691,215 @@ class SubselectTest extends TestCase
                 false,
             ],
         ];
+    }
+
+    /**
+     * Multi-address checkout must apply the same full-total check as a normal cart.
+     *
+     * @param array $itemQtys
+     * @param string $operator
+     * @param string $rangeValue
+     * @param bool $expectedResult
+     * @return void
+     */
+    #[DataProvider('dataProviderForQuantityRangeAcrossMultipleItems')]
+    public function testMultiShippingValidatesQuantityAgainstFullAddressTotal(
+        array $itemQtys,
+        string $operator,
+        string $rangeValue,
+        bool $expectedResult
+    ): void {
+        $this->model->setData('conditions', []);
+        $this->model->setData('attribute', 'qty');
+        $this->model->setData('value', $rangeValue);
+        $this->model->setData('operator', $operator);
+
+        $itemMocks = [];
+        foreach ($itemQtys as $qty) {
+            $itemMocks[] = $this->createSimpleQtyItem($qty);
+        }
+
+        $quoteMock = $this->createPartialMockWithReflection(
+            Quote::class,
+            ['getIsMultiShipping', 'getAllVisibleItems']
+        );
+        $quoteMock->expects($this->any())
+            ->method('getIsMultiShipping')
+            ->willReturn(true);
+        $quoteMock->expects($this->never())
+            ->method('getAllVisibleItems');
+
+        $address = $this->createPartialMockWithReflection(
+            AbstractModel::class,
+            ['getQuote', 'getAllVisibleItems', 'getAllItems']
+        );
+        $address->expects($this->any())
+            ->method('getQuote')
+            ->willReturn($quoteMock);
+        $address->expects($this->any())
+            ->method('getAllVisibleItems')
+            ->willReturn($itemMocks);
+        $address->expects($this->never())
+            ->method('getAllItems');
+
+        $this->assertEquals($expectedResult, $this->model->validate($address));
+    }
+
+    /**
+     * A configurable child row on the address must not be added again on top of its parent.
+     *
+     * @param string $operator
+     * @param string $value
+     * @param bool $expectedResult
+     * @return void
+     */
+    #[DataProvider('dataProviderForMultiShippingChildRow')]
+    public function testMultiShippingDoesNotDoubleCountChildRow(
+        string $operator,
+        string $value,
+        bool $expectedResult
+    ): void {
+        $this->model->setData('conditions', []);
+        $this->model->setData('attribute', 'qty');
+        $this->model->setData('value', $value);
+        $this->model->setData('operator', $operator);
+
+        $parent = $this->createSimpleQtyItem(2, 'configurable');
+        $child = $this->createSimpleQtyItem(2);
+        $child->expects($this->any())
+            ->method('getParentItemId')
+            ->willReturn(10);
+
+        $quoteMock = $this->createPartialMockWithReflection(Quote::class, ['getIsMultiShipping']);
+        $quoteMock->expects($this->any())
+            ->method('getIsMultiShipping')
+            ->willReturn(true);
+
+        $address = $this->createPartialMockWithReflection(
+            AbstractModel::class,
+            ['getQuote', 'getAllVisibleItems', 'getAllItems']
+        );
+        $address->expects($this->any())
+            ->method('getQuote')
+            ->willReturn($quoteMock);
+        $address->expects($this->any())
+            ->method('getAllVisibleItems')
+            ->willReturn([$parent]);
+        $address->expects($this->any())
+            ->method('getAllItems')
+            ->willReturn([$parent, $child]);
+
+        $this->assertEquals($expectedResult, $this->model->validate($address));
+    }
+
+    /**
+     * Visible parent qty is 2. Counting the child row as well would make the total 4.
+     *
+     * @return array
+     */
+    public static function dataProviderForMultiShippingChildRow(): array
+    {
+        return [
+            'parent quantity matches when the child row is ignored' => ['==', '2', true],
+            'doubled parent and child quantity must not match' => ['==', '4', false],
+        ];
+    }
+
+    /**
+     * A matching item followed by a non-matching item still counts only the matching quantity.
+     *
+     * @return void
+     */
+    public function testMultiShippingCountsMatchingItemWhenLaterItemDoesNotMatch(): void
+    {
+        $this->model->setData('attribute', 'qty');
+        $this->model->setData('operator', '>=');
+        $this->model->setData('value', '2');
+        $this->model->setData('aggregator', 'all');
+        $this->model->setConditions([
+            new class (['match']) {
+                /**
+                 * @param string[] $skus
+                 */
+                public function __construct(private array $skus)
+                {
+                }
+
+                /**
+                 * @return string|null
+                 */
+                public function getAttributeScope(): ?string
+                {
+                    return null;
+                }
+
+                /**
+                 * @param AbstractModel $item
+                 * @return bool
+                 */
+                public function validate(AbstractModel $item): bool
+                {
+                    return in_array((string) $item->getSku(), $this->skus, true);
+                }
+            }
+        ]);
+
+        $matching = $this->createSimpleQtyItem(2);
+        $matching->expects($this->any())->method('getSku')->willReturn('match');
+        $other = $this->createSimpleQtyItem(5);
+        $other->expects($this->any())->method('getSku')->willReturn('other');
+
+        $quoteMock = $this->createPartialMockWithReflection(Quote::class, ['getIsMultiShipping']);
+        $quoteMock->expects($this->any())
+            ->method('getIsMultiShipping')
+            ->willReturn(true);
+
+        $address = $this->createPartialMockWithReflection(
+            AbstractModel::class,
+            ['getQuote', 'getAllVisibleItems']
+        );
+        $address->expects($this->any())
+            ->method('getQuote')
+            ->willReturn($quoteMock);
+        $address->expects($this->any())
+            ->method('getAllVisibleItems')
+            ->willReturn([$matching, $other]);
+
+        $this->assertTrue($this->model->validate($address));
+    }
+
+    /**
+     * Quote item with a quantity and no children.
+     *
+     * @param float|int $qty
+     * @param string $type
+     * @return Item|MockObject
+     */
+    private function createSimpleQtyItem(float|int $qty, string $type = ProductType::TYPE_SIMPLE)
+    {
+        $item = $this->createPartialMockWithReflection(
+            Item::class,
+            ['getProductType', 'getData', 'getProduct', 'getChildren', 'getHasChildren', 'getParentItemId', 'getSku']
+        );
+        $item->expects($this->any())
+            ->method('getProductType')
+            ->willReturn($type);
+        $item->expects($this->any())
+            ->method('getData')
+            ->willReturnCallback(static function (...$args) use ($qty) {
+                $key = $args[0] ?? 'qty';
+                return $key === 'qty' || $key === '' ? $qty : null;
+            });
+        $item->expects($this->any())
+            ->method('getProduct')
+            ->willReturn($this->productMock);
+        $item->expects($this->any())
+            ->method('getChildren')
+            ->willReturn([]);
+        $item->expects($this->any())
+            ->method('getHasChildren')
+            ->willReturn(false);
+
+        return $item;
     }
 }
