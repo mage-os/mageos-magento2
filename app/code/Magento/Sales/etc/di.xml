@@ -1094,7 +1094,7 @@
         <arguments>
             <!-- The parameter can be neither typehinted nor given a PHP default, so DI needs
                  a value when Magento_Wishlist is absent. Magento_Wishlist overrides it in its
-                 adminhtml di.xml; see the block's constructor. -->
+                 adminhtml di.xml; see the block's resolveWishlistFactory(). -->
             <argument name="wishlistFactory" xsi:type="null"/>
         </arguments>
     </type>

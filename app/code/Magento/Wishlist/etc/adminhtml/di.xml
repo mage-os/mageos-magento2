@@ -30,8 +30,8 @@
         <arguments>
             <!-- Overrides the null configured by Magento_Sales. Argument configuration is
                  inherited, so subclasses that typehint WishlistFactory receive the factory.
-                 The block itself has an untyped parameter, which DI does not instantiate,
-                 and resolves the factory on its own; see its constructor. -->
+                 The block itself has an untyped parameter, which DI passes this configuration
+                 to uninstantiated; the block instantiates it, see resolveWishlistFactory(). -->
             <argument name="wishlistFactory" xsi:type="object">Magento\Wishlist\Model\WishlistFactory</argument>
         </arguments>
     </type>

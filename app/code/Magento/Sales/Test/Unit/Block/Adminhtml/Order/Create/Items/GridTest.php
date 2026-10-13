@@ -16,9 +16,10 @@ use Magento\Catalog\Model\Product\Type;
 use Magento\CatalogInventory\Model\StockRegistry;
 use Magento\CatalogInventory\Model\StockState;
 use Magento\Directory\Helper\Data as DirectoryHelper;
+use Magento\Framework\App\ObjectManager as AppObjectManager;
 use Magento\Framework\DataObject;
 use Magento\Framework\Json\Helper\Data as JsonHelper;
-use Magento\Framework\Module\Manager as ModuleManager;
+use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Element\AbstractBlock;
@@ -458,18 +459,19 @@ class GridTest extends TestCase
     }
 
     /**
-     * With Magento_Wishlist not enabled the grid offers no wishlists.
+     * Without a usable wishlist factory argument (Magento_Wishlist absent or
+     * disabled, so only Magento_Sales' null is configured) the grid offers no
+     * wishlists.
+     *
+     * @param mixed $wishlistFactoryArgument
      */
-    public function testNoWishlistsWithoutWishlistModule()
+    #[DataProvider('unusableWishlistFactoryArgumentDataProvider')]
+    public function testNoWishlistsWithoutWishlistFactory($wishlistFactoryArgument)
     {
-        $moduleManager = $this->createMock(ModuleManager::class);
-        $moduleManager->method('isEnabled')->with('Magento_Wishlist')->willReturn(false);
-
         $block = $this->objectManager->getObject(
             Grid::class,
             [
-                'wishlistFactory' => null,
-                'moduleManager' => $moduleManager,
+                'wishlistFactory' => $wishlistFactoryArgument,
                 'sessionQuote' => $this->createPartialMockWithReflection(Quote::class, ['getCustomerId']),
             ]
         );
@@ -479,15 +481,28 @@ class GridTest extends TestCase
     }
 
     /**
-     * With Magento_Wishlist enabled the factory is resolved from the object
-     * manager (it cannot be a typed constructor dependency), also when DI passes
-     * Magento_Wishlist's object argument through uninstantiated.
-     *
-     * @param mixed $wishlistFactoryArgument
+     * @return array
      */
-    #[DataProvider('unresolvedWishlistFactoryArgumentDataProvider')]
-    public function testWishlistFactoryResolvedWhenModuleEnabled($wishlistFactoryArgument)
+    public static function unusableWishlistFactoryArgumentDataProvider(): array
     {
+        return [
+            'null' => [null],
+            'array without instance' => [[]],
+        ];
+    }
+
+    /**
+     * DI passes Magento_Wishlist's object argument to the untyped parameter as
+     * raw configuration; the grid instantiates it the way DI would.
+     *
+     * @param array $wishlistFactoryArgument
+     * @param string $expectedMethod
+     */
+    #[DataProvider('wishlistFactoryArgumentConfigurationDataProvider')]
+    public function testWishlistFactoryResolvedFromArgumentConfiguration(
+        array $wishlistFactoryArgument,
+        string $expectedMethod
+    ) {
         $collection = $this->createPartialMockWithReflection(
             \Magento\Wishlist\Model\ResourceModel\Wishlist\Collection::class,
             ['filterByCustomerId']
@@ -501,19 +516,22 @@ class GridTest extends TestCase
         $wishlistFactory = $this->createPartialMockWithReflection(WishlistFactory::class, ['create']);
         $wishlistFactory->method('create')->willReturn($wishlist);
 
-        $moduleManager = $this->createMock(ModuleManager::class);
-        $moduleManager->method('isEnabled')->with('Magento_Wishlist')->willReturn(true);
-        $this->objectManager->prepareObjectManager([
-            [WishlistFactory::class, $wishlistFactory],
-            [JsonHelper::class, $this->createMock(JsonHelper::class)],
-            [DirectoryHelper::class, $this->createMock(DirectoryHelper::class)],
-        ]);
+        $objectManager = $this->createMock(ObjectManagerInterface::class);
+        $objectManager->method('get')->willReturnCallback(
+            fn (string $type) => $type === WishlistFactory::class && $expectedMethod === 'get'
+                ? $wishlistFactory
+                : $this->createMock($type)
+        );
+        $objectManager->expects($expectedMethod === 'create' ? $this->once() : $this->never())
+            ->method('create')
+            ->with(WishlistFactory::class)
+            ->willReturn($wishlistFactory);
+        AppObjectManager::setInstance($objectManager);
 
         $block = $this->objectManager->getObject(
             Grid::class,
             [
                 'wishlistFactory' => $wishlistFactoryArgument,
-                'moduleManager' => $moduleManager,
                 'sessionQuote' => $this->createPartialMockWithReflection(Quote::class, ['getCustomerId']),
             ]
         );
@@ -524,11 +542,12 @@ class GridTest extends TestCase
     /**
      * @return array
      */
-    public static function unresolvedWishlistFactoryArgumentDataProvider(): array
+    public static function wishlistFactoryArgumentConfigurationDataProvider(): array
     {
         return [
-            'null' => [null],
-            'raw object argument configuration' => [['instance' => WishlistFactory::class]],
+            'shared by default' => [['instance' => WishlistFactory::class], 'get'],
+            'shared' => [['instance' => WishlistFactory::class, 'shared' => true], 'get'],
+            'not shared' => [['instance' => WishlistFactory::class, 'shared' => false], 'create'],
         ];
     }
 
