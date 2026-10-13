@@ -869,6 +869,109 @@ class SubselectTest extends TestCase
     }
 
     /**
+     * A bundle child row carried in getChildren() must be summed once, not added on top of the parent.
+     *
+     * Unlike testMultiShippingDoesNotDoubleCountChildRow (which proves child rows are excluded from
+     * the visible-item list), this feeds a child through getBaseRowTotalForChildrenProduct()'s bundle
+     * summation branch and asserts the child total is counted a single time.
+     *
+     * @param string $operator
+     * @param string $value
+     * @param bool $expectedResult
+     * @return void
+     */
+    #[DataProvider('dataProviderForBundleChildCountedOnce')]
+    public function testMultiShippingBundleChildTotalCountedOnce(
+        string $operator,
+        string $value,
+        bool $expectedResult
+    ): void {
+        $this->model->setData('conditions', []);
+        $this->model->setData('attribute', 'base_row_total');
+        $this->model->setData('value', $value);
+        $this->model->setData('operator', $operator);
+
+        $child = $this->createRowTotalItem(100.0);
+        $bundle = $this->createRowTotalItem(100.0, ProductType::TYPE_BUNDLE, [$child]);
+
+        $quoteMock = $this->createPartialMockWithReflection(Quote::class, ['getIsMultiShipping']);
+        $quoteMock->expects($this->any())
+            ->method('getIsMultiShipping')
+            ->willReturn(true);
+
+        $address = $this->createPartialMockWithReflection(
+            AbstractModel::class,
+            ['getQuote', 'getAllVisibleItems', 'getAllItems']
+        );
+        $address->expects($this->any())
+            ->method('getQuote')
+            ->willReturn($quoteMock);
+        $address->expects($this->any())
+            ->method('getAllVisibleItems')
+            ->willReturn([$bundle]);
+        $address->expects($this->never())
+            ->method('getAllItems');
+
+        $this->assertEquals($expectedResult, $this->model->validate($address));
+    }
+
+    /**
+     * Bundle parent and its single child both carry base_row_total 100; the total must be 100, not 200.
+     *
+     * @return array
+     */
+    public static function dataProviderForBundleChildCountedOnce(): array
+    {
+        return [
+            'bundle child base_row_total counted once' => ['==', '100', true],
+            'parent and child base_row_total must not both count' => ['==', '200', false],
+            'threshold still met at the real total' => ['>=', '100', true],
+            'threshold not met above the single count' => ['>', '100', false],
+        ];
+    }
+
+    /**
+     * Quote item carrying a base_row_total, with optional bundle children.
+     *
+     * @param float $baseRowTotal
+     * @param string $type
+     * @param array $children
+     * @return Item|MockObject
+     */
+    private function createRowTotalItem(
+        float $baseRowTotal,
+        string $type = ProductType::TYPE_SIMPLE,
+        array $children = []
+    ) {
+        $item = $this->createPartialMockWithReflection(
+            Item::class,
+            ['getProductType', 'getData', 'getProduct', 'getChildren', 'getHasChildren', 'getQty', 'getParentItemId']
+        );
+        $item->expects($this->any())
+            ->method('getProductType')
+            ->willReturn($type);
+        $item->expects($this->any())
+            ->method('getData')
+            ->willReturnCallback(static function (...$args) use ($baseRowTotal) {
+                return ($args[0] ?? '') === 'base_row_total' ? $baseRowTotal : null;
+            });
+        $item->expects($this->any())
+            ->method('getProduct')
+            ->willReturn($this->productMock);
+        $item->expects($this->any())
+            ->method('getChildren')
+            ->willReturn($children);
+        $item->expects($this->any())
+            ->method('getHasChildren')
+            ->willReturn($children !== []);
+        $item->expects($this->any())
+            ->method('getQty')
+            ->willReturn(1);
+
+        return $item;
+    }
+
+    /**
      * Quote item with a quantity and no children.
      *
      * @param float|int $qty
