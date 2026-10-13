@@ -492,6 +492,26 @@ TEMPLATE;
     }
 
     /**
+     * A directive that defers at the root template has no parent left to resolve it. The
+     * internal registry placeholder must not reach the output; the directive itself is
+     * emitted instead, as it was before out-of-band deferral. This is the shape of the
+     * Email FilterTest case "Child template mode results in unmodified directive".
+     */
+    public function testRootLevelDeferralDoesNotLeakPlaceholder(): void
+    {
+        $filter = $this->createFilter(
+            [$this->createDeferProcessor(null)],
+            new FilteringDepthMeter(),
+            new DirectiveOutputNeutralizer($this->signatureProvider)
+        );
+
+        $result = $filter->filter('<html><p></p> {{defer}}</html>');
+
+        $this->assertStringNotContainsString(':deferred:', $result);
+        $this->assertSame('<html><p></p> {{defer}}</html>', $result);
+    }
+
+    /**
      * {{passthrough}} processor: returns the directive unchanged without declaring deferral
      * when $resolved is null, otherwise resolves to $resolved.
      *

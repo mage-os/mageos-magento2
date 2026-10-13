@@ -276,6 +276,13 @@ class Template implements FilterInterface
             $value = str_replace($placeholder, $this->resolveDirectives($directive), $value);
         }
 
+        // A directive that defers again at the root template has no parent left to resolve
+        // it, which would leave an internal placeholder in the output. Emit the directive
+        // itself instead, matching the behaviour before out-of-band deferral.
+        foreach ($this->deferredDirectiveRegistry->getAll() as $placeholder => $directive) {
+            $value = str_replace($placeholder, $directive, $value);
+        }
+
         $this->deferredDirectiveRegistry->clear();
 
         return $value;
