@@ -14,10 +14,12 @@ use Magento\Framework\Filter\DirectiveProcessor\LegacyDirective;
 use Magento\Framework\Filter\DirectiveProcessor\TemplateDirective;
 use Magento\Framework\Filter\DirectiveProcessorInterface;
 use Magento\Framework\Filter\Template;
+use Magento\Framework\Filter\Template\DeferredDirectiveRegistry;
 use Magento\Framework\Filter\Template\DirectiveOutputNeutralizer;
 use Magento\Framework\Filter\Template\FilteringDepthMeter;
 use Magento\Framework\Filter\Template\SignatureProvider;
 use Magento\Framework\Filter\VariableResolverInterface;
+use Magento\Framework\Math\Random;
 use Magento\Framework\Stdlib\StringUtils;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Model\Store;
@@ -40,6 +42,14 @@ class TemplateTest extends TestCase
      * @var Store
      */
     private $store;
+
+    /**
+     * Shared across the filters a test builds, mirroring the DI singleton: a child defers
+     * into it and the root template resolves out of it.
+     *
+     * @var DeferredDirectiveRegistry
+     */
+    private $deferredDirectiveRegistry;
 
     /**
      * @var \Magento\Framework\Filter\Template\SignatureProvider|\PHPUnit\Framework\MockObject\MockObject
@@ -90,12 +100,15 @@ class TemplateTest extends TestCase
             ['showMark']
         );
 
+        $this->deferredDirectiveRegistry = new DeferredDirectiveRegistry(new Random());
+
         $this->templateFilter = $objectManager->getObject(
             \Magento\Framework\Filter\Template::class,
             [
                 'signatureProvider' => $this->signatureProvider,
                 'filteringDepthMeter' => $this->filteringDepthMeter,
-                'directiveOutputNeutralizer' => new DirectiveOutputNeutralizer($this->signatureProvider)
+                'directiveOutputNeutralizer' => new DirectiveOutputNeutralizer($this->signatureProvider),
+                'deferredDirectiveRegistry' => $this->deferredDirectiveRegistry
             ]
         );
     }
@@ -528,7 +541,8 @@ TEMPLATE;
             $this->createMock(VariableResolverInterface::class),
             $this->signatureProvider,
             $depthMeter,
-            $neutralizer
+            $neutralizer,
+            $this->deferredDirectiveRegistry
         );
     }
 
@@ -575,10 +589,10 @@ TEMPLATE;
             public function process(array $construction, Template $filter, array $templateVariables): string
             {
                 if ($this->resolved === null) {
-                    $filter->deferToParent($construction[0]);
+                    return $filter->deferToParent($construction[0]);
                 }
 
-                return $this->resolved ?? $construction[0];
+                return $this->resolved;
             }
 
             public function getRegularExpression(): string

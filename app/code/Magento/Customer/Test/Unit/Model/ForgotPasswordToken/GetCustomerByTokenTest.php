@@ -7,12 +7,10 @@ declare(strict_types=1);
 
 namespace Magento\Customer\Test\Unit\Model\ForgotPasswordToken;
 
-use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Customer\Api\Data\CustomerInterface;
-use Magento\Customer\Api\Data\CustomerSearchResultsInterface;
 use Magento\Customer\Model\ForgotPasswordToken\GetCustomerByToken;
-use Magento\Framework\Api\SearchCriteria;
-use Magento\Framework\Api\SearchCriteriaBuilder;
+use Magento\Customer\Model\ResourceModel\Customer\Collection;
+use Magento\Customer\Model\ResourceModel\Customer\CollectionFactory;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Exception\State\ExpiredException;
 use Magento\Framework\Phrase;
@@ -25,79 +23,70 @@ class GetCustomerByTokenTest extends TestCase
     private const RESET_PASSWORD = 'resetPassword';
 
     /**
-     * @var SearchCriteriaBuilder|MockObject
+     * @var CollectionFactory|MockObject
      */
-    private $searchCriteriaBuilderMock;
+    private $collectionFactoryMock;
 
     /**
-     * @var SearchCriteria|MockObject
+     * @var Collection|MockObject
      */
-    private $searchCriteriaMock;
+    private $collectionMock;
 
     /**
-     * @var CustomerRepositoryInterface|MockObject
-     */
-    private $customerRepositoryMock;
-
-    /**
-     * @var CustomerSearchResultsInterface|MockObject
-     */
-    private $searchResultMock;
-
-    /**
+     * Typed to the interface execute() declares. Note that the real collection yields
+     * \Magento\Customer\Model\Customer, which does NOT implement CustomerInterface - see
+     * the upstream note in the PR description.
+     *
      * @var CustomerInterface|MockObject
      */
     private $customerMock;
 
     /**
-     * @var GetCustomerByToken;
+     * @var GetCustomerByToken
      */
     private $model;
 
     protected function setUp(): void
     {
-        $this->searchCriteriaBuilderMock = $this->createMock(SearchCriteriaBuilder::class);
-        $this->searchCriteriaMock = $this->createMock(SearchCriteria::class);
-        $this->searchResultMock = $this->createMock(CustomerSearchResultsInterface::class);
-        $this->customerRepositoryMock = $this->createMock(CustomerRepositoryInterface::class);
+        $this->collectionFactoryMock = $this->createMock(CollectionFactory::class);
+        $this->collectionMock = $this->createMock(Collection::class);
         $this->customerMock = $this->createMock(CustomerInterface::class);
 
         $objectManagerHelper = new ObjectManagerHelper($this);
         $this->model = $objectManagerHelper->getObject(
             GetCustomerByToken::class,
             [
-                'searchCriteriaBuilder' => $this->searchCriteriaBuilderMock,
-                'customerRepository' => $this->customerRepositoryMock
+                'collectionFactory' => $this->collectionFactoryMock
             ]
         );
 
-        $this->searchCriteriaBuilderMock->expects($this->once())
+        $this->collectionFactoryMock->expects($this->once())
             ->method('create')
-            ->willReturn($this->searchCriteriaMock);
-        $this->customerRepositoryMock->expects($this->once())
-            ->method('getList')
-            ->with($this->searchCriteriaMock)
-            ->willReturn($this->searchResultMock);
+            ->willReturn($this->collectionMock);
+        $this->collectionMock->expects($this->once())
+            ->method('addAttributeToFilter')
+            ->with('rp_token', self::RESET_PASSWORD)
+            ->willReturnSelf();
     }
 
     public function testExecuteReturnWhenOneItemAvailable(): void
     {
-        $totalCount = 1;
-        $this->searchResultMock->method('getTotalCount')->willReturn($totalCount);
-        $this->searchResultMock->expects($this->once())
-            ->method('getItems')
-            ->willReturn([$this->customerMock]);
+        $this->collectionMock->method('getSize')->willReturn(1);
+        $this->collectionMock->expects($this->once())
+            ->method('getFirstItem')
+            ->willReturn($this->customerMock);
 
-        $this->assertInstanceOf(
-            CustomerInterface::class,
+        $this->assertSame(
+            $this->customerMock,
             $this->model->execute(self::RESET_PASSWORD)
         );
     }
 
     public function testExecuteWithNoSuchEntityException(): void
     {
-        $totalCount = 0;
-        $this->searchResultMock->method('getTotalCount')->willReturn($totalCount);
+        $this->collectionMock->method('getSize')->willReturn(0);
+        $this->collectionMock->expects($this->never())->method('getFirstItem');
+
         $this->expectExceptionObject(new NoSuchEntityException(
             new Phrase(
                 'No such entity with rp_token = %value',
@@ -110,8 +99,8 @@ class GetCustomerByTokenTest extends TestCase
 
     public function testExecuteWithExpireException(): void
     {
-        $totalCount = 2;
-        $this->searchResultMock->method('getTotalCount')->willReturn($totalCount);
+        $this->collectionMock->method('getSize')->willReturn(2);
+        $this->collectionMock->expects($this->never())->method('getFirstItem');
 
         $this->expectExceptionObject(new ExpiredException(
             new Phrase(
