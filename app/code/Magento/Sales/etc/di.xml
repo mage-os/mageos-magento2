@@ -1092,8 +1092,9 @@
     </type>
     <type name="Magento\Sales\Block\Adminhtml\Order\Create\Items\Grid">
         <arguments>
-            <!-- The parameter can be neither typehinted nor given a PHP default (see the
-                 constructor, which resolves the factory while Magento_Wishlist is enabled). -->
+            <!-- The parameter can be neither typehinted nor given a PHP default, so DI needs
+                 a value when Magento_Wishlist is absent. Magento_Wishlist overrides it in its
+                 adminhtml di.xml; see the block's constructor. -->
             <argument name="wishlistFactory" xsi:type="null"/>
         </arguments>
     </type>

@@ -26,4 +26,13 @@
     </type>
     <preference for="Magento\Wishlist\Model\ResourceModel\Item\Product\CollectionBuilderInterface"
                 type="Magento\Wishlist\Model\Adminhtml\ResourceModel\Item\Product\CollectionBuilder"/>
+    <type name="Magento\Sales\Block\Adminhtml\Order\Create\Items\Grid">
+        <arguments>
+            <!-- Overrides the null configured by Magento_Sales. Argument configuration is
+                 inherited, so subclasses that typehint WishlistFactory receive the factory.
+                 The block itself has an untyped parameter, which DI does not instantiate,
+                 and resolves the factory on its own; see its constructor. -->
+            <argument name="wishlistFactory" xsi:type="object">Magento\Wishlist\Model\WishlistFactory</argument>
+        </arguments>
+    </type>
 </config>

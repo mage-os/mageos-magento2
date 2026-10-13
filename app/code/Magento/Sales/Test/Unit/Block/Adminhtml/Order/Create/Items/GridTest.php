@@ -480,9 +480,13 @@ class GridTest extends TestCase
 
     /**
      * With Magento_Wishlist enabled the factory is resolved from the object
-     * manager (it cannot be a typed constructor dependency).
+     * manager (it cannot be a typed constructor dependency), also when DI passes
+     * Magento_Wishlist's object argument through uninstantiated.
+     *
+     * @param mixed $wishlistFactoryArgument
      */
-    public function testWishlistFactoryResolvedWhenModuleEnabled()
+    #[DataProvider('unresolvedWishlistFactoryArgumentDataProvider')]
+    public function testWishlistFactoryResolvedWhenModuleEnabled($wishlistFactoryArgument)
     {
         $collection = $this->createPartialMockWithReflection(
             \Magento\Wishlist\Model\ResourceModel\Wishlist\Collection::class,
@@ -508,13 +512,24 @@ class GridTest extends TestCase
         $block = $this->objectManager->getObject(
             Grid::class,
             [
-                'wishlistFactory' => null,
+                'wishlistFactory' => $wishlistFactoryArgument,
                 'moduleManager' => $moduleManager,
                 'sessionQuote' => $this->createPartialMockWithReflection(Quote::class, ['getCustomerId']),
             ]
         );
 
         $this->assertSame($collection, $block->getCustomerWishlists());
+    }
+
+    /**
+     * @return array
+     */
+    public static function unresolvedWishlistFactoryArgumentDataProvider(): array
+    {
+        return [
+            'null' => [null],
+            'raw object argument configuration' => [['instance' => WishlistFactory::class]],
+        ];
     }
 
     /**
