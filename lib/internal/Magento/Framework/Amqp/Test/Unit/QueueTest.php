@@ -133,7 +133,7 @@ class QueueTest extends TestCase
         $amqpChannel = $this->createMock(AMQPChannel::class);
         $amqpChannel->expects($this->once())
             ->method('basic_qos')
-            ->with(0, self::PREFETCH_COUNT, false);
+            ->with(0, 10, false);
         $amqpChannel->expects($this->once())
             ->method('basic_consume')
             ->with('testQueue', '', false, false, false, false, $this->isType('callable'))
@@ -145,6 +145,19 @@ class QueueTest extends TestCase
 
         $this->model->subscribeWithLimit(function () {
         }, 10);
+    }
+
+    public function testSubscribeWithLimitCapsUnlimitedPrefetch(): void
+    {
+        $model = new Queue($this->config, $this->envelopeFactory, 'testQueue', $this->logger, 0);
+        $amqpChannel = $this->createMock(AMQPChannel::class);
+        $amqpChannel->expects($this->once())
+            ->method('basic_qos')
+            ->with(0, 3, false);
+        $this->config->method('getChannel')->willReturn($amqpChannel);
+
+        $model->subscribeWithLimit(function () {
+        }, 3);
     }
 
     /**
@@ -168,6 +181,9 @@ class QueueTest extends TestCase
     {
         $amqpChannel = $this->createMock(AMQPChannel::class);
         $amqpChannel->method('basic_qos');
+        $amqpChannel->expects($this->once())
+            ->method('basic_cancel')
+            ->with('test-consumer-tag');
         $amqpChannel->method('basic_consume')
             ->willReturnCallback(function () use ($amqpChannel) {
                 $amqpChannel->callbacks = ['test-consumer-tag' => function () {
