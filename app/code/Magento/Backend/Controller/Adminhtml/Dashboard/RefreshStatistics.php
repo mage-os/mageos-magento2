@@ -7,7 +7,9 @@
 namespace Magento\Backend\Controller\Adminhtml\Dashboard;
 
 use Magento\Backend\App\Action\Context;
+use Magento\Backend\Model\Dashboard\StatisticsCache;
 use Magento\Framework\App\Action\HttpPostActionInterface;
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Stdlib\DateTime\Filter\Date;
 use Magento\Reports\Controller\Adminhtml\Report\Statistics;
 use Psr\Log\LoggerInterface;
@@ -23,19 +25,27 @@ class RefreshStatistics extends Statistics implements HttpPostActionInterface
     private $logger;
 
     /**
+     * @var StatisticsCache
+     */
+    private $statisticsCache;
+
+    /**
      * @param Context $context
      * @param Date $dateFilter
      * @param array $reportTypes
      * @param LoggerInterface $logger
+     * @param StatisticsCache|null $statisticsCache
      */
     public function __construct(
         Context $context,
         Date $dateFilter,
         array $reportTypes,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        ?StatisticsCache $statisticsCache = null
     ) {
         parent::__construct($context, $dateFilter, $reportTypes);
         $this->logger = $logger;
+        $this->statisticsCache = $statisticsCache ?? ObjectManager::getInstance()->get(StatisticsCache::class);
     }
 
     /**
@@ -50,6 +60,7 @@ class RefreshStatistics extends Statistics implements HttpPostActionInterface
             foreach ($collectionsNames as $collectionName) {
                 $this->_objectManager->create($collectionName)->aggregate();
             }
+            $this->statisticsCache->clean();
             $this->messageManager->addSuccessMessage(__('We updated lifetime statistic.'));
         } catch (\Exception $e) {
             $this->messageManager->addErrorMessage(__('We can\'t refresh lifetime statistics.'));

@@ -6,14 +6,16 @@
 /*global FORM_KEY*/
 define([
     'jquery',
+    'Magento_Backend/js/dashboard/period-storage',
     'jquery-ui-modules/widget'
-], function ($) {
+], function ($, periodStorage) {
     'use strict';
 
     $.widget('mage.dashboardTotals', {
         options: {
             updateUrl: '',
-            periodSelect: null
+            periodSelect: null,
+            period: ''
         },
         elementId: null,
 
@@ -25,8 +27,15 @@ define([
 
             if (this.options.periodSelect) {
                 $(document).on('change', this.options.periodSelect, $.proxy(function () {
+                    periodStorage.set($(this.options.periodSelect).val());
                     this.refreshTotals();
                 }, this));
+
+                periodStorage.apply(this.options.periodSelect);
+
+                if (this.options.period && $(this.options.periodSelect).val() !== this.options.period) {
+                    this.refreshTotals();
+                }
             }
         },
 

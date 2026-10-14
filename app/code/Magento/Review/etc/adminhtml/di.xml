@@ -28,4 +28,11 @@
             </argument>
         </arguments>
     </virtualType>
+    <type name="Magento\Backend\Model\Dashboard\Attention\Pool">
+        <arguments>
+            <argument name="items" xsi:type="array">
+                <item name="pending_reviews" xsi:type="object">Magento\Review\Model\Dashboard\Attention\PendingReviews</item>
+            </argument>
+        </arguments>
+    </type>
 </config>
