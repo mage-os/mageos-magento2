@@ -57,12 +57,14 @@ class Select extends \Zend_Db_Select
      * Class constructor
      * Add straight join support
      *
-     * @param Adapter\Pdo\Mysql $adapter
+     * Accepts any Zend DB adapter, not only Pdo\Mysql.
+     *
+     * @param \Zend_Db_Adapter_Abstract $adapter
      * @param Select\SelectRenderer $selectRenderer
      * @param array $parts
      */
     public function __construct(
-        \Magento\Framework\DB\Adapter\Pdo\Mysql $adapter,
+        \Zend_Db_Adapter_Abstract $adapter,
         \Magento\Framework\DB\Select\SelectRenderer $selectRenderer,
         $parts = []
     ) {
