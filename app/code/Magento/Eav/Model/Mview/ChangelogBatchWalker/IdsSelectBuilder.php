@@ -46,6 +46,7 @@ class IdsSelectBuilder implements IdsSelectBuilderInterface
         $changelogTableName = $this->resourceConnection->getTableName($changelog->getName());
 
         $connection = $this->resourceConnection->getConnection();
+        $this->setGroupConcatMax($this->calculateEavAttributeSize($changelog));
 
         $columns = [
             $changelog->getColumnName(),
@@ -97,6 +98,9 @@ class IdsSelectBuilder implements IdsSelectBuilderInterface
     private function setGroupConcatMax(int $numberOfAttributes): void
     {
         $connection = $this->resourceConnection->getConnection();
+        if (!$connection instanceof \Magento\Framework\DB\Adapter\Pdo\Mysql) {
+            return;
+        }
         $connection->query(sprintf(
             'SET SESSION %s=%s',
             self::GROUP_CONCAT_MAX_VARIABLE,

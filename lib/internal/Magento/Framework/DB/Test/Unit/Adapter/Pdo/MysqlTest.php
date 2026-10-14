@@ -1091,12 +1091,22 @@ class MysqlTest extends TestCase
 
     public function testGetFieldSql(): void
     {
-        $adapter = $this->getMysqlPdoAdapterMock([]);
-        $this->assertSame('0', (string) $adapter->getFieldSql('status', []));
-        $this->assertSame('0', (string) $adapter->getFieldSql('status', ['']));
+        $adapter = $this->getMysqlPdoAdapterMock(['quote']);
+        $adapter->method('quote')->willReturnCallback(static function ($value) {
+            if (is_int($value) || is_float($value)) {
+                return $value;
+            }
+            return "'" . $value . "'";
+        });
+        $this->assertSame('NULL', (string) $adapter->getFieldSql('status', []));
+        $this->assertSame('NULL', (string) $adapter->getFieldSql('status', ['']));
         $this->assertSame(
             'FIELD(status, 1, 2, 3)',
             (string) $adapter->getFieldSql('status', [1, '', 2, 3])
+        );
+        $this->assertSame(
+            "FIELD(sku, 'sku1', 'hello\", \"world')",
+            (string) $adapter->getFieldSql('sku', ['sku1', 'hello", "world'])
         );
     }
 
@@ -1135,14 +1145,14 @@ class MysqlTest extends TestCase
         $adapter->expects($this->once())
             ->method('query')
             ->with(
-                'CREATE TEMPORARY TABLE `tmp` (PRIMARY KEY(id)) ENGINE=`innodb` IGNORE (SELECT 1)',
+                'CREATE TEMPORARY TABLE `tmp` (PRIMARY KEY(id)) ENGINE=`memory` IGNORE (SELECT 1)',
                 ['foo' => 'bar']
             )
             ->willReturn($stmt);
 
         $this->assertSame(
             $stmt,
-            $adapter->createTemporaryTableFromSelect('tmp', ['PRIMARY KEY(id)'], $select)
+            $adapter->createTemporaryTableFromSelect('tmp', ['PRIMARY KEY(id)'], $select, 'memory')
         );
     }
 }
