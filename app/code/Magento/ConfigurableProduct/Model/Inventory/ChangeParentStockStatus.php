@@ -100,7 +100,7 @@ class ChangeParentStockStatus
         }
         $parentStockItem = array_shift($allItems);
 
-        $childrenIds = $this->configurableType->getChildrenIds($productId);
+        $childrenIds = $this->configurableType->getChildrenIds($productId)[0];
         $criteria->setProductsFilter($childrenIds);
         $stockItemCollection = $this->stockItemRepository->getList($criteria);
         $allItems = $stockItemCollection->getItems();

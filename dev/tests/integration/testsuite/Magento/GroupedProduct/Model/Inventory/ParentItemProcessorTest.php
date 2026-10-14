@@ -11,6 +11,11 @@ use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Model\Product;
 use Magento\CatalogInventory\Api\StockRegistryInterface;
 use Magento\CatalogInventory\Model\Stock\StockItemRepository;
+use Magento\Catalog\Test\Fixture\Product as ProductFixture;
+use Magento\Framework\App\ResourceConnection;
+use Magento\GroupedProduct\Test\Fixture\Product as GroupedProductFixture;
+use Magento\TestFramework\Fixture\DataFixture;
+use Magento\TestFramework\Fixture\DataFixtureStorageManager;
 use PHPUnit\Framework\TestCase;
 use Magento\TestFramework\Helper\Bootstrap;
 use Magento\Framework\ObjectManagerInterface;
@@ -55,5 +60,33 @@ class ParentItemProcessorTest extends TestCase
         $stockItem = $stockItemRepository->get($stockItem->getItemId());
 
         $this->assertEquals(false, $stockItem->getIsInStock());
+    }
+
+    /**
+     * Grouped product whose only child has required options has no eligible children
+     *
+     * @return void
+     */
+    #[
+        DataFixture(ProductFixture::class, as: 'child'),
+        DataFixture(GroupedProductFixture::class, ['product_links' => ['$child$']], 'grouped'),
+    ]
+    public function testParentWithoutEligibleChildrenGoesOutOfStock(): void
+    {
+        $fixtures = DataFixtureStorageManager::getStorage();
+        $childId = (int)$fixtures->get('child')->getId();
+        $resource = $this->objectManager->get(ResourceConnection::class);
+        $resource->getConnection()->update(
+            $resource->getTableName('catalog_product_entity'),
+            ['required_options' => 1],
+            ['entity_id = ?' => $childId]
+        );
+
+        $this->objectManager->get(ChangeParentStockStatus::class)->execute($childId);
+
+        $stockItem = $this->objectManager->create(StockRegistryInterface::class)
+            ->getStockItemBySku($fixtures->get('grouped')->getSku());
+        $stockItem = $this->objectManager->create(StockItemRepository::class)->get($stockItem->getItemId());
+        $this->assertFalse((bool)$stockItem->getIsInStock());
     }
 }
