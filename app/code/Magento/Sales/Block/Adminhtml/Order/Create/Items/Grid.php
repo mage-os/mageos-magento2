@@ -35,7 +35,10 @@ class Grid extends \Magento\Sales\Block\Adminhtml\Order\Create\AbstractCreate
     protected $_taxData;
 
     /**
-     * @var \Magento\Wishlist\Model\WishlistFactory
+     * Null when Magento_Wishlist is not enabled, in which case the grid offers
+     * no move-to-wishlist actions.
+     *
+     * @var \Magento\Wishlist\Model\WishlistFactory|null
      */
     protected $_wishlistFactory;
 
@@ -69,7 +72,7 @@ class Grid extends \Magento\Sales\Block\Adminhtml\Order\Create\AbstractCreate
      * @param \Magento\Backend\Model\Session\Quote $sessionQuote
      * @param \Magento\Sales\Model\AdminOrder\Create $orderCreate
      * @param PriceCurrencyInterface $priceCurrency
-     * @param \Magento\Wishlist\Model\WishlistFactory $wishlistFactory
+     * @param \Magento\Wishlist\Model\WishlistFactory|null $wishlistFactory
      * @param \Magento\GiftMessage\Model\Save $giftMessageSave
      * @param \Magento\Tax\Model\Config $taxConfig
      * @param \Magento\Tax\Helper\Data $taxData
@@ -85,7 +88,7 @@ class Grid extends \Magento\Sales\Block\Adminhtml\Order\Create\AbstractCreate
         \Magento\Backend\Model\Session\Quote $sessionQuote,
         \Magento\Sales\Model\AdminOrder\Create $orderCreate,
         PriceCurrencyInterface $priceCurrency,
-        \Magento\Wishlist\Model\WishlistFactory $wishlistFactory,
+        $wishlistFactory,
         \Magento\GiftMessage\Model\Save $giftMessageSave,
         \Magento\Tax\Model\Config $taxConfig,
         \Magento\Tax\Helper\Data $taxData,
@@ -96,7 +99,7 @@ class Grid extends \Magento\Sales\Block\Adminhtml\Order\Create\AbstractCreate
         ?CatalogHelper $catalogHelper = null
     ) {
         $this->_messageHelper = $messageHelper;
-        $this->_wishlistFactory = $wishlistFactory;
+        $this->_wishlistFactory = $this->resolveWishlistFactory($wishlistFactory);
         $this->_giftMessageSave = $giftMessageSave;
         $this->_taxConfig = $taxConfig;
         $this->_taxData = $taxData;
@@ -104,6 +107,34 @@ class Grid extends \Magento\Sales\Block\Adminhtml\Order\Create\AbstractCreate
         $this->stockState = $stockState;
         $data['catalogHelper'] = $catalogHelper ?? ObjectManager::getInstance()->get(CatalogHelper::class);
         parent::__construct($context, $sessionQuote, $orderCreate, $priceCurrency, $data);
+    }
+
+    /**
+     * Resolve the wishlist factory from the constructor argument
+     *
+     * The parameter cannot be typed: di:compile fails on the typehint when
+     * module-wishlist is absent, and PHP forbids a default value at its position.
+     * Magento_Sales configures it as null and Magento_Wishlist's adminhtml di.xml
+     * overrides it with the factory. DI only instantiates object arguments for
+     * typed parameters, so subclasses that keep the original typehint receive the
+     * factory while this block receives the raw ['instance' => ...] configuration,
+     * which is instantiated here the way DI would.
+     *
+     * @param mixed $wishlistFactory
+     * @return \Magento\Wishlist\Model\WishlistFactory|null
+     */
+    private function resolveWishlistFactory($wishlistFactory)
+    {
+        if (is_object($wishlistFactory)) {
+            return $wishlistFactory;
+        }
+        if (!is_array($wishlistFactory) || !is_string($wishlistFactory['instance'] ?? null)) {
+            return null;
+        }
+        $objectManager = ObjectManager::getInstance();
+        return ($wishlistFactory['shared'] ?? true)
+            ? $objectManager->get($wishlistFactory['instance'])
+            : $objectManager->create($wishlistFactory['instance']);
     }
 
     /**
@@ -567,16 +598,22 @@ class Grid extends \Magento\Sales\Block\Adminhtml\Order\Create\AbstractCreate
      */
     public function isMoveToWishlistAllowed($item)
     {
-        return $item->getProduct()->isVisibleInSiteVisibility();
+        return $this->_wishlistFactory !== null && $item->getProduct()->isVisibleInSiteVisibility();
     }
 
     /**
-     * Retrieve collection of customer wishlists
+     * Retrieve customer wishlists
      *
-     * @return \Magento\Wishlist\Model\ResourceModel\Wishlist\Collection
+     * Returns \Magento\Wishlist\Model\ResourceModel\Wishlist\Collection when
+     * Magento_Wishlist is present, an empty iterable otherwise.
+     *
+     * @return iterable
      */
     public function getCustomerWishlists()
     {
+        if ($this->_wishlistFactory === null) {
+            return [];
+        }
         return $this->_wishlistFactory->create()->getCollection()->filterByCustomerId($this->getCustomerId());
     }
 

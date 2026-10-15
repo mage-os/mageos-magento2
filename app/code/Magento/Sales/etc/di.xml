@@ -1090,4 +1090,12 @@
             <argument name="batchSize" xsi:type="number">5000</argument>
         </arguments>
     </type>
+    <type name="Magento\Sales\Block\Adminhtml\Order\Create\Items\Grid">
+        <arguments>
+            <!-- The parameter can be neither typehinted nor given a PHP default, so DI needs
+                 a value when Magento_Wishlist is absent. Magento_Wishlist overrides it in its
+                 adminhtml di.xml; see the block's resolveWishlistFactory(). -->
+            <argument name="wishlistFactory" xsi:type="null"/>
+        </arguments>
+    </type>
 </config>
