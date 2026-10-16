@@ -48,8 +48,9 @@ class Order
             'id' => base64_encode((string)$orderModel->getEntityId()),
             'increment_id' => $orderModel->getIncrementId(),
             'number' => $orderModel->getIncrementId(),
-            'order_date' => $this->timezone->date($orderModel->getCreatedAt())
-                ->format(DateTime::DATETIME_SLASH_PHP_FORMAT),
+            'order_date' => $this->timezone->date(
+                new \DateTime($orderModel->getCreatedAt(), new \DateTimeZone('UTC'))
+            )->format(DateTime::DATETIME_SLASH_PHP_FORMAT),
             'order_number' => $orderModel->getIncrementId(),
             'status' => $orderModel->getStatusLabel(),
             'email' => $orderModel->getCustomerEmail(),
