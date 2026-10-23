@@ -66,4 +66,19 @@ class GridTest extends TestCase
         $this->assertCount(1, $items);
         $this->assertEquals('simple2', reset($items)->getSku());
     }
+
+    /**
+     * Magento_Wishlist configures the wishlist factory for the grid in the adminhtml area. The grid's
+     * parameter is untyped, so DI passes that argument through as raw configuration, which the grid
+     * must still resolve into the factory.
+     *
+     * @return void
+     */
+    public function testWishlistFactoryResolvedFromWishlistModuleConfiguration(): void
+    {
+        $this->assertInstanceOf(
+            \Magento\Wishlist\Model\ResourceModel\Wishlist\Collection::class,
+            $this->block->getCustomerWishlists()
+        );
+    }
 }
