@@ -1,0 +1,33 @@
+<?php
+/**
+ * Copyright © Mage-OS. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+use Magento\Backend\ViewModel\StatisticsFreshness;
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+
+/** @var Template $block */
+/** @var Escaper $escaper */
+/** @var StatisticsFreshness|null $freshness */
+$freshness = $block->getData('freshness_view_model');
+?>
+<?php if ($freshness): ?>
+    <p class="dashboard-statistics-freshness">
+        <?php if ($freshness->isRefreshed()): ?>
+            <?= $escaper->escapeHtml(
+                __('Statistics last refreshed: %1', $freshness->getLastRefreshedAtFormatted())
+            ) ?>
+        <?php else: ?>
+            <?= $escaper->escapeHtml(__('Statistics have not been refreshed yet.')) ?>
+        <?php endif; ?>
+        <?php if ($freshness->isAggregatedMode() && $freshness->isStale()): ?>
+            <span class="dashboard-statistics-freshness-stale">
+                <?= $escaper->escapeHtml(
+                    __('The dashboard uses aggregated data that is more than a day old; its figures may be outdated.')
+                ) ?>
+            </span>
+        <?php endif; ?>
+    </p>
+<?php endif; ?>
