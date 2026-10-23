@@ -58,6 +58,24 @@ class SearchEngineConfigStage extends AbstractStage
             );
 
             if ($useExisting) {
+                if ($search->enableAuth && empty($search->password)) {
+                    $password = \Laravel\Prompts\password(
+                        label: 'Search engine password',
+                        hint: 'Password was not saved for security',
+                        required: true
+                    );
+
+                    $context->setSearchEngine(new SearchEngineConfiguration(
+                        $search->engine,
+                        $search->host,
+                        $search->port,
+                        $search->prefix,
+                        $search->enableAuth,
+                        $search->username,
+                        $password
+                    ));
+                }
+
                 return StageResult::continue();
             }
         }

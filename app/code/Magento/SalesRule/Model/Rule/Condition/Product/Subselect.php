@@ -165,7 +165,7 @@ class Subselect extends Combine
                 $subSelectConditionsFlag = $this->validateSubSelectConditions($item);
             }
             $total = $this->getBaseRowTotalForChildrenProduct($item, $attr, $total);
-            if ($subSelectConditionsFlag && $this->validateAttribute($total)) {
+            if ($isMultiShipping && $subSelectConditionsFlag && $this->validateAttribute($total)) {
                 return true;
             }
         }

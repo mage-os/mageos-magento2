@@ -152,9 +152,10 @@ class MagentoInstallationStage extends AbstractStage
             '--cleanup-database' => true
         ];
 
-        // Add search engine host
-        $hostKey = $search->isOpenSearch() ? '--opensearch-host' : '--elasticsearch-host';
-        $arguments[$hostKey] = $search->getHostWithPort();
+        // Add search engine connection
+        $searchOptionPrefix = $search->isOpenSearch() ? '--opensearch-' : '--elasticsearch-';
+        $arguments[$searchOptionPrefix . 'host'] = $search->host;
+        $arguments[$searchOptionPrefix . 'port'] = (string)$search->port;
 
         // Add optional parameters
         if (!empty($db->prefix)) {
@@ -162,8 +163,13 @@ class MagentoInstallationStage extends AbstractStage
         }
 
         if (!empty($search->prefix)) {
-            $prefixKey = $search->isOpenSearch() ? '--opensearch-index-prefix' : '--elasticsearch-index-prefix';
-            $arguments[$prefixKey] = $search->prefix;
+            $arguments[$searchOptionPrefix . 'index-prefix'] = $search->prefix;
+        }
+
+        if ($search->enableAuth) {
+            $arguments[$searchOptionPrefix . 'enable-auth'] = '1';
+            $arguments[$searchOptionPrefix . 'username'] = $search->username;
+            $arguments[$searchOptionPrefix . 'password'] = $search->password;
         }
 
         return $arguments;

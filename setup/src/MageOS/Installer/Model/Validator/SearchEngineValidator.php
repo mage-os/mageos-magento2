@@ -17,23 +17,19 @@ class SearchEngineValidator
      * @param string $engine
      * @param string $host
      * @param int $port
+     * @param string $username
+     * @param string $password
      * @return array{success: bool, error: string|null}
      */
-    public function testConnection(string $engine, string $host, int $port): array
-    {
+    public function testConnection(
+        string $engine,
+        string $host,
+        int $port,
+        string $username = '',
+        string $password = ''
+    ): array {
         try {
-            // phpcs:ignore Magento2.Functions.DiscouragedFunction
-            $context = stream_context_create([
-                'http' => [
-                    'method' => 'GET',
-                    'timeout' => 5,
-                    'ignore_errors' => true
-                ],
-                'ssl' => [
-                    'verify_peer' => false,
-                    'verify_peer_name' => false,
-                ]
-            ]);
+            $context = $this->createStreamContext($username, $password);
 
             $url = null;
             $response = false;
@@ -154,5 +150,34 @@ class SearchEngineValidator
                 )
             ];
         }
+    }
+
+    /**
+     * Create the HTTP context used for search engine requests
+     *
+     * @param string $username
+     * @param string $password
+     * @return resource
+     */
+    private function createStreamContext(string $username, string $password)
+    {
+        $headers = [];
+        if ($username !== '' || $password !== '') {
+            $headers[] = 'Authorization: Basic ' . base64_encode($username . ':' . $password);
+        }
+
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction, Magento2.Exceptions.TryProcessSystemResources
+        return stream_context_create([
+            'http' => [
+                'method' => 'GET',
+                'timeout' => 5,
+                'ignore_errors' => true,
+                'header' => implode("\r\n", $headers)
+            ],
+            'ssl' => [
+                'verify_peer' => false,
+                'verify_peer_name' => false,
+            ]
+        ]);
     }
 }
