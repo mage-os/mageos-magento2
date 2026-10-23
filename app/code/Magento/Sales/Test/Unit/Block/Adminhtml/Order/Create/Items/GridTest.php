@@ -90,12 +90,18 @@ class GridTest extends TestCase
     protected $stockState;
 
     /**
+     * @var ObjectManagerInterface|null
+     */
+    private $previousAppObjectManager;
+
+    /**
      * Initialize required data
      */
     protected function setUp(): void
     {
         $orderCreateMock = $this->createMock(Create::class);
         $taxData = $this->createMock(Data::class);
+        $this->previousAppObjectManager = $this->appObjectManagerInstance()->getValue();
         $this->priceCurrency = $this->getMockBuilder(
             PriceCurrencyInterface::class
         )->getMock();
@@ -456,6 +462,25 @@ class GridTest extends TestCase
             'expected' => 32
         ];
         return $result;
+    }
+
+    /**
+     * Restore the application ObjectManager replaced by setUp() and the tests
+     */
+    protected function tearDown(): void
+    {
+        $this->appObjectManagerInstance()->setValue(null, $this->previousAppObjectManager);
+        parent::tearDown();
+    }
+
+    /**
+     * Get the static property holding the application ObjectManager, which may be unset
+     *
+     * @return \ReflectionProperty
+     */
+    private function appObjectManagerInstance(): \ReflectionProperty
+    {
+        return new \ReflectionProperty(AppObjectManager::class, '_instance');
     }
 
     /**
