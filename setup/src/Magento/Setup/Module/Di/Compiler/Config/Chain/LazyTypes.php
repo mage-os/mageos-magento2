@@ -9,17 +9,35 @@ namespace Magento\Setup\Module\Di\Compiler\Config\Chain;
 
 use Magento\Framework\ObjectManager\Attribute\NonLazy;
 use Magento\Setup\Module\Di\Compiler\Config\ModificationInterface;
+use Magento\Setup\Module\Di\Compiler\ConstructorSideEffectScanner;
 
 /**
  * Compile-time scanner that records the allow-list of concrete types provably eligible for
  * PHP 8.4 lazy ghosts. A type qualifies only when it is a loadable, concrete, non-final,
  * non-enum, non-readonly class with no internal PHP ancestor (e.g. ArrayObject, DateTime)
- * and no #[NonLazy] attribute. Types never seen at compile time — such as transitive
- * auto-wired dependencies with no di.xml entry of their own — are simply absent from the
- * allow-list and fall back to eager construction at runtime.
+ * and no #[NonLazy] attribute on itself, an ancestor, an implemented interface, or a used trait.
+ * Classes whose constructor is declared in Magento\ or MageOS\ (or that have none) are then lazy
+ * by default. Others (third-party constructors) are lazy only when ConstructorSideEffectScanner
+ * proves the constructor is side-effect-free, because a ghost's constructor may never run (#353).
+ * Types never seen at compile time — such as transitive auto-wired dependencies with no di.xml
+ * entry of their own — are simply absent from the allow-list and fall back to eager construction
+ * at runtime.
+ *
+ * A lazy class builds its constructor dependencies only when it is first initialized, so a
+ * dependency with side effects (even a #[NonLazy] one, or one created by the ObjectManager
+ * fallback) is built at that point rather than at injection. A class whose own methods never touch
+ * its state but rely on a dependency's side effects should itself be marked #[NonLazy].
  */
 class LazyTypes implements ModificationInterface
 {
+    /**
+     * @param ConstructorSideEffectScanner $constructorScanner
+     */
+    public function __construct(
+        private readonly ConstructorSideEffectScanner $constructorScanner
+    ) {
+    }
+
     /**
      * Supplement the DI config to record class types that ARE eligible for lazy object loading
      *
@@ -89,16 +107,55 @@ class LazyTypes implements ModificationInterface
         if ($ref->isFinal() || $ref->isEnum() || $ref->isReadOnly()) {
             return false;
         }
-        for ($current = $ref; $current; $current = $current->getParentClass()) {
-            if ($current->isInternal()) {
-                return false;
-            }
-        }
-
-        if ($ref->getAttributes(NonLazy::class) !== []) {
+        if ($this->isExcluded($ref)) {
             return false;
         }
 
-        return true;
+        $owner = $ref->getConstructor()?->getDeclaringClass()->getName() ?? $ref->getName();
+        if ($this->constructorScanner->isTrusted($ref->getName()) && $this->constructorScanner->isTrusted($owner)) {
+            return true;
+        }
+
+        return $this->constructorScanner->isSideEffectFree($ref);
+    }
+
+    /**
+     * Whether the class has an internal ancestor or #[NonLazy] on itself, an ancestor, an interface or a trait
+     *
+     * @param \ReflectionClass $ref
+     * @return bool
+     */
+    private function isExcluded(\ReflectionClass $ref): bool
+    {
+        foreach ($ref->getInterfaces() as $interface) {
+            if ($interface->getAttributes(NonLazy::class) !== []) {
+                return true;
+            }
+        }
+        for ($current = $ref; $current; $current = $current->getParentClass()) {
+            if ($current->isInternal()
+                || $current->getAttributes(NonLazy::class) !== []
+                || $this->usesNonLazyTrait($current)
+            ) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Whether a class or trait uses a #[NonLazy] trait, directly or through other traits
+     *
+     * @param \ReflectionClass $class
+     * @return bool
+     */
+    private function usesNonLazyTrait(\ReflectionClass $class): bool
+    {
+        foreach ($class->getTraits() as $trait) {
+            if ($trait->getAttributes(NonLazy::class) !== [] || $this->usesNonLazyTrait($trait)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
