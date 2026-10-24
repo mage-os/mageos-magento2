@@ -7,26 +7,30 @@ declare(strict_types=1);
 
 namespace Magento\Setup\Module\Di\Compiler\Config\Chain;
 
-use Magento\Framework\ObjectManager\Attribute\Lazy;
 use Magento\Framework\ObjectManager\Attribute\NonLazy;
 use Magento\Setup\Module\Di\Compiler\Config\ModificationInterface;
+use Magento\Setup\Module\Di\Compiler\ConstructorSideEffectScanner;
 
 /**
  * Compile-time scanner that records the allow-list of concrete types provably eligible for
  * PHP 8.4 lazy ghosts. A type qualifies only when it is a loadable, concrete, non-final,
  * non-enum, non-readonly class with no internal PHP ancestor (e.g. ArrayObject, DateTime)
- * and no #[NonLazy] attribute. Only Magento\ and MageOS\ classes are lazy by default; other
- * (third-party) classes must opt in with #[Lazy], since the scan cannot tell whether a
- * constructor has side effects that callers rely on. Types never seen at compile time — such as transitive
+ * and no #[NonLazy] attribute. Magento\ and MageOS\ classes are then lazy by default. Other
+ * (third-party) classes are lazy only when ConstructorSideEffectScanner proves their constructor
+ * is side-effect-free, because a ghost's constructor may never run (#353). Types never seen at
+ * compile time — such as transitive
  * auto-wired dependencies with no di.xml entry of their own — are simply absent from the
  * allow-list and fall back to eager construction at runtime.
  */
 class LazyTypes implements ModificationInterface
 {
     /**
-     * Namespaces whose classes are lazy-eligible without an explicit #[Lazy] opt-in
+     * @param ConstructorSideEffectScanner $constructorScanner
      */
-    private const DEFAULT_LAZY_NAMESPACES = ['Magento\\', 'MageOS\\'];
+    public function __construct(
+        private readonly ConstructorSideEffectScanner $constructorScanner
+    ) {
+    }
 
     /**
      * Supplement the DI config to record class types that ARE eligible for lazy object loading
@@ -107,12 +111,10 @@ class LazyTypes implements ModificationInterface
             return false;
         }
 
-        foreach (self::DEFAULT_LAZY_NAMESPACES as $namespace) {
-            if (str_starts_with($ref->getName(), $namespace)) {
-                return true;
-            }
+        if ($this->constructorScanner->isTrusted($ref->getName())) {
+            return true;
         }
 
-        return $ref->getAttributes(Lazy::class) !== [];
+        return $this->constructorScanner->isSideEffectFree($ref);
     }
 }

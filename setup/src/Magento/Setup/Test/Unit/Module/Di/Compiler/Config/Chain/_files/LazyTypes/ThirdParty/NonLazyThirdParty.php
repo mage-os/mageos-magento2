@@ -7,10 +7,10 @@ declare(strict_types=1);
 
 namespace Vendor\LazyTypesFixture;
 
-use Magento\Framework\ObjectManager\Attribute\Lazy;
+use Magento\Framework\ObjectManager\Attribute\NonLazy;
 
-#[Lazy]
-final class OptedInFinalThirdParty
+#[NonLazy]
+class NonLazyThirdParty
 {
     public function __construct()
     {

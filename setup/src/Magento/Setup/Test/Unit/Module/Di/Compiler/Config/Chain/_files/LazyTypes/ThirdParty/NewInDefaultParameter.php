@@ -7,12 +7,9 @@ declare(strict_types=1);
 
 namespace Vendor\LazyTypesFixture;
 
-use Magento\Framework\ObjectManager\Attribute\Lazy;
-
-#[Lazy]
-class OptedInThirdParty
+class NewInDefaultParameter
 {
-    public function __construct()
+    public function __construct(private NoConstructor $dependency = new NoConstructor())
     {
     }
 }
