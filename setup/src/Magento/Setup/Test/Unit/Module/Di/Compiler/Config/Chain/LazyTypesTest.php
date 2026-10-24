@@ -18,6 +18,7 @@ use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyTypes\ATr
 use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyTypes\CoreParentWithHook;
 use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyTypes\ExtendsInternal;
 use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyTypes\Foo\Proxy as FooProxy;
+use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyTypes\ExtendsMarkedNonLazy;
 use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyTypes\MarkedNonLazy;
 use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyTypes\PlainClass;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -137,6 +138,21 @@ class LazyTypesTest extends TestCase
         );
 
         $this->assertArrayNotHasKey(MarkedNonLazy::class, $output['lazyTypes']);
+    }
+
+    /**
+     * PHP attributes are not inherited, so the scan must walk ancestors: a subclass of a
+     * #[NonLazy] class (e.g. Customer\Model\Session extending SessionManager) stays eager.
+     */
+    public function testSubclassOfNonLazyClassIsExcludedFromAllowList(): void
+    {
+        $this->skipIfPhpBelow84();
+
+        $output = $this->createLazyTypes()->modify(
+            ['arguments' => [ExtendsMarkedNonLazy::class => []]]
+        );
+
+        $this->assertArrayNotHasKey(ExtendsMarkedNonLazy::class, $output['lazyTypes']);
     }
 
     /**

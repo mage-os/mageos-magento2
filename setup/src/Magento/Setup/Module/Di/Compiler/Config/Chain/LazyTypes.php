@@ -15,7 +15,7 @@ use Magento\Setup\Module\Di\Compiler\ConstructorSideEffectScanner;
  * Compile-time scanner that records the allow-list of concrete types provably eligible for
  * PHP 8.4 lazy ghosts. A type qualifies only when it is a loadable, concrete, non-final,
  * non-enum, non-readonly class with no internal PHP ancestor (e.g. ArrayObject, DateTime)
- * and no #[NonLazy] attribute. Magento\ and MageOS\ classes are then lazy by default. Other
+ * and no #[NonLazy] attribute on itself or any ancestor. Magento\ and MageOS\ classes are then lazy by default. Other
  * (third-party) classes are lazy only when ConstructorSideEffectScanner proves their constructor
  * is side-effect-free, because a ghost's constructor may never run (#353). Types never seen at
  * compile time — such as transitive
@@ -101,14 +101,11 @@ class LazyTypes implements ModificationInterface
         if ($ref->isFinal() || $ref->isEnum() || $ref->isReadOnly()) {
             return false;
         }
+        // PHP attributes are not inherited, so #[NonLazy] on any ancestor also excludes subclasses
         for ($current = $ref; $current; $current = $current->getParentClass()) {
-            if ($current->isInternal()) {
+            if ($current->isInternal() || $current->getAttributes(NonLazy::class) !== []) {
                 return false;
             }
-        }
-
-        if ($ref->getAttributes(NonLazy::class) !== []) {
-            return false;
         }
 
         if ($this->constructorScanner->isTrusted($ref->getName())) {

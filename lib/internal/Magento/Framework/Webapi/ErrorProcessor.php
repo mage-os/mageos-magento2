@@ -16,6 +16,7 @@ use Magento\Framework\Exception\AuthorizationException;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Message\AbstractMessage;
+use Magento\Framework\ObjectManager\Attribute\NonLazy;
 use Magento\Framework\Phrase;
 use Magento\Framework\Validator\Exception as ValidatorException;
 use Magento\Framework\Serialize\Serializer\Json;
@@ -28,6 +29,7 @@ use Magento\Framework\Webapi\Exception as WebapiException;
  * @api
  * @since 100.0.2
  */
+#[NonLazy] // Constructor registers the shutdown handler that renders fatal API errors
 class ErrorProcessor
 {
     public const DEFAULT_SHUTDOWN_FUNCTION = 'apiShutdownFunction';

@@ -5,6 +5,7 @@
  */
 namespace Magento\Framework\Session;
 
+use Magento\Framework\ObjectManager\Attribute\NonLazy;
 use Magento\Framework\ObjectManager\ResetAfterRequestInterface;
 use Magento\Framework\Session\Config\ConfigInterface;
 
@@ -14,6 +15,7 @@ use Magento\Framework\Session\Config\ConfigInterface;
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.CookieAndSessionMisuse)
  */
+#[NonLazy] // Constructor starts the session; callers rely on that side effect
 class SessionManager implements SessionManagerInterface, ResetAfterRequestInterface
 {
     /**
