@@ -23,6 +23,14 @@ use PHPUnit\Framework\TestCase;
 
 class LazyTypesTest extends TestCase
 {
+    public static function setUpBeforeClass(): void
+    {
+        // Fixtures outside the Magento\ namespace are not covered by the test autoloader
+        foreach (glob(__DIR__ . '/_files/LazyTypes/ThirdParty/*.php') as $fixture) {
+            require_once $fixture;
+        }
+    }
+
     public function testEarlyReturnOnPhpBelow84(): void
     {
         if (PHP_VERSION_ID >= 80400) {
@@ -140,6 +148,54 @@ class LazyTypesTest extends TestCase
 
         $this->assertArrayHasKey('External\\PreSeeded\\Type', $output['lazyTypes']);
         $this->assertArrayHasKey(PlainClass::class, $output['lazyTypes']);
+    }
+
+    /**
+     * Third-party constructors may have side effects callers rely on (#353), which the scan
+     * cannot detect, so only Magento\ and MageOS\ classes are lazy by default.
+     */
+    public function testThirdPartyClassIsExcludedByDefault(): void
+    {
+        $this->skipIfPhpBelow84();
+
+        $output = (new LazyTypes())->modify([
+            'arguments' => [
+                'Vendor\\LazyTypesFixture\\PlainThirdParty' => [],
+                'MageOS\\LazyTypesFixture\\MageOSClass' => [],
+            ],
+        ]);
+
+        $this->assertArrayNotHasKey('Vendor\\LazyTypesFixture\\PlainThirdParty', $output['lazyTypes']);
+        $this->assertArrayHasKey('MageOS\\LazyTypesFixture\\MageOSClass', $output['lazyTypes']);
+    }
+
+    public function testThirdPartyClassWithLazyAttributeIsAddedToAllowList(): void
+    {
+        $this->skipIfPhpBelow84();
+
+        $output = (new LazyTypes())->modify(
+            ['arguments' => ['Vendor\\LazyTypesFixture\\OptedInThirdParty' => []]]
+        );
+
+        $this->assertArrayHasKey('Vendor\\LazyTypesFixture\\OptedInThirdParty', $output['lazyTypes']);
+    }
+
+    /**
+     * #[Lazy] only lifts the namespace restriction; PHP-level disqualifiers and #[NonLazy]
+     * still apply.
+     */
+    public function testLazyAttributeDoesNotOverrideOtherDisqualifiers(): void
+    {
+        $this->skipIfPhpBelow84();
+
+        $output = (new LazyTypes())->modify([
+            'arguments' => [
+                'Vendor\\LazyTypesFixture\\OptedInFinalThirdParty' => [],
+                'Vendor\\LazyTypesFixture\\BothMarkedThirdParty' => [],
+            ],
+        ]);
+
+        $this->assertSame([], $output['lazyTypes']);
     }
 
     private function skipIfPhpBelow84(): void

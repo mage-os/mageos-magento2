@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\Setup\Module\Di\Compiler\Config\Chain;
 
+use Magento\Framework\ObjectManager\Attribute\Lazy;
 use Magento\Framework\ObjectManager\Attribute\NonLazy;
 use Magento\Setup\Module\Di\Compiler\Config\ModificationInterface;
 
@@ -14,12 +15,19 @@ use Magento\Setup\Module\Di\Compiler\Config\ModificationInterface;
  * Compile-time scanner that records the allow-list of concrete types provably eligible for
  * PHP 8.4 lazy ghosts. A type qualifies only when it is a loadable, concrete, non-final,
  * non-enum, non-readonly class with no internal PHP ancestor (e.g. ArrayObject, DateTime)
- * and no #[NonLazy] attribute. Types never seen at compile time — such as transitive
+ * and no #[NonLazy] attribute. Only Magento\ and MageOS\ classes are lazy by default; other
+ * (third-party) classes must opt in with #[Lazy], since the scan cannot tell whether a
+ * constructor has side effects that callers rely on. Types never seen at compile time — such as transitive
  * auto-wired dependencies with no di.xml entry of their own — are simply absent from the
  * allow-list and fall back to eager construction at runtime.
  */
 class LazyTypes implements ModificationInterface
 {
+    /**
+     * Namespaces whose classes are lazy-eligible without an explicit #[Lazy] opt-in
+     */
+    private const DEFAULT_LAZY_NAMESPACES = ['Magento\\', 'MageOS\\'];
+
     /**
      * Supplement the DI config to record class types that ARE eligible for lazy object loading
      *
@@ -99,6 +107,12 @@ class LazyTypes implements ModificationInterface
             return false;
         }
 
-        return true;
+        foreach (self::DEFAULT_LAZY_NAMESPACES as $namespace) {
+            if (str_starts_with($ref->getName(), $namespace)) {
+                return true;
+            }
+        }
+
+        return $ref->getAttributes(Lazy::class) !== [];
     }
 }
