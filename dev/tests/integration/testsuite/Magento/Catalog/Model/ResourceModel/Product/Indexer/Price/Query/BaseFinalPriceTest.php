@@ -27,6 +27,7 @@ use Magento\Store\Model\StoreManagerInterface;
 use Magento\Store\Test\Fixture\Group as GroupFixture;
 use Magento\Store\Test\Fixture\Store as StoreFixture;
 use Magento\Store\Test\Fixture\Website as WebsiteFixture;
+use Magento\TestFramework\Fixture\AppIsolation;
 use Magento\TestFramework\Fixture\Config;
 use Magento\TestFramework\Fixture\DataFixture;
 use Magento\TestFramework\Fixture\DataFixtureStorageManager;
@@ -65,15 +66,18 @@ class BaseFinalPriceTest extends TestCase
     protected function tearDown(): void
     {
         if ($this->originalRate !== null) {
-            $connection = $this->objectManager->get(ResourceConnection::class)->getConnection();
-            $rateTable = $connection->getTableName('directory_currency_rate');
-            $where = ['currency_from = ?' => 'USD', 'currency_to = ?' => 'EUR'];
+            $currencyResource = $this->objectManager->get(CurrencyResource::class);
             if ($this->originalRate === false) {
-                $connection->delete($rateTable, $where);
+                // No API removes a rate; drop the row this test added
+                $connection = $this->objectManager->get(ResourceConnection::class)->getConnection();
+                $connection->delete(
+                    $currencyResource->getTable('directory_currency_rate'),
+                    ['currency_from = ?' => 'USD', 'currency_to = ?' => 'EUR']
+                );
             } else {
-                $connection->update($rateTable, ['rate' => $this->originalRate], $where);
+                $currencyResource->saveRates(['USD' => ['EUR' => $this->originalRate]]);
             }
-            $this->objectManager->get(CurrencyResource::class)->_resetState();
+            $currencyResource->_resetState();
         }
         parent::tearDown();
     }
@@ -82,11 +86,13 @@ class BaseFinalPriceTest extends TestCase
      * A percentage tier price must not be scaled by the website currency rate.
      *
      * With a USD -> EUR rate of 2, a 10% discount used to be indexed as a 20% discount on the EUR website.
+     * DB isolation is off because the store fixture creates sequence tables (DDL); fixtures and tearDown revert.
      *
      * @return void
      */
     #[
         DbIsolation(false),
+        AppIsolation(true),
         Config(Currency::XML_PATH_CURRENCY_BASE, 'USD'),
         Config(Store::XML_PATH_PRICE_SCOPE, Store::PRICE_SCOPE_WEBSITE),
         Config(Store::XML_PATH_PRICE_SCOPE, Store::PRICE_SCOPE_WEBSITE, 'website', 'eur_website'),
@@ -132,14 +138,9 @@ class BaseFinalPriceTest extends TestCase
      */
     private function setUsdToEurRate(float $rate): void
     {
-        $connection = $this->objectManager->get(ResourceConnection::class)->getConnection();
-        $this->originalRate = $connection->fetchOne(
-            $connection->select()
-                ->from($connection->getTableName('directory_currency_rate'), 'rate')
-                ->where('currency_from = ?', 'USD')
-                ->where('currency_to = ?', 'EUR')
-        );
         $currencyResource = $this->objectManager->get(CurrencyResource::class);
+        $currencyResource->_resetState();
+        $this->originalRate = $currencyResource->getRate('USD', 'EUR');
         $currencyResource->saveRates(['USD' => ['EUR' => $rate]]);
         // getRate() keeps a static cache that saveRates() does not clear
         $currencyResource->_resetState();
