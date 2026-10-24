@@ -24,6 +24,11 @@ use Psr\Log\LoggerInterface;
 class Queue implements QueueInterface
 {
     /**
+     * AMQP basic.qos prefetch-count is a 16-bit unsigned field.
+     */
+    private const MAX_PREFETCH_COUNT = 65535;
+
+    /**
      * @var Config
      */
     private $amqpConfig;
@@ -182,6 +187,7 @@ class Queue implements QueueInterface
         $prefetchCount = $this->prefetchCount > 0
             ? min($this->prefetchCount, $maxMessages)
             : $maxMessages;
+        $prefetchCount = min($prefetchCount, self::MAX_PREFETCH_COUNT);
         $channel->basic_qos(0, $prefetchCount, false);
         $consumerTag = $channel->basic_consume($this->queueName, '', false, false, false, false, $callbackConverter);
 

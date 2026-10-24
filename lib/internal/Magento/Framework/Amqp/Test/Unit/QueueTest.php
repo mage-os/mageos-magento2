@@ -14,6 +14,7 @@ use Magento\Framework\MessageQueue\EnvelopeFactory;
 use Magento\Framework\MessageQueue\EnvelopeInterface;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Exception\AMQPTimeoutException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -158,6 +159,39 @@ class QueueTest extends TestCase
 
         $model->subscribeWithLimit(function () {
         }, 3);
+    }
+
+    /**
+     * Test verifies the bounded prefetch never exceeds the AMQP 16-bit prefetch-count limit.
+     */
+    #[DataProvider('prefetchLimitDataProvider')]
+    public function testSubscribeWithLimitClampsPrefetchToAmqpLimit(
+        int $configuredPrefetch,
+        int $maxMessages,
+        int $expectedPrefetch
+    ): void {
+        $model = new Queue($this->config, $this->envelopeFactory, 'testQueue', $this->logger, $configuredPrefetch);
+        $amqpChannel = $this->createMock(AMQPChannel::class);
+        $amqpChannel->expects($this->once())
+            ->method('basic_qos')
+            ->with(0, $expectedPrefetch, false);
+        $this->config->method('getChannel')->willReturn($amqpChannel);
+
+        $model->subscribeWithLimit(function () {
+        }, $maxMessages);
+    }
+
+    /**
+     * @return array
+     */
+    public static function prefetchLimitDataProvider(): array
+    {
+        return [
+            'unlimited prefetch, max messages at limit' => [0, 65535, 65535],
+            'unlimited prefetch, max messages above limit' => [0, 100000, 65535],
+            'prefetch and max messages above limit' => [100000, 200000, 65535],
+            'prefetch above limit, max messages below limit' => [100000, 500, 500],
+        ];
     }
 
     /**
