@@ -17,10 +17,15 @@ use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyTypes\ARe
 use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyTypes\ATrait;
 use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyTypes\CoreParentWithHook;
 use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyTypes\ExtendsInternal;
+use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyTypes\ExtendsNonLazyTraitUser;
 use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyTypes\Foo\Proxy as FooProxy;
 use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyTypes\ExtendsMarkedNonLazy;
+use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyTypes\ImplementsNonLazyInterface;
+use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyTypes\InheritsThirdPartyConstructor;
+use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyTypes\InheritsTrivialThirdPartyConstructor;
 use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyTypes\MarkedNonLazy;
 use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyTypes\PlainClass;
+use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyTypes\UsesNestedNonLazyTrait;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
@@ -155,6 +160,25 @@ class LazyTypesTest extends TestCase
         $this->assertArrayNotHasKey(ExtendsMarkedNonLazy::class, $output['lazyTypes']);
     }
 
+    #[DataProvider('nonLazyViaInterfaceOrTraitProvider')]
+    public function testNonLazyOnInterfaceOrTraitExcludesClass(string $class): void
+    {
+        $this->skipIfPhpBelow84();
+
+        $output = $this->createLazyTypes()->modify(['arguments' => [$class => []]]);
+
+        $this->assertArrayNotHasKey($class, $output['lazyTypes']);
+    }
+
+    public static function nonLazyViaInterfaceOrTraitProvider(): array
+    {
+        return [
+            'implements #[NonLazy] interface' => [ImplementsNonLazyInterface::class],
+            'uses trait that uses #[NonLazy] trait' => [UsesNestedNonLazyTrait::class],
+            'extends class using #[NonLazy] trait' => [ExtendsNonLazyTraitUser::class],
+        ];
+    }
+
     /**
      * The chain step is one of several modifiers that can contribute to lazyTypes.
      * Pre-existing entries (from prior chain steps or upstream config sources) must be
@@ -208,6 +232,10 @@ class LazyTypesTest extends TestCase
             'new in default parameter' => ['NewInDefaultParameter', false],
             'parent::__construct to non-trivial parent' => ['ChildOfSideEffectParent', false],
             'extends core and overrides _construct' => ['ExtendsCoreOverridingHook', false],
+            'extends core and overrides another method its constructor calls' => [
+                'ExtendsCoreOverridingInitSelect',
+                false,
+            ],
             '#[NonLazy] with trivial constructor' => ['NonLazyThirdParty', false],
         ];
     }
@@ -228,6 +256,25 @@ class LazyTypesTest extends TestCase
 
         $this->assertArrayHasKey('MageOS\\LazyTypesFixture\\MageOSClass', $output['lazyTypes']);
         $this->assertArrayHasKey(CoreParentWithHook::class, $output['lazyTypes']);
+    }
+
+    /**
+     * Trust follows the class that declares the constructor, so a core class inheriting a
+     * third-party constructor is scanned.
+     */
+    public function testCoreClassInheritingThirdPartyConstructorIsScanned(): void
+    {
+        $this->skipIfPhpBelow84();
+
+        $output = $this->createLazyTypes()->modify([
+            'arguments' => [
+                InheritsThirdPartyConstructor::class => [],
+                InheritsTrivialThirdPartyConstructor::class => [],
+            ],
+        ]);
+
+        $this->assertArrayNotHasKey(InheritsThirdPartyConstructor::class, $output['lazyTypes']);
+        $this->assertArrayHasKey(InheritsTrivialThirdPartyConstructor::class, $output['lazyTypes']);
     }
 
     private function createLazyTypes(): LazyTypes

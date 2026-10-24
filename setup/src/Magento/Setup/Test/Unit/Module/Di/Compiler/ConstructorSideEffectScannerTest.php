@@ -13,6 +13,11 @@ use PHPUnit\Framework\TestCase;
 
 class ConstructorSideEffectScannerTest extends TestCase
 {
+    private const NAMESPACE = 'Vendor\\ScannerFixture';
+
+    private const PROPERTIES = "public \$a;\n    public \$b;\n    public \$c;\n    public \$d;\n"
+        . "    public static \$s;\n    public const X = 'x';\n    ";
+
     /**
      * @var string[]
      */
@@ -51,15 +56,23 @@ class ConstructorSideEffectScannerTest extends TestCase
         return [
             // Side-effect-free
             'empty' => ['', '', true],
-            'promoted properties' => ['private array $a = [], private ?string $b = null', '', true],
+            'promoted properties' => ['private array $p = [], private ?string $q = null', '', true],
             'plain assignment' => ['$a', '$this->a = $a;', true],
             'coalesce assignment' => ['$a', '$this->a ??= $a;', true],
             'literals' => ['', '$this->a = 1; $this->b = -1.5; $this->c = \'x\'; $this->d = null;', true],
             'constants' => ['', '$this->a = PHP_EOL; $this->b = self::class; $this->c = \Foo\Bar::BAZ;', true],
             'static class constant' => ['', '$this->a = static::FOO;', true],
             'magic constants' => ['', '$this->a = __DIR__; $this->b = __CLASS__;', true],
-            'arrays' => ['$a', '$this->a = [\'k\' => $a, ...$a]; $this->b = array(1, 2,);', true],
-            'casts' => ['$a', '$this->a = (int)$a; $this->b = (array)$a; $this->c = (bool)$a;', true],
+            'arrays' => ['array $a', '$this->a = [\'k\' => $a, ...$a]; $this->b = array(1, 2,);', true],
+            'spread of variadic' => ['...$a', '$this->a = [...$a];', true],
+            'casts of scalar parameters' => [
+                '?int $a, int|string $b, bool $c',
+                '$this->a = (string)$a; $this->b = (int)$b; $this->c = (array)$c;',
+                true,
+            ],
+            'casts of literals and constants' => ['', '$this->a = (int)\'5\'; $this->b = (string)self::X;', true],
+            'nullable array dim fetch' => ['?array $a', '$this->a = $a[\'k\'] ?? null;', true],
+            'promoted property read' => ['private array $p', '$this->a = $this->p;', true],
             'ternary' => ['$a', '$this->a = $a ? $a : []; $this->b = $a ?: null;', true],
             'nested coalesce' => ['$a, $b', '$this->a = $a ?? $b ?? [];', true],
             'property and dim fetch' => ['array $d', '$this->a = $d[\'x\'] ?? $this->b; $this->c = $this->a;', true],
@@ -108,6 +121,23 @@ class ConstructorSideEffectScannerTest extends TestCase
             'concatenation' => ['$a', '$this->a = $a . \'x\';', false],
             'comparison' => ['$a', '$this->a = $a === 1;', false],
             'object cast' => ['$a', '$this->a = (object)$a;', false],
+            'cast of untyped parameter' => ['$a', '$this->a = (string)$a;', false],
+            'cast of object parameter' => ['\Stringable $a', '$this->a = (string)$a;', false],
+            'cast of mixed parameter' => ['mixed $a', '$this->a = (int)$a;', false],
+            'cast of property' => ['', '$this->a = (string)$this->b;', false],
+            'dim fetch on untyped parameter' => ['$a', '$this->a = $a[\'k\'];', false],
+            'dim fetch on iterable parameter' => ['iterable $a', '$this->a = $a[\'k\'] ?? null;', false],
+            'nested dim fetch' => ['array $a', '$this->a = $a[\'k\'][\'j\'];', false],
+            'dim fetch on property' => ['', '$this->a = $this->b[\'k\'];', false],
+            'dim fetch on $this' => ['', '$this->a = $this[\'k\'];', false],
+            'property read on parameter' => ['$a', '$this->a = $a->b;', false],
+            'nullsafe property read on parameter' => ['$a', '$this->a = $a?->b;', false],
+            'nested property read' => ['', '$this->a = $this->b->c;', false],
+            'undefined variable' => ['', '$this->a = $b;', false],
+            'spread of untyped parameter' => ['$a', '$this->a = [...$a];', false],
+            'undeclared property assignment' => ['$a', '$this->undeclared = $a;', false],
+            'undeclared property read' => ['', '$this->a = $this->undeclared;', false],
+            'static property via $this' => ['$a', '$this->s = $a;', false],
             'ObjectManager outside coalesce' => [
                 '',
                 '$this->a = \Magento\Framework\App\ObjectManager::getInstance()->get(\Foo::class);',
@@ -208,16 +238,138 @@ class ConstructorSideEffectScannerTest extends TestCase
         $this->assertFalse($scanner->isTrusted('MagentoX\\Foo'));
     }
 
+    public function testMagicSetRejectsAssignmentAndMagicGetRejectsRead(): void
+    {
+        $assign = "public function __construct(\$a)\n    {\n        \$this->a = \$a;\n    }";
+        $read = "public function __construct()\n    {\n        \$this->a = \$this->b;\n    }";
+        $set = "\n    public function __set(\$n, \$v)\n    {\n    }";
+        $get = "\n    public function __get(\$n)\n    {\n    }";
+
+        $scanner = new ConstructorSideEffectScanner();
+        $this->assertFalse($scanner->isSideEffectFree(new \ReflectionClass($this->declareClass($assign . $set))));
+        $this->assertTrue($scanner->isSideEffectFree(new \ReflectionClass($this->declareClass($assign . $get))));
+        $this->assertFalse($scanner->isSideEffectFree(new \ReflectionClass($this->declareClass($read . $get))));
+
+        $parentWithSet = $this->declareClass(ltrim($set));
+        $child = $this->declareClass($assign, '', $parentWithSet, self::NAMESPACE, '');
+        $this->assertFalse($scanner->isSideEffectFree(new \ReflectionClass($child)));
+    }
+
+    public function testParentPrivatePropertyIsUndeclaredForChild(): void
+    {
+        $parent = $this->declareClass('private $p;', '', null, self::NAMESPACE, '');
+        $child = $this->declareClass(
+            "public function __construct(\$a)\n    {\n        \$this->p = \$a;\n    }",
+            '',
+            $parent,
+            self::NAMESPACE,
+            ''
+        );
+
+        $this->assertFalse((new ConstructorSideEffectScanner())->isSideEffectFree(new \ReflectionClass($child)));
+    }
+
+    public function testHookedPropertiesAreRejected(): void
+    {
+        if (PHP_VERSION_ID < 80400) {
+            $this->markTestSkipped('Property hooks need PHP 8.4.');
+        }
+        $hooked = "public \$h { set => \$value; }\n    ";
+        $scanner = new ConstructorSideEffectScanner();
+        foreach (['$this->h = $a;', '$this->a = $this->h;'] as $body) {
+            $class = $this->declareClass(
+                $hooked . "public function __construct(\$a)\n    {\n        $body\n    }",
+                '',
+                null,
+                self::NAMESPACE,
+                self::PROPERTIES
+            );
+            $this->assertFalse($scanner->isSideEffectFree(new \ReflectionClass($class)), $body);
+        }
+
+        // A subclass can add a hook to a property that an inherited constructor assigns
+        $parent = $this->declareClass("public function __construct(\$a)\n    {\n        \$this->a = \$a;\n    }");
+        $child = $this->declareClass('public $a { set => $value; }', '', $parent, self::NAMESPACE, '');
+        $this->assertTrue($scanner->isSideEffectFree(new \ReflectionClass($parent)));
+        $this->assertFalse($scanner->isSideEffectFree(new \ReflectionClass($child)));
+    }
+
+    #[DataProvider('trustedConstructorCallProvider')]
+    public function testMethodsCalledByTrustedConstructorMustNotBeOverridden(
+        string $coreBody,
+        string $members,
+        bool $expected
+    ): void {
+        $core = $this->declareClass(
+            "public function __construct()\n    {\n        $coreBody\n    }\n"
+            . "    protected function _initSelect()\n    {\n    }\n"
+            . "    protected static function make()\n    {\n    }",
+            '',
+            null,
+            'Magento\\ScannerFixture'
+        );
+
+        $class = $this->declareClass($members, '', $core);
+        $scanner = new ConstructorSideEffectScanner();
+        $this->assertSame($expected, $scanner->isSideEffectFree(new \ReflectionClass($class)));
+    }
+
+    public static function trustedConstructorCallProvider(): array
+    {
+        $override = "protected function _initSelect()\n    {\n    }";
+        $overrideStatic = "protected static function make()\n    {\n    }";
+        $magicCall = "public function __call(\$n, \$a)\n    {\n    }";
+        return [
+            'not overridden' => ['$this->_initSelect();', '', true],
+            'overridden' => ['$this->_initSelect();', $override, false],
+            'other method overridden' => ['$this->_initSelect();', $overrideStatic, true],
+            'static:: call overridden' => ['static::make();', $overrideStatic, false],
+            'self:: call is not virtual' => ['self::make();', $overrideStatic, true],
+            'dynamic method name' => ['$this->$name();', '', false],
+            'undefined method reaches third-party __call' => ['$this->missing();', $magicCall, false],
+        ];
+    }
+
+    public function testTrustedParentConstructorChainIsWalked(): void
+    {
+        $grandparent = $this->declareClass(
+            "public function __construct()\n    {\n        \$this->_construct();\n    }\n"
+            . "    protected function _construct()\n    {\n    }",
+            '',
+            null,
+            'Magento\\ScannerFixture'
+        );
+        $parent = $this->declareClass(
+            "public function __construct()\n    {\n        parent::__construct();\n    }",
+            '',
+            $grandparent,
+            'Magento\\ScannerFixture'
+        );
+        $override = "protected function _construct()\n    {\n    }";
+
+        $scanner = new ConstructorSideEffectScanner();
+        $this->assertTrue($scanner->isSideEffectFree(new \ReflectionClass($this->declareClass('', '', $parent))));
+        $overriding = $this->declareClass($override, '', $parent);
+        $this->assertFalse($scanner->isSideEffectFree(new \ReflectionClass($overriding)));
+    }
+
     /**
      * Write a uniquely named class to a temp file and load it, so the scanner can read its source
      *
      * @param string $members
      * @param string $uses
      * @param string|null $parent
+     * @param string $namespace
+     * @param string $properties
      * @return string
      */
-    private function declareClass(string $members, string $uses = '', ?string $parent = null): string
-    {
+    private function declareClass(
+        string $members,
+        string $uses = '',
+        ?string $parent = null,
+        string $namespace = self::NAMESPACE,
+        string $properties = self::PROPERTIES
+    ): string {
         self::$counter++;
         $name = 'ScannerFixture' . getmypid() . '_' . self::$counter;
         $extends = $parent !== null ? ' extends \\' . ltrim($parent, '\\') : '';
@@ -225,11 +377,10 @@ class ConstructorSideEffectScannerTest extends TestCase
         self::$files[] = $file;
         file_put_contents(
             $file,
-            "<?php\nnamespace Vendor\\ScannerFixture;\n\n$uses\n#[\\AllowDynamicProperties]\n"
-            . "class $name$extends\n{\n    $members\n}\n"
+            "<?php\nnamespace $namespace;\n\n$uses\nclass $name$extends\n{\n    $properties$members\n}\n"
         );
         require $file;
 
-        return 'Vendor\\ScannerFixture\\' . $name;
+        return $namespace . '\\' . $name;
     }
 }

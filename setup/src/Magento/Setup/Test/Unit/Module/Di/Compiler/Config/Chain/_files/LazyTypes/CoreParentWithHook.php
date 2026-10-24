@@ -8,7 +8,7 @@ declare(strict_types=1);
 namespace Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyTypes;
 
 /**
- * Stand-in for a core class (e.g. AbstractModel, AbstractBlock) whose constructor calls the _construct() hook
+ * Stand-in for a core class (e.g. AbstractModel, AbstractBlock) whose constructor calls overridable methods
  */
 class CoreParentWithHook
 {
@@ -21,9 +21,14 @@ class CoreParentWithHook
     {
         $this->data = $data;
         $this->_construct();
+        $this->_initSelect();
     }
 
     protected function _construct(): void
+    {
+    }
+
+    protected function _initSelect(): void
     {
     }
 }
