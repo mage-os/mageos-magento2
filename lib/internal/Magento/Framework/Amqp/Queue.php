@@ -24,6 +24,11 @@ use Psr\Log\LoggerInterface;
 class Queue implements QueueInterface
 {
     /**
+     * AMQP basic.qos prefetch-count is a 16-bit unsigned field.
+     */
+    private const MAX_PREFETCH_COUNT = 65535;
+
+    /**
      * @var Config
      */
     private $amqpConfig;
@@ -177,7 +182,13 @@ class Queue implements QueueInterface
         };
 
         $channel = $this->amqpConfig->getChannel();
-        $channel->basic_qos(0, $this->prefetchCount, false);
+        // A short-lived consumer should not receive more messages than it can process.
+        // AMQP treats a prefetch count of zero as unlimited, so cap that case too.
+        $prefetchCount = $this->prefetchCount > 0
+            ? min($this->prefetchCount, $maxMessages)
+            : $maxMessages;
+        $prefetchCount = min($prefetchCount, self::MAX_PREFETCH_COUNT);
+        $channel->basic_qos(0, $prefetchCount, false);
         $consumerTag = $channel->basic_consume($this->queueName, '', false, false, false, false, $callbackConverter);
 
         $timeout = $waitTimeout > 0 ? $waitTimeout : 0;
@@ -186,6 +197,7 @@ class Queue implements QueueInterface
                 $channel->wait(null, false, $timeout);
             } catch (AMQPTimeoutException $e) {
                 // No message arrived within the wait window — queue is empty or idle; exit cleanly.
+                $channel->basic_cancel($consumerTag);
                 break;
             }
         }
