@@ -140,6 +140,20 @@ class ValidateDobOnSaveTest extends TestCase
         $this->assertSame($customer, $actual);
     }
 
+    public function testFalseDobSkipsValidationAndProceeds(): void
+    {
+        $customer = $this->createCustomerMock(false);
+        $this->mockAttributeRulesArray(['date_range_min' => '1980-01-01', 'date_range_max' => '2000-12-31']);
+
+        $called = false;
+        $proceed = $this->proceedPlugin($called, $customer);
+
+        $actual = $this->plugin->aroundSave($this->repo, $proceed, $customer, null);
+
+        $this->assertTrue($called);
+        $this->assertSame($customer, $actual);
+    }
+
     public function testRulesAsJsonStringAreUnserialized(): void
     {
         $customer = $this->createCustomerMock('1979-12-31');
