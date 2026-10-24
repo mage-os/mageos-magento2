@@ -1,0 +1,42 @@
+{
+  "account": {
+    "accountOverviewSlug": "/customer/account/",
+    "addressBookSlug": "/customer/address",
+    "addressIndexSlug": "/customer/address/index",
+    "addressNewSlug": "customer/address/new",
+    "accountEditSlug": "/customer/account/edit/",
+    "changePasswordSlug": "/customer/account/edit/changepass/1/",
+    "createAccountSlug": "/customer/account/create/",
+    "loginSlug": "/customer/account/login/",
+    "orderHistorySlug": "/sales/order/history/"
+  },
+  "cart": {
+    "cartProductChangeSlug": "/cart/configure/",
+    "cartSlug": "/checkout/cart/"
+  },
+  "categoryPage": {
+    "categorySlug": "/men/tops-men.html",
+    "subcategorySlug" : "/men/tops-men.html?cat=14"
+  },
+  "checkout": {
+    "checkoutSlug": "/checkout/",
+    "purchaseSuccessSlug": "/checkout/onepage/success/"
+  },
+  "contact": {
+    "contactSlug": "/contact"
+  },
+  "productPage": {
+    "configurableProductSlug": "/inez-full-zip-jacket.html",
+    "productComparisonSlug": "/catalog/product_compare/index/",
+    "secondSimpleProductSlug": "/aim-analog-watch.html",
+    "simpleProductSlug": "/push-it-messenger-bag.html",
+    "searchProductSlug": "catalogsearch/result/?q=Push+It+Messenger+Bag"
+  },
+  "search": {
+    "resultsSlug": "/catalogsearch/result/"
+  },
+  "wishList": {
+    "wishListSlug": "wishlist/",
+    "wishListRegex": ".*wishlist.*"
+  }
+}
