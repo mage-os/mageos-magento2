@@ -74,7 +74,7 @@ class ValidateDobOnSave
         $dobRaw = $customer->getDob();
 
         $dobDate = $this->parseDate($dobRaw);
-        if ($dobRaw !== null && $dobRaw !== '' && !$dobDate) {
+        if ($dobRaw !== null && $dobRaw !== '' && $dobRaw !== false && !$dobDate) {
             throw new InputException(__('Date of Birth is invalid.'));
         }
 
