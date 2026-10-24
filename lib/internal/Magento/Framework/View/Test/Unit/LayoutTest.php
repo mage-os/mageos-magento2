@@ -321,6 +321,15 @@ class LayoutTest extends TestCase
             ->method('importElements')
             ->with([])
             ->willReturnSelf();
+        $this->readerContextFactoryMock->expects($this->once())
+            ->method('create')
+            ->willReturn($this->readerContextMock);
+        $this->layoutScheduledSructure->expects($this->once())
+            ->method('populateWithArray')
+            ->with([]);
+        $this->pageConfigStructure->expects($this->once())
+            ->method('populateWithArray')
+            ->with([]);
         $this->assertSame($this->model, $this->model->generateXml());
         $this->assertSame('<some_update>123</some_update>', $this->model->getNode('some_update')->asXML());
     }
