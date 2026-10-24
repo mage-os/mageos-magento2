@@ -22,6 +22,7 @@ use Magento\Quote\Api\Data\AddressInterface;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Address\Rate;
 use Magento\Quote\Model\QuoteFactory;
+use Magento\Quote\Model\ResourceModel\Quote as QuoteResource;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\TestFramework\Helper\Bootstrap;
 
@@ -106,13 +107,23 @@ $quote->setBillingAddress($billing);
 
 $quote->setIsMultiShipping(1);
 
+// Save and reload the quote so its items have IDs before address items reference them.
+$quote->collectTotals();
+/** @var CartRepositoryInterface $quoteRepository */
+$quoteRepository = $objectManager->get(CartRepositoryInterface::class);
+$quoteRepository->save($quote);
+
+/** @var QuoteResource $quoteResource */
+$quoteResource = $objectManager->get(QuoteResource::class);
+$quote = $quoteFactory->create();
+$quoteResource->load($quote, 'multishipping_subselect_ordering', 'reserved_order_id');
+
 $shippingAddresses = $quote->getAllShippingAddresses();
 $shippingAddress = reset($shippingAddresses);
 foreach ($quote->getAllVisibleItems() as $visibleItem) {
     $shippingAddress->addItem($visibleItem);
 }
 
+$quote->setTotalsCollectedFlag(false);
 $quote->collectTotals();
-/** @var CartRepositoryInterface $quoteRepository */
-$quoteRepository = $objectManager->get(CartRepositoryInterface::class);
 $quoteRepository->save($quote);

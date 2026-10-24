@@ -79,9 +79,9 @@ class MultishippingSubselectTest extends TestCase
     /**
      * A dynamic bundle's child rows must not be added on top of the visible parent row.
      *
-     * The bundle selects simple1 (10) and simple2 (20); its visible row total is 30 while the two
-     * child address rows carry 10 and 20. Counting only visible items yields 30; the pre-fix
-     * getAllItems() path yielded 60.
+     * The bundle selects simple1 (special price 5.99) and simple2 (special price 15.99); its visible
+     * row total is 21.98 while the two child address rows carry 5.99 and 15.99. Counting only visible
+     * items yields 21.98; the pre-fix getAllItems() path yielded 43.96.
      *
      * @magentoDataFixture Magento/SalesRule/_files/multishipping_quote_with_dynamic_bundle.php
      */
@@ -89,30 +89,30 @@ class MultishippingSubselectTest extends TestCase
     {
         $shippingAddress = $this->getMultishippingAddress('multishipping_subselect_bundle');
 
-        // Exactly the visible bundle total (30) must match, and anything above it must not — which
-        // only holds if the child rows (10 + 20) are excluded rather than added to make 60.
+        // Exactly the visible bundle total (21.98) must match, and anything above it must not — which
+        // only holds if the child rows (5.99 + 15.99) are excluded rather than added to make 43.96.
         $this->subselect->setData([
             'attribute' => 'base_row_total',
             'operator' => '==',
-            'value' => 30,
+            'value' => 21.98,
             'aggregator' => 'all',
         ]);
         $this->subselect->setConditions([]);
         $this->assertTrue(
             $this->subselect->validate($shippingAddress),
-            'Visible bundle row total should be counted once (30).'
+            'Visible bundle row total should be counted once (21.98).'
         );
 
         $this->subselect->setData([
             'attribute' => 'base_row_total',
-            'operator' => '==',
-            'value' => 60,
+            'operator' => '>',
+            'value' => 21.98,
             'aggregator' => 'all',
         ]);
         $this->subselect->setConditions([]);
         $this->assertFalse(
             $this->subselect->validate($shippingAddress),
-            'Bundle child rows (10 + 20) must not be double counted on top of the parent.'
+            'Bundle child rows (5.99 + 15.99) must not be double counted on top of the parent.'
         );
     }
 
