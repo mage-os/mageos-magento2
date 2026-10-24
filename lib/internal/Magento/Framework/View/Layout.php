@@ -345,6 +345,9 @@ class Layout extends \Magento\Framework\Simplexml\Config implements \Magento\Fra
         $xml = $this->getUpdate()->asSimplexml();
         $this->setXml($xml);
         $this->structure->importElements([]);
+        // Generation runs on an isolated copy, so drop state left over from a previous build
+        $this->getReaderContext()->getScheduledStructure()->populateWithArray([]);
+        $this->getReaderContext()->getPageConfigStructure()->populateWithArray([]);
         return $this;
     }
 
