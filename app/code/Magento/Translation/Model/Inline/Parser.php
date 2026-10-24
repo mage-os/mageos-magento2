@@ -329,13 +329,17 @@ class Parser implements ParserInterface
             return $content;
         }
         $dom = new DOMDocument('1.0', 'UTF-8');
-        libxml_use_internal_errors(true);
+        $previousErrorMode = libxml_use_internal_errors(true);
         $wrapper = '<div>' . $content . '</div>';
-        $dom->loadHTML(
-            '<?xml encoding="UTF-8"?>' . $wrapper,
-            LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD
-        );
-        libxml_clear_errors();
+        try {
+            $dom->loadHTML(
+                '<?xml encoding="UTF-8"?>' . $wrapper,
+                LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD
+            );
+        } finally {
+            libxml_clear_errors();
+            libxml_use_internal_errors($previousErrorMode);
+        }
         $xpath = new \DOMXPath($dom);
         foreach ($xpath->query('//a[@href]') as $anchor) {
             $href = trim(html_entity_decode($anchor->getAttribute('href'), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
@@ -374,10 +378,6 @@ class Parser implements ParserInterface
         }
 
         if (strncmp($href, '//', 2) === 0 || strncasecmp($href, 'www.', 4) === 0) {
-            return true;
-        }
-
-        if (preg_match('/^[a-z0-9.-]+\.[a-z]{2,}/i', $href)) {
             return true;
         }
 
