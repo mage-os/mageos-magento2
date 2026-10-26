@@ -92,24 +92,6 @@ class Symfony implements FrontendInterface
     private bool $hasPendingWrites = false;
 
     /**
-     * @var array
-     */
-    private array $responseCache = [];
-
-    /**
-     * @var int
-     */
-    private const RESPONSE_CACHE_MAX_SIZE = 500;
-
-    /**
-     * @var int Response cache TTL in seconds
-     *
-     * Set to 0 to disable (safer for multi-instance scenarios)
-     * Can be increased in single-instance production environments
-     */
-    private const RESPONSE_CACHE_TTL = 0;
-
-    /**
      * Constructor
      *
      * @param Closure $cacheFactory Factory that creates the cache pool
@@ -197,16 +179,6 @@ class Symfony implements FrontendInterface
     public function test($identifier)
     {
         $cleanId = $this->cleanIdentifier($identifier);
-        $cacheKey = 'test:' . $cleanId;
-
-        // OPTIMIZATION: Check response cache first (Predis optimization)
-        if (isset($this->responseCache[$cacheKey])) {
-            $cached = $this->responseCache[$cacheKey];
-            if ((time() - $cached['time']) < self::RESPONSE_CACHE_TTL) {
-                return $cached['result'];
-            }
-            unset($this->responseCache[$cacheKey]);
-        }
 
         if ($this->hasPendingWrites) {
             $this->commitPendingWrites();
@@ -221,19 +193,9 @@ class Symfony implements FrontendInterface
 
         $value = $item->get();
 
-        $result = is_array($value) && isset($value['mtime'])
+        return is_array($value) && isset($value['mtime'])
             ? (int)$value['mtime']
             : time();
-
-        // Cache result in memory
-        if (count($this->responseCache) < self::RESPONSE_CACHE_MAX_SIZE) {
-            $this->responseCache[$cacheKey] = [
-                'result' => $result,
-                'time' => time()
-            ];
-        }
-
-        return $result;
     }
 
     /**
@@ -242,16 +204,6 @@ class Symfony implements FrontendInterface
     public function load($identifier)
     {
         $cleanId = $this->cleanIdentifier($identifier);
-        $cacheKey = 'load:' . $cleanId;
-
-        // OPTIMIZATION: Check response cache first (Predis optimization)
-        if (isset($this->responseCache[$cacheKey])) {
-            $cached = $this->responseCache[$cacheKey];
-            if ((time() - $cached['time']) < self::RESPONSE_CACHE_TTL) {
-                return $cached['result'];
-            }
-            unset($this->responseCache[$cacheKey]);
-        }
 
         if ($this->hasPendingWrites) {
             $this->commitPendingWrites();
@@ -266,19 +218,9 @@ class Symfony implements FrontendInterface
 
         $wrappedData = $item->get();
 
-        $result = (is_array($wrappedData) && array_key_exists('data', $wrappedData))
+        return (is_array($wrappedData) && array_key_exists('data', $wrappedData))
             ? $wrappedData['data']
             : $wrappedData;
-
-        // Cache result in memory (only cache hits, not misses)
-        if ($result !== false && count($this->responseCache) < self::RESPONSE_CACHE_MAX_SIZE) {
-            $this->responseCache[$cacheKey] = [
-                'result' => $result,
-                'time' => time()
-            ];
-        }
-
-        return $result;
     }
 
     /**
@@ -290,11 +232,6 @@ class Symfony implements FrontendInterface
     {
         $cache = $this->getCache();
         $cleanId = $this->cleanIdentifier($identifier);
-
-        // Clear response cache for this key (important for concurrent access)
-        unset($this->responseCache['test:' . $cleanId]);
-        unset($this->responseCache['load:' . $cleanId]);
-
         $item = $cache->getItem($cleanId);
 
         // Calculate actual lifetime to use
@@ -564,10 +501,6 @@ class Symfony implements FrontendInterface
         $cache = $this->getCache();
         $cleanId = $this->cleanIdentifier($identifier);
 
-        // Clear from response cache
-        unset($this->responseCache['test:' . $cleanId]);
-        unset($this->responseCache['load:' . $cleanId]);
-
         $this->adapter->onRemove($cleanId);
 
         $success = $cache->deleteItem($cleanId);
@@ -584,8 +517,6 @@ class Symfony implements FrontendInterface
      */
     public function clean($mode = CacheConstants::CLEANING_MODE_ALL, array $tags = [])
     {
-        $this->responseCache = [];
-
         if ($this->hasPendingWrites) {
             $this->commitPendingWrites();
         }
@@ -629,7 +560,6 @@ class Symfony implements FrontendInterface
      */
     private function cleanAll(CacheItemPoolInterface $cache): bool
     {
-        $this->responseCache = [];
         $this->adapter->clearAllIndices();
         $success = $cache->clear();
 
