@@ -26,6 +26,9 @@ namespace Magento\Setup\Module\Di\Compiler;
  *
  * Every `$this->prop` must be a declared, non-static property without hooks, and the class must not
  * declare `__set()` (when assigning) or `__get()` (when reading), so property access runs no user code.
+ * Promoted constructor parameters count as property writes, so a hook added to one by a subclass also
+ * makes the class unsafe. A `__destruct()` declared outside Magento\ or MageOS\ makes the class unsafe
+ * too: an uninitialized ghost is never destructed, so its side effects would be skipped as well.
  *
  * Constructors declared in Magento\ or MageOS\ classes are trusted without scanning. They often call
  * overridable methods such as `_construct()`, so the class is unsafe if a method that a trusted
@@ -161,6 +164,12 @@ class ConstructorSideEffectScanner
      */
     private function evaluate(\ReflectionClass $class): bool
     {
+        if ($class->hasMethod('__destruct')
+            && !$this->isTrusted($class->getMethod('__destruct')->getDeclaringClass()->getName())
+        ) {
+            return false;
+        }
+
         $writes = [];
         $reads = [];
         $current = $class;
@@ -312,10 +321,13 @@ class ConstructorSideEffectScanner
             $this->imports = $this->importCache[$constructor->getFileName()];
             $this->scope = $declaring;
             $this->params = [];
+            $this->access = ['writes' => [], 'reads' => []];
             foreach ($constructor->getParameters() as $param) {
                 $this->params[$param->getName()] = $param;
+                if ($param->isPromoted()) {
+                    $this->access['writes'][$param->getName()] = true;
+                }
             }
-            $this->access = ['writes' => [], 'reads' => []];
 
             $callsParent = false;
             if ($this->parseConstructor($callsParent)) {
@@ -427,12 +439,20 @@ class ConstructorSideEffectScanner
                 && $tokens[$i + 1][0] === T_STRING
                 && strtolower($tokens[$i + 1][1]) === '__construct'
             ) {
+                // Braces inside the signature (property hooks on promoted parameters) do not open the body
                 $slice = [];
                 $depth = 0;
+                $parens = 0;
                 for ($j = $i; $j < $count; $j++) {
                     $slice[] = $tokens[$j];
                     $id = $tokens[$j][0];
-                    if ($id === '{' || $id === T_CURLY_OPEN || $id === T_DOLLAR_OPEN_CURLY_BRACES) {
+                    if ($id === '(') {
+                        $parens++;
+                    } elseif ($id === ')') {
+                        $parens--;
+                    } elseif ($parens > 0) {
+                        continue;
+                    } elseif ($id === '{' || $id === T_CURLY_OPEN || $id === T_DOLLAR_OPEN_CURLY_BRACES) {
                         $depth++;
                     } elseif ($id === '}') {
                         if (--$depth === 0) {
@@ -459,10 +479,11 @@ class ConstructorSideEffectScanner
             return false;
         }
         // Signature: any tokens except `new` (default values like `= new Foo()` run on instantiation)
+        // and `{` (a property hook on a promoted parameter runs when the parameter is assigned)
         $depth = 1;
         while ($depth > 0) {
             $id = $this->peek();
-            if ($id === null || $id === T_NEW) {
+            if ($id === null || $id === T_NEW || $id === '{') {
                 return false;
             }
             if ($id === '(') {

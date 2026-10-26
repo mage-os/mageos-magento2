@@ -294,6 +294,47 @@ class ConstructorSideEffectScannerTest extends TestCase
         $this->assertFalse($scanner->isSideEffectFree(new \ReflectionClass($child)));
     }
 
+    public function testHookOnPromotedParameterIsRejected(): void
+    {
+        if (PHP_VERSION_ID < 80400) {
+            $this->markTestSkipped('Property hooks need PHP 8.4.');
+        }
+        $scanner = new ConstructorSideEffectScanner();
+        $hooked = $this->declareClass(
+            "public function __construct(public \$p { set => \$value; })\n    {\n    }",
+            '',
+            null,
+            self::NAMESPACE,
+            ''
+        );
+        $this->assertFalse($scanner->isSideEffectFree(new \ReflectionClass($hooked)));
+
+        // A subclass can add a hook to a property that an inherited constructor promotes
+        $parent = $this->declareClass(
+            "public function __construct(public \$p = null)\n    {\n    }",
+            '',
+            null,
+            self::NAMESPACE,
+            ''
+        );
+        $child = $this->declareClass('public $p { set => $value; }', '', $parent, self::NAMESPACE, '');
+        $this->assertTrue($scanner->isSideEffectFree(new \ReflectionClass($parent)));
+        $this->assertFalse($scanner->isSideEffectFree(new \ReflectionClass($child)));
+    }
+
+    public function testUntrustedDestructorIsRejected(): void
+    {
+        $scanner = new ConstructorSideEffectScanner();
+        $class = $this->declareClass(
+            "public function __construct(\$a)\n    {\n        \$this->a = \$a;\n    }\n\n"
+            . "    public function __destruct()\n    {\n    }"
+        );
+        $this->assertFalse($scanner->isSideEffectFree(new \ReflectionClass($class)));
+
+        $child = $this->declareClass('', '', $class, self::NAMESPACE, '');
+        $this->assertFalse($scanner->isSideEffectFree(new \ReflectionClass($child)));
+    }
+
     #[DataProvider('trustedConstructorCallProvider')]
     public function testMethodsCalledByTrustedConstructorMustNotBeOverridden(
         string $coreBody,
