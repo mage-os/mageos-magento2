@@ -15,6 +15,7 @@ use Magento\Eav\Model\Config as EavConfig;
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
 use Magento\Framework\Exception\InputException;
 use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Magento\Framework\Locale\ResolverInterface;
@@ -138,6 +139,62 @@ class ValidateDobOnSaveTest extends TestCase
 
         $this->assertTrue($called);
         $this->assertSame($customer, $actual);
+    }
+
+    /**
+     * Form::compactData() assigns false to attributes missing from the request.
+     *
+     * @return void
+     */
+    public function testFalseDobSkipsValidationAndProceeds(): void
+    {
+        $customer = $this->createCustomerMock(false);
+        $customer->expects($this->never())->method('setDob');
+        $this->mockAttributeRulesArray(['date_range_min' => '1980-01-01', 'date_range_max' => '2000-12-31']);
+
+        $called = false;
+        $proceed = $this->proceedPlugin($called);
+
+        $actual = $this->plugin->aroundSave($this->repo, $proceed, $customer, null);
+
+        $this->assertTrue($called);
+        $this->assertSame($customer, $actual);
+    }
+
+    /**
+     * A blank string must not reach \DateTimeImmutable, which parses whitespace as "now".
+     *
+     * @param string $dob
+     * @return void
+     */
+    #[DataProvider('blankDobDataProvider')]
+    public function testBlankDobSkipsValidationAndProceeds(string $dob): void
+    {
+        $customer = $this->createCustomerMock($dob);
+        $customer->expects($this->never())->method('setDob');
+        $this->mockAttributeRulesArray(['date_range_min' => '1980-01-01', 'date_range_max' => '2000-12-31']);
+
+        $called = false;
+        $proceed = $this->proceedPlugin($called);
+
+        $actual = $this->plugin->aroundSave($this->repo, $proceed, $customer, null);
+
+        $this->assertTrue($called);
+        $this->assertSame($customer, $actual);
+    }
+
+    /**
+     * @return array<string, array<int, string>>
+     */
+    public static function blankDobDataProvider(): array
+    {
+        return [
+            'empty string' => [''],
+            'single space' => [' '],
+            'multiple spaces' => ['   '],
+            'tab' => ["\t"],
+            'newline' => ["\n"],
+        ];
     }
 
     public function testRulesAsJsonStringAreUnserialized(): void
@@ -353,9 +410,9 @@ class ValidateDobOnSaveTest extends TestCase
      */
     private function proceedPlugin(bool &$called, ?CustomerInterface $result = null): callable
     {
-        return function (CustomerInterface $c, $hash = null) use (&$called) {
+        return function (CustomerInterface $c, $hash = null) use (&$called, $result) {
             $called = true;
-            return $c;
+            return $result ?? $c;
         };
     }
 
