@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright 2025 Mage-OS
- * All Rights Reserved.
+ * Copyright © Mage-OS. All rights reserved.
+ * See COPYING.txt for license details.
  */
 declare(strict_types=1);
 

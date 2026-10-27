@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright 2025 Mage-OS
- * All Rights Reserved.
+ * Copyright © Mage-OS. All rights reserved.
+ * See COPYING.txt for license details.
  *
  * Multi-address quote whose single shipping address carries one dynamic-price bundle.
- * The bundle selects simple1 (10) and simple2 (20), so its visible row total is 30, while the
- * two bundle child rows carry 10 and 20. Address::addItem() creates a parent address item plus
- * two child address items, so the pre-fix getAllItems() path summed 30 + 10 + 20 = 60 (double
- * count). getAllVisibleItems() must sum only the parent once: 30.
+ * The bundle selects simple1 (special price 5.99) and simple2 (special price 15.99), so its visible
+ * row total is 21.98, while the two bundle child rows carry 5.99 and 15.99. Address::addItem()
+ * creates a parent address item plus two child address items, so the pre-fix getAllItems() path
+ * summed 21.98 + 5.99 + 15.99 = 43.96 (double count). Only the parent may be counted: 21.98.
  *
  * NOTE: integration fixture — requires the integration test database to execute.
  */

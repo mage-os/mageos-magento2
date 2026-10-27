@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright 2025 Mage-OS
- * All Rights Reserved.
+ * Copyright © Mage-OS. All rights reserved.
+ * See COPYING.txt for license details.
  *
  * Multi-address quote whose single shipping address carries a matching item followed by a
  * non-matching item. Reproduces the ACP2E-3986 ordering scenario for Subselect::validate():

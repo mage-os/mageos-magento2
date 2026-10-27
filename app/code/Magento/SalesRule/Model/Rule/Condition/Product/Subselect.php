@@ -160,12 +160,36 @@ class Subselect extends Combine
         $attr = $this->getAttribute();
         $total = 0;
         $items = $model->getQuote()->getIsMultiShipping()
-            ? $model->getAllVisibleItems()
+            ? $this->getAddressVisibleItems($model)
             : $model->getQuote()->getAllVisibleItems();
         foreach ($items as $item) {
             $total = $this->getBaseRowTotalForChildrenProduct($item, $attr, $total);
         }
         return $this->validateAttribute($total);
+    }
+
+    /**
+     * Get the address items that are not configurable or bundle children.
+     *
+     * Address::getAllVisibleItems() checks parent_item_id only, which is assigned when the address
+     * item is saved. Multi-address checkout collects totals on new address items before saving them,
+     * so the in-memory parent link has to be checked as well.
+     *
+     * @param AbstractModel $address
+     * @return array
+     */
+    private function getAddressVisibleItems(AbstractModel $address): array
+    {
+        $items = [];
+        foreach ($address->getAllItems() as $item) {
+            if ($item->getParentItem() || $item->getParentItemId()) {
+                continue;
+            }
+
+            $items[] = $item;
+        }
+
+        return $items;
     }
 
     /**
