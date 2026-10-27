@@ -551,4 +551,6 @@ T,T
 F,F
 VAT,VAT
 "Something went wrong while logging out customer.","Something went wrong while logging out customer."
+"The search criteria filter field is invalid.","The search criteria filter field is invalid."
+"The search criteria sort field is invalid.","The search criteria sort field is invalid."
 "Address not found.","Address not found."

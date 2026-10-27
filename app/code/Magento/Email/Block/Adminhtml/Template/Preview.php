@@ -12,9 +12,13 @@ use Magento\Backend\Block\Template\Context;
 use Magento\Backend\Block\Widget;
 use Magento\Email\Model\AbstractTemplate;
 use Magento\Email\Model\Template;
+use Magento\Email\Model\Template\Validator as TemplateValidator;
 use Magento\Email\Model\TemplateFactory;
+use Magento\Framework\App\ObjectManager;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Filter\Input\MaliciousCode;
 use Magento\Framework\Profiler;
+use Magento\Framework\Validation\ValidationException;
 use Magento\Store\Model\Store;
 
 /**
@@ -46,19 +50,28 @@ class Preview extends Widget
     protected $profilerName = 'email_template_proccessing';
 
     /**
+     * @var TemplateValidator
+     */
+    private $templateValidator;
+
+    /**
      * @param Context $context
      * @param MaliciousCode $maliciousCode
      * @param TemplateFactory $emailFactory
      * @param array $data
+     * @param TemplateValidator $templateValidator
      */
     public function __construct(
         Context $context,
         MaliciousCode $maliciousCode,
         TemplateFactory $emailFactory,
-        array $data = []
+        array $data = [],
+        ?TemplateValidator $templateValidator = null
     ) {
         $this->_maliciousCode = $maliciousCode;
         $this->_emailFactory = $emailFactory;
+        $this->templateValidator = $templateValidator ?:
+            ObjectManager::getInstance()->get(TemplateValidator::class);
         parent::__construct($context, $data);
     }
 
@@ -83,10 +96,23 @@ class Preview extends Widget
         if ($id = (int)$request->getParam('id')) {
             $template->load($id);
         } else {
+            $rawText = $request->getParam('text');
+            $rawText = is_string($rawText) ? $rawText : '';
+            $rawStyles = $request->getParam('styles');
+            $rawStyles = is_string($rawStyles) ? $rawStyles : '';
+            try {
+                $this->templateValidator->validate($rawText);
+                if ($rawStyles !== '') {
+                    $this->templateValidator->validate($rawStyles);
+                }
+            } catch (ValidationException $e) {
+                throw new LocalizedException(
+                    __('Template content validation failed. Please review template syntax.')
+                );
+            }
             $template->setTemplateType($request->getParam('type'));
-            $template->setTemplateText($this->_maliciousCode->filter($request->getParam('text')));
-            $template->setTemplateStyles($request->getParam('styles'));
-
+            $template->setTemplateText($this->_maliciousCode->filter($rawText));
+            $template->setTemplateStyles($rawStyles);
         }
 
         Profiler::start($this->profilerName);

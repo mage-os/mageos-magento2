@@ -73,9 +73,12 @@ class ValidateDobOnSave
     ) {
         $dobRaw = $customer->getDob();
 
-        $dobDate = $this->parseDate($dobRaw);
-        if ($dobRaw !== null && $dobRaw !== '' && !$dobDate) {
-            throw new InputException(__('Date of Birth is invalid.'));
+        $dobDate = null;
+        if (!$this->isEmptyDob($dobRaw)) {
+            $dobDate = $this->parseDate($dobRaw);
+            if (!$dobDate) {
+                throw new InputException(__('Date of Birth is invalid.'));
+            }
         }
 
         if ($dobDate) {
@@ -120,6 +123,19 @@ class ValidateDobOnSave
     }
 
     /**
+     * Check whether a value represents "no date of birth" (null, false, or blank string).
+     *
+     * @param mixed $value
+     * @return bool
+     */
+    private function isEmptyDob($value): bool
+    {
+        return $value === null
+            || $value === false
+            || (is_string($value) && trim($value) === '');
+    }
+
+    /**
      * Parse a date value into DateTimeImmutable.
      *
      * @param mixed $value
@@ -129,7 +145,7 @@ class ValidateDobOnSave
      */
     private function parseDate($value): ?\DateTimeImmutable
     {
-        if ($value === null || $value === '' || $value === false) {
+        if ($this->isEmptyDob($value)) {
             return null;
         }
         if (is_int($value) || (is_string($value) && ctype_digit($value))) {

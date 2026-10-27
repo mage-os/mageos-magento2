@@ -105,13 +105,9 @@ class StockItemCriteriaMapper extends GenericMapper
         if (!is_array($products)) {
             $products = [$products];
         }
-        foreach ($products as $product) {
-            if ($product instanceof \Magento\Catalog\Model\Product) {
-                $productIds[] = $product->getId();
-            } else {
-                $productIds[] = $product;
-            }
-        }
+        array_walk_recursive($products, static function ($product) use (&$productIds) {
+            $productIds[] = $product instanceof \Magento\Catalog\Model\Product ? $product->getId() : $product;
+        });
         if (empty($productIds)) {
             $productIds[] = false;
         }
