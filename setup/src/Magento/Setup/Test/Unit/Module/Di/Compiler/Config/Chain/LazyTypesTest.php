@@ -15,6 +15,8 @@ use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyTypes\AnE
 use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyTypes\AnInterface;
 use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyTypes\AReadonlyClass;
 use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyTypes\ATrait;
+use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyTypes\CoreChainingToThirdParty;
+use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyTypes\CoreChainingToTrivialThirdParty;
 use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyTypes\CoreParentWithHook;
 use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyTypes\ExtendsInternal;
 use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyTypes\ExtendsNonLazyTraitUser;
@@ -238,6 +240,24 @@ class LazyTypesTest extends TestCase
             ],
             '#[NonLazy] with trivial constructor' => ['NonLazyThirdParty', false],
         ];
+    }
+
+    /**
+     * A trusted constructor delegating into an untrusted one does not exempt it from the scan.
+     */
+    public function testCoreConstructorChainingIntoThirdPartyIsScanned(): void
+    {
+        $this->skipIfPhpBelow84();
+
+        $output = $this->createLazyTypes()->modify([
+            'arguments' => [
+                CoreChainingToThirdParty::class => [],
+                CoreChainingToTrivialThirdParty::class => [],
+            ],
+        ]);
+
+        $this->assertArrayNotHasKey(CoreChainingToThirdParty::class, $output['lazyTypes']);
+        $this->assertArrayHasKey(CoreChainingToTrivialThirdParty::class, $output['lazyTypes']);
     }
 
     /**

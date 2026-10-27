@@ -17,8 +17,10 @@ use Magento\Setup\Module\Di\Compiler\ConstructorSideEffectScanner;
  * non-enum, non-readonly class with no internal PHP ancestor (e.g. ArrayObject, DateTime)
  * and no #[NonLazy] attribute on itself, an ancestor, an implemented interface, or a used trait.
  * Classes whose constructor is declared in Magento\ or MageOS\ (or that have none) are then lazy
- * by default. Others (third-party constructors) are lazy only when ConstructorSideEffectScanner
- * proves the constructor is side-effect-free, because a ghost's constructor may never run (#353).
+ * by default, unless that constructor delegates upward into one that is not. Others (third-party
+ * constructors, and trusted constructors chaining into them) are lazy only when
+ * ConstructorSideEffectScanner proves the constructor is side-effect-free, because a ghost's
+ * constructor may never run.
  * Types never seen at compile time — such as transitive auto-wired dependencies with no di.xml
  * entry of their own — are simply absent from the allow-list and fall back to eager construction
  * at runtime.
@@ -112,7 +114,10 @@ class LazyTypes implements ModificationInterface
         }
 
         $owner = $ref->getConstructor()?->getDeclaringClass()->getName() ?? $ref->getName();
-        if ($this->constructorScanner->isTrusted($ref->getName()) && $this->constructorScanner->isTrusted($owner)) {
+        if ($this->constructorScanner->isTrusted($ref->getName())
+            && $this->constructorScanner->isTrusted($owner)
+            && !$this->constructorScanner->chainsToUntrustedConstructor($ref)
+        ) {
             return true;
         }
 

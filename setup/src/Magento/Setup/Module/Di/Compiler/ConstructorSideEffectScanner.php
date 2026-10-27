@@ -36,6 +36,10 @@ namespace Magento\Setup\Module\Di\Compiler;
  * Magento\ or MageOS\ (in the class itself or a third-party ancestor or trait). This check covers
  * only the trusted constructors themselves, not the methods they call.
  *
+ * A trusted constructor that delegates into one declared outside Magento\ or MageOS\ does not end
+ * the walk: that constructor is scanned like any other untrusted one, so inheriting or extending a
+ * core constructor never exempts a third-party ancestor from the scan.
+ *
  * A lazy class builds its constructor dependencies only when it is first initialized, so a
  * dependency with side effects (even a #[NonLazy] one, or one created by the ObjectManager fallback)
  * is built at that point rather than at injection. A class whose methods never touch its own state
@@ -81,6 +85,11 @@ class ConstructorSideEffectScanner
      * @var array<string, string[]|null> Methods called on $this by a trusted constructor, null when unknown
      */
     private array $trustedCallCache = [];
+
+    /**
+     * @var array<string, bool> Whether a trusted constructor calls parent::__construct(), per declaring class
+     */
+    private array $trustedParentCallCache = [];
 
     /**
      * @var array<string, bool> Result per scanned class
@@ -179,7 +188,14 @@ class ConstructorSideEffectScanner
                 if (!$this->callsOnlyTrustedMethods($class, $this->getTrustedCalls($constructor, $declaring))) {
                     return false;
                 }
-                break;
+                $untrusted = $this->getUntrustedAncestorConstructor($declaring);
+                if ($untrusted === null) {
+                    break;
+                }
+                // A trusted constructor may still delegate upward into one that is not trusted, so
+                // keep walking and scan that constructor rather than assuming the chain is safe.
+                $current = $untrusted->getDeclaringClass();
+                continue;
             }
 
             $parsed = $this->getParsedConstructor($constructor, $declaring);
@@ -290,6 +306,8 @@ class ConstructorSideEffectScanner
             }
         }
 
+        $this->trustedParentCallCache[$key] = $callsParent;
+
         $parent = $declaring->getParentClass();
         $parentConstructor = $parent !== false ? $parent->getConstructor() : null;
         if ($callsParent && $parentConstructor !== null
@@ -303,6 +321,74 @@ class ConstructorSideEffectScanner
         }
 
         return $this->trustedCallCache[$key] = array_map('strval', array_keys($methods));
+    }
+
+    /**
+     * Whether the constructor chain of a class reaches a constructor outside the trusted namespaces
+     *
+     * @param \ReflectionClass $class
+     * @return bool
+     */
+    public function chainsToUntrustedConstructor(\ReflectionClass $class): bool
+    {
+        $constructor = $class->getConstructor();
+        if ($constructor === null) {
+            return false;
+        }
+        $declaring = $constructor->getDeclaringClass();
+        if (!$this->isTrusted($declaring->getName())) {
+            return true;
+        }
+        // Without an untrusted ancestor that declares a constructor there is nothing for
+        // parent::__construct() to reach, so the chain is trusted without reading any source.
+        if (!$this->hasUntrustedAncestorConstructor($declaring)) {
+            return false;
+        }
+        if ($this->getTrustedCalls($constructor, $declaring) === null) {
+            return true;
+        }
+        return $this->getUntrustedAncestorConstructor($declaring) !== null;
+    }
+
+    /**
+     * The first constructor above a trusted one that parent::__construct() reaches and is not trusted
+     *
+     * @param \ReflectionClass $declaring
+     * @return \ReflectionMethod|null
+     */
+    private function getUntrustedAncestorConstructor(\ReflectionClass $declaring): ?\ReflectionMethod
+    {
+        $owner = $declaring;
+        while (!empty($this->trustedParentCallCache[$owner->getName()])) {
+            $parent = $owner->getParentClass();
+            $parentConstructor = $parent !== false ? $parent->getConstructor() : null;
+            if ($parentConstructor === null) {
+                return null;
+            }
+            $owner = $parentConstructor->getDeclaringClass();
+            if (!$this->isTrusted($owner->getName())) {
+                return $parentConstructor;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Whether any ancestor outside the trusted namespaces declares a constructor of its own
+     *
+     * @param \ReflectionClass $declaring
+     * @return bool
+     */
+    private function hasUntrustedAncestorConstructor(\ReflectionClass $declaring): bool
+    {
+        for ($parent = $declaring->getParentClass(); $parent !== false; $parent = $parent->getParentClass()) {
+            if (!$this->isTrusted($parent->getName())
+                && $parent->getConstructor()?->getDeclaringClass()->getName() === $parent->getName()
+            ) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

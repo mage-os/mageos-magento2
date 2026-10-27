@@ -394,6 +394,30 @@ class ConstructorSideEffectScannerTest extends TestCase
         $this->assertFalse($scanner->isSideEffectFree(new \ReflectionClass($overriding)));
     }
 
+    public function testTrustedConstructorChainingIntoUntrustedParentIsScanned(): void
+    {
+        $sideEffectParent = $this->declareClass(
+            "public function __construct()\n    {\n        define('SCANNER_FIXTURE_CONST', 1);\n    }"
+        );
+        $trivialParent = $this->declareClass(
+            "public function __construct(\$a = null)\n    {\n        \$this->a = \$a;\n    }"
+        );
+        $chain = "public function __construct()\n    {\n        parent::__construct();\n    }";
+
+        $scanner = new ConstructorSideEffectScanner();
+
+        // A trusted constructor must not exempt the untrusted one it delegates to.
+        $core = $this->declareClass($chain, '', $sideEffectParent, 'Magento\\ScannerFixture');
+        $this->assertFalse($scanner->isSideEffectFree(new \ReflectionClass($core)));
+
+        // Nor may a third-party subclass that inherits that trusted constructor.
+        $this->assertFalse($scanner->isSideEffectFree(new \ReflectionClass($this->declareClass('', '', $core))));
+
+        // A trusted constructor delegating to a provably safe untrusted one stays safe.
+        $safeCore = $this->declareClass($chain, '', $trivialParent, 'Magento\\ScannerFixture');
+        $this->assertTrue($scanner->isSideEffectFree(new \ReflectionClass($safeCore)));
+    }
+
     /**
      * Write a uniquely named class to a temp file and load it, so the scanner can read its source
      *
