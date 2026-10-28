@@ -8,21 +8,47 @@ declare(strict_types=1);
 namespace Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain;
 
 use Magento\Setup\Module\Di\Compiler\Config\Chain\LazyTypes;
+use Magento\Setup\Module\Di\Compiler\ConstructorSideEffectScanner;
 use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyTypes\AFinalClass;
 use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyTypes\AnAbstract;
 use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyTypes\AnEnum;
 use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyTypes\AnInterface;
 use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyTypes\AReadonlyClass;
 use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyTypes\ATrait;
+use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyTypes\CoreChainingToThirdParty;
+use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyTypes\CoreChainingToTrivialThirdParty;
+use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyTypes\CoreParentWithHook;
 use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyTypes\ExtendsInternal;
+use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyTypes\ExtendsNonLazyTraitUser;
 use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyTypes\Foo\Proxy as FooProxy;
+use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyTypes\ExtendsMarkedNonLazy;
+use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyTypes\ImplementsNonLazyInterface;
+use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyTypes\InheritsThirdPartyConstructor;
+use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyTypes\InheritsTrivialThirdPartyConstructor;
 use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyTypes\MarkedNonLazy;
 use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyTypes\PlainClass;
+use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyTypes\UsesNestedNonLazyTrait;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class LazyTypesTest extends TestCase
 {
+    private const FIXTURE_NAMESPACE = 'Vendor\\LazyTypesFixture\\';
+
+    public static function setUpBeforeClass(): void
+    {
+        // Fixtures outside the Magento\ namespace are not covered by the test autoloader
+        spl_autoload_register(static function (string $class): void {
+            foreach ([self::FIXTURE_NAMESPACE, 'MageOS\\LazyTypesFixture\\'] as $namespace) {
+                $file = __DIR__ . '/_files/LazyTypes/ThirdParty/' . substr($class, strlen($namespace)) . '.php';
+                if (str_starts_with($class, $namespace) && is_file($file)) {
+                    require_once $file;
+                    return;
+                }
+            }
+        });
+    }
+
     public function testEarlyReturnOnPhpBelow84(): void
     {
         if (PHP_VERSION_ID >= 80400) {
@@ -30,7 +56,7 @@ class LazyTypesTest extends TestCase
         }
 
         $input = ['arguments' => [PlainClass::class => []]];
-        $output = (new LazyTypes())->modify($input);
+        $output = $this->createLazyTypes()->modify($input);
 
         $this->assertSame($input, $output);
         $this->assertArrayNotHasKey('lazyTypes', $output);
@@ -40,7 +66,7 @@ class LazyTypesTest extends TestCase
     {
         $this->skipIfPhpBelow84();
 
-        $output = (new LazyTypes())->modify(
+        $output = $this->createLazyTypes()->modify(
             ['arguments' => [PlainClass::class => []]]
         );
 
@@ -53,7 +79,7 @@ class LazyTypesTest extends TestCase
     {
         $this->skipIfPhpBelow84();
 
-        $output = (new LazyTypes())->modify(
+        $output = $this->createLazyTypes()->modify(
             ['arguments' => [$class => []]]
         );
 
@@ -83,7 +109,7 @@ class LazyTypesTest extends TestCase
     {
         $this->skipIfPhpBelow84();
 
-        $output = (new LazyTypes())->modify([
+        $output = $this->createLazyTypes()->modify([
             'arguments' => [PlainClass::class => []],
             'instanceTypes' => ['VirtualType' => AFinalClass::class],
             'preferences' => ['SomeIface' => ExtendsInternal::class],
@@ -99,7 +125,7 @@ class LazyTypesTest extends TestCase
     {
         $this->skipIfPhpBelow84();
 
-        $output = (new LazyTypes())->modify([]);
+        $output = $this->createLazyTypes()->modify([]);
 
         $this->assertSame([], $output['lazyTypes']);
     }
@@ -114,11 +140,45 @@ class LazyTypesTest extends TestCase
     {
         $this->skipIfPhpBelow84();
 
-        $output = (new LazyTypes())->modify(
+        $output = $this->createLazyTypes()->modify(
             ['arguments' => [MarkedNonLazy::class => []]]
         );
 
         $this->assertArrayNotHasKey(MarkedNonLazy::class, $output['lazyTypes']);
+    }
+
+    /**
+     * PHP attributes are not inherited, so the scan must walk ancestors: a subclass of a
+     * #[NonLazy] class (e.g. Customer\Model\Session extending SessionManager) stays eager.
+     */
+    public function testSubclassOfNonLazyClassIsExcludedFromAllowList(): void
+    {
+        $this->skipIfPhpBelow84();
+
+        $output = $this->createLazyTypes()->modify(
+            ['arguments' => [ExtendsMarkedNonLazy::class => []]]
+        );
+
+        $this->assertArrayNotHasKey(ExtendsMarkedNonLazy::class, $output['lazyTypes']);
+    }
+
+    #[DataProvider('nonLazyViaInterfaceOrTraitProvider')]
+    public function testNonLazyOnInterfaceOrTraitExcludesClass(string $class): void
+    {
+        $this->skipIfPhpBelow84();
+
+        $output = $this->createLazyTypes()->modify(['arguments' => [$class => []]]);
+
+        $this->assertArrayNotHasKey($class, $output['lazyTypes']);
+    }
+
+    public static function nonLazyViaInterfaceOrTraitProvider(): array
+    {
+        return [
+            'implements #[NonLazy] interface' => [ImplementsNonLazyInterface::class],
+            'uses trait that uses #[NonLazy] trait' => [UsesNestedNonLazyTrait::class],
+            'extends class using #[NonLazy] trait' => [ExtendsNonLazyTraitUser::class],
+        ];
     }
 
     /**
@@ -130,7 +190,7 @@ class LazyTypesTest extends TestCase
     {
         $this->skipIfPhpBelow84();
 
-        $output = (new LazyTypes())->modify([
+        $output = $this->createLazyTypes()->modify([
             'arguments' => [PlainClass::class => []],
             'lazyTypes' => [
                 'External\\PreSeeded\\Type' => true,
@@ -140,6 +200,106 @@ class LazyTypesTest extends TestCase
 
         $this->assertArrayHasKey('External\\PreSeeded\\Type', $output['lazyTypes']);
         $this->assertArrayHasKey(PlainClass::class, $output['lazyTypes']);
+    }
+
+    /**
+     * Third-party classes are lazy only when their constructor is provably side-effect-free (#353).
+     */
+    #[DataProvider('thirdPartyProvider')]
+    public function testThirdPartyClassIsLazyOnlyWhenConstructorIsSideEffectFree(string $fixture, bool $lazy): void
+    {
+        $this->skipIfPhpBelow84();
+
+        $class = self::FIXTURE_NAMESPACE . $fixture;
+        $output = $this->createLazyTypes()->modify(['arguments' => [$class => []]]);
+
+        $this->assertSame($lazy, isset($output['lazyTypes'][$class]));
+    }
+
+    public static function thirdPartyProvider(): array
+    {
+        return [
+            'empty constructor' => ['PlainThirdParty', true],
+            'trivial property assignments' => ['TrivialAssigns', true],
+            'promoted properties' => ['PromotedProperties', true],
+            'no constructor' => ['NoConstructor', true],
+            'inherited trivial constructor' => ['InheritsTrivialConstructor', true],
+            'trait-provided trivial constructor' => ['TraitConstructor', true],
+            'ObjectManager BC fallback' => ['ObjectManagerFallback', true],
+            'parent::__construct to trivial parent' => ['ChildOfTrivialParent', true],
+            'extends core without _construct' => ['ExtendsCoreWithoutHook', true],
+            'define() calls (Fooman-style)' => ['DefinesConstants', false],
+            'init method call (Braintree-style)' => ['CallsInitMethod', false],
+            'if in constructor' => ['ConditionalConstructor', false],
+            'new in default parameter' => ['NewInDefaultParameter', false],
+            'parent::__construct to non-trivial parent' => ['ChildOfSideEffectParent', false],
+            'extends core and overrides _construct' => ['ExtendsCoreOverridingHook', false],
+            'extends core and overrides another method its constructor calls' => [
+                'ExtendsCoreOverridingInitSelect',
+                false,
+            ],
+            '#[NonLazy] with trivial constructor' => ['NonLazyThirdParty', false],
+        ];
+    }
+
+    /**
+     * A trusted constructor delegating into an untrusted one does not exempt it from the scan.
+     */
+    public function testCoreConstructorChainingIntoThirdPartyIsScanned(): void
+    {
+        $this->skipIfPhpBelow84();
+
+        $output = $this->createLazyTypes()->modify([
+            'arguments' => [
+                CoreChainingToThirdParty::class => [],
+                CoreChainingToTrivialThirdParty::class => [],
+            ],
+        ]);
+
+        $this->assertArrayNotHasKey(CoreChainingToThirdParty::class, $output['lazyTypes']);
+        $this->assertArrayHasKey(CoreChainingToTrivialThirdParty::class, $output['lazyTypes']);
+    }
+
+    /**
+     * Magento\ and MageOS\ classes stay lazy by default without a constructor scan.
+     */
+    public function testCoreClassesAreLazyRegardlessOfConstructor(): void
+    {
+        $this->skipIfPhpBelow84();
+
+        $output = $this->createLazyTypes()->modify([
+            'arguments' => [
+                'MageOS\\LazyTypesFixture\\MageOSClass' => [],
+                CoreParentWithHook::class => [],
+            ],
+        ]);
+
+        $this->assertArrayHasKey('MageOS\\LazyTypesFixture\\MageOSClass', $output['lazyTypes']);
+        $this->assertArrayHasKey(CoreParentWithHook::class, $output['lazyTypes']);
+    }
+
+    /**
+     * Trust follows the class that declares the constructor, so a core class inheriting a
+     * third-party constructor is scanned.
+     */
+    public function testCoreClassInheritingThirdPartyConstructorIsScanned(): void
+    {
+        $this->skipIfPhpBelow84();
+
+        $output = $this->createLazyTypes()->modify([
+            'arguments' => [
+                InheritsThirdPartyConstructor::class => [],
+                InheritsTrivialThirdPartyConstructor::class => [],
+            ],
+        ]);
+
+        $this->assertArrayNotHasKey(InheritsThirdPartyConstructor::class, $output['lazyTypes']);
+        $this->assertArrayHasKey(InheritsTrivialThirdPartyConstructor::class, $output['lazyTypes']);
+    }
+
+    private function createLazyTypes(): LazyTypes
+    {
+        return new LazyTypes(new ConstructorSideEffectScanner());
     }
 
     private function skipIfPhpBelow84(): void
