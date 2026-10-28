@@ -286,6 +286,51 @@ class UrlTest extends TestCase
         $this->assertEquals($returnUri, $url);
     }
 
+    public function testGetUrlCacheIsIsolatedByScope(): void
+    {
+        $routeConfigMock = $this->createMock(ConfigInterface::class);
+        $model = $this->getUrlModel(
+            [
+                'scopeResolver' => $this->scopeResolverMock,
+                'routeParamsResolverFactory' => $this->getRouteParamsResolverFactory(),
+                'queryParamsResolver' => $this->queryParamsResolverMock,
+                'request' => $this->getRequestMock(),
+                'routeConfig' => $routeConfigMock,
+                'routeParamsPreprocessor' => $this->routeParamsPreprocessorMock,
+            ]
+        );
+
+        $urlType = UrlInterface::URL_TYPE_LINK;
+
+        $scope1 = $this->createMock(ScopeInterface::class);
+        $scope1->method('getId')->willReturn(1);
+        $scope1->method('getBaseUrl')->willReturn('http://store1.example.com/');
+
+        $scope2 = $this->createMock(ScopeInterface::class);
+        $scope2->method('getId')->willReturn(2);
+        $scope2->method('getBaseUrl')->willReturn('http://store2.example.com/');
+
+        $this->routeParamsResolverMock->method('getType')->willReturn($urlType);
+        $this->routeParamsResolverMock->method('getRouteParams')->willReturn([]);
+        $this->routeParamsPreprocessorMock->method('execute')->willReturnArgument(2);
+        $routeConfigMock->method('getRouteFrontName')->willReturn('catalog');
+        $this->queryParamsResolverMock->method('getQuery')->willReturn('');
+
+        $this->scopeResolverMock->method('getScope')->willReturn($scope1);
+
+        // Set scope1 directly, bypassing the resolver
+        $model->setData('scope', $scope1);
+        $url1 = $model->getUrl('catalog/product/view', ['_nosid' => 1]);
+
+        // Switch to scope2 directly — this is what happens in multi-store requests
+        $model->setData('scope', $scope2);
+        $url2 = $model->getUrl('catalog/product/view', ['_nosid' => 1]);
+
+        $this->assertNotEquals($url1, $url2, 'URLs for different stores must not share a cache entry');
+        $this->assertStringContainsString('store1.example.com', $url1);
+        $this->assertStringContainsString('store2.example.com', $url2);
+    }
+
     /**
      * @return void
      */

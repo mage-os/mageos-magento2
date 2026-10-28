@@ -103,7 +103,7 @@ class Response extends \Magento\Framework\Webapi\Response
             if ($maskedException->getDetails()) {
                 $messageData['parameters'] = $maskedException->getDetails();
             }
-            if ($this->_appState->getMode() == \Magento\Framework\App\State::MODE_DEVELOPER) {
+            if ($this->isDeveloperMode()) {
                 $messageData['trace'] = $exception instanceof \Magento\Framework\Webapi\Exception
                     ? $exception->getStackTrace()
                     : $exception->getTraceAsString();
@@ -192,5 +192,17 @@ class Response extends \Magento\Framework\Webapi\Response
         }
 
         return false;
+    }
+
+    /**
+     * Determine whether the application is running in developer mode.
+     *
+     * Protected so subclasses and plugins can override the check.
+     *
+     * @return bool
+     */
+    protected function isDeveloperMode(): bool
+    {
+        return $this->_appState->getMode() === \Magento\Framework\App\State::MODE_DEVELOPER;
     }
 }

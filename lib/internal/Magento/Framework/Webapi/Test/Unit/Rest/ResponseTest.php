@@ -231,4 +231,18 @@ class ResponseTest extends TestCase
         $hasException = $this->responseRest->hasExceptionOfType('Test\Exception');
         $this->assertFalse($hasException);
     }
+
+    public function testIsDeveloperModeReturnsTrueInDeveloperMode(): void
+    {
+        $this->appStateMock->method('getMode')->willReturn(State::MODE_DEVELOPER);
+        $reflection = new \ReflectionMethod($this->responseRest, 'isDeveloperMode');
+        $this->assertTrue($reflection->invoke($this->responseRest));
+    }
+
+    public function testIsDeveloperModeReturnsFalseInProductionMode(): void
+    {
+        $this->appStateMock->method('getMode')->willReturn(State::MODE_PRODUCTION);
+        $reflection = new \ReflectionMethod($this->responseRest, 'isDeveloperMode');
+        $this->assertFalse($reflection->invoke($this->responseRest));
+    }
 }

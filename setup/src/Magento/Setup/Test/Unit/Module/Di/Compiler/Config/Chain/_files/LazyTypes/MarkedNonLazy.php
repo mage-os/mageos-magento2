@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\NonLazyTypes;
+namespace Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyTypes;
 
 use Magento\Framework\ObjectManager\Attribute\NonLazy;
 

@@ -76,7 +76,7 @@ class EnvConfigWriter
                 $config['cache'] = [
                     'frontend' => [
                         'default' => [
-                            'backend' => 'Cm_Cache_Backend_Redis',
+                            'backend' => 'redis',
                             'backend_options' => [
                                 'server' => $host,
                                 'port' => (string)$port,
@@ -104,7 +104,7 @@ class EnvConfigWriter
                     $config['cache'] = ['frontend' => []];
                 }
                 $config['cache']['frontend']['page_cache'] = [
-                    'backend' => 'Cm_Cache_Backend_Redis',
+                    'backend' => 'redis',
                     'backend_options' => [
                         'server' => $host,
                         'port' => (string)$port,
@@ -156,7 +156,7 @@ class EnvConfigWriter
                 $config['cache'] = [
                     'frontend' => [
                         'default' => [
-                            'backend' => 'Cm_Cache_Backend_Redis',
+                            'backend' => 'redis',
                             'backend_options' => [
                                 'server' => $redisConfig['cache']['host'],
                                 'port' => $redisConfig['cache']['port'],
@@ -180,7 +180,7 @@ class EnvConfigWriter
                 // FPC configuration
                 if ($redisConfig['fpc'] && $redisConfig['fpc']['enabled']) {
                     $config['cache']['frontend']['page_cache'] = [
-                        'backend' => 'Cm_Cache_Backend_Redis',
+                        'backend' => 'redis',
                         'backend_options' => [
                             'server' => $redisConfig['fpc']['host'],
                             'port' => $redisConfig['fpc']['port'],

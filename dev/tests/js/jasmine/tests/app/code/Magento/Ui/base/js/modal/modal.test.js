@@ -50,5 +50,15 @@ define([
             expect($(modal.options.modalTitle).text()).toContain(newTitle);
             expect($(modal.options.modalTitle).find(modal.options.modalSubTitle).length).toBe(1);
         });
+
+        it('does not throw when _destroyOverlay is called after overlay is already destroyed', function () {
+            element.trigger('openModal');
+            modal.modal.removeClass('_show');
+            modal._destroyOverlay();
+
+            expect(function () {
+                modal._destroyOverlay();
+            }).not.toThrow();
+        });
     });
 });

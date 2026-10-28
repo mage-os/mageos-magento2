@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\NonLazyTypes;
+namespace Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyTypes;
 
 // phpcs:disable Magento2.Legacy.RestrictedCode
 class ExtendsInternal extends \ArrayObject

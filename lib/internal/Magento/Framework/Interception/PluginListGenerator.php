@@ -129,7 +129,12 @@ class PluginListGenerator implements ConfigWriterInterface, ConfigLoaderInterfac
                     [$this->pluginData, $this->inherited, $this->processed]
                 );
                 // need global & primary scopes plugin data for other scopes
-                if ($scope === 'global') {
+                // Capture the global/primary baseline that every subsequent area is reset to
+                // below. 'primary' is included because getAllScopes() lists it before 'global':
+                // compiling 'primary' first also loads 'global', so the dedicated 'global'
+                // iteration is skipped and this snapshot would otherwise never be taken -
+                // truncating every later area's plugin-list (see mage-os/mageos-magento2#299).
+                if ($scope === 'global' || $scope === 'primary') {
                     $this->globalScopePluginData = $this->pluginData;
                 }
                 if (count($this->scopePriorityScheme) > 2) {

@@ -65,6 +65,31 @@ class RedirectTest extends TestCase
         $this->assertInstanceOf(Redirect::class, $this->redirect->setUrl($url));
     }
 
+    public function testGetUrlReturnsUrlSetViaSetUrl(): void
+    {
+        $url = 'https://example.com/catalog/product/view/id/1';
+        $this->redirect->setUrl($url);
+        $this->assertSame($url, $this->redirect->getUrl());
+    }
+
+    public function testGetUrlReturnsUrlSetViaSetPath(): void
+    {
+        $path   = 'catalog/product/view';
+        $params = ['id' => 1];
+        $expectedUrl = 'https://example.com/catalog/product/view/id/1';
+
+        $this->redirectInterface->method('updatePathParams')->with($params)->willReturn($params);
+        $this->urlInterface->method('getUrl')->with($path, $params)->willReturn($expectedUrl);
+
+        $this->redirect->setPath($path, $params);
+        $this->assertSame($expectedUrl, $this->redirect->getUrl());
+    }
+
+    public function testGetUrlReturnsEmptyStringWhenNotSet(): void
+    {
+        $this->assertSame('', $this->redirect->getUrl());
+    }
+
     public function testSetPath()
     {
         $path = 'test/path';

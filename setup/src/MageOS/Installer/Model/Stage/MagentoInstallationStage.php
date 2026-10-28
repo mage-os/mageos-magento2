@@ -152,9 +152,10 @@ class MagentoInstallationStage extends AbstractStage
             '--cleanup-database' => true
         ];
 
-        // Add search engine host
-        $hostKey = $search->isOpenSearch() ? '--opensearch-host' : '--elasticsearch-host';
-        $arguments[$hostKey] = $search->getHostWithPort();
+        // Add search engine connection
+        $searchOptionPrefix = $search->isOpenSearch() ? '--opensearch-' : '--elasticsearch-';
+        $arguments[$searchOptionPrefix . 'host'] = $search->host;
+        $arguments[$searchOptionPrefix . 'port'] = (string)$search->port;
 
         // Add optional parameters
         if (!empty($db->prefix)) {
@@ -162,8 +163,13 @@ class MagentoInstallationStage extends AbstractStage
         }
 
         if (!empty($search->prefix)) {
-            $prefixKey = $search->isOpenSearch() ? '--opensearch-index-prefix' : '--elasticsearch-index-prefix';
-            $arguments[$prefixKey] = $search->prefix;
+            $arguments[$searchOptionPrefix . 'index-prefix'] = $search->prefix;
+        }
+
+        if ($search->enableAuth) {
+            $arguments[$searchOptionPrefix . 'enable-auth'] = '1';
+            $arguments[$searchOptionPrefix . 'username'] = $search->username;
+            $arguments[$searchOptionPrefix . 'password'] = $search->password;
         }
 
         return $arguments;
@@ -216,13 +222,15 @@ class MagentoInstallationStage extends AbstractStage
             return true;
         }
 
-        // Create timestamped backup
+        // Create timestamped backup. Keep the .php extension so the backup is
+        // never served as raw plaintext if app/etc happens to sit inside the
+        // web root (legacy root-as-docroot layout).
         $timestamp = date('Y-m-d_H-i-s');
-        $backupFile = BP . "/app/etc/env.php.backup.{$timestamp}";
+        $backupName = "env.php.backup.{$timestamp}.php";
+        $backupFile = BP . "/app/etc/{$backupName}";
 
-        // phpcs:ignore Magento2.Functions.DiscouragedFunction
-        if (copy($envFile, $backupFile)) {
-            $output->writeln("<info>✓ Backed up env.php to env.php.backup.{$timestamp}</info>");
+        if ($this->writeSecureBackup($envFile, $backupFile)) {
+            $output->writeln("<info>✓ Backed up env.php to {$backupName}</info>");
             // Remove the original to prevent collision
             // phpcs:ignore Magento2.Functions.DiscouragedFunction
             unlink($envFile);
@@ -241,5 +249,34 @@ class MagentoInstallationStage extends AbstractStage
         }
 
         return $continueAnyway;
+    }
+
+    /**
+     * Copy a secrets file to a backup, preserving owner-only (0600) permissions
+     *
+     * @param string $source
+     * @param string $destination
+     * @return bool
+     */
+    private function writeSecureBackup(string $source, string $destination): bool
+    {
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
+        $previousUmask = umask(0077);
+        try {
+            // phpcs:ignore Magento2.Functions.DiscouragedFunction
+            $copied = copy($source, $destination);
+        } finally {
+            // phpcs:ignore Magento2.Functions.DiscouragedFunction
+            umask($previousUmask);
+        }
+
+        if (!$copied) {
+            return false;
+        }
+
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction
+        chmod($destination, 0600);
+
+        return true;
     }
 }

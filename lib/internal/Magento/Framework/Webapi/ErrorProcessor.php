@@ -46,6 +46,11 @@ class ErrorProcessor
     public const DATA_FORMAT_XML = 'xml';
 
     /**
+     * @var string
+     */
+    private const REPORT_EXECUTION_GUARD = '<?php exit; ?>';
+
+    /**
      * @var \Magento\Framework\Json\Encoder $encoder
      */
     protected $encoder;
@@ -113,7 +118,7 @@ class ErrorProcessor
      */
     public function maskException(\Exception $exception)
     {
-        $isDevMode = $this->_appState->getMode() === State::MODE_DEVELOPER;
+        $isDevMode = $this->isDeveloperMode();
         $stackTrace = $isDevMode ? $exception->getTraceAsString() : null;
 
         if ($exception instanceof WebapiException) {
@@ -206,6 +211,10 @@ class ErrorProcessor
             || ($exception instanceof AuthenticationException)
         ) {
             return WebapiException::HTTP_UNAUTHORIZED;
+        } elseif (((int)$exception->getPrevious()?->getCode() === WebapiException::HTTP_TOO_MANY_REQUESTS)
+            || ((int)$exception->getCode() === WebapiException::HTTP_TOO_MANY_REQUESTS)
+        ) {
+            return WebapiException::HTTP_TOO_MANY_REQUESTS;
         } else {
             return WebapiException::HTTP_BAD_REQUEST;
         }
@@ -281,7 +290,7 @@ class ErrorProcessor
      */
     public function renderException(\Exception $exception, $httpCode = self::DEFAULT_ERROR_HTTP_CODE)
     {
-        if ($this->_appState->getMode() == State::MODE_DEVELOPER ||
+        if ($this->isDeveloperMode() ||
             $exception instanceof \Magento\Framework\Webapi\Exception
         ) {
             $this->renderErrorMessage($exception->getMessage(), $exception->getTraceAsString(), $httpCode);
@@ -355,7 +364,7 @@ class ErrorProcessor
     {
         $errorData = [];
         $message = ['code' => $httpCode, 'message' => $errorMessage];
-        $isDeveloperMode = $this->_appState->getMode() == State::MODE_DEVELOPER;
+        $isDeveloperMode = $this->isDeveloperMode();
         if ($isDeveloperMode) {
             $message['trace'] = $trace;
         }
@@ -383,6 +392,20 @@ class ErrorProcessor
     }
 
     /**
+     * Determine whether the application is running in developer mode.
+     *
+     * Extracted so subclasses and plugins can override the check — for example
+     * to enable verbose API output for specific API keys regardless of the
+     * configured application mode.
+     *
+     * @return bool
+     */
+    protected function isDeveloperMode(): bool
+    {
+        return $this->_appState->getMode() === State::MODE_DEVELOPER;
+    }
+
+    /**
      * Declare web API-specific shutdown function.
      *
      * @return $this
@@ -405,7 +428,7 @@ class ErrorProcessor
         if ($error && $error['type'] & $fatalErrorFlag) {
             $errorMessage = "Fatal Error: '{$error['message']}' in '{$error['file']}' on line {$error['line']}";
             $reportId = $this->_saveFatalErrorReport($errorMessage);
-            if ($this->_appState->getMode() == State::MODE_DEVELOPER) {
+            if ($this->isDeveloperMode()) {
                 $this->renderErrorMessage($errorMessage);
             } else {
                 $this->renderErrorMessage(
@@ -425,7 +448,13 @@ class ErrorProcessor
     {
         $this->directoryWrite->create('report/api');
         $reportId = abs((int)(microtime(true) * random_int(100, 1000)));
-        $this->directoryWrite->writeFile('report/api/' . $reportId, $this->serializer->serialize($reportData));
+        if (is_string($reportData)) {
+            $reportData = str_replace('<?', '< ?', $reportData);
+        }
+        $this->directoryWrite->writeFile(
+            'report/api/' . $reportId,
+            self::REPORT_EXECUTION_GUARD . PHP_EOL . $this->serializer->serialize($reportData)
+        );
         return $reportId;
     }
 }

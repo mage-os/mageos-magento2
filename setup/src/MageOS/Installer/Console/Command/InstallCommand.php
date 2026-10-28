@@ -113,6 +113,21 @@ class InstallCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        if (!function_exists('Laravel\\Prompts\\confirm')) {
+            $output->writeln('');
+            $output->writeln(
+                '<error>The interactive installer requires the "laravel/prompts" package, '
+                . 'which is not installed.</error>'
+            );
+            $output->writeln('');
+            $output->writeln(
+                '<comment>Run the following from your project root to install it:</comment>'
+            );
+            $output->writeln('  <info>composer require --dev laravel/prompts</info>');
+            $output->writeln('');
+            return Command::FAILURE;
+        }
+
         try {
             $baseDir = BP; // Magento base directory constant
 

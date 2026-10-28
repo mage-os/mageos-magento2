@@ -85,6 +85,16 @@ class Redirect extends AbstractResult
     }
 
     /**
+     * URL Getter
+     *
+     * @return string
+     */
+    public function getUrl(): string
+    {
+        return (string)$this->url;
+    }
+
+    /**
      * Set url by path
      *
      * @param string $path

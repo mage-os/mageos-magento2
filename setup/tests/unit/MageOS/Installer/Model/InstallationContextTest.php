@@ -90,9 +90,10 @@ class InstallationContextTest extends TestCase
 
         $this->assertContains('database.password', $sensitiveFields);
         $this->assertContains('admin.password', $sensitiveFields);
+        $this->assertContains('search.password', $sensitiveFields);
         $this->assertContains('rabbitMQ.password', $sensitiveFields);
         $this->assertContains('email.password', $sensitiveFields);
-        $this->assertCount(4, $sensitiveFields);
+        $this->assertCount(5, $sensitiveFields);
     }
 
     public function testToArrayExcludesSensitiveData(): void
@@ -111,6 +112,9 @@ class InstallationContextTest extends TestCase
 
         // Admin should not have password
         $this->assertArrayNotHasKey('password', $array['admin']);
+
+        // Search engine should not have password
+        $this->assertArrayNotHasKey('password', $array['search']);
     }
 
     public function testToArrayIncludesCreatedAtTimestamp(): void
@@ -294,6 +298,31 @@ class InstallationContextTest extends TestCase
         $missing = $context->getMissingPasswords();
 
         $this->assertNotContains('rabbitMQ.password', $missing);
+    }
+
+    public function testGetMissingPasswordsOnlyChecksSearchWhenAuthenticationEnabled(): void
+    {
+        $context = new InstallationContext();
+        $context->setSearchEngine(new \MageOS\Installer\Model\VO\SearchEngineConfiguration(
+            engine: 'opensearch',
+            host: 'localhost',
+            port: 9200,
+            enableAuth: false,
+            password: ''
+        ));
+
+        $this->assertNotContains('search.password', $context->getMissingPasswords());
+
+        $context->setSearchEngine(new \MageOS\Installer\Model\VO\SearchEngineConfiguration(
+            engine: 'opensearch',
+            host: 'localhost',
+            port: 9200,
+            enableAuth: true,
+            username: 'admin',
+            password: ''
+        ));
+
+        $this->assertContains('search.password', $context->getMissingPasswords());
     }
 
     public function testGetMissingPasswordsChecksRabbitmqWhenEnabled(): void

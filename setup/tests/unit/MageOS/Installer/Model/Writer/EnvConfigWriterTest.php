@@ -73,7 +73,7 @@ class EnvConfigWriterTest extends TestCase
                 $this->callback(function ($config) {
                     $envConfig = $config[ConfigFilePool::APP_ENV];
                     return isset($envConfig['cache']['frontend']['default'])
-                        && $envConfig['cache']['frontend']['default']['backend'] === 'Cm_Cache_Backend_Redis'
+                        && $envConfig['cache']['frontend']['default']['backend'] === 'redis'
                         && $envConfig['cache']['frontend']['default']['backend_options']['database'] === '1';
                 }),
                 true
@@ -99,7 +99,7 @@ class EnvConfigWriterTest extends TestCase
                 $this->callback(function ($config) {
                     $envConfig = $config[ConfigFilePool::APP_ENV];
                     return isset($envConfig['cache']['frontend']['page_cache'])
-                        && $envConfig['cache']['frontend']['page_cache']['backend'] === 'Cm_Cache_Backend_Redis'
+                        && $envConfig['cache']['frontend']['page_cache']['backend'] === 'redis'
                         && $envConfig['cache']['frontend']['page_cache']['backend_options']['database'] === '2';
                 }),
                 true

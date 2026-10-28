@@ -67,7 +67,7 @@ use Magento\Store\Model\StoreManagerInterface;
  * @method Order unsBillingAddressId()
  * @method bool hasShippingAddressId()
  * @method Order unsShippingAddressId()
- * @method int getShippigAddressId()
+ * @method int getShippingAddressId()
  * @method bool hasCustomerNoteNotify()
  * @method bool hasForcedCanCreditmemo()
  * @method bool getIsInProcess()

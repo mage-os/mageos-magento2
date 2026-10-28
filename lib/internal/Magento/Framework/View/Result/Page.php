@@ -44,6 +44,7 @@ use Magento\Framework\View\EntitySpecificHandlesList;
  * @api
  * @since 100.0.2
  */
+#[\Magento\Framework\ObjectManager\Attribute\NonLazy]
 class Page extends Layout
 {
     /**
@@ -347,6 +348,10 @@ class Page extends Layout
         $fileName = $this->viewFileSystem->getTemplateFileName($this->template);
         if (!$fileName) {
             throw new \InvalidArgumentException('Template "' . $this->template . '" is not found');
+        }
+
+        if (\Magento\Framework\Filesystem\SecurePathValidator::isUnsafeIncludePath((string)$fileName)) {
+            throw new \RuntimeException('Refusing to render a template from an unsafe path.');
         }
 
         ob_start();

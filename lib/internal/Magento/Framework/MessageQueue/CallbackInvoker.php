@@ -6,6 +6,7 @@
 
 namespace Magento\Framework\MessageQueue;
 
+use Magento\Framework\Amqp\Queue as AmqpQueue;
 use Magento\Framework\App\DeploymentConfig;
 use Magento\Framework\MessageQueue\PoisonPill\PoisonPillCompareInterface;
 use Magento\Framework\MessageQueue\PoisonPill\PoisonPillReadInterface;
@@ -53,6 +54,11 @@ class CallbackInvoker implements CallbackInvokerInterface
     /**
      * Run short running process
      *
+     * For AMQP queues this uses basic_consume with prefetch so RabbitMQ pushes
+     * messages to the consumer rather than requiring a basic_get round-trip per
+     * message. For all other queue types the original dequeue() polling loop is
+     * used unchanged.
+     *
      * @param QueueInterface $queue
      * @param int $maxNumberOfMessages
      * @param \Closure $callback
@@ -71,9 +77,15 @@ class CallbackInvoker implements CallbackInvokerInterface
         $sleep = null
     ) {
         $this->poisonPillVersion = $this->poisonPillRead->getLatestVersion();
+
+        if ($queue instanceof AmqpQueue && $maxNumberOfMessages !== null) {
+            $this->invokeAmqp($queue, (int) $maxNumberOfMessages, $callback);
+            return;
+        }
+
         $sleep = (int) $sleep ?: 1;
         $maxIdleTime = $maxIdleTime ? (int) $maxIdleTime : PHP_INT_MAX;
-        $connectionName = method_exists($queue, 'getConnectionName') ? $queue->getConnectionName(): null;
+        $connectionName = method_exists($queue, 'getConnectionName') ? $queue->getConnectionName() : null;
         if ($connectionName === 'stomp') {
             $queue->subscribeQueue();
         }
@@ -99,6 +111,36 @@ class CallbackInvoker implements CallbackInvokerInterface
 
             $callback($message);
         }
+    }
+
+    /**
+     * Run AMQP consumer using push-based basic_consume instead of polling basic_get.
+     *
+     * @param AmqpQueue $queue
+     * @param int $maxNumberOfMessages
+     * @param callable $callback
+     * @return void
+     */
+    private function invokeAmqp(AmqpQueue $queue, int $maxNumberOfMessages, callable $callback): void
+    {
+        $poisonPillVersion = $this->poisonPillVersion;
+
+        $wrappedCallback = function ($envelope) use ($callback, $poisonPillVersion, $queue) {
+            if (false === $this->poisonPillCompare->isLatestVersion($poisonPillVersion)) {
+                $queue->reject($envelope);
+                // phpcs:ignore Magento2.Security.LanguageConstruct.ExitUsage
+                exit(0);
+            }
+
+            $callback($envelope);
+        };
+
+        // Mirror the consumers_wait_for_messages behaviour for AMQP:
+        //   1 (default) → block indefinitely waiting for the next message (waitTimeout=0 → null)
+        //   0           → exit as soon as the queue is idle (waitTimeout=1 → 1-second channel timeout)
+        $waitTimeout = $this->isWaitingNextMessage() ? 0 : 1;
+
+        $queue->subscribeWithLimit($wrappedCallback, $maxNumberOfMessages, $waitTimeout);
     }
 
     /**

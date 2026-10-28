@@ -564,5 +564,46 @@ define([
                 expect($.localStorage.get).toHaveBeenCalledWith('mage-customer-login');
             });
         });
+
+        describe('"initStorage" cookie path', function () {
+            var originalCookieStorage,
+                originalLocalStorage,
+                cookieStorageSpy;
+
+            beforeEach(function () {
+                originalCookieStorage = $.cookieStorage;
+                originalLocalStorage  = $.localStorage;
+
+                cookieStorageSpy = jasmine.createSpyObj(
+                    'cookieStorage', ['setConf', 'set', 'get', 'isSet']
+                );
+                cookieStorageSpy.get.and.returnValue({});
+                cookieStorageSpy.isSet.and.returnValue(false);
+
+                $.cookieStorage = cookieStorageSpy;
+                $.localStorage  = jasmine.createSpyObj(
+                    'localStorage', ['isSet', 'get', 'set']
+                );
+            });
+
+            afterEach(function () {
+                $.cookieStorage = originalCookieStorage;
+                $.localStorage  = originalLocalStorage;
+            });
+
+            it('uses "/" as default cookie path when cookiePath is not configured', function () {
+                init({ cookieLifeTime: 3600 });
+                expect(cookieStorageSpy.setConf).toHaveBeenCalledWith(
+                    jasmine.objectContaining({ path: '/' })
+                );
+            });
+
+            it('uses the configured cookiePath when provided', function () {
+                init({ cookieLifeTime: 3600, cookiePath: '/shop/' });
+                expect(cookieStorageSpy.setConf).toHaveBeenCalledWith(
+                    jasmine.objectContaining({ path: '/shop/' })
+                );
+            });
+        });
     });
 });

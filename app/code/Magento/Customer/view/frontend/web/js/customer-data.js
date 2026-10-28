@@ -239,7 +239,7 @@ define([
          */
         initStorage: function () {
             $.cookieStorage.setConf({
-                path: '/',
+                path: options.cookiePath || '/',
                 expires: new Date(Date.now() + parseInt(options.cookieLifeTime, 10) * 1000)
             });
 

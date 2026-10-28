@@ -66,4 +66,29 @@ class QueryParamsResolverTest extends TestCase
         $this->object->addQueryParams(['foo' => 'bar', 'true' => 'false']);
         $this->assertEquals(['foo' => 'bar', 'true' => 'false'], $this->object->getQueryParams());
     }
+
+    public function testGetQueryParamsWithValuelessParam()
+    {
+        $this->object->setQuery('foo&bar=1');
+        $params = $this->object->getQueryParams();
+        $this->assertArrayHasKey('foo', $params);
+        $this->assertSame('', $params['foo']);
+        $this->assertSame('1', $params['bar']);
+    }
+
+    public function testGetQueryParamsPreservesEqualsInValue()
+    {
+        $this->object->setQuery('token=abc==&other=val');
+        $params = $this->object->getQueryParams();
+        $this->assertSame('abc==', $params['token']);
+        $this->assertSame('val', $params['other']);
+    }
+
+    public function testGetQueryParamsIgnoresTrailingAmpersand()
+    {
+        $this->object->setQuery('foo=bar&');
+        $params = $this->object->getQueryParams();
+        $this->assertArrayNotHasKey('', $params);
+        $this->assertSame('bar', $params['foo']);
+    }
 }

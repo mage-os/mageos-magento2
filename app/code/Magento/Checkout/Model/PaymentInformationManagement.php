@@ -14,6 +14,7 @@ use Magento\Customer\Api\Data\AddressInterface;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\PaymentException;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\Data\AddressInterface as QuoteAddressInterface;
 use Magento\Quote\Api\Data\PaymentInterface;
@@ -173,6 +174,9 @@ class PaymentInformationManagement implements \Magento\Checkout\Api\PaymentInfor
                     'is_guest_checkout' => false
                 ]
             );
+            if ($e instanceof PaymentException) {
+                throw $e;
+            }
             throw new CouldNotSaveException(
                 __($e->getMessage()),
                 $e

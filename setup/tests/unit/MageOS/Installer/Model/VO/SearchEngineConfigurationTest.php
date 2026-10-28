@@ -18,13 +18,16 @@ class SearchEngineConfigurationTest extends AbstractVOTest
             engine: 'opensearch',
             host: 'localhost',
             port: 9200,
-            prefix: 'magento'
+            prefix: 'magento',
+            enableAuth: true,
+            username: 'admin',
+            password: 'secret'
         );
     }
 
     protected function getSensitiveFields(): array
     {
-        return []; // No sensitive fields
+        return ['password'];
     }
 
     public function testItConstructsWithAllParameters(): void
@@ -111,6 +114,9 @@ class SearchEngineConfigurationTest extends AbstractVOTest
         $this->assertArrayHasKey('host', $array);
         $this->assertArrayHasKey('port', $array);
         $this->assertArrayHasKey('prefix', $array);
+        $this->assertArrayHasKey('enableAuth', $array);
+        $this->assertArrayHasKey('username', $array);
+        $this->assertArrayNotHasKey('password', $array);
         $this->assertSame(9200, $array['port']);
     }
 
@@ -120,7 +126,10 @@ class SearchEngineConfigurationTest extends AbstractVOTest
             'engine' => 'elasticsearch8',
             'host' => 'es.local',
             'port' => 9300,
-            'prefix' => 'shop'
+            'prefix' => 'shop',
+            'enableAuth' => true,
+            'username' => 'elastic',
+            'password' => 'secret'
         ];
 
         $config = SearchEngineConfiguration::fromArray($data);
@@ -129,6 +138,9 @@ class SearchEngineConfigurationTest extends AbstractVOTest
         $this->assertPropertyEquals($config, 'host', 'es.local');
         $this->assertPropertyEquals($config, 'port', 9300);
         $this->assertPropertyEquals($config, 'prefix', 'shop');
+        $this->assertPropertyEquals($config, 'enableAuth', true);
+        $this->assertPropertyEquals($config, 'username', 'elastic');
+        $this->assertPropertyEquals($config, 'password', 'secret');
     }
 
     public function testFromArrayWithMissingFieldsUsesDefaults(): void
@@ -141,6 +153,9 @@ class SearchEngineConfigurationTest extends AbstractVOTest
         $this->assertPropertyEquals($config, 'host', 'localhost');
         $this->assertPropertyEquals($config, 'port', 9200);
         $this->assertPropertyEquals($config, 'prefix', '');
+        $this->assertPropertyEquals($config, 'enableAuth', false);
+        $this->assertPropertyEquals($config, 'username', '');
+        $this->assertPropertyEquals($config, 'password', '');
     }
 
     public function testFromArrayCoercesPortToInt(): void
