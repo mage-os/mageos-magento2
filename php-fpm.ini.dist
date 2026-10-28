@@ -1,6 +1,8 @@
 ; Copyright 2026 Adobe
 ; All Rights Reserved.
 
+; PHP-FPM configuration template for production
+
 ; Recommended memory limit for Magento web requests.
 memory_limit = 756M
 ; Fallback limit for runaway requests; nginx.conf.sample and .user.ini raise it to 18000 for long admin imports.
