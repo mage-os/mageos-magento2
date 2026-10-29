@@ -181,7 +181,7 @@
                         <previewTmpl>Magento_Catalog/image-preview</previewTmpl>
                         <openDialogTitle>Media Gallery</openDialogTitle>
                         <initialMediaGalleryOpenSubpath>catalog/category</initialMediaGalleryOpenSubpath>
-                        <allowedExtensions>jpg jpeg gif png</allowedExtensions>
+                        <allowedExtensions>jpg jpeg gif png webp avif</allowedExtensions>
                         <maxFileSize>4194304</maxFileSize>
                     </settings>
                 </imageUploader>

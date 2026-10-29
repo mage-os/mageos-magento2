@@ -111,8 +111,8 @@ class Content extends \Magento\Backend\Block\Widget
         )->setFilters(
             [
                 'images' => [
-                    'label' => __('Images (.gif, .jpg, .png)'),
-                    'files' => ['*.gif', '*.jpg', '*.jpeg', '*.png'],
+                    'label' => __('Images (.gif, .jpg, .png, .webp, .avif)'),
+                    'files' => ['*.gif', '*.jpg', '*.jpeg', '*.png', '*.webp', '*.avif'],
                 ],
             ]
         );

@@ -276,7 +276,7 @@ class StorageTest extends TestCase
         $this->assertEquals(['ttf', 'otf', 'eot', 'svg', 'woff'], $fontTypes);
 
         $imagesTypes = $this->helper->getAllowedExtensionsByType();
-        $this->assertEquals(['jpg', 'jpeg', 'gif', 'png', 'xbm', 'wbmp'], $imagesTypes);
+        $this->assertEquals(['jpg', 'jpeg', 'gif', 'png', 'webp', 'avif', 'xbm', 'wbmp'], $imagesTypes);
     }
 
     /**

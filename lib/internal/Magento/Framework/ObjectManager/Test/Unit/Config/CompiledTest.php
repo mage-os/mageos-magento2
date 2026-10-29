@@ -171,7 +171,7 @@ class CompiledTest extends TestCase
     }
 
     /**
-     * Test that $arguments, $virtualTypes and $preferences initializing in construct must be array.
+     * Test that $arguments, $instanceTypes and $preferences initializing in construct must be array.
      *
      * @param $data
      * @param array $expectedResult
@@ -227,7 +227,7 @@ class CompiledTest extends TestCase
     }
 
     /**
-     * Test that $arguments, $virtualTypes and $preferences initializing in extend must be array.
+     * Test that $arguments, $instanceTypes and $preferences initializing in extend must be array.
      *
      * @param $data
      * @param array $expectedResult
@@ -346,5 +346,23 @@ class CompiledTest extends TestCase
         $this->assertFalse($compiled->isNonLazyType('First\\Type'));
         $this->assertFalse($compiled->isNonLazyType('Second\\Type'));
         $this->assertTrue($compiled->isNonLazyType('Other\\Type'));
+    }
+
+    #[DataProvider('mergedSections')]
+    public function testExtendReplacesEverySectionPerTopLevelKey(string $section): void
+    {
+        $compiled = new Compiled([$section => ['Shared' => 'globalValue', 'Overridden' => ['a' => 1, 'b' => 2]]]);
+
+        $compiled->extend([$section => ['Overridden' => ['b' => 3], 'AreaOnly' => 'areaValue']]);
+
+        $this->assertSame(
+            ['Shared' => 'globalValue', 'Overridden' => ['b' => 3], 'AreaOnly' => 'areaValue'],
+            (new \ReflectionClass(Compiled::class))->getProperty($section)->getValue($compiled)
+        );
+    }
+
+    public static function mergedSections(): array
+    {
+        return array_map(static fn (string $section) => [$section], Compiled::MERGED_SECTIONS);
     }
 }

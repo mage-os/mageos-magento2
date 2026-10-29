@@ -16,12 +16,14 @@ $rootDirectory = $targetDirectory->getDirectoryWrite(DirectoryList::TMP);
 $filesToCopy = [
     'empty.png',
     'image_adapters_test.png',
+    'image_adapters_test.webp',
     'magento_thumbnail.jpg',
     'notanimage.txt',
     'watermark.gif',
     'watermark.jpg',
     'watermark.png',
     'watermark_alpha.png',
+    'watermark_alpha.webp',
     'watermark_alpha_base_image.jpg',
 ];
 

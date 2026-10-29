@@ -398,7 +398,7 @@ define([
                     let targetElement = uploadInput,
                         fileId = null,
                         arrayFromObj = Array.from,
-                        allowedExt = ['jpeg', 'jpg', 'png', 'gif'],
+                        allowedExt = ['jpeg', 'jpg', 'png', 'gif', 'webp', 'avif'],
                         allowedResize = false,
                         options = {
                             proudlyDisplayPoweredByUppy: false,

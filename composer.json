@@ -103,6 +103,7 @@
         "dealerdirect/phpcodesniffer-composer-installer": "^0.7 || ^1.0",
         "dg/bypass-finals": "^1.4",
         "friendsofphp/php-cs-fixer": "^3.22",
+        "inchoo/magento-bricklayer": "^1.18",
         "magento/magento-coding-standard": "*",
         "magento/magento2-functional-testing-framework": "^6.0",
         "pdepend/pdepend": "^3@dev",

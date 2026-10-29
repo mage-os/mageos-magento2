@@ -11,6 +11,7 @@ use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Directory\WriteInterface;
+use Magento\Framework\Image\AdapterFactory;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\MediaStorage\Model\File\Storage;
 use Magento\MediaStorage\Helper\File\Storage\Database;
@@ -117,6 +118,62 @@ class ImageUploaderTest extends TestCase
                 'expectedName' => 'magento_image_with_space_in_name.jpg',
             ],
         ];
+    }
+
+    /**
+     * @param string $fileName
+     * @return void
+     */
+    #[DataProvider('categoryImageFormatProvider')]
+    public function testCategoryImageUploaderAcceptsFormat(string $fileName): void
+    {
+        /** @var ImageUploader $imageUploader */
+        $imageUploader = $this->objectManager->get('Magento\Catalog\CategoryImageUpload');
+        $fixtureDir = realpath(__DIR__ . '/../_files');
+        $filePath = $this->tmpDirectory->getAbsolutePath($fileName);
+        copy($fixtureDir . DIRECTORY_SEPARATOR . $fileName, $filePath);
+        $this->skipUnlessConfiguredAdapterReads($filePath, $fileName);
+
+        $_FILES['image'] = [
+            'name' => $fileName,
+            'type' => 'image',
+            'tmp_name' => $filePath,
+            'error' => 0,
+            'size' => filesize($filePath),
+        ];
+
+        $result = $imageUploader->saveFileToTmpDir('image');
+        $uploadedPath = $imageUploader->getBaseTmpPath() . DIRECTORY_SEPARATOR . $result['file'];
+        $this->assertTrue($this->mediaDirectory->isFile($this->mediaDirectory->getAbsolutePath($uploadedPath)));
+    }
+
+    /**
+     * @return array
+     */
+    public static function categoryImageFormatProvider(): array
+    {
+        return [
+            'jpg' => ['magento_image.jpg'],
+            'gif' => ['magento_image.gif'],
+            'webp' => ['magento_image.webp'],
+            'avif' => ['magento_image.avif'],
+        ];
+    }
+
+    /**
+     * @param string $filePath
+     * @param string $fileName
+     * @return void
+     */
+    private function skipUnlessConfiguredAdapterReads(string $filePath, string $fileName): void
+    {
+        try {
+            $this->objectManager->get(AdapterFactory::class)->create()->open($filePath);
+        } catch (\Throwable $e) {
+            $this->markTestSkipped(
+                sprintf('The configured image adapter cannot read %s: %s', $fileName, $e->getMessage())
+            );
+        }
     }
 
     /**
