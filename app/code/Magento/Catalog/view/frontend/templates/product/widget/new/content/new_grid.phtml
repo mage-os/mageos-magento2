@@ -103,7 +103,7 @@ if ($exist = ($block->getProductCollection() && $block->getProductCollection()->
                                         <?php endif; ?>
                                         <?php if ($showWishlist || $showCompare) :?>
                                             <div class="actions-secondary" data-role="add-to-links">
-                                                <?php if ($this->helper(Magento\Wishlist\Helper\Data::class)->isAllow() && $showWishlist) :?>
+                                                <?php if ($block->isAddToWishlistAllowed() && $showWishlist) :?>
                                                     <a href="#"
                                                        data-post='<?= /* @noEscape */ $block->getAddToWishlistParams($_item) ?>'
                                                        class="action towishlist"

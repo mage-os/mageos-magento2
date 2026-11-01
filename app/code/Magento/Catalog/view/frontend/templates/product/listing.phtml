@@ -67,10 +67,12 @@ $_helper = $this->helper(Magento\Catalog\Helper\Output::class);
                                     '<div class="stock unavailable"><span>' . $block->escapeHtml(__('Out of stock')) . '</span></div>';
                             }
 
-                            $info['links'] = '<div class="product links" data-role="add-to-links">'
-                                . '<a href="#" data-post=\'' . $this->helper(Magento\Wishlist\Helper\Data::class)->getAddParams($_product) . '\' class="action towishlist" data-action="add-to-wishlist">'
-                                . '<span>' . $block->escapeHtml(__('Add to Wish List')) . '</span></a>'
-                                . '<a href="' . $block->escapeUrl($block->getAddToCompareUrl($_product)) . '" class="action tocompare">'
+                            $info['links'] = '<div class="product links" data-role="add-to-links">';
+                            if ($block->isAddToWishlistAllowed()) {
+                                $info['links'] .= '<a href="#" data-post=\'' . $block->getAddToWishlistParams($_product) . '\' class="action towishlist" data-action="add-to-wishlist">'
+                                    . '<span>' . $block->escapeHtml(__('Add to Wish List')) . '</span></a>';
+                            }
+                            $info['links'] .= '<a href="' . $block->escapeUrl($block->getAddToCompareUrl($_product)) . '" class="action tocompare">'
                                 . '<span>' . $block->escapeHtml(__('Add to Compare')) . '</span></a></div>';
                             $info['actions'] = '<div class="product action">' . $info['button'] . $info['links'] . '</div>';
 

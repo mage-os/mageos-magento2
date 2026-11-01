@@ -9,7 +9,6 @@ use Magento\Catalog\Helper\Product\Compare;
 use Magento\CatalogWidget\Block\Product\ProductsList;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\Escaper;
-use Magento\Wishlist\Helper\Data;
 
 /** @var Escaper $escaper */
 /** @var ProductsList $block */
@@ -111,7 +110,7 @@ use Magento\Wishlist\Helper\Data;
                                             <?php endif; ?>
                                             <?php if ($showWishlist || $showCompare): ?>
                                                 <div class="actions-secondary" data-role="add-to-links">
-                                                    <?php if ($this->helper(Data::class)->isAllow() && $showWishlist): ?>
+                                                    <?php if ($block->isAddToWishlistAllowed() && $showWishlist): ?>
                                                         <a href="#"
                                                            data-post='<?= /* @noEscape */ $block->getAddToWishlistParams($_item) ?>' class="action towishlist" data-action="add-to-wishlist" title="<?= $escaper->escapeHtmlAttr(__('Add to Wish List')) ?>">
                                                             <span><?= $escaper->escapeHtml(__('Add to Wish List')) ?></span>

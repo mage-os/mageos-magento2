@@ -85,7 +85,7 @@
                                         <?php endif; ?>
                                     <?php endif; ?>
                                 </div>
-                                <?php if ($this->helper(Magento\Wishlist\Helper\Data::class)->isAllow()) :?>
+                                <?php if ($block->isAddToWishlistAllowed()) :?>
                                     <div class="secondary-addto-links actions-secondary" data-role="add-to-links">
                                         <a href="#"
                                            data-post='<?= /* @noEscape */ $block->getAddToWishlistParams($item) ?>'

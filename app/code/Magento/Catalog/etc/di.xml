@@ -8,6 +8,7 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <preference for="Magento\Catalog\Api\Data\ProductInterface" type="Magento\Catalog\Model\Product" />
     <preference for="Magento\Catalog\Api\ProductRepositoryInterface" type="Magento\Catalog\Model\ProductRepository" />
+    <preference for="Magento\Catalog\Helper\Wishlist\AddToWishlistInterface" type="Magento\Catalog\Helper\Wishlist\NullAddToWishlist" />
     <preference for="Magento\Catalog\Api\CategoryAttributeRepositoryInterface" type="Magento\Catalog\Model\Category\AttributeRepository" />
     <preference for="Magento\Catalog\Api\Data\CategoryAttributeInterface" type="Magento\Catalog\Model\Category\Attribute" />
     <preference for="Magento\Catalog\Api\CategoryAttributeOptionManagementInterface" type="Magento\Catalog\Model\Category\Attribute\OptionManagement" />
