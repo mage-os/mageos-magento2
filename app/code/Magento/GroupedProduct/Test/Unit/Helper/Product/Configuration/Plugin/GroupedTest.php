@@ -93,7 +93,7 @@ class GroupedTest extends TestCase
             \Magento\GroupedProduct\Model\Product\Type\Grouped::TYPE_CODE
         );
 
-        $quantityItemMock = $this->createMock(\Magento\Wishlist\Model\Item\Option::class);
+        $quantityItemMock = $this->createMock(\Magento\Catalog\Model\Product\Configuration\Item\Option\OptionInterface::class);
         $quantityItemMock->method('getValue')->willReturn(1);
 
         $this->itemMock->expects(
