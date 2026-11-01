@@ -12,7 +12,6 @@ use Magento\CatalogGraphQl\Model\Resolver\Type\WishlistItemType as CatalogWishli
 use Magento\Framework\ObjectManagerInterface;
 use Magento\TestFramework\Fixture\AppArea;
 use Magento\TestFramework\Helper\Bootstrap;
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -34,40 +33,34 @@ class WishlistItemTypeTest extends TestCase
     }
 
     /**
-     * Each product type module registers its wish list item type on the CatalogGraphQl resolver.
+     * Each product type module registers its wish list item type on the CatalogGraphQl resolver
      *
-     * @param string $productType
-     * @param string $expectedType
      * @return void
      */
-    #[
-        AppArea('graphql'),
-        DataProvider('productTypeDataProvider')
-    ]
-    public function testResolvesTypesRegisteredByProductTypeModules(string $productType, string $expectedType): void
+    #[AppArea('graphql')]
+    public function testResolvesTypesRegisteredByProductTypeModules(): void
     {
         $resolver = $this->objectManager->create(CatalogWishlistItemType::class);
-
-        $this->assertSame($expectedType, $resolver->resolveType(['model' => $this->createProduct($productType)]));
-    }
-
-    /**
-     * @return array
-     */
-    public static function productTypeDataProvider(): array
-    {
-        return [
-            'simple' => ['simple', 'SimpleWishlistItem'],
-            'virtual' => ['virtual', 'VirtualWishlistItem'],
-            'bundle' => ['bundle', 'BundleWishlistItem'],
-            'configurable' => ['configurable', 'ConfigurableWishlistItem'],
-            'downloadable' => ['downloadable', 'DownloadableWishlistItem'],
-            'grouped' => ['grouped', 'GroupedProductWishlistItem'],
+        $expectedTypes = [
+            'simple' => 'SimpleWishlistItem',
+            'virtual' => 'VirtualWishlistItem',
+            'bundle' => 'BundleWishlistItem',
+            'configurable' => 'ConfigurableWishlistItem',
+            'downloadable' => 'DownloadableWishlistItem',
+            'grouped' => 'GroupedProductWishlistItem',
         ];
+
+        foreach ($expectedTypes as $productType => $expectedType) {
+            $this->assertSame(
+                $expectedType,
+                $resolver->resolveType(['model' => $this->createProduct($productType)]),
+                $productType
+            );
+        }
     }
 
     /**
-     * Types registered on the deprecated WishlistGraphQl resolver are still resolved.
+     * Types registered on the deprecated WishlistGraphQl resolver are still resolved
      *
      * @return void
      */
@@ -84,11 +77,16 @@ class WishlistItemTypeTest extends TestCase
         $resolver = $this->objectManager->create(CatalogWishlistItemType::class);
 
         $this->assertInstanceOf(WishlistItemType::class, $resolver);
-        $this->assertSame('CustomWishlistItem', $resolver->resolveType(['model' => $this->createProduct('custom_type')]));
+        $this->assertSame(
+            'CustomWishlistItem',
+            $resolver->resolveType(['model' => $this->createProduct('custom_type')])
+        );
         $this->assertSame('SimpleWishlistItem', $resolver->resolveType(['model' => $this->createProduct('simple')]));
     }
 
     /**
+     * Create an unsaved product of the given type
+     *
      * @param string $productType
      * @return Product
      */

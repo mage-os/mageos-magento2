@@ -29,6 +29,8 @@ class WishlistItemTypeTest extends TestCase
     }
 
     /**
+     * A registered product type resolves to its wish list item type
+     *
      * @return void
      */
     public function testResolvesSupportedProductType(): void
@@ -40,6 +42,8 @@ class WishlistItemTypeTest extends TestCase
     }
 
     /**
+     * An unregistered product type is rejected
+     *
      * @return void
      */
     public function testThrowsForUnsupportedProductType(): void
@@ -52,6 +56,8 @@ class WishlistItemTypeTest extends TestCase
     }
 
     /**
+     * A model that is not a product is rejected
+     *
      * @return void
      */
     public function testThrowsWhenModelIsNotAProduct(): void
