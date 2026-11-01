@@ -16,7 +16,7 @@ use Magento\Customer\Controller\RegistryConstants;
 class Wishlist extends \Magento\Backend\Block\Widget\Grid\Extended
 {
     /**
-     * Core registry.
+     * Registry holding the ID of the customer being viewed
      *
      * @var \Magento\Framework\Registry
      */
@@ -142,7 +142,7 @@ class Wishlist extends \Magento\Backend\Block\Widget\Grid\Extended
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getRowUrl($row)
     {
