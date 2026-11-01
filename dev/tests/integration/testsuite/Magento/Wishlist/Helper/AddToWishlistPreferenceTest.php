@@ -18,6 +18,8 @@ use PHPUnit\Framework\TestCase;
 class AddToWishlistPreferenceTest extends TestCase
 {
     /**
+     * Catalog's AddToWishlistInterface and block context resolve to the shared wish list helper
+     *
      * @return void
      */
     public function testCatalogReceivesTheWishlistHelper(): void

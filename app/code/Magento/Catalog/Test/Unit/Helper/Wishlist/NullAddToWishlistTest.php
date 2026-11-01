@@ -14,6 +14,8 @@ use PHPUnit\Framework\TestCase;
 class NullAddToWishlistTest extends TestCase
 {
     /**
+     * Without Magento_Wishlist, adding to the wish list is never allowed
+     *
      * @return void
      */
     public function testAddingToWishlistIsNeverAllowed(): void

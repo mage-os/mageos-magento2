@@ -98,31 +98,36 @@ class AbstractProductTest extends TestCase
     }
 
     /**
-     * @param bool $isAllowed
+     * Adding to the wish list is allowed when the wish list implementation allows it
+     *
      * @return void
      */
-    #[DataProvider('isAddToWishlistAllowedDataProvider')]
-    public function testIsAddToWishlistAllowed(bool $isAllowed): void
+    public function testIsAddToWishlistAllowed(): void
     {
         $this->addToWishlistMock->expects($this->once())
             ->method('isAllow')
-            ->willReturn($isAllowed);
+            ->willReturn(true);
 
-        $this->assertSame($isAllowed, $this->block->isAddToWishlistAllowed());
+        $this->assertTrue($this->block->isAddToWishlistAllowed());
     }
 
     /**
-     * @return array
+     * Adding to the wish list is not allowed when the wish list implementation refuses it
+     *
+     * @return void
      */
-    public static function isAddToWishlistAllowedDataProvider(): array
+    public function testIsAddToWishlistNotAllowed(): void
     {
-        return [
-            'allowed' => [true],
-            'not allowed' => [false],
-        ];
+        $this->addToWishlistMock->expects($this->once())
+            ->method('isAllow')
+            ->willReturn(false);
+
+        $this->assertFalse($this->block->isAddToWishlistAllowed());
     }
 
     /**
+     * The add to wish list post data comes from the wish list implementation
+     *
      * @return void
      */
     public function testGetAddToWishlistParams(): void
