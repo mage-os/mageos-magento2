@@ -6,6 +6,8 @@
 
 namespace Magento\WishlistReports\Block\Adminhtml;
 
+use Magento\WishlistReports\Block\Adminhtml\Wishlist\Grid;
+
 /**
  * Adminhtml wishlist report page content block
  *
@@ -51,7 +53,7 @@ class Wishlist extends \Magento\Backend\Block\Template
     {
         $this->setChild(
             'grid',
-            $this->getLayout()->createBlock(\Magento\WishlistReports\Block\Adminhtml\Wishlist\Grid::class, 'report.grid')
+            $this->getLayout()->createBlock(Grid::class, 'report.grid')
         );
 
         $collection = $this->_wishlistFactory->create();
