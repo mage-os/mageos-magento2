@@ -30,7 +30,6 @@
         "magento/module-theme": "*",
         "magento/module-ui": "*",
         "magento/module-widget": "*",
-        "magento/module-wishlist": "*",
         "magento/module-encryption-key": "*"
     },
     "suggest": {
