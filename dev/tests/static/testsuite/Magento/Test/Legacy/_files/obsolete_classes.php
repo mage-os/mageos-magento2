@@ -4332,4 +4332,9 @@ return [
     ['Magento\Elasticsearch\Test\Unit\Model\DataProvider\Base\SuggestionsTest'],
     ['Zend_Measure_Length', 'Magento\Framework\Measure\Length'],
     ['Zend_Measure_Weight', 'Magento\Framework\Measure\Weight'],
+    ['Magento\Reports\Block\Adminhtml\Wishlist\Grid'],
+    ['Magento\Reports\Model\ResourceModel\Wishlist\Collection'],
+    ['Magento\Reports\Model\ResourceModel\Wishlist\Product\Collection'],
+    ['Magento\Reports\Observer\WishlistAddProductObserver', 'Magento\WishlistReports\Observer\WishlistAddProductObserver'],
+    ['Magento\Reports\Observer\WishlistShareObserver', 'Magento\WishlistReports\Observer\WishlistShareObserver'],
 ];

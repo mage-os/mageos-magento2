@@ -6,7 +6,7 @@
 
 declare(strict_types=1);
 
-namespace Magento\Reports\Test\Unit\Observer;
+namespace Magento\WishlistReports\Test\Unit\Observer;
 
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Framework\Event\Observer;
@@ -15,12 +15,12 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHe
 use Magento\Reports\Model\Event;
 use Magento\Reports\Model\ReportStatus;
 use Magento\Reports\Observer\EventSaver;
-use Magento\Reports\Observer\WishlistAddProductObserver;
+use Magento\WishlistReports\Observer\WishlistAddProductObserver;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Unit test for \Magento\Reports\Observer\WishlistAddProductObserver
+ * Unit test for \Magento\WishlistReports\Observer\WishlistAddProductObserver
  */
 class WishlistAddProductObserverTest extends TestCase
 {
