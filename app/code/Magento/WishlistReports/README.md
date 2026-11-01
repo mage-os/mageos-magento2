@@ -1,6 +1,6 @@
 # Magento_WishlistReports module
 
-This module connects Magento_Wishlist to Magento_Reports. It records the "Product Added To Wish List" and "Share Wish List" events in the Reports event log, adds the settings that enable them under **Stores > Configuration > General > Reports > General Options**, and contains the deprecated admin wish list report block.
+This module connects Magento_Wishlist to Magento_Reports. It records the "Product Added To Wish List" and "Share Wish List" events in the Reports event log, and adds the settings that enable them under **Stores > Configuration > General > Reports > General Options**.
 
 Magento_Reports and Magento_Wishlist don't depend on each other. Either one can be removed, together with this module.
 
