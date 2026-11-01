@@ -63,6 +63,7 @@ For information about the event, see [Events and observers](https://developer.ad
 This module introduces the following layouts and layout handles in the directories:
 
 - `view/adminhtml/layout`:
+    - `customer_index_viewwishlist`
     - `customer_index_wishlist`
 - `view/base/layout`:
     - `catalog_product_prices`

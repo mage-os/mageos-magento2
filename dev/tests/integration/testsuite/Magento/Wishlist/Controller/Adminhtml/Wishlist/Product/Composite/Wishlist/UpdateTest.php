@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\Customer\Controller\Adminhtml\Wishlist\Product\Composite\Wishlist;
+namespace Magento\Wishlist\Controller\Adminhtml\Wishlist\Product\Composite\Wishlist;
 
 use Magento\Backend\Model\Session;
 use Magento\Catalog\Api\Data\ProductInterface;

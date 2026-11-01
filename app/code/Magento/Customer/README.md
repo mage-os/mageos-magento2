@@ -150,7 +150,6 @@ This module introduces the following layouts in the `view/frontend/layout` and `
     - `customer_index_newsletter`
     - `customer_index_orders`
     - `customer_index_viewcart`
-    - `customer_index_viewwishlist`
     - `customer_online_index`
 
 - `view/frontend/layout`:

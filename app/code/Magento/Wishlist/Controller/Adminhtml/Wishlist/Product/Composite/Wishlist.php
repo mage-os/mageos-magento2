@@ -3,7 +3,7 @@
  * Copyright 2013 Adobe
  * All Rights Reserved.
  */
-namespace Magento\Customer\Controller\Adminhtml\Wishlist\Product\Composite;
+namespace Magento\Wishlist\Controller\Adminhtml\Wishlist\Product\Composite;
 
 use Magento\Framework\Exception\LocalizedException as CoreException;
 

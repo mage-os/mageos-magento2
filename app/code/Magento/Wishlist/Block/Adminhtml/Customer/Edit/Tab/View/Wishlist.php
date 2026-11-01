@@ -3,7 +3,7 @@
  * Copyright 2013 Adobe
  * All Rights Reserved.
  */
-namespace Magento\Customer\Block\Adminhtml\Edit\Tab\View;
+namespace Magento\Wishlist\Block\Adminhtml\Customer\Edit\Tab\View;
 
 use Magento\Customer\Controller\RegistryConstants;
 
