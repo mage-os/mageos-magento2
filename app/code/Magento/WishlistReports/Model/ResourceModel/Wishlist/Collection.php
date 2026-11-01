@@ -7,7 +7,7 @@
 /**
  * Wishlist Report collection
  */
-namespace Magento\Reports\Model\ResourceModel\Wishlist;
+namespace Magento\WishlistReports\Model\ResourceModel\Wishlist;
 
 /**
  * @api

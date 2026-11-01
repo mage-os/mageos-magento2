@@ -4,7 +4,7 @@
  * All Rights Reserved.
  */
 
-namespace Magento\Reports\Block\Adminhtml;
+namespace Magento\WishlistReports\Block\Adminhtml;
 
 /**
  * Adminhtml wishlist report page content block
@@ -19,12 +19,12 @@ class Wishlist extends \Magento\Backend\Block\Template
      *
      * @var string
      */
-    protected $_template = 'Magento_Reports::report/wishlist.phtml';
+    protected $_template = 'Magento_WishlistReports::report/wishlist.phtml';
 
     /**
      * Reports wishlist collection factory
      *
-     * @var \Magento\Reports\Model\ResourceModel\Wishlist\CollectionFactory
+     * @var \Magento\WishlistReports\Model\ResourceModel\Wishlist\CollectionFactory
      */
     protected $_wishlistFactory;
 
@@ -32,12 +32,12 @@ class Wishlist extends \Magento\Backend\Block\Template
      * Constructor
      *
      * @param \Magento\Backend\Block\Template\Context $context
-     * @param \Magento\Reports\Model\ResourceModel\Wishlist\CollectionFactory $wishlistFactory
+     * @param \Magento\WishlistReports\Model\ResourceModel\Wishlist\CollectionFactory $wishlistFactory
      * @param array $data
      */
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,
-        \Magento\Reports\Model\ResourceModel\Wishlist\CollectionFactory $wishlistFactory,
+        \Magento\WishlistReports\Model\ResourceModel\Wishlist\CollectionFactory $wishlistFactory,
         array $data = []
     ) {
         $this->_wishlistFactory = $wishlistFactory;
@@ -51,7 +51,7 @@ class Wishlist extends \Magento\Backend\Block\Template
     {
         $this->setChild(
             'grid',
-            $this->getLayout()->createBlock(\Magento\Reports\Block\Adminhtml\Wishlist\Grid::class, 'report.grid')
+            $this->getLayout()->createBlock(\Magento\WishlistReports\Block\Adminhtml\Wishlist\Grid::class, 'report.grid')
         );
 
         $collection = $this->_wishlistFactory->create();

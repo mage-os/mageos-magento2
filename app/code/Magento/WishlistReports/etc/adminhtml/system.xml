@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Mage-OS. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="reports">
+            <group id="options">
+                <field id="product_to_wishlist_enabled" translate="label comment" type="select" sortOrder="5" showInDefault="1">
+                    <label>Enable "Product Added To WishList" Report</label>
+                    <comment>If enabled, will collect statistic of products added to WishList</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="wishlist_share_enabled" translate="label comment" type="select" sortOrder="6" showInDefault="1">
+                    <label>Enable "Share WishList" Report</label>
+                    <comment>If enabled, will collect statistic of shared WishLists</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

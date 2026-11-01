@@ -27,10 +27,4 @@
     <event name="sales_quote_item_save_before">
         <observer name="reports" instance="Magento\Reports\Observer\CheckoutCartAddProductObserver" />
     </event>
-    <event name="wishlist_add_product">
-        <observer name="reports" instance="Magento\Reports\Observer\WishlistAddProductObserver" />
-    </event>
-    <event name="wishlist_share">
-        <observer name="reports" instance="Magento\Reports\Observer\WishlistShareObserver" />
-    </event>
 </config>
