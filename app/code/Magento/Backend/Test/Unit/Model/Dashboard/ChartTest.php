@@ -10,7 +10,9 @@ namespace Magento\Backend\Test\Unit\Model\Dashboard;
 use Magento\Backend\Helper\Dashboard\Order as OrderHelper;
 use Magento\Backend\Model\Dashboard\Chart;
 use Magento\Backend\Model\Dashboard\Chart\Date as DateRetriever;
+use Magento\Backend\Model\Dashboard\Config;
 use Magento\Backend\Model\Dashboard\Period;
+use Magento\Backend\Model\Dashboard\StatisticsCache;
 use Magento\Framework\DataObject;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Reports\Model\ResourceModel\Order\Collection;
@@ -48,6 +50,11 @@ class ChartTest extends TestCase
     /**
      * @inheritDoc
      */
+    /**
+     * @var StatisticsCache|MockObject
+     */
+    private $statisticsCacheMock;
+
     protected function setUp(): void
     {
         $this->objectManagerHelper = new ObjectManager($this);
@@ -62,12 +69,20 @@ class ChartTest extends TestCase
 
         $period = $this->objectManagerHelper->getObject(Period::class);
 
+        $this->statisticsCacheMock = $this->createMock(StatisticsCache::class);
+        $this->statisticsCacheMock->method('get')
+            ->willReturnCallback(fn ($key, $scope, $lifetime, $loader) => $loader());
+        $config = $this->createMock(Config::class);
+        $config->method('getTotalsCacheLifetime')->willReturn(300);
+
         $this->model = $this->objectManagerHelper->getObject(
             Chart::class,
             [
                 'dateRetriever' => $this->dateRetrieverMock,
                 'orderHelper' => $this->orderHelperMock,
-                'period' => $period
+                'period' => $period,
+                'statisticsCache' => $this->statisticsCacheMock,
+                'dashboardConfig' => $config
             ]
         );
     }
@@ -104,10 +119,7 @@ class ChartTest extends TestCase
 
         $valueMap = [];
         foreach ($result as $resultItem) {
-            $dataObjectMock = $this->createMock(DataObject::class);
-            $dataObjectMock->method('getData')
-                ->with($chartParam)
-                ->willReturn($resultItem['y']);
+            $dataObjectMock = new DataObject(['quantity' => $resultItem['y'], 'revenue' => $resultItem['y']]);
 
             $valueMap[] = [
                 'range',
@@ -122,6 +134,62 @@ class ChartTest extends TestCase
             $result,
             $this->model->getByPeriod($period, $chartParam)
         );
+    }
+
+    public function testGetSeriesByPeriodReturnsBothSeriesFromOneLoad(): void
+    {
+        $this->dateRetrieverMock->expects($this->once())
+            ->method('getByPeriod')
+            ->with(Period::PERIOD_7_DAYS)
+            ->willReturn(['2020-01-21', '2020-01-22']);
+        $this->orderHelperMock->expects($this->once())->method('getCollection');
+        $this->collectionMock->method('count')->willReturn(1);
+        $this->collectionMock->method('getItemByColumnValue')->willReturnMap([
+            ['range', '2020-01-21', null],
+            ['range', '2020-01-22', new DataObject(['quantity' => '3', 'revenue' => '120.5'])],
+        ]);
+
+        $series = $this->model->getSeriesByPeriod(Period::PERIOD_7_DAYS, '1');
+
+        $this->assertSame(Period::PERIOD_7_DAYS, $series['period']);
+        $this->assertSame([['x' => '2020-01-21', 'y' => 0], ['x' => '2020-01-22', 'y' => 3.0]], $series['quantity']);
+        $this->assertSame([['x' => '2020-01-21', 'y' => 0], ['x' => '2020-01-22', 'y' => 120.5]], $series['revenue']);
+    }
+
+    public function testUnknownPeriodFallsBackTo24Hours(): void
+    {
+        $this->dateRetrieverMock->method('getByPeriod')->willReturn([]);
+        $this->collectionMock->method('count')->willReturn(0);
+
+        $series = $this->model->getSeriesByPeriod('bogus');
+
+        $this->assertSame(Period::PERIOD_24_HOURS, $series['period']);
+        $this->assertSame([], $series['quantity']);
+    }
+
+    public function testSeriesAreCachedByPeriodAndScope(): void
+    {
+        $statisticsCache = $this->createMock(StatisticsCache::class);
+        $statisticsCache->expects($this->once())
+            ->method('get')
+            ->with('chart', ['period' => '1m', 'store' => '', 'website' => '2', 'group' => ''], 300)
+            ->willReturn(['period' => '1m', 'quantity' => [['x' => 'a', 'y' => 1]], 'revenue' => []]);
+        $this->orderHelperMock->expects($this->never())->method('getCollection');
+        $config = $this->createMock(Config::class);
+        $config->method('getTotalsCacheLifetime')->willReturn(300);
+
+        $model = $this->objectManagerHelper->getObject(
+            Chart::class,
+            [
+                'dateRetriever' => $this->dateRetrieverMock,
+                'orderHelper' => $this->orderHelperMock,
+                'period' => $this->objectManagerHelper->getObject(Period::class),
+                'statisticsCache' => $statisticsCache,
+                'dashboardConfig' => $config
+            ]
+        );
+
+        $this->assertSame([['x' => 'a', 'y' => 1]], $model->getByPeriod('1m', 'quantity', null, '2'));
     }
 
     /**
