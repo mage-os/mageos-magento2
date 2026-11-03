@@ -660,6 +660,46 @@ class CreateTest extends TestCase
         $this->assertSame($quote, $result);
     }
 
+    public function testGetQuoteKeepsCustomerGroupSelectedForOrder(): void
+    {
+        $selectedGroupId = 3;
+        $quote = $this->createPartialMockWithReflection(
+            Quote::class,
+            ['updateCustomerData', 'getCustomerId']
+        );
+        $quote->setData('customer_group_id', (string)$selectedGroupId);
+
+        $quote->expects($this->once())
+            ->method('getCustomerId')
+            ->willReturn(self::CUSTOMER_ID);
+
+        $customerData = $this->getMockBuilder(CustomerInterface::class)
+            ->getMock();
+        $customerData->expects($this->once())
+            ->method('setGroupId')
+            ->with($selectedGroupId)
+            ->willReturnSelf();
+
+        $customerRepository = $this->getMockBuilder(CustomerRepositoryInterface::class)
+            ->getMock();
+        $customerRepository->expects($this->once())
+            ->method('getById')
+            ->with(self::CUSTOMER_ID)
+            ->willReturn($customerData);
+
+        $quote->expects($this->once())
+            ->method('updateCustomerData')
+            ->with($customerData);
+
+        $this->sessionQuote->expects($this->once())
+            ->method('getQuote')
+            ->willReturn($quote);
+
+        $subject = $this->createAdminOrderCreateWithCustomerRepository($customerRepository);
+
+        $this->assertSame($quote, $subject->getQuote());
+    }
+
     public function testGetQuoteSkipsAssignWhenNoCustomerId(): void
     {
         $quote = $this->createPartialMockWithReflection(
