@@ -1,0 +1,86 @@
+{
+  "account": {
+    "accountCreatedNotificationText": "Thank you for registering with Main Website Store.",
+    "accountPageTitle": "Account Information",
+    "addressBookTitle": "Customer Address",
+    "changedCredentialsInformation": "You saved the account",
+    "createAccountHeaderText" : "Create New Customer Account",
+    "newsletterRemovedNotification": "We have removed your newsletter subscription.",
+    "newsletterSavedNotification": "We have saved your subscription.",
+    "newsletterSubscriptionTitle": "Newsletter Subscription",
+    "newsletterUpdatedNotification": "We have updated your subscription."
+  },
+  "address": {
+    "addressDeletedNotification": "You deleted the address.",
+    "newAddressAddedNotifcation": "You saved the address."
+  },
+  "adminGeneral": {
+    "searchResultsFoundText": "records found",
+    "activeFiltersText": "Active filters"
+  },
+  "cart": {
+    "discountAppliedNotification": "You used coupon code",
+    "discountRemovedNotification": "You canceled the coupon code.",
+    "incorrectCouponCodeNotificationOne": "The coupon code",
+    "incorrectCouponCodeNotificationTwo": "is not valid.",
+    "priceReducedSymbols": "$"
+  },
+  "categoryPage" : {
+    "subCategoryPageTitle" : "Fitness Equipment"
+  },
+  "checkout": {
+    "checkoutPriceReducedSymbol": "-$",
+    "couponAppliedNotification": "Your coupon was successfully applied",
+    "couponRemovedNotification": "Your coupon was successfully removed",
+    "incorrectDiscountNotification": "The coupon code isn't valid. Verify the code and try again.",
+    "orderPlacedNotification": "Thank you for your purchase!",
+    "orderPlacedNumberText": "Your order number is:"
+  },
+  "comparePage": {
+    "productRemovedNotificationTextOne": "You removed product",
+    "productRemovedNotificationTextTwo": "from the comparison list.",
+    "productNotWishlistedNotificationText": "You must login or register to add items to your wishlist."
+  },
+  "contactPage": {
+    "messageSentConfirmationText": "Thanks for contacting us with"
+  },
+  "customerOverviewPage": {
+    "searchResultsFoundText": "records found"
+  },
+  "footerPage": {
+    "newsletterSubscription": "Thank you for your subscription.",
+    "newsletterAlreadySubscribed": "This email address is already subscribed."
+  },
+  "homePage": {
+    "firstProductName": "Aim Analog Watch"
+  },
+  "logout": {
+    "logoutConfirmationText": "You have signed out"
+  },
+  "magentoAdmin" : {
+    "configurationSavedText" : "You saved the configuration.",
+    "couponRuleSavedText" : "You saved the rule.",
+    "noResultsFoundText" : "We couldn't find any records."
+  },
+  "miniCart": {
+    "configurableProductMinicartTitle": "x Inez Full Zip Jacket",
+    "miniCartTitle": "My Cart",
+    "productQuantityChangedConfirmation": "was updated in your shopping cart",
+    "productRemovedConfirmation": "You removed the item.",
+    "simpleProductInCartTitle": "x Push It Messenger Bag"
+  },
+  "productPage": {
+    "borderClassRegex": ".* border-primary$",
+    "simpleProductAddedNotification": "You added"
+  },
+  "login": {
+    "loginHeaderText" : "Login",
+    "invalidCredentialsMessage": "The account sign-in was incorrect or your account is disabled temporarily. Please wait and try again later."
+  },
+  "search": {
+    "noResultsMessage": "Your search returned no results."
+  },
+  "wishListPage": {
+    "wishListAddedNotification": "has been added to your Wish List."
+  }
+}
