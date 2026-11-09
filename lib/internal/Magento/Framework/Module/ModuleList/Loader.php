@@ -99,6 +99,13 @@ class Loader
         return $this->sortBySequence($result);
     }
 
+    /**
+     * Loads the module.xml information of a single module, or null if the module is not registered.
+     *
+     * @param string $moduleName
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @return array|null
+     */
     public function loadModule(string $moduleName): ?array
     {
         $modulePath = $this->moduleRegistry->getPath(ComponentRegistrar::MODULE, $moduleName);
@@ -111,6 +118,14 @@ class Loader
         return $data[$moduleName] ?? null;
     }
 
+    /**
+     * Converts the contents of a module.xml file into module information.
+     *
+     * @param string $file
+     * @param string $contents
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @return array
+     */
     private function convertModuleConfig(string $file, string $contents): array
     {
         try {

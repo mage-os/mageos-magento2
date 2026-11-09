@@ -46,6 +46,11 @@ class ModuleList implements ModuleListInterface
      */
     private $enabled;
 
+    /**
+     * Declarations of the modules loaded one at a time by getOne(), keyed by module name
+     *
+     * @var array
+     */
     private array $modules = [];
 
     /**
