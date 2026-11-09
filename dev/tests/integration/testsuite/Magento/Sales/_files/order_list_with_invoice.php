@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 use Magento\Framework\DB\Transaction;
 use Magento\Framework\Stdlib\DateTime;
+use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\Sales\Api\Data\OrderInterfaceFactory;
 use Magento\Sales\Api\InvoiceManagementInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
@@ -36,6 +37,14 @@ $invoiceManagement = $objectManager->get(InvoiceManagementInterface::class);
 $transaction = $objectManager->get(Transaction::class);
 
 $dateTime = new \DateTimeImmutable();
+// The dashboard's month-to-date window starts at midnight on the 1st in the
+// store's timezone, not in UTC. Orders that must count as "this month" are kept
+// at or after that moment; otherwise, while it is already the 2nd in UTC but
+// still the 1st in the store's timezone, they fall into the previous month.
+$monthStart = (new \DateTimeImmutable(
+    'first day of this month midnight',
+    new \DateTimeZone($objectManager->get(TimezoneInterface::class)->getConfigTimezone())
+))->setTimezone(new \DateTimeZone('UTC'));
 $ordersData = [
     [
         'increment_id' => '100000002',
@@ -45,7 +54,7 @@ $ordersData = [
         'base_grand_total' => 120.00,
         'grand_total' => 120.00,
         'subtotal' => 120.00,
-        'created_at' => $dateTime->modify('-1 hour')->format(DateTime::DATETIME_PHP_FORMAT),
+        'created_at' => max($dateTime->modify('-1 hour'), $monthStart)->format(DateTime::DATETIME_PHP_FORMAT),
     ],
     [
         'increment_id' => '100000003',
@@ -55,8 +64,7 @@ $ordersData = [
         'base_grand_total' => 130.00,
         'grand_total' => 130.00,
         'subtotal' => 130.00,
-        'created_at' => max($dateTime->modify('-1 day'), $dateTime->modify('first day of this month'))
-            ->format(DateTime::DATETIME_PHP_FORMAT),
+        'created_at' => max($dateTime->modify('-1 day'), $monthStart)->format(DateTime::DATETIME_PHP_FORMAT),
     ],
     [
         'increment_id' => '100000004',
