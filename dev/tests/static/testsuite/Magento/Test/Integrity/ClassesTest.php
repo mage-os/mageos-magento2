@@ -271,6 +271,9 @@ class ClassesTest extends \PHPUnit\Framework\TestCase
      */
     private function assertClassNamespace(string $file, string $relativePath, string $contents, string $className): void
     {
+        // A module can keep classes that moved into it working under their old names. Those live in
+        // BackwardCompatibility/<old module>/, which the module's composer.json autoloads as the old namespace.
+        $relativePath = preg_replace('#^(app/code/[^/]+/)[^/]+/BackwardCompatibility/#', '$1', $relativePath);
         $namespacePattern = '/(Magento|Zend)\/[a-zA-Z]+[^\.]+/';
         $formalPattern = '/^namespace\s[a-zA-Z]+(\\\\[a-zA-Z0-9]+)*/m';
 

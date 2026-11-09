@@ -4332,10 +4332,4 @@ return [
     ['Magento\Elasticsearch\Test\Unit\Model\DataProvider\Base\SuggestionsTest'],
     ['Zend_Measure_Length', 'Magento\Framework\Measure\Length'],
     ['Zend_Measure_Weight', 'Magento\Framework\Measure\Weight'],
-    ['Magento\Customer\Block\Adminhtml\Edit\Tab\View\Wishlist', 'Magento\Wishlist\Block\Adminhtml\Customer\Edit\Tab\View\Wishlist'],
-    ['Magento\Customer\Controller\Adminhtml\Index\Wishlist', 'Magento\Wishlist\Controller\Adminhtml\Index\Wishlist'],
-    ['Magento\Customer\Controller\Adminhtml\Index\ViewWishlist', 'Magento\Wishlist\Controller\Adminhtml\Index\ViewWishlist'],
-    ['Magento\Customer\Controller\Adminhtml\Wishlist\Product\Composite\Wishlist', 'Magento\Wishlist\Controller\Adminhtml\Wishlist\Product\Composite\Wishlist'],
-    ['Magento\Customer\Controller\Adminhtml\Wishlist\Product\Composite\Wishlist\Configure', 'Magento\Wishlist\Controller\Adminhtml\Wishlist\Product\Composite\Wishlist\Configure'],
-    ['Magento\Customer\Controller\Adminhtml\Wishlist\Product\Composite\Wishlist\Update', 'Magento\Wishlist\Controller\Adminhtml\Wishlist\Product\Composite\Wishlist\Update'],
 ];
