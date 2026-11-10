@@ -47,6 +47,13 @@ class ModuleList implements ModuleListInterface
     private $enabled;
 
     /**
+     * Declarations of the modules loaded one at a time by getOne(), keyed by module name
+     *
+     * @var array
+     */
+    private array $modules = [];
+
+    /**
      * Constructor
      *
      * @param DeploymentConfig $config
@@ -88,8 +95,16 @@ class ModuleList implements ModuleListInterface
      */
     public function getOne($name)
     {
-        $enabled = $this->getAll();
-        return $enabled[$name] ?? null;
+        if (null !== $this->enabled) {
+            return $this->getAll()[$name] ?? null;
+        }
+        if (!$this->has($name)) {
+            return null;
+        }
+        if (!array_key_exists($name, $this->modules)) {
+            $this->modules[$name] = $this->loader->loadModule($name);
+        }
+        return $this->modules[$name];
     }
 
     /**
