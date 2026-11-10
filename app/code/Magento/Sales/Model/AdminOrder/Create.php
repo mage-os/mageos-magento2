@@ -52,7 +52,7 @@ class Create extends \Magento\Framework\DataObject implements \Magento\Checkout\
     /**
      * Quote customer wishlist model object
      *
-     * @var \Magento\Wishlist\Model\Wishlist
+     * @var \Magento\Framework\DataObject|false|null
      */
     protected $_wishlist;
 
@@ -294,6 +294,11 @@ class Create extends \Magento\Framework\DataObject implements \Magento\Checkout\
     private $paymentMethodSpecifications;
 
     /**
+     * @var WishlistProviderInterface
+     */
+    private $wishlistProvider;
+
+    /**
      * @param \Magento\Framework\ObjectManagerInterface $objectManager
      * @param \Magento\Framework\Event\ManagerInterface $eventManager
      * @param \Magento\Framework\Registry $coreRegistry
@@ -330,6 +335,7 @@ class Create extends \Magento\Framework\DataObject implements \Magento\Checkout\
      * @param HttpRequest|null $request
      * @param SpecificationFactory|null $paymentMethodSpecificationFactory
      * @param array $paymentMethodSpecifications
+     * @param WishlistProviderInterface|null $wishlistProvider
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
@@ -368,7 +374,8 @@ class Create extends \Magento\Framework\DataObject implements \Magento\Checkout\
         ?OrderRepositoryInterface $orderRepositoryInterface = null,
         ?HttpRequest $request = null,
         ?SpecificationFactory $paymentMethodSpecificationFactory = null,
-        array $paymentMethodSpecifications = []
+        array $paymentMethodSpecifications = [],
+        ?WishlistProviderInterface $wishlistProvider = null
     ) {
         $this->_objectManager = $objectManager;
         $this->_eventManager = $eventManager;
@@ -412,6 +419,8 @@ class Create extends \Magento\Framework\DataObject implements \Magento\Checkout\
         $this->paymentMethodSpecificationFactory = $paymentMethodSpecificationFactory ?: ObjectManager::getInstance()
             ->get(SpecificationFactory::class);
         $this->paymentMethodSpecifications = $paymentMethodSpecifications;
+        $this->wishlistProvider = $wishlistProvider ?: ObjectManager::getInstance()
+            ->get(WishlistProviderInterface::class);
     }
 
     /**
@@ -780,7 +789,8 @@ class Create extends \Magento\Framework\DataObject implements \Magento\Checkout\
      * Retrieve customer wishlist model object
      *
      * @param bool $cacheReload pass cached wishlist object and get new one
-     * @return \Magento\Wishlist\Model\Wishlist|false Return false if customer ID is not specified
+     * @return \Magento\Framework\DataObject|false The wish list, or false if no customer ID is specified or
+     *     Magento_Wishlist is not installed
      */
     public function getCustomerWishlist($cacheReload = false)
     {
@@ -789,9 +799,8 @@ class Create extends \Magento\Framework\DataObject implements \Magento\Checkout\
         }
 
         $customerId = (int)$this->getSession()->getCustomerId();
-        if ($customerId) {
-            $this->_wishlist = $this->_objectManager->create(\Magento\Wishlist\Model\Wishlist::class);
-            $this->_wishlist->loadByCustomerId($customerId, true);
+        $this->_wishlist = $customerId ? $this->wishlistProvider->getCustomerWishlist($customerId) : null;
+        if ($this->_wishlist) {
             $this->_wishlist->setStore(
                 $this->getSession()->getStore()
             )->setSharedStoreIds(
@@ -969,17 +978,14 @@ class Create extends \Magento\Framework\DataObject implements \Magento\Checkout\
                 case 'wishlist':
                     $wishlist = null;
                     if (!isset($moveTo[1])) {
-                        $wishlist = $this->_objectManager->create(
-                            \Magento\Wishlist\Model\Wishlist::class
-                        )->loadByCustomerId(
-                            $this->getSession()->getCustomerId(),
-                            true
+                        $customerId = $this->getSession()->getCustomerId();
+                        $wishlist = $this->wishlistProvider->getCustomerWishlist(
+                            $customerId === null ? null : (int)$customerId
                         );
                     } else {
-                        $wishlist = $this->_objectManager->create(
-                            \Magento\Wishlist\Model\Wishlist::class
-                        )->load($moveTo[1]);
-                        if (!$wishlist->getId() || $wishlist->getCustomerId() != $this->getSession()->getCustomerId()
+                        $wishlist = $this->wishlistProvider->getWishlist((int)$moveTo[1]);
+                        if ($wishlist && (!$wishlist->getId()
+                            || $wishlist->getCustomerId() != $this->getSession()->getCustomerId())
                         ) {
                             $wishlist = null;
                         }
@@ -1062,13 +1068,8 @@ class Create extends \Magento\Framework\DataObject implements \Magento\Checkout\
         }
         if (isset($data['add_wishlist_item'])) {
             foreach ($data['add_wishlist_item'] as $itemId => $qty) {
-                $item = $this->_objectManager->create(
-                    \Magento\Wishlist\Model\Item::class
-                )->loadWithOptions(
-                    $itemId,
-                    'info_buyRequest'
-                );
-                if ($item->getId()) {
+                $item = $this->wishlistProvider->getWishlistItem((int)$itemId, 'info_buyRequest');
+                if ($item && $item->getId()) {
                     $this->addProduct($item->getProduct(), $item->getBuyRequest()->toArray());
                     $transferredItems = $this->_session->getTransferredItems() ?? [];
                     $transferredItems['wishlist'][$itemId] = $itemId;
@@ -1118,8 +1119,8 @@ class Create extends \Magento\Framework\DataObject implements \Magento\Checkout\
                 break;
             case 'wishlist':
                 $wishlist = $this->getCustomerWishlist();
-                if ($wishlist) {
-                    $item = $this->_objectManager->create(\Magento\Wishlist\Model\Item::class)->load($itemId);
+                $item = $wishlist ? $this->wishlistProvider->getWishlistItem((int)$itemId) : null;
+                if ($item) {
                     $item->delete();
                 }
                 break;
@@ -2167,7 +2168,7 @@ class Create extends \Magento\Framework\DataObject implements \Magento\Checkout\
      * Restore items that were transferred from ordered items to their original sources (cart, wishlist, ...)
      *
      * @param string $area
-     * @param \Magento\Quote\Model\Quote\Item[]|\Magento\Wishlist\Model\Item[] $items
+     * @param \Magento\Framework\DataObject[] $items Quote items, wish list items, ...
      * @return bool
      */
     private function restoreTransferredItem(string $area, array $items): bool

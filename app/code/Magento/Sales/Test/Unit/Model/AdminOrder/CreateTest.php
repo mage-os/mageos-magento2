@@ -41,6 +41,7 @@ use Magento\Customer\Api\CustomerRepositoryInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
+use Magento\Sales\Model\AdminOrder\WishlistProviderInterface;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -106,6 +107,11 @@ class CreateTest extends TestCase
      * @var Order|MockObject
      */
     private Order $orderMock;
+
+    /**
+     * @var WishlistProviderInterface|MockObject
+     */
+    private WishlistProviderInterface $wishlistProvider;
 
     /**
      * @var ObjectManagerInterface|ObjectManagerInterface&MockObject|MockObject
@@ -177,6 +183,7 @@ class CreateTest extends TestCase
 
         $this->objectManager = $this->createMock(ObjectManagerInterface::class);
         $this->messageManager = $this->createMock(ManagerInterface::class);
+        $this->wishlistProvider = $this->createMock(WishlistProviderInterface::class);
         $objectManagerHelper = new ObjectManagerHelper($this);
         $this->adminOrderCreate = $objectManagerHelper->getObject(
             Create::class,
@@ -192,8 +199,53 @@ class CreateTest extends TestCase
                 'dataObjectHelper' => $this->dataObjectHelper,
                 'quoteRepository' => $this->quoteRepository,
                 'quoteFactory' => $this->quoteFactory,
+                'wishlistProvider' => $this->wishlistProvider,
             ]
         );
+    }
+
+    /**
+     * Without wish lists (Magento_Wishlist not installed) the customer has no wish list
+     *
+     * @return void
+     */
+    public function testGetCustomerWishlistReturnsFalseWithoutWishlists(): void
+    {
+        $this->sessionQuote->method('getCustomerId')->willReturn(1);
+        $this->wishlistProvider->expects($this->once())
+            ->method('getCustomerWishlist')
+            ->with(1)
+            ->willReturn(null);
+
+        $this->assertFalse($this->adminOrderCreate->getCustomerWishlist(true));
+    }
+
+    /**
+     * Without a customer no wish list is requested
+     *
+     * @return void
+     */
+    public function testGetCustomerWishlistReturnsFalseWithoutCustomer(): void
+    {
+        $this->sessionQuote->method('getCustomerId')->willReturn(null);
+        $this->wishlistProvider->expects($this->never())->method('getCustomerWishlist');
+
+        $this->assertFalse($this->adminOrderCreate->getCustomerWishlist(true));
+    }
+
+    /**
+     * Wish list items that cannot be loaded are not added to the order
+     *
+     * @return void
+     */
+    public function testApplySidebarDataSkipsWishlistItemsWithoutWishlists(): void
+    {
+        $this->wishlistProvider->expects($this->once())
+            ->method('getWishlistItem')
+            ->with(5, 'info_buyRequest')
+            ->willReturn(null);
+
+        $this->adminOrderCreate->applySidebarData(['add_wishlist_item' => [5 => 1]]);
     }
 
     /**
