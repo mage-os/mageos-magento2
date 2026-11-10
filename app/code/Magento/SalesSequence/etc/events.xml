@@ -9,4 +9,10 @@
     <event name="store_delete">
         <observer name="magento_sequence" instance="Magento\SalesSequence\Observer\SequenceRemovalObserver" />
     </event>
+    <event name="website_delete_before">
+        <observer name="magento_sequence" instance="Magento\SalesSequence\Observer\ScopeSequenceRemovalObserver" />
+    </event>
+    <event name="store_group_delete_before">
+        <observer name="magento_sequence" instance="Magento\SalesSequence\Observer\ScopeSequenceRemovalObserver" />
+    </event>
 </config>
