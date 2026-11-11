@@ -136,13 +136,23 @@ class Context
      */
     private function updateContext(RequestInterface $request, StoreInterface $store)
     {
+        $runType = $request->getServerValue(StoreManager::PARAM_RUN_TYPE);
         switch (true) {
             case $store->isUseStoreInUrl():
                 $defaultStore = $store;
                 break;
-            case ScopeInterface::SCOPE_STORE == $request->getServerValue(StoreManager::PARAM_RUN_TYPE):
+            case ScopeInterface::SCOPE_STORE == $runType:
                 $defaultStoreCode = $request->getServerValue(StoreManager::PARAM_RUN_CODE);
                 $defaultStore = $this->storeManager->getStore($defaultStoreCode);
+                break;
+            case ScopeInterface::SCOPE_WEBSITE == $runType:
+                $website = $this->storeManager->getWebsite($store->getWebsiteId());
+                $defaultStoreId = $this->storeManager->getGroup($website->getDefaultGroupId())->getDefaultStoreId();
+                $defaultStore = $this->storeManager->getStore($defaultStoreId);
+                break;
+            case ScopeInterface::SCOPE_GROUP == $runType:
+                $defaultStoreId = $this->storeManager->getGroup($store->getStoreGroupId())->getDefaultStoreId();
+                $defaultStore = $this->storeManager->getStore($defaultStoreId);
                 break;
             default:
                 $defaultStoreCode = $this->storeManager->getDefaultStoreView()->getCode();
