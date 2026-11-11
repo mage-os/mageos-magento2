@@ -147,59 +147,49 @@ class Subselect extends Combine
     }
 
     /**
-     * Validate subSelect conditions, base_row_total and attribute
+     * Validate subSelect conditions, base_row_total and attribute.
+     *
+     * Sum visible items, then compare once. Multi-address quotes must not match on a
+     * partial total, and must not count a configurable or bundle child row twice.
      *
      * @param AbstractModel $model
      * @return bool
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function validate(AbstractModel $model)
     {
-        $subSelectConditionsFlag = true;
         $attr = $this->getAttribute();
         $total = 0;
-        $isMultiShipping = (bool) $model->getQuote()->getIsMultiShipping();
-        $items = $isMultiShipping ? $model->getAllItems() : $model->getQuote()->getAllVisibleItems();
+        $items = $model->getQuote()->getIsMultiShipping()
+            ? $this->getAddressVisibleItems($model)
+            : $model->getQuote()->getAllVisibleItems();
         foreach ($items as $item) {
-            if ($isMultiShipping) {
-                $subSelectConditionsFlag = $this->validateSubSelectConditions($item);
-            }
             $total = $this->getBaseRowTotalForChildrenProduct($item, $attr, $total);
-            if ($isMultiShipping && $subSelectConditionsFlag && $this->validateAttribute($total)) {
-                return true;
-            }
         }
-        return $subSelectConditionsFlag && $this->validateAttribute($total);
+        return $this->validateAttribute($total);
     }
 
     /**
-     * Check subSelect conditions to verify if they are met
+     * Get the address items that are not configurable or bundle children.
      *
-     * @param mixed $item
-     * @return bool
+     * Address::getAllVisibleItems() checks parent_item_id only, which is assigned when the address
+     * item is saved. Multi-address checkout collects totals on new address items before saving them,
+     * so the in-memory parent link has to be checked as well.
+     *
+     * @param AbstractModel $address
+     * @return array
      */
-    private function validateSubSelectConditions(mixed $item): bool
+    private function getAddressVisibleItems(AbstractModel $address): array
     {
-        $subSelectConditionsFlag = true;
-        $all = $this->getAggregator() === 'all';
-        $true = (bool)$this->getValue();
-        $conditions = $this->getConditions();
-        if (!empty($conditions)) {
-            foreach ($conditions as $cond) {
-                if ($item instanceof AbstractModel) {
-                    $validated = $cond->validate($item);
-                } else {
-                    $validated = $cond->validateByEntityId($item);
-                }
-                if ($all && $validated !== $true) {
-                    $subSelectConditionsFlag = false;
-                    break;
-                } elseif (!$all && $validated === $true) {
-                    continue;
-                }
+        $items = [];
+        foreach ($address->getAllItems() as $item) {
+            if ($item->getParentItem() || $item->getParentItemId()) {
+                continue;
             }
+
+            $items[] = $item;
         }
-        return $subSelectConditionsFlag;
+
+        return $items;
     }
 
     /**
