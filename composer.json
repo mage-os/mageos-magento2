@@ -351,6 +351,7 @@
             "Magento\\Framework\\": "lib/internal/Magento/Framework/",
             "Magento\\Setup\\": "setup/src/Magento/Setup/",
             "Magento\\": "app/code/Magento/",
+            "Magento\\Customer\\": "app/code/Magento/Wishlist/BackwardCompatibility/Customer/",
             "MageOS\\Installer\\": "setup/src/MageOS/Installer/"
         },
         "psr-0": {

@@ -40,6 +40,18 @@ class LayoutRule implements \Magento\TestFramework\Dependency\RuleInterface
     protected $_mapRouters = [];
 
     /**
+     * List of routers per area, used instead of $_mapRouters for layouts in that area
+     *
+     * Format: array(
+     *  '{Area}' => array(
+     *   '{Router}' => array('{Module_Name}')
+     * ))
+     *
+     * @var array
+     */
+    private $mapRoutersByArea;
+
+    /**
      * List of layout blocks
      *
      * Format: array(
@@ -84,10 +96,16 @@ class LayoutRule implements \Magento\TestFramework\Dependency\RuleInterface
      * @param array $mapRouters
      * @param array $mapLayoutBlocks
      * @param array $mapLayoutHandles
+     * @param array $mapRoutersByArea
      */
-    public function __construct(array $mapRouters, array $mapLayoutBlocks, array $mapLayoutHandles)
-    {
+    public function __construct(
+        array $mapRouters,
+        array $mapLayoutBlocks,
+        array $mapLayoutHandles,
+        array $mapRoutersByArea = []
+    ) {
         $this->_mapRouters = $mapRouters;
+        $this->mapRoutersByArea = $mapRoutersByArea;
         $this->_mapLayoutBlocks = $mapLayoutBlocks;
         $this->_mapLayoutHandles = $mapLayoutHandles;
         $this->_namespaces = implode('|', \Magento\Framework\App\Utility\Files::init()->getNamespaces());
@@ -400,9 +418,10 @@ class LayoutRule implements \Magento\TestFramework\Dependency\RuleInterface
             array_pop($chunks);
         }
         $router = implode('_', $chunks);
-        if (isset($this->_mapRouters[$router])) {
+        $mapRouters = $this->mapRoutersByArea[$area] ?? $this->_mapRouters;
+        if (isset($mapRouters[$router])) {
             // CASE 1: Single dependency
-            $modules = $this->_mapRouters[$router];
+            $modules = $mapRouters[$router];
             if (!in_array($currentModule, $modules)) {
                 return ['modules' => $modules];
             }

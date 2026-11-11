@@ -11,7 +11,9 @@ use Magento\Backend\Block\Context;
 use Magento\Bundle\Helper\Catalog\Product\Configuration;
 use Magento\Catalog\Helper\Product\ConfigurationPool;
 use Magento\Catalog\Model\Product;
+use Magento\Catalog\Model\Product\Configuration\Item\ItemInterface;
 use Magento\Customer\Block\Adminhtml\Edit\Tab\View\Grid\Renderer\Item;
+use Magento\Framework\DataObject;
 use Magento\Framework\Escaper;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -20,7 +22,7 @@ use PHPUnit\Framework\TestCase;
 
 class ItemTest extends TestCase
 {
-    /** @var  MockObject */
+    /** @var DataObject&ItemInterface */
     protected $item;
 
     /** @var  Item */
@@ -50,11 +52,31 @@ class ItemTest extends TestCase
             ->method('getName')
             ->willReturn('testProductName');
 
-        $this->item = $this->createPartialMock(\Magento\Wishlist\Model\Item::class, ['getProduct']);
-        $this->item
-            ->expects($this->atLeastOnce())
-            ->method('getProduct')
-            ->willReturn($product);
+        $this->item = new class (['product' => $product]) extends DataObject implements ItemInterface {
+            /**
+             * @inheritdoc
+             */
+            public function getProduct()
+            {
+                return $this->getData('product');
+            }
+
+            /**
+             * @inheritdoc
+             */
+            public function getOptionByCode($code)
+            {
+                return null;
+            }
+
+            /**
+             * @inheritdoc
+             */
+            public function getFileDownloadParams()
+            {
+                return null;
+            }
+        };
 
         $productConfigPool = $this->createPartialMock(
             ConfigurationPool::class,

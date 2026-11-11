@@ -9,10 +9,10 @@ namespace Magento\Customer\Test\Unit\Block\Account;
 
 use Magento\Customer\Block\Account\Link as CustomerAccountLink;
 use Magento\Customer\Block\Account\Navigation;
+use Magento\Customer\Block\Account\SortLink;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Framework\View\LayoutInterface;
-use Magento\Wishlist\Block\Link as WishListLink;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -58,13 +58,13 @@ class NavigationTest extends TestCase
     }
 
     /**
-     * Test get links with block customer account link and wish list link
+     * Test get links sorts a customer account link and a sort link by sort order
      *
      * @return void
      */
-    public function testGetLinksWithCustomerAndWishList()
+    public function testGetLinksWithCustomerAccountLinkAndSortLink()
     {
-        $wishListLinkMock = $this->getMockBuilder(WishListLink::class)
+        $sortLinkMock = $this->getMockBuilder(SortLink::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getSortOrder'])
             ->getMock();
@@ -74,7 +74,7 @@ class NavigationTest extends TestCase
             ->onlyMethods(['getSortOrder'])
             ->getMock();
 
-        $wishListLinkMock->expects($this->any())
+        $sortLinkMock->expects($this->any())
             ->method('getSortOrder')
             ->willReturn(100);
 
@@ -85,7 +85,7 @@ class NavigationTest extends TestCase
         $nameInLayout = 'top.links';
 
         $blockChildren = [
-            'wishListLink' => $wishListLinkMock,
+            'sortLink' => $sortLinkMock,
             'customerAccountLink' => $customerAccountLinkMock
         ];
 
@@ -98,7 +98,7 @@ class NavigationTest extends TestCase
         /* Assertion */
         $this->assertEquals(
             [
-                0 => $wishListLinkMock,
+                0 => $sortLinkMock,
                 1 => $customerAccountLinkMock
             ],
             $this->navigation->getLinks()

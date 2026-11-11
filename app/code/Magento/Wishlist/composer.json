@@ -37,7 +37,8 @@
             "registration.php"
         ],
         "psr-4": {
-            "Magento\\Wishlist\\": ""
+            "Magento\\Wishlist\\": "",
+            "Magento\\Customer\\": "BackwardCompatibility/Customer/"
         }
     }
 }

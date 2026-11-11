@@ -3,11 +3,11 @@
  * Copyright 2014 Adobe
  * All Rights Reserved.
  */
-namespace Magento\Customer\Controller\Adminhtml\Wishlist\Product\Composite\Wishlist;
+namespace Magento\Wishlist\Controller\Adminhtml\Wishlist\Product\Composite\Wishlist;
 
 use Exception;
 
-class Update extends \Magento\Customer\Controller\Adminhtml\Wishlist\Product\Composite\Wishlist
+class Update extends \Magento\Wishlist\Controller\Adminhtml\Wishlist\Product\Composite\Wishlist
 {
     /**
      * IFrame handler for submitted configuration for wishlist item.
