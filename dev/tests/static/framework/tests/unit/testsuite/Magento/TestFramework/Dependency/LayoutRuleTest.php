@@ -113,6 +113,34 @@ class LayoutRuleTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Routes another area declares don't make a layout depend on their modules
+     */
+    public function testUpdatesRouterUsesRoutesOfLayoutArea()
+    {
+        $model = new LayoutRule(
+            ['router_name' => ['Magento\RouterModule', 'Magento\AdminModule']],
+            [],
+            [],
+            [
+                'frontend' => ['router_name' => ['Magento\RouterModule']],
+                'adminhtml' => ['router_name' => ['Magento\RouterModule', 'Magento\AdminModule']],
+            ]
+        );
+        $contents = '<update handle="router_name_action"/>';
+        $this->assertEquals(
+            [['modules' => ['Magento\RouterModule'], 'type' => 'soft', 'source' => 'router_name_action']],
+            $model->getDependencyInfo('Magento\AnotherModule', 'layout', '/view/frontend/layout/a.xml', $contents)
+        );
+        $this->assertEquals(
+            [
+                ['modules' => ['Magento\RouterModule'], 'type' => 'soft', 'source' => 'router_name_action'],
+                ['modules' => ['Magento\AdminModule'], 'type' => 'soft', 'source' => 'router_name_action'],
+            ],
+            $model->getDependencyInfo('Magento\AnotherModule', 'layout', '/view/adminhtml/layout/a.xml', $contents)
+        );
+    }
+
+    /**
      * @param string $contents
      * @param string $type
      * @param bool $isHandle
