@@ -22,6 +22,8 @@ Refer to [how to enable or disable modules in Magento 2](https://experienceleagu
 
 `Pricing/` - the directory that contain solutions for configurable and downloadable product price.
 
+`BackwardCompatibility/` - classes that moved into this module, kept under their old names. See [Backward compatibility](#backward-compatibility).
+
 For information about a typical file structure of a module, see [Module file structure](https://developer.adobe.com/commerce/php/development/build/component-file-structure/#module-file-structure).
 
 ## Extensibility
@@ -100,3 +102,18 @@ You can extend a customer form and widgets using the configuration files located
     - `widget_recently_viewed`
 
 For information about a UI component, see [Overview of UI components](https://developer.adobe.com/commerce/frontend-core/ui-components/).
+
+## Backward compatibility
+
+The admin customer Wish List tab moved here from Magento_Customer. Its classes keep working under their old `Magento\Customer\...` names, which are deprecated:
+
+| Old name | New name |
+|---|---|
+| `Magento\Customer\Block\Adminhtml\Edit\Tab\View\Wishlist` | `Magento\Wishlist\Block\Adminhtml\Customer\Edit\Tab\View\Wishlist` |
+| `Magento\Customer\Controller\Adminhtml\Index\Wishlist` | `Magento\Wishlist\Controller\Adminhtml\Index\Wishlist` |
+| `Magento\Customer\Controller\Adminhtml\Index\ViewWishlist` | `Magento\Wishlist\Controller\Adminhtml\Index\ViewWishlist` |
+| `Magento\Customer\Controller\Adminhtml\Wishlist\Product\Composite\Wishlist` | `Magento\Wishlist\Controller\Adminhtml\Wishlist\Product\Composite\Wishlist` |
+| `Magento\Customer\Controller\Adminhtml\Wishlist\Product\Composite\Wishlist\Configure` | `Magento\Wishlist\Controller\Adminhtml\Wishlist\Product\Composite\Wishlist\Configure` |
+| `Magento\Customer\Controller\Adminhtml\Wishlist\Product\Composite\Wishlist\Update` | `Magento\Wishlist\Controller\Adminhtml\Wishlist\Product\Composite\Wishlist\Update` |
+
+The old names ship with this module, so they only exist while Magento_Wishlist is installed. Plugins, preferences and subclasses that target the old names keep working, with one exception: a plugin on the old abstract `Magento\Customer\Controller\Adminhtml\Wishlist\Product\Composite\Wishlist` no longer applies to the core Configure and Update actions, because those extend the new base class. Declare such a plugin on `Magento\Wishlist\Controller\Adminhtml\Wishlist\Product\Composite\Wishlist` instead.
