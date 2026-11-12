@@ -85,7 +85,8 @@ class ComposerInformationTest extends TestCase
             'mage-os/product-test-package-name-edition' => [
                 'name'    => 'mage-os/product-test-package-name-edition',
                 'type'    => 'metapackage',
-                'version' => '123.456.789'
+                'version' => '123.456.789',
+                'magento_version' => null
             ]
         ];
         $this->assertEquals($expected, $this->composerInformation->getSystemPackages());
@@ -125,8 +126,8 @@ class ComposerInformationTest extends TestCase
     /**
      * @param string $packageName
      * @param boolean $expected
-     * @dataProvider isSystemPackageDataProvider
      */
+    #[DataProvider('isSystemPackageDataProvider')]
     public function testIsSystemPackage($packageName, $expected)
     {
         $this->assertEquals($expected, $this->composerInformation->isSystemPackage($packageName));

@@ -249,8 +249,8 @@ class RealTest extends TestCase
      *
      * @param string $definition
      * @param bool $expectedUnsigned
-     * @dataProvider unsignedDefinitionDataProvider()
      */
+    #[DataProvider('unsignedDefinitionDataProvider')]
     public function testFromDefinitionUnsigned(string $definition, bool $expectedUnsigned)
     {
         $unsigned = new Unsigned();
