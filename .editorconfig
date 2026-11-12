@@ -11,6 +11,10 @@ trim_trailing_whitespace = true
 [*.md]
 trim_trailing_whitespace = false
 
+# Code generator test fixtures contain whitespace-only lines that the generators emit verbatim.
+[**/_files/*.txt]
+trim_trailing_whitespace = false
+
 [*.{yml,yaml,json}]
 indent_size = 2
 
