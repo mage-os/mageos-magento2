@@ -201,8 +201,8 @@ class GuestTest extends TestCase
         );
         $billingAddressMock->expects($this->once())->method('getLastname')
             ->willReturn($post['oar_billing_lastname']);
-        $billingAddressMock->expects($this->any())->method('getEmail')->willReturn($post['oar_email']);
-        $billingAddressMock->expects($this->any())->method('getPostcode')->willReturn($post['oar_zip']);
+        $billingAddressMock->expects($this->any())->method('getEmail')->willReturn($post['oar_email'] ?? '');
+        $billingAddressMock->expects($this->any())->method('getPostcode')->willReturn($post['oar_zip'] ?? '');
         $this->salesOrderMock->expects($this->once())->method('getBillingAddress')->willReturn($billingAddressMock);
         $this->salesOrderMock->expects($this->once())->method('getProtectCode')->willReturn($protectedCode);
         $metaDataMock = $this->createMock(PublicCookieMetadata::class);
@@ -259,6 +259,22 @@ class GuestTest extends TestCase
                     'oar_billing_lastname' => 'Black  ',
                     'oar_email' => '        test1@magento-test.com  ',
                     'oar_zip' => '123456  '
+                ]
+            ],
+            [
+                [
+                    'oar_order_id' => '1',
+                    'oar_type' => 'email',
+                    'oar_billing_lastname' => 'White',
+                    'oar_email' => 'test@magento-test.com'
+                ]
+            ],
+            [
+                [
+                    'oar_order_id' => '1',
+                    'oar_type' => 'zip',
+                    'oar_billing_lastname' => 'White',
+                    'oar_zip' => '123456'
                 ]
             ]
         ];
