@@ -5,23 +5,23 @@
  */
 declare(strict_types=1);
 
-namespace Magento\GroupedProduct\Test\Unit\Model\Wishlist\Product;
+namespace Magento\Wishlist\Test\Unit\Plugin\Model\Item;
 
 use Magento\Catalog\Model\Product;
 use Magento\Framework\DataObject;
 use Magento\GroupedProduct\Model\Product\Type\Grouped as TypeGrouped;
-use Magento\GroupedProduct\Model\Wishlist\Product\Item;
 use Magento\Wishlist\Model\Item\Option;
+use Magento\Wishlist\Plugin\Model\Item\GroupedProduct;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Unit test for Wishlist Item Plugin.
  */
-class ItemTest extends TestCase
+class GroupedProductTest extends TestCase
 {
     /**
-     * @var Item
+     * @var GroupedProduct
      */
     protected $model;
 
@@ -60,7 +60,7 @@ class ItemTest extends TestCase
             ]
         );
 
-        $this->model = new Item();
+        $this->model = new GroupedProduct();
     }
 
     /**
