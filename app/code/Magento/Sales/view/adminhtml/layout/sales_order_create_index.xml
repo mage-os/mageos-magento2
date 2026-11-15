@@ -45,11 +45,6 @@
                                     <argument name="sideBarPermissionCheck" xsi:type="object">Magento\Sales\ViewModel\Order\Create\SidebarPermissionCheck</argument>
                                 </arguments>
                             </block>
-                            <block class="Magento\Sales\Block\Adminhtml\Order\Create\Sidebar\Wishlist" template="Magento_Sales::order/create/sidebar/items.phtml" name="wishlist">
-                                <arguments>
-                                    <argument name="sideBarPermissionCheck" xsi:type="object">Magento\Sales\ViewModel\Order\Create\SidebarPermissionCheck</argument>
-                                </arguments>
-                            </block>
                             <block class="Magento\Sales\Block\Adminhtml\Order\Create\Sidebar\Reorder" template="Magento_Sales::order/create/sidebar/items.phtml" name="reorder">
                                 <arguments>
                                     <argument name="sideBarPermissionCheck" xsi:type="object">Magento\Sales\ViewModel\Order\Create\SidebarPermissionCheck</argument>

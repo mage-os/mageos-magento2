@@ -35,4 +35,6 @@
             <argument name="wishlistFactory" xsi:type="object">Magento\Wishlist\Model\WishlistFactory</argument>
         </arguments>
     </type>
+    <preference for="Magento\Sales\Model\AdminOrder\WishlistProviderInterface"
+                type="Magento\Wishlist\Model\Sales\AdminOrder\WishlistProvider"/>
 </config>
