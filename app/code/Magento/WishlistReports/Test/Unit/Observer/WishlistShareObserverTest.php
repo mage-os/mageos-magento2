@@ -6,7 +6,7 @@
 
 declare(strict_types=1);
 
-namespace Magento\Reports\Test\Unit\Observer;
+namespace Magento\WishlistReports\Test\Unit\Observer;
 
 use Magento\Framework\Event\Observer;
 use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
@@ -14,13 +14,13 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHe
 use Magento\Reports\Model\Event;
 use Magento\Reports\Model\ReportStatus;
 use Magento\Reports\Observer\EventSaver;
-use Magento\Reports\Observer\WishlistShareObserver;
+use Magento\WishlistReports\Observer\WishlistShareObserver;
 use Magento\Wishlist\Model\Wishlist;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Unit test for \Magento\Reports\Observer\WishlistShareObserver
+ * Unit test for \Magento\WishlistReports\Observer\WishlistShareObserver
  */
 class WishlistShareObserverTest extends TestCase
 {

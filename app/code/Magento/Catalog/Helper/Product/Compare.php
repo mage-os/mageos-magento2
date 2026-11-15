@@ -5,6 +5,7 @@
  */
 namespace Magento\Catalog\Helper\Product;
 
+use Magento\Catalog\Helper\Wishlist\AddToWishlistInterface;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ResourceModel\Product\Compare\Item\Collection;
 
@@ -88,7 +89,7 @@ class Compare extends \Magento\Framework\Url\Helper\Data
     protected $_formKey;
 
     /**
-     * @var \Magento\Wishlist\Helper\Data
+     * @var AddToWishlistInterface
      */
     protected $_wishlistHelper;
 
@@ -111,7 +112,7 @@ class Compare extends \Magento\Framework\Url\Helper\Data
      * @param \Magento\Customer\Model\Session $customerSession
      * @param \Magento\Catalog\Model\Session $catalogSession
      * @param \Magento\Framework\Data\Form\FormKey $formKey
-     * @param \Magento\Wishlist\Helper\Data $wishlistHelper
+     * @param AddToWishlistInterface $wishlistHelper
      * @param \Magento\Framework\Data\Helper\PostHelper $postHelper
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
@@ -124,7 +125,7 @@ class Compare extends \Magento\Framework\Url\Helper\Data
         \Magento\Customer\Model\Session $customerSession,
         \Magento\Catalog\Model\Session $catalogSession,
         \Magento\Framework\Data\Form\FormKey $formKey,
-        \Magento\Wishlist\Helper\Data $wishlistHelper,
+        AddToWishlistInterface $wishlistHelper,
         \Magento\Framework\Data\Helper\PostHelper $postHelper
     ) {
         $this->_itemCollectionFactory = $itemCollectionFactory;

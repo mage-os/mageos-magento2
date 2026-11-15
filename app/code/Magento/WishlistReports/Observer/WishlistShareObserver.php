@@ -3,15 +3,16 @@
  * Copyright 2015 Adobe
  * All Rights Reserved.
  */
-namespace Magento\Reports\Observer;
+namespace Magento\WishlistReports\Observer;
 
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Reports\Model\Event;
+use Magento\Reports\Observer\EventSaver;
 
 /**
  * Reports Event observer model
  */
-class WishlistAddProductObserver implements ObserverInterface
+class WishlistShareObserver implements ObserverInterface
 {
     /**
      * @var EventSaver
@@ -36,20 +37,20 @@ class WishlistAddProductObserver implements ObserverInterface
     }
 
     /**
-     * Add product to wishlist action
+     * Share customer wishlist action
      *
      * @param \Magento\Framework\Event\Observer $observer
      * @return void
      */
     public function execute(\Magento\Framework\Event\Observer $observer)
     {
-        if (!$this->reportStatus->isReportEnabled(Event::EVENT_PRODUCT_TO_WISHLIST)) {
+        if (!$this->reportStatus->isReportEnabled(Event::EVENT_WISHLIST_SHARE)) {
             return;
         }
 
         $this->eventSaver->save(
-            Event::EVENT_PRODUCT_TO_WISHLIST,
-            $observer->getEvent()->getProduct()->getId()
+            Event::EVENT_WISHLIST_SHARE,
+            $observer->getEvent()->getWishlist()->getId()
         );
     }
 }

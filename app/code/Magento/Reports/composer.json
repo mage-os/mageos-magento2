@@ -22,8 +22,7 @@
         "magento/module-store": "*",
         "magento/module-tax": "*",
         "magento/module-widget": "*",
-        "magento/module-theme": "*",
-        "magento/module-wishlist": "*"
+        "magento/module-theme": "*"
     },
     "type": "magento2-module",
     "license": [
