@@ -529,6 +529,13 @@ type StoreConfig {
     root_category_uid: ID @doc(description: "The unique ID for a `CategoryInterface` object.") @resolver(class: "Magento\\CatalogGraphQl\\Model\\Resolver\\RootCategoryUid")
 }
 
+interface WishlistItemInterface @typeResolver(class: "Magento\\CatalogGraphQl\\Model\\Resolver\\Type\\WishlistItemType") @doc(description: "The interface for wish list items."){
+    id: ID! @doc(description: "The unique ID for a `WishlistItemInterface` object.")
+    quantity: Float!  @doc(description: "The quantity of this wish list item.")
+    description: String  @doc(description: "The description of the item.")
+    added_at: String!  @doc(description: "The date and time the item was added to the wish list.")
+}
+
 type SimpleWishlistItem implements WishlistItemInterface @doc(description: "Contains a simple product wish list item.") {
 }
 
