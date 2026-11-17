@@ -273,9 +273,9 @@ class Guest extends \Magento\Framework\App\Helper\AbstractHelper
     private function compareStoredBillingDataWithInput(Order $order, array $postData)
     {
         $type = $postData['oar_type'];
-        $email = $postData['oar_email'];
-        $lastName = $postData['oar_billing_lastname'];
-        $zip = $postData['oar_zip'];
+        $email = $postData['oar_email'] ?? '';
+        $lastName = $postData['oar_billing_lastname'] ?? '';
+        $zip = $postData['oar_zip'] ?? '';
         $billingAddress = $order->getBillingAddress();
         return $this->normalizeStr($lastName) === $this->normalizeStr($billingAddress->getLastname()) &&
             ($type === 'email' && $this->normalizeStr($email) === $this->normalizeStr($billingAddress->getEmail()) ||
