@@ -9,6 +9,7 @@ namespace Magento\Backend\Test\Unit\Controller\Adminhtml\Dashboard;
 
 use Magento\Backend\App\Action\Context;
 use Magento\Backend\Controller\Adminhtml\Dashboard\RefreshStatistics;
+use Magento\Backend\Model\Dashboard\StatisticsCache;
 use Magento\Backend\Model\View\Result\Redirect;
 use Magento\Backend\Model\View\Result\RedirectFactory;
 use Magento\Framework\App\RequestInterface;
@@ -73,6 +74,11 @@ class RefreshStatisticsTest extends TestCase
      */
     protected $context;
 
+    /**
+     * @var StatisticsCache|MockObject
+     */
+    private $statisticsCache;
+
     protected function setUp(): void
     {
         $reportTypes = [
@@ -108,11 +114,14 @@ class RefreshStatisticsTest extends TestCase
             ->method('getResultRedirectFactory')
             ->willReturn($this->resultRedirectFactory);
 
+        $this->statisticsCache = $this->createMock(StatisticsCache::class);
+
         $this->refreshStatisticsController = $objectManagerHelper->getObject(
             RefreshStatistics::class,
             [
                 'context' => $this->context,
-                'reportTypes' => $reportTypes
+                'reportTypes' => $reportTypes,
+                'statisticsCache' => $this->statisticsCache
             ]
         );
     }
@@ -126,6 +135,8 @@ class RefreshStatisticsTest extends TestCase
         $this->messageManager->expects($this->once())
             ->method('addSuccessMessage')
             ->with(__('We updated lifetime statistic.'));
+
+        $this->statisticsCache->expects($this->once())->method('clean');
 
         $this->objectManager->expects($this->any())
             ->method('create')

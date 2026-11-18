@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\Backend\Controller\Adminhtml\Dashboard;
 
 use Magento\Backend\App\Action\Context;
+use Magento\Backend\Block\Dashboard\Sales;
 use Magento\Backend\Block\Dashboard\Totals;
 use Magento\Backend\Controller\Adminhtml\Dashboard;
 use Magento\Framework\App\Action\HttpPostActionInterface;
@@ -17,7 +18,7 @@ use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\View\LayoutFactory;
 
 /**
- * Class used to retrieve content of dashboard totals block via ajax
+ * Class used to retrieve content of dashboard totals and sales blocks via ajax
  */
 class AjaxBlock extends Dashboard implements HttpPostActionInterface
 {
@@ -59,6 +60,10 @@ class AjaxBlock extends Dashboard implements HttpPostActionInterface
         if ($blockTab === 'totals') {
             $output = $this->layoutFactory->create()
                 ->createBlock(Totals::class)
+                ->toHtml();
+        } elseif ($blockTab === Sales::CACHE_KEY) {
+            $output = $this->layoutFactory->create()
+                ->createBlock(Sales::class, '', ['data' => ['render_sync' => true]])
                 ->toHtml();
         }
 
