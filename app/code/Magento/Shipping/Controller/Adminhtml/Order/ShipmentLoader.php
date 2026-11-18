@@ -14,6 +14,7 @@ use Magento\Sales\Api\Data\ShipmentTrackCreationInterfaceFactory;
 use Magento\Sales\Api\Data\ShipmentItemCreationInterfaceFactory;
 use Magento\Sales\Api\ShipmentRepositoryInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
+use Magento\Sales\Model\CurrentShipment;
 use Magento\Sales\Model\Order\ShipmentDocumentFactory;
 use Magento\Sales\Api\Data\ShipmentItemCreationInterface;
 
@@ -27,10 +28,16 @@ use Magento\Sales\Api\Data\ShipmentItemCreationInterface;
  * @method int getOrderId()
  * @method int getShipmentId()
  * @method array getTracking()
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class ShipmentLoader extends DataObject
 {
     const SHIPMENT = 'shipment';
+
+    /**
+     * @var CurrentShipment
+     */
+    private CurrentShipment $currentShipment;
 
     /**
      * @var ManagerInterface
@@ -76,6 +83,7 @@ class ShipmentLoader extends DataObject
      * @param ShipmentTrackCreationInterfaceFactory $trackFactory
      * @param ShipmentItemCreationInterfaceFactory $itemFactory
      * @param array $data
+     * @param CurrentShipment|null $currentShipment
      */
     public function __construct(
         ManagerInterface $messageManager,
@@ -85,8 +93,10 @@ class ShipmentLoader extends DataObject
         ShipmentDocumentFactory $documentFactory,
         ShipmentTrackCreationInterfaceFactory $trackFactory,
         ShipmentItemCreationInterfaceFactory $itemFactory,
-        array $data = []
+        array $data = [],
+        ?CurrentShipment $currentShipment = null
     ) {
+        $this->currentShipment = $currentShipment ?? new CurrentShipment($registry);
         $this->messageManager = $messageManager;
         $this->registry = $registry;
         $this->shipmentRepository = $shipmentRepository;
@@ -149,7 +159,11 @@ class ShipmentLoader extends DataObject
             );
         }
 
-        $this->registry->register('current_shipment', $shipment);
+        if ($shipment instanceof \Magento\Sales\Model\Order\Shipment) {
+            $this->currentShipment->set($shipment);
+        } else {
+            $this->registry->register('current_shipment', $shipment);
+        }
         return $shipment;
     }
 

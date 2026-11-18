@@ -7,9 +7,11 @@
 namespace Magento\Sales\Helper;
 
 use Magento\Framework\App as App;
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Exception\InputException;
 use Magento\Framework\Stdlib\Cookie\CookieSizeLimitReachedException;
 use Magento\Framework\Stdlib\Cookie\FailureToSendException;
+use Magento\Sales\Model\CurrentOrder;
 use \Magento\Sales\Model\Order;
 
 /**
@@ -19,6 +21,11 @@ use \Magento\Sales\Model\Order;
  */
 class Guest extends \Magento\Framework\App\Helper\AbstractHelper
 {
+    /**
+     * @var CurrentOrder
+     */
+    private CurrentOrder $currentOrder;
+
     /**
      * @var \Magento\Framework\Registry
      */
@@ -101,6 +108,7 @@ class Guest extends \Magento\Framework\App\Helper\AbstractHelper
      * @param \Magento\Framework\Controller\Result\RedirectFactory $resultRedirectFactory
      * @param \Magento\Sales\Api\OrderRepositoryInterface $orderRepository
      * @param \Magento\Framework\Api\SearchCriteriaBuilder $searchCriteria
+     * @param CurrentOrder|null $currentOrder
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
@@ -115,8 +123,10 @@ class Guest extends \Magento\Framework\App\Helper\AbstractHelper
         \Magento\Sales\Model\OrderFactory $orderFactory,
         \Magento\Framework\Controller\Result\RedirectFactory $resultRedirectFactory,
         ?\Magento\Sales\Api\OrderRepositoryInterface $orderRepository = null,
-        ?\Magento\Framework\Api\SearchCriteriaBuilder $searchCriteria = null
+        ?\Magento\Framework\Api\SearchCriteriaBuilder $searchCriteria = null,
+        ?CurrentOrder $currentOrder = null
     ) {
+        $this->currentOrder = $currentOrder ?? new CurrentOrder($coreRegistry);
         $this->coreRegistry = $coreRegistry;
         $this->storeManager = $storeManager;
         $this->customerSession = $customerSession;
@@ -162,7 +172,11 @@ class Guest extends \Magento\Framework\App\Helper\AbstractHelper
                 && isset($post['oar_order_id'], $post['oar_type'])
                 && !$this->hasPostDataEmptyFields($post))
                 ? $this->loadFromPost($post) : $this->loadFromCookie($fromCookie);
-            $this->coreRegistry->register('current_order', $order);
+            if ($order instanceof Order) {
+                $this->currentOrder->set($order);
+            } else {
+                $this->coreRegistry->register('current_order', $order);
+            }
             return true;
         } catch (InputException $e) {
             $this->messageManager->addErrorMessage($e->getMessage());
