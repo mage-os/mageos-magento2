@@ -7,19 +7,20 @@ namespace Magento\Framework\ObjectManager\Config;
 
 use Magento\Framework\ObjectManager\ConfigInterface;
 use Magento\Framework\ObjectManager\ConfigCacheInterface;
+use Magento\Framework\ObjectManager\LazyProxyAwareInterface;
 use Magento\Framework\ObjectManager\LazyTypeAwareInterface;
 use Magento\Framework\ObjectManager\RelationsInterface;
 
 /**
  * Provides object manager configuration when in compiled mode
  */
-class Compiled implements ConfigInterface, LazyTypeAwareInterface
+class Compiled implements ConfigInterface, LazyTypeAwareInterface, LazyProxyAwareInterface
 {
     /**
      * Sections of a compiled configuration that are merged per top-level key, both by extend() and when
      * the compiled config loader resolves an area stored as its differences from global
      */
-    public const MERGED_SECTIONS = ['arguments', 'instanceTypes', 'preferences', 'lazyTypes'];
+    public const MERGED_SECTIONS = ['arguments', 'instanceTypes', 'preferences', 'lazyTypes', 'lazyProxies'];
 
     /**
      * @var array
@@ -42,6 +43,13 @@ class Compiled implements ConfigInterface, LazyTypeAwareInterface
      * @var array<string,bool>
      */
     private array $lazyTypes = [];
+
+    /**
+     * Compile-time map from proxy names to concrete real-instance classes.
+     *
+     * @var array<string,string>
+     */
+    private array $lazyProxies = [];
 
     /**
      * @param array $data
@@ -67,6 +75,14 @@ class Compiled implements ConfigInterface, LazyTypeAwareInterface
     public function isNonLazyType(string $type): bool
     {
         return !isset($this->lazyTypes[$type]);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getLazyProxyTarget(string $proxyType): ?string
+    {
+        return $this->lazyProxies[$proxyType] ?? null;
     }
 
     /**
