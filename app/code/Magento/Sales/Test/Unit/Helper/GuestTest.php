@@ -159,7 +159,8 @@ class GuestTest extends TestCase
                 'view' => $this->viewInterfaceMock,
                 'orderRepository' => $this->orderRepository,
                 'searchCriteriaBuilder' => $this->searchCriteriaBuilder,
-                'resultRedirectFactory' => $resultRedirectFactory
+                'resultRedirectFactory' => $resultRedirectFactory,
+                'currentOrder' => new \Magento\Sales\Model\CurrentOrder($registryMock)
             ]
         );
     }
@@ -328,5 +329,82 @@ class GuestTest extends TestCase
             ->with(Guest::COOKIE_NAME, $this->anything(), $metaDataMock);
         $requestMock = $this->createMock(Http::class);
         $this->assertTrue($this->guest->loadValidOrder($requestMock));
+    }
+
+    /**
+     * An order authorized by its guest cookie is shared with Registry readers.
+     */
+    public function testLoadSharesCurrentOrderWithRegistry(): void
+    {
+        $registry = new Registry();
+        $currentOrder = new \Magento\Sales\Model\CurrentOrder($registry);
+        $this->searchCriteriaBuilder->method('addFilter')->willReturnSelf();
+        $this->salesOrderMock->method('getProtectCode')->willReturn('secret');
+        $this->cookieManagerMock->method('getCookie')->with(Guest::COOKIE_NAME)
+            ->willReturn(base64_encode('secret:100000012'));
+        $metadata = new PublicCookieMetadata();
+        $this->cookieMetadataFactoryMock->method('createPublicCookieMetadata')->willReturn($metadata);
+        $request = $this->createMock(Http::class);
+        $request->method('getPostValue')->willReturn([]);
+        $storeManager = $this->createMock(StoreManagerInterface::class);
+        $storeManager->method('getStore')->willReturn($this->storeModelMock);
+        $guest = (new ObjectManagerHelper($this))->getObject(
+            Guest::class,
+            [
+                'coreRegistry' => $registry,
+                'currentOrder' => $currentOrder,
+                'customerSession' => $this->sessionMock,
+                'cookieManager' => $this->cookieManagerMock,
+                'cookieMetadataFactory' => $this->cookieMetadataFactoryMock,
+                'storeManager' => $storeManager,
+                'orderRepository' => $this->orderRepository,
+                'searchCriteria' => $this->searchCriteriaBuilder
+            ]
+        );
+
+        $this->assertTrue($guest->loadValidOrder($request));
+        $this->assertSame($this->salesOrderMock, $currentOrder->get());
+        $this->assertSame($this->salesOrderMock, $registry->registry('current_order'));
+    }
+
+    /**
+     * A custom repository order remains available after guest cookie validation.
+     */
+    public function testLoadRegistersNonModelOrder(): void
+    {
+        $registry = new Registry();
+        $currentOrder = new \Magento\Sales\Model\CurrentOrder($registry);
+        $this->searchCriteriaBuilder->method('addFilter')->willReturnSelf();
+        $order = $this->createMock(\Magento\Sales\Api\Data\OrderInterface::class);
+        $order->method('getProtectCode')->willReturn('secret');
+        $searchResult = $this->createMock(OrderSearchResultInterface::class);
+        $searchResult->method('getItems')->willReturn([$order]);
+        $repository = $this->createMock(OrderRepositoryInterface::class);
+        $repository->method('getList')->willReturn($searchResult);
+        $this->cookieManagerMock->method('getCookie')->with(Guest::COOKIE_NAME)
+            ->willReturn(base64_encode('secret:100000012'));
+        $metadata = new PublicCookieMetadata();
+        $this->cookieMetadataFactoryMock->method('createPublicCookieMetadata')->willReturn($metadata);
+        $request = $this->createMock(Http::class);
+        $request->method('getPostValue')->willReturn([]);
+        $storeManager = $this->createMock(StoreManagerInterface::class);
+        $storeManager->method('getStore')->willReturn($this->storeModelMock);
+        $guest = (new ObjectManagerHelper($this))->getObject(
+            Guest::class,
+            [
+                'coreRegistry' => $registry,
+                'currentOrder' => $currentOrder,
+                'customerSession' => $this->sessionMock,
+                'cookieManager' => $this->cookieManagerMock,
+                'cookieMetadataFactory' => $this->cookieMetadataFactoryMock,
+                'storeManager' => $storeManager,
+                'orderRepository' => $repository,
+                'searchCriteria' => $this->searchCriteriaBuilder
+            ]
+        );
+
+        $this->assertTrue($guest->loadValidOrder($request));
+        $this->assertNull($currentOrder->get());
+        $this->assertSame($order, $registry->registry('current_order'));
     }
 }
