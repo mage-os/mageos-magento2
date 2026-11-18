@@ -736,7 +736,7 @@ abstract class AbstractDb extends \Magento\Framework\Data\Collection
         if (!$this->_isOrdersRendered) {
             foreach ($this->_orders as $field => $direction) {
                 if (isset($this->sqlReservedWords[strtoupper($field)])) {
-                    $field = "`$field`";
+                    $field = $this->getConnection()->quoteIdentifier($field);
                 }
 
                 $this->_select->order(new \Zend_Db_Expr($field . ' ' . $direction));

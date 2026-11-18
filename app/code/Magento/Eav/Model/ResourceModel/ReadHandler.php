@@ -156,7 +156,7 @@ class ReadHandler implements AttributeInterface
                 $select = $connection->select()
                     ->from(
                         ['t' => $attributeTable],
-                        ['value' => 't.value', 'attribute_id' => 't.attribute_id']
+                        ['value' => $connection->castToText('t.value'), 'attribute_id' => 't.attribute_id']
                     )
                     ->where($metadata->getLinkField() . ' = ?', $entityData[$metadata->getLinkField()])
                     ->where('attribute_id IN (?)', $attributeIds, \Zend_Db::INT_TYPE);

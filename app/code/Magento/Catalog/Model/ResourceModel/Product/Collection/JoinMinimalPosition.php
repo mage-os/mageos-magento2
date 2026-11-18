@@ -70,7 +70,8 @@ class JoinMinimalPosition
                     []
                 );
             }
-            $positions[] = $connection->getIfNullSql($table . '.position', '~0');
+            // Portable max bigint for missing position.
+            $positions[] = $connection->getIfNullSql($table . '.position', '9223372036854775807');
         }
 
         // Ensures that position attribute is registered in _joinFields
