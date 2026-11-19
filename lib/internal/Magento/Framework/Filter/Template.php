@@ -228,17 +228,25 @@ class Template implements FilterInterface
 
         $this->filteringDepthMeter->descend();
 
-        // Processing of template directives.
-        $value = $this->resolveDirectives($value);
+        try {
+            // Processing of template directives.
+            $value = $this->resolveDirectives($value);
 
-        // At the root template, resolve directives that child templates deferred to it.
-        if ($this->filteringDepthMeter->showMark() === 1) {
-            $value = $this->resolveDeferredDirectives($value);
+            // At the root template, resolve directives that child templates deferred to it.
+            if ($this->filteringDepthMeter->showMark() === 1) {
+                $value = $this->resolveDeferredDirectives($value);
+            }
+
+            $value = $this->afterFilter($value);
+        } finally {
+            // The depth meter and the deferral registry are shared for the whole process. A directive
+            // that throws must not leave them behind, or every later template filtered in the same
+            // process is no longer treated as the root and emits unresolved deferral placeholders.
+            if ($this->filteringDepthMeter->showMark() === 1) {
+                $this->deferredDirectiveRegistry->clear();
+            }
+            $this->filteringDepthMeter->ascend();
         }
-
-        $value = $this->afterFilter($value);
-
-        $this->filteringDepthMeter->ascend();
 
         return $value;
     }
