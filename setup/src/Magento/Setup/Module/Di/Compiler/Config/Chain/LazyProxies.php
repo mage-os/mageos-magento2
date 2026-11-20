@@ -168,8 +168,14 @@ class LazyProxies implements ModificationInterface
 
         $preferred = $config['preferences'][$subject] ?? $subject;
         $target = $config['instanceTypes'][$preferred] ?? $preferred;
+        if (str_ends_with($target, '\\Proxy')) {
+            return null;
+        }
         try {
             $reflection = new \ReflectionClass($target);
+            if (!is_a($target, $subject, true)) {
+                return null;
+            }
         } catch (\Throwable) {
             return null;
         }

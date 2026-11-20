@@ -176,6 +176,41 @@ class LazyProxiesTest extends TestCase
     }
 
     /**
+     * Keep the generated proxy when the resolved target cannot stand in for the subject.
+     */
+    #[RequiresPhp('>= 8.4')]
+    #[DataProvider('unassignableTargets')]
+    public function testTargetsThatCannotReplaceTheGeneratedProxyAreExcluded(string $proxyType, array $config): void
+    {
+        $config['arguments'] = [$proxyType => []];
+
+        self::assertArrayNotHasKey($proxyType, $this->createLazyProxies()->modify($config)['lazyProxies']);
+    }
+
+    /**
+     * Supply preferences to an unrelated class and to another proxy.
+     *
+     * @return array
+     */
+    public static function unassignableTargets(): array
+    {
+        return [
+            'preference to an unrelated class' => [
+                Subject::class . '\\Proxy',
+                ['preferences' => [Subject::class => PlainClass::class]],
+            ],
+            'instance type of an unrelated class' => [
+                Subject::class . '\\Proxy',
+                ['instanceTypes' => [Subject::class => PlainClass::class]],
+            ],
+            'preference to another proxy' => [
+                AnInterface::class . '\\Proxy',
+                ['preferences' => [AnInterface::class => WrittenSubject::class . '\\Proxy']],
+            ],
+        ];
+    }
+
+    /**
      * Resolve instance types after preferences, matching the compiled object manager.
      */
     #[RequiresPhp('>= 8.4')]
