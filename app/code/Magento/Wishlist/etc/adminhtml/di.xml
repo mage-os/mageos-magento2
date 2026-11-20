@@ -35,4 +35,16 @@
             <argument name="wishlistFactory" xsi:type="object">Magento\Wishlist\Model\WishlistFactory</argument>
         </arguments>
     </type>
+    <!-- These classes moved here from Magento_Customer. Create them under their old names, so preferences
+         and plugins that other code declares for the old names keep applying. Remove with the old names. -->
+    <preference for="Magento\Wishlist\Block\Adminhtml\Customer\Edit\Tab\View\Wishlist"
+                type="Magento\Customer\Block\Adminhtml\Edit\Tab\View\Wishlist"/>
+    <preference for="Magento\Wishlist\Controller\Adminhtml\Index\Wishlist"
+                type="Magento\Customer\Controller\Adminhtml\Index\Wishlist"/>
+    <preference for="Magento\Wishlist\Controller\Adminhtml\Index\ViewWishlist"
+                type="Magento\Customer\Controller\Adminhtml\Index\ViewWishlist"/>
+    <preference for="Magento\Wishlist\Controller\Adminhtml\Wishlist\Product\Composite\Wishlist\Configure"
+                type="Magento\Customer\Controller\Adminhtml\Wishlist\Product\Composite\Wishlist\Configure"/>
+    <preference for="Magento\Wishlist\Controller\Adminhtml\Wishlist\Product\Composite\Wishlist\Update"
+                type="Magento\Customer\Controller\Adminhtml\Wishlist\Product\Composite\Wishlist\Update"/>
 </config>

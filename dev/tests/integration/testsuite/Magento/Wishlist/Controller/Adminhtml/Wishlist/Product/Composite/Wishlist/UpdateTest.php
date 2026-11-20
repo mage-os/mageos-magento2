@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\Customer\Controller\Adminhtml\Wishlist\Product\Composite\Wishlist;
+namespace Magento\Wishlist\Controller\Adminhtml\Wishlist\Product\Composite\Wishlist;
 
 use Magento\Backend\Model\Session;
 use Magento\Catalog\Api\Data\ProductInterface;
@@ -44,6 +44,8 @@ class UpdateTest extends AbstractBackendController
     }
 
     /**
+     * Update the quantity of a simple product wish list item
+     *
      * @magentoDataFixture Magento/Wishlist/_files/wishlist_with_simple_product.php
      * @magentoDbIsolation disabled
      *
@@ -59,6 +61,8 @@ class UpdateTest extends AbstractBackendController
     }
 
     /**
+     * Update the options and quantity of a configurable product wish list item
+     *
      * @magentoDataFixture Magento/Wishlist/_files/wishlist_with_configurable_product.php
      * @magentoDbIsolation disabled
      *
@@ -81,6 +85,8 @@ class UpdateTest extends AbstractBackendController
     }
 
     /**
+     * Updating an item that does not exist reports an error
+     *
      * @return void
      */
     public function testUpdateNotExistingItem(): void
@@ -94,6 +100,8 @@ class UpdateTest extends AbstractBackendController
     }
 
     /**
+     * Updating without an item ID reports an error
+     *
      * @return void
      */
     public function testUpdateWithoutParams(): void

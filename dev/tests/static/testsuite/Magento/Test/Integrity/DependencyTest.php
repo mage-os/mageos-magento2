@@ -323,7 +323,11 @@ class DependencyTest extends \PHPUnit\Framework\TestCase
             new LayoutRule(
                 self::$routeMapper->getRoutes(),
                 self::$_mapLayoutBlocks,
-                self::$_mapLayoutHandles
+                self::$_mapLayoutHandles,
+                [
+                    'frontend' => self::$routeMapper->getRoutes('standard'),
+                    'adminhtml' => self::$routeMapper->getRoutes('admin'),
+                ]
             ),
             new DiRule(new VirtualTypeMapper()),
             new ReportsConfigRule($tableToModuleMap),
