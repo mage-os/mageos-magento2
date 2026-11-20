@@ -11,6 +11,8 @@ use Laminas\Filter\FilterInterface;
 use Magento\Framework\App\Cache\TypeListInterface;
 use Magento\Framework\App\State;
 use Magento\Framework\Escaper;
+use Magento\Framework\Filter\Input\MaliciousCode;
+use Magento\Framework\Filter\Input\PurifierInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\Translate\InlineInterface;
 use Magento\Store\Api\Data\StoreInterface;
@@ -153,6 +155,67 @@ class ParserTest extends TestCase
         $this->model->processAjaxPost([]);
     }
 
+    public function testProcessAjaxPostKeepsRelativeLinkAndRemovesExternalLink(): void
+    {
+        $this->translateInlineMock->method('isAllowed')->willReturn(true);
+        $this->storeMock->method('getId')->willReturn(1);
+        $this->appStateMock->method('getAreaCode')->willReturn('frontend');
+        (new \ReflectionProperty(Parser::class, 'normalizer'))->setValue($this->model, new \Normalizer());
+
+        $purifierConfig = \HTMLPurifier_Config::createDefault();
+        $purifierConfig->set('Cache.DefinitionImpl', null);
+        $purifier = new \HTMLPurifier($purifierConfig);
+        $purifierAdapter = $this->createMock(PurifierInterface::class);
+        $purifierAdapter->method('purify')->willReturnCallback([$purifier, 'purify']);
+        (new \ReflectionProperty(Parser::class, '_inputFilter'))
+            ->setValue($this->model, new MaliciousCode($purifierAdapter));
+
+        $saved = [];
+        $this->resourceMock->expects($this->exactly(2))
+            ->method('saveTranslate')
+            ->willReturnCallback(function ($original, $custom, $locale, $storeId) use (&$saved): void {
+                $this->assertNull($locale);
+                $this->assertSame(1, $storeId);
+                $saved[$original] = $custom;
+            });
+
+        $this->model->processAjaxPost([
+            ['original' => 'relative', 'custom' => '<a href="page.html">Guide</a>', 'perstore' => 1],
+            ['original' => 'external', 'custom' => '<a href="https://outside.example">Guide</a>', 'perstore' => 1],
+        ]);
+
+        $this->assertSame(
+            ['relative' => '<a href="page.html">Guide</a>', 'external' => 'Guide'],
+            $saved
+        );
+    }
+
+    public function testRelativeFilenameLinkIsPreserved(): void
+    {
+        $result = $this->removeExternalLinks('<a href="page.html">Guide</a>');
+
+        $this->assertSame('<a href="page.html">Guide</a>', $result);
+    }
+
+    public function testExternalLinkIsStillRemoved(): void
+    {
+        $result = $this->removeExternalLinks('<a href="https://example.com">Guide</a>');
+
+        $this->assertSame('Guide', $result);
+    }
+
+    public function testHtmlParsingRestoresLibxmlErrorMode(): void
+    {
+        $previousMode = libxml_use_internal_errors(false);
+        try {
+            $this->removeExternalLinks('<a href="page.html">Guide</a>');
+
+            $this->assertFalse(libxml_use_internal_errors());
+        } finally {
+            libxml_use_internal_errors($previousMode);
+        }
+    }
+
     /**
      * @return void
      */
@@ -162,6 +225,13 @@ class ParserTest extends TestCase
         $expectedOutput = file_get_contents(__DIR__ . '/_files/output.html');
         $actualOutput = $this->model->processResponseBodyString($html);
         $this->assertEquals($expectedOutput, $actualOutput);
+    }
+
+    private function removeExternalLinks(string $html): string
+    {
+        (new \ReflectionProperty(Parser::class, 'normalizer'))->setValue($this->model, null);
+
+        return (new \ReflectionMethod(Parser::class, 'removeExternalLinks'))->invoke($this->model, $html);
     }
 
     /**
