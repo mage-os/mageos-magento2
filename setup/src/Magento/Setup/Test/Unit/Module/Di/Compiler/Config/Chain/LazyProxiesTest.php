@@ -164,7 +164,7 @@ class LazyProxiesTest extends TestCase
             AReadonlyClass::class,
             ATrait::class,
             ExtendsInternal::class,
-            \ArrayObject::class,
+            \SplQueue::class,
             'Missing\\Subject',
         ];
         foreach ($subjects as $subject) {
