@@ -10,6 +10,10 @@ namespace Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Filesystem\Driver\File;
 use Magento\Setup\Module\Di\Compiler\Config\Chain\LazyProxies;
+use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyProxies\ExtendsNonLazySubject;
+use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyProxies\NonLazyInterfaceSubject;
+use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyProxies\NonLazySubject;
+use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyProxies\NonLazyTraitSubject;
 use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyProxies\NullableProxyConsumer;
 use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyProxies\ProxyConsumer;
 use Magento\Setup\Test\Unit\Module\Di\Compiler\Config\Chain\_files\LazyProxies\ResettableSubject;
@@ -346,6 +350,38 @@ class LazyProxiesTest extends TestCase
         ]);
 
         self::assertSame([], $result['lazyProxies']);
+    }
+
+    /**
+     * Keep the generated proxy for subjects marked #[NonLazy] on the class, a parent, an interface or a trait.
+     *
+     * A native proxy runs methods that touch no instance state without constructing the real instance, which
+     * would skip the constructor side effects the attribute exists to preserve.
+     */
+    #[RequiresPhp('>= 8.4')]
+    #[DataProvider('nonLazySubjects')]
+    public function testNonLazyTargetIsExcluded(string $subject): void
+    {
+        $result = $this->createLazyProxies()->modify([
+            'arguments' => [$subject . '\\Proxy' => []],
+        ]);
+
+        self::assertSame([], $result['lazyProxies']);
+    }
+
+    /**
+     * Supply stateful subjects that carry #[NonLazy] in each supported position.
+     *
+     * @return array
+     */
+    public static function nonLazySubjects(): array
+    {
+        return [
+            'class' => [NonLazySubject::class],
+            'parent' => [ExtendsNonLazySubject::class],
+            'interface' => [NonLazyInterfaceSubject::class],
+            'nested trait' => [NonLazyTraitSubject::class],
+        ];
     }
 
     /**

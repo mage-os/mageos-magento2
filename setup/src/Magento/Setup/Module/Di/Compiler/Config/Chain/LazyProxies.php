@@ -10,6 +10,7 @@ namespace Magento\Setup\Module\Di\Compiler\Config\Chain;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Filesystem\Driver\File;
+use Magento\Framework\ObjectManager\Attribute\NonLazy;
 use Magento\Setup\Module\Di\Compiler\Config\ModificationInterface;
 
 /**
@@ -234,7 +235,7 @@ class LazyProxies implements ModificationInterface
     }
 
     /**
-     * Check PHP's target restrictions, including internal classes anywhere in the ancestry.
+     * Check PHP's target restrictions, internal classes anywhere in the ancestry and #[NonLazy] markers.
      *
      * @param \ReflectionClass $reflection
      * @return bool
@@ -250,12 +251,39 @@ class LazyProxies implements ModificationInterface
         ) {
             return false;
         }
+        foreach ($reflection->getInterfaces() as $interface) {
+            if ($interface->getAttributes(NonLazy::class) !== []) {
+                return false;
+            }
+        }
         for ($current = $reflection; $current; $current = $current->getParentClass()) {
-            if ($current->isInternal()) {
+            if ($current->isInternal()
+                || $current->getAttributes(NonLazy::class) !== []
+                || $this->usesNonLazyTrait($current)
+            ) {
                 return false;
             }
         }
         return $this->hasInstanceProperties($reflection);
+    }
+
+    /**
+     * Whether a class or trait uses a #[NonLazy] trait, directly or through other traits.
+     *
+     * A native proxy runs methods without constructing the real instance until instance state is touched,
+     * so a #[NonLazy] subject could have its constructor side effects skipped; keep the generated proxy.
+     *
+     * @param \ReflectionClass $class
+     * @return bool
+     */
+    private function usesNonLazyTrait(\ReflectionClass $class): bool
+    {
+        foreach ($class->getTraits() as $trait) {
+            if ($trait->getAttributes(NonLazy::class) !== [] || $this->usesNonLazyTrait($trait)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

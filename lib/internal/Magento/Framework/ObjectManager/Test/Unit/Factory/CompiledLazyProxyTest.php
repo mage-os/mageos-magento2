@@ -108,6 +108,7 @@ class CompiledLazyProxyTest extends TestCase
         };
         $data = $this->compiledData();
         $data['lazyProxies'][Proxy::class] = $real::class;
+        $data['preferences'][NativeProxySubject::class] = $real::class;
         $objectManager = $this->createMock(ObjectManagerInterface::class);
         $objectManager->expects(self::once())->method('get')->with(NativeProxySubject::class)->willReturn($real);
         $factory = new Compiled(new CompiledConfig($data));
@@ -118,6 +119,70 @@ class CompiledLazyProxyTest extends TestCase
         self::assertSame($real::class, $result::class);
         self::assertTrue((new \ReflectionClass($real))->isUninitializedLazyObject($result));
         self::assertSame($real->ping(), $result->ping());
+    }
+
+    /**
+     * Keep the generated proxy when a shared instance of another class is already registered for the subject.
+     *
+     * ObjectManagerFactory seeds App\Filesystem\DirectoryList for Framework\Filesystem\DirectoryList, and
+     * addSharedInstance() can do the same; PHP would reject that real instance for a native proxy of the target.
+     */
+    #[RequiresPhp('>= 8.4')]
+    public function testSeededSharedInstanceOfAnotherClassKeepsGeneratedProxy(): void
+    {
+        $real = new class ('seeded subclass') extends NativeProxySubject {
+        };
+        $objectManager = $this->createMock(ObjectManagerInterface::class);
+        $objectManager->expects(self::once())->method('get')->with(NativeProxySubject::class)->willReturn($real);
+        $shared = [ObjectManagerInterface::class => $objectManager, NativeProxySubject::class => $real];
+        $factory = new Compiled(new CompiledConfig($this->compiledData()), $shared);
+        $factory->setObjectManager($objectManager);
+
+        $result = $factory->create(Proxy::class);
+
+        self::assertInstanceOf(Proxy::class, $result);
+        self::assertSame('seeded subclass', $result->ping());
+    }
+
+    /**
+     * Use the native proxy when the registered shared instance is exactly the compiled target.
+     */
+    #[RequiresPhp('>= 8.4')]
+    public function testSeededSharedInstanceOfTargetClassUsesNativeProxy(): void
+    {
+        $real = new NativeProxySubject('seeded target');
+        $objectManager = $this->createMock(ObjectManagerInterface::class);
+        $objectManager->expects(self::once())->method('get')->with(NativeProxySubject::class)->willReturn($real);
+        $shared = [ObjectManagerInterface::class => $objectManager, NativeProxySubject::class => $real];
+        $factory = new Compiled(new CompiledConfig($this->compiledData()), $shared);
+        $factory->setObjectManager($objectManager);
+
+        $result = $factory->create(Proxy::class);
+
+        self::assertNotInstanceOf(Proxy::class, $result);
+        self::assertSame('seeded target', $result->ping());
+    }
+
+    /**
+     * Keep the generated proxy when a runtime preference no longer resolves to the compiled target.
+     */
+    #[RequiresPhp('>= 8.4')]
+    public function testRuntimePreferenceChangeKeepsGeneratedProxy(): void
+    {
+        $real = new class ('runtime preference') extends NativeProxySubject {
+        };
+        $config = new CompiledConfig($this->compiledData());
+        $config->extend(['preferences' => [NativeProxySubject::class => $real::class]]);
+        $objectManager = $this->createMock(ObjectManagerInterface::class);
+        $objectManager->expects(self::once())->method('get')->with(NativeProxySubject::class)->willReturn($real);
+        $shared = [ObjectManagerInterface::class => $objectManager];
+        $factory = new Compiled($config, $shared);
+        $factory->setObjectManager($objectManager);
+
+        $result = $factory->create(Proxy::class);
+
+        self::assertInstanceOf(Proxy::class, $result);
+        self::assertSame('runtime preference', $result->ping());
     }
 
     /**
