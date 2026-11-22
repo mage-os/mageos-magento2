@@ -407,7 +407,9 @@ class IdentifierTest extends TestCase
             ->willReturn(self::VARY);
 
         $uri = $this->createMock(HttpUri::class);
-        $uri->expects($this->any())->method('getQueryAsArray')->willReturn(['abc' => '123']);
+        $uri->expects($this->any())->method('getQueryAsArray')->willReturn(
+            ['abc' => '123', 'ref' => 'header', 'cm' => 'filter', 'si' => '2', 'tg' => 'summer']
+        );
         $this->requestMock->expects($this->any())
             ->method('getUri')
             ->willReturn($uri);
