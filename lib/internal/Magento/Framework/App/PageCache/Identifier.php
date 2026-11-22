@@ -65,33 +65,57 @@ class Identifier implements IdentifierInterface
     }
 
     /**
-     * Pattern detect marketing parameters
+     * Pattern detect marketing parameters.
+     *
+     * Keep in sync with PageCache etc/varnish*.vcl vcl_recv strip logic.
      *
      * @return array
      */
     public function getMarketingParameterPatterns(): array
     {
         return [
+            '/&?_branch_match_id\=[^&]+/',
+            '/&?_bta_[a-z]+\=[^&]+/',
+            '/&?_ga\=[^&]+/',
+            '/&?_gl\=[^&]+/',
+            '/&?_ke\=[^&]+/',
+            '/&?_kx\=[^&]+/',
+            '/&?campid\=[^&]+/',
+            '/&?ceneo_cid\=[^&]+/',
+            '/&?clickId\=[^&]+/',
+            '/&?cof\=[^&]+/',
+            '/&?customid\=[^&]+/',
+            '/&?cx\=[^&]+/',
+            '/&?dclid\=[^&]+/',
+            '/&?dm_i\=[^&]+/',
+            '/&?ef_id\=[^&]+/',
+            '/&?epik\=[^&]+/',
+            '/&?fbclid\=[^&]+/',
             '/&?gad_source\=[^&]+/',
             '/&?gbraid\=[^&]+/',
-            '/&?wbraid\=[^&]+/',
-            '/&?_gl\=[^&]+/',
-            '/&?dclid\=[^&]+/',
-            '/&?gclsrc\=[^&]+/',
-            '/&?srsltid\=[^&]+/',
-            '/&?msclkid\=[^&]+/',
-            '/&?_kx\=[^&]+/',
             '/&?gclid\=[^&]+/',
-            '/&?cx\=[^&]+/',
-            '/&?ie\=[^&]+/',
-            '/&?cof\=[^&]+/',
+            '/&?gclsrc\=[^&]+/',
+            '/&?gdf[a-z]+\=[^&]+/',
+            '/&?hsa_[a-z]+\=[^&]+/',
+            '/&?igshid\=[^&]+/',
+            '/&?mc_[a-z]+\=[^&]+/',
+            '/&?mk[a-z]{3}\=[^&]+/',
+            '/&?msclkid\=[^&]+/',
+            '/&?(?:mtm|matomo)_[a-z]+\=[^&]+/',
+            '/&?pcrid\=[^&]+/',
+            '/&?p(?:iwi)?k_[a-z]+\=[^&]+/',
+            '/&?redirect(?:_log)?_mongo_id\=[^&]+/',
+            '/&?s_kwcid\=[^&]+/',
+            '/&?sb_referer_host\=[^&]+/',
+            '/&?ScCid\=[^&]+/',
             '/&?siteurl\=[^&]+/',
+            '/&?snrai_[a-z]+\=[^&]+/',
+            '/&?srsltid\=[^&]+/',
+            '/&?tduid\=[^&]+/',
+            '/&?trk_[a-z]+\=[^&]+/',
+            '/&?utm_[a-z]+\=[^&]+/',
+            '/&?wbraid\=[^&]+/',
             '/&?zanpid\=[^&]+/',
-            '/&?origin\=[^&]+/',
-            '/&?fbclid\=[^&]+/',
-            '/&?mc_(.*?)\=[^&]+/',
-            '/&?utm_(.*?)\=[^&]+/',
-            '/&?_bta_(.*?)\=[^&]+/',
         ];
     }
 
