@@ -10,6 +10,7 @@ namespace Magento\SalesSequence\Observer;
 use Magento\Framework\Event\Observer as EventObserver;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\SalesSequence\Model\Sequence\DeleteByStore;
+use Psr\Log\LoggerInterface;
 
 /**
  * Removes sequences of store views deleted together with their website or store group.
@@ -20,9 +21,11 @@ class ScopeSequenceRemovalObserver implements ObserverInterface
 {
     /**
      * @param DeleteByStore $deleteByStore
+     * @param LoggerInterface $logger
      */
     public function __construct(
-        private readonly DeleteByStore $deleteByStore
+        private readonly DeleteByStore $deleteByStore,
+        private readonly LoggerInterface $logger
     ) {
     }
 
@@ -35,6 +38,9 @@ class ScopeSequenceRemovalObserver implements ObserverInterface
     public function execute(EventObserver $observer)
     {
         $scope = $observer->getEvent()->getData('data_object');
+        if (!$scope) {
+            return;
+        }
         // Read from a new collection: getStoreIds() may return stale cached membership
         $storeIds = $scope->getStoreCollection()->getAllIds();
         if (!$storeIds) {
@@ -44,7 +50,12 @@ class ScopeSequenceRemovalObserver implements ObserverInterface
         $scope->getResource()->addCommitCallback(
             function () use ($storeIds) {
                 foreach ($storeIds as $storeId) {
-                    $this->deleteByStore->execute((int)$storeId);
+                    try {
+                        $this->deleteByStore->execute((int)$storeId);
+                    } catch (\Throwable $e) {
+                        // Keep cleaning up the remaining stores
+                        $this->logger->critical($e);
+                    }
                 }
             }
         );

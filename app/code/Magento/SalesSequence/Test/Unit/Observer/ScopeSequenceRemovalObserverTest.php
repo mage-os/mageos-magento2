@@ -16,6 +16,7 @@ use Magento\Store\Model\ResourceModel\Website as WebsiteResource;
 use Magento\Store\Model\Website;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
 class ScopeSequenceRemovalObserverTest extends TestCase
 {
@@ -38,7 +39,10 @@ class ScopeSequenceRemovalObserverTest extends TestCase
     {
         $this->deleteByStore = $this->createMock(DeleteByStore::class);
         $this->resource = $this->createMock(WebsiteResource::class);
-        $this->observer = new ScopeSequenceRemovalObserver($this->deleteByStore);
+        $this->observer = new ScopeSequenceRemovalObserver(
+            $this->deleteByStore,
+            $this->createStub(LoggerInterface::class)
+        );
     }
 
     public function testSequencesAreDeletedAfterCommit(): void
@@ -64,6 +68,42 @@ class ScopeSequenceRemovalObserverTest extends TestCase
 
         $callback();
         $this->assertSame([2, 3], $deletedStoreIds);
+    }
+
+    public function testFailureForOneStoreDoesNotStopOthers(): void
+    {
+        $logger = $this->createMock(LoggerInterface::class);
+        $observer = new ScopeSequenceRemovalObserver($this->deleteByStore, $logger);
+        $callback = null;
+        $this->resource->expects($this->once())->method('addCommitCallback')->willReturnCallback(
+            function (callable $commitCallback) use (&$callback) {
+                $callback = $commitCallback;
+                return $this->resource;
+            }
+        );
+        $error = new \RuntimeException('Cannot drop table');
+        $deletedStoreIds = [];
+        $this->deleteByStore->expects($this->exactly(3))->method('execute')->willReturnCallback(
+            function ($storeId) use (&$deletedStoreIds, $error) {
+                if ($storeId === 2) {
+                    throw $error;
+                }
+                $deletedStoreIds[] = $storeId;
+            }
+        );
+        $logger->expects($this->once())->method('critical')->with($error);
+
+        $observer->execute($this->createObserver(['2', '3', '4']));
+        $callback();
+        $this->assertSame([3, 4], $deletedStoreIds);
+    }
+
+    public function testNothingIsScheduledWithoutScope(): void
+    {
+        $this->resource->expects($this->never())->method('addCommitCallback');
+        $this->deleteByStore->expects($this->never())->method('execute');
+
+        $this->observer->execute(new Observer(['event' => new Event([])]));
     }
 
     public function testNothingIsScheduledWithoutStores(): void
