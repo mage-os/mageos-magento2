@@ -136,29 +136,7 @@ class Context
      */
     private function updateContext(RequestInterface $request, StoreInterface $store)
     {
-        $runType = $request->getServerValue(StoreManager::PARAM_RUN_TYPE);
-        switch (true) {
-            case $store->isUseStoreInUrl():
-                $defaultStore = $store;
-                break;
-            case ScopeInterface::SCOPE_STORE == $runType:
-                $defaultStoreCode = $request->getServerValue(StoreManager::PARAM_RUN_CODE);
-                $defaultStore = $this->storeManager->getStore($defaultStoreCode);
-                break;
-            case ScopeInterface::SCOPE_WEBSITE == $runType:
-                $website = $this->storeManager->getWebsite($store->getWebsiteId());
-                $defaultStoreId = $this->storeManager->getGroup($website->getDefaultGroupId())->getDefaultStoreId();
-                $defaultStore = $this->storeManager->getStore($defaultStoreId);
-                break;
-            case ScopeInterface::SCOPE_GROUP == $runType:
-                $defaultStoreId = $this->storeManager->getGroup($store->getStoreGroupId())->getDefaultStoreId();
-                $defaultStore = $this->storeManager->getStore($defaultStoreId);
-                break;
-            default:
-                $defaultStoreCode = $this->storeManager->getDefaultStoreView()->getCode();
-                $defaultStore = $this->storeManager->getStore($defaultStoreCode);
-                break;
-        }
+        $defaultStore = $store->isUseStoreInUrl() ? $store : $this->getRunScopeDefaultStore($request);
         $this->httpContext->setValue(
             StoreManagerInterface::CONTEXT_STORE,
             $store->getCode(),
@@ -169,6 +147,60 @@ class Context
             $this->session->getCurrencyCode() ?: $store->getDefaultCurrencyCode(),
             $defaultStore->getDefaultCurrencyCode()
         );
+    }
+
+    /**
+     * Get the store this vhost serves to a visitor who expressed no store preference.
+     *
+     * The reference store is derived from the run scope of the vhost, never from the requested store:
+     * the latter comes from the visitor (___store or the store cookie), so using it would let two
+     * different storefronts produce the same (empty) vary data and share one full page cache entry.
+     * The normalisation below mirrors \Magento\Store\Model\StoreResolver, which ignores the run type
+     * and falls back to the default website whenever no run code is configured.
+     *
+     * @param RequestInterface $request
+     * @return StoreInterface
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    private function getRunScopeDefaultStore(RequestInterface $request): StoreInterface
+    {
+        $runCode = $request->getServerValue(StoreManager::PARAM_RUN_CODE);
+        $runType = $runCode
+            ? $request->getServerValue(StoreManager::PARAM_RUN_TYPE)
+            : ScopeInterface::SCOPE_WEBSITE;
+
+        try {
+            return $this->resolveRunScopeStore($runType, $runCode);
+        } catch (NoSuchEntityException $e) {
+            // A run scope pointing at a website, group or store that no longer exists must not turn a
+            // valid storefront request into "Invalid store requested." or an unhandled exception.
+            return $this->storeManager->getStore($this->storeManager->getDefaultStoreView()->getCode());
+        }
+    }
+
+    /**
+     * Get the default store of the given run scope.
+     *
+     * @param string|null $runType
+     * @param string|null $runCode
+     * @return StoreInterface
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    private function resolveRunScopeStore(?string $runType, ?string $runCode): StoreInterface
+    {
+        switch ($runType) {
+            case ScopeInterface::SCOPE_STORE:
+                return $this->storeManager->getStore($runCode);
+            case ScopeInterface::SCOPE_GROUP:
+                $group = $this->storeManager->getGroup((int)$runCode);
+                return $this->storeManager->getStore($group->getDefaultStoreId());
+            case ScopeInterface::SCOPE_WEBSITE:
+                $website = $this->storeManager->getWebsite($runCode ?: true);
+                $group = $this->storeManager->getGroup($website->getDefaultGroupId());
+                return $this->storeManager->getStore($group->getDefaultStoreId());
+            default:
+                return $this->storeManager->getStore($this->storeManager->getDefaultStoreView()->getCode());
+        }
     }
 
     /**

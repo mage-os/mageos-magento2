@@ -32,7 +32,10 @@ class ContextTest extends TestCase
 {
     use MockCreationTrait;
 
-    private const WEBSITE_DEFAULT_GROUP_IDS = [1 => 1, 2 => 2];
+    private const WEBSITES = [
+        'base' => ['id' => 1, 'default_group_id' => 1, 'is_default' => true],
+        'second' => ['id' => 2, 'default_group_id' => 2, 'is_default' => false],
+    ];
 
     private const GROUP_DEFAULT_STORE_IDS = [1 => 1, 2 => 3, 3 => 5];
 
@@ -116,6 +119,12 @@ class ContextTest extends TestCase
             'website run type, second website, store code in url' => [
                 $website, 'second', 'second_fr', true, null, [],
             ],
+            'website run type, run code of another website' => [
+                $website, 'base', 'second_en', false, null, ['store' => 'second_en', 'current_currency' => 'EUR'],
+            ],
+            'website run type, no run code falls back to default website' => [
+                $website, null, 'second_en', false, null, ['store' => 'second_en', 'current_currency' => 'EUR'],
+            ],
             'group run type, default group, default store view' => [
                 $group, '1', 'default', false, null, [],
             ],
@@ -140,6 +149,15 @@ class ContextTest extends TestCase
             'group run type, store code in url' => [
                 $group, '3', 'outlet_fr', true, null, [],
             ],
+            'group run type, run code of another group' => [
+                $group, '2', 'outlet_en', false, null, ['store' => 'outlet_en'],
+            ],
+            'group run type, no run code falls back to default website' => [
+                $group, null, 'second_en', false, null, ['store' => 'second_en', 'current_currency' => 'EUR'],
+            ],
+            'store run type, no run code falls back to default website' => [
+                $store, null, 'second_en', false, null, ['store' => 'second_en', 'current_currency' => 'EUR'],
+            ],
             'store run type, store view of run code' => [
                 $store, 'second_en', 'second_en', false, null, [],
             ],
@@ -158,11 +176,15 @@ class ContextTest extends TestCase
     /**
      * @param string|null $runType
      * @param string|null $runCode
+     * @param array $expectedVaryData
      * @return void
      */
     #[DataProvider('invalidStoreDataProvider')]
-    public function testBeforeDispatchSetsCurrentStoreForInvalidStoreCode(?string $runType, ?string $runCode): void
-    {
+    public function testBeforeDispatchSetsCurrentStoreForInvalidStoreCode(
+        ?string $runType,
+        ?string $runCode,
+        array $expectedVaryData
+    ): void {
         $exception = null;
         try {
             $this->createPlugin(false, null)
@@ -175,7 +197,7 @@ class ContextTest extends TestCase
 
         $this->assertInstanceOf(NotFoundException::class, $exception);
         $this->assertSame('second_en', $this->httpContext->getValue(StoreManagerInterface::CONTEXT_STORE));
-        $this->assertSame([], $this->httpContext->getData());
+        $this->assertSame($expectedVaryData, $this->httpContext->getData());
     }
 
     /**
@@ -184,8 +206,11 @@ class ContextTest extends TestCase
     public static function invalidStoreDataProvider(): array
     {
         return [
-            'website run type' => [ScopeInterface::SCOPE_WEBSITE, 'second'],
-            'group run type' => [ScopeInterface::SCOPE_GROUP, '3'],
+            'website run type' => [ScopeInterface::SCOPE_WEBSITE, 'second', []],
+            'group run type' => [ScopeInterface::SCOPE_GROUP, '2', []],
+            'group run type, run code of another group' => [
+                ScopeInterface::SCOPE_GROUP, '3', ['store' => 'second_en'],
+            ],
         ];
     }
 
@@ -276,11 +301,20 @@ class ContextTest extends TestCase
         $storeMap[] = [null, $stores['second_en']];
 
         $websiteMap = [];
-        foreach (self::WEBSITE_DEFAULT_GROUP_IDS as $websiteId => $groupId) {
-            $websiteMap[] = [
-                $websiteId,
-                $this->createConfiguredMock(WebsiteInterface::class, ['getDefaultGroupId' => $groupId]),
-            ];
+        foreach (self::WEBSITES as $websiteCode => $websiteData) {
+            $website = $this->createConfiguredMock(
+                WebsiteInterface::class,
+                [
+                    'getId' => $websiteData['id'],
+                    'getCode' => $websiteCode,
+                    'getDefaultGroupId' => $websiteData['default_group_id'],
+                ]
+            );
+            $websiteMap[] = [$websiteData['id'], $website];
+            $websiteMap[] = [$websiteCode, $website];
+            if ($websiteData['is_default']) {
+                $websiteMap[] = [true, $website];
+            }
         }
 
         $groupMap = [];
