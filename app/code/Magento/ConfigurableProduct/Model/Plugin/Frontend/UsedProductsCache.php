@@ -157,6 +157,8 @@ class UsedProductsCache
 
         $usedProducts = [];
         foreach ($items as $item) {
+            // Attribute objects cannot be restored from a JSON data payload.
+            unset($item['_cache_instance_product_set_attributes']);
             /** @var Product $productItem */
             $productItem = $this->productFactory->create();
             $productItem->setData($item);
@@ -182,7 +184,10 @@ class UsedProductsCache
         $data = $this->serializer->serialize(
             array_map(
                 function ($item) {
-                    return $item->getData();
+                    $data = $item->getData();
+                    // Keep the live product's attribute objects out of persistent cache data.
+                    unset($data['_cache_instance_product_set_attributes']);
+                    return $data;
                 },
                 $subProducts
             )
