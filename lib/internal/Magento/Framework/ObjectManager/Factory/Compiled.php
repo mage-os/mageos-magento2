@@ -27,7 +27,7 @@ class Compiled extends AbstractFactory
     private $sharedInstances;
 
     /**
-     * Whether the env.php kill-switch has disabled lazy-ghost construction.
+     * Whether the env.php kill-switch has disabled native lazy object construction.
      *
      * @var bool
      */
@@ -61,6 +61,11 @@ class Compiled extends AbstractFactory
      */
     public function create($requestedType, array $arguments = [])
     {
+        $lazyProxy = $this->createLazyProxy($requestedType, $arguments);
+        if ($lazyProxy !== null) {
+            return $lazyProxy;
+        }
+
         $type = $this->config->getInstanceType($requestedType);
 
         /**
@@ -89,6 +94,62 @@ class Compiled extends AbstractFactory
         }
 
         return $this->createObject($type, $this->resolveArguments($requestedType, $arguments));
+    }
+
+    /**
+     * Construct a native proxy only when compiled configuration proves the target eligible.
+     *
+     * @param string $requestedType
+     * @param array $arguments
+     * @return object|null
+     */
+    private function createLazyProxy(string $requestedType, array $arguments): ?object
+    {
+        if (!str_ends_with($requestedType, '\\Proxy')
+            || \PHP_VERSION_ID < 80400
+            || $this->lazyDisabled
+            || $arguments !== []
+            || !$this->config instanceof \Magento\Framework\ObjectManager\LazyProxyAwareInterface
+        ) {
+            return null;
+        }
+
+        $target = $this->config->getLazyProxyTarget($requestedType);
+        if ($target === null) {
+            return null;
+        }
+
+        $subject = substr($requestedType, 0, -strlen('\\Proxy'));
+        if (!$this->resolvesToTarget($subject, $target)) {
+            return null;
+        }
+
+        return (new \ReflectionClass($target))->newLazyProxy(function () use ($subject) {
+            $real = $this->objectManager->get($subject);
+            return (new \ReflectionClass($real))->initializeLazyObject($real);
+        });
+    }
+
+    /**
+     * Whether the subject still resolves at runtime to the class recorded at compile time.
+     *
+     * PHP rejects a real instance whose class differs from the native proxy class, while a generated proxy
+     * accepts any subclass. Shared instances seeded at bootstrap (for example App\Filesystem\DirectoryList
+     * registered for Framework\Filesystem\DirectoryList), added through addSharedInstance(), or preferences
+     * changed through configure() can all diverge from the compiled target, so keep the generated proxy then.
+     *
+     * @param string $subject
+     * @param string $target
+     * @return bool
+     */
+    private function resolvesToTarget(string $subject, string $target): bool
+    {
+        $preferred = $this->config->getPreference($subject);
+        if (isset($this->sharedInstances[$preferred])) {
+            return get_class($this->sharedInstances[$preferred]) === $target;
+        }
+
+        return $this->config->getInstanceType($preferred) === $target;
     }
 
     /**

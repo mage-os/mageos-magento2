@@ -93,7 +93,7 @@ class Area implements OperationInterface
         $this->sortDefinitions($definitionsCollection);
 
         $areaCodes = array_merge([App\Area::AREA_GLOBAL], $this->areaList->getCodes());
-        $globalConfig = [];
+        $configs = [];
         foreach ($areaCodes as $areaCode) {
             $config = $this->configReader->generateCachePerScope($definitionsCollection, $areaCode);
             $config = $this->modificationChain->modify($config);
@@ -103,6 +103,30 @@ class Area implements OperationInterface
             ksort($config['preferences']);
             ksort($config['instanceTypes']);
 
+            $configs[$areaCode] = $config;
+        }
+
+        $this->writeConfigurations($configs);
+    }
+
+    /**
+     * Keep only native proxy targets that remain eligible and identical in every area.
+     *
+     * @param array $configs
+     * @return void
+     */
+    private function writeConfigurations(array $configs): void
+    {
+        $lazyProxies = $configs[App\Area::AREA_GLOBAL]['lazyProxies'] ?? [];
+        foreach ($configs as $config) {
+            $lazyProxies = array_intersect_assoc($lazyProxies, $config['lazyProxies'] ?? []);
+        }
+
+        $globalConfig = [];
+        foreach ($configs as $areaCode => $config) {
+            if (isset($config['lazyProxies'])) {
+                $config['lazyProxies'] = $lazyProxies;
+            }
             if ($areaCode === App\Area::AREA_GLOBAL) {
                 $globalConfig = $config;
             } else {

@@ -26,6 +26,7 @@ use Magento\Setup\Module\Di\Code\Generator\PluginList;
 use Magento\Setup\Module\Di\Code\Reader\ClassesScanner;
 use Magento\Setup\Module\Di\Compiler\Config\Chain\BackslashTrim;
 use Magento\Setup\Module\Di\Compiler\Config\Chain\InterceptorSubstitution;
+use Magento\Setup\Module\Di\Compiler\Config\Chain\LazyProxies;
 use Magento\Setup\Module\Di\Compiler\Config\Chain\LazyTypes;
 use Magento\Setup\Module\Di\Compiler\Config\Chain\PreferencesResolving;
 use Magento\Setup\Module\Di\Compiler\Config\ModificationChain;
@@ -361,6 +362,9 @@ class DiCompileCommand extends Command
                             ],
                             'LazyTypes' => [
                                 'instance' => LazyTypes::class
+                            ],
+                            'LazyProxies' => [
+                                'instance' => LazyProxies::class
                             ],
                         ]
                     ]
