@@ -3,7 +3,7 @@
  * Copyright 2013 Adobe
  * All Rights Reserved.
  */
-namespace Magento\Customer\Controller\Adminhtml\Wishlist\Product\Composite;
+namespace Magento\Wishlist\Controller\Adminhtml\Wishlist\Product\Composite;
 
 use Magento\Framework\Exception\LocalizedException as CoreException;
 
@@ -17,7 +17,7 @@ abstract class Wishlist extends \Magento\Backend\App\Action
      *
      * @see _isAllowed()
      */
-    const ADMIN_RESOURCE = 'Magento_Customer::manage';
+    public const ADMIN_RESOURCE = 'Magento_Customer::manage';
 
     /**
      * Wishlist we're working with.

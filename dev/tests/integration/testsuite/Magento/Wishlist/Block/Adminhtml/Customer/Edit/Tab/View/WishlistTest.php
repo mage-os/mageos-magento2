@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\Customer\Block\Adminhtml\Edit\Tab\View;
+namespace Magento\Wishlist\Block\Adminhtml\Customer\Edit\Tab\View;
 
 use Magento\Customer\Controller\RegistryConstants;
 use Magento\Framework\ObjectManagerInterface;

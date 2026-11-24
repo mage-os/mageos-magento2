@@ -3,11 +3,11 @@
  * Copyright 2014 Adobe
  * All Rights Reserved.
  */
-namespace Magento\Customer\Controller\Adminhtml\Wishlist\Product\Composite\Wishlist;
+namespace Magento\Wishlist\Controller\Adminhtml\Wishlist\Product\Composite\Wishlist;
 
 use Exception;
 
-class Configure extends \Magento\Customer\Controller\Adminhtml\Wishlist\Product\Composite\Wishlist
+class Configure extends \Magento\Wishlist\Controller\Adminhtml\Wishlist\Product\Composite\Wishlist
 {
     /**
      * Ajax handler to response configuration fieldset of composite product in customer's wishlist.

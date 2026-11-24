@@ -105,7 +105,7 @@ class Item extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\AbstractRe
     /**
      * Returns formatted option value for an item
      *
-     * @param \Magento\Wishlist\Model\Item\Option $option
+     * @param array|string $option
      * @return array
      */
     protected function getFormattedOptionValue($option)
