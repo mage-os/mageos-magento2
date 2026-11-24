@@ -42,6 +42,9 @@ class AuthenticationTest extends TestCase
         $anotherPassword = 'another_password';
         $anotherHeader = 'Basic YW5vdGhlcl9sb2dpbjphbm90aGVyX3Bhc3N3b3Jk';
 
+        $colonPassword = 'pass:wo:rd';
+        $colonHeader = 'Basic bG9naW46cGFzczp3bzpyZA==';
+
         return [
             [[], '', ''],
             [['REDIRECT_HTTP_AUTHORIZATION' => $header], $login, $password],
@@ -69,7 +72,24 @@ class AuthenticationTest extends TestCase
                 ['REDIRECT_HTTP_AUTHORIZATION' => $header, 'HTTP_AUTHORIZATION' => $anotherHeader],
                 $anotherLogin,
                 $anotherPassword
-            ]
+            ],
+            'password with colons, HTTP_AUTHORIZATION' => [
+                ['HTTP_AUTHORIZATION' => $colonHeader],
+                $login,
+                $colonPassword
+            ],
+            'password with colons, REDIRECT_HTTP_AUTHORIZATION' => [
+                ['REDIRECT_HTTP_AUTHORIZATION' => $colonHeader],
+                $login,
+                $colonPassword
+            ],
+            'password with colons, Authorization' => [
+                ['Authorization' => $colonHeader],
+                $login,
+                $colonPassword
+            ],
+            'no colon, HTTP_AUTHORIZATION' => [['HTTP_AUTHORIZATION' => 'Basic bG9naW4='], $login, ''],
+            'no colon, Authorization' => [['Authorization' => 'Basic bG9naW4='], $login, '']
         ];
     }
 

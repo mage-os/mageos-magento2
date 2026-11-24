@@ -67,13 +67,28 @@ class Authentication
              * the PHP directive cgi.rfc2616_headers must be set to 0 (the default value).
              */
             $auth = $server['HTTP_AUTHORIZATION'];
-            list($user, $pass) = explode(':', base64_decode(substr($auth, strpos($auth, " ") + 1)));
+            list($user, $pass) = $this->parseBasicAuth($auth);
         } elseif (!empty($server['Authorization'])) {
             $auth = $server['Authorization'];
-            list($user, $pass) = explode(':', base64_decode(substr($auth, strpos($auth, " ") + 1)));
+            list($user, $pass) = $this->parseBasicAuth($auth);
         }
 
         return [$user, $pass];
+    }
+
+    /**
+     * Extract login and password from the value of a "Basic" authorization header
+     *
+     * Only the first colon separates them, the password may contain more.
+     *
+     * @param string $header
+     * @return string[]
+     */
+    private function parseBasicAuth(string $header): array
+    {
+        $credentials = base64_decode(substr($header, strpos($header, ' ') + 1));
+
+        return explode(':', $credentials, 2) + ['', ''];
     }
 
     /**
