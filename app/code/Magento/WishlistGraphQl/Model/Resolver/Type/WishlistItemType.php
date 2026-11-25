@@ -7,53 +7,15 @@ declare(strict_types=1);
 
 namespace Magento\WishlistGraphQl\Model\Resolver\Type;
 
-use Magento\Catalog\Api\Data\ProductInterface;
-use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\GraphQl\Query\Resolver\TypeResolverInterface;
-
 /**
  * Resolving the wishlist item type
+ *
+ * Kept so that supportedTypes registered for this class keep working: Magento_WishlistGraphQl
+ * makes it the preference for the CatalogGraphQl resolver, whose arguments it inherits.
+ *
+ * @deprecated Register supportedTypes on the replacement instead.
+ * @see \Magento\CatalogGraphQl\Model\Resolver\Type\WishlistItemType
  */
-class WishlistItemType implements TypeResolverInterface
+class WishlistItemType extends \Magento\CatalogGraphQl\Model\Resolver\Type\WishlistItemType
 {
-    /**
-     * @var array
-     */
-    private $supportedTypes = [];
-
-    /**
-     * @param array $supportedTypes
-     */
-    public function __construct(array $supportedTypes = [])
-    {
-        $this->supportedTypes = $supportedTypes;
-    }
-
-    /**
-     * Resolving wishlist item type
-     *
-     * @param array $data
-     *
-     * @return string
-     *
-     * @throws LocalizedException
-     */
-    public function resolveType(array $data): string
-    {
-        if (!$data['model'] instanceof ProductInterface) {
-            throw new LocalizedException(__('"model" should be a "%instance" instance', [
-                'instance' => ProductInterface::class
-            ]));
-        }
-
-        $productTypeId = $data['model']->getTypeId();
-
-        if (!isset($this->supportedTypes[$productTypeId])) {
-            throw new LocalizedException(
-                __('Product "%product_type" type is not supported', ['product_type' => $productTypeId])
-            );
-        }
-
-        return $this->supportedTypes[$productTypeId];
-    }
 }

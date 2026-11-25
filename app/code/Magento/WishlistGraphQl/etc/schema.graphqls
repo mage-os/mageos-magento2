@@ -34,11 +34,7 @@ type Wishlist @doc(description: "Contains a customer wish list.") {
     updated_at: String @doc(description: "The time of the last modification to the wish list.")
 }
 
-interface WishlistItemInterface @typeResolver(class: "Magento\\WishlistGraphQl\\Model\\Resolver\\Type\\WishlistItemType") @doc(description: "The interface for wish list items."){
-    id: ID! @doc(description: "The unique ID for a `WishlistItemInterface` object.")
-    quantity: Float!  @doc(description: "The quantity of this wish list item.")
-    description: String  @doc(description: "The description of the item.")
-    added_at: String!  @doc(description: "The date and time the item was added to the wish list.")
+interface WishlistItemInterface {
     product: ProductInterface @doc(description: "Product details of the wish list item.") @resolver(class: "\\Magento\\WishlistGraphQl\\Model\\Resolver\\ProductResolver")
     customizable_options: [SelectedCustomizableOption]! @resolver(class: "Magento\\WishlistGraphQl\\Model\\Resolver\\CustomizableOptions") @doc(description: "Custom options selected for the wish list item.")
 }

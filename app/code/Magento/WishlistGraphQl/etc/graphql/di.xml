@@ -8,6 +8,8 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <preference for="Magento\WishlistGraphQl\Model\WishlistItem\DataProvider\CustomizableOptionValueInterface" type="Magento\WishlistGraphQl\Model\WishlistItem\DataProvider\CustomizableOptionValue\Composite" />
+    <!-- Keeps supportedTypes registered on the deprecated WishlistGraphQl resolver working -->
+    <preference for="Magento\CatalogGraphQl\Model\Resolver\Type\WishlistItemType" type="Magento\WishlistGraphQl\Model\Resolver\Type\WishlistItemType" />
     <type name="Magento\StoreGraphQl\Model\Resolver\Store\StoreConfigDataProvider">
         <arguments>
             <argument name="extendedConfigData" xsi:type="array">
