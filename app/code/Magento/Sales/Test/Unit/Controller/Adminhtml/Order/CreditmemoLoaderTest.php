@@ -115,7 +115,8 @@ class CreditmemoLoaderTest extends TestCase
             $this->messageManagerMock,
             $this->registryMock,
             $this->stockConfiguration,
-            $data
+            $data,
+            new \Magento\Sales\Model\CurrentCreditmemo($this->registryMock)
         );
     }
 
@@ -511,5 +512,59 @@ class CreditmemoLoaderTest extends TestCase
             ->willReturn($creditmemoMock);
 
         $this->assertEquals($creditmemoMock, $this->loader->load());
+    }
+
+    /**
+     * Loading a credit memo exposes it through both access paths.
+     */
+    public function testLoadSharesCurrentCreditmemoWithRegistry(): void
+    {
+        $registry = new Registry();
+        $currentCreditmemo = new \Magento\Sales\Model\CurrentCreditmemo($registry);
+        $creditmemo = $this->createMock(Creditmemo::class);
+        $this->creditmemoRepositoryMock->expects($this->once())->method('get')->with(12)->willReturn($creditmemo);
+        $loader = new CreditmemoLoader(
+            $this->creditmemoRepositoryMock,
+            $this->creditmemoFactoryMock,
+            $this->orderFactoryMock,
+            $this->invoiceRepositoryMock,
+            $this->eventManagerMock,
+            $this->sessionMock,
+            $this->messageManagerMock,
+            $registry,
+            $this->stockConfiguration,
+            ['creditmemo_id' => 12],
+            $currentCreditmemo
+        );
+
+        $this->assertSame($creditmemo, $loader->load());
+        $this->assertSame($creditmemo, $currentCreditmemo->get());
+        $this->assertSame($creditmemo, $registry->registry('current_creditmemo'));
+    }
+
+    /**
+     * Loading without IDs preserves the false Registry value.
+     */
+    public function testLoadWithoutIdsPreservesFalseInRegistry(): void
+    {
+        $registry = new Registry();
+        $currentCreditmemo = new \Magento\Sales\Model\CurrentCreditmemo($registry);
+        $loader = new CreditmemoLoader(
+            $this->creditmemoRepositoryMock,
+            $this->creditmemoFactoryMock,
+            $this->orderFactoryMock,
+            $this->invoiceRepositoryMock,
+            $this->eventManagerMock,
+            $this->sessionMock,
+            $this->messageManagerMock,
+            $registry,
+            $this->stockConfiguration,
+            [],
+            $currentCreditmemo
+        );
+
+        $this->assertFalse($loader->load());
+        $this->assertNull($currentCreditmemo->get());
+        $this->assertFalse($registry->registry('current_creditmemo'));
     }
 }

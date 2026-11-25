@@ -7,6 +7,7 @@ namespace Magento\Sales\Controller\Adminhtml\Order;
 
 use Magento\Framework\DataObject;
 use Magento\Sales\Api\CreditmemoRepositoryInterface;
+use Magento\Sales\Model\CurrentCreditmemo;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\CreditmemoFactory;
 
@@ -22,9 +23,15 @@ use Magento\Sales\Model\Order\CreditmemoFactory;
  * @method int getInvoiceId()
  * @method int getOrderId()
  * @SuppressWarnings(PHPMD.CookieAndSessionMisuse)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class CreditmemoLoader extends DataObject
 {
+    /**
+     * @var CurrentCreditmemo
+     */
+    private CurrentCreditmemo $currentCreditmemo;
+
     /**
      * @var CreditmemoRepositoryInterface;
      */
@@ -81,6 +88,7 @@ class CreditmemoLoader extends DataObject
      * @param \Magento\Framework\Registry $registry
      * @param \Magento\CatalogInventory\Api\StockConfigurationInterface $stockConfiguration
      * @param array $data
+     * @param CurrentCreditmemo|null $currentCreditmemo
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
@@ -93,8 +101,10 @@ class CreditmemoLoader extends DataObject
         \Magento\Framework\Message\ManagerInterface $messageManager,
         \Magento\Framework\Registry $registry,
         \Magento\CatalogInventory\Api\StockConfigurationInterface $stockConfiguration,
-        array $data = []
+        array $data = [],
+        ?CurrentCreditmemo $currentCreditmemo = null
     ) {
+        $this->currentCreditmemo = $currentCreditmemo ?? new CurrentCreditmemo($registry);
         $this->creditmemoRepository = $creditmemoRepository;
         $this->creditmemoFactory = $creditmemoFactory;
         $this->orderFactory = $orderFactory;
@@ -244,7 +254,22 @@ class CreditmemoLoader extends DataObject
             ['creditmemo' => $creditmemo, 'input' => $this->getCreditmemo()]
         );
 
-        $this->registry->register('current_creditmemo', $creditmemo);
+        $this->registerCurrentCreditmemo($creditmemo);
         return $creditmemo;
+    }
+
+    /**
+     * Expose the loaded credit memo through the typed holder, or keep a non-model value in the Registry.
+     *
+     * @param mixed $creditmemo
+     * @return void
+     */
+    private function registerCurrentCreditmemo($creditmemo): void
+    {
+        if ($creditmemo instanceof \Magento\Sales\Model\Order\Creditmemo) {
+            $this->currentCreditmemo->set($creditmemo);
+        } else {
+            $this->registry->register('current_creditmemo', $creditmemo);
+        }
     }
 }

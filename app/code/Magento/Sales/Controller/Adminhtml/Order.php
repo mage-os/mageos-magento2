@@ -21,6 +21,7 @@ use Magento\Sales\Api\OrderManagementInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Exception\InputException;
+use Magento\Sales\Model\CurrentOrder;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -32,6 +33,11 @@ use Psr\Log\LoggerInterface;
  */
 abstract class Order extends Action
 {
+    /**
+     * @var CurrentOrder
+     */
+    private CurrentOrder $currentOrder;
+
     /**
      * Authorization level of a basic admin session
      *
@@ -110,6 +116,7 @@ abstract class Order extends Action
      * @param OrderManagementInterface $orderManagement
      * @param OrderRepositoryInterface $orderRepository
      * @param LoggerInterface $logger
+     * @param CurrentOrder|null $currentOrder
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -125,8 +132,10 @@ abstract class Order extends Action
         RawFactory $resultRawFactory,
         OrderManagementInterface $orderManagement,
         OrderRepositoryInterface $orderRepository,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        ?CurrentOrder $currentOrder = null
     ) {
+        $this->currentOrder = $currentOrder ?? new CurrentOrder($coreRegistry);
         $this->_coreRegistry = $coreRegistry;
         $this->_fileFactory = $fileFactory;
         $this->_translateInline = $translateInline;
@@ -174,7 +183,11 @@ abstract class Order extends Action
             return false;
         }
         $this->_coreRegistry->register('sales_order', $order);
-        $this->_coreRegistry->register('current_order', $order);
+        if ($order instanceof \Magento\Sales\Model\Order) {
+            $this->currentOrder->set($order);
+        } else {
+            $this->_coreRegistry->register('current_order', $order);
+        }
         return $order;
     }
 

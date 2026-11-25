@@ -9,9 +9,18 @@ use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Registry;
 use Magento\Framework\Controller\Result\ForwardFactory;
 use Magento\Framework\Controller\Result\RedirectFactory;
+use Magento\Sales\Model\CurrentOrder;
 
+/**
+ * Loads the order authorized for the current storefront request.
+ */
 class OrderLoader implements OrderLoaderInterface
 {
+    /**
+     * @var CurrentOrder
+     */
+    private CurrentOrder $currentOrder;
+
     /**
      * @var \Magento\Sales\Model\OrderFactory
      */
@@ -49,6 +58,7 @@ class OrderLoader implements OrderLoaderInterface
      * @param \Magento\Framework\UrlInterface $url
      * @param ForwardFactory $resultForwardFactory
      * @param RedirectFactory $redirectFactory
+     * @param CurrentOrder|null $currentOrder
      */
     public function __construct(
         \Magento\Sales\Model\OrderFactory $orderFactory,
@@ -56,8 +66,10 @@ class OrderLoader implements OrderLoaderInterface
         Registry $registry,
         \Magento\Framework\UrlInterface $url,
         ForwardFactory $resultForwardFactory,
-        RedirectFactory $redirectFactory
+        RedirectFactory $redirectFactory,
+        ?CurrentOrder $currentOrder = null
     ) {
+        $this->currentOrder = $currentOrder ?? new CurrentOrder($registry);
         $this->orderFactory = $orderFactory;
         $this->orderAuthorization = $orderAuthorization;
         $this->registry = $registry;
@@ -82,7 +94,11 @@ class OrderLoader implements OrderLoaderInterface
         $order = $this->orderFactory->create()->load($orderId);
 
         if ($this->orderAuthorization->canView($order)) {
-            $this->registry->register('current_order', $order);
+            if ($order instanceof \Magento\Sales\Model\Order) {
+                $this->currentOrder->set($order);
+            } else {
+                $this->registry->register('current_order', $order);
+            }
             return true;
         }
         /** @var \Magento\Framework\Controller\Result\Redirect $resultRedirect */

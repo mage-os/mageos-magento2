@@ -172,6 +172,7 @@ class ViewTest extends TestCase
             [
                 'context' => $this->context,
                 'coreRegistry' => $this->coreRegistryMock,
+                'currentOrder' => new \Magento\Sales\Model\CurrentOrder($this->coreRegistryMock),
                 'resultPageFactory' => $this->resultPageFactoryMock,
                 'resultRedirectFactory' => $this->resultRedirectFactoryMock,
                 'orderManagement' => $this->orderManagementMock,

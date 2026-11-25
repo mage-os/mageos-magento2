@@ -119,7 +119,8 @@ class ShipmentLoaderTest extends TestCase
                 'documentFactory' => $this->documentFactoryMock,
                 'trackFactory' => $this->trackFactoryMock,
                 'itemFactory' => $this->itemFactoryMock,
-                'data' => $data
+                'data' => $data,
+                'currentShipment' => new \Magento\Sales\Model\CurrentShipment($this->registryMock)
             ]
         );
     }
@@ -178,5 +179,51 @@ class ShipmentLoaderTest extends TestCase
         $this->documentFactoryMock->expects($this->once())->method('create')->willReturn($shipmentModelMock);
 
         $this->assertEquals($shipmentModelMock, $this->loader->load());
+    }
+
+    /**
+     * Loading a shipment exposes it through both access paths.
+     */
+    public function testLoadSharesCurrentShipmentWithRegistry(): void
+    {
+        $registry = new Registry();
+        $currentShipment = new \Magento\Sales\Model\CurrentShipment($registry);
+        $shipment = $this->createMock(Shipment::class);
+        $this->shipmentRepositoryMock->expects($this->once())->method('get')->with(12)->willReturn($shipment);
+        $loader = $this->objectManagerMock->getObject(
+            ShipmentLoader::class,
+            [
+                'registry' => $registry,
+                'currentShipment' => $currentShipment,
+                'shipmentRepository' => $this->shipmentRepositoryMock,
+                'data' => ['shipment_id' => 12]
+            ]
+        );
+
+        $this->assertSame($shipment, $loader->load());
+        $this->assertSame($shipment, $currentShipment->get());
+        $this->assertSame($shipment, $registry->registry('current_shipment'));
+    }
+
+    /**
+     * Loading without IDs preserves the false Registry value.
+     */
+    public function testLoadWithoutIdsPreservesFalseInRegistry(): void
+    {
+        $registry = new Registry();
+        $currentShipment = new \Magento\Sales\Model\CurrentShipment($registry);
+        $loader = $this->objectManagerMock->getObject(
+            ShipmentLoader::class,
+            [
+                'registry' => $registry,
+                'currentShipment' => $currentShipment,
+                'shipmentRepository' => $this->shipmentRepositoryMock,
+                'data' => []
+            ]
+        );
+
+        $this->assertFalse($loader->load());
+        $this->assertNull($currentShipment->get());
+        $this->assertFalse($registry->registry('current_shipment'));
     }
 }
