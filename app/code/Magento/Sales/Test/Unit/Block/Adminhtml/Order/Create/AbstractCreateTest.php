@@ -12,7 +12,7 @@ use Magento\Catalog\Pricing\Price\FinalPrice;
 use Magento\Downloadable\Pricing\Price\LinkPrice;
 use Magento\Framework\Pricing\PriceInfo\Base;
 use Magento\Sales\Block\Adminhtml\Order\Create\AbstractCreate;
-use Magento\Wishlist\Model\Item;
+use Magento\Catalog\Model\Product\Configuration\Item\ItemInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -89,7 +89,7 @@ class AbstractCreateTest extends TestCase
     protected function getMockForItemClass()
     {
         $productMock = $this->createMock(Product::class);
-        $itemMock = $this->createMock(Item::class);
+        $itemMock = $this->createMock(ItemInterface::class);
         $itemMock->expects($this->once())->method('getProduct')->willReturn($productMock);
 
         return $itemMock;

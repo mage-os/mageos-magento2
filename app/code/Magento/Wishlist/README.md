@@ -64,6 +64,10 @@ This module introduces the following layouts and layout handles in the directori
 
 - `view/adminhtml/layout`:
     - `customer_index_wishlist`
+    - `sales_order_create_index`
+    - `sales_order_create_load_block_data`
+    - `sales_order_create_load_block_sidebar`
+    - `sales_order_create_load_block_sidebar_wishlist`
 - `view/base/layout`:
     - `catalog_product_prices`
 - `view/frantend/layout`:
