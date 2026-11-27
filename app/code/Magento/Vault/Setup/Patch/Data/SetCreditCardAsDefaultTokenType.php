@@ -47,7 +47,7 @@ class SetCreditCardAsDefaultTokenType implements DataPatchInterface, PatchVersio
             [
                 PaymentTokenInterface::TYPE => CreditCardTokenFactory::TOKEN_TYPE_CREDIT_CARD
             ],
-            PaymentTokenInterface::TYPE . ' = ""'
+            PaymentTokenInterface::TYPE . " = ''"
         );
 
         $this->moduleDataSetup->getConnection()->endSetup();

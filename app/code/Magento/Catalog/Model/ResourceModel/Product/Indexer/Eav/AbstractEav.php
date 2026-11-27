@@ -189,7 +189,7 @@ abstract class AbstractEav extends \Magento\Catalog\Model\ResourceModel\Product\
             'i.entity_id = cpw.product_id AND sw.website_id = cpw.website_id',
             []
         )->group(
-            ['parent_id', 'i.attribute_id', 'i.store_id', 'i.value', 'l.child_id']
+            ['e.entity_id', 'i.attribute_id', 'i.store_id', 'i.value', 'l.child_id']
         )->columns(
             [
                 'parent_id' => 'e.entity_id',
