@@ -54,7 +54,7 @@ class ConfiguredRegularPrice extends AbstractPrice implements ConfiguredPriceInt
 
         foreach ($associatedProducts as $product) {
             /** @var Product $product */
-            /** @var \Magento\Wishlist\Model\Item\Option $customOption */
+            /** @var \Magento\Catalog\Model\Product\Configuration\Item\Option\OptionInterface $customOption */
             $customOption = $this->getProduct()
                 ->getCustomOption('associated_product_' . $product->getId());
             if (!$customOption) {

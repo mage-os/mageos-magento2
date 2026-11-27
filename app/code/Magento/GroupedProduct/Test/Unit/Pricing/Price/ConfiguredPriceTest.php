@@ -9,6 +9,7 @@ namespace Magento\GroupedProduct\Test\Unit\Pricing\Price;
 
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Configuration\Item\ItemInterface;
+use Magento\Catalog\Model\Product\Configuration\Item\Option\OptionInterface;
 use Magento\Catalog\Pricing\Price\BasePrice;
 use Magento\Framework\Pricing\Adjustment\CalculatorInterface;
 use Magento\Framework\Pricing\Price\PriceInterface;
@@ -20,7 +21,6 @@ use Magento\GroupedProduct\Model\Product\Type\Grouped;
 use Magento\GroupedProduct\Pricing\Price\ConfiguredPrice;
 use Magento\GroupedProduct\Pricing\Price\FinalPrice;
 use Magento\Store\Model\Store;
-use Magento\Wishlist\Model\Item\Option;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -133,10 +133,10 @@ class ConfiguredPriceTest extends TestCase
 
         $this->price->method('getValue')->willReturn($resultPrice);
 
-        $customOptionOne = $this->createMock(Option::class);
+        $customOptionOne = $this->createMock(OptionInterface::class);
         $customOptionOne->method('getValue')->willReturn($customOptionOneQty);
 
-        $customOptionTwo = $this->createMock(Option::class);
+        $customOptionTwo = $this->createMock(OptionInterface::class);
         $customOptionTwo->method('getValue')->willReturn($customOptionTwoQty);
 
         $store = $this->createMock(Store::class);

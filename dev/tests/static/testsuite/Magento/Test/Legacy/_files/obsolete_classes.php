@@ -4332,4 +4332,5 @@ return [
     ['Magento\Elasticsearch\Test\Unit\Model\DataProvider\Base\SuggestionsTest'],
     ['Zend_Measure_Length', 'Magento\Framework\Measure\Length'],
     ['Zend_Measure_Weight', 'Magento\Framework\Measure\Weight'],
+    ['Magento\GroupedProduct\Model\Wishlist\Product\Item', 'Magento\Wishlist\Plugin\Model\Item\GroupedProduct'],
 ];

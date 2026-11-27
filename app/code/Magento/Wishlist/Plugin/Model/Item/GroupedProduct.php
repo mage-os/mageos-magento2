@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\GroupedProduct\Model\Wishlist\Product;
+namespace Magento\Wishlist\Plugin\Model\Item;
 
 use Magento\Catalog\Model\Product\Configuration\Item\Option\OptionInterface;
 use Magento\Wishlist\Model\Item as WishlistItem;
@@ -15,7 +15,7 @@ use Magento\Catalog\Model\Product;
 /**
  * Wishlist logic for grouped product
  */
-class Item
+class GroupedProduct
 {
     /**
      * Modify Wishlist item based on associated product qty
