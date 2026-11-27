@@ -14,6 +14,7 @@ use Magento\Catalog\Block\Product\Context;
 use Magento\Catalog\Block\Product\Image;
 use Magento\Catalog\Block\Product\ImageBuilder;
 use Magento\Catalog\Block\Product\View\Type\Simple;
+use Magento\Catalog\Helper\Wishlist\AddToWishlistInterface;
 use Magento\Catalog\Model\Product;
 use Magento\CatalogInventory\Api\Data\StockItemInterface;
 use Magento\CatalogInventory\Api\StockRegistryInterface;
@@ -57,6 +58,11 @@ class AbstractProductTest extends TestCase
     protected $imageBuilder;
 
     /**
+     * @var AddToWishlistInterface|MockObject
+     */
+    private $addToWishlistMock;
+
+    /**
      * Set up mocks and tested class
      * Child class is used as the tested class is declared abstract
      */
@@ -64,8 +70,11 @@ class AbstractProductTest extends TestCase
     {
         $this->productContextMock = $this->createPartialMock(
             Context::class,
-            ['getLayout', 'getStockRegistry', 'getImageBuilder']
+            ['getLayout', 'getStockRegistry', 'getImageBuilder', 'getWishlistHelper']
         );
+        $this->addToWishlistMock = $this->createMock(AddToWishlistInterface::class);
+        $this->productContextMock->method('getWishlistHelper')
+            ->willReturn($this->addToWishlistMock);
         $arrayUtilsMock = $this->createMock(ArrayUtils::class);
         $this->layoutMock = $this->createPartialMock(Layout::class, ['getBlock']);
         $this->stockRegistryMock = $this->createMock(StockRegistryInterface::class);
@@ -86,6 +95,50 @@ class AbstractProductTest extends TestCase
             $this->productContextMock,
             $arrayUtilsMock
         );
+    }
+
+    /**
+     * Adding to the wish list is allowed when the wish list implementation allows it
+     *
+     * @return void
+     */
+    public function testIsAddToWishlistAllowed(): void
+    {
+        $this->addToWishlistMock->expects($this->once())
+            ->method('isAllow')
+            ->willReturn(true);
+
+        $this->assertTrue($this->block->isAddToWishlistAllowed());
+    }
+
+    /**
+     * Adding to the wish list is not allowed when the wish list implementation refuses it
+     *
+     * @return void
+     */
+    public function testIsAddToWishlistNotAllowed(): void
+    {
+        $this->addToWishlistMock->expects($this->once())
+            ->method('isAllow')
+            ->willReturn(false);
+
+        $this->assertFalse($this->block->isAddToWishlistAllowed());
+    }
+
+    /**
+     * The add to wish list post data comes from the wish list implementation
+     *
+     * @return void
+     */
+    public function testGetAddToWishlistParams(): void
+    {
+        $product = $this->createMock(Product::class);
+        $this->addToWishlistMock->expects($this->once())
+            ->method('getAddParams')
+            ->with($product)
+            ->willReturn('{"action":"wishlist\\/index\\/add"}');
+
+        $this->assertSame('{"action":"wishlist\\/index\\/add"}', $this->block->getAddToWishlistParams($product));
     }
 
     /**
