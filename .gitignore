@@ -72,3 +72,11 @@ atlassian*
 /generated/*
 !/generated/.htaccess
 .DS_Store
+
+# Personal AI agent files (the shared instructions live in AGENTS.md)
+AGENTS.local.md
+AGENTS.override.md
+CLAUDE.local.md
+/.claude/settings.local.json
+/.aider*
+!/.aider.conf.yml
