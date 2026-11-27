@@ -512,6 +512,68 @@ TEMPLATE;
     }
 
     /**
+     * A directive that throws after a child template deferred to the root must not leave the
+     * shared depth meter and deferral registry behind. Otherwise the next template filtered in
+     * the same process (the next email of a cron or consumer batch) is no longer the root, and
+     * its deferrals reach the output as ":deferred:<hash>:" placeholders.
+     */
+    public function testThrowingDirectiveDoesNotPoisonLaterFilterCalls(): void
+    {
+        $depthMeter = new FilteringDepthMeter();
+        $neutralizer = new DirectiveOutputNeutralizer($this->signatureProvider);
+
+        $child = $this->createFilter(
+            [$this->createDeferProcessor(null)],
+            $depthMeter,
+            $neutralizer
+        );
+        $root = $this->createFilter(
+            [
+                $this->createIncludeProcessor($child, '{{defer}}'),
+                $this->createThrowingProcessor(),
+                $this->createDeferProcessor('DEFERRED-OK'),
+            ],
+            $depthMeter,
+            $neutralizer
+        );
+
+        try {
+            $root->filter('[{{include}}{{boom}}]');
+            $this->fail('The exception thrown by the directive must be rethrown.');
+        } catch (\RuntimeException $e) {
+            $this->assertSame('boom', $e->getMessage());
+        }
+
+        $this->assertSame(0, $depthMeter->showMark());
+        $this->assertSame([], $this->deferredDirectiveRegistry->getAll());
+
+        $result = $root->filter('[{{include}}]');
+
+        $this->assertSame('[DEFERRED-OK]', $result);
+        $this->assertSame(0, $depthMeter->showMark());
+    }
+
+    /**
+     * {{boom}} processor: throws, like a directive whose template variable is missing.
+     *
+     * @return DirectiveProcessorInterface
+     */
+    private function createThrowingProcessor(): DirectiveProcessorInterface
+    {
+        return new class implements DirectiveProcessorInterface {
+            public function process(array $construction, Template $filter, array $templateVariables): string
+            {
+                throw new \RuntimeException('boom');
+            }
+
+            public function getRegularExpression(): string
+            {
+                return '/{{boom}}/';
+            }
+        };
+    }
+
+    /**
      * {{passthrough}} processor: returns the directive unchanged without declaring deferral
      * when $resolved is null, otherwise resolves to $resolved.
      *
