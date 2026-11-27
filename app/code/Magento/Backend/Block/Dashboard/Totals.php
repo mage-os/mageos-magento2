@@ -8,7 +8,9 @@ declare(strict_types=1);
 namespace Magento\Backend\Block\Dashboard;
 
 use Magento\Backend\Block\Template\Context;
+use Magento\Backend\Model\Dashboard\Config;
 use Magento\Backend\Model\Dashboard\Period;
+use Magento\Backend\Model\Dashboard\StatisticsCache;
 use Magento\Framework\Module\Manager;
 use Magento\Reports\Model\ResourceModel\Order\Collection;
 use Magento\Reports\Model\ResourceModel\Order\CollectionFactory;
@@ -38,21 +40,42 @@ class Totals extends Bar
     private $period;
 
     /**
+     * @var StatisticsCache
+     */
+    private $statisticsCache;
+
+    /**
+     * @var Config
+     */
+    private $dashboardConfig;
+
+    /**
+     * @var string
+     */
+    private $currentPeriod = '';
+
+    /**
      * @param Context $context
      * @param CollectionFactory $collectionFactory
      * @param Manager $moduleManager
      * @param array $data
      * @param Period|null $period
+     * @param StatisticsCache|null $statisticsCache
+     * @param Config|null $dashboardConfig
      */
     public function __construct(
         Context $context,
         CollectionFactory $collectionFactory,
         Manager $moduleManager,
         array $data = [],
-        ?Period $period = null
+        ?Period $period = null,
+        ?StatisticsCache $statisticsCache = null,
+        ?Config $dashboardConfig = null
     ) {
         $this->_moduleManager = $moduleManager;
         $this->period = $period ?? ObjectManager::getInstance()->get(Period::class);
+        $this->statisticsCache = $statisticsCache ?? ObjectManager::getInstance()->get(StatisticsCache::class);
+        $this->dashboardConfig = $dashboardConfig ?? ObjectManager::getInstance()->get(Config::class);
         parent::__construct($context, $collectionFactory, $data);
     }
 
@@ -65,6 +88,48 @@ class Totals extends Bar
         if (!$this->_moduleManager->isEnabled('Magento_Reports')) {
             return $this;
         }
+        $firstPeriod = array_key_first($this->period->getDatePeriods());
+        $period = (string)$this->getRequest()->getParam('period', $firstPeriod);
+        $this->currentPeriod = $period;
+
+        $totals = $this->statisticsCache->get(
+            'totals',
+            [
+                'period' => $period,
+                'store' => (string)$this->getRequest()->getParam('store'),
+                'website' => (string)$this->getRequest()->getParam('website'),
+                'group' => (string)$this->getRequest()->getParam('group'),
+            ],
+            $this->dashboardConfig->getTotalsCacheLifetime(),
+            fn (): array => $this->loadTotals($period)
+        );
+
+        $this->addTotal(__('Revenue'), $totals['revenue']);
+        $this->addTotal(__('Tax'), $totals['tax']);
+        $this->addTotal(__('Shipping'), $totals['shipping']);
+        $this->addTotal(__('Quantity'), $totals['quantity'], true);
+
+        return $this;
+    }
+
+    /**
+     * Period the figures were computed for
+     *
+     * @return string
+     */
+    public function getPeriod(): string
+    {
+        return $this->currentPeriod;
+    }
+
+    /**
+     * Query the period totals from the database
+     *
+     * @param string $period
+     * @return array{revenue: float, tax: float, shipping: float, quantity: int}
+     */
+    private function loadTotals(string $period): array
+    {
         $isFilter = $this->getRequest()->getParam(
             'store'
         ) || $this->getRequest()->getParam(
@@ -72,8 +137,6 @@ class Totals extends Bar
         ) || $this->getRequest()->getParam(
             'group'
         );
-        $firstPeriod = array_key_first($this->period->getDatePeriods());
-        $period = $this->getRequest()->getParam('period', $firstPeriod);
 
         /* @var $collection Collection */
         $collection = $this->_collectionFactory->create()->addCreateAtPeriodFilter(
@@ -105,11 +168,11 @@ class Totals extends Bar
 
         $totals = $collection->getFirstItem();
 
-        $this->addTotal(__('Revenue'), $totals->getRevenue());
-        $this->addTotal(__('Tax'), $totals->getTax());
-        $this->addTotal(__('Shipping'), $totals->getShipping());
-        $this->addTotal(__('Quantity'), $totals->getQuantity() * 1, true);
-
-        return $this;
+        return [
+            'revenue' => (float)$totals->getRevenue(),
+            'tax' => (float)$totals->getTax(),
+            'shipping' => (float)$totals->getShipping(),
+            'quantity' => (int)$totals->getQuantity(),
+        ];
     }
 }

@@ -18,6 +18,10 @@ use Magento\Framework\View\Helper\SecureHtmlRenderer;
 $viewModel = $block->getViewModel();
 ?>
 <div class="dashboard-diagram">
+    <span class="dashboard-diagram-palette" hidden aria-hidden="true">
+        <i class="_amounts"></i><i class="_orders"></i><i class="_average"></i>
+        <i class="_text"></i><i class="_grid"></i>
+    </span>
     <div id="chart_<?= $escaper->escapeHtmlAttr($block->getData('html_id')) ?>_period_container"
          class="dashboard-diagram-graph">
         <canvas id="chart_<?= $escaper->escapeHtmlAttr($block->getData('html_id')) ?>_period"></canvas>
@@ -37,11 +41,7 @@ $viewModel = $block->getViewModel();
                     '_current' => true
                 ])) ?>",
                 "periodSelect": "#dashboard_chart_period",
-                "periodUnits": <?= /** @noEscape */ $viewModel->getPeriodUnits() ?>,
-                <?php if ($precision = $block->getData('chart_precision')): ?>
-                "precision": <?= (int)$precision ?>,
-                <?php endif; ?>
-                "type": "<?= $escaper->escapeJs($block->getData('html_id')) ?>"
+                "periodUnits": <?= /** @noEscape */ $viewModel->getPeriodUnits() ?>
             }
         }
     }

@@ -10,40 +10,28 @@ define([
 
     describe('Magento_Backend/js/dashboard/chart', function () {
         let chartContainer, canvas;
-        const dataProvider = {
+        const series = {
             'today': {
-                label: 'Revenue',
-                data: [
-                    {
-                        'x': '2026-01-10 06:00',
-                        'y': 80
-                    }
-                ]
+                orders: {label: 'Orders', data: [{'x': '2026-01-10 06:00', 'y': 2}]},
+                amounts: {label: 'Revenue', data: [{'x': '2026-01-10 06:00', 'y': 80}]}
             },
             '1m': {
-                label: 'Revenue',
-                data: [
-
-                    {
-                        'x': '2026-01-09',
-                        'y': 120
-                    },
-                    {
-                        'x': '2026-01-10',
-                        'y': 80
-                    }
-                ]
+                orders: {label: 'Orders', data: [{'x': '2026-01-09', 'y': 1}, {'x': '2026-01-10', 'y': 3}]},
+                amounts: {label: 'Revenue', data: [{'x': '2026-01-09', 'y': 120}, {'x': '2026-01-10', 'y': 80}]}
             },
             '1y': {
-                label: 'Revenue',
-                data: [
-                    {
-                        'x': '2026-01',
-                        'y': 200
-                    }
-                ]
+                orders: {label: 'Orders', data: [{'x': '2026-01', 'y': 5}]},
+                amounts: {label: 'Revenue', data: [{'x': '2026-01', 'y': 200}]}
             }
         };
+
+        /**
+         * @param {String} period
+         * @returns {Object}
+         */
+        function response(period) {
+            return {period: period, series: series[period], currency: 'USD', locale: 'en-US'};
+        }
 
         /**
          * Creates a new instance of the dashboard chart widget with a mocked _request method.
@@ -56,7 +44,7 @@ define([
         function getWidgetInstance(element, options, mocks) {
             $.widget('test.dashboardChartTest', $.mage.dashboardChart, $.extend({
                 _request: function (data) {
-                    return $.Deferred().resolve(dataProvider[data.period || 'today']);
+                    return $.Deferred().resolve(response(data.period || 'today'));
                 }
             }, mocks || {}));
 
@@ -98,7 +86,10 @@ define([
             const period = 'today',
                 chartWidget = getWidgetInstance(canvas, {}, {
                     _request: function () {
-                        return $.Deferred().resolve({label: 'Revenue', data: []});
+                        return $.Deferred().resolve({
+                            period: 'today',
+                            series: {orders: {label: 'Orders', data: []}, amounts: {label: 'Revenue', data: []}}
+                        });
                     }
                 });
 
@@ -106,6 +97,7 @@ define([
             expect(chartWidget.chart).toBeDefined();
             expect(chartWidget.chart.data.datasets[0].label).toBe('Revenue');
             expect(chartWidget.chart.data.datasets[0].data).toEqual([]);
+            expect(chartWidget.chart.data.datasets[1].data).toEqual([]);
             expect(canvas.parent().is(':visible')).toBeFalse();
             expect(canvas.parent().next('.dashboard-diagram-nodata').is(':visible')).toBeTrue();
         });
@@ -115,10 +107,20 @@ define([
 
             expect(chartWidget.period).toBe(period);
             expect(chartWidget.chart).toBeDefined();
-            expect(chartWidget.chart.data.datasets[0].label).toBe(dataProvider[period].label);
-            expect(chartWidget.chart.data.datasets[0].data).toBe(dataProvider[period].data);
+            expect(chartWidget.chart.data.datasets[0].label).toBe('Revenue');
+            expect(chartWidget.chart.data.datasets[0].data).toEqual(series[period].amounts.data);
+            expect(chartWidget.chart.data.datasets[1].label).toBe('Orders');
+            expect(chartWidget.chart.data.datasets[1].data).toEqual(series[period].orders.data);
+            expect(chartWidget.chart.options.plugins.averageLine.value).toBe(80);
             expect(canvas.parent().is(':visible')).toBeTrue();
             expect(canvas.parent().next('.dashboard-diagram-nodata').is(':visible')).toBeFalse();
+        });
+        it('should format currency and counts for the active locale', () => {
+            const chartWidget = getWidgetInstance(canvas);
+
+            expect(chartWidget.formatCurrency(1234.5)).toBe('$1,234.50');
+            expect(chartWidget.formatCurrency(1234.5, true)).toBe('$1,235');
+            expect(chartWidget.formatCount(1234)).toBe('1,234');
         });
         it('should update the chart when period changes', () => {
             const period = '1m',
@@ -130,8 +132,10 @@ define([
             canvas.parent().parent().find('select').val(period).trigger('change');
 
             expect(chartWidget.period).toBe(period);
-            expect(chartWidget.chart.data.datasets[0].label).toBe(dataProvider[period].label);
-            expect(chartWidget.chart.data.datasets[0].data).toBe(dataProvider[period].data);
+            expect(chartWidget.unit).toBe('day');
+            expect(chartWidget.chart.data.datasets[0].data).toEqual(series[period].amounts.data);
+            expect(chartWidget.chart.data.datasets[1].data).toEqual(series[period].orders.data);
+            expect(chartWidget.chart.options.plugins.averageLine.value).toBe(100);
             expect(canvas.parent().is(':visible')).toBeTrue();
             expect(canvas.parent().next('.dashboard-diagram-nodata').is(':visible')).toBeFalse();
         });
