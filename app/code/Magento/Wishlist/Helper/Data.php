@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace Magento\Wishlist\Helper;
 
+use Magento\Catalog\Helper\Wishlist\AddToWishlistInterface;
 use Magento\Catalog\Model\Product;
 use Magento\Framework\App\ActionInterface;
 use Magento\Framework\App\ObjectManager;
@@ -27,7 +28,7 @@ use Magento\Wishlist\Model\Item;
  * @api
  * @since 100.0.2
  */
-class Data extends \Magento\Framework\App\Helper\AbstractHelper
+class Data extends \Magento\Framework\App\Helper\AbstractHelper implements AddToWishlistInterface
 {
     /**
      * Config key 'Display Wishlist Summary'

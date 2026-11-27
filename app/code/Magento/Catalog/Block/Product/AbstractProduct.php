@@ -73,7 +73,7 @@ class AbstractProduct extends \Magento\Framework\View\Element\Template
     protected $_cartHelper;
 
     /**
-     * @var \Magento\Wishlist\Helper\Data
+     * @var \Magento\Catalog\Helper\Wishlist\AddToWishlistInterface
      */
     protected $_wishlistHelper;
 
@@ -180,6 +180,18 @@ class AbstractProduct extends \Magento\Framework\View\Element\Template
     public function getAddToWishlistParams($product)
     {
         return $this->_wishlistHelper->getAddParams($product);
+    }
+
+    /**
+     * Check whether customers can add products to their wish list
+     *
+     * Always false when Magento_Wishlist is not installed.
+     *
+     * @return bool
+     */
+    public function isAddToWishlistAllowed()
+    {
+        return (bool)$this->_wishlistHelper->isAllow();
     }
 
     /**

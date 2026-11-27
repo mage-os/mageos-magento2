@@ -96,7 +96,7 @@ if ($exist = ($block->getRecentlyViewedProducts() && $block->getRecentlyViewedPr
                                             <?php endif; ?>
                                             <?php if ($showWishlist || $showCompare) : ?>
                                                 <div class="actions-secondary" data-role="add-to-links">
-                                                    <?php if ($this->helper(\Magento\Wishlist\Helper\Data::class)->isAllow() && $showWishlist) : ?>
+                                                    <?php if ($block->isAddToWishlistAllowed() && $showWishlist):?>
                                                         <a href="#"
                                                            class="action towishlist" data-action="add-to-wishlist"
                                                            data-post='<?= /* @noEscape */ $block->getAddToWishlistParams($_item) ?>'

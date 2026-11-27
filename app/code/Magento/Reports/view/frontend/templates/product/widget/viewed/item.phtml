@@ -69,7 +69,7 @@ $rating = 'short';
                     </div>
 
                     <div class="secondary-addto-links" data-role="add-to-links">
-                        <?php if ($this->helper(\Magento\Wishlist\Helper\Data::class)->isAllow()) : ?>
+                        <?php if ($block->isAddToWishlistAllowed()):?>
                             <a href="#" data-post='<?= /* @noEscape */ $block->getAddToWishlistParams($item) ?>'  class="action towishlist" data-action="add-to-wishlist" title="<?= $block->escapeHtmlAttr(__('Add to Wish List')) ?>">
                                 <span><?= $block->escapeHtml(__('Add to Wish List')) ?></span>
                             </a>
