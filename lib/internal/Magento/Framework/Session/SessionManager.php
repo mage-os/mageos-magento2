@@ -212,11 +212,20 @@ class SessionManager implements SessionManagerInterface, ResetAfterRequestInterf
     /**
      * Execute after script terminates
      *
+     * The shutdown function references the session manager weakly. A strong reference would keep every session
+     * manager, and everything it depends on, alive until the process ends, which leaks connections and file handles
+     * in processes that rebuild the object manager, such as long-running workers and the integration tests.
+     *
      * @return void
      */
     public function registerShutdown()
     {
-        register_shutdown_function([$this, 'writeClose']);
+        $sessionManager = \WeakReference::create($this);
+        register_shutdown_function(
+            static function () use ($sessionManager): void {
+                $sessionManager->get()?->writeClose();
+            }
+        );
     }
 
     /**
