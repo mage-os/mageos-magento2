@@ -5,16 +5,20 @@
  */
 namespace Magento\Catalog\Model\ResourceModel;
 
+use Magento\Catalog\Api\Data\ProductAttributeInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Test\Fixture\Attribute as AttributeFixture;
 use Magento\Catalog\Test\Fixture\Product as ProductFixture;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Store\Test\Fixture\Store as StoreFixture;
 use Magento\TestFramework\Eav\Model\GetAttributeSetByName;
 use Magento\TestFramework\Fixture\AppArea;
 use Magento\TestFramework\Fixture\AppIsolation;
 use Magento\TestFramework\Fixture\Config as ConfigFixture;
 use Magento\TestFramework\Fixture\DataFixture;
+use Magento\TestFramework\Fixture\DataFixtureStorageManager;
+use Magento\TestFramework\Fixture\DbIsolation;
 use Magento\TestFramework\Helper\Bootstrap;
 use PHPUnit\Framework\TestCase;
 use Magento\Framework\Exception\NoSuchEntityException;
@@ -220,6 +224,45 @@ class ProductTest extends TestCase
 
         $attribute = $this->model->getAttributeRawValue($product->getId(), $attributeCode, 1);
         $this->assertEmpty($attribute);
+    }
+
+    /**
+     * Checks that updating a website scope value updates it for every store view of the website.
+     */
+    #[
+        DbIsolation(false),
+        DataFixture(StoreFixture::class, as: 'store2'),
+        DataFixture(
+            AttributeFixture::class,
+            [
+                'attribute_code' => 'website_attr',
+                'scope' => ProductAttributeInterface::SCOPE_WEBSITE_TEXT,
+            ]
+        ),
+        DataFixture(ProductFixture::class, ['sku' => 'simple']),
+    ]
+    public function testSaveAttributeUpdatesWebsiteScopeValueInAllStoreViewsOfWebsite(): void
+    {
+        $attributeCode = 'website_attr';
+        $defaultStoreId = (int)$this->storeManager->getStore('default')->getId();
+        $secondStoreId = (int)$this->objectManager->get(DataFixtureStorageManager::class)
+            ->getStorage()
+            ->get('store2')
+            ->getId();
+
+        $product = $this->productRepository->get('simple', true, $defaultStoreId, true);
+        $product->setData($attributeCode, 'initial value');
+        $this->model->saveAttribute($product, $attributeCode);
+        $product->setData($attributeCode, 'updated value');
+        $this->model->saveAttribute($product, $attributeCode);
+
+        foreach ([$defaultStoreId, $secondStoreId] as $storeId) {
+            $this->assertEquals(
+                'updated value',
+                $this->model->getAttributeRawValue($product->getId(), $attributeCode, $storeId),
+                sprintf('The website scope value is not updated for store view %d.', $storeId)
+            );
+        }
     }
 
     /**
