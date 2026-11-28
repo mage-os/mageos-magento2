@@ -331,7 +331,16 @@ abstract class AbstractResource extends \Magento\Eav\Model\Entity\AbstractEntity
         $storeId = $hasSingleStore
             ? $this->getDefaultStoreId()
             : (int) $this->_storeManager->getStore($object->getStoreId())->getId();
-        if ($valueId > 0 && array_key_exists('store_id', $row) && $storeId === $row['store_id']) {
+        /**
+         * A website scope value is stored for every store view of the website, so updating the single
+         * matched row would leave the other store views of the website with the previous value.
+         */
+        $isWebsiteScopeValue = $attribute->isScopeWebsite() && $storeId !== $this->getDefaultStoreId();
+        if ($valueId > 0
+            && !$isWebsiteScopeValue
+            && array_key_exists('store_id', $row)
+            && $storeId === $row['store_id']
+        ) {
             $table = $attribute->getBackend()->getTable();
             $connection = $this->getConnection();
             $connection->update(
