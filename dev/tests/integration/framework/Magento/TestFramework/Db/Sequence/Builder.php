@@ -226,6 +226,7 @@ class Builder extends \Magento\SalesSequence\Model\Builder
             $this->data['store_id']
         );
         if ($metadata->getSequenceTable() == $this->getSequenceName()) {
+            $this->createSequenceTable();
             return;
         }
 
@@ -261,6 +262,28 @@ class Builder extends \Magento\SalesSequence\Model\Builder
             $this->resourceMetadata->delete($metadata);
             throw $e;
         }
+        $this->createSequenceTable();
         $this->data = array_flip($this->pattern);
+    }
+
+    /**
+     * Create the sequence table if it is missing and no transaction is open
+     *
+     * The installation creates the sequence tables of stores 0 to 9 only, so a store created later, for example by
+     * a legacy store fixture in a test without DB isolation, had sequence metadata pointing to a missing table.
+     * DDL is not allowed while a transaction is open, so stores created in tests with DB isolation still get only
+     * their metadata.
+     *
+     * @return void
+     */
+    private function createSequenceTable(): void
+    {
+        $connection = $this->appResource->getConnection('sales');
+        $sequenceName = $this->getSequenceName();
+        if ($connection->getTransactionLevel() === 0 && !$connection->isTableExists($sequenceName)) {
+            $connection->query(
+                $this->ddlSequence->getCreateSequenceDdl($sequenceName, $this->data['start_value'])
+            );
+        }
     }
 }

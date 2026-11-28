@@ -344,6 +344,13 @@ class LoadBlockTest extends AbstractBackendController
         $this->assertStringNotContainsString("sidebar[add_wishlist_item][$itemId]", $body);
         $quoteItems = $this->session->getQuote()->getItemsCollection();
         $this->assertCount(1, $quoteItems);
+
+        // Adding the wishlist item also creates the customer's cart, which the fixture rollback leaves behind
+        try {
+            $this->quoteIdsToRemove[] = $this->quoteRepository->getForCustomer(1)->getId();
+        } catch (NoSuchEntityException $e) {
+            //do nothing
+        }
     }
 
     /**

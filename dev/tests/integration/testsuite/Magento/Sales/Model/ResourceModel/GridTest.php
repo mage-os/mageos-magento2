@@ -47,7 +47,9 @@ class GridTest extends TestCase
     public function testRefreshBySchedule(array $constructorArgs, string $orderIdField)
     {
         $constructorArgs['orderIdField'] = $constructorArgs['mainTableName'] . '.' . $orderIdField;
+        // The grid rows are keyed by entity_id; without it, a refresh inserts a new row instead of updating
         $constructorArgs['columns'] = [
+            'entity_id' => $constructorArgs['mainTableName'] . '.entity_id',
             $orderIdField => $constructorArgs['orderIdField'],
             'created_at' => $constructorArgs['mainTableName'] . '.created_at',
             'updated_at' => $constructorArgs['mainTableName'] . '.updated_at',
@@ -60,7 +62,7 @@ class GridTest extends TestCase
         $connection = $grid->getConnection();
         $select = $connection->select()
             ->from($constructorArgs['mainTableName'], ['created_at', 'updated_at'])
-            ->where($orderIdField, $order->getEntityId());
+            ->where("$orderIdField = ?", $order->getEntityId());
         $data = $connection->fetchRow($select);
         $this->assertNotEmpty($data);
 
@@ -78,7 +80,7 @@ class GridTest extends TestCase
 
         $select = $connection->select()
             ->from($constructorArgs['gridTableName'], ['created_at', 'updated_at'])
-            ->where($orderIdField, $order->getEntityId());
+            ->where("$orderIdField = ?", $order->getEntityId());
         $gridData = $connection->fetchRow($select);
         $this->assertEquals($data, $gridData);
 
@@ -95,7 +97,7 @@ class GridTest extends TestCase
 
         $select = $connection->select()
             ->from($constructorArgs['gridTableName'], ['created_at', 'updated_at'])
-            ->where($orderIdField, $order->getEntityId());
+            ->where("$orderIdField = ?", $order->getEntityId());
         $gridData = $connection->fetchRow($select);
         $this->assertEquals($data, $gridData);
     }
