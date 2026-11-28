@@ -10,6 +10,7 @@ namespace Magento\Sales\Cron;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Quote\Model\QuoteRepository;
 use Magento\Quote\Model\ResourceModel\Quote\CollectionFactory as QuoteCollectionFactory;
+use Magento\Store\Api\StoreRepositoryInterface;
 use Magento\TestFramework\Helper\Bootstrap;
 
 /**
@@ -31,6 +32,11 @@ class CleanExpiredQuotesTest extends \PHPUnit\Framework\TestCase
     private $quoteCollectionFactory;
 
     /**
+     * @var StoreRepositoryInterface
+     */
+    private $storeRepository;
+
+    /**
      * @inheritdoc
      */
     protected function setUp(): void
@@ -38,6 +44,7 @@ class CleanExpiredQuotesTest extends \PHPUnit\Framework\TestCase
         $objectManager = Bootstrap::getObjectManager();
         $this->cleanExpiredQuotes = $objectManager->get(CleanExpiredQuotes::class);
         $this->quoteCollectionFactory = $objectManager->get(QuoteCollectionFactory::class);
+        $this->storeRepository = $objectManager->get(StoreRepositoryInterface::class);
     }
 
     /**
@@ -48,14 +55,16 @@ class CleanExpiredQuotesTest extends \PHPUnit\Framework\TestCase
      */
     public function testExecute()
     {
-        //Initial count - should be equal to stores number.
-        $this->assertQuotesCount(2);
+        // The fixture adds one quote to each store. Earlier tests can leave quotes in the default store.
+        $this->assertGreaterThanOrEqual(1, $this->getQuotesCount('default'));
+        $this->assertEquals(1, $this->getQuotesCount('fixture_second_store'));
 
         //Deleting expired quotes
         $this->cleanExpiredQuotes->execute();
 
-        //Only 1 will be deleted for the store that has all of them expired by config (default_store)
-        $this->assertQuotesCount(1);
+        //Only the quotes of the store that has all of them expired by config (default_store) are deleted
+        $this->assertEquals(0, $this->getQuotesCount('default'));
+        $this->assertEquals(1, $this->getQuotesCount('fixture_second_store'));
     }
 
     /**
@@ -66,25 +75,27 @@ class CleanExpiredQuotesTest extends \PHPUnit\Framework\TestCase
      */
     public function testExecuteWithBigAmountOfQuotes()
     {
-        //Initial count - should be equal to 1000
-        $this->assertQuotesCount(6000);
+        // The fixture adds 6000 quotes to the default store. Earlier tests can leave more there.
+        $this->assertGreaterThanOrEqual(6000, $this->getQuotesCount('default'));
 
         //Deleting expired quotes
         $this->cleanExpiredQuotes->execute();
 
-        //There should be no quotes anymore
-        $this->assertQuotesCount(0);
+        //There should be no quotes in the default store anymore
+        $this->assertEquals(0, $this->getQuotesCount('default'));
     }
 
     /**
-     * Optimized assert quotes count
-     * Uses collection getSize in order to get quick result
+     * Count the quotes of one store, not of the whole database, which earlier tests can leave quotes in.
+     * Uses the collection size in order to get a quick result.
      *
-     * @param int $expected
+     * @param string $storeCode
+     * @return int
      */
-    private function assertQuotesCount(int $expected): void
+    private function getQuotesCount(string $storeCode): int
     {
-        $totalCount = $this->quoteCollectionFactory->create()->getSize();
-        $this->assertEquals($expected, $totalCount);
+        return $this->quoteCollectionFactory->create()
+            ->addFieldToFilter('store_id', (int)$this->storeRepository->get($storeCode)->getId())
+            ->getSize();
     }
 }
